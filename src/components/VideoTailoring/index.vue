@@ -273,7 +273,15 @@ export default {
       // 监听文档初始化完成
       this.$EventBus.$on('docSDK_ready', async () => {
         this.showVideo = true;
-        await this.initSDK().catch(err=>this.$message.error(`${err.message}!x{${err.code}}`));
+        await this.initSDK().catch(err=>{
+          this.$message({
+            message: `${err.message}!x{${err.code}}`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          })
+        });
         this.showTailoring = true;
       });
       this.showTailoring = true;
@@ -391,7 +399,13 @@ export default {
      */
     async exportVideoFun () {
       if (this.videoTitle.trim() == '') {
-        this.$message.error('请输入导出回放标题');
+        this.$message({
+          message: this.t('请输入导出回放标题'),
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       let data = await this.cutTimeReverse();
@@ -426,10 +440,22 @@ export default {
      */
     createVideo () {
       if (!this.selectDate) {
-        this.$message.error('请选择时间');
+        this.$message({
+          message: this.t('请选择时间'),
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       } else if (this.room_id.trim() == '') {
-        this.$message.error('请输入直播ID');
+        this.$message({
+          message: this.t('请输入直播ID'),
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       let pargram = {
@@ -459,7 +485,13 @@ export default {
      */
     findVideo () {
       if (this.room_id.trim() == '') {
-        this.$message.error('请输入点播ID/直播ID');
+        this.$message({
+          message: this.t('请输入点播ID/直播ID'),
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       this.tableData = [];
@@ -572,7 +604,13 @@ export default {
             window.vhallPlayer.destroy();
           }
           if (this.roomInfo.duration == '00:00:00') {
-            this.$message.error('请选择正确的原视频');
+            this.$message({
+              message: this.t('请选择正确的原视频'),
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
             return false;
           }
           this.showVideo = false;

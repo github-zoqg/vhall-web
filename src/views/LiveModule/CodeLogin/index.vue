@@ -84,9 +84,23 @@ import { liveTag } from '@/utils/filter';
           if(res.code == 200){
             this.baseObj = res.data
             console.warn(res.data, '获取活动的基础信息');
-          }else{
-            this.$message.warning(res.msg)
+          } else {
+            this.$message({
+              message: res.msg || `获取活动的基础信息失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           }
+        }).catch(res => {
+          this.$message({
+            message: res.msg || `获取活动的基础信息失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         })
       },
       entryLive() {
@@ -119,8 +133,22 @@ import { liveTag } from '@/utils/filter';
                 // this.$router.push({name: 'LiveRoom', params: {il_id: this.$route.params.id}})
               }, 300)
             } else {
-              this.$message.error(res.msg)
+              this.$message({
+                message: res.msg || `登录失败`,
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             }
+          }).catch(res => {
+            this.$message({
+              message: res.msg || `登录失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           })
         }
       }

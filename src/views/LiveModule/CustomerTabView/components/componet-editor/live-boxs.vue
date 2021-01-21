@@ -159,7 +159,13 @@ export default {
     doSelect(item) {
 
       if (this.selectedOption.length == 10 && !item.checked) {
-        this.$message.error('直播最多只能选择10个！')
+        this.$message({
+          message: `直播最多只能选择10个`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return
       }
 

@@ -146,15 +146,23 @@ export default {
         params.end_time = this.query.timeStr[1] || '';
       }
       this.$fetch(this.sonVo.vip_info.type > 0 ? 'exportFlowDetail' : 'exportOnlineDetail', params).then(res=>{
-        if (res && res.code === 200) {
-          this.$message.success('下载申请成功，请去下载中心下载该项！');
-          this.$EventBus.$emit('saas_vs_download_change');
-        } else {
-          this.$message.error(res.msg);
-        }
-      }).catch(e=>{
-        console.log(e);
-      });
+        this.$message({
+          message: `下载申请成功，请去下载中心下载该项`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `下载申请失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      })
     },
     initComp(sonVo) {
       this.sonVo = sonVo;

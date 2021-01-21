@@ -83,13 +83,25 @@ export default {
           isDefault: false
         })
       } else {
-        this.$message.error(e.msg)
+        this.$message({
+          message: e.msg ,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }
     },
 
     uploadError(e) {
       console.log('upload error', e)
-      this.$message.error(e.msg)
+      this.$message({
+        message: e.msg ,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
   }
 }

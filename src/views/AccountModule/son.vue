@@ -96,10 +96,15 @@ export default {
         } catch (e) {
           console.log(e);
         }
-      }).catch(e => {
-        console.log(e);
-        this.$message.error(res.msg || '获取信息失败');
-      });
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `获取信息失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      })
     },
     initPage() {
       this.getSonInfo();// 获取子账号统计信息

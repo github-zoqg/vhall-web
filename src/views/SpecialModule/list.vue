@@ -180,7 +180,13 @@ export default {
           this.text = '';
         }
       }).catch(error=>{
-        this.$message.error(`获取专题列表失败,${error.errmsg || error.message}`);
+        this.$message({
+          message: `获取专题列表失败,${error.errmsg || error.message}`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         console.log(error);
       }).finally(()=>{
         this.loading = false;
@@ -198,8 +204,11 @@ export default {
           this.trueDelete(id);
         }).catch(() => {
           this.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
+            customClass: 'zdy-info-box'
           });
         });
     },
@@ -214,7 +223,13 @@ export default {
           this.searchHandler();
         }
       }).catch(error=>{
-        this.$message.error(`删除失败，${error.message}`);
+        this.$message({
+          message: `删除失败，${error.message}`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }).finally(()=>{
         this.loading = false;
       });

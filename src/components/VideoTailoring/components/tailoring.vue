@@ -657,7 +657,13 @@ export default {
      */
     addEventPoint () {
       if (this.eventLabel == '') {
-        this.$message.error(this.t('请输入事件点标记文字'));
+        this.$message({
+          message: this.t('请输入事件点标记文字'),
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       let eventPoint = { timePoint: this.eventTime, msg: this.eventLabel };
@@ -708,7 +714,13 @@ export default {
         })
       );
       if (cutTime == 0 || cutTime == this.videoTime) {
-        this.$message.error(this.t('请选择正确的视频裁剪点'));
+        this.$message({
+          message: this.t('请选择正确的视频裁剪点'),
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       this.$EventBus.$emit('cuttingBlockInit', cutTime);

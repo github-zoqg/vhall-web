@@ -184,10 +184,13 @@ export default {
             });
           })
         }).catch(() => {
-          /* this.$message({
+          this.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
-          }); */
+            customClass: 'zdy-info-box'
+          });
         });
     },
     deleteAll(id) {

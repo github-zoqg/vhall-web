@@ -227,13 +227,31 @@ export default {
         }
         if (res.code == 200) {
           this.$emit('onClose');
-          this.$message.success('转播成功！');
+          this.$message({
+            message: `转播成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
         } else {
-          this.$message.error('转播失败！');
+          this.$message({
+          message: res.msg || `转播失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         }
-      }).catch(err=>{
-        console.warn('v3RebroadcastStart', err);
-        this.$message.error('转播失败！');
+      }).catch(res=>{
+        console.warn('v3RebroadcastStart', res);
+        this.$message({
+          message: res.msg || `转播失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
 
     },

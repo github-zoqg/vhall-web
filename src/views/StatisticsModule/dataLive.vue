@@ -200,7 +200,13 @@ export default {
         this.tableList = res.data.list;
         this.totalNum = res.data.total;
       }).catch(error=>{
-        this.$message.error(`获取活动列表失败,${error.errmsg || error.message}`);
+        this.$message({
+          message: `获取活动列表失败,${error.msg}`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         console.log(error);
       }).finally(()=>{
         this.loading = false;
@@ -212,12 +218,22 @@ export default {
     // 导出
     exportCenterData() {
       this.$fetch('exportWebinar', this.$params(this.params)).then(res => {
-        if (res.code == 200) {
-          this.$message.success(`活动数据导出成功，请去下载中心下载`);
-          this.$EventBus.$emit('saas_vs_download_change');
-        } else {
-          this.$message.error(`活动数据${res.msg}`);
-        }
+        this.$message({
+          message: `活动数据导出成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `活动数据导出失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     dataReport(that, val) {

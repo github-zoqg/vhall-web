@@ -454,13 +454,22 @@ export default {
             room_id: this.roomId
           }
           this.$fetch('deleteChatList', obj).then(res => {
-            this.$message.success('删除成功');
+            this.$message({
+              message: `删除成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
             this.chatInfo();
           });
         }).catch(() => {
           this.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
+            customClass: 'zdy-info-box'
           });
         });
     },
@@ -472,14 +481,26 @@ export default {
     deleteAll(id) {
       if (this.title === '聊天') {
         if (this.seleteAllOptionList.length < 1) {
-          this.$message.error('请选择要操作的对象');
+          this.$message({
+            message: `请选择要操作的对象`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         } else {
           id = this.seleteAllOptionList.join(',');
           this.chatConfirmSure(id);
         }
       } else {
           if (this.seleteAnwerList.length < 1 && this.seleteQuestionList.length < 1) {
-            this.$message.error('请选择要操作的对象')
+            this.$message({
+              message: `请选择要操作的对象`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           } else {
             this.recordAllDelete();
           }
@@ -500,13 +521,22 @@ export default {
             room_id: this.roomId
           }
           this.$fetch('deleteAllRecodrder', this.$params(obj)).then(res => {
-            this.$message.success('删除成功');
+            this.$message({
+              message: `删除成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
             this.getRecordList();
           });
         }).catch(() => {
           this.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
+            customClass: 'zdy-info-box'
           });
         });
     },
@@ -530,8 +560,11 @@ export default {
           });
         }).catch(() => {
           that.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
+            customClass: 'zdy-info-box'
           });
         });
     },
@@ -676,13 +709,22 @@ export default {
             room_id: this.roomId
           }
           this.$fetch('deleteRecodrder', obj).then(res => {
-            this.$message.success('删除成功');
+            this.$message({
+              message: `删除成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
             this.getRecordList();
           });
         }).catch(() => {
           this.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
+            customClass: 'zdy-info-box'
           });
         });
     },
@@ -768,76 +810,142 @@ export default {
     // 邀请详情导出
     exportInviteDetailInfo(id) {
        this.$fetch('exportDetailInvite', {webinar_id: this.webinarId, join_id: id }).then(res => {
-        this.$message.success('导出申请成功，请去下载中心下载');
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 邀请导出
     exportInviteInfo() {
       this.$fetch('exportInvite', {webinar_id: this.webinarId}).then(res => {
-        this.$message.success('导出申请成功，请去下载中心下载');
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 聊天
     exportChatInfo() {
       this.$fetch('exportChat', {room_id: this.roomId}).then(res => {
-        this.$message.success('导出申请成功，请去下载中心下载');
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 问答
     exportRecordInfo() {
       this.$fetch('exportRecodrder', this.params).then(res => {
-        this.$message.success('导出申请成功，请去下载中心下载');
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 签到
     exportSignInfo() {
       this.$fetch('exportSign', {room_id: this.roomId}).then(res => {
-        this.$message.success('导出申请成功，请去下载中心下载');
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     exportDetailSignInfo(id) {
       this.$fetch('exportDetailSign',{room_id: this.roomId, sign_id: id}).then(res => {
-        this.$message.success('导出申请成功，请去下载中心下载');
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 问卷
     exportQuestionInfo() {
       this.$fetch('exportSurvey',{webinar_id: this.webinarId, room_id: this.roomId}).then(res => {
-        this.$message.success('导出申请成功，请去下载中心下载');
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 抽奖
     exportPrizeInfo() {
       this.$fetch('exportLottery', this.params).then(res => {
-        this.$message.success('导出申请成功，请去下载中心下载');
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 抽奖单个
     exportPrizeDetailInfo(item) {
       this.$fetch('exportDetailLottery',{webinar_id: this.webinarId, id: item.id}).then(res => {
-        this.$message.success('导出申请成功，请去下载中心下载');
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 发群红包
     exportRedpacketInfo() {
       this.$fetch('exportRedpacket',{webinar_id: this.webinarId}).then(res => {
-        this.$message.success('导出申请成功，请去下载中心下载');
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
      // 发群红包---导出明细
     exportRedpacketDetailInfo(uuid, type) {
       this.$fetch('exportDetailRedpacket',{webinar_id: this.webinarId, red_packet_uuid: uuid, type: type}).then(res => {
-        this.$message.success('导出申请成功，请去下载中心下载');
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },

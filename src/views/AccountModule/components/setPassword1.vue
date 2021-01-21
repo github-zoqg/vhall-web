@@ -204,7 +204,13 @@ export default {
           };
           this.$fetch('resetPassword', params).then(res => {
             if (res && res.code === 200) {
-              this.$message.success('操作成功');
+              this.$message({
+                message: '操作成功',
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
               this.visible = false;
               this.$emit('changeOk');
             }

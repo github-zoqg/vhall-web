@@ -449,24 +449,32 @@ export default {
           this.deleteList(rows.order_id);
         }).catch(() => {
           this.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
+            customClass: 'zdy-info-box'
           });
         });
     },
     deleteList(id) {
-       this.$fetch('deleteDetail', {id: id}).then(res =>{
-         if (res.code == 200) {
-           this.getDetailList();
-           this.$message.success('删除成功')
-         } else {
-           this.$message.success(res.msg || '删除失败')
-         }
+      this.$fetch('deleteDetail', {id: id}).then(res =>{
+        this.$message({
+          message: '删除成功',
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.getDetailList();
       }).catch(e=>{
         console.log(e);
         this.$message({
+          message: e.msg || '删除失败',
+          showClose: true,
+          // duration: 0,
           type: 'error',
-          message: '删除失败!'
+          customClass: 'zdy-info-box'
         });
       });
     },
@@ -483,12 +491,22 @@ export default {
     exportAccount() {
       let url = this.activeIndex == '1' ? 'exporOrder' : 'exportAdmin';
       this.$fetch(url, this.params).then(res => {
-        if (res.code == 200) {
-          this.$message.success(`${this.activeIndex == 1 ? '购买' : '开通'}账单明细导出申请成功，请去下载中心下载`);
-          this.$EventBus.$emit('saas_vs_download_change');
-        } else {
-          this.$message.error(`账单明细${res.msg}`);
-        }
+        this.$message({
+          message: `${this.activeIndex == 1 ? '购买' : '开通'}账单明细导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `${this.activeIndex == 1 ? '购买' : '开通'}账单明细导出失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
   }

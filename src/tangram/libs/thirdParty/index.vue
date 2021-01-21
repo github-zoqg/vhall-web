@@ -97,9 +97,21 @@ export default {
         url = this.stream_number;
       }
       this.$copyText(url).then(e => {
-        this.$message.success('复制成功！');
+        this.$message({
+          message: `复制成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
       }).catch(error=>{
-        this.$message.error('复制失败！');
+        this.$message({
+          message: `复制失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     }
 
