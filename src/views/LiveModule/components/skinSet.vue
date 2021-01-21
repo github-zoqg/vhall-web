@@ -2,7 +2,7 @@
   <div class="skin--set">
     <div class="sign--set--main">
       <div class="skin--set--left">
-        <el-form :model="skinSetForm" ref="skinSetForm" :rules="skinSetFormRules" label-width="66px">
+        <el-form :model="skinSetForm" ref="skinSetForm" :rules="skinSetFormRules" label-width="70px">
           <el-form-item label="皮肤方案">
             <el-radio-group v-model="skinType" @change="previewShow">
               <el-radio :label="0">默认皮肤</el-radio>
@@ -304,7 +304,7 @@ export default {
   padding-left: 60px;
 }
 /deep/.el-form-item__label {
-  padding: 0 10px 0 0;
+  padding: 0 12px 0 0;
 }
 /deep/.el-form-item {
   margin-bottom: 32px;

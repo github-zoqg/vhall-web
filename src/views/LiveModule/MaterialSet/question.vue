@@ -290,8 +290,8 @@ export default {
     }
   }
   .show-question{
-    position: absolute;
-    z-index: 2002;
+    position: fixed;
+    z-index: 3000;
     top: 0;
     left: 0;
     width: 100%;
@@ -322,6 +322,7 @@ export default {
       }
       .submit-footer{
         text-align: center;
+        padding-top: 20px;
       }
     }
   }
