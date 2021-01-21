@@ -1,7 +1,7 @@
 <template>
   <div :class="['signFormBox']">
     <div :class="['signWrap']">
-      <vhscroll>
+      <vueScroll :ops="ops">
         <div class="entryFormBox">
           <header>
             <img :src="`${ Env.staticLinkVo.uploadBaseUrl }${baseInfo.cover ? baseInfo.cover : 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'}`" alt="">
@@ -239,7 +239,7 @@
             </template>
           </article>
         </div>
-      </vhscroll>
+      </vueScroll>
       <i v-if="!isEntryForm" class="closeBtn" @click="closePreview">
         <icon icon-class="saasicon_close"></icon>
       </i>
@@ -501,7 +501,12 @@
         colNum: 8,
         regionalId: '',
         isVerifyCodeErr: false,
-        overflowStatus: 0 // 文本溢出的状态，0 未溢出；1 溢出未展开；2溢出展开
+        overflowStatus: 0, // 文本溢出的状态，0 未溢出；1 溢出未展开；2溢出展开
+        ops: {
+          bar: {
+            background: '#ccc',
+          }
+        }
       };
     },
     mounted() {
@@ -986,12 +991,13 @@
       background: #fff;
       position: relative;
       z-index: 101;
+
       &.signWrapHid{
         height: auto;
         box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
       }
       .entryFormBox {
-        width: 840px;
+        width: 760px;
         background: #fff;
         padding-bottom: 87px;
       }
