@@ -24,6 +24,7 @@
           <preview-box
             :info="item"
             :mode="1"
+            :pre="pre"
           ></preview-box>
         </template>
         </div>
@@ -46,6 +47,9 @@ export default {
       required: true
     },
     uuid: {
+      required: true
+    },
+    pre: {
       required: true
     }
   },

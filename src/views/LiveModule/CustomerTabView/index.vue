@@ -19,14 +19,14 @@
           <span
             class="vh-customer__preview-tabcontrols__btn "
             :class="{'vh-customer__preview-tabcontrols__btn—active': activeIndex == 1}"
-            @click="activeIndex = 1"
+            @click="preShow(1)"
           >
             手机预览
           </span>
           <span
             class="vh-customer__preview-tabcontrols__btn"
             :class="{'vh-customer__preview-tabcontrols__btn—active': activeIndex == 2}"
-            @click="activeIndex = 2"
+            @click="preShow(2)"
             style="float:right; left: auto"
           >
             PC预览
@@ -36,12 +36,14 @@
           <mobile-preview
             ref="menusControl"
             :menus.sync="customMenus"
+            :pre="activeIndex"
             @updateMenus="updateMenus"
           ></mobile-preview>
         </div>
         <div class="vh-customer__preview-pc" v-show="activeIndex == 2">
           <pc-preview
             :menus="customMenus"
+            :pre="activeIndex"
           ></pc-preview>
         </div>
       </div>
@@ -100,7 +102,6 @@ export default {
     PcPreview,
     beginPlay
   },
-
   created() {
     this.qrCode = `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`
     this.link = `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`
@@ -108,6 +109,9 @@ export default {
   },
 
   methods: {
+    preShow(activeIndex) {
+      this.activeIndex = activeIndex;
+    },
     copy() {
       this.$copyText(this.link).then(e => {
         this.$message({

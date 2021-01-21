@@ -17,8 +17,10 @@
           </vhscroll>
       </div>
       <div class="rank-band">
-          <img v-show="activeIndex == 1" src="./bang01@2x.png">
-          <img v-show="activeIndex == 2" src="./bang02@2x.png">
+        <img v-if="activeIndex == 1 && pre == 1" src="./phone-bang02@2x.png" alt="" />
+        <img v-if="activeIndex == 1 && pre == 2" src="./pc-bang02@2x.png" alt="" />
+        <img v-if="activeIndex == 2 && pre == 1" src="./phone-bang01@2x.png" alt="" />
+        <img v-if="activeIndex == 2 && pre == 2" src="./pc-bang01@2x.png" alt="" />
       </div>
     </div>
     <div class="rank-editor-box" v-if="mode == 2">
@@ -70,13 +72,14 @@ export default {
     },
     info: {
       required: false
+    },
+    pre: {
+      required: true
     }
   },
-
   components: {
     vEditor,
   },
-
   data() {
     return {
       activeIndex: '1'
@@ -92,7 +95,6 @@ export default {
       }
     }
   },
-
   methods: {
     changeTab(index) {
       this.activeIndex = index

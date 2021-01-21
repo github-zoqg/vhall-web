@@ -5,6 +5,7 @@
       :info="info"
       :mode="mode || 1"
       @updateInfo="updateInfo"
+      :pre="pre"
     ></component>
   </div>
 </template>
@@ -29,6 +30,9 @@ export default {
     },
     mode: {
       required: false
+    },
+    pre: {
+      required: true
     }
   },
 

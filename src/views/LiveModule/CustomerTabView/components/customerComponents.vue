@@ -6,6 +6,7 @@
         :units.sync="currentInfo.components"
         :menuInfo="currentInfo"
         :uuid="currentInfo.uuid"
+        :pre="pre"
       ></component>
   </div>
 </template>
@@ -21,6 +22,12 @@ import componentGoods from './components-view/component-goods'
 import componentRecommend from './components-view/component-recommend'
 
 export default {
+  props: {
+    pre: {
+      required: true,
+      default: 1
+    }
+  },
   data() {
     return {
       currentInfo: {}

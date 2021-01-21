@@ -5,6 +5,7 @@
         :units.sync="currentInfo.components"
         :menuInfo="currentInfo"
         :uuid="currentInfo.uuid"
+        :pre="pre"
       ></component>
   </div>
 </template>
@@ -17,6 +18,9 @@ import componentDes from './component-des'
 export default {
   props: {
     currentInfo: {
+      required: true
+    },
+    pre: {
       required: true
     }
   },
