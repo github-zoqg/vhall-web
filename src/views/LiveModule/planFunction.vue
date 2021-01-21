@@ -47,15 +47,16 @@
         </div>
         <!--PC预览,begin-->
         <div :class="['plan-func-pc', {'zj': !chapterCompute}]" v-show="switchType === 'pc'">
+          <span class="share-span" v-if="shareCompute"></span>
           <div class="icon-spans">
-           <span class="share-span"  v-if="shareCompute"></span><span class="reward-span" v-if="rewardCompute"></span><span class="gift-span" v-if="giftCompute"></span><span class="like-span" v-if="likeCompute"></span>
+           <span class="reward-span" v-if="rewardCompute"></span><span class="gift-span" v-if="giftCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
         </div>
         <!--手机预览,begin-->
         <div :class="['plan-func-app', {'zj': !chapterCompute }]" v-show="switchType === 'app'">
           <span class="chat-span">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
           <div class="icon-spans">
-            <span class="gift-span" v-if="giftCompute"></span><span class="reward-span" v-if="rewardCompute"></span><span class="like-span" v-if="likeCompute"></span>
+            <span class="gift-span" v-if="giftCompute"></span><span  class="reward-span" v-if="rewardCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
         </div>
       </div>
@@ -305,6 +306,18 @@ export default {
   &.zj {
     background-image: url('../../common/images/plan-function/pc-zj.png');
   }
+  .share-span{
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    display: inline-block;
+    width: 28px;
+    height: 11px;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    margin-left: 2px;
+    background-image: url('../../common/images/plan-function/pc-share@2x.png');
+  }
   .icon-spans {
     position: absolute;
     bottom: 0;
@@ -325,9 +338,6 @@ export default {
     }
     .gift-span{
       background-image: url('../../common/images/plan-function/pc-gift@2x.png');
-    }
-    .share-span{
-      background-image: url('../../common/images/plan-function/pc-share@2x.png');
     }
   }
 }
@@ -365,17 +375,14 @@ export default {
       background-repeat: no-repeat;
       background-size: 100% 100%;
     }
-    .reward-span{
-      background-image: url('../../common/images/plan-function/phone-reward@2x.png');
-    }
     .like-span{
       background-image: url('../../common/images/plan-function/phone-like@2x.png');
     }
     .gift-span{
       background-image: url('../../common/images/plan-function/phone-gift@2x.png');
     }
-    .share-span{
-      background-image: url('../../common/images/plan-function/phone-share@2x.png');
+    .reward-span{
+      background-image: url('../../common/images/plan-function/phone-reward@2x.png');
     }
   }
 }
