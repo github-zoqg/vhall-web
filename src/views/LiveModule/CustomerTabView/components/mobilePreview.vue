@@ -243,7 +243,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 3, // 1显示, 2隐藏, 3直播回放隐藏, 4预告结束显示
               components: []
             })
           } else if (this.$insertIndex == 0) {
@@ -252,7 +252,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 3, // 1显示, 2隐藏, 3直播回放隐藏, 4预告结束显示
               components: []
             })
           } else if(this.$insertIndex == this.menus.length) {
@@ -261,7 +261,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 3, // 1显示, 2隐藏, 3直播隐藏, 4预告结束显示
               components: []
             })
           }
@@ -323,6 +323,7 @@ export default {
       } else {
         this.menus[index].status = 3
       }
+      console.log(2323234, this.menus[index])
     },
     // 删除
     delThis(index) {

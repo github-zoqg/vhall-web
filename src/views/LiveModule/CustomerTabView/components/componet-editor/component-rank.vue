@@ -148,6 +148,8 @@ export default {
       padding: 8px;
       line-height: 24px;
       height: 120px;
+      overflow-y: scroll;
+      word-break: break-all;
     }
   }
   .switch-box{
