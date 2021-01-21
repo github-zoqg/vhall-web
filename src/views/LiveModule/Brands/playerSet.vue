@@ -186,7 +186,7 @@
             <div id="videoDom"></div>
             <div class="vod-controller" :class="{'active':hoveVideo}">
               <div class="slider line-slider">
-                <el-slider v-model="sliderVal" :show-tooltip="false" ref="controllerRef" @change="setVideo"></el-slider>
+                <el-slider v-model="sliderVal" :show-tooltip="false" ref="controllerRef" @change="setVideo" v-if="formOther.progress"></el-slider>
                 <div class="Times" :style="{ left: hoverLeft + 'px' }" v-show="TimesShow">
                   <span class="current-time">{{ hoverTime | secondToDate }}</span>
                 </div>
@@ -203,10 +203,21 @@
                     <span class="all-time">{{ totalTime | secondToDate }}</span>
                   </div>
                 </div>
-                <div class="right-box fr">
-                  <div class="speed-box"></div>
-                  <div class="barrage-box">
+                <div class="center-wrap">
+                  <!-- 倍速 -->
+                  <div class="speed-box" v-if="formOther.doubleSpeed">
+                    <p class="chose" @click="choseSpeed">{{speed}}x</p>
+                    <div class="chose-list" v-show="isSpeed">
+                      <p v-for="(item, index) in speedList" :key="index" :class="speed==item ? 'active' : ''" @click="choseOtherSpeed(item)">{{item}}x</p>
+                    </div>
                   </div>
+                  <!-- 弹幕 -->
+                  <div class="barrage-box">
+                    <i class="iconfont-v3 saasdanmu_kai" v-if="formOther.bulletChat"></i>
+                    <i class="iconfont-v3 saasdanmu_guan" v-if="!formOther.bulletChat"></i>
+                  </div>
+                </div>
+                <div class="right-box fr">
                   <div class="volume-box">
                     <span class="icon-box">
                       <i style="color: #ececec" class="iconfont-v3" @click="jingYin"  :class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'" ></i>
@@ -254,7 +265,7 @@ export default {
       sliderVal: 0, // seek
       hoverLeft: 10,
       hoveVideo:false,
-      statePaly: true, // 播放状态
+      statePaly: false, // 播放状态
       currentTime: 0,
       voice: 20, // 音量
       isFullscreen: false, // 全屏
@@ -265,6 +276,9 @@ export default {
       totalTime: 0,
       scrolling_open: false,
       watermark_open: false,
+      isSpeed: false,
+      speedList: [],
+      speed: 1,
       pageThemeColors: ['FFFFFF','1A1A1A','FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
       formHorse: {
         color: '#FFFFFF', // 六位
@@ -355,10 +369,11 @@ export default {
   created() {
     this.getFontList();
     this.getBasescrollingList();
+    // 获取其他信息
+    this.getBaseOtherList();
   },
   mounted () {
     this.initPlayer();
-
   },
   beforeDestroy() {
     if(this.$Vhallplayer){
@@ -371,6 +386,13 @@ export default {
       if (!this.formHorse.interval) {
         this.formHorse.interval = 20;
       }
+    },
+    choseSpeed() {
+      this.isSpeed = true;
+    },
+    choseOtherSpeed(item) {
+      this.isSpeed = false;
+      this.speed = item;
     },
     // 预览视频
     previewVideo () {
@@ -406,47 +428,48 @@ export default {
     otherOtherInfo(value) {
       this.preOthersOptions();
       // 1--弹幕  2--进度条  3--倍速
-      switch (value) {
-        case 1 :
-          if (this.formOther.bulletChat) {
-            let content = "弹幕已开启";
-            var opt = {
-                  position: 0,     // 位置   int  0上    1中  2下  3全屏
-                  alpha: 1,      // 透明度 int  0~1
-                  fontsize: 15,    // 字体大小 int
-                  color: "#000000"  // 颜色   string
-                }
-            vp.setBarrageInfo(opt ,failure=>{
-              console.log('failure',failure);
-            } )
-            vp.openBarrage()
-            setTimeout (()=>{
-              vp.addBarrage(content , failure=>{
-                console.log('failure',failure);
-              })
-            },2000)
+      // switch (value) {
+      //   case 1 :
+      //     if (this.formOther.bulletChat) {
+      //       let content = "弹幕已开启";
+      //       var opt = {
+      //             position: 0,     // 位置   int  0上    1中  2下  3全屏
+      //             alpha: 1,      // 透明度 int  0~1
+      //             fontsize: 15,    // 字体大小 int
+      //             color: "#000000"  // 颜色   string
+      //           }
+      //       vp.setBarrageInfo(opt ,failure=>{
+      //         console.log('failure',failure);
+      //       } )
+      //       vp.openBarrage()
+      //       setTimeout (()=>{
+      //         vp.addBarrage(content , failure=>{
+      //           console.log('failure',failure);
+      //         })
+      //       },2000)
 
-          } else {
-            vp.closeBarrage()
-          }
-          break;
-        case 2 :
-          // eslint-disable-next-line no-case-declarations
-          let progressContainer =  document.querySelector('.vhallPlayer-progress-container')
-           this.formOther.progress ? progressContainer.style.display = 'block' : progressContainer.style.display = 'none'
-          break;
-        case 3 :
-          // eslint-disable-next-line no-case-declarations
-          let list = this.$Vhallplayer.getUsableSpeed()
-          if (this.formOther.doubleSpeed) {
-            this.$Vhallplayer.setPlaySpeed(list[0])
+      //     } else {
+      //       vp.closeBarrage()
+      //     }
+      //     break;
+      //   case 2 :
+      //     // eslint-disable-next-line no-case-declarations
+      //     let progressContainer =  document.querySelector('.vhallPlayer-progress-container')
+      //      this.formOther.progress ? progressContainer.style.display = 'block' : progressContainer.style.display = 'none'
+      //     break;
+      //   case 3 :
+      //     // eslint-disable-next-line no-case-declarations
+      //     let list = this.$Vhallplayer.getUsableSpeed()
+      //     console.log(list, '?????????')
+      //     if (this.formOther.doubleSpeed) {
+      //       this.$Vhallplayer.setPlaySpeed(list[0])
 
-             document.querySelector('.vhallPlayer-speed-component').style.display = "block"
-          }else {
-            document.querySelector('.vhallPlayer-speed-component').style.display = "none"
-          }
-          break;
-      }
+      //        document.querySelector('.vhallPlayer-speed-component').style.display = "block"
+      //     }else {
+      //       document.querySelector('.vhallPlayer-speed-component').style.display = "none"
+      //     }
+      //     break;
+      // }
       // this.initNodePlay()
     },
     // 获取跑马灯基本信息
@@ -457,7 +480,6 @@ export default {
           this.$nextTick(() => {
             this.$refs.pageThemeColors.initColor(res.data.color);
           })
-          console.log(this.formHorse.color, '?222222222222222222')
           this.scrolling_open = Boolean(res.data.scrolling_open);
         }
       })
@@ -480,16 +502,16 @@ export default {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
           this.formOther.progress = Boolean(res.data.progress_bar);
           this.formOther.doubleSpeed = Boolean(res.data.speed);
-          let progressContainers =  document.querySelector('.vhallPlayer-progress-container')
-          this.formOther.progress ? progressContainers.style.display = 'block' : progressContainers.style.display = 'none'
-          this.$nextTick(()=>{
-            if (this.formOther.doubleSpeed) {
-              // this.$Vhallplayer.setPlaySpeed(list[0])
-                document.querySelector('.vhallPlayer-speed-component').style.display = "block"
-              }else {
-                document.querySelector('.vhallPlayer-speed-component').style.display = "none"
-              }
-          })
+          // let progressContainers =  document.querySelector('.vhallPlayer-progress-container')
+          // this.formOther.progress ? progressContainers.style.display = 'block' : progressContainers.style.display = 'none'
+          // this.$nextTick(()=>{
+          //   if (this.formOther.doubleSpeed) {
+          //     // this.$Vhallplayer.setPlaySpeed(list[0])
+          //       document.querySelector('.vhallPlayer-speed-component').style.display = "block"
+          //     }else {
+          //       document.querySelector('.vhallPlayer-speed-component').style.display = "none"
+          //     }
+          // })
         }
       }).catch(res => {
         this.$message({
@@ -675,7 +697,7 @@ export default {
           url: this.domain_url || this.audioImg, // 水印图片的路径
           align: 'tr', // 图片的对其方式， tl | tr | bl | br 分别对应：左上，右上，左下，右下
           position: watermarkOptionPosition, // 对应的横纵位置，支持px,vh,vw,%
-          size: ['80px', '35px'], // 水印大小，支持px,vh,vw,%
+          size: ['180px', '60px'], // 水印大小，支持px,vh,vw,%  默认 80 35
           alpha:this.formWatermark.img_alpha
         },
         subtitleOption: {
@@ -696,6 +718,14 @@ export default {
             window.vp = this.$Vhallplayer;
             // this.$Vhallplayer.pause()
             this.$Vhallplayer.openControls(false);
+            if (this.formOther.doubleSpeed) {
+              this.speedList = this.$Vhallplayer.getUsableSpeed() || [];
+              this.speedList.map((item, index) => {
+                if (item == 1) {
+                  this.speed = this.speedList[index];
+                }
+              })
+            }
             this.$Vhallplayer.on(window.VhallPlayer.LOADED, () => {
               this.loading = false;
               // 加载中
@@ -1077,6 +1107,61 @@ export default {
           .center-box{
             display: inline-block;
             line-height: 48px;
+          }
+        }
+        .center-wrap{
+          float: left;
+          line-height: 45px;
+          padding: 0 15px 0 70px;
+          .speed-box{
+            display: inline-block;
+            padding-right: 30px;
+            position: relative;
+            .chose{
+              width: 60px;
+              height: 30px;
+              background: rgba(0, 0, 0, 1);
+              border-radius: 20px;
+              color: #fff;
+              text-align: center;
+              line-height: 30px;
+              font-size: 14px;
+              cursor: pointer;
+              &:hover{
+                background: #FB3A32;
+                opacity: 0.8;
+              }
+            }
+            .chose-list{
+              position: absolute;
+              top: 30px;
+              left: 0;
+              width: 55px;
+              border-radius: 4px;
+              background: rgba(0, 0, 0, 1);
+              cursor: pointer;
+              p{
+                height: 25px;
+                line-height: 25px;
+                color: #fff;
+                text-align: center;
+                &:hover{
+                  color: #FB3A32;
+                }
+                &:active{
+                  color: #FB3A32;
+                }
+              }
+            }
+          }
+          .barrage-box{
+            display: inline-block;
+            i{
+              font-size: 20px;
+            }
+            .saasdanmu_kai{
+              color:#FB3A32;
+            }
           }
         }
         .right-box{
