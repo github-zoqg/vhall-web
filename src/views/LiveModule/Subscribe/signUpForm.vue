@@ -1318,20 +1318,20 @@
             background: #DEDEDE;
           }
         }
-        // 云盾样式重置
+        // 云盾样式重置,注释部分为设计稿样式，暂时不删除，有备无患
         .captcha{
-          /deep/ .yidun .yidun_control {
-            border-radius: 4px!important;
-            border-color: #ccc;
-            background: #fff;
-            overflow: hidden;
-            .yidun_slide_indicator {
-              border-radius: 4px!important;
-            }
-            .yidun_tips {
-              color: #888888;
-              line-height: 38px;
-            }
+        //   /deep/ .yidun .yidun_control {
+        //     border-radius: 4px!important;
+        //     border-color: #ccc;
+        //     background: #fff;
+        //     overflow: hidden;
+        //     .yidun_slide_indicator {
+        //       border-radius: 4px!important;
+        //     }
+        //     .yidun_tips {
+        //       color: #888888;
+        //       line-height: 38px;
+        //     }
             .yidun_slider {
               .yidun_slider__icon {
                 background-image: url(./images/icon-slide1.png);
@@ -1339,54 +1339,54 @@
                 background-position: center;
               }
               &:hover {
-                background-color: #FB3A32;
+                // background-color: #FB3A32;
                 .yidun_slider__icon {
                   background-image: url(./images/icon-slide.png);
                 }
               }
             }
-            &.yidun_control--moving {
-              background-color: #E2E2E2;
-              border-color: #FB3A32;
-              .yidun_slide_indicator {
-                border-color: #FB3A32;
-                background-color: #E2E2E2;
-              }
-            }
+        //     &.yidun_control--moving {
+        //       background-color: #E2E2E2;
+        //       border-color: #FB3A32;
+        //       .yidun_slide_indicator {
+        //         border-color: #FB3A32;
+        //         background-color: #E2E2E2;
+        //       }
+        //     }
 
-          }
-          /deep/ .yidun--success {
-            .yidun_control--moving {
-              background-color: #F0F1FE!important;
-              .yidun_slide_indicator {
-                background-color: #F0F1FE!important;
-              }
-            }
-            .yidun_control {
-              border-color: #3562FA!important;
-              .yidun_slider {
-                .yidun_slider__icon {
-                  background-image: url(./images/icon-succeed.png);
-                }
-                &:hover {
-                  background-color: #FB3A32;
-                  .yidun_slider__icon {
-                    background-image: url(./images/icon-succeed.png);
-                  }
-                }
-              }
-            }
-          }
+          // }
+        //   /deep/ .yidun--success {
+        //     .yidun_control--moving {
+        //       background-color: #F0F1FE!important;
+        //       .yidun_slide_indicator {
+        //         background-color: #F0F1FE!important;
+        //       }
+        //     }
+        //     .yidun_control {
+        //       border-color: #3562FA!important;
+        //       .yidun_slider {
+        //         .yidun_slider__icon {
+        //           background-image: url(./images/icon-succeed.png);
+        //         }
+        //         &:hover {
+        //           background-color: #FB3A32;
+        //           .yidun_slider__icon {
+        //             background-image: url(./images/icon-succeed.png);
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
         }
-        .yidun.yidun--light.yidun--success.yidun--jigsaw {
-          .yidun_control .yidun_slider {
-            background-color: #3562FA;
-          }
-          .yidun_slide_indicator {
-            border-color: #3562FA;
-            background-color: #E2E2E2;
-          }
-        }
+        // .yidun.yidun--light.yidun--success.yidun--jigsaw {
+        //   .yidun_control .yidun_slider {
+        //     background-color: #3562FA;
+        //   }
+        //   .yidun_slide_indicator {
+        //     border-color: #3562FA;
+        //     background-color: #E2E2E2;
+        //   }
+        // }
       }
     }
     .entryForm .blue {
