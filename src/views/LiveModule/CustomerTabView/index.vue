@@ -6,8 +6,7 @@
     >
       <div slot="content">所有设置对电脑端和移动浏览器同时生效</div>
       <div class="vh-customer-menu-btns">
-
-        <el-link type="info" :underline=false href="http://www.vhall.com/saas/doc/1457.html" target="_blank" class="link__left">使用帮助</el-link>
+        <a href="http://www.vhall.com/saas/doc/1457.html" target="_blank" class="link__left">使用帮助</a>
         <el-button type="primary" style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab">保存</el-button>
       </div>
     </page-title>
@@ -300,6 +299,11 @@ export default {
 }
 </script>
 <style lang="less">
+  .vh-customer-menu-contentBox__preview {
+    width: calc(100% - 140px);
+    float: right;
+    position: relative;
+  }
   .vh-customer-menu-wrap{
     min-height: 530px;
     height: 100%;
@@ -309,6 +313,12 @@ export default {
     position: absolute;
     right: 10px;
     top: 0;
+  }
+  a.link__left {
+    font-size: 14px;
+    font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    font-weight: 400;
+    color: #3562FA;
   }
   .qr-previewbox{
     text-align: center;
