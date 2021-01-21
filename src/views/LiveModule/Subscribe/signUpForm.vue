@@ -1341,6 +1341,7 @@
                 background-image: url(./images/icon-slide1.png);
                 background-size: 28px 20px;
                 background-position: center;
+                margin-top: -5px;
               }
               &:hover {
                 // background-color: #FB3A32;
@@ -1359,28 +1360,31 @@
         //     }
 
           // }
-        //   /deep/ .yidun--success {
-        //     .yidun_control--moving {
-        //       background-color: #F0F1FE!important;
-        //       .yidun_slide_indicator {
-        //         background-color: #F0F1FE!important;
-        //       }
-        //     }
-        //     .yidun_control {
-        //       border-color: #3562FA!important;
-        //       .yidun_slider {
-        //         .yidun_slider__icon {
-        //           background-image: url(./images/icon-succeed.png);
-        //         }
-        //         &:hover {
-        //           background-color: #FB3A32;
-        //           .yidun_slider__icon {
-        //             background-image: url(./images/icon-succeed.png);
-        //           }
-        //         }
-        //       }
-        //     }
-        //   }
+          /deep/ .yidun--success {
+            // .yidun_control--moving {
+            //   background-color: #F0F1FE!important;
+            //   .yidun_slide_indicator {
+            //     background-color: #F0F1FE!important;
+            //   }
+            // }
+            .yidun_control {
+              .yidun_slider {
+                .yidun_slider__icon {
+                  background-image: url(./images/icon-succeed.png);
+                  background-size: 28px 20px;
+                  background-position: center;
+                }
+                &:hover {
+                  // background-color: #FB3A32;
+                  .yidun_slider__icon {
+                    background-image: url(./images/icon-succeed.png);
+                    background-size: 28px 20px;
+                    background-position: center;
+                  }
+                }
+              }
+            }
+          }
         }
         // .yidun.yidun--light.yidun--success.yidun--jigsaw {
         //   .yidun_control .yidun_slider {
