@@ -20,7 +20,7 @@
           :picker-options="pickerOptions"
           style="width: 240px;margin-right:16px"
         />
-        <el-select filterable clearable v-model="versionType" v-if="parentId == 0 && childNum == 1"  style="width: 160px;vertical-align: top;">
+        <el-select filterable clearable v-model="versionType" v-if="parentId == 0 && childNum == 1" @change="getDataList"  style="width: 160px;vertical-align: top;">
           <el-option
             v-for="(opt, optIndex) in versionOptions"
             :key="optIndex"
@@ -198,7 +198,7 @@ export default {
     getDataList() {
       let params = {
         account_id: this.userId,
-        type: this.versionType,
+        type: this.versionType || 1,
         start_time: this.dateValue ? this.dateValue[0] : '',
         end_time: this.dateValue ? this.dateValue[1] : ''
       }

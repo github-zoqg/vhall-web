@@ -66,6 +66,7 @@ export default {
     position: fixed;
     right: 60px;
     bottom: 100px;
+    z-index: 100;
     .begin-btn{
       width: 80px;
       height: 80px;

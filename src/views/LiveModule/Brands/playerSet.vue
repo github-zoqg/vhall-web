@@ -64,7 +64,8 @@
                     v-model="formHorse.interval"
                     :disabled="!scrolling_open"
                     maxlength="3"
-                    oninput="this.value=this.value.replace(/[^\d]/g, '')"
+                    @blur="blurChange"
+                    oninput="this.value=this.value.replace(/[^1-9]/g, '')"
                     placeholder="默认20，支持输入范围1-300">
                     <i slot="suffix">秒</i>
                     </el-input>
@@ -310,6 +311,11 @@ export default {
     }
   },
   methods: {
+    blurChange(value) {
+      if (!this.formHorse.interval) {
+        this.formHorse.interval = 20;
+      }
+    },
     // 预览视频
     previewVideo () {
       this.initNodePlay()
@@ -442,12 +448,10 @@ export default {
     // 保存跑马灯
     preFormHorse() {
       // 校验间隔时间的输入
-      let reg = /^[0-9]*$/
-      if(!reg.test(this.formHorse.interval) || this.formHorse.interval == 0){
+      if(this.formHorse.interval > 300){
         this.$message({
           message: `间隔时间只能输入1-300之间的数字`,
           showClose: true,
-          // duration: 0,
           type: 'error',
           customClass: 'zdy-info-box'
         });
@@ -586,7 +590,6 @@ export default {
           watermarkOptionPosition = ['5%','70%']
           break;
       }
-      console.log(this.scrolling_open, ':?????????????????????')
       const incomingData = {
         appId: 'd317f559', // 应用ID，必填
         accountId: this.accountIds, // 第三方用户ID，必填
