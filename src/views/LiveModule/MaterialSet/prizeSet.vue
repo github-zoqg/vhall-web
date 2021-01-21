@@ -317,7 +317,13 @@ export default {
             this.backgroundImg = this.prizeImgList[0];
           }
       }).catch((err)=>{
-        this.$message.error(err.msg);
+        this.$message({
+          message: err.msg || `获取信息失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     // 抽奖页保存按钮
@@ -332,25 +338,51 @@ export default {
           description: this.formData.description
       }
       this.$fetch('savePrizeInfo', params).then(res => {
-        if (res.code == 200) {
-          this.$message.success('保存成功');
-        } else {
-          this.$message.error(res.msg ||'保存失败');
-        }
+        this.$message({
+          message: `保存成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
       }).catch((err)=>{
-        this.$message.error(err.msg)
+        this.$message({
+          message: err.msg || '保存失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     changeImg() {
       this.$fetch('uploadImage').then(res => {
-        this.$message.success('保存成功')
+        this.$message({
+          message: `保存成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
       }).catch((err)=>{
-        this.$message.error(err.msg)
+        this.$message({
+          message: err.msg || '保存失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     addField() {
       if(this.givePrizeList.length == 6){
-        this.$message.error(`最多只能添加三个自定义选项`);
+        this.$message({
+          message: `最多只能添加三个自定义选项`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false
       }
       this.index ++;
@@ -390,13 +422,21 @@ export default {
       })
       console.warn(this.givePrizeList);
       this.$fetch('saveDrawPrizeInfo', {webinar_id: this.$route.params.str,data:JSON.stringify(this.givePrizeList)}).then(res => {
-        if (res.code == 200) {
-          this.$message.success('保存成功');
-        } else {
-          this.$message.error(res.msg ||'保存失败');
-        }
+        this.$message({
+          message: `保存成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
       }).catch((err)=>{
-        this.$message.error(err.msg)
+        this.$message({
+          message: err.msg || `保存失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     handleClick(tab) {
@@ -434,11 +474,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`文件格式不支持，请检查图片`);
+        this.$message({
+          message: `文件格式不支持，请检查图片`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('文件大小超过2MB，请检查图片');
+        this.$message({
+          message: `文件大小超过2M，请检查图片`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -448,7 +500,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`图片上传失败`);
+      this.$message({
+        message: `图片上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);

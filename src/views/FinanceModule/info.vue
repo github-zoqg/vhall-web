@@ -402,11 +402,16 @@ export default {
               orderId: res.data.order_id
             }
           });
-        } else {
-          this.$message.error(res.msg);
         }
-      }).catch(e=>{
-        console.log(e);
+      }).catch(res =>{
+        this.$message({
+          message: res.msg || "获取信息失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       });
     },
     initPayMessage() {
@@ -428,24 +433,44 @@ export default {
     exportCenterData() {
       let url = this.versionType == '1' ? 'exportFlow' : 'exportOnline';
       this.$fetch(url, this.lineParams).then(res => {
-        if (res.code == 200) {
-          this.$message.success(`${this.versionType ? '流量' : '并发'}用量统计导出申请成功，请去下载中心下载`);
-          this.$EventBus.$emit('saas_vs_download_change');
-        } else {
-          this.$message.error(`用量统计${res.msg}`);
-        }
+        this.$message({
+          message: `${this.versionType ? '流量' : '并发'}用量统计导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `${this.versionType ? '流量' : '并发'}用量统计导出失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     // 导出消费账单
     exportAccount() {
       let url = this.versionType == '1' ? 'exportFlowDetail' : 'exportOnlineDetail';
       this.$fetch(url, this.dataParams).then(res => {
-        if (res.code == 200) {
-          this.$message.success(`${this.versionType ? '流量' : '并发'}消费账单导出申请成功，请去下载中心下载`);
-          this.$EventBus.$emit('saas_vs_download_change');
-        } else {
-          this.$message.error(`消费账单${res.msg}`);
-        }
+       this.$message({
+        message: `${this.versionType ? '流量' : '并发'}消费账单导出申请成功，请去下载中心下载`,
+        showClose: true,
+        // duration: 0,
+        type: 'success',
+        customClass: 'zdy-info-box'
+       });
+       this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `${this.versionType ? '流量' : '并发'}消费账单导出失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
   }

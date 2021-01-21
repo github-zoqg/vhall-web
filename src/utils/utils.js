@@ -193,11 +193,23 @@ export function checkUploadType(file, that, type = 1) {
   const isType = typeList.includes(typeArr[typeArr.length - 1]);
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isType) {
-    that.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+    that.$message({
+      message: `上传封面图片只能是 ${typeList.join('、')} 格式`,
+      showClose: true,
+      // duration: 0,
+      type: 'error',
+      customClass: 'zdy-info-box'
+    });
     return false;
   }
   if (!isLt2M) {
-    that.$message.error('上传封面图片大小不能超过 2MB!');
+    that.$message({
+      message: `上传封面图片大小不能超过 2M`,
+      showClose: true,
+      // duration: 0,
+      type: 'error',
+      customClass: 'zdy-info-box'
+    });
     return false;
   }
   let imgSrc = window.URL.createObjectURL(file);
@@ -206,7 +218,13 @@ export function checkUploadType(file, that, type = 1) {
   img.onload = function () {
     // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
     if (img.width !== 1280 && img.height !== 720 ) {
-      that.$message.error(`请上传1280*720尺寸图片!`);
+      that.$message({
+        message: `请上传1280*720尺寸图片`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
       return false;
     }
   };
@@ -283,14 +301,24 @@ export function checkAuth(to, from, next) {
             window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=2`;
           } else {
             // 获取回调token失败
-            this.$message.error('登录信息获取失败，请重新登录');
+            this.$message({
+              message: `登录信息获取失败，请重新登录`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
             sessionOrLocal.clear('localStorage');
             sessionOrLocal.clear();
           }
         } else{
-          this.$message.error(res.msg || '异常请求，无法操作');
-          // 获取回调token失败
-          this.$message.error('登录信息获取失败，请重新登录');
+          this.$message({
+            message: res.msg || '异常请求，无法操作',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           sessionOrLocal.clear('localStorage');
           sessionOrLocal.clear();
         }
@@ -306,14 +334,25 @@ export function checkAuth(to, from, next) {
           window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=2`;
         } else {
           // 获取回调token失败
-          this.$message.error('登录信息获取失败，请重新登录');
+          this.$message({
+            message: '登录信息获取失败，请重新登录',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           sessionOrLocal.clear('localStorage');
           sessionOrLocal.clear();
         }
       } else{
-        this.$message.error(e.msg || '异常请求，无法操作');
         // 获取回调token失败
-        this.$message.error('登录信息获取失败，请重新登录');
+        this.$message({
+          message: e.msg || '登录信息获取失败，请重新登录',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         sessionOrLocal.clear('localStorage');
         sessionOrLocal.clear();
       }

@@ -258,7 +258,13 @@ export default {
       let flag = false;
       if (this.showVo.executeType !== 'email') {
         /*if(!(/^1[0-9]{10}$/.test(this.form.phone))) {
-          this.$message.error('手机号校验失败');
+          this.$message({
+            message:  `手机号校验失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           flag = false;
         } else */if(!this.mobileKey) {
           this.$message({

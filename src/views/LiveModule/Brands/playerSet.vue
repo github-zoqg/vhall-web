@@ -397,8 +397,6 @@ export default {
           })
           console.log(this.formHorse.color, '?222222222222222222')
           this.scrolling_open = Boolean(res.data.scrolling_open);
-        } else {
-          // this.$message.error('获取信息失败');
         }
       })
     },
@@ -410,8 +408,6 @@ export default {
           this.formWatermark.img_alpha = Number(res.data.img_alpha);
           this.domain_url = res.data.img_url;
           this.watermark_open = Boolean(res.data.watermark_open);
-        } else {
-          // this.$message.error('获取信息失败');
         }
       })
     },
@@ -443,7 +439,13 @@ export default {
       // 校验间隔时间的输入
       let reg = /^[0-9]*$/
       if(!reg.test(this.formHorse.interval) || this.formHorse.interval == 0){
-        this.$message.error('间隔时间只能输入1-300之间的数字')
+        this.$message({
+          message: `间隔时间只能输入1-300之间的数字`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false
       }
       this.formHorse.webinar_id = this.$route.params.str
@@ -451,30 +453,55 @@ export default {
       this.formHorse.text = this.formHorse.text || '版权所有，盗版必究';
       this.formHorse.scrolling_open = Number(this.scrolling_open);
       this.$fetch('setScrolling',this.$params(this.formHorse)).then(res => {
-         if (res.code == 200) {
-           this.$message.success(this.scrolling_open ? "跑马灯开启成功" : '跑马灯关闭成功');
-
-         } else {
-           this.$message.error(res.msg || "保存跑马灯失败");
-         }
+        this.$message({
+          message: this.scrolling_open ? "跑马灯开启成功" : '跑马灯关闭成功',
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+      }).catch(res => {
+        this.$message({
+          message:res.msg || "保存跑马灯失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     // 保存水印
     preWatermark() {
       if (!this.domain_url && this.watermark_open) {
-        this.$message.error('水印图片不能为空');
+        this.$message({
+          message: `水印图片不能为空`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       this.formWatermark.webinar_id = this.$route.params.str;
       this.formWatermark.img_url = this.$parseURL(this.domain_url).path;
       this.formWatermark.watermark_open = Number(this.watermark_open);
       this.$fetch('setWatermark', this.$params(this.formWatermark)).then(res => {
-         if (res.code == 200) {
-          this.getBaseWaterList();
-          this.$message.success(this.watermark_open ? "水印开启成功" : "水印关闭成功");
-         } else {
-          this.$message.error(res.msg || "保存水印灯失败");
-         }
+        this.$message({
+          message: this.watermark_open ? "水印开启成功" : "水印关闭成功",
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.getBaseWaterList();
+      }).catch(res => {
+        this.$message({
+          message: res.msg || "保存水印灯失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     // 保存播放器其他设置
@@ -502,7 +529,13 @@ export default {
            this.checkEnter = false
           }
         }).catch((res) => {
-            this.$message.error(res.msg || '设置失败')
+          this.$message({
+            message: res.msg || "设置失败",
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         })
     },
     //文案提示问题
@@ -645,11 +678,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`水印图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `水印图片只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('水印图片大小不能超过 2MB!');
+        this.$message({
+          message: `水印图片大小不能超过 2M`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -659,7 +704,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`水印图片上传失败`);
+      this.$message({
+        message: `水印图片上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);

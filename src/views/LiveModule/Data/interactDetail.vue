@@ -472,14 +472,26 @@ export default {
     deleteAll(id) {
       if (this.title === '聊天') {
         if (this.seleteAllOptionList.length < 1) {
-          this.$message.error('请选择要操作的对象');
+          this.$message({
+            message: `请选择要操作的对象`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         } else {
           id = this.seleteAllOptionList.join(',');
           this.chatConfirmSure(id);
         }
       } else {
           if (this.seleteAnwerList.length < 1 && this.seleteQuestionList.length < 1) {
-            this.$message.error('请选择要操作的对象')
+            this.$message({
+              message: `请选择要操作的对象`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           } else {
             this.recordAllDelete();
           }

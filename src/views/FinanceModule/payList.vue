@@ -118,7 +118,14 @@ export default {
         this.payInfo = res.data;
         this.downTime(res.data.current_time.replace(/-/g,'/'), res.data.expire_time.replace(/-/g,'/'));
       }).catch(res=>{
-        this.$message.error(res.msg);
+        this.$message({
+          message: res.msg || "获取信息失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       });
     },
     downTime(targetStartDate, targetEndDate) {
@@ -176,7 +183,14 @@ export default {
           this.getweiXinCode(res.data.link);
         }
       }).catch(res=>{
-        this.$message.error(res.msg);
+        this.$message({
+          message: res.msg || "操作失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       });
     },
     getweiXinCode(link) {
@@ -201,7 +215,14 @@ export default {
             path: '/finance/infoDetail'
           });
       }).catch(res => {
-        this.$message.error(res.msg);
+        this.$message({
+          message: res.msg || "操作异常",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       })
 
     }

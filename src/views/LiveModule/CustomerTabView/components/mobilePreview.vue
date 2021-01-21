@@ -220,7 +220,13 @@ export default {
         return item.type == 1
       })
       if (addedMenu.length == 6) {
-        this.$message.error('自定义菜单最多增加六个。您已到达上限！')
+        this.$message({
+          message: '自定义菜单最多增加六个。您已到达上限',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false
       }
 

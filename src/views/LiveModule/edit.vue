@@ -530,9 +530,15 @@ export default {
         setTimeout(() => {
           this.isChange = false
         }, 300)
-      }).catch(error=>{
-        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
-        console.log(error);
+      }).catch(res=>{
+        this.$message({
+          message: res.msg || "获取信息失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       }).finally(()=>{
         this.loading = false;
       });
@@ -560,11 +566,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`上传封面图片只能是 ${typeList.join('、')} 格式!`);
+        this.$message({
+          message: `上传封面图片只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传封面图片大小不能超过 2M!');
+        this.$message({
+          message: '上传封面图片大小不能超过 2M',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -574,7 +592,13 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`封面上传失败`);
+      this.$message({
+        message: '封面上传失败',
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -582,16 +606,34 @@ export default {
     submitForm(formName) {
       if (!this.versionType) {
         if (this.formData.limitCapacitySwtich && this.formData.limitCapacity > this.limitInfo.total) {
-          this.$message.error(`最大并发数不能大于并发剩余量`);
+          this.$message({
+            message: '最大并发数不能大于并发剩余量',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           return;
         }
       }
       if (this.formData.limitCapacitySwtich && this.formData.limitCapacity < 1) {
-        this.$message.error('最高并发请输入大于1的数值');
+        this.$message({
+          message: '最高并发请输入大于1的数值',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       if (this.webniarTypeToZH == '点播' && !this.selectMedia.id) {
-        this.$message.error(`请先上传视频`);
+        this.$message({
+          message: '请先上传视频',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       let data = {
@@ -626,24 +668,38 @@ export default {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
           this.$fetch(url, this.$params(data)).then(res=>{
-            if(res && res.code === 200) {
-              this.$message.success(`${this.title}成功`);
-              this.isChange = false;
-              console.log(res);
-              setTimeout(()=>{
-                this.$router.push({path: '/live/list'});
-              }, 500);
-            } else{
-              this.$message.error(res.msg || '操作失败');
-            }
-          }).catch(error=>{
-            this.$message.error(`操作失败，${error.message}`);
+            this.$message({
+              message: `${this.title}成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.isChange = false;
+            console.log(res);
+            setTimeout(()=>{
+              this.$router.push({path: '/live/list'});
+            }, 500);
+          }).catch(res=>{
+            this.$message({
+              message: res.msg || `操作失败，`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           }).finally(()=>{
             this.loading = false;
           });
           console.log(data);
         } else {
-          this.$message.error('请完善必填字段');
+          this.$message({
+            message: '请完善必填字段',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           document.documentElement.scrollTop = 0;
           return false;
         }

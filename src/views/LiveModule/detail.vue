@@ -200,9 +200,15 @@ export default {
           let nowTime = date.setTime(date.getTime());
           this.downTime(formateDates(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
         }
-      }).catch(error=>{
-        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
-        console.log(error);
+      }).catch(res=>{
+        this.$message({
+          message: res.msg || "获取信息失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       }).finally(()=>{
         this.loading = false;
       });
@@ -240,9 +246,21 @@ export default {
     // 复制
     doCopy () {
       this.$copyText(this.link).then(e => {
-        this.$message.success('复制成功！');
-      }).catch(error=>{
-        this.$message.error('复制失败！');
+        this.$message({
+          message: `复制成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+      }).catch(res =>{
+        this.$message({
+          message: res.msg || `复制失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     // 打开页面
@@ -272,10 +290,23 @@ export default {
     },
     reSumeNotice() {
       this.$fetch('liveEdit', {webinar_id:this.$route.params.str, type: 2}).then(res=>{
-        this.$message.success('恢复预告成功');
+        this.$message({
+          message: `恢复预告成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.getLiveDetail(this.$route.params.str);
-      }).catch(error=>{
-        this.$message.error(`恢复预告失败，${error.message}`);
+      }).catch(res=>{
+        this.$message({
+          message: res.msg || "恢复预告失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       });
     },
     // 判断是否有起直播的权限

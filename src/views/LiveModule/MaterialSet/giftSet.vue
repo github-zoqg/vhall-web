@@ -418,7 +418,13 @@ export default {
     // 上传失败处理
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message.error(`礼物上传失败`);
+      this.$message({
+        message:  `礼物上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
     // 上传预览
     uploadPreview(file){
@@ -432,11 +438,23 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
-        this.$message.error(`文件格式不支持，请检查图片`);
+        this.$message({
+          message:  `文件格式不支持，请检查图片`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       if (!isLt2M) {
-        this.$message.error('上传礼物图片大小不能超过 2MB!');
+        this.$message({
+          message:  `上传礼物图片大小不能超过 2M`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       return isType && isLt2M;
@@ -480,13 +498,25 @@ export default {
           let price = Number(this.editParams.price)
           if (price || price == 0) {
             if (price < 0 || price > 9999.99) {
-              this.$message.error('价格必须介于0-9999.99之间')
+              this.$message({
+                message:  `价格必须介于0-9999.99之间`,
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
               return
             }
             price=Math.floor(price*100)/100;
             this.editParams.price = price.toFixed(2)
           } else {
-            this.$message.error('请输入正确礼物价格')
+            this.$message({
+              message:  `请输入正确礼物价格`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
             return
           }
           if(this.editParams.gift_id) {
@@ -520,9 +550,21 @@ export default {
           }
         }).catch((err) => {
             if (err.code == 13001) {
-              this.$message.error('直播中禁止编辑礼物')
+              this.$message({
+                message:  `直播中禁止编辑礼物`,
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             } else {
-              this.$message.error('编辑失败')
+              this.$message({
+                message: err.msg,
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             }
             this.handleCancelEdit()
         })
@@ -542,12 +584,24 @@ export default {
           room_id: this.room_id
         }).then((res) => {
           if (res.code == 200) {
-            this.$message.success('创建成功')
+            this.$message({
+              message: `创建成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
             this.getTableList()
             this.handleCancelEdit()
           }
-        }).catch((e) => {
-            this.$message.error('创建失败')
+        }).catch((res) => {
+          this.$message({
+            message: res.msg || `创建失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         })
       })
     },

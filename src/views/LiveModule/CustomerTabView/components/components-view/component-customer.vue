@@ -138,7 +138,13 @@ export default {
         const result = this.$parent.validateALL()
 
         if (result) {
-          this.$message.error('功能组件只能添加一次，已阻止您本次操作！')
+          this.$message({
+            message: '功能组件只能添加一次，已阻止您本次操作',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           return
         }
 

@@ -814,7 +814,7 @@ export default {
             this.closePayQrCode()
             this.closePayWay()
             let gift = this.giftList.find(item => item.id == this.selectGiftId)
-            if (gift && gift.price == 0) { 
+            if (gift && gift.price == 0) {
               this.$message.success('赠送成功')
             } else {
               this.handleGiveTime()
@@ -851,7 +851,13 @@ export default {
       if (isNum.test(Number(val))) {
         return true
       } else {
-        this.$message.error('金额格式错误')
+        this.$message({
+          message: `金额格式错误`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        })
         return false
       }
     },
@@ -916,8 +922,14 @@ export default {
             this.payQrCode = url
           }
         )
-      }).catch(e => {
-        this.$message.error(e.msg)
+      }).catch(res => {
+        this.$message({
+          message: res.msg || '操作异常',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        })
       })
     },
     closePayQrCode () {

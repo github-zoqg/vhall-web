@@ -177,12 +177,16 @@ export default {
         subject: this.$route.query.subject || ''
       }
       this.$fetch('getQuestionDetailList', this.$params(params)).then(res => {
-        if (res.code == 200 && res.data) {
-          this.total = res.data.total || 0;
-          this.questionList = res.data.list;
-        } else {
-          this.$message.error(res.msg || '获取房间下问卷列表错误')
-        }
+        this.total = res.data.total || 0;
+        this.questionList = res.data.list;
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `获取房间下问卷列表错误`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     // 导出数据

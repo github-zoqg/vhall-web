@@ -95,12 +95,16 @@ export default {
                   path: this.watchUrl
                 }) */
                 window.location.href = this.watchUrl;
-              } else {
-                this.$message.error(res.msg || '检测异常');
               }
-            }).catch(e => {
-              console.log(e);
-              this.$message.error(e.msg || '检测异常');
+            }).catch(res => {
+              this.$message({
+                message: res.msg || "检测异常",
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
+              console.log(res);
             });
           // }else{
           //   // this.$router.push({name: 'LiveRoom', params: {il_id: this.arr[0]}})
@@ -126,12 +130,16 @@ export default {
         if(res && res.code === 200) {
           // this.watchUrl = res.data.page_url;
           this.scheme = res.data.client_protocol;
-        } else {
-          this.$message.error(res.msg || '当前未获取到启动数据');
         }
-      }).catch(e => {
-        console.log(e);
-        this.$message.error(e.msg || '当前未获取到启动数据');
+      }).catch(res => {
+        this.$message({
+          message: res.msg || "当前未获取到启动数据",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       });
     },
     userLogoGet() {

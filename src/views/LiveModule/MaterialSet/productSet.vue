@@ -103,7 +103,13 @@ export default {
       if(option.watch) {
         if (this.saleTotal >= 100) {
           option.watch = false;
-          this.$message.error('商品最大上架数量为100，请下架后再进行操作');
+          this.$message({
+            message: `商品最大上架数量为100，请下架后再进行操作`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
           return;
         }
         // 上架处理
@@ -251,18 +257,33 @@ export default {
       }).then(() => {
         this.$fetch('goodsBatchDel', {webinar_id: this.$route.params.str, goods_ids: id}).then(res => {
           if (res.code == 200) {
-            this.$message.success("删除成功！");
+            this.$message({
+              message: `删除成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
             this.checkedGoodsId = [];
             this.getTableList('delete');
           }
         }).catch(res => {
-          this.$message.error( res.msg || '删除失败, 请下架后删除');
+          this.$message({
+            message: res.msg || `删除失败, 请下架后删除`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         })
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        });
+        // this.$message({
+        //   message: `已取消删除`,
+        //   showClose: true,
+        //   // duration: 0,
+        //   type: 'info',
+        //   customClass: 'zdy-info-box'
+        // });
       });
     },
     // 删除
