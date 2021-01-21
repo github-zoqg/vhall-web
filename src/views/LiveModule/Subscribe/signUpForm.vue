@@ -1329,10 +1329,13 @@
         //     .yidun_slide_indicator {
         //       border-radius: 4px!important;
         //     }
-        //     .yidun_tips {
-        //       color: #888888;
-        //       line-height: 38px;
-        //     }
+            .yidun_tips {
+              color: #999999;
+              line-height: 38px!important;
+              .yidun_tips__text {
+                vertical-align: initial;
+              }
+            }
             .yidun_slider {
               .yidun_slider__icon {
                 background-image: url(./images/icon-slide1.png);
