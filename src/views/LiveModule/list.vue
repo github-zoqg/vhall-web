@@ -246,8 +246,22 @@ export default {
     },
     deleteLive() {
       this.$fetch('liveDel', {webinar_ids: this.webinarInfo.webinar_id}).then(res => {
-        this.$message.success('删除成功');
+        this.$message({
+          message: `删除成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.getLiveList();
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `删除失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     goLivePlay(item) {

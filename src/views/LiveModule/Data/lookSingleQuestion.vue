@@ -192,7 +192,13 @@ export default {
     // 导出数据
     exportSingleQuerstion() {
       this.$fetch('exportSurveyDetial',{webinar_id: this.$route.params.str, survey_id: this.$route.query.surveyId, subject: this.$route.query.subject}).then(res => {
-        this.$message.success('导出申请成功，请去下载中心下载');
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.$EventBus.$emit('saas_vs_download_change');
       })
     }

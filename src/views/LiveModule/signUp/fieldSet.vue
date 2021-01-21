@@ -381,7 +381,13 @@ export default {
     },
     // 保存表单
     sureQuestionnaire() {
-      this.$message.success('保存成功');
+      this.$message({
+        message: `保存成功`,
+        showClose: true,
+        // duration: 0,
+        type: 'success',
+        customClass: 'zdy-info-box'
+      });
     },
     // 添加一个题目选项
     addOption(data, other){

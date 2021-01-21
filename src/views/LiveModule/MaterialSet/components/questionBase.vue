@@ -196,7 +196,13 @@ export default {
         webinar_id: this.$route.params.str
       }
       this.$fetch('sharedLiveQuestion', params).then(res => {
-        this.$message.success('添加成功');
+        this.$message({
+          message: `添加成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
         this.dataBaseVisible = false;
         this.pageInfo.pageNum = 1;
         this.pageInfo.pos = 0;

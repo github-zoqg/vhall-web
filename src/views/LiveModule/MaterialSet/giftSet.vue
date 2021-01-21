@@ -543,7 +543,13 @@ export default {
           room_id: this.room_id
         }).then((res) => {
           if (res.code == 200) {
-            this.$message.success('编辑成功')
+            this.$message({
+              message: `编辑成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
             this.getTableList()
             this.queryMateriaGifts()
             this.handleCancelEdit()

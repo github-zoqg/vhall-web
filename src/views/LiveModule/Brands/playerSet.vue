@@ -428,10 +428,15 @@ export default {
                 document.querySelector('.vhallPlayer-speed-component').style.display = "none"
               }
           })
-
-        } else {
-          this.$message.success('获取信息失败');
         }
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `获取信息失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     // 保存跑马灯

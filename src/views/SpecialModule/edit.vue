@@ -392,7 +392,13 @@ export default {
           this.$fetch(url, this.$params(data)).then(res=>{
             if(res.code == 200) {
               this.subject_id = res.data.subject_id;
-              this.$message.success(this.$route.query.id ? '编辑成功' : `创建成功`);
+              this.$message({
+                message: this.$route.query.id ? '编辑成功' : `创建成功`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
               // 保存或创建成功重置更改状态
               this.isChange = false
               console.log(res);
@@ -480,10 +486,10 @@ export default {
             }
           })
         }).catch(() => {
-          this.$message({
+          /* this.$message({
             type: 'info',
             message: '已取消删除'
-          });
+          }); */
         });
     },
     dragStart(e) {

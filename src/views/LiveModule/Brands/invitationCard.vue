@@ -330,7 +330,21 @@ export default {
         status: Number(this.invitation)
       };
       this.$fetch('setCardStatus', params).then(res => {
-        this.$message.success(this.invitation ? '开启邀请卡' : '关闭邀请卡');
+        this.$message({
+          message: this.invitation ? '开启邀请卡成功' : '关闭邀请卡成功',
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+      }).catch(res => {
+        this.$message({
+          message: res.msg || (this.invitation ? '开启邀请卡失败' : '关闭邀请卡失败'),
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     getInviteCardInfo() {
@@ -374,8 +388,22 @@ export default {
       let obj = Object.assign({}, ids, this.formInvitation);
       this.$fetch('editCardStatus', this.$params(obj)).then(res => {
        if (res.code == 200) {
-         this.$message.success('保存数据成功');
+         this.$message({
+          message: `保存数据成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
        }
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `保存数据失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     fileDownLoad(imgUrl, name) {

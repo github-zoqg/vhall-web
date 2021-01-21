@@ -157,8 +157,22 @@ export default {
       }
       this.$fetch('warmOpen', params).then(res=>{
         if(res.code == 200){
-          this.$message.success(this.warmFlag ? '开启暖场视频' : '关闭暖场视频')
+          this.$message({
+            message: this.warmFlag ? '开启暖场视频成功' : '关闭暖场视频成功',
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
         }
+      }).catch(res => {
+        this.$message({
+          message: res.msg || (this.warmFlag ? '开启暖场视频失败' : '关闭暖场视频失败'),
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     // 获取暖场视频详情

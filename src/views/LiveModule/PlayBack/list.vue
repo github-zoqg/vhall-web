@@ -425,7 +425,13 @@ export default {
         if (res.data.has_download_url == 0) {
           data.transcoding = true;
           this.transcodingArr.push(data);
-          this.$message.success('正在转码，请稍等...');
+          this.$message({
+            message: `正在转码，请稍侯...`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           return false;
         }
         window.open(res.data.download_url);

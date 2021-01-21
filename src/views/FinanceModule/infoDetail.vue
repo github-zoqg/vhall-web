@@ -448,25 +448,30 @@ export default {
         }).then(() => {
           this.deleteList(rows.order_id);
         }).catch(() => {
-          this.$message({
+          /* this.$message({
             type: 'info',
             message: '已取消删除'
-          });
+          }); */
         });
     },
     deleteList(id) {
-       this.$fetch('deleteDetail', {id: id}).then(res =>{
-         if (res.code == 200) {
-           this.getDetailList();
-           this.$message.success('删除成功')
-         } else {
-           this.$message.success(res.msg || '删除失败')
-         }
+      this.$fetch('deleteDetail', {id: id}).then(res =>{
+        this.$message({
+          message: '删除成功',
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.getDetailList();
       }).catch(e=>{
         console.log(e);
         this.$message({
+          message: e.msg || '删除失败',
+          showClose: true,
+          // duration: 0,
           type: 'error',
-          message: '删除失败!'
+          customClass: 'zdy-info-box'
         });
       });
     },

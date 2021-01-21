@@ -1212,7 +1212,13 @@ export default {
       if (this.roomInfo.third_party_user_id == msg.room_join_id && this.roomInfo.account_id == this.roomInfo.third_party_user_id) {
         // 主持人被设置成为主讲人。 自动跳过提示
       } else {
-        this.$message.success(`${msg.nick_name}设置成为主讲人`);
+        this.$message({
+          message: `${msg.nick_name}设置成为主讲人`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
       }
     });
 
@@ -1356,7 +1362,13 @@ export default {
             this.calculateLiveDuration(1);
           })
             .catch(e => {
-              this.$message.error('发起录制失败');
+              this.$message({
+                message: `发起录制失败`,
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
             });
         }
       });
@@ -1372,7 +1384,13 @@ export default {
         if (res.code == 200) {
           console.log('结束推流');
           if (this.localDuration <= 30) {
-            this.$message.error('录制时间过短，生成回放失败！');
+            this.$message({
+              message: `录制时间过短，生成回放失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
             this.sid = res.data.sid;
             localStorage.setItem('sid', '');
             this.stopping = true;
@@ -1528,7 +1546,13 @@ export default {
     },
     thirdPartyShow () {
       if (this.isPublishing) {
-        this.$message.error('请先结束录制');
+        this.$message({
+          message: `请先结束录制`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       this.thirdPartyMobild = true;
@@ -1536,7 +1560,13 @@ export default {
     },
     thirdPartyClose () {
       if (this.isPublishing) {
-        this.$message.error('请先结束录制');
+        this.$message({
+          message: `请先结束录制`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       this.thirdPartyMobild = false;
@@ -1744,9 +1774,21 @@ export default {
     doCopy () {
       console.log(this);
       this.$copyText(this.ilId).then(e => {
-        this.$message.success('复制成功！');
+        this.$message({
+          message: `复制成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
       }).catch(error=>{
-        this.$message.error('复制失败！');
+        this.$message({
+          message: `复制失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     openMediaSettings () {
@@ -1847,7 +1889,13 @@ export default {
     },
     showDoc () {
       if (this.doc_permission != this.roomInfo.join_info.third_party_user_id) {
-        this.$message.error({ message: `您不是主讲人不能使用该功能` });
+        this.$message({
+          message: `您不是主讲人不能使用该功能`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       if (this.isDocEnabled) {
@@ -1868,7 +1916,13 @@ export default {
     },
     showWhiteBoard () {
       if (this.doc_permission != this.roomInfo.join_info.third_party_user_id) {
-        this.$message.error({ message: `您不是主讲人不能使用该功能` });
+        this.$message({
+          message: `您不是主讲人不能使用该功能`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       this.NoDocShow = false;
@@ -1909,7 +1963,13 @@ export default {
         return;
       }
       if (this.doc_permission != this.roomInfo.third_party_user_id) {
-        this.$message.error({ message: `您不是主讲人不能使用该功能` });
+        this.$message({
+          message: `您不是主讲人不能使用该功能`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       if (this.screensharing) {

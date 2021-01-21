@@ -85,7 +85,13 @@ export default {
       const input = document.getElementById(this.linkId);
       input.select();
       document.execCommand('copy');
-      this.$message.success('复制成功');
+      this.$message({
+        message: `复制成功`,
+        showClose: true,
+        // duration: 0,
+        type: 'success',
+        customClass: 'zdy-info-box'
+      });
     }
   }
 };

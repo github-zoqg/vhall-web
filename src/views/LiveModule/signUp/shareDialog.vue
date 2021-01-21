@@ -97,7 +97,13 @@ export default {
       const input = document.getElementById('linkBox');
       input.select();
       document.execCommand('copy');
-      this.$message.success('复制成功');
+      this.$message({
+        message: `复制成功`,
+        showClose: true,
+        // duration: 0,
+        type: 'success',
+        customClass: 'zdy-info-box'
+      });
     },
     // 独立表单开关事件
     switchExtraForm(value) {

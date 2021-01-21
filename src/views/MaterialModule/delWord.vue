@@ -268,7 +268,6 @@ export default {
       console.log(res, file, fileList);
       this.importWordShow = false;
       if(res.code === 200) {
-        // this.$message.success('上传成功');
         if (this.$route.params.str) {
           // 弹出框提示是否同步
           this.$confirm('确定同步到资料库？', '提示', {
@@ -393,8 +392,11 @@ export default {
         });
       } else {
         this.$message({
+          message: `请至少选择一条记录进行删除`,
+          showClose: true,
+          // duration: 0,
           type: 'error',
-          message: '请至少选择一条记录进行删除'
+          customClass: 'zdy-info-box'
         });
       }
     },
@@ -507,7 +509,13 @@ export default {
       };
       this.$fetch('delWordList', this.$params(params)).then(res=>{
         if(res && res.code === 200) {
-          this.$message.success('删除成功');
+          this.$message({
+            message: `删除成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           try {
             this.$refs.tableListWord.clearSelect();
           } catch(e) {

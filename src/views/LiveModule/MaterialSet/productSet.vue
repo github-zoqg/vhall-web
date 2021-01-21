@@ -121,7 +121,6 @@ export default {
             this.vm.close();
           }
           this.messageInfo('上架设置成功');
-          // this.$message.success("");
           this.getTableList();
           console.log(res);
         }).catch(res => {
@@ -145,7 +144,6 @@ export default {
             this.vm.close();
           }
           this.messageInfo('下架设置成功');
-          // this.$message.success("下架设置成功！");
           this.getTableList();
           console.log(res);
         }).catch(res => {

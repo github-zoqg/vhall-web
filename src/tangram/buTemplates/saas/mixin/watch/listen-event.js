@@ -386,9 +386,21 @@ export const listenEvent = {
       // 切换设备重新推流报错
       EventBus.$on('republisherror', e => {
         if (e.data.error.msg.name == 'NotAllowedError') {
-          this.$message.error('设备被禁用导致上麦失败，请检查设备!');
+          this.$message({
+            message: `设备被禁用导致上麦失败，请检查设备`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         } else {
-          this.$message.error('因设备问题导致上麦失败，请检查设备!');
+          this.$message({
+            message: `因设备问题导致上麦失败，请检查设备`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         }
       });
 

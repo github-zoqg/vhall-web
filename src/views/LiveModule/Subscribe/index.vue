@@ -1166,7 +1166,13 @@ export default {
             at_id: this.roomData.webinar.userinfo.user_id,
             type: 1
           }).then(res => {
-            this.$message.success('取消关注')
+            this.$message({
+              message: `取消关注`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
             this.isFollow = !this.isFollow
           })
         } else {
@@ -1174,7 +1180,13 @@ export default {
             at_id: this.roomData.webinar.userinfo.user_id,
             type: 1
           }).then(res => {
-            this.$message.success('关注成功')
+            this.$message({
+              message: `关注成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
             this.isFollow = !this.isFollow
           })
         }
@@ -1547,7 +1559,13 @@ export default {
         } else {
           // window.location.reload()
           this.handleCancelDelete()
-          this.$message.success('您已预约成功，直播当天访问直播间参与直播')
+          this.$message({
+            message: `您已预约成功，直播当天访问直播间参与直播`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.getWatchInfo().then(res => {
             this.handleInitRoom()
           })
@@ -1569,24 +1587,54 @@ export default {
           this.showSignForm = true
           break
         case 512002:
-          this.$message.warning('活动不存在')
+          this.$message({
+            message: `活动不存在`,
+            showClose: true,
+            // duration: 0,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
           break
         case 512522:
-          this.$message.warning('主持人、嘉宾或助理不允许进入观看端')
+          this.$message({
+            message: `主持人、嘉宾或助理不允许进入观看端`,
+            showClose: true,
+            // duration: 0,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
           break
         case 512529:
-          this.$message.warning('邀请码错误')
+          this.$message({
+            message: `邀请码错误`,
+            showClose: true,
+            // duration: 0,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
           !this.showModile && this.showDialog('邀请码验证', '请输入邀请码', '')
           break
         case 512530:
-          this.$message.warning('邀请码已被使用')
+          this.$message({
+            message: `邀请码已被使用`,
+            showClose: true,
+            // duration: 0,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
           !this.showModile && this.showDialog('邀请码验证', '请输入邀请码', '')
           break
         case 512531:
           !this.showModile && this.showDialog('邀请码验证', '请输入邀请码', '')
           break
         case 512527:
-            this.$message.warning('密码错误')
+            this.$message({
+              message: `密码错误`,
+              showClose: true,
+              // duration: 0,
+              type: 'warning',
+              customClass: 'zdy-info-box'
+            });
             !this.showModile && this.showDialog('密码验证', '请输入密码', '当前活动需要密码')
           break
         case 12528:
@@ -1596,26 +1644,45 @@ export default {
             !this.showModile && this.showDialog('身份验证', '请输入身份信息', '当前活动设置了身份验证')
           break
         case 512017:
-            this.$message.warning('白名单观众不存在')
+            this.$message({
+              message: `白名单观众不存在`,
+              showClose: true,
+              // duration: 0,
+              type: 'warning',
+              customClass: 'zdy-info-box'
+            });
             !this.showModile && this.showDialog('身份验证', '请输入身份信息', '当前活动设置了身份验证')
           break
         case 512526:
-            this.$message.warning('检测类型和活动观看限制类型不一致')
-            this.chatSDK.destroy()
-            this.chatSDK = null
-            setTimeout(() => {
-              window.location.reload()
-            }, 2000)
+          this.$message({
+            message: `检测类型和活动观看限制类型不一致`,
+            showClose: true,
+            // duration: 0,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
+          this.chatSDK.destroy()
+          this.chatSDK = null
+          setTimeout(() => {
+            window.location.reload()
+          }, 2000)
+          break;
         case 512523:
-            if (this.getWxImg && this.getZFBlink) {
-              this.showPayModel = true
-            } else {
-              this.handleShowPay('wx')
-              this.handleShowPay('zfb')
-            }
-            break;
+          if (this.getWxImg && this.getZFBlink) {
+            this.showPayModel = true
+          } else {
+            this.handleShowPay('wx')
+            this.handleShowPay('zfb')
+          }
+          break;
         default:
-          this.$message.warning(msg)
+          this.$message({
+            message: `${msg}`,
+            showClose: true,
+            // duration: 0,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
           break
       }
     },

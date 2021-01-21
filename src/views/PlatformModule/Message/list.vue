@@ -182,7 +182,13 @@ export default {
             msg_id: this.ids.join(',')
           }).then(res => {
             if(res && res.code === 200) {
-              this.$message.success(`操作成功`);
+              this.$message({
+                message: `操作成功`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
               this.ids = [];
               this.$refs.msgTable.clearSelect();
               // 重新从第一页查询
@@ -191,15 +197,21 @@ export default {
               this.$EventBus.$emit('saas_vs_msg_count', true);
             }else {
               this.$message({
+                message: res.msg || '操作失败',
+                showClose: true,
+                // duration: 0,
                 type: 'error',
-                message: res.msg || '操作失败'
+                customClass: 'zdy-info-box'
               });
             }
-          }).catch(e => {
-            console.log(e);
+          }).catch(res => {
+            console.log(res);
             this.$message({
+              message: res.msg || '操作失败',
+              showClose: true,
+              // duration: 0,
               type: 'error',
-              message:  '操作失败'
+              customClass: 'zdy-info-box'
             });
           });
         }).catch(() => {
