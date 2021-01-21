@@ -277,14 +277,24 @@ export default {
         this.editLoading = false;
         this.titleEdit = '';
         this.titleDialogVisible = false;
-      }).catch(res=> {
-        this.$message({
-          message: res.msg || `保存失败`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+      }).catch(err=> {
+        if (err.code == '12909') {
+          this.$message({
+            message: `被剪切的视频片段不能小于10秒`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+        } else {
+          this.$message({
+            message: err.msg || `保存失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+        }
         this.editLoading = false;
         this.titleEdit = '';
         this.titleDialogVisible = false;
@@ -405,14 +415,26 @@ export default {
           customClass: 'zdy-info-box'
         });
         this.$refs.videoTailoringComponent.cancelExportVideoFun()
-      }).catch(res => {
-         this.$message({
-          message: res.msg || `导出失败`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+      }).catch(err => {
+        if (err.code == '12909') {
+          this.$message({
+            message: `被剪切的视频片段不能小于10秒`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+        } else {
+          this.$message({
+            message: err.msg || `导出失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+        }
+        this.editLoading = false;
+        this.$refs.videoTailoringComponent.cancelExportVideoFun()
       })
     },
     // isAdd 为false 没有该方法
