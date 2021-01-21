@@ -590,7 +590,9 @@ export default {
     }
     ::v-deep.set-upload{
       position: relative;
+      cursor: pointer;
       span{
+        cursor: pointer;
         input{
           position: absolute;
           left: 0;

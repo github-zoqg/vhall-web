@@ -52,5 +52,13 @@ export default {
 .brand--set {
   .layout--right--main();
   .min-height();
+  /deep/.el-radio__inner{
+    width: 16px;
+    height: 16px;
+    &::after{
+      width: 8px;
+      height: 8px;
+    }
+  }
 }
 </style>
