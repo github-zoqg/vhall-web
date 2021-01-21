@@ -178,7 +178,7 @@ export default {
 
     a.sidebar-logo2 {
       float: left;
-      margin: 8px 0 8px 18px;
+      margin: 10px 0 10px 18px;
       text-align: left;
       width: 120px!important;
       height: 44px;

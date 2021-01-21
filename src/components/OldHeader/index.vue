@@ -175,10 +175,10 @@ header.commen-header {
   }
   .navbar-brand {
     float: left;
-    padding: 4px 0;
+    margin: 10px 0 10px 18px;
     text-align: left;
-    width: 156px!important;
-    height: 100%;
+    width: 120px!important;
+    height: 44px;
     img {
       display: block;
       width: 100%;
