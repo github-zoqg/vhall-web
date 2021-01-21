@@ -495,7 +495,10 @@ body {
     padding: 15px 0;
   }
 }
-
+/*表格最后一根线压右侧直播按钮-重置*/
+/deep/.el-table::before {
+  height: 0;
+}
 
 /*-----------------------------------------表单异常 样式重置 ---------------------------------------------*/
 .el-form-item.is-error .el-input__inner, .el-form-item.is-error .el-input__inner:focus, .el-form-item.is-error .el-textarea__inner, .el-form-item.is-error .el-textarea__inner:focus, .el-message-box__input input.invalid, .el-message-box__input input.invalid:focus {
@@ -552,10 +555,8 @@ body {
     border: 1px solid #E6E6E6;
     cursor: not-allowed;
     color: #B3B3B3;
-    background: #fff;
     &:hover, &:active {
       color: #B3B3B3;
-      background: #fff;
       border: 1px solid #E6E6E6;
     }
   }
@@ -663,6 +664,7 @@ button.el-button.el-button--white-primary {
   &.is-disabled {
     background: #F09D99;
     border: 1px solid #F09D99;
+    color: #ffffff;
     cursor: not-allowed;
 
     &:hover, &:active {

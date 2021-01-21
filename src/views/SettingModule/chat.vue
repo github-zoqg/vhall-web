@@ -101,7 +101,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="select-option" v-if="total">已选择<span>{{ids.length || 0}}</span>个，共<span>{{total}}</span>条</div>
+          <div class="select-option" v-if="total">已选择<span> {{ids.length || 0}} </span>个，共<span> {{total}} </span>条</div>
           <!-- 无聊天严禁词内容 -->
           <null-page class="search-no-data" :height="0" v-if="total === 0"></null-page>
         </div>
@@ -687,8 +687,8 @@ export default {
   margin-top: 8px;
   /deep/span {
     color: #FB3A32;
-    font-size: 16px;
-    padding: 0 10px;
+    /* font-size: 16px;
+    padding: 0 10px; */
   }
 }
 .btn-a {

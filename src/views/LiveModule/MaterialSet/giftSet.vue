@@ -195,7 +195,7 @@
         <null-page noSearchText="没有找到相关礼物" nullType="search" v-if="isNull"></null-page>
       </div>
       <div class="control">
-        <span>当前选中<span class="choosed-num"> {{addGiftsIds.length}} </span>件商品</span>
+        <span>当前选中<span class="choosed-num"> {{addGiftsIds.length}} </span>件礼物</span>
         <div class="control-btn" style="text-align: right;">
           <el-button @click="chooseGift" type="primary" round :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
           <el-button @click="handleCloseChooseGift" round>取消</el-button>

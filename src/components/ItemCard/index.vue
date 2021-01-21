@@ -135,6 +135,7 @@ export default {
         { icon: 'icon_brand@2x', id: 1, title: '品牌设置', subText: '设置观看页品牌信息', path: `/live/brandSet/${this.$route.params.str}`,isShow: true},
         { icon: 'icon_custom@2x', id: 2, title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/live/customTab/${this.$route.params.str}`,isShow: this.isTrue},
         { icon: 'icon_player@2x',id: 3, title: '播放器设置', subText: `设置${this.type == 4 ? '点播' :'直播'}跑马灯水印`, path: `/live/playerSet/${this.$route.params.str}`,isShow: this.perssionInfo.player_config==1},
+        // this.perssionInfo.player_config==1
         { icon: 'icon_invitation@2x', id: 4, title: '邀请卡', subText: `用于${this.type == 4 ? '点播' :'直播'}邀请或裂变分享`, path: `/live/invCard/${this.$route.params.str}`,isShow: this.perssionInfo.btn_invite==1},
         { icon: 'icon_advertising@2x', id: 5, title: '广告', subText: '设置观看页广告位信息', path: `/live/advertCard/${this.$route.params.str}`,isShow: this.perssionInfo.ad_recommend==1},
         { icon: 'icon_public@2x', id: 6, title: '公众号', subText: '设置观看页展示的公众号', path: `/live/officeSet/${this.$route.params.str}`,isShow: this.perssionInfo.live_broadcast_window==1},
@@ -145,7 +146,7 @@ export default {
         { icon: 'icon_Lucky draw@2x', id: 2, title: '抽奖', subText: '直播中发起抽奖活跃气氛', path: `/live/prizeSet/${this.$route.params.str}`, isShow: this.perssionInfo['ui.hide_lottery']==0 && this.type != 4},
         { icon: 'icon_questionnaire@2x', id: 3,title: '问卷', subText: '创建问卷收集信息', path: '/live/question',isShow: this.perssionInfo['ui.hide_survey']==0 && this.type != 4 },
         { icon: 'icon_goods@2x', id: 4, title: '商品', subText: '设置展示给观众的商品', path: `/live/productSet/${this.$route.params.str}`,isShow: this.perssionInfo.product_show==1 || (this.type == 4 && this.perssionInfo.product_show==1)},
-        { icon: 'icon_gift@2x', id: 5, title: '礼物', subText: '设置观众发送的礼物信息', path: `/live/gift/${this.$route.params.str}`,isShow: this.perssionInfo['ui.show_gift']==1 || (this.type == 4 && this.perssionInfo['ui.show_gift']==1)},
+        { icon: 'icon_gift@2x', id: 5, title: '礼物', subText: '设置观众发送的礼物信息', path: `/live/gift/${this.$route.params.str}`,isShow: this.perssionInfo['ui.hide_gifts']==0 || (this.type == 4 && this.perssionInfo['ui.hide_gifts']==0)},
       ],
       reportDataList: [
         { icon: 'icon_data@2x',  id: 1, title: '数据报告', subText: `统计${this.type == 4 ? '点播' :'直播'}基本数据`, path: `/live/reportsData/${this.$route.params.str}`,isShow: true },
@@ -229,7 +230,7 @@ export default {
     .mainText{
       font-size: 20px;
       color: #1A1A1A;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     .subText{
       font-size: 14px;

@@ -676,6 +676,14 @@ export default {
 <style lang="less" scoped>
 @import '../../common/css/common.less';
 .viewer-rules {
+  /deep/.el-radio__inner{
+    width: 16px;
+    height: 16px;
+    &::after{
+      width: 8px;
+      height: 8px;
+    }
+  }
   .layout--right--main();
   min-height: 544px;
   padding: 49px 56px 40px 56px;

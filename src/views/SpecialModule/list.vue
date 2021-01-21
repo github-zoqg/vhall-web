@@ -1,7 +1,7 @@
 <template>
   <div class="liveListBox" v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)" v-show="!loading">
     <pageTitle title="专题列表">
-      <div class="title_text">专题功能教您如何玩转不同场景下的多会场直播，<span>了解一下</span></div>
+      <div class="title_text">专题功能教您如何玩转不同场景下的多会场直播，<span @click="introduceDetail">了解一下</span></div>
     </pageTitle>
 
     <!-- 操作栏 -->
@@ -84,6 +84,17 @@
         <share slot="content" :shareVo="shareVo"></share>
       </div>
    </VhallDialog>
+   <el-dialog
+      custom-class="dialog-tutorial-wrap"
+      class="vh-dialog"
+      :visible.sync="tutorialVisible"
+      width="740px"
+      center
+      :close-on-click-modal=false
+      :close-on-press-escape=false
+    >
+      <introduce-show></introduce-show>
+    </el-dialog>
   </div>
 </template>
 
@@ -92,11 +103,13 @@ import PageTitle from '@/components/PageTitle';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import Env from '@/api/env.js';
 import share from '@/components/Share'
+import introduceShow from './components/moduleTutorial'
 export default {
   data() {
     return {
       liveStatus: 0,
       isSearch: false,
+      tutorialVisible:false,
       nullText: 'nullData',
       text: '暂未创建专题活动',
       dialogShareVisible: false,
@@ -123,7 +136,8 @@ export default {
   components: {
     PageTitle,
     share,
-    noData
+    noData,
+    introduceShow
   },
   created() {
     this.getLiveList();
@@ -218,6 +232,9 @@ export default {
     specialDetail(item) {
       let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
       window.open(routeData.href, '_blank');
+    },
+    introduceDetail() {
+      this.tutorialVisible = true;
     }
   },
   filters: {
@@ -286,6 +303,24 @@ export default {
       span{
         color: #3562FA;
         cursor: pointer;
+      }
+    }
+    /deep/ .el-dialog__wrapper .dialog-tutorial-wrap {
+      padding: 0px 0px 30px;
+      background: transparent!important;
+      border: none;
+      box-shadow: none;
+      .el-dialog__headerbtn {
+        top: 24px;
+        right: 0;
+        margin-bottom: 8px;
+        .el-dialog__close {
+          color: #FFFFFF;
+        }
+      }
+      .el-dialog__body {
+        padding: 0;
+        border-radius: 8px;
       }
     }
   /*  .el-button.is-round{
@@ -363,7 +398,8 @@ export default {
         position: relative;
       }
       .inner:hover{
-        box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.15);
+        border-radius: 4px;
+        box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
       }
       .top{
         height: 175px;

@@ -104,7 +104,7 @@
         <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂未数据'"></noData>
       </el-tabs>
     </div>
-    <cash-box ref="cashBox" :money="money" :userInfo="userInfo" :type="type" @onreload="onreload"></cash-box>
+    <cash-box ref="cashBox" :money="money" :type="type" @onreload="onreload"></cash-box>
   </div>
 </template>
 
@@ -240,7 +240,6 @@ export default {
   created() {
     this.tabelColumn = this.liveColumns;
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
-    this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
   },
   mounted() {
     this.getIncomeInfo();
@@ -313,6 +312,8 @@ export default {
       });
     },
     cash(title) {
+      this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
+      console.log(this.userInfo, '???????????????')
       if (this.incomeInfo.in_live_withdraw || this.incomeInfo.in_red_withdraw) {
         this.$alert('您有进行中的提现，无法再次提现', '提示', {
           confirmButtonText: '知道了',
@@ -329,9 +330,10 @@ export default {
         this.$message.warning('当前余额不足1元，不支持提现');
         return false;
       }
-      let flag = this.isBangWeixin();
-      // （false）未绑定微信   绑定微信(true)
-      if (flag) {
+      // let flag = this.isBangWeixin();
+      let flag = this.userInfo.user_extends.is_bind_wechat;
+      // 0未绑定微信   绑定微信1
+      if (flag == 1) {
         this.$refs.cashBox.dialogCashVisible = true;
         this.phone = this.userInfo.phone;
         this.money = title === '直播' ? this.incomeInfo.live_balance : this.incomeInfo.red_packet_balance;
@@ -342,9 +344,6 @@ export default {
     },
     onreload() {
       this.getIncomeInfo();
-    },
-    isBangWeixin() {
-      return this.userInfo.user_thirds.some(item => item.type == 3);
     },
     detail(that, { rows }) {
       that.$router.push({

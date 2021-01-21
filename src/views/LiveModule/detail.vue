@@ -159,7 +159,7 @@ export default {
     },
     getPermission(id) {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
-      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: userId, scene_id: 1}).then(res => {
+      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: userId, scene_id: 2}).then(res => {
       if(res.code == 200) {
         let arr = ['component_1','component_2','component_3','component_4','component_5','component_6','component_7','component_8','component_9'];
         if(res.data.permissions) {
