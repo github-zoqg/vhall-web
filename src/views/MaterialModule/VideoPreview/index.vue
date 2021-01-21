@@ -66,7 +66,7 @@ export default {
       isFullscreen: false, // 全屏
       loading: true,
       hoveVideo: false,
-      audioImg: require('@/common/images/v35-webinar.png'),
+      audioImg: require('@/common/images/gif/MP3.gif'),
       audioEnd: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/fb/40/fb40e62abba02933ada7d97495f81ef1.jpg',
       videoType: 1, // 1为视频   2为音频
       tipsType: 0, // 1为音频封面   2 播放结束

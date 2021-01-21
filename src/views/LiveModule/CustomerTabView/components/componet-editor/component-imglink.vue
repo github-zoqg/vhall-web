@@ -92,7 +92,13 @@ export default {
           ...this.info,
         })
       } else {
-        this.$message.error(e.msg)
+        this.$message({
+          message: e.msg ,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }
     },
 
@@ -108,7 +114,13 @@ export default {
 
     uploadError(e) {
       console.log('upload error', e)
-      this.$message.error(e.msg)
+      this.$message({
+        message: e.msg ,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
     },
   }
 }

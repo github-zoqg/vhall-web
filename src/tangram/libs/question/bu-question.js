@@ -330,9 +330,15 @@ export default {
       }).then(res => {
         this.showPreview = false;
         this.isDoListcShow = false;
-      }).catch(e => {
-        this.$message.error('提交失败')
-        console.log('提交失败', e)
+      }).catch(res => {
+        console.log('提交失败', res)
+        this.$message({
+          message: res.msg || `提交失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         this.showPreview = false;
         this.isDoListcShow = false;
       });

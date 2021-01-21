@@ -124,7 +124,13 @@ export default {
     // 保存按钮
     save () {
       if (!this.ready) {
-        this.$message.error('保存失败，请检查设备');
+        this.$message({
+          message: `保存失败，请检查设备`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       const options = {
@@ -140,7 +146,13 @@ export default {
       this.destoryPreview();
 
       this.$emit('onCloses');
-      this.$message.success('保存成功');
+      this.$message({
+        message: '保存成功',
+        showClose: true,
+        // duration: 0,
+        type: 'success',
+        customClass: 'zdy-info-box'
+      });
     },
     vhallCheckings () {
       VhallRTC.getDevices({

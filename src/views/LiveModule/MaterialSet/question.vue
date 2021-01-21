@@ -178,8 +178,11 @@ export default {
           );
         }).catch(() => {
           this.$message({
+            message: `已取消修改`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消修改'
+            customClass: 'zdy-info-box'
           });
         });
       } else {
@@ -209,22 +212,43 @@ export default {
         }).then(() => {
           this.$fetch('deleteLiveQuestion', {survey_ids: id, webinar_id: this.webinarId}).then(res => {
             if (res.code == 200) {
+              this.$message({
+                message: `删除成功`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
               this.getTableList('search');
-              this.$message.success('删除成功');
             }
           }).catch(res => {
-            this.$message.error(res.msg || '删除失败');
+            this.$message({
+              message: res.msg || '删除失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
           })
         }).catch(() => {
           this.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
+            customClass: 'zdy-info-box'
           });
         });
     },
     deleteAll(id) {
       if (this.selectChecked.length < 1) {
-          this.$message.warning('请选择要操作的选项');
+          this.$message({
+            message: `请选择要操作的选项`,
+            showClose: true,
+            // duration: 0,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
         } else {
           id = this.selectChecked.join(',');
           this.deleteConfirm(id);
@@ -290,8 +314,8 @@ export default {
     }
   }
   .show-question{
-    position: absolute;
-    z-index: 2002;
+    position: fixed;
+    z-index: 3000;
     top: 0;
     left: 0;
     width: 100%;
@@ -322,6 +346,7 @@ export default {
       }
       .submit-footer{
         text-align: center;
+        padding-top: 20px;
       }
     }
   }

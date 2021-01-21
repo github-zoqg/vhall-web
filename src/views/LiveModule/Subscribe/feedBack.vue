@@ -101,7 +101,13 @@ export default {
         ...params
       }).then(res => {
         if (res.code == 200) {
-          this.$message.success('问题反馈成功!')
+          this.$message({
+            message: `问题反馈成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.closeHandler()
         }
       })

@@ -123,7 +123,13 @@ export default {
                 this.applyWating = true;
                 this.applyTimerCount = null;
                 clearTimeout(this.applyTimer);
-                this.$message.error('上麦失败');
+                this.$message({
+                  message: `上麦失败`,
+                  showClose: true,
+                  // duration: 0,
+                  type: 'error',
+                  customClass: 'zdy-info-box'
+                });
               });
             });
           } else {

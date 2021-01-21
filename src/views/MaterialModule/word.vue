@@ -326,7 +326,6 @@ export default {
       console.log(res, file, fileList);
       this.importWordShow = false;
       if(res.code === 200) {
-        // this.$message.success('上传成功');
         if (this.$route.params.str) {
           this.asyncDialog.visible = true;
           this.asyncDialog.sureChecked = true;

@@ -159,12 +159,22 @@ export default {
     },
     exportAccount() {
        this.$fetch('exportWithdraw', this.params).then(res => {
-        if (res.code == 200) {
-          this.$message.success(`账单明细导出申请成功，请去下载中心下载`);
-          this.$EventBus.$emit('saas_vs_download_change');
-        } else {
-          this.$message.error(`账单明细${res.msg}`);
-        }
+        this.$message({
+          message: `账单明细导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `账单明细导出失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     }
   }

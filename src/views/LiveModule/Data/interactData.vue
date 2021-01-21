@@ -29,9 +29,15 @@ export default {
     getLiveDetail() {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         this.liveDetailInfo = res.data;
-      }).catch(error=>{
-        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
-        console.log(error);
+      }).catch(res =>{
+        this.$message({
+          message: res.msg || `获取信息失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       });
     }
   },

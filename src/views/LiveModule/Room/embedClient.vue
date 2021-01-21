@@ -1146,12 +1146,16 @@ export default {
           this.$nextTick(() => {
             window.location.reload()
           })
-        } else {
-          this.$message.error('退出失败')
-          console.log('退出失败', res)
         }
-      }).catch(e => {
-        console.log('退出失败', e)
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `退出失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log('退出失败', res)
       })
     }
   }

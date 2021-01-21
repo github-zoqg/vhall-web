@@ -13,14 +13,7 @@
             <p>{{ specialInfo.created_at | unitTime  }}</p>
             <h2>共<b>{{ specialInfo.webinar_num }}</b>个直播<span v-if="specialInfo.hide_pv"><i style="color:#FB3A32" class="iconfont-v3 saasicon_redu"></i>热度<b>{{ specialInfo.pv }}</b></span><label v-if="specialInfo.hide_appointment"><b>{{ specialInfo.order_num }}</b>次预约</label></h2>
             <div class="shareText">
-              <el-popover
-                placement="bottom-end"
-                trigger="click">
-                <div>
-                  <share slot="content" :shareVo="shareVo"></share>
-                </div>
-                <h3 slot="reference"><i class="el-icon-share"></i>分享</h3>
-              </el-popover>
+              <h3 @click="share"><i class="el-icon-share"></i>分享</h3>
             </div>
           </div>
         </div>
@@ -53,12 +46,13 @@
         </el-tabs>
       </div>
     </div>
+    <share slot="content" ref="share" :shareVo="shareVo" ></share>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
 import OldHeader from '@/components/OldHeader';
-import share from '@/components/Share'
+import share from './share'
 import Env from '@/api/env.js';
 export default {
   data() {
@@ -88,6 +82,9 @@ export default {
     this.getSpecialList();
   },
   methods: {
+    share() {
+      this.$refs.share.dialogVisible = true;
+    },
     moreLoadData() {
       if (this.pageNum >= this.maxPage) {
         return false;
@@ -97,16 +94,14 @@ export default {
     },
     getSpecialList() {
       this.$fetch('subjectInfo', {subject_id: this.$route.query.id}).then(res => {
-        if (res.code == 200) {
-          this.specialInfo = res.data.webinar_subject;
-          // this.liveList = res.data.webinar_subject.webinar_list;
-          this.totalList = res.data.webinar_subject.webinar_list;
-          this.liveList = this.totalList.slice(0, this.pageSize);
-          let totalElement = res.data.webinar_subject.webinar_num;
-          this.maxPage = Math.ceil(totalElement / this.pageSize);
-        } else {
-          this.$message.error('获取失败');
-        }
+        this.specialInfo = res.data.webinar_subject;
+        // this.liveList = res.data.webinar_subject.webinar_list;
+        this.totalList = res.data.webinar_subject.webinar_list;
+        this.liveList = this.totalList.slice(0, this.pageSize);
+        let totalElement = res.data.webinar_subject.webinar_num;
+        this.maxPage = Math.ceil(totalElement / this.pageSize);
+      }).catch(res => {
+        console.log('获取结果失败', res);
       })
     },
     toDetail(id) {

@@ -221,7 +221,14 @@ export default {
               this.phone = res.data.phone;
               this.countDown();
             }).catch(res => {
-              this.$message.error(res.msg);
+              this.$message({
+                message: res.msg || "操作失败",
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
+              console.log(res);
             });
           }
         } else {
@@ -249,20 +256,37 @@ export default {
       };
       this.$fetch('withdrawal', params).then(res => {
         if (res.code == 200) {
-          this.$message.success('提现成功');
+          this.$message({
+            message: `提现成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
           this.dialogCashVisible = false;
           this.$emit('onreload');
-        } else {
-          this.$message.error(res.msg || '提现失败');
         }
       }).catch(res => {
-        this.$message.error(res.msg);
+        this.$message({
+          message: res.msg || "提现失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       });
     },
     // 绑定微信短信验证码
     getBangCode() {
       if (!this.mobileKey) {
-        this.$message.error('图形验证码错误');
+        this.$message({
+          message: `图形验证码错误`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       this.phone = this.userInfo.phone;
@@ -273,13 +297,17 @@ export default {
         validate: this.mobileKey
       };
       this.$fetch('sendCode', params).then(res => {
-        if (res.code == 200) {
-          this.countDown();
-        } else {
-          this.callCaptcha();
-        }
+        this.countDown();
       }).catch(res => {
-        this.$message.error(res.msg);
+        this.$message({
+          message: res.msg || "发送验证码失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        this.callCaptcha();
+        console.log(res);
       });
     },
     // 绑定微信 ---获取绑定微信二维码
@@ -290,7 +318,14 @@ export default {
           this.qrcode = `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=wap&jump_url=${process.env.VUE_APP_WAP_WATCH}/lives/bind/${res.data.mark}`;
         }
       }).catch(res => {
-        this.$message.error(res.msg);
+        this.$message({
+          message: res.msg || "获取信息失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       });
       console.log(this.qrcode)
     },

@@ -86,7 +86,13 @@ export default {
   methods: {
     nextStep() {
       if (!this.tableSelect.length) {
-        this.$message.error('请选择要关联的文档');
+        this.$message({
+          message: `请选择要关联的文档`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       } else {
         if (this.tableDataLength) {
           this.$confirm("当前视频内容已有关联文档，再次关联文档，将会清除已设置的全部章节内容，确认继续？", '提示', {

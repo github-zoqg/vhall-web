@@ -229,9 +229,15 @@ export default {
           this.isSwitch = false;
         }
         this.getTableList();
-      }).catch(error=>{
-        this.$message.error(`获取信息失败,${error.errmsg || error.message}`);
-        console.log(error);
+      }).catch(res=>{
+        this.$message({
+          message: res.msg || `获取信息失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
       });
     },
     // 获取直播场次
@@ -277,12 +283,22 @@ export default {
     // 导出
     exportCenterData() {
       this.$fetch('exportUserinfo', this.params).then(res => {
-        if (res.code == 200) {
-          this.$message.success(`用户统计数据导出申请成功，请去下载中心下载`);
-          this.$EventBus.$emit('saas_vs_download_change');
-        } else {
-          this.$message.error(`用户统计数据${res.msg}`);
-        }
+        this.$message({
+          message: `用户统计数据导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `用户统计数据导出失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     changeTableCheckbox(val) {

@@ -112,20 +112,21 @@ export default {
     },
     logout() {
       this.$fetch('loginOut', {}).then(res =>{
-        if(res && res.code === 200 && res.data) {
-          sessionOrLocal.clear();
-          sessionOrLocal.clear('localStorage');
-          // 监听消息变化
-          this.$EventBus.$emit('saas_vs_login_out', true);
-          this.$router.push({
-            path: '/login'
-          });
-        } else {
-          this.$message.error(res.msg || '退出失败');
-        }
-      }).catch(e=>{
-        console.log(e);
-        this.$message.error('退出失败');
+        sessionOrLocal.clear();
+        sessionOrLocal.clear('localStorage');
+        // 监听消息变化
+        this.$EventBus.$emit('saas_vs_login_out', true);
+        this.$router.push({
+          path: '/login'
+        });
+      }).catch(res=>{
+        this.$message({
+          message: res.msg || `退出失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }).finally(() => {
         sessionOrLocal.clear();
         sessionOrLocal.clear('localStorage');

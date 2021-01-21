@@ -255,8 +255,14 @@ export default {
           }).then(() => {
             this.countDown();
           }).catch(res => {
-          this.$message.error(res.msg);
-        });
+            this.$message({
+              message: res.msg,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+          });
         } else {
           // this.$message({
           //   message: '请检查手机号是否输入正确',
@@ -277,7 +283,13 @@ export default {
         }).then(() => {
             this.countDown();
         }).catch(res => {
-          this.$message.error(res.msg);
+          this.$message({
+            message: res.msg,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
         } else {
           // this.$message({
@@ -307,7 +319,13 @@ export default {
             this.findStep = 3;
           }
         }).catch(res => {
-          this.$message.error(res.msg);
+          this.$message({
+            message: res.msg,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
         } else {
           console.log('error submit!!');

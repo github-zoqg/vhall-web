@@ -4,7 +4,7 @@
       <div class="show-main data-base">
         <p class="titlle">选择问卷 <i class="el-icon-close" @click="dataBaseVisible=false"></i></p>
         <div class="data-search" v-show="total || isSearch">
-          <VhallInput v-model.trim="keyword" placeholder="搜索问卷名称" clearable  @keyup.enter.native="getTitle" style="width: 220px" @clear="getTitle">
+          <VhallInput class="search-dialog-tag" v-model.trim="keyword" placeholder="搜索问卷名称" clearable  @keyup.enter.native="getTitle" style="width: 220px" @clear="getTitle">
             <i slot="suffix" class="iconfont-v3 saasicon_search" style="cursor: pointer; line-height: 36px;" @click="getTitle"></i>
           </VhallInput>
         </div>
@@ -181,7 +181,13 @@ export default {
     // 选择资料库中的问卷
     choseSureQuestion() {
       if (this.checkList.length >= 21) {
-        this.$message.error('每次只能添加20个问卷');
+        this.$message({
+          message: `每次只能添加20个问卷`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return;
       }
       let params = {
@@ -190,16 +196,26 @@ export default {
         webinar_id: this.$route.params.str
       }
       this.$fetch('sharedLiveQuestion', params).then(res => {
-        if (res.code == 200) {
-          this.$message.success('添加成功');
-          this.dataBaseVisible = false;
-          this.pageInfo.pageNum = 1;
-          this.pageInfo.pos = 0;
-          this.$emit("getTableList");
-        } else {
-          this.$message.error('添加失败');
-           this.dataBaseVisible = true;
-        }
+        this.$message({
+          message: `添加成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.dataBaseVisible = false;
+        this.pageInfo.pageNum = 1;
+        this.pageInfo.pos = 0;
+        this.$emit("getTableList");
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `添加失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        this.dataBaseVisible = true;
       })
     },
     choseShowQueston() {
@@ -234,6 +250,25 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.search-dialog-tag {
+    /deep/.el-input__inner {
+      border-radius: 20px;
+      height: 36px;
+      padding-right: 50px!important;
+    }
+    /deep/ .el-input__suffix {
+      .el-input__suffix-inner {
+        i {
+          margin-right: 5px;
+          line-height: 36px;
+          cursor: pointer;
+        }
+      }
+      /deep/ .el-input__icon {
+        width: auto;
+      }
+    }
+  }
 .data-base{
   position: relative;
   padding-bottom: 20px;
@@ -260,6 +295,7 @@ export default {
   .text{
     height: 40px;
     padding-top: 8px;
+    font-size: 14px;
     span{
       color: #fb3a32;
       padding: 0 5px;
@@ -280,13 +316,12 @@ export default {
   }
 }
 .show-question{
-    position: absolute;
-    z-index: 5;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 2002;
+    z-index: 3000;
     background: rgba(0, 0, 0, .3);
     .show-main{
       position: absolute;

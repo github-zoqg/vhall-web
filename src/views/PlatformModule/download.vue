@@ -163,7 +163,13 @@ export default {
       let arr = this.selectRows;
       let that = this;
       if (!(this.selectRows && this.selectRows.length > 0)) {
-        this.$message.error('请至少选择一条下载记录');
+        this.$message({
+          message: `请至少选择一条下载记录`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       } else {
         let index = 0;
         let interDown = setInterval(function() {
@@ -290,7 +296,13 @@ export default {
         }
       } catch (e) {
         console.log(e);
-        this.$message.error(e.msg || '重新生成失败');
+        this.$message({
+          message: e.msg || '重新生成失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }
     },
     // 删除某条下载任务

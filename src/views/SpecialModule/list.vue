@@ -75,15 +75,16 @@
         <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建专题</el-button>
       </noData>
     </div>
-    <VhallDialog
+    <!-- <VhallDialog
       title="分享"
       :visible.sync="dialogShareVisible"
       :close-on-click-modal="false"
-      width="500px">
+      width="592px">
       <div class="content">
-        <share slot="content" :shareVo="shareVo"></share>
+
       </div>
-   </VhallDialog>
+   </VhallDialog> -->
+   <share ref="share" :shareVo="shareVo"></share>
    <el-dialog
       custom-class="dialog-tutorial-wrap"
       class="vh-dialog"
@@ -102,7 +103,7 @@
 import PageTitle from '@/components/PageTitle';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import Env from '@/api/env.js';
-import share from '@/components/Share'
+import share from './components/share'
 import introduceShow from './components/moduleTutorial'
 export default {
   data() {
@@ -179,7 +180,13 @@ export default {
           this.text = '';
         }
       }).catch(error=>{
-        this.$message.error(`获取专题列表失败,${error.errmsg || error.message}`);
+        this.$message({
+          message: `获取专题列表失败,${error.errmsg || error.message}`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         console.log(error);
       }).finally(()=>{
         this.loading = false;
@@ -197,8 +204,11 @@ export default {
           this.trueDelete(id);
         }).catch(() => {
           this.$message({
+            message:  `已取消删除`,
+            showClose: true,
+            // duration: 0,
             type: 'info',
-            message: '已取消删除'
+            customClass: 'zdy-info-box'
           });
         });
     },
@@ -213,7 +223,13 @@ export default {
           this.searchHandler();
         }
       }).catch(error=>{
-        this.$message.error(`删除失败，${error.message}`);
+        this.$message({
+          message: `删除失败，${error.message}`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }).finally(()=>{
         this.loading = false;
       });
@@ -224,7 +240,8 @@ export default {
       window.open(href, '_blank');
     },
     toShare(id) {
-      this.dialogShareVisible = true;
+      this.$refs.share.dialogVisible = true;
+      // this.dialogShareVisible = true;
       this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${id}`;
       this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
     },

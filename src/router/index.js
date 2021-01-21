@@ -1,3 +1,5 @@
+import Vue from 'vue'
+import VueRouter from 'vue-router';
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'
 import { checkAuth } from "@/utils/utils"; // progress bar style
@@ -14,6 +16,7 @@ import Home from './modules/home'
 import Live from './modules/liveOrSpecial'
 import material from './modules/material'
 import setting from './modules/settingOrData'
+import userRoutes from './modules/user'
 import v3 from './modules/v3Sys'
 
 const base = (process.env.VUE_APP_NODE_ENV === 'production' || process.env.VUE_APP_NODE_ENV === 'test') ? '/v3/' : '/'
@@ -25,6 +28,7 @@ const createRouter = () => new VueRouter({
     ...Live,
     ...material,
     ...setting,
+    ...userRoutes,
     ...v3
   ]
 });
