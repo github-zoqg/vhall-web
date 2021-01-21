@@ -146,7 +146,13 @@ export default {
       this.destoryPreview();
 
       this.$emit('onCloses');
-      this.$message.success('保存成功');
+      this.$message({
+        message: '保存成功',
+        showClose: true,
+        // duration: 0,
+        type: 'success',
+        customClass: 'zdy-info-box'
+      });
     },
     vhallCheckings () {
       VhallRTC.getDevices({

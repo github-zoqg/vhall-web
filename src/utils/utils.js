@@ -294,7 +294,6 @@ export function checkAuth(to, from, next) {
         // 非200情况下，若是3账户信息-账号绑定，提示当前账号已绑定，请解绑。
         if(auth_tag) {
           if (auth_tag.indexOf('bind') !== -1) {
-            // this.$message.success('绑定成功');
             sessionOrLocal.set('bind_result', JSON.stringify(res));
             sessionOrLocal.set('user_auth_key', user_auth_key);
             // 绑定成功
@@ -327,7 +326,6 @@ export function checkAuth(to, from, next) {
       // 非200情况下，若是3账户信息-账号绑定，提示当前账号已绑定，请解绑。
       if(auth_tag) {
         if (auth_tag.indexOf('bind') !== -1) {
-          // this.$message.success('绑定成功');
           sessionOrLocal.set('bind_result', JSON.stringify(e));
           sessionOrLocal.set('user_auth_key', user_auth_key);
           // 绑定成功
