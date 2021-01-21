@@ -42,16 +42,16 @@
               </upload>
             </div>
           </div>
-          <p class="imgText">只能上传jpg/png/gif/bmp格式，不能超过2MB，建议尺寸：600*600px</p>
+          <p class="imgText">建议尺寸600*600，小于2M，支持jpg、gif、png、bmp</p>
         </el-form-item>
         <el-form-item label="商品描述" prop="description">
           <VhallInput type="textarea" v-model.trim="form.description" :maxlength="140" autocomplete="off"  show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></VhallInput>
         </el-form-item>
         <el-form-item label="商品原价" prop="price">
-          <VhallInput v-model.trim="form.price" placeholder="请输入商品原价0-99999999.99元" autocomplete="off"  :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><span style="padding-left:6px; padding-top: 1px;" slot="prefix">￥</span><i slot="suffix">元</i></VhallInput>
+          <VhallInput v-model.trim="form.price" placeholder="请输入原价" autocomplete="off"  :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></VhallInput>
         </el-form-item>
         <el-form-item label="优惠价" prop="discount_price">
-         <VhallInput v-model.trim="form.discount_price" placeholder="请输入商品优惠价0-99999999.99元" autocomplete="off" :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><span style="padding-left: 6px; padding-top: 1px;" slot="prefix">￥</span><i slot="suffix">元</i></VhallInput>
+         <VhallInput v-model.trim="form.discount_price" placeholder="请输入优惠价" autocomplete="off" :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></VhallInput>
         </el-form-item>
         <el-form-item label="商品链接" prop="url">
           <VhallInput v-model.trim="form.url" placeholder="请输入商品链接" autocomplete="off" ></VhallInput>
@@ -157,7 +157,9 @@ export default {
         img_id: [],
         imageUrl: '',
         url: '',
-        shop_url: ''
+        shop_url: '',
+        name: '',
+        description: ''
       },
       fileList: [],
       rules: {
@@ -458,9 +460,13 @@ export default {
     }
     /deep/.el-input__inner, /deep/.el-textarea__inner{
       padding: 5px 12px;
+      font-family: '';
     }
     /deep/.el-input--prefix .el-input__inner {
       padding-left: 24px;
+    }
+    /deep/.el-input__inner{
+      height: 40px;
     }
     .add-product{
       background: #fff;

@@ -4,10 +4,14 @@
       <div id="videoDom"></div>
       <div class="tips" v-if="!loading">
         <img v-if="videoParam.msg_url=='.mp3' || videoParam.msg_url=='.mav'" class="audio-img" :src="audioImg" alt="">
-        <p v-if="tipsType == 2" class="video-end">
+        <div v-if="tipsType == 2" class="video-end">
+          <div class="reset-play" @click="resetPlay">
+            <i class="iconfont-v3 saasicon_replay"></i>
+            <p>重新播放</p>
+          </div>
           <!-- <img :src="audioEnd" alt="" srcset=""> -->
-          <el-button class="reset-play" @click="resetPlay">再次播放</el-button>
-        </p>
+          <!-- <el-button class="reset-play" @click="resetPlay">再次播放</el-button> -->
+        </div>
       </div>
       <div v-if="!loading" class="vod-controller" :class="{'active':hoveVideo}">
         <div class="slider line-slider">
@@ -244,7 +248,11 @@ export default {
       width: 100%;
       height: 100%;
       z-index: 22;
-      background: #333;
+      background: #1a1a1a;
+      i{
+        color: #fff;
+        font-size: 50px;
+      }
       // img{
       //   width: 100%;
       //   height: 100%;
@@ -254,6 +262,12 @@ export default {
         left: 50%;
         top: 50%;
         transform: translate(-50%,-50%);
+        cursor: pointer;
+      }
+      p{
+        color: #fff;
+        font-size: 16px;
+        padding-top: 10px;
       }
     }
   }

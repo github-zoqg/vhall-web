@@ -182,8 +182,47 @@
       </el-tabs>
       <div class="show-purple">
           <el-button type="white-primary" size="small" round class="preview-video" @click="previewVideo">预览</el-button>
+          <div class="video-wrap">
+            <div id="videoDom"></div>
+            <div class="vod-controller" :class="{'active':hoveVideo}">
+              <div class="slider line-slider">
+                <el-slider v-model="sliderVal" :show-tooltip="false" ref="controllerRef" @change="setVideo"></el-slider>
+                <div class="Times" :style="{ left: hoverLeft + 'px' }" v-show="TimesShow">
+                  <span class="current-time">{{ hoverTime | secondToDate }}</span>
+                </div>
+              </div>
+              <div class="wrap">
+                <div class="left-box fl">
+                  <i v-if="!statePaly" class="iconfont-v3 saasicon_zanting" @click="videoPlayBtn"></i>
+                  <i v-else class="iconfont-v3 saasicon_bofang" @click="videoPlayBtn"></i>
+                  <div class="center-box">
+                    <span class="current-time">
+                      {{ currentTime | secondToDate }}
+                    </span>
+                    <span>/</span>
+                    <span class="all-time">{{ totalTime | secondToDate }}</span>
+                  </div>
+                </div>
+                <div class="right-box fr">
+                  <div class="speed-box"></div>
+                  <div class="barrage-box">
+                  </div>
+                  <div class="volume-box">
+                    <span class="icon-box">
+                      <i style="color: #ececec" class="iconfont-v3" @click="jingYin"  :class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'" ></i>
+                    </span>
+                    <div class="ver-slider">
+                      <el-slider vertical height="100px"  @change="setVoice" :min='0'  v-model="voice"></el-slider>
+                    </div>
+                  </div>
+                  <i v-if="isFullscreen" class="iconfont-v3 saasicon_quxiaoquanping" @click="exitFullscreen"></i>
+                  <i v-else class="iconfont-v3 saasicon_quanping" @click="enterFullscreen"></i>
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- <img :src="audioEnd" alt="" v-show="!showVideo"> -->
-          <div id="videoDom" v-show="showVideo"></div>
+          <!-- <div id="videoDom" v-show="showVideo"></div> -->
           <p class="show-purple-info">
             <span>提示</span>
             <span>1. 移动端全屏播放时，跑马灯会失效</span>
@@ -203,14 +242,26 @@ import Env from "@/api/env";
 import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue';
 import { sessionOrLocal, debounce } from '@/utils/utils';
 import beginPlay from '@/components/beginBtn';
+import { secondToDateZH } from '@/utils/general';
+import controle from './js/control';
 export default {
-  name: 'prizeSet',
+  name: 'playerSet',
+  mixins: [controle],
   data() {
     return {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       activeName: 'first',
+      sliderVal: 0, // seek
+      hoverLeft: 10,
+      hoveVideo:false,
+      statePaly: true, // 播放状态
+      currentTime: 0,
+      voice: 20, // 音量
+      isFullscreen: false, // 全屏
       loading: true,
+      TimesShow: false,
       showVideo: false,
+      hoverTime: 10, // seek显示时间
       totalTime: 0,
       scrolling_open: false,
       watermark_open: false,
@@ -295,6 +346,11 @@ export default {
         return "开启后，观看回放时播放器画面显示倍速功能";
       }
     }
+  },
+  filters: {
+    secondToDate (val) {
+      return secondToDateZH(val);
+    },
   },
   created() {
     this.getFontList();
@@ -562,6 +618,11 @@ export default {
 
       // document.querySelector('.vhallPlayer-container').style.display = 'block';
       this.initSDK().then(() => {
+        this.initSlider();
+          this.totalTime = this.$Vhallplayer.getDuration(() => {
+            console.log('获取总时间失败');
+          });
+          // this.listen();
         // 初试完播放器获取其它设置
         this.getBaseOtherList()
 
@@ -597,6 +658,7 @@ export default {
         type: 'vod', // live 直播  vod 点播  必填
         videoNode: 'videoDom', // 播放器的容器， div的id 必填
         poster: '', // 封面地址  仅支持.jpg
+        isLoop: true,
         vodOption: { recordId: '922013fa', forceMSE: false },
         marqueeOption:{ // 选填
           enable: Boolean(this.scrolling_open), // 默认 false
@@ -617,8 +679,8 @@ export default {
           alpha:this.formWatermark.img_alpha
         },
         subtitleOption: {
-            enable: true
-          }
+          enable: true
+        }
 
       };
       return new Promise((resolve) => {
@@ -632,7 +694,7 @@ export default {
 
             this.$Vhallplayer = event.vhallplayer;
             window.vp = this.$Vhallplayer;
-            this.$Vhallplayer.pause()
+            // this.$Vhallplayer.pause()
             this.$Vhallplayer.openControls(false);
             this.$Vhallplayer.on(window.VhallPlayer.LOADED, () => {
               this.loading = false;
@@ -641,9 +703,9 @@ export default {
             });
 
             // document.querySelector('.vhallPlayer-container').classList.remove("hide");
-            document.querySelector('.vhallPlayer-container').style.display = 'block';
-            document.querySelector('.vhallPlayer-container').classList.remove('hide')
-            console.log(document.querySelector('.vhallPlayer-container').classList, '?????????????')
+            // document.querySelector('.vhallPlayer-container').style.display = 'block';
+            // document.querySelector('.vhallPlayer-container').classList.remove('hide')
+            // console.log(document.querySelector('.vhallPlayer-container').classList, '?????????????')
           },
           (e) => {
             console.log('播放器创建实例失败', e, e.message);
@@ -677,6 +739,54 @@ export default {
         this.formWatermark.img_url = file_url;
         this.domain_url = domain_url;
       }
+    },
+    initSlider () {
+      this.$Vhallplayer.on(window.VhallPlayer.TIMEUPDATE, () => {
+        this.currentTime = this.$Vhallplayer.getCurrentTime(() => {});
+        this.sliderVal = (this.currentTime / this.totalTime) * 100;
+      });
+      // 拖拽显示时间
+      const dom = this.$refs.controllerRef.$el;
+      const but = document.querySelector('div.el-slider__button-wrapper');
+      const innitDom = () => {
+        dom.onmouseover = e => {
+          console.log('dom over', e);
+          this.TimesShow = true;
+          const totalWidth = dom.offsetWidth;
+          this.ContorlWidth = dom.offsetWidth;
+          const lef = e.layerX;
+          this.hoverTime = (lef / totalWidth) * this.totalTime;
+          this.hoverLeft = lef;
+          dom.onmousemove = event => {
+            const lef = event.layerX;
+            this.hoverTime = (lef / totalWidth) * this.totalTime;
+            this.hoverLeft = lef;
+          };
+        };
+        dom.onmouseout = () => {
+          this.TimesShow = false;
+        };
+      };
+      innitDom();
+      but.onmousedown = () => {
+        dom.onmouseout = dom.onmousemove = dom.onmousemove = dom.onmouseover = null;
+        this.ContorlWidth = dom.offsetWidth;
+        this.onmousedownControl = true;
+        this.pause();
+        document.onmousemove = () => {
+          this.TimesShow = true;
+        };
+        document.onmouseup = () => {
+          document.onmousemove = null;
+          this.onmousedownControl = false;
+          this.TimesShow = false;
+          innitDom();
+        };
+      };
+      but.onmouseover = e => {
+        this.TimesShow = false;
+        e.stopPropagation();
+      };
     },
     beforeUploadHnadler(file){
       console.log(file);
@@ -747,23 +857,27 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background: black;
   /deep/.vhallPlayer-container{
-    display: block !important;
+    display: none!important;
   }
-  /deep/.vhallPlayer-config-btn {
-    display: none;
-  }
-  /deep/ .vhallPlayer-definition-component,/deep/.vhallPlayer-volume-component {
-    display: none;
-  }
-  /deep/.vhallPlayer-speed-component span.vhallPlayer-speedBtn:hover{
-    background: #FB3A32 !important;
-  }
-  /deep/.vhallPlayer-speed-component .speed-popup {
-    ul.speed-list-box li:hover, ul.speed-list-box li.active{
-      color: #FB3A32 !important;
-    }
-  }
+  // /deep/.vhallPlayer-container{
+  //   display: block !important;
+  // }
+  // /deep/.vhallPlayer-config-btn {
+  //   display: none;
+  // }
+  // /deep/ .vhallPlayer-definition-component,/deep/.vhallPlayer-volume-component {
+  //   display: none;
+  // }
+  // /deep/.vhallPlayer-speed-component span.vhallPlayer-speedBtn:hover{
+  //   background: #FB3A32 !important;
+  // }
+  // /deep/.vhallPlayer-speed-component .speed-popup {
+  //   ul.speed-list-box li:hover, ul.speed-list-box li.active{
+  //     color: #FB3A32 !important;
+  //   }
+  // }
 
 }
 
@@ -877,7 +991,6 @@ export default {
   .show-purple{
     width: 400px;
     height: 226px;
-    border: 1px solid #ccc;
     margin-top: 100px;
     margin-left: 20px;
     border-radius: 5px;
@@ -888,6 +1001,11 @@ export default {
       width: 400px;
       height: 226px;
     }
+    .video-wrap{
+      width: 400px;
+      height: 226px;
+      border: 1px solid #ccc;
+    }
     &-info {
       width: 300px;
       margin-top: 15px;
@@ -897,6 +1015,104 @@ export default {
         line-height: 20px;
         font-size: 14px;
       }
+    }
+  }
+  .video-wrap{
+    .vod-controller{
+      position: absolute;
+      z-index: 1;
+      width: 100%;
+      height: 40px;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      transition: all 0.8s;
+      color: white;
+      .local-icon{
+        display: inline-block;
+        width: 38px;
+        text-align: center;
+        color: white;
+      }
+      .slider::v-deep{
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        .Times {
+          position: absolute;
+          top: -35px;
+          min-width: 60px;
+          text-align: center;
+          padding: 5px;
+          background: rgba(0, 0, 0, 0.3);
+          font-size: 12px;
+          color: #fff;
+          transform: translateX(-50%);
+        }
+        &:hover{
+          top: -2px;
+          .el-slider__runway{
+            height: 8px;
+          }
+          .el-slider__bar{
+            height: 8px;
+          }
+        }
+        .el-slider{
+          .el-slider__runway{
+            margin: 0;
+          }
+        }
+      }
+      .wrap{
+        width: 100%;
+        .left-box{
+          i:first-child{
+            padding: 0 8px;
+            cursor: pointer;
+          }
+          .local-icon{
+            margin: 0 4px;
+          }
+          .center-box{
+            display: inline-block;
+            line-height: 48px;
+          }
+        }
+        .right-box{
+          i:last-child{
+            padding: 0 12px;
+            cursor: pointer;
+          }
+          .volume-box{
+            display: inline-block;
+            line-height: 34px;
+            position: relative;
+            height: 34px;
+            margin-top: 6px;
+            &:hover{
+              .ver-slider{
+                display: block;
+              }
+            }
+            .icon-box{
+              i{
+                padding-right: 5px;
+                cursor: pointer;
+              }
+            }
+            .ver-slider{
+              display: none;
+              position: absolute;
+              left: 0;
+              bottom: 30px;
+            }
+          }
+        }
+      }
+    }
+    .active{
+      bottom: 0px;
     }
   }
   .preview-video {

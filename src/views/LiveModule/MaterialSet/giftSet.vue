@@ -132,8 +132,9 @@
             <VhallInput v-model.trim="editParams.name" show-word-limit :maxlength="10" autocomplete="off"  placeholder="请输入礼物名称"></VhallInput>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
-            <VhallInput @input="handleInput" v-model.trim.number="editParams.price" autocomplete="off"  show-word-limit :maxlength="10" placeholder="请输入0-9999.99">
-              <span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span>
+            <VhallInput @input="handleInput" v-model.trim.number="editParams.price" autocomplete="off" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"  :maxlength="10" placeholder="请输入0-9999.99">
+              <i slot="suffix">元</i>
+              <!-- <span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span> -->
             </VhallInput>
         </el-form-item>
       </el-form>
@@ -192,7 +193,7 @@
             </div>
           </el-scrollbar>
         </div>
-        <null-page noSearchText="没有找到相关礼物" nullType="search" v-if="isNull"></null-page>
+        <null-page noSearchText="没有找到相关礼物" nullType="noData" v-if="isNull" :text="'暂无礼物'"></null-page>
       </div>
       <div class="control">
         <span>当前选中<span class="choosed-num"> {{addGiftsIds.length}} </span>件礼物</span>
@@ -219,6 +220,18 @@ import beginPlay from '@/components/beginBtn';
 export default {
   name: "giftSize",
   data() {
+    // 礼物价格
+    const priceValidate = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入礼物价格'));
+      } else {
+        if (value <= 0 || value > 9999.99) {
+          callback && callback('价格必须大于0且小于9999.99');
+        } else {
+          callback();
+        }
+      }
+    };
     return {
       webinar_id: this.$route.params.str,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
@@ -268,7 +281,7 @@ export default {
           { required: true, message: '请输入礼物图片', trigger: 'change' }
         ],
         price: [
-          { required: true,  message: '请输入礼物价格', trigger: 'blur' }
+          { required: true, validator: priceValidate, trigger: 'blur' }
         ],
       },
       isWebinarLiving: false
@@ -888,6 +901,16 @@ export default {
   /deep/.el-upload--picture-card .box img {
     width: auto
   }
+  /deep/.el-form-item {
+    .el-input__inner {
+      padding: 0 10px;
+    }
+      i{
+        font-style: normal;
+        padding: 0 5px;
+        color: #666;
+      }
+    }
   .head-operat{
     margin-bottom: 20px;
     /deep/ .el-input__suffix-inner .el-input__icon {

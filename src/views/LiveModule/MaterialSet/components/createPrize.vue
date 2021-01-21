@@ -50,7 +50,7 @@
         <el-scrollbar v-loadMore="moreLoadData">
          <div class="prize">
            <div class="prize-item" v-for="(item, index) in list" :key="index" :class="item.isChecked ? 'active' : ''" @click.stop="choisePrize(item)">
-             <img :src="item.img_path" alt="">
+             <span class="prize-img"><img :src="item.img_path" alt=""></span>
              <div class="prize-title">
                <h1>{{item.prize_name}}</h1>
                <p>{{item.prize_id}}</p>
@@ -483,10 +483,19 @@ export default {
         border-radius: 4px;
         cursor: pointer;
         position: relative;
-        img{
+        .prize-img{
+          display: inline-block;
           width: 72px;
-          height: 66px;
-          margin: 15px 12px;
+          height: 72px;
+          margin: 12px;
+          border: 1px solid #E6E6E6;
+          border-radius: 4px;
+        }
+        img{
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
+          border-radius: 4px;
         }
         .prize-title{
           margin-top: 15px;

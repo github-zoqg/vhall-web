@@ -57,7 +57,7 @@
       </el-col>
       <el-col :span="6" v-if="titleType!=4">
         <div class="grid-content">
-          <span>最高并发</span>
+          <span>最高并发（方）</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content">
               观看直播的连接数，即1个人同时打开3个观看页计作3个并发。<br />筛选条件内显示当前活动的最高并发
@@ -154,7 +154,7 @@
       </el-col>
       <el-col :span="6">
         <div class="grid-content">
-          <span>观看时长</span>
+          <span>观看时长（分）</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content" v-if="!titleType">筛选条件内的观看总时长，将活动数据进行相加，数据不去重</div>
             <div slot="content" v-else>筛选条件内的观看总时长</div>
@@ -167,7 +167,7 @@
       </el-col>
       <el-col :span="6">
         <div class="grid-content">
-          <span>人均观看时长</span>
+          <span>人均观看时长（分）</span>
           <el-tooltip effect="dark" placement="right-start">
             <div slot="content" v-if="!titleType">
               筛选条件内的观看平均时长，将活动数据进行相加，数据不去重。人均观看时长=观看时长/观看人数
