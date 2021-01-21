@@ -151,9 +151,8 @@ export default {
     noData
   },
   created() {
+    // 创建点播是否可用(全局)
     this.vodPerssion = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['ui.upload_video_as_demand'];
-    console.log(sessionOrLocal.get('SAAS_V3_SON_PS'), '??????????????????')
-    console.log(this.vodPerssion, '??????????????????')
     this.getLiveList();
   },
   methods: {

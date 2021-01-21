@@ -30,7 +30,7 @@
                   <li @click="addRight(index)"> 右侧新增菜单 </li>
                   <li @click="addLeft(index)"> 左侧新增菜单 </li>
                   <li v-if="item.type == 1">
-                    <el-checkbox type="checkbox" :checked="item.status == 4" @click="showOrHide(index)" /> 预告/结束显示
+                    <el-checkbox type="checkbox" :checked="item.status == 4" @change="showOrHide(index)" /> 预告/结束显示
                     <el-tooltip class="item" effect="dark" placement="right">
                       <div slot="content" style="line-height:24px">勾选后，该直播为预告和结束状态时也会显示此菜单；<br />不勾选则只在直播和回放状态显示。</div>
                       <i class="iconfont-v3 saasicon_help_m"></i>
@@ -220,13 +220,7 @@ export default {
         return item.type == 1
       })
       if (addedMenu.length == 6) {
-        this.$message({
-          message: '自定义菜单最多增加六个。您已到达上限',
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
+        this.$message.error('自定义菜单最多增加六个。您已到达上限！')
         return false
       }
 
@@ -249,7 +243,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 3, // 1显示, 2隐藏, 3直播回放隐藏, 4预告结束显示
               components: []
             })
           } else if (this.$insertIndex == 0) {
@@ -258,7 +252,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 3, // 1显示, 2隐藏, 3直播回放隐藏, 4预告结束显示
               components: []
             })
           } else if(this.$insertIndex == this.menus.length) {
@@ -267,7 +261,7 @@ export default {
               type: 1,
               uuid: uuidV1(),
               show: false,
-              status: 3, // 1显示, 2隐藏, 3直播回放显示, 4预告结束显示
+              status: 3, // 1显示, 2隐藏, 3直播隐藏, 4预告结束显示
               components: []
             })
           }

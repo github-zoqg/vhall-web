@@ -4,7 +4,7 @@
     <!-- 内容区域  -->
     <div class="plan-func-main">
       <div class="plan-func-form">
-        <div class="div__func div__view" v-if="keyList">
+        <div class="div__func div__view" v-if="keyList.length>0">
           <div class="div__view__title">观看页设置</div>
           <ul class="switch__list">
             <li class="switch__box" v-for="(item, ins) in keyList" :key="`view_`+ins">
@@ -21,20 +21,20 @@
             </li>
           </ul>
         </div>
-        <div class="div__func div__playback" v-if="liveKeyList && liveKeyList">
+        <div class="div__func div__playback" v-if="liveKeyList.length>0">
           <div class="div__view__title">回放设置</div>
           <ul class="switch__list">
-            <li class="switch__box" v-for="(item, ins) in liveKeyList" :key="`playback_`+ins">
-              <label class="leve3_title label__r12">{{ item.key_name }}</label>
-              <el-switch
-                v-model="item.value"
-                :active-value="1"
-                :inactive-value="0"
-                active-color="#FB3A32"
-                inactive-color="#CECECE"
-                @change="changeStatus($event, item)">
-              </el-switch>
-              <span class="leve3_title title--999">{{!!item.value ? item.openShow : item.closeShow }}</span>
+            <li class="switch__box" v-for="(item, ins) in liveKeyList" :key="`playback_`+ins" >
+                <label class="leve3_title label__r12">{{ item.key_name }}</label>
+                <el-switch
+                  v-model="item.value"
+                  :active-value="1"
+                  :inactive-value="0"
+                  active-color="#FB3A32"
+                  inactive-color="#CECECE"
+                  @change="changeStatus($event, item)">
+                </el-switch>
+                <span class="leve3_title title--999">{{!!item.value ? item.openShow : item.closeShow }}</span>
             </li>
           </ul>
         </div>
@@ -155,8 +155,8 @@ export default {
     planSuccessRender (data) {
       let dataVo = JSON.parse(data);
       console.log(dataVo, '功能配置');
-      let permissions = sessionOrLocal.get('WEBINAR_PES', 'localStorage');
-      let perVo = permissions ? JSON.parse(permissions) : {};
+      let permissions = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+      // let perVo = permissions ? JSON.parse(permissions) : {};
       // if(perVo['ui.record_chapter'] === '' || perVo['ui.record_chapter'] === '') {
       //   perVo['ui.record_chapter'] = 1;
       // }
@@ -190,22 +190,24 @@ export default {
           value: Number(dataVo['ui.watch_hide_share']) || 0
         }
       ];
-      this.liveKeyList = [
-        {
-          type: 'ui.watch_record_no_chatting',
-          key_name: '回放禁言',
-          openShow: '已开启，回放/点播不支持聊天',
-          closeShow: '开启后，回放/点播不支持聊天',
-          value: Number(dataVo['ui.watch_record_no_chatting']) || 0
-        },
-        {
+      this.liveKeyList = [{
+        type: 'ui.watch_record_no_chatting',
+        key_name: '回放禁言',
+        openShow: '已开启，回放/点播不支持聊天',
+        closeShow: '开启后，回放/点播不支持聊天',
+        value: Number(dataVo['ui.watch_record_no_chatting']) || 0
+      }]
+      if (permissions['ui.record_chapter'] > 0) {
+        this.liveKeyList.push({
           type: 'ui.watch_record_chapter',
           key_name: '回放章节',
           openShow: '已开启，回放/点播观看端显示文档章节',
           closeShow: '开启后，回放/点播观看端显示文档章节',
           value: Number(dataVo['ui.watch_record_chapter']) || 0
-        }
-      ]
+        })
+      } else {
+        this.liveKeyList = [];
+      }
     },
     planErrorRender(err) {
       this.$message({
@@ -221,7 +223,8 @@ export default {
     planFunctionGet() {
       this.$fetch('planFunctionGet', {
         webinar_id: this.$route.params.str,
-        webinar_user_id: sessionOrLocal.get('userId')
+        webinar_user_id: sessionOrLocal.get('userId'),
+        scene_id: 2
       }).then(res=>{
         console.log(res);
         // 数据渲染

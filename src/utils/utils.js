@@ -372,6 +372,7 @@ export function checkAuth(to, from, next) {
       if(res && res.code === 200) {
         let permissions = res.data.permissions;
         if(permissions) {
+          // 设置全部权限
           sessionOrLocal.set('SAAS_VS_PES', permissions, 'localStorage');
         } else {
           sessionOrLocal.removeItem('SAAS_VS_PES');
