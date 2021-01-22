@@ -32,11 +32,12 @@
         col-xs  -*用于超小型设备（max-width：768px）
         -->
         <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in dataList" :key="index">
-          <div class="inner">
+          <a class="inner" :href="toPageHandle(item)" target="_blank">
             <div class="top">
               <span class="liveTag" v-if="tabType === 'live' && item.webinar_type">
                 <label class="live-status" v-if="item.webinar_state == 1">
-                  <img src="../../../common/images/live.gif" alt="" @click="toPageHandle(item)"/>
+                  <!-- @click="toPageHandle(item)" -->
+                  <img src="../../../common/images/live.gif" alt="" />
                 </label>{{item | liveTag}}
               </span>
               <span class="hot" v-if="item.hide_pv > 0">
@@ -55,7 +56,7 @@
             <transition name="el-zoom-in-bottom">
               <div class="mask" v-show="!!item.liveDropDownVisible"></div>
             </transition>
-          </div>
+          </a>
         </el-col>
       </el-row>
     </div>
@@ -229,14 +230,16 @@ export default {
       }
       if (this.tabType !== 'live') {
         let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
-        window.open(routeData.href, '_blank');
+        return routeData.href;
+        // window.open(routeData.href, '_blank');
       } else {
        /*  let routeData = this.$router.resolve({
           path: routerStr
         });
          window.open(routeData.href, '_blank');*/
         let url = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}${routerStr}`;
-        window.open(url, '_blank');
+        // window.open(url, '_blank');
+        return url;
       }
     },
     initComp(vo) {
@@ -452,6 +455,12 @@ export default {
         font-size: 18px;
         a{
           color: rgb(44, 43, 43);
+          &.btn-css {
+            color: #666666;
+            &:nth-child(2){
+              margin: 0 20px;
+            }
+          }
         }
         i{
           cursor: pointer;
