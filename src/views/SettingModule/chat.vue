@@ -1,186 +1,192 @@
 <template>
   <div>
-    <pageTitle title="聊天严禁词" iconCssType="gary">
-      <!-- <div slot="content">
-        1.聊天、评论，包含严禁词自动过滤,适用于所有直播。垃圾信息系统已过滤无需添加
-        <br/>
-        2.批量上传时每个严禁词的长度为1~20个字符，超出范围的会自动丢弃
-      </div> -->
-    </pageTitle>
-    <div>
-      <el-button type="primary" @click.prevent.stop="setKeyWordShow" class="length104" size="medium" round>设置</el-button>
-      <a :href="downloadHref" class="btn-a">
-        <el-button class="length104" size="medium" round v-if="downloadHref">
-          下载模板
-        </el-button>
-      </a>
+    <div v-if="!auth_show">
+      <null-page text="聊天严禁词为高级功能，设置后可以防止观众在聊天内容中输入不符合自身利益的词语，保障直播间健康有序地交流。联系您的客户经理获取权限后方可使用。" nullType="noAuth">
+        <el-button type="primary" round @click="openChat">联系客服</el-button>
+      </null-page>
     </div>
-    <div class="setting-chat-main">
-      <el-form :model="chatForm" ref="chatForm" label-width="86px">
-        <el-form-item label="严禁词列表">
-          <div class="words-white">
-            {{checkNames && checkNames.length > 0 ? checkNames.join('，') : '请设置聊天严禁词'}}
-          </div>
-          <div class="notice">
-            <p>提示：</p>
-            <p>1.设置聊天严禁词后，可以防止观众在聊天内容中输入不符合自身利益的词语，保障直播间健康有序地交流</p>
-            <p>2.如果用户发送的聊天文字内容中包含设置的严禁词，则该聊天文字内容其他用户将不可见</p>
-            <p>3.批量上传时每个严禁词的长度为1~20个字符，超出范围的会自动丢弃</p>
-          </div>
-        </el-form-item>
-      </el-form>
-    </div>
-    <!-- 聊天严禁词弹出框 -->
-    <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false  @close="handleClose">
-      <div class="chat-dialog-content">
-        <!-- 全部无结果 -->
-        <div class="all-no-data" v-if="total === 0  && pageInfo.keyword === ''">
-          <null-page nullType="nullData" text="暂未设置严禁词，快去添加吧" :height="0">
-            <el-button type="primary" class="length106" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total === 1000">添加</el-button>
-            <el-button type="white-primary" class="length106" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total === 1000">批量添加</el-button>
-          </null-page>
-        </div>
-        <!-- 全部有结果 -->
-        <div class="all-yes-data" v-else>
-          <!-- 操作栏 -->
-          <div class="operaBox">
-            <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total === 1000">添加</el-button>
-            <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total === 1000">批量添加</el-button>
-            <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round :disabled="!(ids && ids.length > 0)">批量删除</el-button>
-            <div class="searchBox">
-              <el-input
-                class="search-tag"
-                placeholder="搜索严禁词"
-                v-model="pageInfo.keyword"
-                clearable
-                @clear="searchKeyWord"
-                @keyup.enter.native="searchKeyWord"
-                >
-                <i
-                  class="el-icon-search el-input__icon"
-                  slot="suffix"
-                  @click="searchKeyWord">
-                </i>
-              </el-input>
-            </div>
-          </div>
-          <el-table
-            ref="chatTable"
-            :data="showChatList"
-            tooltip-effect="dark"
-            style="width: 100%"
-            class="table-td56"
-            max-height="328px"
-            :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
-            @selection-change="checkMoreRow"
-            @select-all="checkAllRow"
-            v-loadMore="moreLoadData">
-            <div slot="empty" style="height:0"></div>
-            <el-table-column
-              type="selection"
-              width="55"
-              align="left"
-            />
-            <el-table-column
-              label="严禁词"
-              prop="name"
-              width="auto"
-              show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column
-              label="操作"
-              width="114"
-              show-overflow-tooltip>
-              <template slot-scope="scope">
-                <el-button
-                  type="text"
-                  v-preventReClick @click="keywordEdit(scope.row)">编辑</el-button>
-                <el-button
-                type="text"
-                v-preventReClick  @click="keywordDel(scope.row)">删除</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-          <div class="select-option" v-if="total">已选择<span> {{ids.length || 0}} </span>个，共<span> {{total}} </span>条</div>
-          <!-- 无聊天严禁词内容 -->
-          <null-page class="search-no-data" :height="0" v-if="total === 0"></null-page>
-        </div>
+    <div v-else>
+      <pageTitle title="聊天严禁词" iconCssType="gary">
+        <!-- <div slot="content">
+          1.聊天、评论，包含严禁词自动过滤,适用于所有直播。垃圾信息系统已过滤无需添加
+          <br/>
+          2.批量上传时每个严禁词的长度为1~20个字符，超出范围的会自动丢弃
+        </div> -->
+      </pageTitle>
+      <div>
+        <el-button type="primary" @click.prevent.stop="setKeyWordShow" class="length104" size="medium" round>设置</el-button>
+        <a :href="downloadHref" class="btn-a">
+          <el-button class="length104" size="medium" round v-if="downloadHref">
+            下载模板
+          </el-button>
+        </a>
       </div>
-    </VhallDialog>
-    <!-- 添加严禁词 -->
-    <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body :lock-scroll=false>
-      <div :class="`chat-add-dialog-content ${addForm.executeType}`">
-        <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
-          <el-form-item label="严禁词" prop="name">
-           <!--  <el-input
-              v-if="addForm.executeType === 'add'"
-              type="textarea"
-              placeholder="可同时添加多个严禁词，中间以逗号(不区分中英文)分隔,每个严禁词的长度为1~20个字符，超出范围的会自动丢弃"
-              v-model.trim="addForm.name"
-              :maxlength="1000"
-              autocomplete="off"
-              show-word-limit
-            ></el-input> -->
-             <VhallInput
-              :type="addForm.executeType === 'add' ? 'textarea' : 'text'"
-              :placeholder="addForm.executeType === 'add' ? '可同时添加多个严禁词，中间以逗号(不区分中英文)分隔,每个严禁词的长度为1~20个字符，超出范围的会自动丢弃' : '每个严禁词的长度为1~20个字符'"
-              v-model.trim="addForm.name"
-              :maxlength="addForm.executeType === 'add' ? 1000 : 20"
-              autocomplete="off"
-              show-word-limit
-            ></VhallInput>
+      <div class="setting-chat-main">
+        <el-form :model="chatForm" ref="chatForm" label-width="86px">
+          <el-form-item label="严禁词列表">
+            <div class="words-white">
+              {{checkNames && checkNames.length > 0 ? checkNames.join('，') : '请设置聊天严禁词'}}
+            </div>
+            <div class="notice">
+              <p>提示：</p>
+              <p>1.设置聊天严禁词后，可以防止观众在聊天内容中输入不符合自身利益的词语，保障直播间健康有序地交流</p>
+              <p>2.如果用户发送的聊天文字内容中包含设置的严禁词，则该聊天文字内容其他用户将不可见</p>
+              <p>3.批量上传时每个严禁词的长度为1~20个字符，超出范围的会自动丢弃</p>
+            </div>
           </el-form-item>
         </el-form>
-        <div class="dialog-right-btn">
-          <el-button type="primary" v-preventReClick @click.prevent.stop="keywordSend" size="medium" round>确 定</el-button>
-          <el-button @click="addShow = false" size="medium" round>取 消</el-button>
-        </div>
       </div>
-    </VhallDialog>
-    <!-- 批量上传 -->
-    <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false @close="closeImportChat">
-      <div class="upload-dialog-content">
-        <file-upload
-          ref="chatUpload"
-          v-model="fileUrl"
-          @delete="deleteFile"
-          :saveData="{
-             path: pathUrl,
-             type: 'exel'
-          }"
-          :on-success="uploadSuccess"
-          :on-progress="uploadProcess"
-          :on-error="uploadError"
-          :on-preview="uploadPreview"
-          :before-upload="beforeUploadHandler">
-          <div slot="upload-result">
-            <!-- 状态1： 有上传过文件，后面重新删除等-变为未上传 -->
-            <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && fileUrl">请使用模版上传文件</p>
-            <!-- 状态2： 已选择文件，提示上传中，进度条 -->
-            <div v-if="uploadResult && uploadResult.status === 'progress'">
-              <div class="progressBox">
-                <el-progress :percentage="percent" ></el-progress>
+      <!-- 聊天严禁词弹出框 -->
+      <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false  @close="handleClose">
+        <div class="chat-dialog-content">
+          <!-- 全部无结果 -->
+          <div class="all-no-data" v-if="total === 0  && pageInfo.keyword === ''">
+            <null-page nullType="nullData" text="暂未设置严禁词，快去添加吧" :height="0">
+              <el-button type="primary" class="length106" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total === 1000">添加</el-button>
+              <el-button type="white-primary" class="length106" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total === 1000">批量添加</el-button>
+            </null-page>
+          </div>
+          <!-- 全部有结果 -->
+          <div class="all-yes-data" v-else>
+            <!-- 操作栏 -->
+            <div class="operaBox">
+              <el-button type="primary" @click.prevent.stop="addKeywordShow" size="medium" round :disabled="total === 1000">添加</el-button>
+              <el-button type="white-primary" @click.prevent.stop="multiUploadKeywordShow" size="medium" round :disabled="total === 1000">批量添加</el-button>
+              <el-button v-preventReClick @click.prevent.stop="multiKeywordDel" size="medium" round :disabled="!(ids && ids.length > 0)">批量删除</el-button>
+              <div class="searchBox">
+                <el-input
+                  class="search-tag"
+                  placeholder="搜索严禁词"
+                  v-model="pageInfo.keyword"
+                  clearable
+                  @clear="searchKeyWord"
+                  @keyup.enter.native="searchKeyWord"
+                  >
+                  <i
+                    class="el-icon-search el-input__icon"
+                    slot="suffix"
+                    @click="searchKeyWord">
+                  </i>
+                </el-input>
               </div>
             </div>
-            <!-- 状态3： 检测失败 -->
-            <div class="change-txt" v-if="uploadResult && uploadResult.status === 'error'">
-              <p class="p-error">{{uploadResult.text}}</p>
-            </div>
-            <!-- 状态4:  检测成功 -->
-            <div class="change-txt" v-if="uploadResult && uploadResult.status === 'success'">
-              <p class="p-right">上传成功，共检测到{{importResult && importResult.success}}条有效数据</p>
-            </div>
+            <el-table
+              ref="chatTable"
+              :data="showChatList"
+              tooltip-effect="dark"
+              style="width: 100%"
+              class="table-td56"
+              max-height="328px"
+              :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+              @selection-change="checkMoreRow"
+              @select-all="checkAllRow"
+              v-loadMore="moreLoadData">
+              <div slot="empty" style="height:0"></div>
+              <el-table-column
+                type="selection"
+                width="55"
+                align="left"
+              />
+              <el-table-column
+                label="严禁词"
+                prop="name"
+                width="auto"
+                show-overflow-tooltip>
+              </el-table-column>
+              <el-table-column
+                label="操作"
+                width="114"
+                show-overflow-tooltip>
+                <template slot-scope="scope">
+                  <el-button
+                    type="text"
+                    v-preventReClick @click="keywordEdit(scope.row)">编辑</el-button>
+                  <el-button
+                  type="text"
+                  v-preventReClick  @click="keywordDel(scope.row)">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div class="select-option" v-if="total">已选择<span> {{ids.length || 0}} </span>个，共<span> {{total}} </span>条</div>
+            <!-- 无聊天严禁词内容 -->
+            <null-page class="search-no-data" :height="0" v-if="total === 0"></null-page>
           </div>
-          <!-- 状态1： 未上传 -->
-          <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && !fileUrl">请使用模版上传文件</p>
-        </file-upload>
-        <div class="dialog-right-btn">
-          <el-button type="primary" v-preventReClick @click="saveUploadKey" size="medium" round>确 定</el-button>
-          <el-button @click="closeImportChat" size="medium" round>取 消</el-button>
         </div>
-      </div>
-    </VhallDialog>
-
+      </VhallDialog>
+      <!-- 添加严禁词 -->
+      <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body :lock-scroll=false>
+        <div :class="`chat-add-dialog-content ${addForm.executeType}`">
+          <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
+            <el-form-item label="严禁词" prop="name">
+            <!--  <el-input
+                v-if="addForm.executeType === 'add'"
+                type="textarea"
+                placeholder="可同时添加多个严禁词，中间以逗号(不区分中英文)分隔,每个严禁词的长度为1~20个字符，超出范围的会自动丢弃"
+                v-model.trim="addForm.name"
+                :maxlength="1000"
+                autocomplete="off"
+                show-word-limit
+              ></el-input> -->
+              <VhallInput
+                :type="addForm.executeType === 'add' ? 'textarea' : 'text'"
+                :placeholder="addForm.executeType === 'add' ? '可同时添加多个严禁词，中间以逗号(不区分中英文)分隔,每个严禁词的长度为1~20个字符，超出范围的会自动丢弃' : '每个严禁词的长度为1~20个字符'"
+                v-model.trim="addForm.name"
+                :maxlength="addForm.executeType === 'add' ? 1000 : 20"
+                autocomplete="off"
+                show-word-limit
+              ></VhallInput>
+            </el-form-item>
+          </el-form>
+          <div class="dialog-right-btn">
+            <el-button type="primary" v-preventReClick @click.prevent.stop="keywordSend" size="medium" round>确 定</el-button>
+            <el-button @click="addShow = false" size="medium" round>取 消</el-button>
+          </div>
+        </div>
+      </VhallDialog>
+      <!-- 批量上传 -->
+      <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false @close="closeImportChat">
+        <div class="upload-dialog-content">
+          <file-upload
+            ref="chatUpload"
+            v-model="fileUrl"
+            @delete="deleteFile"
+            :saveData="{
+              path: pathUrl,
+              type: 'exel'
+            }"
+            :on-success="uploadSuccess"
+            :on-progress="uploadProcess"
+            :on-error="uploadError"
+            :on-preview="uploadPreview"
+            :before-upload="beforeUploadHandler">
+            <div slot="upload-result">
+              <!-- 状态1： 有上传过文件，后面重新删除等-变为未上传 -->
+              <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && fileUrl">请使用模版上传文件</p>
+              <!-- 状态2： 已选择文件，提示上传中，进度条 -->
+              <div v-if="uploadResult && uploadResult.status === 'progress'">
+                <div class="progressBox">
+                  <el-progress :percentage="percent" ></el-progress>
+                </div>
+              </div>
+              <!-- 状态3： 检测失败 -->
+              <div class="change-txt" v-if="uploadResult && uploadResult.status === 'error'">
+                <p class="p-error">{{uploadResult.text}}</p>
+              </div>
+              <!-- 状态4:  检测成功 -->
+              <div class="change-txt" v-if="uploadResult && uploadResult.status === 'success'">
+                <p class="p-right">上传成功，共检测到{{importResult && importResult.success}}条有效数据</p>
+              </div>
+            </div>
+            <!-- 状态1： 未上传 -->
+            <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && !fileUrl">请使用模版上传文件</p>
+          </file-upload>
+          <div class="dialog-right-btn">
+            <el-button type="primary" v-preventReClick @click="saveUploadKey" size="medium" round>确 定</el-button>
+            <el-button @click="closeImportChat" size="medium" round>取 消</el-button>
+          </div>
+        </div>
+      </VhallDialog>
+    </div>
   </div>
 </template>
 
@@ -188,7 +194,8 @@
 import FileUpload from '@/components/FileUpload/main';
 import PageTitle from '@/components/PageTitle';
 import NullPage from '../PlatformModule/Error/nullPage.vue';
-import Env from "@/api/env";
+import {sessionOrLocal} from "@/utils/utils";
+import env from "@/api/env";
 export default {
   name: "chat.vue",
   components: {
@@ -267,7 +274,8 @@ export default {
         fail: 0,
         success: 0
       },
-      isCheckAll: false
+      isCheckAll: false,
+      auth_show: false
     };
   },
   computed: {
@@ -281,6 +289,25 @@ export default {
     }
   },
   methods: {
+    getSysConfig() {
+      let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+      if(permissions) {
+        let perVo = JSON.parse(permissions);
+        console.log(perVo, '权限-用户');
+        // perVo['ui.console_logo'] = 1; // TODO 默认配置项权限开启
+        if (perVo['front_keyword'] > 0) {
+          // 开启
+          this.auth_show = true;
+          this.getKeywordTemplate();
+          this.getAllKeyWordList();
+        } else {
+          this.auth_show = false;
+        }
+      }
+    },
+    openChat() {
+      window.open(`${env.staticLinkVo.kf}`, '_blank');
+    },
     deleteFile() {
       this.fileUrl = ''
       this.isUploadEnd = false
@@ -675,8 +702,7 @@ export default {
     }
   },
   created() {
-    this.getKeywordTemplate();
-    this.getAllKeyWordList();
+    this.getSysConfig();
   }
 };
 </script>
