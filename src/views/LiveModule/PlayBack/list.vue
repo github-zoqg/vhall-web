@@ -128,7 +128,7 @@
 
     <!-- 编辑弹窗 -->
     <el-dialog
-      title="编辑内容标题"
+      title="编辑"
       v-loading="editLoading"
       :visible.sync="editDialogVisible"
       :close-on-click-modal=false
@@ -704,6 +704,10 @@ export default {
       margin-bottom: 40px;
     }
     .playpackSource{
+      color: #1a1a1a;
+    }
+    .el-button.is-disabled{
+      border: 0;
       color: #1a1a1a;
     }
     /deep/ thead .el-select {

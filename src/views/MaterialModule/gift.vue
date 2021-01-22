@@ -16,7 +16,7 @@
         @keyup.enter.native="searchGifts"
         clearable
         @clear="searchGifts"
-        class="head-btn fr search resetRightBrn"
+        class="head-btn fr search resetRightBrn search-tag"
         v-model.trim="searchName"
         autocomplete="off"
         placeholder="请输入礼物名称"
@@ -550,6 +550,27 @@ export default {
     /deep/ .el-input__suffix-inner .el-input__icon {
       line-height: 36px;
     }
+    .search-tag{
+      float: right;
+      width: 220px;
+      /* /deep/.el-input__inner{
+        border-radius: 18px;
+        padding: 0 12px;
+      } */
+      /deep/.el-input__inner {
+          border-radius: 20px;
+          height: 36px;
+          padding-right: 50px!important;
+        }
+        /deep/ .el-input__suffix {
+          cursor: pointer;
+          /deep/ .el-input__icon {
+            width: auto;
+            margin-right: 5px;
+            line-height: 36px;
+          }
+        }
+    }
     .head-btn{
       display: inline-block;
       border-radius: 20px;
@@ -589,7 +610,6 @@ export default {
       }
     }
     /deep/.el-input {
-      width: 180px;
       height: 36px;
       input{
         border-radius: 18px;
