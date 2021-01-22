@@ -93,7 +93,7 @@
           </el-table-column>
 
           <el-table-column
-            width="176"
+            width="190"
             label="操作"
             show-overflow-tooltip
             align="left"
@@ -692,7 +692,7 @@ export default {
     }
   }
   .tableBox{
-    padding: 32px 24px;
+    padding: 24px 24px;
     background: #fff;
     /deep/ .el-table__empty-block {
       display: none;
@@ -745,17 +745,16 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: rgba(255, 255, 255, 0.6);
+        background-color: rgba(0, 0, 0, 0.6);
         z-index: 2;
+        border-radius: 4px;
         .statusDesc{
           width: 80px;
           height: 30px;
           line-height: 30px;
           text-align: center;
-          border-radius: 15px;
-          background-color: rgba(0,0,0,.6);
           color: #fff;
-          font-size: 14px;
+          font-size: 12px;
         }
       }
       .defaultSign{
