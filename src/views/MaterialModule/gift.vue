@@ -16,6 +16,7 @@
         @keyup.enter.native="searchGifts"
         clearable
         @clear="searchGifts"
+        style="width: 220px;"
         class="head-btn fr search resetRightBrn search-tag"
         v-model.trim="searchName"
         autocomplete="off"

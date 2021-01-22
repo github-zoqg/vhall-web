@@ -44,7 +44,7 @@
             <img :src="item.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
           </div>
           <div class="bottom">
-            <div class="curint" @click="editSpecialInfo(item.id)">
+            <div class="">
               <p class="liveTitle" :title="item.title">{{item.title}}</p>
               <p class="liveTime">{{item.created_at | unitTime }}</p>
             </div>
@@ -493,9 +493,6 @@ export default {
         .liveTime{
           font-size: 14px;
           color: #666;
-        }
-        .curint{
-          cursor: pointer;
         }
         .liveOpera{
           color: #666666;

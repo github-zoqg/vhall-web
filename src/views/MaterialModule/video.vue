@@ -569,7 +569,7 @@ export default {
     }
     /deep/ .el-dialog__headerbtn{
       top: 30px;
-      right: 0px;
+      right:-18px;
       .el-dialog__close {
         color: #fff;
       }
@@ -578,7 +578,7 @@ export default {
       width: 642px;
       height: 375px;
       border-top: 10px solid #333;
-      border-bottom: 10px solid #333;
+      // border-bottom: 10px solid #333;
       background: #333;
       border-radius: 4px;
     }
