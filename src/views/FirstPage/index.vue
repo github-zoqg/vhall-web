@@ -4,34 +4,34 @@
       <data-usage></data-usage>
       <el-row type="flex" class="row-center" :gutter="16" >
         <el-col :xl="{span: colVal}">
-          <div class="center-item" @click="toCreateLive">
+          <router-link :to="{path:'/live/edit'}"  class="center-item">
             <p><icon icon-class="saasicon_chuangjianzhibo-copy"></icon></p>
             <h3>创建直播</h3>
-          </div>
+          </router-link>
         </el-col>
         <el-col :xl="{span: colVal}">
-          <div class="center-item" @click="toUploadWord">
+          <router-link :to="{path:'/material/word'}"  class="center-item">
             <p><icon icon-class="saasicon_shangchuanwendang-copy"></icon></p>
             <h3>上传文档</h3>
-          </div>
+          </router-link>
         </el-col>
         <el-col :xl="{span: colVal}">
-          <div class="center-item" @click="toBrandSet">
+          <router-link :to="{path:'/setting/info'}"  class="center-item">
             <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p>
             <h3>设置中心</h3>
-          </div>
+          </router-link>
         </el-col>
         <el-col :xl="{span: colVal}" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
-          <div class="center-item" @click="toDataInfo">
+          <router-link :to="{path:'/data/info'}"  class="center-item">
             <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p>
             <h3>数据中心</h3>
-          </div>
+          </router-link>
         </el-col>
         <el-col :xl="{span: colVal}">
-          <div class="center-item" @click="toFinanceInfo">
+          <router-link :to="{path:'/finance/info'}"  class="center-item">
             <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p>
             <h3>财务中心</h3>
-          </div>
+          </router-link>
         </el-col>
       </el-row>
       <div class="row-list" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
@@ -199,26 +199,6 @@ export default {
         this.childPremission = {};
       })
     },
-    // 页面跳转
-     toCreateLive(){
-      this.$router.push({path: `/live/edit`});
-    },
-    // 上传文档
-    toUploadWord(){
-      this.$router.push({path: `/material/word`});
-    },
-    // 设置中心
-    toBrandSet(){
-      this.$router.push({path: `/setting/info`});
-    },
-    // 数据中心-数据总览
-    toDataInfo(){
-      this.$router.push({path: `/data/info`});
-    },
-    // 财务中心-财务总览
-    toFinanceInfo(){
-      this.$router.push({path: `/finance/info`});
-    },
     // 联系我们
     contactUs() {
       window.open(`http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738`, "_blank");
@@ -280,13 +260,15 @@ export default {
         margin: 24px 0;
       }
       .center-item{
+        display: inline-block;
+        width: 100%;
         height: 130px;
         background: #fff;
         border-radius: 4px;
         padding-top: 38px;
         text-align: center;
         cursor: pointer;
-        border: 2px solid transparent;
+        border: 1px solid transparent;
         &:hover{
           background: #FFFFFF;
           box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);
