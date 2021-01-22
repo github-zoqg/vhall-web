@@ -266,26 +266,50 @@ export default {
         });
       });
     },
+    getAppersInfo(item) {
+      let userId = JSON.parse(sessionOrLocal.get('userId'));
+      this.$fetch('getVersionInfo', { user_id: userId}).then(res => {
+        if (res.data.arrears.total_fee < 0) {
+          this.$confirm(`尊敬的微吼会员，您的${res.data.type == 1 ? '流量' : '并发套餐'}已用尽，请充值`, '提示', {
+            confirmButtonText: '去充值',
+            cancelButtonText: '知道了',
+            customClass: 'zdy-message-box',
+            lockScroll: false,
+            cancelButtonClass: 'zdy-confirm-cancel',
+          }).then(() => {
+            this.$router.push({path:'/finance/info'});
+          }).catch(() => {});
+        } else {
+          if (item.webinar_state == 1) {
+            this.getOpenLive(item);
+          } else {
+            this.goIsLive(item)
+          }
+        }
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
     goLivePlay(item) {
       //判断是否可以开播
-      let status = JSON.parse(sessionOrLocal.get("arrears")).total_fee;
-      if (status) {
-        this.$confirm('尊敬的微吼会员，您的流量已用尽，请充值', '提示', {
-          confirmButtonText: '去充值',
-          cancelButtonText: '知道了',
-          customClass: 'zdy-message-box',
-          lockScroll: false,
-          cancelButtonClass: 'zdy-confirm-cancel',
-        }).then(() => {
-          this.$router.push({path:'/finance/info'});
-        }).catch(() => {});
-      } else {
-        if (item.webinar_state == 1) {
-          this.getOpenLive(item);
-        } else {
-          this.goIsLive(item)
-        }
-      }
+      this.getAppersInfo(item);
+      // if (status) {
+      //   this.$confirm('尊敬的微吼会员，您的流量已用尽，请充值', '提示', {
+      //     confirmButtonText: '去充值',
+      //     cancelButtonText: '知道了',
+      //     customClass: 'zdy-message-box',
+      //     lockScroll: false,
+      //     cancelButtonClass: 'zdy-confirm-cancel',
+      //   }).then(() => {
+      //     this.$router.push({path:'/finance/info'});
+      //   }).catch(() => {});
+      // } else {
+      //   if (item.webinar_state == 1) {
+      //     this.getOpenLive(item);
+      //   } else {
+      //     this.goIsLive(item)
+      //   }
+      // }
     },
     goPlayback(item) {
       const { href } = this.$router.resolve({path: item.webinar_state == 4 ? `/live/recordplayback/${item.webinar_id}` : `/live/playback/${item.webinar_id}`});

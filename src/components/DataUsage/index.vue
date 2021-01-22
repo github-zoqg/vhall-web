@@ -99,6 +99,7 @@ export default {
       typeChange:false, // 区分是首页还是财务的样式
       title: '流量包',
       isOutTime: false, //是否过期
+      unpaid: 0,
       versionType: '',
       userInfo: {
         concurrency: {},
@@ -106,7 +107,9 @@ export default {
         arrears: {}
       },
       buttonList: [],
-      orderInfo: {},
+      orderInfo: {
+        unpaid: 0
+      },
       concurrentPrice: {}
     };
   },
@@ -117,7 +120,6 @@ export default {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getVersion();
     this.getPayListStatus();
-    console.log('route',this.$route);
     if (this.$route.path == '/finance/info') {
       this.typeChange = true
     }else {
@@ -168,14 +170,13 @@ export default {
           path: '/finance/info'
         });
       } else {
-        if (this.orderInfo.unpaid) {
+        if (this.orderInfo.unpaid == 1) {
           this.$alert('您有未处理订单', '提示', {
             confirmButtonText: '立即支付',
-            customClass: 'zdy-message-box',
-            callback: action => {
-              this.goPayList(this.orderInfo.order_id);
-            }
-          });
+            customClass: 'zdy-alert-box',
+          }).then(()=>{
+            this.goPayList(this.orderInfo.order_id);
+          }).catch(()=>{});
           return;
         }
         if (title === '升级' && this.userInfo.left_months < 1) {
@@ -207,14 +208,13 @@ export default {
           path: '/finance/info'
         });
       } else {
-        if (this.orderInfo.unpaid) {
-          this.$alert('您有未处理订单', '提示', {
-            confirmButtonText: '立即支付',
-            customClass: 'zdy-message-box',
-            callback: action => {
-              this.goPayList(this.orderInfo.order_id);
-            }
-          });
+        if (this.orderInfo.unpaid == 1) {
+         this.$alert('您有未处理订单', '提示', {
+          confirmButtonText: '立即支付',
+          customClass: 'zdy-alert-box',
+        }).then(()=>{
+          this.goPayList(this.orderInfo.order_id);
+        }).catch(()=>{});
           return;
         }
         this.title = this.versionType;
