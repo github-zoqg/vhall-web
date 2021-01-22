@@ -251,7 +251,8 @@ export default {
       background: #1a1a1a;
       i{
         color: #fff;
-        font-size: 50px;
+        font-size: 40px;
+        padding: 10px;
       }
       // img{
       //   width: 100%;

@@ -1143,13 +1143,13 @@ export default {
             display: inline-block;
             span{
               font-size: 12px;
-              padding-left: 160px;
+              padding-left: 182px;
             }
           }
           .barrage-box{
             float: right;
             i{
-              font-size: 30px;
+              font-size: 22px;
               vertical-align: middle;
             }
             .saasdanmu_kai{
