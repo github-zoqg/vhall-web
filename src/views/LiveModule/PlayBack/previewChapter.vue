@@ -29,8 +29,8 @@
         </span>
       </div>
     </div>
-    <div class="playerBoxContainer">
-      <div class="playerBox">
+    <div class="playerBoxContainer" @mouseover="videoMouseOver" @mouseleave="videoMouseLeave">
+      <div :class="['playerBox', chanBenVisible ? 'openControler' : '']">
         <!-- v-if="docSDKReady" -->
         <player ref="player" v-if="docSDKReady"  v-bind="playerProps" :playerParams="playerParams"></player>
       </div>
@@ -39,12 +39,14 @@
           <span>章节</span>
         </div>
         <div class="listBox">
-          <ul class="chapterList">
-            <li v-for="(item, index) in tableData" @click="chapterHandler(index)" :key="index">
-              <span class="title">{{item.index}}. {{item.title}}</span>
-              <span class="times">{{item.createTimeShow}}</span>
-            </li>
-          </ul>
+          <vhscroll :ops="ops">
+            <ul class="chapterList">
+              <li v-for="(item, index) in tableData" @click="chapterHandler(index)" :key="index">
+                <span class="title">{{item.index}}. {{item.title}}</span>
+                <span class="times">{{item.createTimeShow}}</span>
+              </li>
+            </ul>
+          </vhscroll>
         </div>
       </div>
     </div>
@@ -92,6 +94,12 @@ export default {
           color: '#FD2C0A'
         }
       },
+      ops: {
+        bar: {
+          background: '#ccc'
+        }
+      },
+      chanBenVisible: false
     };
   },
   provide () {
@@ -140,6 +148,8 @@ export default {
 
     this.$EventBus.$on('component_playerSDK_ready', ()=>{
       console.log('component_playerSDK_ready');
+      window.addEventListener('resize', this.calcHeight);
+      this.calcHeight()
     });
 
     this.$EventBus.$on('component_page_info', ()=>{
@@ -181,8 +191,18 @@ export default {
     this.$EventBus.$off('component_playerSDK_ready');
     this.$EventBus.$off('component_page_info');
     this.$EventBus.$off('vod_cuepoint_load_complete');
+    window.removeEventListener('resize', this.calcHeight);
   },
   methods: {
+    calcHeight() {
+      document.querySelector('.chaptersBox').style.height = document.querySelector('.playerBoxContainer').offsetHeight - document.querySelector('.playerBox').offsetHeight + 'px'
+    },
+    videoMouseOver() {
+      this.chanBenVisible = true;
+    },
+    videoMouseLeave() {
+      this.chanBenVisible = false;
+    },
     checkChapterSave() {
       this.$fetch('checkChapterSave', {
         record_id: this.recordId
@@ -297,24 +317,49 @@ export default {
 
     }
     /deep/ .vhallPlayer-container{
-      position: relative;
+      // position: relative;
       visibility: visible;
       opacity: 1;
       z-index: 2;
-      display: block !important;
+      // display: block !important;
+      // &:hover{
+      //   height: 4px;
+      // }
       .vhallPlayer-progress-container .vhallPlayer-progress-play{
         background: #FB3A32;
       }
+      .vhallPlayer-progress-scrubber {
+        display: none!important;
+      }
       .vhallPlayer-verticalSlider-popup .vhallPlayer-verticalSlider-box .verticalSlider-range .verticalSlider-value{
         background: #FB3A32;
+      }
+      .vhallPlayer-controller-box {
+        height: 40px;
+        padding: 0 10px;
+      }
+      .vhallPlayer-volume-component {
+        margin-right: 3px;
+      }
+      .vhallPlayer-progress-container {
+        height: 4px!important;
+      }
+      .vhallPlayer-playBtn {
+        margin-right: 10px;
       }
     }
     .playerBoxContainer{
       float: left;
       width: 32%;
       height: 100%;
+      .playerBox {
+        &.openControler{
+          /deep/ .vhallPlayer-container{
+            display: block!important;
+          }
+        }
+      }
       .chaptersBox {
-        height: calc(100% - 223px);
         .tab{
           height: 32px;
           box-shadow: 0px 1px 0px 0px #1A1A1A;
@@ -332,6 +377,7 @@ export default {
           overflow-y: auto;
         }
         .chapterList{
+          padding-right: 10px;
           li{
             color: #CCCCCC;
             font-size: 12px;
