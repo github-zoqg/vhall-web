@@ -92,21 +92,21 @@
         <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>-->
       <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false' height="458px" :modalClick=true>
-        <img class="imgLoading" src="//t-alistatic01.e.vhall.com/static/images/delFlash/load.gif" v-show="isLoading">
-        <div  v-if="isDot" style="position: relative;height: 396px;">
-          <!-- 动态文档区域 -->
+        <img class="imgLoading" src="//t-alistatic01.e.vhall.com/static/images/delFlash/load.gif"  v-show="!docLoadComplete">
+        <div style="position: relative;height: 396px;" v-show="isDot && docLoadComplete">
+          <!-- 动态文档区域-->
           <div :key="currentCid"  :id="currentCid" style="width: 704px;height: 396px;"></div>
         </div>
-        <!-- 静态文档区域 -->
+        <!-- 静态文档区域
         <div class="preview-doc" id="previewDoc" v-else>
           <img v-for="sIndex of docParam.page" :key="`s_${sIndex}`"  v-show="activeIns === sIndex" :index="sIndex" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${sIndex}.jpg`" alt="" />
-        </div>
-        <div class="preview-pages" v-if="isDot && dotPageInfo.total > 0">
+        </div>-->
+        <div class="preview-pages" v-if="isDot && dotPageInfo.total > 0 && docLoadComplete">
           <span class="left" @click="prevStep">&lt;</span><span class="current">{{ dotPageInfo.pageIndex }}</span><span class="side">/</span><span class="total">{{ dotPageInfo.total }}</span><span class="right" @click="nextStep">&gt;</span>
         </div>
-        <div class="preview-pages" v-else>
+        <!-- <div class="preview-pages" v-else>
           <span class="left" @click="showLastImg">&lt;</span><span class="current">{{ activeIns }}</span><span class="side">/</span><span class="total">{{ docParam.page }}</span><span class="right" @click="showNextImg">&gt;</span>
-        </div>
+        </div> -->
       </VhallDialog>
     </template>
 
@@ -605,13 +605,19 @@ export default {
       });
     },
     // 预览
-    preShow(that, { rows }) {
+    async preShow(that, { rows }) {
       console.log('预览', rows);
       that.showDialog = true;
       that.docParam = rows;
       that.activeIns = 1; // 默认打开第一页
-      that.isDot = false;
-      that.setImgSize(); // loading
+     /*  that.isDot = false;
+      that.setImgSize(); // loading */
+      that.isDot = true;
+      that.dotPageInfo.pageIndex = 0;
+      that.dotPageInfo.total = 0;
+      that.docLoadComplete = false;
+      await that.$nextTick(() => {})
+      that.docEvents(rows);
     },
     // 动态演示
     async preDocShow(that, { rows }) {
@@ -623,7 +629,7 @@ export default {
       that.dotPageInfo.total = 0;
       that.docLoadComplete = false;
       await that.$nextTick(() => {})
-      that.docEvents(rows);
+      that.docDotEvents(rows);
     },
     // 删除
     deleteHandle(that, { rows }) {
@@ -713,6 +719,7 @@ export default {
       });
     },
     async _initDocSDK() {
+      console.log('实例化文档参数进入');
       let result = await this.$fetch('msgInitConsole');
       if (result) {
         console.log(result, '值');
@@ -753,7 +760,7 @@ export default {
       console.log(opts);
       this.docSDK.createDocument(opts);
     },
-    async docEvents(rows) {
+    async docDotEvents(rows) {
       let cid = this.docSDK.createUUID('document')
       this.currentCid = cid;
       await this.$nextTick(() => {})
@@ -764,6 +771,18 @@ export default {
       });
       this.docSDK.selectContainer({id: cid});
       await this.docSDK.loadDoc({ docId: rows.document_id, id: cid})
+    },
+    async docEvents(rows) {
+      let cid = this.docSDK.createUUID('document')
+      this.currentCid = cid;
+      await this.$nextTick(() => {})
+      this.initContainer({
+        type: 'document',
+        docId: rows.document_id,
+        id: cid
+      });
+      this.docSDK.selectContainer({id: cid});
+      await this.docSDK.loadDoc({ docId: rows.document_id, id: cid, docType: 2})
     },
     docSdkEvent() {
       // 下一步
@@ -1021,6 +1040,7 @@ export default {
     this._initDocSDK();
   },
   beforeDestroy() {
+    console.log('docSDK消亡，chat消亡');
     if(this.docSDK) {
       this.docSDK.destroy();
       this.docSDK = null;
@@ -1193,5 +1213,10 @@ export default {
   text-align: right;
   margin-bottom: 24px;
   margin-top: 24px;
+}
+.imgLoading {
+  width: 40px;
+  height: 40px;
+  margin: 200px calc(50% - 20px);
 }
 </style>
