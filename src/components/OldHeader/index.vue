@@ -14,7 +14,7 @@
         <div class="collapse navbar-collapse" v-if="isShowLogin">
           <div class="pull-right login-reg" >
             <div class="" v-if="isLogin">
-              <el-dropdown @command="handleCommand" class="hover-dropdown">
+             <!--  <el-dropdown @command="handleCommand" class="hover-dropdown">
                 <span class="el-dropdown-link">
                   <img  class="head" :src="avatarImgUrl" alt="" width="30" height="30"/>
                   <span class="textofover">{{userInfo && userInfo.nick_name ? userInfo.nick_name : '--'}}</span>
@@ -22,6 +22,15 @@
                 </span>
                 <el-dropdown-menu slot="dropdown" class="zdy-hover-dropdown">
                   <el-dropdown-item command="loginOut">退出</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown> -->
+              <el-dropdown class="avatar-container">
+                <div class="avatar-wrapper">
+                  <img :src="avatarImgUrl" class="user-avatar" alt="" />
+                  <span>{{show_name}}</span>
+                </div>
+                <el-dropdown-menu slot="dropdown" class="user-dropdown">
+                  <el-dropdown-item divided @click.native="loginOut">退出</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
@@ -68,6 +77,19 @@ export default {
       logo: null,
       logo_jump_url: null
     };
+  },
+  computed: {
+    show_name: function() {
+      if (this.userInfo && this.userInfo.nick_name) {
+        if(this.userInfo.nick_name.length > 5) {
+          return this.userInfo.nick_name.substring(0, 5) + '...';
+        } else {
+          return this.userInfo.nick_name
+        }
+      } else {
+        return '';
+      }
+    }
   },
   methods: {
     toLoginPageHandle() {
@@ -256,5 +278,67 @@ header.commen-header {
 }
 /deep/.el-dropdown {
   margin-top: 6px;
+}
+
+/deep/.avatar-container.el-dropdown {
+  margin-top: 0;
+}
+.avatar-wrapper {
+  position: relative;
+  .user-avatar {
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 100%;
+  }
+  span {
+    font-size: 14px;
+    font-family: @fontRegular;
+    font-weight: 400;
+    color: #666666;
+    padding-left: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+  }
+  .el-icon-caret-bottom {
+    cursor: pointer;
+    position: absolute;
+    right: -20px;
+    top: 25px;
+    font-size: 12px;
+  }
+}
+.user-dropdown {
+  border-radius: 4px;
+  padding: 0 0;
+  /deep/.el-dropdown-menu__item{
+    padding: 0 10px!important;
+    min-width: 160px;
+    height: 40px;
+    background: #FFFFFF;
+    font-size: 14px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.65);
+    border-radius: 0 0 4px 4px;
+  }
+  li:first-child {
+    border-radius: 4px 4px 0 0;
+    border-top: 0;
+    margin-top: 0;
+  }
+  /deep/.el-dropdown-menu__item--divided:before {
+    display: none!important;
+  }
+  .hover-icon {
+    margin-right: 12px;
+  }
+
+  .el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover {
+    background-color: #ffebeb;
+    color: #FB3A32;
+  }
 }
 </style>
