@@ -5,7 +5,7 @@
     <div v-if="msgDao.total > 0">
       <div class="message--title">
         <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="ids && ids.length === 0">批量删除</el-button>
-        <el-button size="medium" round @click.prevent.stop="executeUseRead" :disabled="ids && ids.length === 0">标记为已读</el-button>
+        <el-button size="medium" round @click.prevent.stop="executeUseRead" :disabled="ids && ids.length === 0">标记已读</el-button>
       </div>
       <!-- 表格与分页 -->
       <div class="message-list">

@@ -44,7 +44,7 @@
             <img :src="item.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
           </div>
           <div class="bottom">
-            <div class="">
+            <div class="curint" @click="editSpecialInfo(item.id)">
               <p class="liveTitle" :title="item.title">{{item.title}}</p>
               <p class="liveTime">{{item.created_at | unitTime }}</p>
             </div>
@@ -481,6 +481,7 @@ export default {
           color: #1A1A1A;
           font-size: 16px;
           margin-bottom: 6px;
+          line-height: 24px;
           text-overflow: -o-ellipsis-lastline;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -492,6 +493,9 @@ export default {
         .liveTime{
           font-size: 14px;
           color: #666;
+        }
+        .curint{
+          cursor: pointer;
         }
         .liveOpera{
           color: #666666;

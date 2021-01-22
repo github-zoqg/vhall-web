@@ -120,6 +120,24 @@ export default {
 };
 </script>
 <style lang="less">
+::v-deep.head-wrap{
+  .collapse{
+    height: 100%;
+    .login-reg{
+      height: 100%;
+      .head{
+        margin-top: -8px;
+        border: none;
+        vertical-align: middle;
+        display: inline-block;
+        margin-right: 8px;
+      }
+      .caret{
+        margin-bottom: 4px;
+      }
+    }
+  }
+}
 .titleBox {
   margin-top: 40px;
 }

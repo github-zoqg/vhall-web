@@ -477,6 +477,7 @@ export default {
     }
   }
   .search-tag {
+    width: 220px;
     /deep/.el-input__inner {
       border-radius: 20px;
       height: 36px;

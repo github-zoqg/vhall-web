@@ -560,6 +560,9 @@ export default {
        /deep/.el-input__inner{
          border-radius: 20px;
        }
+       .el-input__suffix{
+         right: 8px;
+       }
      }
      .ad-list{
        display: flex;

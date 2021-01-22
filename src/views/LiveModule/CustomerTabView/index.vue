@@ -19,14 +19,14 @@
           <span
             class="vh-customer__preview-tabcontrols__btn "
             :class="{'vh-customer__preview-tabcontrols__btn—active': activeIndex == 1}"
-            @click="preShow(1)"
+            @click="activeIndex = 1"
           >
             手机预览
           </span>
           <span
             class="vh-customer__preview-tabcontrols__btn"
             :class="{'vh-customer__preview-tabcontrols__btn—active': activeIndex == 2}"
-            @click="preShow(2)"
+            @click="activeIndex = 2"
             style="float:right; left: auto"
           >
             PC预览
@@ -109,9 +109,6 @@ export default {
   },
 
   methods: {
-    preShow(activeIndex) {
-      this.activeIndex = activeIndex;
-    },
     copy() {
       this.$copyText(this.link).then(e => {
         this.$message({

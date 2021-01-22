@@ -681,8 +681,9 @@ export default {
       })
     },
     getChapters(tableSelect) {
+      console.log('tableSelect', tableSelect)
       this.$fetch('playBackChaptersGet', {
-        document_id: tableSelect.join(',')
+        document_id: tableSelect ? tableSelect.join(',') : ''
       }).then(res => {
         const ids = []
         this.chapterTotalInfo = {}

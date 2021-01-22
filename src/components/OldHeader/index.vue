@@ -13,7 +13,7 @@
         </div>
         <div class="collapse navbar-collapse" v-if="isShowLogin">
           <div class="pull-right login-reg" >
-            <div class=""  v-if="isLogin">
+            <div class="" v-if="isLogin">
               <el-dropdown @command="handleCommand" class="hover-dropdown">
                 <span class="el-dropdown-link">
                   <img  class="head" :src="avatarImgUrl" alt="" width="30" height="30"/>
@@ -202,8 +202,13 @@ header.commen-header {
     padding: 16px 0 0 10px;
     img.head {
       border-radius: 50%;
-      margin-top: -12px;
+      /* margin-top: -12px;
+      border: none; */
+      margin-top: -8px;
       border: none;
+      vertical-align: middle;
+      display: inline-block;
+      margin-right: 8px;
     }
     .textofover {
       text-overflow: ellipsis;
@@ -222,7 +227,8 @@ header.commen-header {
       border-left: 4px solid transparent;
       color: #787a7b;
       margin-left: 5px;
-      margin-bottom: 13px;
+     /*  margin-bottom: 13px; */
+      margin-bottom: 4px;
     }
   }
   header #personal-info {
