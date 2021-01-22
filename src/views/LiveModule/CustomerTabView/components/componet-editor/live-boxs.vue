@@ -207,7 +207,7 @@ export default {
     overflow: hidden;
     background: #F7F7F7;
     border-radius: 4px;
-    margin: 0 14px 14px 0;
+    margin: 0 16px 14px 0;
     position: relative;
     &:hover{
       box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);

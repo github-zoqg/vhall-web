@@ -387,6 +387,7 @@ export default {
       this.$fetch('codeCheck', params).then(res => {
         if (res.code == 200) {
           this.dialogChangeVisible = false;
+          this.goBangWeixin();
           this.dialogVisible = true;
           this.time = 60;
         }
