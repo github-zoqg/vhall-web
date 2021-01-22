@@ -5,13 +5,17 @@
         <i class="iconfont-v3 saasicon_kaibo"></i>
       </div>
     </el-tooltip>
-
   </div>
 </template>
 <script>
 import { sessionOrLocal, debounce } from '@/utils/utils';
 export default {
   props: ['webinarId'],
+  data() {
+    return {
+      userId: ''
+    }
+  },
   methods: {
     // 判断是否有起直播的权限
     getOpenLive() {
@@ -24,12 +28,11 @@ export default {
           window.open(href, '_blank');
         }
     },
-    toRoom(){
-      // 跳转至发起页面
-      debounce(async () => {
-        let status = JSON.parse(sessionOrLocal.get("arrears")).total_fee;
-        if (status) {
-          this.$confirm('尊敬的微吼会员，您的流量已用尽，请充值', '提示', {
+    // 判断是否欠费
+    getAppersInfo() {
+      this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
+        if (res.data.arrears.total_fee < 0) {
+          this.$confirm(`尊敬的微吼会员，您的${res.data.type == 1 ? '流量' : '并发套餐'}已用尽，请充值`, '提示', {
             confirmButtonText: '去充值',
             cancelButtonText: '知道了',
             customClass: 'zdy-message-box',
@@ -39,24 +42,34 @@ export default {
             this.$router.push({path:'/finance/info'});
           }).catch(() => {});
         } else {
-          this.$fetch('checkLive', this.$params({
-            webinar_id: this.webinarId
-          })).then((res) => {
-            this.getOpenLive()
-          }).catch(res => {
-            this.$message({
-              message: res.msg || '校验失败',
-              showClose: true,
-              // duration: 0,
-              type: 'error',
-              customClass: 'zdy-info-box'
-            });
-          });
+          this.toLive();
         }
-
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    toLive() {
+      // 判断是否有权限发起
+      this.$fetch('checkLive', this.$params({
+        webinar_id: this.webinarId
+      })).then((res) => {
+        this.getOpenLive()
+      }).catch(res => {
+        this.$message({
+          message: res.msg || '校验失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      });
+    },
+    toRoom(){
+      // 跳转至发起页面
+      this.userId = JSON.parse(sessionOrLocal.get('userId'));
+      debounce(async () => {
+        await this.getAppersInfo();
       }, 500)
-
-
     },
   }
 }

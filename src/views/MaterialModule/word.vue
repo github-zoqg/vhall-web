@@ -244,7 +244,7 @@ export default {
         total: 0
       },
       isDotEnd: false, // 是否播放完毕
-      isLoadingEnd: false // 是否初始化文档加载完毕
+      docLoadComplete: false, // 文档加载状态
     };
   },
   computed: {
@@ -289,6 +289,15 @@ export default {
     },
     nextStep() {
       console.log(this.isDotEnd)
+      if (!this.docLoadComplete) {
+        return this.$message({
+          message: `请文档加载完成以后再操作`,
+          showClose: true,
+          // duration: 0,
+          type: 'warning',
+          customClass: 'zdy-info-box'
+        });
+      }
       if(!this.isDotEnd) {
         this.$EventBus.$emit('nextStep');
       }
@@ -303,6 +312,15 @@ export default {
       }
     },
     prevStep() {
+      if (!this.docLoadComplete) {
+        return this.$message({
+          message: `请文档加载完成以后再操作`,
+          showClose: true,
+          // duration: 0,
+          type: 'warning',
+          customClass: 'zdy-info-box'
+        });
+      }
       if (!this.dotPageInfo.pageIndex === 1) {
         this.$EventBus.$emit('prevStep');
       }
@@ -603,7 +621,7 @@ export default {
       that.isDot = true;
       that.dotPageInfo.pageIndex = 0;
       that.dotPageInfo.total = 0;
-      that.isLoadingEnd = false;
+      that.docLoadComplete = false;
       await that.$nextTick(() => {})
       that.docEvents(rows);
     },
@@ -796,8 +814,8 @@ export default {
         });
         this.docSDK.on(VHDocSDK.Event.ALL_COMPLETE, event => {
             // 数据格式同  翻页事件 VHDocSDK.Event.PAGE_CHANGE
-          console.log('ALL_COMPLETE所有文档加载完毕');
-          this.isLoadingEnd = true;
+          console.log('=============所有文档加载完成==============', event);
+          this.docLoadComplete = true;
         })
         console.log('docSDK_ready', docsdk, this.$refs.doc);
       });

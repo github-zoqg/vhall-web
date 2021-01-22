@@ -445,7 +445,7 @@ export default {
           }
       }
       .app-download{
-        height: 278px;
+        height: 279px;
         background: #fff;
         margin:16px 0;
         border-radius: 4px;
@@ -480,7 +480,8 @@ export default {
       }
       .data-document{
         background: #fff;
-        height: 190px;
+        // height: calc(100% - 590px);
+        height: 270px;
         border-radius: 4px;
         h2{
           font-size: 16px;
