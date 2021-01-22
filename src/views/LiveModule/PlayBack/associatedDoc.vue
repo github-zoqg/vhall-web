@@ -266,11 +266,12 @@ export default {
     initComp() {
       // 历史已经选择过的数据清空
       this.dialogTableList = [];
-      this.dialogVisible = true;
+      // this.dialogVisible = true;
       this.formParams.keyword = '';
       this.searchHandle();
     },
     saveCheckHandle() {
+      console.log('this.dialogMulti', this.dialogMulti)
       if (this.dialogMulti && this.dialogMulti.length > 0) {
         if (this.tableDataLength) {
           this.$confirm("当前视频内容已有关联文档，再次关联文档，将会清除已设置的全部章节内容，确认继续？", '提示', {
@@ -295,18 +296,28 @@ export default {
         } else {
           // this.$message.info('已取消选择');
           this.$EventBus.$emit('demonstration', {
-            documentIds: this.tableSelect
+            documentIds: this.dialogMulti
           });
-          this.$emit('getChapters', this.tableSelect);
+          this.$emit('getChapters', this.dialogMulti);
           try {
             this.$refs.elTable.clearSelection();
           } catch (e) {
             console.log(e);
           }
-          this.tableSelect = []
+          this.dialogMulti = []
           this.dialogVisible = false;
         }
       } else {
+        this.$EventBus.$emit('demonstration', {
+          documentIds: this.dialogMulti
+        });
+        this.$emit('getChapters', this.dialogMulti);
+        try {
+          this.$refs.elTable.clearSelection();
+        } catch (e) {
+          console.log(e);
+        }
+        this.dialogMulti = []
         this.dialogVisible = false;
       }
     },
