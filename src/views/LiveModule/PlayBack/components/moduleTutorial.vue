@@ -31,7 +31,7 @@
     height: 500px;
   }
   .content {
-    padding: 223px 0 0 458px;
+    padding: 223px 0 0 455px;
     .title {
       width: 95px;
       height: 24px;
