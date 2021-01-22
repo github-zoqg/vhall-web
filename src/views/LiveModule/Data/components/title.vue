@@ -89,7 +89,7 @@ export default {
     padding-right: 50px;
     p {
       font-size: 20px;
-      font-weight: 700;
+      font-weight: 400;
       font-family: @fontRegular;
       color: #1a1a1a;
       overflow: hidden;
