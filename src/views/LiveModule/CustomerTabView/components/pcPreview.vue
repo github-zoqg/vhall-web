@@ -127,6 +127,7 @@ export default {
           border-bottom: 2px solid #Fff;
           display: inline-block;
           height: 49px;
+          color: #666666;
         }
         &.active{
           span{
