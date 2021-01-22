@@ -407,6 +407,7 @@ export default {
         // 深拷贝一个对象做对比
         this.lotteryPageMessage = JSON.parse(JSON.stringify(res.data))
         // this.givePrizeList.forEach(ele=>{
+        //   if(!ele.is_system)
         //   this.givePrizeForm[ele.field_key] = ele.placeholder
         // })
         this.givePrizeList.map(item => {

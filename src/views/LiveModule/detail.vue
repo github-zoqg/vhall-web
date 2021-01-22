@@ -463,8 +463,8 @@ export default {
       }
       .title_hover{
         position: absolute;
-        left: 40%;
-        top: 35%;
+        left: 370px;
+        top: 50px;
         border-radius: 4px;
         width: 368px;
         line-height: 17px;

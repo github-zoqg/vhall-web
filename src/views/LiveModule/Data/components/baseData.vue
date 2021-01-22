@@ -526,7 +526,7 @@ export default {
         }
       }
       i{
-          font-size: 14px;
+          font-size: 16px;
           padding: 0 2px;
         }
     }
@@ -545,6 +545,7 @@ export default {
         position: relative;
         border-radius: 4px;
         background: #fff;
+        border: 1px solid transparent;
         cursor: pointer;
         &:nth-child(3n) {
           margin-right: 0;
@@ -568,9 +569,8 @@ export default {
           //   color: #FB3A32;
           // }
           label{
-            width: 40px;
-            height: 35px;
-            margin-top: 8px;
+            width: 44px;
+            height: 44px;
             img{
               width: 100%;
               height: 100%;
@@ -588,13 +588,17 @@ export default {
               color:#1A1A1A;
               font-weight: bold;
               line-height: 35px;
-              padding-top: 5px;
+              // padding-top: 5px;
               span{
                 color:#1A1A1A;
                 font-weight: bold;
               }
             }
           }
+        }
+        &:hover{
+          border: 1px solid #fb3a32;
+          // border-radius: 4px;
         }
       }
     }
