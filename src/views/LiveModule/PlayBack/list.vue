@@ -169,6 +169,7 @@ import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
 import beginPlay from '@/components/beginBtn';
+import EventBus from "@/utils/Events";
 export default {
   data(){
     return {
@@ -222,9 +223,9 @@ export default {
     }
   },
   created(){
-    this.getInitMsgInfo();
     this.getList();
     this.getLiveDetail();
+    EventBus.$on('record_download', this.handleDownload)
   },
   mounted(){
     this.tipMsg = this.$message({
@@ -241,6 +242,7 @@ export default {
       this.chatSDK.destroy()
       this.chatSDK = null
     }
+    EventBus.$off('record_download', this.handleDownload)
   },
   methods: {
     preview(data) {
@@ -362,62 +364,21 @@ export default {
       this.editDialogVisible = true;
       this.editRecord = data;
     },
-    // 初始化消息
-    getInitMsgInfo() {
-      this.$fetch('msgInitConsole').then(res => {
-        this.initChat(res.data);
-      })
-    },
-    initChat (params) {
-      let opt = {
-        appId: params.paasAppId,
-        accountId: params.accountId,
-        channelId: params.channelId,
-        token: params.paasAccessToken
-      };
-      VhallChat.createInstance(
-        opt,
-        chat => {
-          this.chatSDK = chat.message;
-          console.log('成功了居然', this.chatSDK)
-          // TODO: 监听消息,判断 userId 获取playbackInfo
-          // 自定义消息
-          this.chatSDK.onCustomMsg(msg => {
-            if (typeof msg !== 'object') {
-              msg = JSON.parse(msg);
-            }
-            try {
-              if (msg.data && typeof msg.data !== 'object') {
-                msg.data = JSON.parse(msg.data);
-              }
-            } catch (e) {
-              console.log(e);
-            }
-
-            Object.assign(msg, msg.data);
-              console.log('==========自定义消息==========', msg)
-            if (msg.type == "record_download" && msg.user_id == sessionOrLocal.get('userId')) {
-              console.log('视频转码完成了')
-              // 消息会下发三次，只处理第一次
-              if (!this.handleMsgTimer) {
-                this.transcodingArr = this.transcodingArr.filter(item => {
-                  if(item.id == msg.data.record_id) {
-                    item.transcoding = false;
-                    return false;
-                  }
-                })
-                window.open(msg.data.download_url)
-                this.handleMsgTimer = setTimeout(() => {
-                  this.handleMsgTimer = ''
-                }, 2000)
-              }
-            }
-          })
-        },
-        err => {
-          console.error('聊天SDK实例化失败', err);
-        }
-      )
+    handleDownload(data) {
+      console.log('视频转码完成了')
+      // 消息会下发三次，只处理第一次
+      if (!this.handleMsgTimer) {
+        this.transcodingArr = this.transcodingArr.filter(item => {
+          if(item.id == data.record_id) {
+            item.transcoding = false;
+            return false;
+          }
+        })
+        window.open(data.download_url)
+        this.handleMsgTimer = setTimeout(() => {
+          this.handleMsgTimer = ''
+        }, 2000)
+      }
     },
     // 下载回放
     downPlayBack(data) {

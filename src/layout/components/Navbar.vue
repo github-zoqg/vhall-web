@@ -177,6 +177,9 @@ export default {
         if (msg.data.type === 'sign_trans_code') {
           EventBus.$emit('sign_trans_code', msg.data);
         }
+        if (msg.data.type == "record_download" && msg.data.user_id == sessionOrLocal.get('userId')) {
+          EventBus.$emit('record_download', msg.data);
+        }
       })
     },
     // 初始化
