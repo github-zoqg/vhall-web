@@ -75,7 +75,7 @@
             <div v-else class="progressBox">
               <!-- 样式变化 -->
               <template v-for="(item, ins) of scope.row.transform_schedule_str.split('<br/>')" >
-                <span :class="[scope.row.fileStatusCss, 'statusTag']" :key="ins">{{item}}</span><br/>
+                <span :class="[scope.row.fileStatusCss, 'statusTag']" :key="ins">{{item}}</span><br />
               </template>
             </div>
           </template>
@@ -473,6 +473,9 @@ export default {
   } */
   /deep/.el-table td, .el-table th{
     padding: 15px 0;
+  }
+  /deep/.word-status i.iconfont-v3 {
+    font-size: 20px;
   }
   .text{
     width: 100%;

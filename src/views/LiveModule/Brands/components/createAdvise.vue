@@ -566,7 +566,7 @@ export default {
       //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
-       height: 320px;
+       height: 310px;
       //  overflow: auto;
        .ad-item{
           width: 165px;

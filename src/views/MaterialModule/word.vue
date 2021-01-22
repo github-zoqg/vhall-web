@@ -395,7 +395,8 @@ export default {
         });
       }).finally(()=>{
         this.asyncDialog.visible = false;
-        this.initPage();
+        // this.initPage();
+        window.location.reload();
       });
     },
     beforeUploadHandler(file){

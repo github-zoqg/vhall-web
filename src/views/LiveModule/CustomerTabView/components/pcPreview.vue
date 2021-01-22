@@ -25,6 +25,7 @@
       <preview
         v-if="checkedInfo"
         :currentInfo="checkedInfo"
+        :pre="pre"
       ></preview>
     </div>
   </div>
@@ -35,6 +36,9 @@ import preview from './preview-pc'
 export default {
   props: {
     menus: {
+      required: true
+    },
+    pre: {
       required: true
     }
   },

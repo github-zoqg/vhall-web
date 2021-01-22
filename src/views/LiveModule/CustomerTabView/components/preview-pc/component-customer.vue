@@ -36,7 +36,7 @@
         <component-line :info="item" mode="1"></component-line>
       </div>
       <div :key="index" v-if="item.component_id == 9">
-        <rank :info="item" mode="1"></rank>
+        <rank :info="item" mode="1" :pre="pre"></rank>
       </div>
 
     </template>
@@ -60,6 +60,9 @@ export default {
       required: true
     },
     units: {
+      required: true
+    },
+    pre: {
       required: true
     }
   },

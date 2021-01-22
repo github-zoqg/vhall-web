@@ -368,7 +368,8 @@ export default {
     .top{
       cursor: pointer;
       height: 175px;
-      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+     /*  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
+      background: #1A1A1A;
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
       padding: 10px 10px;
@@ -378,6 +379,7 @@ export default {
       img{
         width: 100%;
         height: 100%;
+        object-fit: scale-down;
         position: absolute;
         border-radius: 4px 4px 0 0;
         top:0;

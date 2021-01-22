@@ -1088,6 +1088,7 @@ export default {
   }
   /deep/.saasicon_help_m {
     color: #999999;
+    vertical-align: bottom;
   }
 </style>
 <style lang="less">

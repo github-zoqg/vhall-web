@@ -9,7 +9,7 @@
         3.奖品图片：尺寸120*120px，大小不超过2M
       </div>
     </pageTitle>
-    <div class="head-operat" v-show="total || isSearch">
+    <div class="head-operat" v-show="total || isSearch" :class="source==0 ? 'head-prize' : ''">
       <el-button size="medium" type="primary" round class="head-btn length104" @click="createPrize">创建奖品</el-button>
       <el-button size="medium" round class="head-btn length104" v-if="$route.meta.title !== '奖品'" @click="prizeMeterial">资料库</el-button>
       <el-button size="medium" round class="head-btn batch-del" @click="allDelete(null)" :disabled="!prizeChecked.length">批量删除</el-button>
@@ -305,6 +305,9 @@ export default {
         }
       }
     }
+  }
+  .head-prize{
+    margin-left: 24px;
   }
   .prize-no{
     // height: calc(100vh - 260px);

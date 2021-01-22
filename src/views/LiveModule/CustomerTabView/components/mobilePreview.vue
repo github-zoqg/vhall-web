@@ -47,14 +47,14 @@
         <i class="iconfont-v3 saasicon_arrowright1" @click.stop="scrollRight()" style="background:#fff; z-index:5; padding-right:2px"></i>
       </div>
       <div class="vh-mobile-tab-content">
-        <component-preview>
+        <component-preview :pre="pre">
         </component-preview>
       </div>
       </div>
     </div>
     <!-- 编辑区域 -->
     <div class="vh-vh-mobile-preview-editor">
-      <editor />
+      <editor :pre="pre"/>
       <!-- <editor-box>
       </editor-box> -->
     </div>
@@ -100,6 +100,9 @@ export default {
   props: {
     menus: {
       requred: true
+    },
+    pre: {
+      required: true
     }
   },
   data() {

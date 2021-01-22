@@ -59,7 +59,7 @@
                         </label>
                       </p>
                     </div>
-                    <p style="color:#666">建议尺寸：240*240px，小于2M 支持jpg、gif、png、bmp</p>
+                    <p style="color:#999">建议尺寸：240*240px，小于2M 支持jpg、gif、png、bmp</p>
                 </el-form-item>
                 <el-form-item label="标题">
                     <VhallInput v-model.trim="formData.title" autocomplete="off" :maxlength="10"  placeholder="请输入抽奖标题" show-word-limit></VhallInput>
@@ -84,7 +84,7 @@
         </el-tab-pane>
          <el-tab-pane label="领奖页设置" name="second">
           <div class="give-item">
-            <div class="give-prize">
+            <div class="give-prize give-live">
               <el-form :model="givePrizeForm" ref="ruleForm" label-width="100px">
                   <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_key}`">
                     <VhallInput v-model="givePrizeForm[item.field_key]" type="text" maxlength="200" :placeholder="item.placeholder"></VhallInput>
@@ -406,9 +406,10 @@ export default {
         this.lotteryrank = res.data[res.data.length - 1].rank
         // 深拷贝一个对象做对比
         this.lotteryPageMessage = JSON.parse(JSON.stringify(res.data))
-        this.givePrizeList.forEach(ele=>{
-          this.givePrizeForm[ele.field_key] = ele.placeholder
-        })
+        // this.givePrizeList.forEach(ele=>{
+        //   if(!ele.is_system)
+        //   this.givePrizeForm[ele.field_key] = ele.placeholder
+        // })
         this.givePrizeList.map(item => {
           item.is_required = Boolean(item.is_required);
         })
@@ -416,10 +417,10 @@ export default {
     },
     // 保存领奖页信息
     sureGivePrize() {
-      this.givePrizeList.forEach(ele=>{
-        console.warn(this.givePrizeForm[ele.field_key], 789, this.givePrizeForm, ele.field_key);
-        ele.placeholder = this.givePrizeForm[ele.field_key]
-      })
+      // this.givePrizeList.forEach(ele=>{
+      //   console.warn(this.givePrizeForm[ele.field_key], 789, this.givePrizeForm, ele.field_key);
+      //   ele.placeholder = this.givePrizeForm[ele.field_key]
+      // })
       console.warn(this.givePrizeList);
       this.$fetch('saveDrawPrizeInfo', {webinar_id: this.$route.params.str,data:JSON.stringify(this.givePrizeList)}).then(res => {
         this.$message({
@@ -563,7 +564,10 @@ export default {
     }
  }
   .prize-info{
-    margin: 18px 24px;
+    margin: 18px 0;
+    // .question-list{
+    //   padding: 24px 0;
+    // }
   }
   .prize-list{
     padding: 33px 24px;
@@ -576,6 +580,9 @@ export default {
     display: flex;
     /deep/.el-form{
       position: relative;
+    }
+    /deep/.el-input__inner{
+      height: 40px;
     }
     .give-prize{
       width: 480px;
@@ -612,6 +619,14 @@ export default {
         height: 240px;
       }
     }
+    .give-live{
+      /deep/.el-form-item {
+        margin-bottom: 10px;
+        &:last-child{
+          padding-top: 10px;
+        }
+      }
+    }
     .add-prize{
       position: absolute;
       left: 100px;
@@ -628,7 +643,7 @@ export default {
       }
     }
     .give-show{
-      width: 340px;
+      width: 370px;
       height: 631px;
       background-image: url('../../../common/images/gif/prize.png');
       background-size: cover;

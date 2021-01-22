@@ -216,8 +216,11 @@ export default {
       this.$fetch('subjectDel', {subject_ids: id}).then(res=>{
         if(res && res.code === 200) {
           this.$message({
+            message: `删除成功`,
+            showClose: true,
+            // duration: 0,
             type: 'success',
-            message: '删除成功!'
+            customClass: 'zdy-info-box'
           });
           // 刷新列表
           this.searchHandler();

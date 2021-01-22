@@ -8,6 +8,7 @@
         mode="2"
         v-if="editorIndex == index"
         :info="item"
+        :pre="pre"
       ></preview>
     </div>
   </div>
@@ -24,6 +25,9 @@ export default {
       required: true
     },
     uuid: {
+      required: true
+    },
+    pre: {
       required: true
     }
   },

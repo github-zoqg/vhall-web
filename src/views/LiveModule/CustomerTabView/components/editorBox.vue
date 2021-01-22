@@ -6,6 +6,7 @@
         :menuInfo.sync="currentInfo"
         :units.sync="currentInfo.components"
         :uuid="currentInfo.uuid"
+        :pre="pre"
       >
       </component>
     </template>
@@ -17,6 +18,11 @@ import EventBus from '../bus'
 import componentCustomer from './componet-editor/component-customerEditor'
 import componentChat from './componet-editor/component-chatEditor'
 export default {
+  props: {
+    pre: {
+      required: true
+    }
+  },
   data() {
     return {
       currentInfo: {}

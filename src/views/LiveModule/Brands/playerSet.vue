@@ -182,8 +182,58 @@
       </el-tabs>
       <div class="show-purple">
           <el-button type="white-primary" size="small" round class="preview-video" @click="previewVideo">预览</el-button>
+          <div class="video-wrap">
+            <div id="videoDom"></div>
+            <div class="vod-controller" :class="{'active':hoveVideo}">
+              <div class="slider line-slider">
+                <el-slider v-model="sliderVal" :show-tooltip="false" ref="controllerRef" @change="setVideo" v-if="formOther.progress"></el-slider>
+                <div class="Times" :style="{ left: hoverLeft + 'px' }" v-show="TimesShow">
+                  <span class="current-time">{{ hoverTime | secondToDate }}</span>
+                </div>
+              </div>
+              <div class="wrap">
+                <div class="left-box fl">
+                  <i v-if="!statePaly" class="iconfont-v3 saasicon_zanting" @click="videoPlayBtn"></i>
+                  <i v-else class="iconfont-v3 saasicon_bofang" @click="videoPlayBtn"></i>
+                  <div class="center-box">
+                    <span class="current-time">
+                      {{ currentTime | secondToDate }}
+                    </span>
+                    <span>/</span>
+                    <span class="all-time">{{ totalTime | secondToDate }}</span>
+                  </div>
+                </div>
+                <div class="center-wrap">
+                  <!-- 倍速 -->
+                  <div class="speed-box" v-if="formOther.doubleSpeed">
+                    <p class="chose" @click="choseSpeed">{{speed}}x</p>
+                    <div class="chose-list" v-show="isSpeed">
+                      <p v-for="(item, index) in speedList" :key="index" :class="speed==item ? 'active' : ''" @click="choseOtherSpeed(item)">{{item}}x</p>
+                    </div>
+                  </div>
+                  <!-- 弹幕 -->
+                  <div class="barrage-box">
+                    <i class="iconfont-v3 saasdanmu_kai" v-if="formOther.bulletChat"></i>
+                    <i class="iconfont-v3 saasdanmu_guan" v-if="!formOther.bulletChat"></i>
+                  </div>
+                </div>
+                <div class="right-box fr">
+                  <div class="volume-box">
+                    <span class="icon-box">
+                      <i style="color: #ececec" class="iconfont-v3" @click="jingYin"  :class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'" ></i>
+                    </span>
+                    <div class="ver-slider">
+                      <el-slider vertical height="100px"  @change="setVoice" :min='0'  v-model="voice"></el-slider>
+                    </div>
+                  </div>
+                  <i v-if="isFullscreen" class="iconfont-v3 saasicon_quxiaoquanping" @click="exitFullscreen"></i>
+                  <i v-else class="iconfont-v3 saasicon_quanping" @click="enterFullscreen"></i>
+                </div>
+              </div>
+            </div>
+          </div>
           <!-- <img :src="audioEnd" alt="" v-show="!showVideo"> -->
-          <div id="videoDom" v-show="showVideo"></div>
+          <!-- <div id="videoDom" v-show="showVideo"></div> -->
           <p class="show-purple-info">
             <span>提示</span>
             <span>1. 移动端全屏播放时，跑马灯会失效</span>
@@ -203,17 +253,32 @@ import Env from "@/api/env";
 import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue';
 import { sessionOrLocal, debounce } from '@/utils/utils';
 import beginPlay from '@/components/beginBtn';
+import { secondToDateZH } from '@/utils/general';
+import controle from './js/control';
 export default {
-  name: 'prizeSet',
+  name: 'playerSet',
+  mixins: [controle],
   data() {
     return {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       activeName: 'first',
+      sliderVal: 0, // seek
+      hoverLeft: 10,
+      hoveVideo:false,
+      statePaly: false, // 播放状态
+      currentTime: 0,
+      voice: 20, // 音量
+      isFullscreen: false, // 全屏
       loading: true,
+      TimesShow: false,
       showVideo: false,
+      hoverTime: 10, // seek显示时间
       totalTime: 0,
       scrolling_open: false,
       watermark_open: false,
+      isSpeed: false,
+      speedList: [],
+      speed: 1,
       pageThemeColors: ['FFFFFF','1A1A1A','FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
       formHorse: {
         color: '#FFFFFF', // 六位
@@ -296,13 +361,19 @@ export default {
       }
     }
   },
+  filters: {
+    secondToDate (val) {
+      return secondToDateZH(val);
+    },
+  },
   created() {
     this.getFontList();
     this.getBasescrollingList();
+    // 获取其他信息
+    this.getBaseOtherList();
   },
   mounted () {
     this.initPlayer();
-
   },
   beforeDestroy() {
     if(this.$Vhallplayer){
@@ -315,6 +386,13 @@ export default {
       if (!this.formHorse.interval) {
         this.formHorse.interval = 20;
       }
+    },
+    choseSpeed() {
+      this.isSpeed = true;
+    },
+    choseOtherSpeed(item) {
+      this.isSpeed = false;
+      this.speed = item;
     },
     // 预览视频
     previewVideo () {
@@ -350,47 +428,48 @@ export default {
     otherOtherInfo(value) {
       this.preOthersOptions();
       // 1--弹幕  2--进度条  3--倍速
-      switch (value) {
-        case 1 :
-          if (this.formOther.bulletChat) {
-            let content = "弹幕已开启";
-            var opt = {
-                  position: 0,     // 位置   int  0上    1中  2下  3全屏
-                  alpha: 1,      // 透明度 int  0~1
-                  fontsize: 15,    // 字体大小 int
-                  color: "#000000"  // 颜色   string
-                }
-            vp.setBarrageInfo(opt ,failure=>{
-              console.log('failure',failure);
-            } )
-            vp.openBarrage()
-            setTimeout (()=>{
-              vp.addBarrage(content , failure=>{
-                console.log('failure',failure);
-              })
-            },2000)
+      // switch (value) {
+      //   case 1 :
+      //     if (this.formOther.bulletChat) {
+      //       let content = "弹幕已开启";
+      //       var opt = {
+      //             position: 0,     // 位置   int  0上    1中  2下  3全屏
+      //             alpha: 1,      // 透明度 int  0~1
+      //             fontsize: 15,    // 字体大小 int
+      //             color: "#000000"  // 颜色   string
+      //           }
+      //       vp.setBarrageInfo(opt ,failure=>{
+      //         console.log('failure',failure);
+      //       } )
+      //       vp.openBarrage()
+      //       setTimeout (()=>{
+      //         vp.addBarrage(content , failure=>{
+      //           console.log('failure',failure);
+      //         })
+      //       },2000)
 
-          } else {
-            vp.closeBarrage()
-          }
-          break;
-        case 2 :
-          // eslint-disable-next-line no-case-declarations
-          let progressContainer =  document.querySelector('.vhallPlayer-progress-container')
-           this.formOther.progress ? progressContainer.style.display = 'block' : progressContainer.style.display = 'none'
-          break;
-        case 3 :
-          // eslint-disable-next-line no-case-declarations
-          let list = this.$Vhallplayer.getUsableSpeed()
-          if (this.formOther.doubleSpeed) {
-            this.$Vhallplayer.setPlaySpeed(list[0])
+      //     } else {
+      //       vp.closeBarrage()
+      //     }
+      //     break;
+      //   case 2 :
+      //     // eslint-disable-next-line no-case-declarations
+      //     let progressContainer =  document.querySelector('.vhallPlayer-progress-container')
+      //      this.formOther.progress ? progressContainer.style.display = 'block' : progressContainer.style.display = 'none'
+      //     break;
+      //   case 3 :
+      //     // eslint-disable-next-line no-case-declarations
+      //     let list = this.$Vhallplayer.getUsableSpeed()
+      //     console.log(list, '?????????')
+      //     if (this.formOther.doubleSpeed) {
+      //       this.$Vhallplayer.setPlaySpeed(list[0])
 
-             document.querySelector('.vhallPlayer-speed-component').style.display = "block"
-          }else {
-            document.querySelector('.vhallPlayer-speed-component').style.display = "none"
-          }
-          break;
-      }
+      //        document.querySelector('.vhallPlayer-speed-component').style.display = "block"
+      //     }else {
+      //       document.querySelector('.vhallPlayer-speed-component').style.display = "none"
+      //     }
+      //     break;
+      // }
       // this.initNodePlay()
     },
     // 获取跑马灯基本信息
@@ -401,7 +480,6 @@ export default {
           this.$nextTick(() => {
             this.$refs.pageThemeColors.initColor(res.data.color);
           })
-          console.log(this.formHorse.color, '?222222222222222222')
           this.scrolling_open = Boolean(res.data.scrolling_open);
         }
       })
@@ -424,16 +502,16 @@ export default {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
           this.formOther.progress = Boolean(res.data.progress_bar);
           this.formOther.doubleSpeed = Boolean(res.data.speed);
-          let progressContainers =  document.querySelector('.vhallPlayer-progress-container')
-          this.formOther.progress ? progressContainers.style.display = 'block' : progressContainers.style.display = 'none'
-          this.$nextTick(()=>{
-            if (this.formOther.doubleSpeed) {
-              // this.$Vhallplayer.setPlaySpeed(list[0])
-                document.querySelector('.vhallPlayer-speed-component').style.display = "block"
-              }else {
-                document.querySelector('.vhallPlayer-speed-component').style.display = "none"
-              }
-          })
+          // let progressContainers =  document.querySelector('.vhallPlayer-progress-container')
+          // this.formOther.progress ? progressContainers.style.display = 'block' : progressContainers.style.display = 'none'
+          // this.$nextTick(()=>{
+          //   if (this.formOther.doubleSpeed) {
+          //     // this.$Vhallplayer.setPlaySpeed(list[0])
+          //       document.querySelector('.vhallPlayer-speed-component').style.display = "block"
+          //     }else {
+          //       document.querySelector('.vhallPlayer-speed-component').style.display = "none"
+          //     }
+          // })
         }
       }).catch(res => {
         this.$message({
@@ -562,6 +640,11 @@ export default {
 
       // document.querySelector('.vhallPlayer-container').style.display = 'block';
       this.initSDK().then(() => {
+        this.initSlider();
+          this.totalTime = this.$Vhallplayer.getDuration(() => {
+            console.log('获取总时间失败');
+          });
+          // this.listen();
         // 初试完播放器获取其它设置
         this.getBaseOtherList()
 
@@ -597,6 +680,7 @@ export default {
         type: 'vod', // live 直播  vod 点播  必填
         videoNode: 'videoDom', // 播放器的容器， div的id 必填
         poster: '', // 封面地址  仅支持.jpg
+        isLoop: true,
         vodOption: { recordId: '922013fa', forceMSE: false },
         marqueeOption:{ // 选填
           enable: Boolean(this.scrolling_open), // 默认 false
@@ -613,12 +697,12 @@ export default {
           url: this.domain_url || this.audioImg, // 水印图片的路径
           align: 'tr', // 图片的对其方式， tl | tr | bl | br 分别对应：左上，右上，左下，右下
           position: watermarkOptionPosition, // 对应的横纵位置，支持px,vh,vw,%
-          size: ['80px', '35px'], // 水印大小，支持px,vh,vw,%
+          size: ['180px', '60px'], // 水印大小，支持px,vh,vw,%  默认 80 35
           alpha:this.formWatermark.img_alpha
         },
         subtitleOption: {
-            enable: true
-          }
+          enable: true
+        }
 
       };
       return new Promise((resolve) => {
@@ -632,8 +716,16 @@ export default {
 
             this.$Vhallplayer = event.vhallplayer;
             window.vp = this.$Vhallplayer;
-            this.$Vhallplayer.pause()
+            // this.$Vhallplayer.pause()
             this.$Vhallplayer.openControls(false);
+            if (this.formOther.doubleSpeed) {
+              this.speedList = this.$Vhallplayer.getUsableSpeed() || [];
+              this.speedList.map((item, index) => {
+                if (item == 1) {
+                  this.speed = this.speedList[index];
+                }
+              })
+            }
             this.$Vhallplayer.on(window.VhallPlayer.LOADED, () => {
               this.loading = false;
               // 加载中
@@ -641,9 +733,9 @@ export default {
             });
 
             // document.querySelector('.vhallPlayer-container').classList.remove("hide");
-            document.querySelector('.vhallPlayer-container').style.display = 'block';
-            document.querySelector('.vhallPlayer-container').classList.remove('hide')
-            console.log(document.querySelector('.vhallPlayer-container').classList, '?????????????')
+            // document.querySelector('.vhallPlayer-container').style.display = 'block';
+            // document.querySelector('.vhallPlayer-container').classList.remove('hide')
+            // console.log(document.querySelector('.vhallPlayer-container').classList, '?????????????')
           },
           (e) => {
             console.log('播放器创建实例失败', e, e.message);
@@ -677,6 +769,54 @@ export default {
         this.formWatermark.img_url = file_url;
         this.domain_url = domain_url;
       }
+    },
+    initSlider () {
+      this.$Vhallplayer.on(window.VhallPlayer.TIMEUPDATE, () => {
+        this.currentTime = this.$Vhallplayer.getCurrentTime(() => {});
+        this.sliderVal = (this.currentTime / this.totalTime) * 100;
+      });
+      // 拖拽显示时间
+      const dom = this.$refs.controllerRef.$el;
+      const but = document.querySelector('div.el-slider__button-wrapper');
+      const innitDom = () => {
+        dom.onmouseover = e => {
+          console.log('dom over', e);
+          this.TimesShow = true;
+          const totalWidth = dom.offsetWidth;
+          this.ContorlWidth = dom.offsetWidth;
+          const lef = e.layerX;
+          this.hoverTime = (lef / totalWidth) * this.totalTime;
+          this.hoverLeft = lef;
+          dom.onmousemove = event => {
+            const lef = event.layerX;
+            this.hoverTime = (lef / totalWidth) * this.totalTime;
+            this.hoverLeft = lef;
+          };
+        };
+        dom.onmouseout = () => {
+          this.TimesShow = false;
+        };
+      };
+      innitDom();
+      but.onmousedown = () => {
+        dom.onmouseout = dom.onmousemove = dom.onmousemove = dom.onmouseover = null;
+        this.ContorlWidth = dom.offsetWidth;
+        this.onmousedownControl = true;
+        this.pause();
+        document.onmousemove = () => {
+          this.TimesShow = true;
+        };
+        document.onmouseup = () => {
+          document.onmousemove = null;
+          this.onmousedownControl = false;
+          this.TimesShow = false;
+          innitDom();
+        };
+      };
+      but.onmouseover = e => {
+        this.TimesShow = false;
+        e.stopPropagation();
+      };
     },
     beforeUploadHnadler(file){
       console.log(file);
@@ -747,23 +887,27 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background: black;
   /deep/.vhallPlayer-container{
-    display: block !important;
+    display: none!important;
   }
-  /deep/.vhallPlayer-config-btn {
-    display: none;
-  }
-  /deep/ .vhallPlayer-definition-component,/deep/.vhallPlayer-volume-component {
-    display: none;
-  }
-  /deep/.vhallPlayer-speed-component span.vhallPlayer-speedBtn:hover{
-    background: #FB3A32 !important;
-  }
-  /deep/.vhallPlayer-speed-component .speed-popup {
-    ul.speed-list-box li:hover, ul.speed-list-box li.active{
-      color: #FB3A32 !important;
-    }
-  }
+  // /deep/.vhallPlayer-container{
+  //   display: block !important;
+  // }
+  // /deep/.vhallPlayer-config-btn {
+  //   display: none;
+  // }
+  // /deep/ .vhallPlayer-definition-component,/deep/.vhallPlayer-volume-component {
+  //   display: none;
+  // }
+  // /deep/.vhallPlayer-speed-component span.vhallPlayer-speedBtn:hover{
+  //   background: #FB3A32 !important;
+  // }
+  // /deep/.vhallPlayer-speed-component .speed-popup {
+  //   ul.speed-list-box li:hover, ul.speed-list-box li.active{
+  //     color: #FB3A32 !important;
+  //   }
+  // }
 
 }
 
@@ -877,7 +1021,6 @@ export default {
   .show-purple{
     width: 400px;
     height: 226px;
-    border: 1px solid #ccc;
     margin-top: 100px;
     margin-left: 20px;
     border-radius: 5px;
@@ -888,6 +1031,11 @@ export default {
       width: 400px;
       height: 226px;
     }
+    .video-wrap{
+      width: 400px;
+      height: 226px;
+      border: 1px solid #ccc;
+    }
     &-info {
       width: 300px;
       margin-top: 15px;
@@ -897,6 +1045,159 @@ export default {
         line-height: 20px;
         font-size: 14px;
       }
+    }
+  }
+  .video-wrap{
+    .vod-controller{
+      position: absolute;
+      z-index: 1;
+      width: 100%;
+      height: 40px;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      transition: all 0.8s;
+      color: white;
+      .local-icon{
+        display: inline-block;
+        width: 38px;
+        text-align: center;
+        color: white;
+      }
+      .slider::v-deep{
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        .Times {
+          position: absolute;
+          top: -35px;
+          min-width: 60px;
+          text-align: center;
+          padding: 5px;
+          background: rgba(0, 0, 0, 0.3);
+          font-size: 12px;
+          color: #fff;
+          transform: translateX(-50%);
+        }
+        &:hover{
+          top: -2px;
+          .el-slider__runway{
+            height: 8px;
+          }
+          .el-slider__bar{
+            height: 8px;
+          }
+        }
+        .el-slider{
+          .el-slider__runway{
+            margin: 0;
+          }
+        }
+      }
+      .wrap{
+        width: 100%;
+        .left-box{
+          i:first-child{
+            padding: 0 8px;
+            cursor: pointer;
+          }
+          .local-icon{
+            margin: 0 4px;
+          }
+          .center-box{
+            display: inline-block;
+            line-height: 48px;
+          }
+        }
+        .center-wrap{
+          float: left;
+          line-height: 45px;
+          padding: 0 15px 0 70px;
+          .speed-box{
+            display: inline-block;
+            padding-right: 30px;
+            position: relative;
+            .chose{
+              width: 60px;
+              height: 30px;
+              background: rgba(0, 0, 0, 1);
+              border-radius: 20px;
+              color: #fff;
+              text-align: center;
+              line-height: 30px;
+              font-size: 14px;
+              cursor: pointer;
+              &:hover{
+                background: #FB3A32;
+                opacity: 0.8;
+              }
+            }
+            .chose-list{
+              position: absolute;
+              top: 30px;
+              left: 0;
+              width: 55px;
+              border-radius: 4px;
+              background: rgba(0, 0, 0, 1);
+              cursor: pointer;
+              p{
+                height: 25px;
+                line-height: 25px;
+                color: #fff;
+                text-align: center;
+                &:hover{
+                  color: #FB3A32;
+                }
+                &:active{
+                  color: #FB3A32;
+                }
+              }
+            }
+          }
+          .barrage-box{
+            display: inline-block;
+            i{
+              font-size: 20px;
+            }
+            .saasdanmu_kai{
+              color:#FB3A32;
+            }
+          }
+        }
+        .right-box{
+          i:last-child{
+            padding: 0 12px;
+            cursor: pointer;
+          }
+          .volume-box{
+            display: inline-block;
+            line-height: 34px;
+            position: relative;
+            height: 34px;
+            margin-top: 6px;
+            &:hover{
+              .ver-slider{
+                display: block;
+              }
+            }
+            .icon-box{
+              i{
+                padding-right: 5px;
+                cursor: pointer;
+              }
+            }
+            .ver-slider{
+              display: none;
+              position: absolute;
+              left: 0;
+              bottom: 30px;
+            }
+          }
+        }
+      }
+    }
+    .active{
+      bottom: 0px;
     }
   }
   .preview-video {

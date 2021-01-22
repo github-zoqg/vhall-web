@@ -29,7 +29,7 @@
             </div>
             <div class="xieyi">
               <el-checkbox v-model="checked"
-                >同意<span>《微吼直播服务协议》</span></el-checkbox
+                >同意<span @click="goNetwork">《微吼直播服务协议》</span></el-checkbox
               >
             </div>
           </div>
@@ -79,7 +79,7 @@
             </div>
             <div class="xieyi">
               <el-checkbox v-model="checked"
-                >同意<span>《微吼直播服务协议》</span></el-checkbox
+                >同意<span @click="goNetwork">《微吼直播服务协议》</span></el-checkbox
               >
             </div>
           </div>
@@ -271,6 +271,10 @@ export default {
         })
         return;
       }
+    },
+    goNetwork() {
+      let href = `https://e.vhall.com/home/vhallapi/serviceagreement`;
+      window.open(href, '_blank');
     }
   }
 };
