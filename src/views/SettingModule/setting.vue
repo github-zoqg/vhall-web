@@ -75,19 +75,19 @@ export default {
     border-radius: 50%;
     margin-left: 35px;
     &.png_saasicon_kaifashezhi {
-      background-image: url("../../common/images/sys/saasicon_kaifashezhi.png");
+      background-image: url("../../common/images/sys/saasicon_kaifashezhi@2x.png");
       background-repeat: no-repeat;
       background-size: 100% 100%;
       border-radius: 0;
     }
     &.png_saasicon_kongzhitaibiaoshi {
-      background-image: url("../../common/images/sys/saasicon_kongzhitaibiaoshi.png");
+      background-image: url("../../common/images/sys/saasicon_kongzhitaibiaoshi@2x.png");
       background-repeat: no-repeat;
       background-size: 100% 100%;
       border-radius: 0;
     }
     &.png_saasicon_xiaoxiyanjinci {
-      background-image: url("../../common/images/sys/saasicon_xiaoxiyanjinci.png");
+      background-image: url("../../common/images/sys/saasicon_xiaoxiyanjinci@2x.png");
       background-repeat: no-repeat;
       background-size: 100% 100%;
       border-radius: 0;
