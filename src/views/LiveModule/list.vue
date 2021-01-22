@@ -49,7 +49,7 @@
       <el-row :gutter="40" class="lives">
           <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
             <div class="inner">
-              <div class="top"  @click.prevent.stop="toDetail(item.webinar_id)">
+              <div class="top" @click.prevent.stop="toDetail(item.webinar_id)">
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
                   <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
                 <span class="hot">
@@ -434,6 +434,9 @@ export default {
           margin-left: 12px;
           margin-right: 20px;
         }
+        /deep/.el-input__icon{
+          line-height: 30px;
+        }
       }
       .el-input{
         width: 220px;
@@ -497,7 +500,6 @@ export default {
         border-radius: 4px;
       }
       .top{
-        cursor: pointer;
         height: 175px;
         // background: linear-gradient(-45deg, #797776, #b1adae, #e5e7e7, #f6fcfa);
         background: #1A1A1A;
@@ -512,6 +514,7 @@ export default {
           height: 100%;
           object-fit: scale-down;
           position: absolute;
+          cursor: pointer;
           border-radius: 4px 4px 0 0;
           top:0;
           left: 0;
@@ -544,6 +547,7 @@ export default {
           color: #fff;
           font-size: 14px;
           z-index: 2;
+          cursor: pointer;
           i{
             position: absolute;
             left: 14px;
@@ -564,6 +568,7 @@ export default {
           color: #1A1A1A;
           font-size: 16px;
           margin-bottom: 6px;
+          line-height: 24px;
           text-overflow: -o-ellipsis-lastline;
           overflow: hidden;
           text-overflow: ellipsis;
