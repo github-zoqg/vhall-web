@@ -48,8 +48,9 @@
     <div v-if="totalElement">
       <el-row :gutter="40" class="lives">
           <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
-            <div class="inner">
-              <div class="top" @click.prevent.stop="toDetail(item.webinar_id)">
+            <router-link :to="{path: `/live/detail/${item.webinar_id}`}" target="_blank" class="inner">
+              <!--  @click.prevent.stop="toDetail(item.webinar_id)" -->
+              <div class="top">
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
                   <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
                 <span class="hot">
@@ -58,48 +59,40 @@
                 <img :src="`${item.img_url}`" alt="">
                 <!-- <div class=""></div> -->
               </div>
-              <div class="center">
-                <div class="">
-                  <router-link :to="{path: `/live/detail/${item.webinar_id}`}" target="_blank" class="liveTitle" :title="item.subject" >{{item.subject}}</router-link>
-                  <router-link :to="{path: `/live/detail/${item.webinar_id}`}" target="_blank" class="liveTime">{{item.start_time}}</router-link>
-                </div>
-              </div>
               <div class="bottom">
+                <div class="">
+                  <p class="liveTitle" :title="item.subject">{{item.subject}}</p>
+                  <p class="liveTime">{{item.start_time}}</p>
+                </div>
                 <p class="liveOpera">
-                  <router-link :to="{path: `/live/detail/${item.webinar_id}`}" target="_blank" class="btn-css"
-                    v-if="item.webinar_state!=4">
-                    <el-tooltip class="item" effect="dark" content="开播" placement="top">
-                      <i class="iconfont-v3 saasicon_kaibo" @click.prevent.stop="goLivePlay(item)"></i>
-                      <!-- <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link> -->
-                    </el-tooltip>
-                  </router-link>
-                  <router-link :to="{path: item.webinar_state == 4 ? `/live/recordplayback/${item.webinar_id}` : `/live/playback/${item.webinar_id}`}"
-                    target="_blank" class="btn-css" v-if="!(childPremission && Number(childPremission.permission_content) === 0)">
-                    <el-tooltip class="item" effect="dark" content="回放" placement="top">
-                    <i class="iconfont-v3 saasicon_huifang" @click="goPlayback(item)"></i>
-                    </el-tooltip>
-                  </router-link>
-                  <router-link :to="{path: `/live/detail/${item.webinar_id}`}" target="_blank" class="btn-css">
-                    <el-tooltip class="item" effect="dark" content="详情" placement="top">
-                      <i class="iconfont-v3 saasicon_xiangqing" @click.prevent.stop="toDetail(item.webinar_id)"></i>
-                    </el-tooltip>
-                  </router-link>
-                  <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)" @command="commandMethod">
-                    <i class="iconfont-v3 saasicon_more2"></i>
-                    <el-dropdown-menu style="width: 98px;" slot="dropdown">
-                      <el-dropdown-item command='/live/reportsData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">数据报告</el-dropdown-item>
-                      <el-dropdown-item command='/live/interactionData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">互动统计</el-dropdown-item>
-                      <el-dropdown-item command='/live/userData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">用户统计</el-dropdown-item>
-                      <el-dropdown-item command='/live/edit' v-if="item.webinar_state!=4">复制</el-dropdown-item>
-                      <el-dropdown-item command='删除'>删除</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+                  <el-tooltip class="item" effect="dark" content="开播" placement="top" v-if="item.webinar_state!=4">
+                    <i class="iconfont-v3 saasicon_kaibo" @click.prevent.stop="goLivePlay(item)"></i>
+                    <!-- <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link> -->
+                  </el-tooltip>
+                  <el-tooltip class="item" effect="dark" content="回放" placement="top" v-if="!(childPremission && Number(childPremission.permission_content) === 0)">
+                  <i class="iconfont-v3 saasicon_huifang" @click.prevent.stop="goPlayback(item)"></i>
+                  </el-tooltip>
+                  <el-tooltip class="item" effect="dark" content="详情" placement="top">
+                    <i class="iconfont-v3 saasicon_xiangqing" @click.prevent.stop="toDetail(item.webinar_id)"></i>
+                  </el-tooltip>
+                  <span @click.prevent.stop>
+                    <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)" @command="commandMethod">
+                      <i class="iconfont-v3 saasicon_more2"></i>
+                      <el-dropdown-menu style="width: 98px;" slot="dropdown">
+                        <el-dropdown-item command='/live/reportsData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">数据报告</el-dropdown-item>
+                        <el-dropdown-item command='/live/interactionData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">互动统计</el-dropdown-item>
+                        <el-dropdown-item command='/live/userData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">用户统计</el-dropdown-item>
+                        <el-dropdown-item command='/live/edit' v-if="item.webinar_state!=4">复制</el-dropdown-item>
+                        <el-dropdown-item command='删除'>删除</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </span>
                 </p>
               </div>
               <transition name="el-zoom-in-bottom">
                 <div class="mask" v-show="!!item.liveDropDownVisible"></div>
               </transition>
-            </div>
+            </router-link>
           </el-col>
       </el-row>
       <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
@@ -565,15 +558,15 @@ export default {
           }
         }
       }
-      .center{
-        height: 94px;
+      .bottom{
+        height: 139px;
         background: #fff;
         box-sizing: border-box;
-        padding: 14px 14px 0 14px;
+        padding: 14px 14px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        border-radius: 0;
+        border-radius: 0 0 4px 4px;
         .liveTitle{
           color: #1A1A1A;
           font-size: 16px;
@@ -591,27 +584,11 @@ export default {
           font-size: 14px;
           color: #666;
         }
-      }
-      .bottom{
-        height: 45px;
-        background: #fff;
-        box-sizing: border-box;
-        padding: 15px 14px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        border-radius: 0 0 4px 4px;
         .liveOpera{
           color: #666666;
           font-size: 18px;
           a{
             color: rgb(44, 43, 43);
-            &.btn-css {
-              color: #666666;
-              &:nth-child(2){
-                margin: 0 20px;
-              }
-            }
           }
           i{
             cursor: pointer;
