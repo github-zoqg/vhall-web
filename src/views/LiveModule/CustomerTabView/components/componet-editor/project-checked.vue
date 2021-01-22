@@ -137,6 +137,7 @@ export default {
       img{
         width: 100%;
         height: 100%;
+        object-fit: scale-down;
         position: absolute;
         top:0;
         left: 0;
