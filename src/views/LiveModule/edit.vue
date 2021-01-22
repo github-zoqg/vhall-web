@@ -10,7 +10,7 @@
       </el-form-item>
       <el-form-item label="直播时间" required v-if="webniarType=='live'" class="item-time">
           <el-col :span="11.5">
-            <el-form-item prop="date1" style="width:270px;" :rules="[
+            <el-form-item prop="date1" style="width:280px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
             ]">
               <el-date-picker type="date" class="date" prefix-icon="iconfont-v3 saasicon_date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%">
@@ -19,7 +19,7 @@
           </el-col>
           <el-col class="line" :span="1">-</el-col>
           <el-col :span="11.5">
-            <el-form-item prop="date2" style="width:270px;" :rules="[
+            <el-form-item prop="date2" style="width:280px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
             <el-time-picker placeholder="选择时间" :disabled="!formData.date1" type="datetime" :picker-options="{
@@ -1079,11 +1079,11 @@ export default {
     /deep/ .el-dialog__body{
       width: 642px;
       height: 375px;
-      border-top: 10px solid #333;
-      border-bottom: 10px solid #333;
-      background: #333;
+      border-top: 4px solid #1a1a1a;
+      border-bottom: 4px solid #1a1a1a;
+      background: #1a1a1a;
       border-radius: 4px;
-      padding: 0 10px;
+      padding: 0 4px;
     }
   }
   /deep/.saasicon_help_m {

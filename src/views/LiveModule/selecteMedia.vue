@@ -411,11 +411,11 @@ export default {
     /deep/ .el-dialog__body{
       width: 642px;
       height: 375px;
-      border-top: 10px solid #333;
-      border-bottom: 10px solid #333;
-      background: #333;
+      border-top: 4px solid #1a1a1a;
+      border-bottom: 4px solid #1a1a1a;
+      background: #1a1a1a;
       border-radius: 4px;
-      padding: 0 10px;
+      padding: 0 4px;
     }
   }
  /*  /deep/ .el-table__header{
