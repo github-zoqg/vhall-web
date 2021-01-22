@@ -206,6 +206,7 @@
                 <div class="center-wrap">
                   <!-- 倍速 -->
                   <div class="speed-box" v-if="formOther.doubleSpeed">
+                    <span>倍速</span>
                     <!-- <el-select v-model="speed" placeholder="请选择" style="">
                       <el-option
                         v-for="item in speedList"
@@ -221,8 +222,8 @@
                   </div>
                   <!-- 弹幕 -->
                   <div class="barrage-box">
-                    <i class="iconfont-v3 saasdanmu_kai" v-if="formOther.bulletChat"></i>
-                    <i class="iconfont-v3 saasdanmu_guan" v-if="!formOther.bulletChat"></i>
+                    <i class="iconfont-v3 saasdanmukai_icon" v-if="formOther.bulletChat"></i>
+                    <i class="iconfont-v3 saasdanmuguan_icon" v-if="!formOther.bulletChat"></i>
                   </div>
                 </div>
                 <div class="right-box fr">
@@ -1060,7 +1061,7 @@ export default {
       position: absolute;
       z-index: 1;
       width: 100%;
-      height: 40px;
+      height: 32px;
       bottom: 0;
       background: rgba(0,0,0,0.7);
       transition: all 0.8s;
@@ -1070,6 +1071,9 @@ export default {
         width: 38px;
         text-align: center;
         color: white;
+      }
+      .iconfont-v3{
+        font-size: 12px;
       }
       .slider::v-deep{
         width: 100%;
@@ -1088,17 +1092,30 @@ export default {
           transform: translateX(-50%);
         }
         &:hover{
-          top: -2px;
           .el-slider__runway{
-            height: 8px;
+            height: 3px;
           }
           .el-slider__bar{
-            height: 8px;
+            height: 3px;
           }
+        }
+        .el-slider__button-wrapper{
+          top: -16px;
         }
         .el-slider{
           .el-slider__runway{
             margin: 0;
+            height: 3px;
+            .el-slider__bar{
+              height: 3px;
+            }
+            .el-slider__button{
+              border: 5px solid #FB3A32;
+              background: transparent;
+              vertical-align: middle;
+              width: 0;
+              height: 0;
+            }
           }
         }
       }
@@ -1114,58 +1131,26 @@ export default {
           }
           .center-box{
             display: inline-block;
-            line-height: 48px;
+            line-height: 35px;
+            font-size: 12px;
           }
         }
         .center-wrap{
           float: left;
-          line-height: 45px;
-          padding: 0 15px 0 50px;
+          line-height: 32px;
+          width: 240px;
           .speed-box{
             display: inline-block;
-            padding-right: 30px;
-            position: relative;
-            .chose{
-              width: 60px;
-              height: 30px;
-              background: rgba(0, 0, 0, 1);
-              border-radius: 20px;
-              color: #fff;
-              text-align: center;
-              line-height: 30px;
-              font-size: 14px;
-              cursor: pointer;
-              &:hover{
-                background: #FB3A32;
-                opacity: 0.8;
-              }
-            }
-            .chose-list{
-              position: absolute;
-              top: 30px;
-              left: 0;
-              width: 55px;
-              border-radius: 4px;
-              background: rgba(0, 0, 0, 1);
-              cursor: pointer;
-              p{
-                height: 25px;
-                line-height: 25px;
-                color: #fff;
-                text-align: center;
-                &:hover{
-                  color: #FB3A32;
-                }
-                &:active{
-                  color: #FB3A32;
-                }
-              }
+            span{
+              font-size: 12px;
+              padding-left: 182px;
             }
           }
           .barrage-box{
-            display: inline-block;
+            float: right;
             i{
-              font-size: 20px;
+              font-size: 22px;
+              vertical-align: middle;
             }
             .saasdanmu_kai{
               color:#FB3A32;
@@ -1179,10 +1164,9 @@ export default {
           }
           .volume-box{
             display: inline-block;
-            line-height: 34px;
+            line-height: 32px;
             position: relative;
-            height: 34px;
-            margin-top: 6px;
+            height: 32px;
             &:hover{
               .ver-slider{
                 display: block;

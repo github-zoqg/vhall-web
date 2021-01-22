@@ -3,7 +3,7 @@
     <div class="content" v-loading="loading" @mousemove="wrapEnter" @mouseleave="wrapLeave">
       <div id="videoDom"></div>
       <div class="tips" v-if="!loading">
-        <img v-if="videoParam.msg_url=='.mp3' || videoParam.msg_url=='.mav'" class="audio-img" :src="audioImg" alt="">
+        <img v-if="videoParam.msg_url.toLowerCase()=='.mp3' || videoParam.msg_url.toLowerCase()=='.mav' || !videoParam.msg_url" class="audio-img" :src="audioImg" alt="">
         <div v-if="tipsType == 2" class="video-end">
           <div class="reset-play" @click="resetPlay">
             <i class="iconfont-v3 saasicon_replay"></i>
@@ -251,7 +251,8 @@ export default {
       background: #1a1a1a;
       i{
         color: #fff;
-        font-size: 50px;
+        font-size: 40px;
+        padding: 10px;
       }
       // img{
       //   width: 100%;

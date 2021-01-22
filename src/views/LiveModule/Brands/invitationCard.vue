@@ -773,10 +773,10 @@ export default {
         word-wrap:break-word;
       }
       p{
-        padding:0;
+        padding-top:6px;
         font-size: 14px;
         color: #666;
-        line-height: 25px;
+        line-height: 22px;
         font-weight: 400;
         min-height: 50px;
         word-wrap: break-all;

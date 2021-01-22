@@ -393,7 +393,8 @@ export default {
    /deep/.cell .advImg {
     width: 142px;
     height: 80px;
-    background: #1a1a1a;
+    background: #fff;
+    border: 1px solid #e6e6e6;
     border-radius: 4px;
     img{
       width:100%;

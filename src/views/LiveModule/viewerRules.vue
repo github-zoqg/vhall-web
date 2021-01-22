@@ -33,7 +33,7 @@
                 <template slot="append">元</template>
               </VhallInput>
             </el-form-item>
-            <el-form-item label="试看" class="switch__height">
+            <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
               <div class="switch__box">
                 <el-switch
                   v-model="form.is_preview"
@@ -69,7 +69,7 @@
                 <el-button class="down-btn" size="medium" type="white-primary" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
               </div>
             </el-form-item>
-            <el-form-item label="试看" class="switch__height">
+            <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
               <div class="switch__box">
                 <el-switch
                   v-model="form.is_preview"
@@ -110,7 +110,7 @@
                 <el-button class="down-btn" size="medium" type="white-primary" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
               </div>
             </el-form-item>
-            <el-form-item label="试看" class="switch__height">
+            <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
               <div class="switch__box">
                 <el-switch
                   v-model="form.is_preview"
@@ -140,7 +140,7 @@
             <el-form-item label="观看密码" prop="password">
               <VhallInput v-model.trim="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></VhallInput>
             </el-form-item>
-            <el-form-item label="试看" class="switch__height">
+            <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
               <div class="switch__box">
                 <el-switch
                   v-model="form.is_preview"
@@ -226,7 +226,7 @@ export default {
     PageTitle,
     beginPlay
   },
-  // 无极版、标准版、新享版 没有邀请码 付费 白名单 试看 权限
+  // 无极版、标准版、新享版 没有邀请码 付费 白名单 试看 权限 按钮-试看
   data() {
     let checkNums = (rule, value, callback) => {
       if (this.viewerDao && this.viewerDao.fcodes > 0) {
