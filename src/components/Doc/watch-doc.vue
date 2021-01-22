@@ -217,7 +217,7 @@ export default {
       }
     },
     _listenEvents () {
-      window.addEventListener('resize', this.resize());
+      window.addEventListener('resize', this.resize);
       // 全屏兼容360浏览器等
       const setFullscreen = () => {
         const fullscreenElement =
@@ -718,7 +718,7 @@ export default {
     console.log('测试文档销毁================');
     this.docSDK.destroy();
     this.docSDK = null;
-    window.removeEventListener('resize', this.resize());
+    window.removeEventListener('resize', this.resize);
   }
 };
 </script>
