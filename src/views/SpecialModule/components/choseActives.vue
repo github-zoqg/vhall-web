@@ -245,6 +245,9 @@ export default {
     /deep/ input {
       border-radius: 20px;
     }
+    /deep/.el-input__suffix{
+      right: 12px;
+    }
   }
   .search{
     margin-bottom: 20px;
