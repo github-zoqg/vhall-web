@@ -133,10 +133,12 @@ export default {
           right: '32'
         }, */
         grid: {
-          left: '85',
+          // left: '85',
+          left:'56',
           top: '25',
           bottom: '60',
-          right: '95'
+          right: '32'
+          // right: '95'
         },
         tooltip: {
           trigger: 'axis',
@@ -223,18 +225,46 @@ export default {
         ],
       };
       if (valData && valData.length > 0) {
-        options.dataZoom = [{
+        options.dataZoom = [
+          // 下面这个属性是 里面拖拽
+          {
             type: 'inside',
             xAxisIndex: 0,
             minSpan: 5
-        }, {
-            type: 'slider',
-            xAxisIndex: 0,
+          },
+          {
+            type: 'slider', //slider表示有滑动块的，inside表示内置的
+            /* xAxisIndex: 0,
             minSpan: 5,
             height: 20,
             bottom: 10,
-            handleSize: '100%'
-        }];
+            handleSize: '100%' */
+            show: true,
+            height: 8,
+            bottom: 10,
+            showDataShadow: false,//是否显示数据阴影 默认auto
+            borderColor: 'transparent',
+            borderRadius: 20,
+            backgroundColor: '#F2F2F2', //两边未选中的滑动条区域的颜色
+            // 拖拽手柄样式 svg 路径
+            handleIcon: 'M512 512m-512 0a512 512 0 1 0 1024 0 512 512 0 1 0-1024 0Z',
+            fillerColor: '#E6E6E6',
+            handleSize: 14,
+            handleStyle: {
+              color: '#FFFFFF',
+              shadowBlur: 0,
+              borderWidth: 2,
+              borderColor: '#fb3a32'
+            },
+            textStyle: {
+              color: '#999999',
+              fontSize: 12,
+              fontFamily: '"Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif'
+            },
+            start: 0,
+            end: 100
+          }
+        ];
       } else {
         options.dataZoom = [];
       }
