@@ -206,10 +206,18 @@
                 <div class="center-wrap">
                   <!-- 倍速 -->
                   <div class="speed-box" v-if="formOther.doubleSpeed">
-                    <p class="chose" @click="choseSpeed">{{speed}}x</p>
+                    <!-- <el-select v-model="speed" placeholder="请选择" style="">
+                      <el-option
+                        v-for="item in speedList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                      </el-option>
+                    </el-select> -->
+                    <!-- <p class="chose" @click="choseSpeed">{{speed}}x</p>
                     <div class="chose-list" v-show="isSpeed">
                       <p v-for="(item, index) in speedList" :key="index" :class="speed==item ? 'active' : ''" @click="choseOtherSpeed(item)">{{item}}x</p>
-                    </div>
+                    </div> -->
                   </div>
                   <!-- 弹幕 -->
                   <div class="barrage-box">
@@ -1112,7 +1120,7 @@ export default {
         .center-wrap{
           float: left;
           line-height: 45px;
-          padding: 0 15px 0 70px;
+          padding: 0 15px 0 50px;
           .speed-box{
             display: inline-block;
             padding-right: 30px;

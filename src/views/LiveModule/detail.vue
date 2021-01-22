@@ -350,28 +350,58 @@ export default {
         console.log(item);
       }
     },
+    getAppersInfo(userId) {
+      this.$fetch('getVersionInfo', { user_id: userId}).then(res => {
+        if (res.data.arrears.total_fee < 0) {
+          this.$confirm(`尊敬的微吼会员，您的${res.data.type == 1 ? '流量' : '并发套餐'}已用尽，请充值`, '提示', {
+            confirmButtonText: '去充值',
+            cancelButtonText: '知道了',
+            customClass: 'zdy-message-box',
+            lockScroll: false,
+            cancelButtonClass: 'zdy-confirm-cancel',
+          }).then(() => {
+            this.$router.push({path:'/finance/info'});
+          }).catch(() => {});
+        } else {
+          this.toLive();
+        }
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    toLive() {
+      if (this.liveDetailInfo.webinar_type == 1) {
+        let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.$route.params.str}`;
+        window.open(href, '_blank');
+      } else {
+        const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1?type=ctrl`});
+        window.open(href, '_blank');
+      }
+    },
     toRoom(){
       // 跳转至发起页面
-      let status = JSON.parse(sessionOrLocal.get("arrears")).total_fee;
-      if (status) {
-        this.$confirm('尊敬的微吼会员，您的流量已用尽，请充值', '提示', {
-          confirmButtonText: '去充值',
-          cancelButtonText: '知道了',
-          customClass: 'zdy-message-box',
-          lockScroll: false,
-          cancelButtonClass: 'zdy-confirm-cancel',
-        }).then(() => {
-          this.$router.push({path:'/finance/info'});
-        }).catch(() => {});
-      } else {
-        if (this.liveDetailInfo.webinar_type == 1) {
-          let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.$route.params.str}`;
-          window.open(href, '_blank');
-        } else {
-          const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1?type=ctrl`});
-          window.open(href, '_blank');
-        }
-      }
+      let userId = JSON.parse(sessionOrLocal.get('userId'));
+      this.getAppersInfo(userId);
+      // let status = await
+      // if (status) {
+      //   this.$confirm('尊敬的微吼会员，您的流量已用尽，请充值', '提示', {
+      //     confirmButtonText: '去充值',
+      //     cancelButtonText: '知道了',
+      //     customClass: 'zdy-message-box',
+      //     lockScroll: false,
+      //     cancelButtonClass: 'zdy-confirm-cancel',
+      //   }).then(() => {
+      //     this.$router.push({path:'/finance/info'});
+      //   }).catch(() => {});
+      // } else {
+      //   if (this.liveDetailInfo.webinar_type == 1) {
+      //     let href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.$route.params.str}`;
+      //     window.open(href, '_blank');
+      //   } else {
+      //     const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1?type=ctrl`});
+      //     window.open(href, '_blank');
+      //   }
+      // }
       // const { href } = this.$router.resolve({path: `/lives/room/${this.$route.params.str}`});
 
     },
@@ -466,7 +496,7 @@ export default {
         left: 370px;
         top: 50px;
         border-radius: 4px;
-        width: 368px;
+        max-width: 368px;
         line-height: 17px;
         background: rgba(#1A1A1A, 0.95);
         font-size: 12px;
