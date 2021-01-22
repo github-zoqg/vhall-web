@@ -510,15 +510,39 @@ body {
   color: #FB3A32;
 }
 // 日期重置
-// .el-date-table{
-//   td span{
-//     font-size: 14px;
-//     color: #1a1a1a;
-//   }
-//   .prev-month{
-//     color: #999;
-//   }
-// }
+.el-date-table{
+  td span{
+    font-size: 14px;
+    color: #1a1a1a;
+  }
+  td.prev-month{
+    span{
+      color: #999;
+    }
+  }
+  td.disabled{
+    div{
+      background-color:#f6efef ;
+    }
+    span{
+      color: #999;
+    }
+  }
+  td.end-date, td.start-date{
+    div{
+      background-color: #fff;
+    }
+    span{
+      background-color: #f7f7f7;
+      color: #fb3a32;
+    }
+  }
+  td.in-range{
+    div{
+      background-color: #fff;
+    }
+  }
+}
 
 /*-----------------------------------------按钮组 ---------------------------------------------*/
 .length152 {

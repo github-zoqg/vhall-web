@@ -265,11 +265,11 @@ export default {
       padding: 0 2px;
     }
     h2{
-      font-size: 28px;
+      font-size: 24px;
       color: #1a1a1a;
       line-height: 30px;
       font-weight: bold;
-      padding: 6px 0 8px 0;
+      padding: 4px;
     }
     .account{
       position: absolute;
@@ -335,7 +335,7 @@ export default {
       color: #1a1a1a;
       line-height: 30px;
       font-weight: bold;
-      padding: 6px 0 8px 0;
+      padding: 4px;
       font-size: 24px;
     }
     .account{

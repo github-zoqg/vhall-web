@@ -160,7 +160,7 @@
             <div class="watch-footer">
               <div class="watch-code"><img :src="qrcode" alt=""></div>
               <div class="watch-action">
-                <p>扫码观看视频</p>
+                <!-- <p>扫码观看视频</p> -->
                 <h1 :title="formInvitation.webinar_date">{{ formInvitation.webinar_date }}</h1>
                 <h1 :title="formInvitation.location">{{ formInvitation.location }}</h1>
               </div>
@@ -801,24 +801,27 @@ export default {
           }
           .watch-action{
             width: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
             h1{
               padding:0;
               font-size: 14px;
               color:#1A1A1A;
               font-weight: 500;
-              line-height: 25px;
-              white-space: nowrap;
-              overflow: hidden;
-              text-overflow: ellipsis;
-            }
-            p{
-              padding:0;
-              font-size: 12px;
-              color:#666;
-              font-weight: 400;
               line-height: 20px;
-              min-height: 20px;
+              // white-space: nowrap;
+              // overflow: hidden;
+              // text-overflow: ellipsis;
             }
+            // p{
+            //   padding:0;
+            //   font-size: 12px;
+            //   color:#666;
+            //   font-weight: 400;
+            //   line-height: 20px;
+            //   min-height: 20px;
+            // }
           }
         }
     }

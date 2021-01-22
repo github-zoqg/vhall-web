@@ -97,7 +97,8 @@ export default {
     overflow: hidden;
     background: #F7F7F7;
     border-radius: 4px;
-    margin: 0 14px 14px 0;
+    margin-bottom: 14px;
+    // margin: 0 14px 14px 0;
     &.checkedActive{
       border: 1px solid #FB3A32;
     }
@@ -176,7 +177,8 @@ export default {
   margin: 20px 0;
   .vh-chose-active-item{
     width: 240px;
-    margin-right: 16px;
+    // margin-right: 16px;
+    padding: 0 8px;
     height: 202px;
     .vh-chose-active-item__cover{
       height: 136px;

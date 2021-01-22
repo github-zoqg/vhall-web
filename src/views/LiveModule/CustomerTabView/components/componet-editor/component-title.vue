@@ -49,6 +49,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.title-previewbox{
+  color: #1A1A1A;
+}
   .qr-editor-box{
     padding-top: 16px;
   }
