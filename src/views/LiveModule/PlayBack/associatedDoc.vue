@@ -1,6 +1,6 @@
 <template>
-  <!-- 文档资料库 -->
-  <VhallDialog title="文档列表" :lock-scroll='false' :before-close="handleClose" :visible.sync="dialogVisible"
+  <!-- 关联文档 -->
+  <VhallDialog title="关联文档" :lock-scroll='false' :before-close="handleClose" :visible.sync="dialogVisible"
     :close-on-click-modal=false
     :close-on-press-escape=false width="878px">
     <div class="word-list">
