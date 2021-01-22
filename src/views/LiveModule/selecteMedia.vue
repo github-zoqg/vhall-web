@@ -301,7 +301,7 @@ export default {
       max-width: 800px;
     }
     /deep/.el-dialog__body{
-      // padding: 0 24px;
+      padding: 0 24px;
     }
     /deep/.el-table__header{
       th{
@@ -403,7 +403,7 @@ export default {
     }
     /deep/ .el-dialog__headerbtn{
       top: 30px;
-      right: 0px;
+      right: -18px;
       .el-dialog__close {
         color: #fff;
       }
@@ -411,10 +411,11 @@ export default {
     /deep/ .el-dialog__body{
       width: 642px;
       height: 375px;
-      border-top: 16px solid #333;
-      border-bottom: 16px solid #333;
+      border-top: 10px solid #333;
+      border-bottom: 10px solid #333;
       background: #333;
       border-radius: 4px;
+      padding: 0 10px;
     }
   }
  /*  /deep/ .el-table__header{

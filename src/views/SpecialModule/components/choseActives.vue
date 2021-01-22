@@ -235,7 +235,7 @@ export default {
 <style lang="less">
   .vh-chose-active-box{
     // width: 560px;
-    max-height: 315px;
+    max-height: 310px;
     // overflow: auto;
     // overflow-x: hidden;
     // position: relative;

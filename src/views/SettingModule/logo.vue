@@ -82,7 +82,7 @@ export default {
       if(permissions) {
         let perVo = JSON.parse(permissions);
         console.log(perVo, '权限-用户');
-        perVo['ui.console_logo'] = 1; // TODO 默认配置项权限开启
+        // perVo['ui.console_logo'] = 1; // TODO 默认配置项权限开启
         if (perVo['ui.console_logo'] > 0) {
           // 开启
           this.auth_show = true;

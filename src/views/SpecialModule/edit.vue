@@ -617,10 +617,8 @@ export default {
     &__tbody{
       // height: 120px;
       // overflow-y: scroll;
-      &-selected {
-        border: 1px solid #FB3A32;
-      }
       &-tr{
+        // border: 1px solid #FB3A32;
         border-bottom: 1px solid #E6E6E6;
         height: 40px;
         line-height: 40px;
@@ -631,6 +629,9 @@ export default {
           display: inline-block;
           vertical-align: top;
         }
+      }
+      &-selected {
+        border: 1px solid #FB3A32;
       }
 
       &-id{
