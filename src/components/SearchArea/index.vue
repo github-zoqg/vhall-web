@@ -197,7 +197,7 @@ export default {
       top: 0;
     }
     .search-tag {
-      width: 180px!important;
+      width: 220px!important;
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;

@@ -4,14 +4,14 @@
       <el-col :span="typeChange ? 8 : 6">
         <div class="top-item">
           <p>当前版本</p>
-          <h2 :class="typeChange ? 'finFontSize' : 'fontSize'">{{ userInfo.edition }}</h2>
+          <h2>{{ userInfo.edition }}</h2>
           <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.edition_valid_time || '' }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
       <el-col :span="typeChange ? 8 : 6">
         <div class="top-item">
           <p>总并发（方）<span class="level" @click="levelVersion('升级')" v-if="buttonList.includes('upgrade')">升级</span></p>
-          <h2 :class="typeChange ? 'finFontSize' : 'fontSize'">{{ userInfo.concurrency.total_concurrency }}</h2>
+          <h2>{{ userInfo.concurrency.total_concurrency }}</h2>
           <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.concurrency.concurrency_valid_time || ''  }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
@@ -27,14 +27,14 @@
            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           </p>
-          <h2 :class="typeChange ? 'finFontSize' : 'fontSize'">{{ userInfo.concurrency.extend || userInfo.arrears.extend }}</h2>
+          <h2>{{ userInfo.concurrency.extend || userInfo.arrears.extend }}</h2>
           <p class="account pointer" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">订单明细</p>
         </div>
       </el-col>
       <el-col :span="typeChange ? 8 : 6" v-if="userInfo.concurrency.extend_day">
         <div class="top-item">
           <p>并发扩展包（天）</p>
-          <h2 :class="typeChange ? 'finFontSize' : 'fontSize'">{{ userInfo.concurrency.extend_day }}</h2>
+          <h2>{{ userInfo.concurrency.extend_day }}</h2>
           <p>{{ userInfo.concurrency.extend_day_start }} 至 {{ userInfo.concurrency.extend_day_end }}</p>
         </div>
       </el-col>
@@ -43,7 +43,7 @@
       <el-col :span="typeChange ? 15 : 9">
         <div class="top-item usage-item">
           <p>当前版本</p>
-          <h2 :class="typeChange ? 'finFontSize' : 'fontSize'">{{ userInfo.edition }} <span class="level pointer" v-if ="buttonList.includes('standard_upgrade')" @click="upgradeVersion()">升级</span></h2>
+          <h2>{{ userInfo.edition }} <span class="level pointer" v-if ="buttonList.includes('standard_upgrade')" @click="upgradeVersion()">升级</span></h2>
           <p v-if="userInfo.edition_valid_time">有效期: {{ userInfo.edition_valid_time }}</p>
         </div>
       </el-col>
@@ -59,7 +59,7 @@
              <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
           </p>
-          <h2 :class="typeChange ? 'finFontSize' : 'fontSize'">无限流量/{{ userInfo.flow.playback_flow || userInfo.arrears.flow  }}</h2>
+          <h2>无限流量/{{ userInfo.flow.playback_flow || userInfo.arrears.flow  }}</h2>
           <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p>
         </div>
       </el-col>
@@ -75,7 +75,7 @@
               <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
           </p>
-          <h2 v-if="userInfo.flow" :class="typeChange ? 'finFontSize' : 'fontSize'">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
+          <h2 v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
           <p class="account"  @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p>
         </div>
       </el-col>
@@ -264,15 +264,12 @@ export default {
       font-size: 14px;
       padding: 0 2px;
     }
-    .fontSize{
+    h2{
       font-size: 28px;
       color: #1a1a1a;
       line-height: 30px;
       font-weight: bold;
       padding: 6px 0 8px 0;
-    }
-    .finFontSize{
-      font-size: 24px;
     }
     .account{
       position: absolute;
@@ -334,15 +331,8 @@ export default {
       font-size: 14px;
       padding: 0 2px;
     }
-    .fontSize{
-      font-size: 28px;
+    h2{
       color: #1a1a1a;
-      line-height: 30px;
-      font-weight: bold;
-      padding: 6px 0 8px 0;
-    }
-    .finFontSize{
-       color: #1a1a1a;
       line-height: 30px;
       font-weight: bold;
       padding: 6px 0 8px 0;

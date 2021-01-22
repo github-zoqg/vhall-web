@@ -79,7 +79,7 @@
           :picker-options="pickerOptions"
           style="width: 240px"
         />
-        <VhallInput v-model.trim="subject" placeholder="请输入活动名称" style="width: 180px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" clearable>
+        <VhallInput v-model.trim="subject" placeholder="请输入活动名称" style="width: 220px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" clearable>
           <i slot="suffix" class="iconfont-v3 saasicon_search" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
         </VhallInput>
           <el-select filterable clearable v-model="accountType" style="width: 160px;marginLeft:15px" @change="getSearchList" v-if="type">

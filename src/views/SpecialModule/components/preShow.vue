@@ -156,6 +156,7 @@ export default {
         padding-top: 10px;
         margin-bottom: 20px;
         width: 100%;
+        line-height: 24px;
         // max-width: 300px;
         text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
@@ -216,6 +217,7 @@ export default {
       .text{
         color: #383838;
         height: calc(100% - 592px);
+        word-break: break-all;
         strong{
           font-weight: bold;
         }

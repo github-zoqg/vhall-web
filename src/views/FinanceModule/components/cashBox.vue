@@ -86,7 +86,7 @@
         <el-form-item label="动态密码" prop="code">
           <div class="inputCode">
             <el-input v-model.trim="withdrawForm.code" style="width: 150px"></el-input>
-            <span @click="getCode()" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+            <span @click="getCode()" :class="(mobileKey && isTrue) ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
           </div>
           <p class="codeTitle" v-if="phone">已向绑定手机号{{ phone }}发送验证码</p>
         </el-form-item>
@@ -97,7 +97,7 @@
           </div>
           <div class="xieyi">
             <el-checkbox v-model="checked"
-              >同意<span>《用户兑换协议》</span></el-checkbox
+              >同意<span @click="getNetWork">《用户兑换协议》</span></el-checkbox
             >
           </div>
         </el-form-item>
@@ -109,21 +109,23 @@
   </div>
 </template>
 <script>
-import QRcode from 'qrcode';
-import Env from "@/api/env";
 import { sessionOrLocal } from '@/utils/utils';
 export default {
   props: ['money', 'type'],
   data() {
     let validateMoney = (rule, value, callback) => {
       if (!(/^\d+$|^\d*\.\d+$/g.test(value))) {
+        this.isTrue = false;
         callback(new Error('请输入数字值'));
       } else {
         if (value < 1 || value > 800) {
+          this.isTrue = false;
           callback(new Error('请输入大于等于1且小于等于800的数字'));
         } else if (value > parseInt(this.money)) {
+          this.isTrue = false;
           callback(new Error('提现值必须小于可用金额'));
         } else {
+          this.isTrue = true;
           callback();
         }
       }
@@ -138,6 +140,7 @@ export default {
       },
       code: "",
       phone: '',
+      isTrue: false,
       nickName: '微吼直播',
       errorMsgShow: false,
       checked: false,
@@ -175,6 +178,7 @@ export default {
         this.errorText = '';
         this.phone = '';
         this.callCaptcha();
+        this.$refs['withdrawForm'].resetFields();
         window.clearInterval(this.timer);
       }
     },
@@ -188,9 +192,15 @@ export default {
         this.callCaptcha();
         this.time = 60;
         this.mobileKey = '';
+        this.phone = '';
         window.clearInterval(this.timer);
       }
     },
+    // showCaptcha() {
+    //   if (this.mobileKey && this.isTrue) {
+    //     this.showCaptcha
+    //   }
+    // },
     dialogVisible() {
       if (this.dialogVisible) {
         this.qrcode = '';
@@ -215,7 +225,6 @@ export default {
     getCode() {
       this.$refs['withdrawForm'].validate((valid) => {
         if (valid) {
-          this.showCaptcha = true;
           if (this.mobileKey && this.withdrawForm.money) {
             this.$fetch('withdrawalPhoneCode', {user_id: this.userInfo.user_id, captcha: this.mobileKey}).then(res => {
               this.phone = res.data.phone;
@@ -344,6 +353,10 @@ export default {
         // window.location.reload();
       }
     },
+    getNetWork() {
+      let href = `https://e.vhall.com/home/vhallapi/exchangeagreement`;
+      window.open(href, '_blank');
+    },
     /**
      * 倒计时函数
      */
@@ -365,9 +378,21 @@ export default {
       this.callCaptcha();
     },
     nextBinding() {
-      this.dialogChangeVisible = false;
-      this.dialogVisible = true;
-      this.time = 60;
+      let params = {
+        type: 1,
+        data: this.phone,
+        code: this.code,
+        scene_id: 6,
+      }
+      this.$fetch('codeCheck', params).then(res => {
+        if (res.code == 200) {
+          this.dialogChangeVisible = false;
+          this.dialogVisible = true;
+          this.time = 60;
+        }
+      }).catch(res => {
+        this.$message.error('验证失败');
+      })
     },
      /**
      * 初始化网易易盾图片验证码
@@ -414,6 +439,7 @@ export default {
 }
 /deep/.el-input__inner {
   border-radius: 2px;
+  padding: 0 12px;
 }
 /deep/.el-checkbox__input.is-checked + .el-checkbox__label {
   color: #666;
@@ -427,6 +453,7 @@ export default {
 }
 .codeTitle{
   line-height: 20px;
+  padding-top: 5px;
 }
 .box-wei {
   // padding-bottom: 20px;
