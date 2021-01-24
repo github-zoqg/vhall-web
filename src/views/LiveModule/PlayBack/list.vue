@@ -11,7 +11,7 @@
     <template v-if="no_show === false">
       <div v-if="!isDemand" class="operaBlock">
         <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
-        <el-button size="medium" plain round @click="toRecord">录制</el-button>
+        <el-button v-if="WEBINAR_PES.btn_record" size="medium" plain round @click="toRecord">录制</el-button>
         <el-button size="medium" round @click="settingHandler">回放设置</el-button>
         <el-button size="medium" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
         <VhallInput
@@ -59,7 +59,7 @@
                 <div class="info">
                   <p class="name">{{ scope.row.name }}</p>
                   <p class="create-time">{{ scope.row.created_at }}</p>
-                  <span v-if="scope.row.doc_status" class="tag">章节</span>
+                  <span v-if="scope.row.doc_status && WEBINAR_PES['ui.record_chapter']" class="tag">章节</span>
                 </div>
               </div>
             </template>
@@ -102,12 +102,12 @@
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
               <el-button :disabled="!!scope.row.transcoding" v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">{{ !!scope.row.transcoding ? '转码中' : '下载' }}</el-button>
-              <el-button type="text" @click="toChapter(scope.row)">章节</el-button>
+              <el-button v-if="WEBINAR_PES['ui.record_chapter']" type="text" @click="toChapter(scope.row)">章节</el-button>
               <el-dropdown v-if="!isDemand" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
                   <el-dropdown-item :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
-                  <el-dropdown-item :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
+                  <el-dropdown-item v-if="WEBINAR_PES['publish_record']" :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'delete', data: scope.row}">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -202,7 +202,9 @@ export default {
         { label: '录制', value: '1' },
         { label: '上传', value: '2' },
         { label: '打点录制', value: '3' }
-      ]
+      ],
+      // 权限配置
+      WEBINAR_PES: sessionOrLocal.get('WEBINAR_PES', 'localStorage') && JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')) || {},
     };
   },
   computed: {
@@ -237,7 +239,7 @@ export default {
     });
   },
   beforeDestroy(){
-    this.tipMsg.close();
+    !this.SAAS_VS_PES['ui.upload_video_as_demand'] && this.tipMsg.close();
     if (this.chatSDK) {
       this.chatSDK.destroy()
       this.chatSDK = null
