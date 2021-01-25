@@ -5,7 +5,7 @@
         <el-tab-pane :label="item.label" :name="item.value" :key="ins" v-if="vo[item.compare_key]"></el-tab-pane>
       </template>
     </el-tabs>
-    <div class="search panel-btn" v-if="vo.show_subject">
+    <div class="search panel-btn" v-if="(vo.show_subject && vsQuanxian && this.vsQuanxian['subject_manager'] > 0) || vo.show_webinar_list">
       <div class="search-query">
         <el-input
           :placeholder="tabType === 'special' ? '请输入专题名称' : '请输入直播名称'"
@@ -61,20 +61,20 @@
       </el-row>
     </div>
     <SPagination
-      :total="tabType === 'live' ? tabList[0].total : tabList[1].total"
+      :total="tabType === 'live' ? (tabList[0] && tabList[0].total ? tabList[0].total : 0) : (tabList[1] && tabList[1].total ? tabList[1].total : 0) "
       :page-size='query.limit'
       :current-page='query.pageNumber'
       @current-change="changeHandle" align="center"
-      v-if="tabType === 'live' ? tabList[0].total > query.limit : tabList[1].total > query.limit"
+      v-if="tabType === 'live' ? (tabList[0] && tabList[0].total ? tabList[0].total : 0) > query.limit : (tabList[1] && tabList[1].total ? tabList[1].total : 0) > query.limit"
     ></SPagination>
     <!-- 既无专题权限 且 无直播权限 -->
     <div :class="['no-create', {'no-border': $route.meta.type === 'owner'}]" :height=170  v-if="Number(vo.show_subject) === 0 && Number(vo.show_webinar_list) === 0">
       <null-page text="贫瘠之地，毛都没有" nullType="create"></null-page>
     </div>
     <!-- 搜索全部，并且无数据 -->
-    <null-page text="暂未添加内容" nullType="create" :height=200 v-if="query.keyword == '' && (tabType === 'live' ? tabList[0].total === 0 : tabList[1].total === 0)"></null-page>
+    <null-page text="暂未添加内容" nullType="create" :height=200 v-if="query.keyword == '' && (tabType === 'live' ? (tabList[0] && tabList[0].total ? tabList[0].total : 0) === 0 : (tabList[1] && tabList[1].total ? tabList[1].total : 0) === 0)"></null-page>
     <!-- 搜索无结果 -->
-    <null-page v-if="query.keyword != '' && (tabType === 'live' ? tabList[0].total === 0 : tabList[1].total === 0)"></null-page>
+    <null-page v-if="query.keyword != '' && (tabType === 'live' ? (tabList[0] && tabList[0].total ? tabList[0].total : 0) === 0 : (tabList[1] && tabList[1].total ? tabList[1].total : 0) === 0)"></null-page>
 
   </div>
 </template>
@@ -97,20 +97,7 @@ export default {
        keyword: ''
      },
      loading: true,
-     tabList: [
-       {
-         label: '直播',
-         value: 'live',
-         compare_key: 'show_webinar_list',
-         total: 0
-       },
-       {
-         label: '专题',
-         value: 'special',
-         compare_key: 'show_subject',
-         total: 10
-       }
-     ],
+     tabList: [],
      tabType: null,
      dataList: [],
      vo: {}
@@ -244,17 +231,55 @@ export default {
     },
     initComp(vo) {
       this.vo = vo;
-      if (Number(vo.show_subject) > 0 && Number(vo.show_webinar_list) > 0) {
-        this.tabType = this.tabList[0].value;
-        this.searchHandle(1);
-      } else if (Number(vo.show_webinar_list) > 0) {
-        this.tabType = this.tabList[0].value;
-        this.searchHandle(1);
-      } else if (Number(vo.show_subject) > 0) {
-        this.tabType = this.tabList[1].value;
-        this.searchHandle(1);
+      let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+      if (vsPersonStr) {
+        this.vsQuanxian = JSON.parse(vsPersonStr);
+      }
+      // 根据个人主页信息，控制 直播 or 专题展示
+      if(this.vsQuanxian && this.vsQuanxian['subject_manager'] > 0) {
+        this.tabList = [
+          {
+            label: '直播',
+            value: 'live',
+            compare_key: 'show_webinar_list',
+            total: 0
+          },
+          {
+            label: '专题',
+            value: 'special',
+            compare_key: 'show_subject',
+            total: 10
+          }
+        ]
+        // 考虑专题配置项
+        if (Number(vo.show_subject) > 0 && Number(vo.show_webinar_list) > 0) {
+          this.tabType = this.tabList[0].value;
+          this.searchHandle(1);
+        } else if (Number(vo.show_webinar_list) > 0) {
+          this.tabType = this.tabList[0].value;
+          this.searchHandle(1);
+        } else if (Number(vo.show_subject) > 0) {
+          this.tabType = this.tabList[1].value;
+          this.searchHandle(1);
+        } else {
+          this.tabType = null;
+        }
       } else {
-        this.tabType = null;
+        this.tabList = [
+          {
+            label: '直播',
+            value: 'live',
+            compare_key: 'show_webinar_list',
+            total: 0
+          }
+        ]
+        // 不考虑专题配置项，只考虑直播列表
+        if (Number(vo.show_webinar_list) > 0) {
+          this.tabType = this.tabList[0].value;
+          this.searchHandle(1);
+        } else {
+          this.tabType = null;
+        }
       }
     }
   },
