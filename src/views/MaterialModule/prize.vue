@@ -6,7 +6,7 @@
         <br>
         2.奖品名称：不支持特殊符号、表情
         <br>
-        3.奖品图片：尺寸120*120px，大小不超过2M
+        3.奖品图片：尺寸240*240px，大小不超过2M
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch" :class="source==0 ? 'head-prize' : ''">
@@ -307,7 +307,7 @@ export default {
     }
   }
   .head-prize{
-    margin-left: 24px;
+    margin:0 24px;
   }
   .prize-no{
     // height: calc(100vh - 260px);

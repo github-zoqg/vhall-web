@@ -13,7 +13,7 @@
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
       <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)" accept=".mp4,.mp3,.rmvb,.avi,.mkv,.flv,.mov,.mav,.wmv"> </el-button>
-      <el-button size="medium" round class="length104 head-btn batch-del" @click="allDelete(null)" :disabled="!checkedList.length">批量删除</el-button>
+      <el-button size="medium" round class="transparent-btn" @click="allDelete(null)" :disabled="!checkedList.length">批量删除</el-button>
       <VhallInput
         class="search-tag"
         placeholder="请输入音视频名称"

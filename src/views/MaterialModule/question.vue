@@ -9,7 +9,7 @@
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
       <el-button size="medium" type="primary" round class="length104 head-btn set-upload" v-preventReClick @click="addQuestion">创建问卷</el-button>
-      <el-button size="medium" round class="length104 head-btn batch-del" @click="deleteAll(null)" :disabled="!selectChecked.length">批量删除</el-button>
+      <el-button size="medium" round class="transparent-btn" @click="deleteAll(null)" :disabled="!selectChecked.length">批量删除</el-button>
       <VhallInput
         class="search-tag"
         placeholder="请输入问卷名称"

@@ -447,7 +447,7 @@ export default {
       context.scale(2,2);
       html2canvas(_canvas, {
         useCORS: true,
-        background: '#fff'
+        backgroundColor: null
       }).then(canvas => {
         let dataUrl = canvas.toDataURL('image/jpeg', 1.0);
         image.src = this.dataUrl;
@@ -605,8 +605,8 @@ export default {
         margin: 50px 24px;
         width: 282px;
         height: 520px;
-        background: #fff;
-        box-shadow: 0px 0 6px 0px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        // box-shadow: 0px 0 6px 0px rgba(0, 0, 0, 0.1);
         position: relative;
         border-radius: 4px;
         .show-header{
@@ -776,7 +776,7 @@ export default {
         padding-top:6px;
         font-size: 14px;
         color: #666;
-        line-height: 22px;
+        line-height: 18px;
         font-weight: 400;
         min-height: 50px;
         word-wrap: break-all;
@@ -793,6 +793,7 @@ export default {
             width: 67px;
             height: 67px;
             margin-right: 10px;
+            margin-top: 2px;
             // margin-left: 10px;
             img{
               width: 67px;
@@ -804,12 +805,13 @@ export default {
             display: flex;
             flex-direction: column;
             justify-content: space-around;
+            vertical-align: middle;
             h1{
               padding:0;
               font-size: 14px;
               color:#1A1A1A;
               font-weight: 500;
-              line-height: 20px;
+              line-height: 18px;
               // white-space: nowrap;
               // overflow: hidden;
               // text-overflow: ellipsis;

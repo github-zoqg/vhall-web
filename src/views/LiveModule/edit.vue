@@ -130,7 +130,7 @@
             <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；音频格式支持mp3、wav <br/>文件大小不超过2G</p>
           </div>
           <div class="mediaSlot" v-else>
-            <icon icon-class="saasshipinwenjian"></icon>
+          <icon icon-class="saasshipinwenjian"></icon>
             <p>{{selectMedia.name}}</p>
           </div>
           <div class="abRight" v-if="selectMedia.id&&showChecked">
@@ -142,18 +142,18 @@
               <i class="iconfont-v3 saasicon_shanchu"></i>
               <el-button type="text" class="operaBtn" >删除</el-button>
             </div>
-            <!-- <el-button type="text" class="operaBtn" @click="previewVideo">预览</el-button>
-            <el-button v-if="!$route.query.record_id" type="text" class="operaBtn" @click="deleteSelectMedia">删除</el-button> -->
           </div>
           <el-tooltip v-if="!$route.query.record_id">
-              <div slot="content">
-                1.上传单个文件最大2G，文件标题不能带有特殊字符和空格<br/>
-                2.视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV<br/>
-                3.上传的视频，不支持剪辑和下载
-              </div>
+            <div slot="content">
+              1.上传单个文件最大2G，文件标题不能带有特殊字符和空格<br/>
+              2.视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV<br/>
+              3.上传的视频，不支持剪辑和下载
+            </div>
             <i class="iconfont-v3 saasicon_help_m tip"></i>
           </el-tooltip>
         </div>
+        <!-- <div class="vod-hover"> -->
+        <!-- </div> -->
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}简介`">
         <v-editor class="editor-wrap" save-type='live' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
@@ -262,7 +262,6 @@ import selectMedia from './selecteMedia';
 import VEditor from '@/components/Tinymce';
 import { sessionOrLocal } from '@/utils/utils';
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
-import Env from "@/api/env";
 
 export default {
   components: {
@@ -466,6 +465,7 @@ export default {
     });
   },
   created(){
+    window.scrollTo(0,0);
     if (this.$route.query.id || this.$route.params.id) {
       this.webinarId = this.$route.query.id || this.$route.params.id;
       if(this.$route.query.id){

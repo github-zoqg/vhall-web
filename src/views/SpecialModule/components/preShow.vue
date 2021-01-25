@@ -235,9 +235,10 @@ export default {
       padding: 24px 32px;
       // max-height: 500px;
       .text{
-        color: #383838;
+        color: #1a1a1a;
         height: calc(100% - 592px);
         word-break: break-all;
+        line-height: 1.5;
         strong{
           font-weight: bold;
         }

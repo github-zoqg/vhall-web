@@ -12,5 +12,6 @@ export default {
   .vh-desc{
     line-height: 30px;
     text-indent: 2em;
+    color: #1a1a1a;
   }
 </style>

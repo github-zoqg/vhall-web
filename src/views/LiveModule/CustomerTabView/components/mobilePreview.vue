@@ -63,6 +63,7 @@
       :title="type == 'add' ? '新增菜单' : '重命名菜单'"
       :visible.sync="addCustomVisbile"
       :close-on-click-modal="false"
+      v-if="addCustomVisbile"
       width="280px"
       top="40vh"
       class="add-menu-dialog"
@@ -117,7 +118,7 @@ export default {
       // 自定义菜单 - 增删
       addCustomVisbile: false,
       addCustomForm: {
-        name: null
+        name: ''
       },
       addCustomFormRules: {
         name: [
@@ -229,7 +230,7 @@ export default {
 
       this.$insertIndex = this.menus.length
       this.type = 'add'
-      this.addCustomForm.name = null
+      this.addCustomForm.name = ''
       this.addCustomVisbile = true
     },
 
@@ -281,7 +282,7 @@ export default {
     rename(index) {
       this.$insertIndex = index
       this.type = 'rename' // 编辑类型！
-      this.addCustomForm.name = this.menus[index].name
+      this.addCustomForm.name = this.menus[index].name || ''
       this.addCustomVisbile = true
     },
     //  左移
