@@ -40,6 +40,7 @@ VueRouter.prototype.push = function push(location) {
 }
 router.beforeEach((to, from, next) => {
   checkAuth(to, from, next);
+  window.scrollTo(0,0);
 });
 router.afterEach(() => {
   NProgress.done();
