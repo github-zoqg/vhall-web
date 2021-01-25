@@ -361,7 +361,7 @@ export default {
       float: right;
       .el-select{
         &:nth-child(1){
-          width: 200px;
+          width: 175px;
           margin-right: 20px;
         }
       }
