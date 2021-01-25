@@ -4,7 +4,7 @@
       <div slot="content">
         1.支持创建免费礼物，观看端最多显示40个礼物
         <br>
-        2.为保证显示效果，建议尺寸：120*120px, 文件大小不超过<br/>2MB,格式jpg、gif、png、bmp
+        2.为保证显示效果，建议尺寸：240*240px, 文件大小不超过<br/>2MB,格式jpg、gif、png、bmp
         <br>
         3.礼物名称不支持特殊字符、表情
       </div>
@@ -123,7 +123,7 @@
             @delete="editParams.img = ''"
            >
             <div slot="tip">
-              <p>建议尺寸：120*120px，小于2MB</p>
+              <p>建议尺寸：240*240px，小于2MB</p>
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
