@@ -84,7 +84,17 @@ export default {
         // 子账号有设置权限
         return !(route && route.meta && route.meta.name === 'dataMgr');
       } else {
-        return true;
+        // TODO 左侧导航菜单
+        if (route.meta && route.meta.auth_key && this.vsQuanxian) {
+           if(this.vsQuanxian[route.meta.auth_key] > 0) {
+             // 由权限限制的字段，若大于0，则返回
+             return true;
+           } else {
+             return false;
+           }
+        } else {
+          return true;
+        }
       }
     },
     getChildPermission() {
@@ -114,6 +124,10 @@ export default {
         // 获取子账号权限，更新
         await this.getChildPermission();
       }
+    }
+    let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+    if (vsPersonStr) {
+      this.vsQuanxian = JSON.parse(vsPersonStr);
     }
   },
   mounted() {
