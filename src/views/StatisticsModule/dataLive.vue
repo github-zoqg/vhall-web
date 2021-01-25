@@ -108,6 +108,11 @@ export default {
           {
             text: '全部',
             onClick(picker) {
+              let childrenArray = Array.from(picker.$el.firstChild.firstChild.children)
+              childrenArray.forEach((item)=>{
+                item.style.color = '#666'
+              })
+              picker.$el.firstChild.firstChild.children[0].style.color = '#FB3A32'
               const end = '';
               const start = '';
               picker.$emit('pick', [start, end]);
@@ -116,6 +121,11 @@ export default {
           {
             text: '近7日',
             onClick(picker) {
+              let childrenArray = Array.from(picker.$el.firstChild.firstChild.children)
+              childrenArray.forEach((item)=>{
+                item.style.color = '#666'
+              })
+              picker.$el.firstChild.firstChild.children[1].style.color = '#FB3A32'
               const end = new Date();
               const start = new Date();
               end.setTime(end.getTime() - 3600 * 1000 * 24);
@@ -125,6 +135,11 @@ export default {
           }, {
             text: '近30日',
             onClick(picker) {
+              let childrenArray = Array.from(picker.$el.firstChild.firstChild.children)
+              childrenArray.forEach((item)=>{
+                item.style.color = '#666'
+              })
+              picker.$el.firstChild.firstChild.children[2].style.color = '#FB3A32'
               const end = new Date();
               const start = new Date();
               end.setTime(end.getTime() - 3600 * 1000 * 24);

@@ -18,6 +18,9 @@ html{
 }
 body {
   margin: 0 0!important;
+  .el-picker-panel__shortcut:first-of-type {
+      color: #fb3a32;
+    }
 }
 #app{
   min-width: 1366px;
