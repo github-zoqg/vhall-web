@@ -10,7 +10,7 @@
           </div>
           <div class="special-detail">
             <h1>{{ specialInfo.title }}</h1>
-            <p>{{ specialInfo.created_at | unitTime  }}</p>
+            <p>{{ (specialInfo && specialInfo.created_at ? specialInfo.created_at : '') | unitTime  }}</p>
             <h2>共<b>{{ specialInfo.webinar_num }}</b>个直播<span v-if="specialInfo.hide_pv"><i style="color:#FB3A32" class="iconfont-v3 saasicon_redu"></i>热度<b>{{ specialInfo.pv }}</b></span><label v-if="specialInfo.hide_appointment"><b>{{ specialInfo.order_num }}</b>次预约</label></h2>
             <div class="shareText">
               <h3 @click="share"><i class="el-icon-share"></i>分享</h3>
@@ -27,18 +27,19 @@
             <!-- <el-scrollbar v-loadMore="moreLoadData"> -->
               <el-row :gutter="40" class="lives">
                   <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
-                    <div class="inner">
-                      <div class="top" @click="goWatchData(item)">
+                    <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
+                      <!-- @click="goWatchData(item)" -->
+                      <div class="top">
                         <span class="liveTag">{{item | liveTag }}</span>
                         <img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
                       </div>
                       <div class="bottom">
                         <div class="">
-                          <p class="liveTitle" :title="item.subject">{{item.subject}}</p>
+                          <p  class="liveTitle" :title="item.subject" >{{item.subject}}</p>
                           <p class="liveTime">{{item.start_time}} <span v-if="item.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{item.pv}}</span></p>
                         </div>
                       </div>
-                    </div>
+                    </a>
                   </el-col>
               </el-row>
             <!-- </el-scrollbar> -->
@@ -70,7 +71,8 @@ export default {
         pcUrl:`${process.env.VUE_APP_WEB_URL}/special/detail/?id=${this.$route.query.id}`
       },
       totalList: [], //总数
-      liveList: []
+      liveList: [],
+      processEnv: `${process.env.VUE_APP_WAP_WATCH}`
     };
   },
   components: {
@@ -174,7 +176,7 @@ export default {
         padding-top: 10px;
         margin-bottom: 20px;
         width: 100%;
-        line-height: 24px;
+        line-height: 1.5;
         // max-width: 300px;
         text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
@@ -250,6 +252,8 @@ export default {
           margin-bottom: 20px;
           // border: 1px solid #ccc;
           .inner{
+            display: inline-block;
+            width: 100%;
             transition: all .15s ease-in;
             position: relative;
           }
@@ -322,6 +326,15 @@ export default {
             .liveOpera{
               color: #666666;
               font-size: 18px;
+              a{
+                color: rgb(44, 43, 43);
+                &.btn-css {
+                  color: #666666;
+                  &:nth-child(2){
+                    margin: 0 20px;
+                  }
+                }
+              }
               i{
                 cursor: pointer;
                 &:nth-child(2){

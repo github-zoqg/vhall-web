@@ -82,6 +82,9 @@ export default {
       min-height: 40px;
       line-height: 40px;
       word-break: break-all;
+      a{
+        color: #3562fa;
+      }
     }
   }
   .label{

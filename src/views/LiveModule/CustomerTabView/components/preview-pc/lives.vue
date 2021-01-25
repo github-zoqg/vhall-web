@@ -97,7 +97,8 @@ export default {
     overflow: hidden;
     background: #F7F7F7;
     border-radius: 4px;
-    margin: 0 14px 14px 0;
+    // margin: 0 16px 16px 0;
+    margin-bottom: 14px;
     &.checkedActive{
       border: 1px solid #FB3A32;
     }
@@ -174,7 +175,7 @@ export default {
 .menus-checkedBox{
   .vh-chose-active-item{
     width: 240px;
-    margin-right: 6px;
+    padding: 0 8px;
     height: 202px;
     .vh-chose-active-item__cover{
       height: 136px;

@@ -259,7 +259,7 @@ export default {
             message: `直播下奖品${this.title === '编辑' ? '修改' : '新建'}成功`,
             showClose: true,
             // duration: 0,
-            type: 'error',
+            type: 'success',
             customClass: 'zdy-info-box'
           });
           this.$emit('getTableList');

@@ -118,7 +118,8 @@ export default {
     overflow: hidden;
     background: #F7F7F7;
     border-radius: 4px;
-    margin: 0 14px 14px 0;
+    margin-bottom: 6px;
+    // margin: 0 14px 14px 0;
     &:hover{
       box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
       border-radius: 4px;
@@ -201,7 +202,8 @@ export default {
   margin: 0 auto;
   .vh-chose-active-item{
     width: 136px;
-    margin-right: 6px;
+    // margin-right: 6px;
+    padding: 0 8px;
     height: 123px;
     .vh-chose-active-item__cover{
       height: 75px;

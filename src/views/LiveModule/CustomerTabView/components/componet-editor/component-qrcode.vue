@@ -113,8 +113,8 @@ export default {
   .qr-previewbox{
     .qrbox {
       position: relative;
-      width: 160px;
-      height: 160px;
+      width: 140px;
+      height: 140px;
       overflow: hidden;
       text-align: center;
       margin: 0 auto;
@@ -122,6 +122,7 @@ export default {
 
       img {
         width: 100%;
+        height: 100%;
         position: absolute;
         left: 0;
         right: 0;

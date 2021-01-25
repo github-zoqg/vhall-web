@@ -203,30 +203,23 @@
                     <span class="all-time">{{ totalTime | secondToDate }}</span>
                   </div>
                 </div>
-                <div class="center-wrap">
-                  <!-- 倍速 -->
+                <!-- <div class="center-wrap">
                   <div class="speed-box" v-if="formOther.doubleSpeed">
                     <span>倍速</span>
-                    <!-- <el-select v-model="speed" placeholder="请选择" style="">
-                      <el-option
-                        v-for="item in speedList"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select> -->
-                    <!-- <p class="chose" @click="choseSpeed">{{speed}}x</p>
-                    <div class="chose-list" v-show="isSpeed">
-                      <p v-for="(item, index) in speedList" :key="index" :class="speed==item ? 'active' : ''" @click="choseOtherSpeed(item)">{{item}}x</p>
-                    </div> -->
                   </div>
-                  <!-- 弹幕 -->
                   <div class="barrage-box">
                     <i class="iconfont-v3 saasdanmukai_icon" v-if="formOther.bulletChat"></i>
                     <i class="iconfont-v3 saasdanmuguan_icon" v-if="!formOther.bulletChat"></i>
                   </div>
-                </div>
+                </div> -->
                 <div class="right-box fr">
+                  <div class="speed-box" v-if="formOther.doubleSpeed">
+                    <span @click="choseSpeed">{{ speedText}}</span>
+                  </div>
+                  <div class="barrage-box">
+                    <i class="iconfont-v3 saasdanmukai_icon" v-if="formOther.bulletChat"></i>
+                    <i class="iconfont-v3 saasdanmuguan_icon" v-if="!formOther.bulletChat"></i>
+                  </div>
                   <div class="volume-box">
                     <span class="icon-box">
                       <i style="color: #ececec" class="iconfont-v3" @click="jingYin"  :class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'" ></i>
@@ -239,6 +232,13 @@
                   <i v-else class="iconfont-v3 saasicon_quanping" @click="enterFullscreen"></i>
                 </div>
               </div>
+            </div>
+            <div class="transtant" v-show="isShowSpeed">
+              <transition>
+                <div class="speed_list">
+                  <p v-for="(item, index) in speedList" :key="index" @click="choseOtherSpeed(item)" :class="speed == index + 1 ? 'active' : ''">{{ item.label }}</p>
+                </div>
+              </transition>
             </div>
           </div>
           <!-- <img :src="audioEnd" alt="" v-show="!showVideo"> -->
@@ -271,10 +271,11 @@ export default {
     return {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       activeName: 'first',
+      isShowSpeed: false,
       sliderVal: 0, // seek
       hoverLeft: 10,
       hoveVideo:false,
-      statePaly: false, // 播放状态
+      statePaly: true, // 播放状态
       currentTime: 0,
       voice: 20, // 音量
       isFullscreen: false, // 全屏
@@ -286,8 +287,30 @@ export default {
       scrolling_open: false,
       watermark_open: false,
       isSpeed: false,
-      speedList: [],
       speed: 1,
+      speedText: '倍速',
+      speedList: [
+        {
+          label: '0.5x',
+          value: 1
+        },
+        {
+          label: '1.0x',
+          value: 2
+        },
+        {
+          label: '1.25x',
+          value: 3
+        },
+        {
+          label: '1.5x',
+          value: 4
+        },
+        {
+          label: '2.0x',
+          value: 5
+        }
+      ],
       pageThemeColors: ['FFFFFF','1A1A1A','FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
       formHorse: {
         color: '#FFFFFF', // 六位
@@ -397,11 +420,13 @@ export default {
       }
     },
     choseSpeed() {
-      this.isSpeed = true;
+      this.isShowSpeed = true;
     },
     choseOtherSpeed(item) {
-      this.isSpeed = false;
-      this.speed = item;
+      this.isShowSpeed = false;
+      this.speedText = item.label;
+      this.speed = item.value;
+      this.$Vhallplayer.setPlaySpeed(this.speed)
     },
     // 预览视频
     previewVideo () {
@@ -667,12 +692,13 @@ export default {
     initSDK() {
       let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
       // 判断水印的位置
+      let postion = 'tl';
       let watermarkOptionPosition = ['10%','10%']
       switch (this.formWatermark.img_position) {
-        case 1:
+        case 2:
           watermarkOptionPosition = ['75%','5%']
           break;
-        case 2:
+        case 1:
           watermarkOptionPosition = ['5%','5%']
           break;
         case 4:
@@ -689,8 +715,7 @@ export default {
         type: 'vod', // live 直播  vod 点播  必填
         videoNode: 'videoDom', // 播放器的容器， div的id 必填
         poster: '', // 封面地址  仅支持.jpg
-        isLoop: true,
-        vodOption: { recordId: '922013fa', forceMSE: false },
+        vodOption: { recordId: 'c2d9bb91', forceMSE: false },
         marqueeOption:{ // 选填
           enable: Boolean(this.scrolling_open), // 默认 false
           text: this.formHorse.text_type == 2 ? `${this.formHorse.text}${userInfo.user_id}${userInfo.nick_name}` : this.formHorse.text,    // 跑马灯的文字
@@ -706,7 +731,7 @@ export default {
           url: this.domain_url || this.audioImg, // 水印图片的路径
           align: 'tr', // 图片的对其方式， tl | tr | bl | br 分别对应：左上，右上，左下，右下
           position: watermarkOptionPosition, // 对应的横纵位置，支持px,vh,vw,%
-          size: ['180px', '60px'], // 水印大小，支持px,vh,vw,%  默认 80 35
+          size: ['80px', '35px'], // 水印大小，支持px,vh,vw,%  默认 80 35
           alpha:this.formWatermark.img_alpha
         },
         subtitleOption: {
@@ -727,13 +752,15 @@ export default {
             window.vp = this.$Vhallplayer;
             // this.$Vhallplayer.pause()
             this.$Vhallplayer.openControls(false);
+
             if (this.formOther.doubleSpeed) {
-              this.speedList = this.$Vhallplayer.getUsableSpeed() || [];
-              this.speedList.map((item, index) => {
-                if (item == 1) {
-                  this.speed = this.speedList[index];
-                }
-              })
+              this.$Vhallplayer.setPlaySpeed(this.speed)
+              // this.speedList = this.$Vhallplayer.getUsableSpeed() || [];
+              // this.speedList.map((item, index) => {
+              //   if (item == 1) {
+              //     this.speed = this.speedList[index];
+              //   }
+              // })
             }
             this.$Vhallplayer.on(window.VhallPlayer.LOADED, () => {
               this.loading = false;
@@ -757,9 +784,9 @@ export default {
     // 初始化播放器节点，重新加载播放器
    async initNodePlay() {
      if (this.$Vhallplayer) {
-       await vp.destroy();
-       await this.$Vhallplayer.destroy();
-       await this.initPlayer()
+      //  await vp.destroy();
+        this.$Vhallplayer.destroy();
+        await this.initPlayer()
      }
     // if(document.querySelector('#videoDom')){
     //     await vp.destroy();
@@ -1057,6 +1084,7 @@ export default {
     }
   }
   .video-wrap{
+    position: relative;
     .vod-controller{
       position: absolute;
       z-index: 1;
@@ -1135,32 +1163,48 @@ export default {
             font-size: 12px;
           }
         }
-        .center-wrap{
-          float: left;
-          line-height: 32px;
-          width: 240px;
+        // .center-wrap{
+        //   float: left;
+        //   line-height: 32px;
+        //   .speed-box{
+        //     display: inline-block;
+        //     span{
+        //       font-size: 12px;
+        //     }
+        //   }
+        //   .barrage-box{
+        //     float: right;
+        //     i{
+        //       font-size: 22px;
+        //       vertical-align: middle;
+        //     }
+        //     .saasdanmu_kai{
+        //       color:#FB3A32;
+        //     }
+        //   }
+        // }
+        .right-box{
+          // i:last-child{
+          //   padding: 0 12px;
+          //   cursor: pointer;
+          // }
+          i{
+            padding: 0 8px;
+          }
           .speed-box{
             display: inline-block;
             span{
               font-size: 12px;
-              padding-left: 182px;
+              padding: 0 8px;
+              cursor: pointer;
             }
           }
           .barrage-box{
-            float: right;
+            display: inline-block;
             i{
               font-size: 22px;
               vertical-align: middle;
             }
-            .saasdanmu_kai{
-              color:#FB3A32;
-            }
-          }
-        }
-        .right-box{
-          i:last-child{
-            padding: 0 12px;
-            cursor: pointer;
           }
           .volume-box{
             display: inline-block;
@@ -1174,7 +1218,6 @@ export default {
             }
             .icon-box{
               i{
-                padding-right: 5px;
                 cursor: pointer;
               }
             }
@@ -1190,6 +1233,37 @@ export default {
     }
     .active{
       bottom: 0px;
+    }
+    .speed_list{
+      position: absolute;
+      bottom: 30px;
+      right: 0;
+      width: 80px;
+      background: #1A1A1A;
+      opacity: 0.85;
+      border-radius: 4px;
+      p{
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+        color: #fff;
+        opacity: 1;
+        font-size: 12px;
+        cursor: pointer;
+        &:hover{
+          color: #FB3A32;
+        }
+        &.active{
+          color: #FB3A32;
+        }
+      }
+    }
+    .transtant .move-enter-active, .transtant .move-leave-active {
+      transition: all 0.5s linear;
+      transform: translate3d(0, 0, 0);
+    }
+    .transtant .move-enter, .transtant .move-leave {
+      transform: translate3d(100%, 0, 0);
     }
   }
   .preview-video {

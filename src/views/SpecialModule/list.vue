@@ -35,8 +35,9 @@
 
     <el-row :gutter="40" class="lives" v-show="totalElement">
       <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
-        <div class="inner">
-          <div class="top" @click="editSpecialInfo(item.id)">
+        <router-link :to="{path:'/special/edit', query: {id: item.id, title: '编辑'}}" target="_blank" class="inner">
+          <!-- @click="editSpecialInfo(item.id)" -->
+          <div class="top">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"> {{item.pv | unitCovert}}</i>
@@ -50,23 +51,23 @@
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="编辑" placement="top">
-                <i class="iconfont-v3 saasicon-pencil" @click="editSpecialInfo(item.id)"></i>
+                <i class="iconfont-v3 saasicon-pencil" @click.prevent.stop="editSpecialInfo(item.id)"></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="预览" placement="top">
-                <i class="iconfont-v3 saasicon-eye" @click="specialDetail(item)"></i>
+                <i class="iconfont-v3 saasicon-eye" @click.prevent.stop="specialDetail(item)"></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="分享" placement="top">
-                <i class="iconfont-v3 saasicon-share" @click="toShare(item.id)"></i>
+                <i class="iconfont-v3 saasicon-share" @click.prevent.stop="toShare(item.id)"></i>
               </el-tooltip>
               <el-tooltip class="item isDelete" effect="dark" content="删除" placement="top">
-                <i class="iconfont-v3 saasicon-trash" @click="deleteHandle(item.id)"></i>
+                <i class="iconfont-v3 saasicon-trash" @click.prevent.stop="deleteHandle(item.id)"></i>
               </el-tooltip>
             </p>
           </div>
           <transition name="el-zoom-in-bottom">
             <div class="mask" v-show="!!item.liveDropDownVisible"></div>
           </transition>
-        </div>
+        </router-link>
       </el-col>
     </el-row>
     <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
@@ -360,7 +361,7 @@ export default {
       float: right;
       .el-select{
         &:nth-child(1){
-          width: 200px;
+          width: 175px;
           margin-right: 20px;
         }
       }

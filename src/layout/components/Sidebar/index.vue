@@ -24,6 +24,7 @@
         :default-active="activeMenu"
         :collapse="!sidebar.opened"
         background-color="#1A1A1A"
+        active-background-color="#2A2A2A"
         text-color="#E2E2E2"
         :unique-opened="true"
         active-text-color="#FB3A32"

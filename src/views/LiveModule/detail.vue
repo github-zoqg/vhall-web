@@ -498,7 +498,7 @@ export default {
         border-radius: 4px;
         max-width: 368px;
         line-height: 17px;
-        background: rgba(#1A1A1A, 0.95);
+        background: rgba(#1A1A1A, 0.85);
         font-size: 12px;
         color: #fff;
         padding: 8px 10px;

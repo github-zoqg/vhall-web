@@ -48,8 +48,9 @@
     <div v-if="totalElement">
       <el-row :gutter="40" class="lives">
           <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
-            <div class="inner">
-              <div class="top" @click.prevent.stop="toDetail(item.webinar_id)">
+            <router-link :to="{path: `/live/detail/${item.webinar_id}`}" target="_blank" class="inner">
+              <!--  @click.prevent.stop="toDetail(item.webinar_id)" -->
+              <div class="top">
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
                   <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
                 <span class="hot">
@@ -69,27 +70,29 @@
                     <!-- <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link> -->
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="回放" placement="top" v-if="!(childPremission && Number(childPremission.permission_content) === 0)">
-                  <i class="iconfont-v3 saasicon_huifang" @click="goPlayback(item)"></i>
+                  <i class="iconfont-v3 saasicon_huifang" @click.prevent.stop="goPlayback(item)"></i>
                   </el-tooltip>
                   <el-tooltip class="item" effect="dark" content="详情" placement="top">
                     <i class="iconfont-v3 saasicon_xiangqing" @click.prevent.stop="toDetail(item.webinar_id)"></i>
                   </el-tooltip>
-                  <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)" @command="commandMethod">
-                    <i class="iconfont-v3 saasicon_more2"></i>
-                    <el-dropdown-menu style="width: 98px;" slot="dropdown">
-                      <el-dropdown-item command='/live/reportsData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">数据报告</el-dropdown-item>
-                      <el-dropdown-item command='/live/interactionData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">互动统计</el-dropdown-item>
-                      <el-dropdown-item command='/live/userData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">用户统计</el-dropdown-item>
-                      <el-dropdown-item command='/live/edit' v-if="item.webinar_state!=4">复制</el-dropdown-item>
-                      <el-dropdown-item command='删除'>删除</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+                  <span @click.prevent.stop>
+                    <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)" @command="commandMethod">
+                      <i class="iconfont-v3 saasicon_more2"></i>
+                      <el-dropdown-menu style="width: 98px;" slot="dropdown">
+                        <el-dropdown-item command='/live/reportsData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">数据报告</el-dropdown-item>
+                        <el-dropdown-item command='/live/interactionData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">互动统计</el-dropdown-item>
+                        <el-dropdown-item command='/live/userData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">用户统计</el-dropdown-item>
+                        <el-dropdown-item command='/live/edit' v-if="item.webinar_state!=4">复制</el-dropdown-item>
+                        <el-dropdown-item command='删除'>删除</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </span>
                 </p>
               </div>
               <transition name="el-zoom-in-bottom">
                 <div class="mask" v-show="!!item.liveDropDownVisible"></div>
               </transition>
-            </div>
+            </router-link>
           </el-col>
       </el-row>
       <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
