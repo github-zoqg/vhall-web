@@ -399,6 +399,30 @@ export default {
 <style lang="less" scoped>
 .word-list {
   padding-bottom: 24px;
+  // 滚动条的宽度
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+    width: 6px; // 横向滚动条
+    height: 6px; // 纵向滚动条 必写
+  }
+  // 滚动条的滑块
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    transition: all 0.3s;
+    cursor: pointer;
+    display: none;
+    background-color: #cccccc;
+    &:hover {
+      background-color: #cccccc;
+    }
+    &:active {
+      background-color: #cccccc;
+    }
+  }
+  &:hover {
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+      display: block;
+    }
+  }
   .word-status {
     margin-right: 12px;
   }
