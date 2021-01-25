@@ -231,7 +231,7 @@ export default {
     // overflow-x: hidden;
     // position: relative;
   }
-  /deep/ .choose-gift {
+  /deep/ .el-dialog {
     .el-dialog__title {
       line-height: 28px;
     }

@@ -471,9 +471,9 @@ export default {
   /deep/.el-switch__label {
     color: #999;
   }
-  /deep/.el-switch.is-checked .el-switch__core::after {
-    margin-left: -12px;
-  }
+  // /deep/.el-switch.is-checked .el-switch__core::after {
+  //   margin-left: -13px;
+  // }
   /deep/.el-form-item__label {
     font-family: @fontRegular;
     font-weight: 400;
