@@ -31,7 +31,7 @@
     <template v-if="isShowQuestion">
       <div class="show-question">
         <div class="show-main">
-          <p>问卷预览 <i class="el-icon-close" @click="isShowQuestion=false"></i></p>
+          <span class="close-btn"><i class="el-icon-close" @click="isShowQuestion=false"></i></span>
           <el-scrollbar>
             <div class="question_main">
               <pre-question  :questionId="questionId"></pre-question>
@@ -145,7 +145,7 @@ export default {
     cope(that, {rows}) {
       let params = {
         survey_id: rows.question_id,
-        webinar_id: that.$route.query.id,
+        webinar_id: that.$route.params.str,
         room_id: that.$route.query.roomId
       }
       that.$fetch('copyLiveQuestion', params).then(res => {
@@ -311,11 +311,14 @@ export default {
       /deep/.el-input__inner{
         border-radius: 18px;
       }
+      /deep/.el-input__suffix{
+        right: 12px;
+      }
     }
   }
   .show-question{
     position: fixed;
-    z-index: 3000;
+    z-index: 1000;
     top: 0;
     left: 0;
     width: 100%;
@@ -328,21 +331,25 @@ export default {
       background: #fff;
       transform: translate(-50%, -50%);
       width: 700px;
-      padding: 24px 32px;
+      padding-bottom: 24px;
+      // padding: 24px 32px;
       .question_main{
-        max-height: 600px;
-        // overflow: auto;
+        max-height: 700px;
+        position: relative;
       }
-      p{
+      .close-btn{
+        z-index: 100;
+        position: absolute;
+        top:16px;
+        right: 16px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 50%;
+        padding: 5px;
+      }
+      i{
+        color: #fff;
         font-size: 20px;
-        font-weight: 600;
-        color: #1A1A1A;
-        line-height: 28px;
-        padding-bottom: 14px;
-        i{
-          float: right;
-          cursor: pointer;
-        }
+        cursor: pointer;
       }
       .submit-footer{
         text-align: center;
