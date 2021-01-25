@@ -447,7 +447,7 @@ export default {
       context.scale(2,2);
       html2canvas(_canvas, {
         useCORS: true,
-        background: '#fff'
+        backgroundColor: null
       }).then(canvas => {
         let dataUrl = canvas.toDataURL('image/jpeg', 1.0);
         image.src = this.dataUrl;
@@ -605,8 +605,8 @@ export default {
         margin: 50px 24px;
         width: 282px;
         height: 520px;
-        background: #fff;
-        box-shadow: 0px 0 6px 0px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        // box-shadow: 0px 0 6px 0px rgba(0, 0, 0, 0.1);
         position: relative;
         border-radius: 4px;
         .show-header{

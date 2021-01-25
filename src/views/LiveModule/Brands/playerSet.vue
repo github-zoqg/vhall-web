@@ -6,7 +6,7 @@
         <el-tab-pane label="防录屏跑马灯" name="first">
           <div class="give-item">
             <div class="give-prize">
-              <el-form :model="formHorse" ref="ruleForm" label-width="100px">
+              <el-form :model="formHorse" ref="ruleForm" :rules="rules" label-width="100px">
                 <el-form-item label="跑马灯">
                   <p class="switch__box">
                     <el-switch
@@ -59,13 +59,13 @@
                   <el-radio v-model="formHorse.position" :label="3" :disabled="!scrolling_open">中</el-radio>
                   <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open">下</el-radio>
                 </el-form-item>
-                <el-form-item label="间隔时间">
+                <el-form-item label="间隔时间" prop="interval">
                   <el-input
                     v-model="formHorse.interval"
                     :disabled="!scrolling_open"
                     maxlength="3"
                     @blur="blurChange"
-                    oninput="this.value=this.value.replace(/[^1-9]/g, '')"
+                    oninput="this.value=this.value.replace(/[^0-9]/g, '')"
                     placeholder="默认20，支持输入范围1-300">
                     <i slot="suffix">秒</i>
                     </el-input>
@@ -258,8 +258,6 @@
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import ColorSet from '@/components/ColorSelect';
-import Env from "@/api/env";
-import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue';
 import { sessionOrLocal, debounce } from '@/utils/utils';
 import beginPlay from '@/components/beginBtn';
 import { secondToDateZH } from '@/utils/general';
@@ -268,6 +266,18 @@ export default {
   name: 'playerSet',
   mixins: [controle],
   data() {
+    const intervalValidate = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('间隔时间不能为空'));
+      } else {
+        if(value < 1) {
+          callback(new Error('间隔时间需大于0'));
+        } else {
+          callback();
+        }
+
+      }
+    };
     return {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       activeName: 'first',
@@ -342,6 +352,9 @@ export default {
       videoParam: {
         paas_record_id: '922013fa'
       },
+      rules: {
+        interval: [{ required: true, validator: intervalValidate, trigger: 'blur' }]
+      },
       vm: null,
       $Vhallplayer:null,
       checkEnter: true, // 检验是否是第一次进来的
@@ -354,7 +367,6 @@ export default {
     upload,
     ColorSet,
     beginPlay
-    // VideoPreview
   },
    computed: {
     horseLampText(){
@@ -414,8 +426,8 @@ export default {
     }
   },
   methods: {
-    blurChange(value) {
-      if (!this.formHorse.interval) {
+    blurChange() {
+      if (!this.formHorse.interval || this.formHorse.interval < 0) {
         this.formHorse.interval = 20;
       }
     },

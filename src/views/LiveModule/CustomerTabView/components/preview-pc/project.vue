@@ -87,6 +87,9 @@ export default {
     height: 100% !important;
     overflow: hidden;
     position: relative;
+    // display: flex;
+    // justify-content: space-between;
+    // flex-wrap: wrap;
   }
   .search{
     margin-bottom: 20px;
@@ -97,8 +100,10 @@ export default {
     overflow: hidden;
     background: #F7F7F7;
     border-radius: 4px;
-    margin-bottom: 14px;
-    // margin: 0 14px 14px 0;
+    margin: 0 16px 16px 0;
+    &:nth-of-type(3n) {
+      margin-right: 0;
+    }
     &.checkedActive{
       border: 1px solid #FB3A32;
     }
@@ -148,14 +153,14 @@ export default {
     &__title{
       margin: 4px 8px;
       line-height: 20px;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 400;
       color: #1A1A1A;
       line-height: 20px;
     }
     &__info{
       margin: 0 8px;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 400;
       color: #666666;
       word-break: keep-all;
@@ -174,11 +179,11 @@ export default {
   }
 .menus-checkedBox{
   width: 780px;
-  margin: 20px 0;
+  // margin: 20px 0;
   .vh-chose-active-item{
     width: 240px;
     // margin-right: 16px;
-    padding: 0 8px;
+    // padding: 0 8px;
     height: 202px;
     .vh-chose-active-item__cover{
       height: 136px;

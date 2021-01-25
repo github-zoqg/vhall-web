@@ -10,7 +10,7 @@
     <!-- 操作栏 -->
       <div class="operaBox" v-if="totalElement || isSearch">
         <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
-        <el-button size="medium" class="is_medium" round @click="createLiveAction('2')" v-if="vodPerssion == 1" v-preventReClick>创建点播</el-button>
+        <el-button size="medium" class="is_medium" round @click="createLiveAction('2')" v-preventReClick>创建点播</el-button>
         <!--  v-if="vodPerssion == 1"  -->
         <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
@@ -100,7 +100,7 @@
     <div class="no-live" v-else>
       <noData :nullType="nullText" :text="text">
         <el-button type="primary" v-if="nullText == 'nullData'" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
-        <el-button round v-if="nullText == 'nullData' && vodPerssion == 1"  @click="createLiveAction('2')" v-preventReClick size="medium">创建点播</el-button>
+        <el-button round v-if="nullText == 'nullData' && vodPerssion == 1" class="transparent-btn"  @click="createLiveAction('2')" v-preventReClick size="medium">创建点播</el-button>
       </noData>
     </div>
   </div>

@@ -510,6 +510,9 @@ body {
   color: #FB3A32;
 }
 // 日期重置
+.el-date-range-picker__content .el-date-range-picker__header div{
+  color: #1a1a1a;
+}
 .el-date-table{
   td span{
     font-size: 14px;
@@ -522,7 +525,7 @@ body {
   }
   td.disabled{
     div{
-      background-color:#f6efef ;
+      background-color:#f7f7f7 ;
     }
     span{
       color: #999;
@@ -540,6 +543,9 @@ body {
   td.in-range{
     div{
       background-color: #fff;
+      &:hover{
+        background-color: transparent;
+      }
     }
   }
 }

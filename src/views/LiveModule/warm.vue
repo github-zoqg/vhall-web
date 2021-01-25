@@ -423,7 +423,7 @@ export default {
       width: 100%;
       text-align: center;
       vertical-align: middle;
-      line-height: 20px;
+      line-height: 18px;
       color: #999999;
       font-size: 12px;
       cursor: pointer;
