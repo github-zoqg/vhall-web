@@ -67,7 +67,7 @@
   <template v-if="isShowQuestion">
       <div class="show-question">
         <div class="show-main">
-          <p class="titlle">问卷预览 <i class="el-icon-close" @click="choseShowQueston"></i></p>
+          <span class="close-btn"><i class="el-icon-close" @click="isShowQuestion=false"></i></span>
           <el-scrollbar>
             <div class="question_main">
               <pre-question  :questionId="questionId"></pre-question>
@@ -321,7 +321,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 3000;
+    z-index: 1000;
     background: rgba(0, 0, 0, .3);
     .show-main{
       position: absolute;
@@ -330,24 +330,30 @@ export default {
       background: #fff;
       transform: translate(-50%, -50%);
       width: 700px;
-      padding: 24px 32px;
+      // padding: 24px 32px;
+      padding-bottom: 24px;
       border-radius: 4px;
       .question_main{
-        max-height: 600px;
-        // overflow: auto;
+        max-height: 700px;
+        position: relative;
       }
-      .titlle{
+      .close-btn{
+        z-index: 100;
+        position: absolute;
+        top:16px;
+        right: 16px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 50%;
+        padding: 5px;
+      }
+      i{
+        color: #fff;
         font-size: 20px;
-        color: #1A1A1A;
-        line-height: 28px;
-        padding-bottom: 14px;
-        i{
-          float: right;
-          cursor: pointer;
-        }
+        cursor: pointer;
       }
       .submit-footer{
         text-align: center;
+        padding-top: 20px;
       }
     }
     .data-base{

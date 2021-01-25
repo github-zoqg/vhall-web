@@ -598,6 +598,7 @@ export default {
         }
         &:hover{
           border: 1px solid #fb3a32;
+          box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);
           // border-radius: 4px;
         }
       }

@@ -6,7 +6,7 @@
       :close-on-press-escape=false
       :before-close="handleClose"
       @close="cancelSelect"
-      width="612px">
+      width="595px">
       <div class="search" v-show="total || isSearch">
         <VhallInput v-model.trim="keyword" placeholder="请输入直播标题" @keyup.enter.native="inputChange"  @clear="inputChange" class="add-living-input" clearable>
           <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer; line-height: 36px;"></i>
@@ -222,6 +222,10 @@ export default {
   .vh-chose-active-box{
     // width: 560px;
     max-height: 310px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
     // overflow: auto;
     // overflow-x: hidden;
     // position: relative;
@@ -246,9 +250,13 @@ export default {
     overflow: hidden;
     background: #F7F7F7;
     border-radius: 4px;
-    margin: 0 12px 12px 0;
+    margin-bottom: 12px;
+    // margin: 0 12px 12px 0;
     border: 1px solid #ffffff;
     position: relative;
+    // &:nth-of-type(3n) {
+    //   margin-right: 0;
+    // }
     .img-tangle{
         position: absolute;
         right: -1px;
@@ -261,25 +269,7 @@ export default {
           width: 100%;
           height: 100%;
         }
-      }
-    // .img-tangle{
-    //   position: absolute;
-    //   z-index: 1;
-    //   right: 0;
-    //   top:0;
-    //   width: 0;
-    //   height: 0;
-    //   border: 10px solid transparent;
-    //   border-right-color: #FB3A32;
-    //   border-top-color: #FB3A32;
-    //   i{
-    //     color:#fff;
-    //     position: absolute;
-    //     top: -8px;
-    //     right:-11px;
-    //     font-size: 10px;
-    //   }
-    // }
+    }
     &.checkedActive{
       border: 1px solid #FB3A32;
       box-shadow: 0 4px 24px rgba(0,0,0,.15);
