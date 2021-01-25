@@ -230,7 +230,7 @@ export default {
     EventBus.$on('record_download', this.handleDownload)
   },
   mounted(){
-    if (!this.WEBINAR_PES['forbid_delrecord'] || !this.WEBINAR_PES['publish_record']) {
+    if (!this.WEBINAR_PES['forbid_delrecord']) {
       this.tipMsg = this.$message({
         dangerouslyUseHTMLString: true,
         message: `
