@@ -933,7 +933,7 @@ export default {
   margin-top: 32px;
 }
 .table__container {
-  width: calc(100% - 256px);
+  width: calc(100% - 224px);
   .padding-table-list2();
   background: #FFFFFF;
   min-height: 676px;
