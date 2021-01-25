@@ -23,6 +23,7 @@ import 'tinymce/plugins/quickbars';//快速栏插件
 import 'tinymce/plugins/wordcount';//快速栏插件
 import 'tinymce/plugins/fullscreen';//全屏插件
 import 'tinymce/plugins/paste';//复制插件
+import './tinymce.less';
 
 import {sessionOrLocal} from "@/utils/utils";
 import VueTinymce from './editorPlugin'
@@ -181,6 +182,7 @@ export default {
   },
 };
 </script>
+</style>
 <style lang="less" scoped>
 /deep/ .tox-statusbar{
   display: none !important;
@@ -239,14 +241,4 @@ export default {
     color: #fb3a32;
   }
 }
-
-/* 样式重写-弹出框 */
-.tox  {
-  /deep/.tox-dialog {
-    border-radius: 4px!important;
-    box-shadow: unset!important;
-    border-width: 0!important;
-  }
-}
-
 </style>
