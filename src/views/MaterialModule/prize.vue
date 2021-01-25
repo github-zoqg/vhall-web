@@ -35,7 +35,7 @@
     <div class="no-live" v-if="!total && !isSearch">
       <noData :nullType="'nullData'" :text="'您还未添加奖品，快去添加吧~'">
         <el-button type="primary"  round @click="createPrize" v-preventReClick>创建奖品</el-button>
-        <el-button v-if="$route.meta.title !== '奖品'"  round @click="prizeMeterial" v-preventReClick>资料库</el-button>
+        <el-button v-if="$route.meta.title !== '奖品'" class="length152" round @click="prizeMeterial" v-preventReClick>资料库</el-button>
       </noData>
     </div>
     <div class="question-list" v-show="total || isSearch">

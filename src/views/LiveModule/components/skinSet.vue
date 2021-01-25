@@ -6,7 +6,7 @@
           <el-form-item label="皮肤方案">
             <el-radio-group v-model="skinType" @change="previewShow">
               <el-radio :label="0">默认皮肤</el-radio>
-              <el-radio :label="1" v-if="perssionInfo.webinar_skins">自定义皮肤</el-radio>
+              <el-radio :label="1" v-if="perssionInfo.webinar_skins>0">自定义皮肤</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="页面底色" v-if="skinType === 1">
