@@ -4,7 +4,7 @@
       <div slot="content">
         1.支持创建免费礼物，观看端最多显示40个礼物
         <br>
-        2.为保证显示效果，建议尺寸：120*120px, 文件大小不超过2MB,格式jpg、gif、png、bmp
+        2.为保证显示效果，建议尺寸：120*120px, 文件大小不超过<br/>2MB,格式jpg、gif、png、bmp
         <br>
         3.礼物名称不支持特殊字符、表情
       </div>
@@ -132,7 +132,7 @@
             <VhallInput v-model.trim="editParams.name" show-word-limit :maxlength="10" autocomplete="off"  placeholder="请输入礼物名称"></VhallInput>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
-            <VhallInput @input="handleInput" v-model.trim.number="editParams.price" autocomplete="off" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"  :maxlength="10" placeholder="请输入0-9999.99">
+            <VhallInput @input="handleInput" v-model.trim.number="editParams.price" autocomplete="off" :maxlength="10" placeholder="请输入0-9999.99">
               <i slot="suffix">元</i>
               <!-- <span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span> -->
             </VhallInput>
@@ -225,8 +225,10 @@ export default {
       if (!value) {
         callback(new Error('请输入礼物价格'));
       } else {
-        if (value <= 0 || value > 9999.99) {
-          callback && callback('价格必须大于0且小于9999.99');
+        if (value < 0 || value > 9999.99) {
+          callback && callback('价格必须大于等于0且小于9999.99');
+        } else if (value.length - value.indexOf('.') > 3 && value.indexOf('.') > -1) {
+          callback && callback('价格最多支持两位小数');
         } else {
           callback();
         }
@@ -328,23 +330,50 @@ export default {
       this.materiaSearchParams.page ++ ;
       this.queryMateriaGifts();
     },
+    /**
+     * 价格格式限制
+     * 只能输入数字和小数点；
+     * 小数点只能有1个
+     * 第一位不能是小数点
+     * 第一位如果输入0，且第二位不是小数点，则去掉第一位的0
+     * 小数点后保留2位
+     */
     handleInput(value) {
       if (value != '') {
-        if (value.indexOf('.') > -1) {
-          console.log(value.length, value.indexOf('.'))
-          if (value.length - value.indexOf('.') > 3) {
-            this.$message({
-              message: `价格最多支持两位小数`,
-              showClose: true,
-              // duration: 0,
-              type: 'warning',
-              customClass: 'zdy-info-box'
-            });
-          }
-          this.editParams.price = value.slice(0, value.indexOf('.') + 3)
-        } else {
-          this.editParams.price = value
+        // this.editParams.price = value.replace(/^[0-9]*$/,'')
+        // this.editParams.price = value.replace(/[^\d]/g,'')
+        let str = value;
+        let len1 = str.substr(0, 1);
+        let len2 = str.substr(1, 1);
+        //如果第一位是0，第二位不是点，就用数字把点替换掉
+        if (str.length > 1 && len1 == 0 && len2 != ".") {
+          str = str.substr(1, 1);
         }
+        //第一位不能是.
+        if (len1 == ".") {
+          str = "";
+        }
+        //限制只能输入一个小数点
+        if (str.indexOf(".") != -1) {
+          let str_ = str.substr(str.indexOf(".") + 1);
+          if (str_.indexOf(".") != -1) {
+            str = str.substr(0, str.indexOf(".") + str_.indexOf(".") + 1);
+          }
+        }
+        //正则替换，保留数字和小数点
+        str = str.replace(/[^\d^\.]+/g,'')
+        //如果需要保留小数点后两位，则用下面公式
+        if (str.indexOf('.') > -1 && str.length - str.indexOf('.') > 3) {
+          str = str.slice(0, str.indexOf('.') + 3)
+          this.$message({
+            message: `价格最多支持两位小数`,
+            showClose: true,
+            // duration: 0,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
+        }
+        this.editParams.price =  str;
       }
     },
     validTitle(rule, value, callback) {
