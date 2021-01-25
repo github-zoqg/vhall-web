@@ -169,7 +169,7 @@ export default {
           this.isShow = true;
           this.isTrue = arr.some(item => {
             // eslint-disable-next-line no-prototype-builtins
-            return this.perssionInfo.hasOwnProperty(item)
+            return this.perssionInfo[item] > 0
           })
         } else {
           sessionOrLocal.removeItem('WEBINAR_PES');

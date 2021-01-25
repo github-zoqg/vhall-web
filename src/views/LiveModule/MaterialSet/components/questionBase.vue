@@ -1,8 +1,8 @@
 <template>
   <div class="height-question">
-  <div class="show-question" v-if="dataBaseVisible">
+  <div class="show-question question-base" v-if="dataBaseVisible">
       <div class="show-main data-base">
-        <p class="titlle">选择问卷 <i class="el-icon-close" @click="dataBaseVisible=false"></i></p>
+        <p class="title">选择问卷 <i class="el-icon-close" @click="dataBaseVisible=false"></i></p>
         <div class="data-search" v-show="total || isSearch">
           <VhallInput class="search-dialog-tag" v-model.trim="keyword" placeholder="搜索问卷名称" clearable  @keyup.enter.native="getTitle" style="width: 220px" @clear="getTitle">
             <i slot="suffix" class="iconfont-v3 saasicon_search" style="cursor: pointer; line-height: 36px;" @click="getTitle"></i>
@@ -78,13 +78,12 @@
           </div>
         </div>
       </div>
-    </template>
+  </template>
   </div>
 </template>
 <script>
 import preQuestion from '@/components/Question/preQuestion';
 import noData from '@/views/PlatformModule/Error/nullPage';
-import { session } from '../../../../components/Player/js/utils';
 export default {
   data() {
     return {
@@ -271,8 +270,18 @@ export default {
   }
 .data-base{
   position: relative;
-  padding-bottom: 20px;
+  z-index: 1000;
+  .title{
+    padding: 32px;
+    font-size: 20px;
+    i{
+      float: right;
+      color: #1A1A1A;
+    }
+  }
+  // padding-bottom: 20px;
   .data-search{
+    padding-left: 24px;
     /deep/.el-input__inner{
       border-radius: 18px;
       padding-left: 12px;
@@ -283,6 +292,7 @@ export default {
 .data-base-list {
   width: 100%;
   margin: 24px 0;
+  padding: 0 32px;
   .mediaName{
     font-size: 14px;
     color: #1A1A1A;
@@ -296,6 +306,7 @@ export default {
     height: 40px;
     padding-top: 8px;
     font-size: 14px;
+    padding-left: 32px;
     span{
       color: #fb3a32;
       padding: 0 5px;
@@ -345,12 +356,13 @@ export default {
         background: rgba(0, 0, 0, 0.6);
         border-radius: 50%;
         padding: 5px;
+        i{
+          color: #fff;
+          font-size: 20px;
+          cursor: pointer;
+        }
       }
-      i{
-        color: #fff;
-        font-size: 20px;
-        cursor: pointer;
-      }
+
       .submit-footer{
         text-align: center;
         padding-top: 20px;

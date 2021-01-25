@@ -6,64 +6,65 @@
       :close-on-press-escape=false
       :before-close="handleClose"
       @close="cancelSelect"
+      custom-class="choose-gift"
       width="595px">
-      <div class="search" v-show="total || isSearch">
-        <VhallInput v-model.trim="keyword" placeholder="请输入直播标题" @keyup.enter.native="inputChange"  @clear="inputChange" class="add-living-input" clearable>
-          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer; line-height: 36px;"></i>
-        </VhallInput>
-        <!-- <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" class="add-living-input" clearable></el-input> -->
-      </div>
-       <el-scrollbar v-loadMore="moreLoadData">
-        <div class="vh-chose-active-box"
-        v-loading="loading"
-        element-loading-spinner="el-icon-loading"
-        v-show="total"
-        >
-        <!-- 单个视频 -->
-          <div class="vh-chose-active-item"
-            v-for="(item) in activeList"
-            :key="item.webinar_id"
-            @click="doSelect(item)"
-            :class="{'checkedActive': item.checked}"
+        <div class="search" v-show="total || isSearch">
+          <VhallInput v-model.trim="keyword" placeholder="请输入直播标题" @keyup.enter.native="inputChange"  @clear="inputChange" class="add-living-input" clearable>
+            <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer; line-height: 36px;"></i>
+          </VhallInput>
+          <!-- <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" class="add-living-input" clearable></el-input> -->
+        </div>
+        <el-scrollbar v-loadMore="moreLoadData">
+          <div class="vh-chose-active-box"
+          v-loading="loading"
+          element-loading-spinner="el-icon-loading"
+          v-show="total"
           >
-          <label  class="img-tangle" v-show="item.checked"><img src="../../../common/images/icon-choose.png" alt=""></label>
-            <!-- <label class="img-tangle" v-show="item.checked">
-              <i class="el-icon-check"></i>
-            </label> -->
-            <div class="vh-chose-active-item__cover">
-              <img :src="item.img_url" alt="">
-              <div class="vh-chose-active-item__cover-status">
-                <span class="liveTag">
-                  <label class="live-status" v-if="item.webinar_state == 1">
-                    <img src="../../../common/images/live.gif" alt="">
-                  </label>
-                  {{item | liveTag}}
-                </span>
-              </div>
-              <div class="vh-chose-active-item__cover-hots">
-              <i class="iconfont-v3 saasicon_redu"> {{ item.pv }}</i>
-              </div>
+          <!-- 单个视频 -->
+            <div class="vh-chose-active-item"
+              v-for="(item) in activeList"
+              :key="item.webinar_id"
+              @click="doSelect(item)"
+              :class="{'checkedActive': item.checked}"
+            >
+            <label  class="img-tangle" v-show="item.checked"><img src="../../../common/images/icon-choose.png" alt=""></label>
+              <!-- <label class="img-tangle" v-show="item.checked">
+                <i class="el-icon-check"></i>
+              </label> -->
+              <div class="vh-chose-active-item__cover">
+                <img :src="item.img_url" alt="">
+                <div class="vh-chose-active-item__cover-status">
+                  <span class="liveTag">
+                    <label class="live-status" v-if="item.webinar_state == 1">
+                      <img src="../../../common/images/live.gif" alt="">
+                    </label>
+                    {{item | liveTag}}
+                  </span>
+                </div>
+                <div class="vh-chose-active-item__cover-hots">
+                <i class="iconfont-v3 saasicon_redu"> {{ item.pv }}</i>
+                </div>
 
-            </div>
-            <div class="vh-chose-active-item__title ellsips" :title="item.subject">
-              {{ item.subject }}
-            </div>
-            <div class="vh-chose-active-item__info">
-              {{ item.created_at }}
+              </div>
+              <div class="vh-chose-active-item__title ellsips" :title="item.subject">
+                {{ item.subject }}
+              </div>
+              <div class="vh-chose-active-item__info">
+                {{ item.created_at }}
+              </div>
             </div>
           </div>
+        </el-scrollbar>
+        <div class="no-live" v-show="!total">
+          <noData :nullType="nullText" :text="text" :height="50">
+            <el-button type="primary" round @click="$router.push({path:'/live/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建直播</el-button>
+          </noData>
         </div>
-      </el-scrollbar>
-      <div class="no-live" v-show="!total">
-        <noData :nullType="nullText" :text="text" :height="50">
-          <el-button type="primary" round @click="$router.push({path:'/live/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建直播</el-button>
-        </noData>
-      </div>
-      <div class="select-option" v-if="total">已选择<span>{{ selectedOption.length }}</span>个</div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" size="medium" round @click="saveSelect" v-preventReClick :disabled="!selectedOption.length">确 定</el-button>
-        <el-button round @click="cancelSelect" size="medium" v-preventReClick>取 消</el-button>
-      </span>
+        <div class="select-option" v-if="total">已选择<span>{{ selectedOption.length }}</span>个</div>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" size="medium" round @click="saveSelect" v-preventReClick :disabled="!selectedOption.length">确 定</el-button>
+          <el-button round @click="cancelSelect" size="medium" v-preventReClick>取 消</el-button>
+        </span>
     </el-dialog>
 </template>
 <script>
@@ -229,6 +230,14 @@ export default {
     // overflow: auto;
     // overflow-x: hidden;
     // position: relative;
+  }
+  /deep/ .choose-gift {
+    .el-dialog__title {
+      line-height: 28px;
+    }
+    .el-dialog__body {
+      padding: 0!important;
+    }
   }
   .add-living-input {
     width: 220px;
