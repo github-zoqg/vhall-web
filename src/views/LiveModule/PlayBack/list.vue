@@ -4,7 +4,7 @@
     <div class="noData" v-if="no_show === true">
       <null-page text="暂未创建回放" nullType="noAuth">
         <el-button class="length152" round type="primary" @click="toCreate">创建回放</el-button>
-        <el-button class="length152 recordbtn" round type="white-primary" @click="toRecord">录制</el-button>
+        <el-button v-if="WEBINAR_PES.btn_record" class="length152 recordbtn" round type="white-primary" @click="toRecord">录制</el-button>
         <!-- <el-button type="white-primary" class="length152" round @click="openCheckWord" v-if="$route.params.str">资料库</el-button> -->
       </null-page>
     </div>
@@ -230,16 +230,24 @@ export default {
     EventBus.$on('record_download', this.handleDownload)
   },
   mounted(){
-    this.tipMsg = this.$message({
-      dangerouslyUseHTMLString: true,
-      message: '<span class="msgGray">非默认回放暂存15天。</span><a href="http://webim.qiao.baidu.com/im/index?siteid=113762&ucid=2052738" target="_blank" class="msgBlue">开通点播服务</a>',
-      showClose: true,
-      duration: 0,
-      offset: 86
-    });
+    if (!this.WEBINAR_PES['forbid_delrecord'] || !this.WEBINAR_PES['publish_record']) {
+      this.tipMsg = this.$message({
+        dangerouslyUseHTMLString: true,
+        message: `
+          ${this.WEBINAR_PES['forbid_delrecord'] ? '' : '<span class="msgGray">非默认回放暂存15天</span>'}
+          ${!this.WEBINAR_PES['forbid_delrecord'] && !this.WEBINAR_PES['publish_record'] ? '，' : ''}
+          ${this.WEBINAR_PES['publish_record'] ? "" : "<a href='http://webim.qiao.baidu.com/im/index?siteid=113762&ucid=2052738' target='_blank' class='msgBlue'>开通点播服务</a>"}
+        `,
+        showClose: true,
+        duration: 0,
+        offset: 86
+      });
+    }
   },
   beforeDestroy(){
-    !this.SAAS_VS_PES['ui.upload_video_as_demand'] && this.tipMsg.close();
+    if (!this.WEBINAR_PES['forbid_delrecord'] || !this.WEBINAR_PES['publish_record']) {
+      this.tipMsg.close();
+    }
     if (this.chatSDK) {
       this.chatSDK.destroy()
       this.chatSDK = null
