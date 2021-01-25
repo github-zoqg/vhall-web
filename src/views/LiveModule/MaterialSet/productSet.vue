@@ -28,7 +28,7 @@
       </div>
        <div class="empty" v-show="!total && !isSearch">
         <noData :nullType="'nullData'" :text="'您还没有商品，快来创建吧！'">
-          <el-button type="primary" round  @click="addProduct" v-preventReClick>创建</el-button>
+          <el-button type="primary" round class="length152"  @click="addProduct" v-preventReClick>创建</el-button>
         </noData>
       </div>
       <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>

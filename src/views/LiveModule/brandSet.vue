@@ -3,11 +3,11 @@
     <pageTitle title="品牌设置"></pageTitle>
     <div class="brand--set">
       <el-tabs v-model="tabType" @tab-click="handleClick">
-        <el-tab-pane label="标识设置" name="signSet"></el-tab-pane>
+        <el-tab-pane label="标识设置" name="signSet" v-if="perssionInfo['ui.brand_setting'] > 0"></el-tab-pane>
         <el-tab-pane label="皮肤设置" name="skinSet"></el-tab-pane>
       </el-tabs>
       <!-- 设置区域 -->
-      <sign-set ref="signSetComp" v-show="tabType === 'signSet'"></sign-set>
+      <sign-set ref="signSetComp" v-show="tabType === 'signSet'"  v-if="perssionInfo['ui.brand_setting'] > 0"></sign-set>
       <skin-set ref="skinSetComp" v-show="tabType === 'skinSet'"></skin-set>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
@@ -31,8 +31,16 @@ export default {
   data() {
     return {
       tabType: null,
+      perssionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
     };
+  },
+  created() {
+    if (this.perssionInfo['ui.brand_setting'] > 0) {
+      this.tabType = 'signSet'
+    } else {
+      this.tabType = 'skinSet'
+    }
   },
   methods:{
     handleClick(tab, event) {
@@ -41,7 +49,6 @@ export default {
     }
   },
   mounted() {
-    this.tabType = 'signSet';
     this.$refs[`signSetComp`].initComp();
   }
 };
