@@ -497,6 +497,8 @@ export default {
         transition: all .15s ease-in;
         position: relative;
         border-radius: 4px;
+        display: inline-block;
+        width: 100%;
       }
       .inner:hover{
         box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);

@@ -313,7 +313,6 @@ export default {
     },
     cash(title) {
       this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
-      console.log(this.userInfo, '???????????????')
       if (this.incomeInfo.in_live_withdraw || this.incomeInfo.in_red_withdraw) {
         this.$alert('您有进行中的提现，无法再次提现', '提示', {
           confirmButtonText: '知道了',

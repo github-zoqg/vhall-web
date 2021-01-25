@@ -237,10 +237,12 @@ export default {
         {
           label: '消费时间',
           key: 'pay_date',
+          width: 120
         },
         {
           label: '活动ID',
           key: 'webinar_id',
+          width: 120
         },
         {
           label: '活动名称',
@@ -249,10 +251,12 @@ export default {
         {
           label: '消费类型',
           key: 'typePay',
+          width: 120
         },
         {
           label: '账号类型',
           key: 'typeText',
+          width: 120
         },
       ],
       pickerOptions: {
@@ -274,12 +278,14 @@ export default {
     if (!this.versionType) {
       this.tabelColumn = this.tabelColumns.concat({
         label: '最高并发（方）',
-        key: 'webinar_max_uv'
+        key: 'webinar_max_uv',
+        width: 150
       })
     } else {
       this.tabelColumn = this.tabelColumns.concat({
         label: '消耗流量（GB）',
-        key: 'webinar_flow'
+        key: 'webinar_flow',
+        width: 150
       })
     }
     if (this.parentId == 0 && this.childNum == 1) {

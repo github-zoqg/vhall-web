@@ -10,7 +10,7 @@ export default {
 </script>
 <style lang="less" scoped>
   .vh-desc{
-    line-height: 30px;
+    line-height: 24px;
     text-indent: 2em;
     color: #1a1a1a;
   }
