@@ -417,6 +417,8 @@ export default {
       .inner{
         transition: all .15s ease-in;
         position: relative;
+        display: inline-block;
+        width: 100%;
       }
       .inner:hover{
         border-radius: 4px;
