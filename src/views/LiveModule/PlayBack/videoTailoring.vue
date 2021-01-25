@@ -26,6 +26,7 @@
       v-if="dataReady"
       ref="videoTailoringComponent"
       :roomInfo="roomInfo"
+      :playerParams="playerParams"
       :isAdd="isAdd"
       @saveVideo="saveVideoHandler"
       @exportVideo="exportVideoHandler"
@@ -81,7 +82,8 @@ export default {
       chatSDK: null,
       msgInfo: {},
       handleMsgTimer: '',
-      isChange: false
+      isChange: false,
+      playerParams: {}
     };
   },
   watch: {
@@ -376,6 +378,13 @@ export default {
           name: data.recordName,
           joinId: data.accountId,
         }
+        this.playerParams.otherOption = {
+          vid: res.data.report_data.vid, // hostId
+          vfid: res.data.report_data.vfid,
+          guid: res.data.report_data.guid,
+          biz_id: this.webinar_id
+        }
+        this.playerParams.otherOption.report_extra = res.data.report_data.report_extra
         this.dataReady = true;
       })
     },

@@ -677,6 +677,13 @@ export default {
           openPlayerUI: false,
           playerInfo: {}
         }
+        this.playerParams.otherOption = {
+          vid: res.data.report_data.vid, // hostId
+          vfid: res.data.report_data.vfid,
+          guid: res.data.report_data.guid,
+          biz_id: this.webinar_id
+        }
+        this.playerParams.otherOption.report_extra = res.data.report_data.report_extra
         this.showDoc = true
       })
     },

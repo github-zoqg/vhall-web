@@ -160,6 +160,10 @@ export default {
       type: Boolean,
       required: false,
       default: true
+    },
+    playerParams: {
+      type: Object,
+      required: false
     }
   },
   data () {
