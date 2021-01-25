@@ -91,7 +91,7 @@
             </el-switch>
           </div>
         </el-form-item>
-        <el-form-item label="专题列表">
+        <el-form-item label="专题列表" v-if="vsQuanxian && vsQuanxian['subject_manager'] > 0">
           <div class="switch__box">
             <el-switch
               v-model="homeSetInfoForm.show_subject"
@@ -345,6 +345,10 @@ export default {
     }
   },
   created() {
+    let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+    if (vsPersonStr) {
+      this.vsQuanxian = JSON.parse(vsPersonStr);
+    }
     this.homeInfoGet();
   }
 };
