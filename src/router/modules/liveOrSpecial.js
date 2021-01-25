@@ -266,17 +266,17 @@ const router = [
     path: '/special',
     component: Layout,
     redirect: '/special/list',
-    meta: { auth: true, title: '专题管理', name: 'Special', icon: 'saasicon_projects', level: 1 },
+    meta: { auth: true, title: '专题管理', name: 'Special', icon: 'saasicon_projects', level: 1, auth_key: 'subject_manager' },
     children: [
       {
         path: 'list',
         component: () => import('@/views/SpecialModule/list'),
-        meta: { auth: true, title: '专题列表', name: 'specialList', level: 2, activeMenu: '/special/list' }
+        meta: { auth: true, title: '专题列表', name: 'specialList', level: 2, activeMenu: '/special/list', auth_key: 'subject_manager' }
       },
       {
         path: 'edit',
         component: () => import('@/views/SpecialModule/edit'),
-        meta: { auth: true, title: '创建专题', name: 'specialEdit', level: 2, activeMenu: '/special/edit' }
+        meta: { auth: true, title: '创建专题', name: 'specialEdit', level: 2, activeMenu: '/special/edit', auth_key: 'subject_manager' }
       }
     ]
   },

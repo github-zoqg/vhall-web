@@ -20,33 +20,33 @@ const router = [
       {
         path: 'question',
         component: () => import('@/views/MaterialModule/question'),
-        meta: { auth: true, title: '问卷', name: 'questionMgr'}
+        meta: { auth: true, title: '问卷', name: 'questionMgr', auth_key: 'ui.hide_survey'}
       },
       {
         path: 'addQuestion',
         component: () => import('@/views/MaterialModule/addQuestion'),
-        meta:{ auth: true, title: '创建问卷', name: 'addQuestionMgr' },
+        meta:{ auth: true, title: '创建问卷', name: 'addQuestionMgr', auth_key: 'ui.hide_survey' },
         hidden: true
       },
       {
         path: 'prize',
         component: () => import('@/views/MaterialModule/prize'),
-        meta: { auth: true, title: '奖品', name: 'prizeMgr'}
+        meta: { auth: true, title: '奖品', name: 'prizeMgr', auth_key: 'ui.hide_lottery'}
       },
       {
         path: 'viewer',
         component: () => import('@/views/MaterialModule/viewer'),
-        meta: { auth: true, title: '观众', name: 'viewerMgr'}
+        meta: { auth: true, title: '观众', name: 'viewerMgr', auth_key: 'white_list'}
       },
       {
         path: 'advertCard',
         component: () => import('@/views/LiveModule/Brands/advertisementCard'),
-        meta: { auth: true, title: '广告', name: 'advertCard'}
+        meta: { auth: true, title: '广告', name: 'advertCard', auth_key: 'ad_recommend'}
       },
       {
         path: 'gift',
         component: () => import('@/views/MaterialModule/gift'),
-        meta: { auth: true, title: '礼物', name: 'giftMgr' }
+        meta: { auth: true, title: '礼物', name: 'giftMgr', auth_key: 'ui.show_gift' }
       }
     ]
   }
