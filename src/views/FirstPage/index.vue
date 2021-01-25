@@ -5,31 +5,36 @@
       <el-row type="flex" class="row-center" :gutter="16" >
         <el-col :xl="{span: colVal}">
           <router-link :to="{path:'/live/edit'}"  class="center-item">
-            <p><icon icon-class="saasicon_chuangjianzhibo-copy"></icon></p>
+          <p class="icon"><i class="iconfont-v3 saasicon_chuangjianzhibo"></i></p>
+            <!-- <p><icon icon-class="saasicon_chuangjianzhibo-copy"></icon></p> -->
             <h3>创建直播</h3>
           </router-link>
         </el-col>
         <el-col :xl="{span: colVal}">
           <router-link :to="{path:'/material/word'}"  class="center-item">
-            <p><icon icon-class="saasicon_shangchuanwendang-copy"></icon></p>
+          <p class="icon"><i class="iconfont-v3 saasicon_shangchuanwendang"></i></p>
+            <!-- <p><icon icon-class="saasicon_shangchuanwendang-copy"></icon></p> -->
             <h3>上传文档</h3>
           </router-link>
         </el-col>
         <el-col :xl="{span: colVal}">
           <router-link :to="{path:'/setting/info'}"  class="center-item">
-            <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p>
+          <p class="icon"><i class="iconfont-v3 saasset"></i></p>
+            <!-- <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p> -->
             <h3>设置中心</h3>
           </router-link>
         </el-col>
         <el-col :xl="{span: colVal}" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
           <router-link :to="{path:'/data/info'}"  class="center-item">
-            <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p>
+          <p class="icon"><i class="iconfont-v3 saasicon_zhanghaoshuju"></i></p>
+            <!-- <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p> -->
             <h3>数据中心</h3>
           </router-link>
         </el-col>
         <el-col :xl="{span: colVal}">
           <router-link :to="{path:'/finance/info'}"  class="center-item">
-            <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p>
+          <p class="icon"><i class="iconfont-v3 saasicon_caiwuzonglan"></i></p>
+            <!-- <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p> -->
             <h3>财务中心</h3>
           </router-link>
         </el-col>
@@ -245,9 +250,12 @@ export default {
     /deep/.el-col-5{
       width: 18.8%;
     }
-    /deep/.iconfont-v3{
-      color: #999;
+    .line-updata, .row-list{
+      /deep/.iconfont-v3{
+        color: #999;
+      }
     }
+
     .main-center{
       float: left;
       // flex: 1;
@@ -280,7 +288,7 @@ export default {
           height: 30px;
           margin: auto;
           // border: 1px solid #ccc;
-          /deep/.svg-icon{
+          /deep/.iconfont-v3{
             font-size: 32px;
             color: #FB3A32;
           }
