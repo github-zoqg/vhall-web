@@ -58,7 +58,7 @@
             </i>
           </VhallInput>
         <!-- <el-input class="inputer" v-model.trim="title" placeholder="请输入用户昵称" style="vertical-align: top;margin-left:20px" @clear="searchTableList" @keyup.enter.native="searchTableList"  clearable><i slot="suffix" class="el-input__icon el-icon-search" @click="searchTableList"></i></el-input> -->
-        <div class="export-data">
+        <div class="export-data" v-if="exportPerssion > 0">
           <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
         </div>
         </div>
@@ -86,7 +86,7 @@
 import titleData from './components/title';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import PageTitle from '@/components/PageTitle';
-import { getRangeDays } from '@/utils/general';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
     return {
@@ -193,6 +193,7 @@ export default {
     PageTitle
   },
   created() {
+    this.exportPerssion = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['data_export'];
     this.initPage()
     this.getLiveDetail();
   },

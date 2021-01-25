@@ -282,6 +282,7 @@ export default {
         {
           label: '订单编号',
           key: 'id',
+          width: 110
         },
         {
           label: '交易时间',
@@ -290,18 +291,22 @@ export default {
         {
           label: '订单类型',
           key: 'type',
+          width: 100
         },
         {
           label: '购买内容',
           key: 'content',
+          width: 150
         },
         {
           label: '订单状态',
           key: 'status',
+          width: 100
         },
         {
           label: '来源',
           key: 'source',
+          width: 120
         },
         {
           label: '启用日期',

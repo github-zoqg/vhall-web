@@ -72,5 +72,7 @@ export default {
 <style lang="less" scoped>
 .vh-preview-box{
   user-select: none;
+  color: #1a1a1a;
+  line-height: 24px;
 }
 </style>

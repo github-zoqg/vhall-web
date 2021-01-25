@@ -27,6 +27,6 @@ export default {
     font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
     font-weight: 400;
     color: #1A1A1A;
-    line-height: 22px;
+    line-height: 24px;
   }
 </style>
