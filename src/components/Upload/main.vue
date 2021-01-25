@@ -240,6 +240,7 @@ export default {
     background: rgba(0, 0, 0, 0.7);
     display: none;
     span{
+      font-size: 14px;
       &:nth-child(2){
         margin: 0 10px;
         i {
@@ -248,6 +249,7 @@ export default {
       }
       i{
         color: #fff;
+        font-size: 18px;
       }
     }
   }

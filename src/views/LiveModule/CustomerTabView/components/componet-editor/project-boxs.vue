@@ -275,14 +275,14 @@ export default {
     &__title{
       margin: 8px 8px 4px 8px;
       line-height: 20px;
-      font-size: 14px;
+      font-size: 16px;
       font-weight: 400;
       color: #1A1A1A;
       line-height: 20px;
     }
     &__info{
       margin: 8px 8px 4px 8px;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 400;
       color: #666666;
       line-height: 16px;

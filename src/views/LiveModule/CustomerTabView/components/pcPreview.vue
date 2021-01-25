@@ -120,7 +120,7 @@ export default {
       }
       .menus-item{
         display: inline-block;
-        padding: 0 10px;
+        // padding: 0 10px;
         margin: 0 24px;
         cursor: pointer;
         span{
@@ -139,7 +139,7 @@ export default {
     }
 
     .tab-content{
-      padding: 25px;
+      padding: 24px;
     }
   }
 </style>

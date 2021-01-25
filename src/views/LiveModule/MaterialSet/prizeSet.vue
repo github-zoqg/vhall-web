@@ -564,7 +564,7 @@ export default {
     }
  }
   .prize-info{
-    margin: 18px 0;
+    margin: 32px 0;
     // .question-list{
     //   padding: 24px 0;
     // }
