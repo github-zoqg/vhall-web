@@ -789,9 +789,14 @@ export default {
     border-color: #FB3A32;
   }
   /deep/ .el-checkbox__input.is-disabled .el-checkbox__inner {
-    background-color: #F7F7F7;
     border-color: #E6E6E6;
     cursor: not-allowed;
+  }
+  /deep/ .el-radio__inner{
+    background-color: rgba(255, 255, 255, 0)
+  }
+  /deep/ .el-checkbox__inner {
+    background-color: rgba(255, 255, 255, 0)
   }
   &.privacyItem {
     .radioInput {
@@ -1000,6 +1005,7 @@ export default {
 .sureBtn{
   background: none;
   text-align: left;
+  border: 0;
   .el-button{
     width: 160px;
     padding: 12px 50px;
@@ -1066,6 +1072,11 @@ export default {
   color: #666;
   /deep/ .el-checkbox__input.is-checked+.el-checkbox__label {
     color: #666;
+  }
+  /deep/ .el-checkbox__inner {
+    border-color: #E6E6E6!important;
+    background-color: rgba(255, 255, 255, 0)!important;
+    cursor: not-allowed;
   }
   p{
     margin: 16px 0 8px 0;
