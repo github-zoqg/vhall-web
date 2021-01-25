@@ -24,13 +24,14 @@
       </div>
     </div>
     <div class="rank-editor-box" v-if="mode == 2">
-      <div class="switch-box">
+      <div class="switch-box switch__box">
         邀请榜
         <el-switch
           style="marign-left: 5px"
           :active-value="1"
           :inactive-value="0"
-          size="mini"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
           v-model="info.inSwitch"
         >
         </el-switch>
@@ -41,13 +42,14 @@
           height="270"
         ></vEditor>
       </div>
-      <div class="switch-box">
+      <div class="switch-box switch__box">
         打赏榜
         <el-switch
           style="marign-left: 5px"
           :active-value="1"
           :inactive-value="0"
-          size="mini"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
           v-model="info.rewardSwitch"
         >
         </el-switch>
