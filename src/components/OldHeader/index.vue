@@ -30,6 +30,10 @@
                   <span>{{show_name}}</span>
                 </div>
                 <el-dropdown-menu slot="dropdown" class="user-dropdown">
+                  <el-dropdown-item divided @click.native="toLive">我的直播</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="toFinance">账户中心</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="toMyHome">我的主页</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="toAccount">账户设置</el-dropdown-item>
                   <el-dropdown-item divided @click.native="loginOut">退出</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -100,6 +104,26 @@ export default {
     toRegisterHandle() {
       this.$router.push({
         path: '/register'
+      });
+    },
+    toLive() {
+      this.$router.push({
+        path: '/live/list'
+      });
+    },
+    toFinance() {
+      this.$router.push({
+        path: '/finance/info'
+      });
+    },
+    toMyHome() {
+      this.$router.push({
+        path: '/acc/myHome'
+      });
+    },
+    toAccount() {
+      this.$router.push({
+        path: '/acc/info'
       });
     },
     handleCommand(command) {
@@ -318,6 +342,7 @@ header.commen-header {
     padding: 0 10px!important;
     min-width: 160px;
     height: 40px;
+    line-height: 40px;
     background: #FFFFFF;
     font-size: 14px;
     font-weight: 400;
@@ -328,6 +353,10 @@ header.commen-header {
     border-radius: 4px 4px 0 0;
     border-top: 0;
     margin-top: 0;
+  }
+  .el-dropdown-menu__item--divided {
+    margin-top: 0;
+    border-top: 0;
   }
   /deep/.el-dropdown-menu__item--divided:before {
     display: none!important;
