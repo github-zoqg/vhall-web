@@ -44,7 +44,7 @@
         :tableRowBtnFun="tableRowBtnFun"
         :isCheckout="isCheckout"
         :totalNum="totalNum"
-        :width="320"
+        :width="240"
         @onHandleBtnClick="onHandleBtnClick"
         @getTableList="getTableList"
       >
@@ -81,6 +81,7 @@ export default {
         {
           label: '活动ID',
           key: 'webinar_id',
+          width: '120px'
         },
         {
           label: '活动标题',
@@ -89,15 +90,17 @@ export default {
         {
           label: '观看人数',
           key: 'total_watch_number',
+          width: '120px'
         },
         {
           label: '观看次数',
           key: 'total_watch_times',
+          width: '120px'
         },
         {
           label: '观看时长（分）',
           key: 'watch_duration',
-          width: '200px'
+          width: '140px'
         }
       ],
       tableRowBtnFun: [

@@ -108,7 +108,10 @@
                   {{ item.subject }}
                 </div>
                 <div class="vh-sort-tables__tbody-status">
-                  <template v-if="item.webinar_type == 1">
+                  <template>
+                   {{ item.webinar_state | actionText }}
+                  </template>
+                  <!-- <template v-if="item.webinar_type == 1">
                     直播
                   </template>
                   <template v-if="item.webinar_type == 2">
@@ -122,7 +125,7 @@
                   </template>
                   <template v-if="item.webinar_type == 5">
                     回放
-                  </template>
+                  </template> -->
                 </div>
                 <div class="vh-sort-tables__tbody-hots">
                   {{ item.pv }}
@@ -206,8 +209,8 @@ export default {
       isChange: false
     };
   },
-  created(){
-    // console.log(this.$route.query.title, '111111111111111111');
+  created() {
+    window.scrollTo(0,0)
   },
   mounted() {
     if (this.$route.query.id) {

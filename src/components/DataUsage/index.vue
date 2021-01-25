@@ -269,7 +269,7 @@ export default {
       color: #1a1a1a;
       line-height: 30px;
       font-weight: bold;
-      padding: 4px;
+      padding: 4px 0 7px 0;
     }
     .account{
       position: absolute;
@@ -335,7 +335,7 @@ export default {
       color: #1a1a1a;
       line-height: 30px;
       font-weight: bold;
-      padding: 4px;
+      padding: 4px 0 7px 0;
       font-size: 24px;
     }
     .account{

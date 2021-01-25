@@ -776,7 +776,7 @@ export default {
         padding-top:6px;
         font-size: 14px;
         color: #666;
-        line-height: 22px;
+        line-height: 18px;
         font-weight: 400;
         min-height: 50px;
         word-wrap: break-all;
@@ -793,6 +793,7 @@ export default {
             width: 67px;
             height: 67px;
             margin-right: 10px;
+            margin-top: 2px;
             // margin-left: 10px;
             img{
               width: 67px;
@@ -804,12 +805,13 @@ export default {
             display: flex;
             flex-direction: column;
             justify-content: space-around;
+            vertical-align: middle;
             h1{
               padding:0;
               font-size: 14px;
               color:#1A1A1A;
               font-weight: 500;
-              line-height: 20px;
+              line-height: 18px;
               // white-space: nowrap;
               // overflow: hidden;
               // text-overflow: ellipsis;

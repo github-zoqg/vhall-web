@@ -370,6 +370,9 @@ export default {
       return `${hours}:${minutes}`;
     }
   },
+  created() {
+    window.scrollTo(0,0)
+  },
   watch: {
     formData: {
       deep: true,

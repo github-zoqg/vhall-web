@@ -218,7 +218,7 @@
                   </div>
                   <div class="barrage-box">
                     <i class="iconfont-v3 saasdanmukai_icon" v-if="formOther.bulletChat"></i>
-                    <i class="iconfont-v3 saasdanmuguan_icon" v-if="!formOther.bulletChat"></i>
+                    <!-- <i class="iconfont-v3 saasdanmuguan_icon" v-if="!formOther.bulletChat"></i> -->
                   </div>
                   <div class="volume-box">
                     <span class="icon-box">

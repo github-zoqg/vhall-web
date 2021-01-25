@@ -238,6 +238,7 @@ export default {
         color: #383838;
         height: calc(100% - 592px);
         word-break: break-all;
+        line-height: 1.5;
         strong{
           font-weight: bold;
         }

@@ -307,7 +307,7 @@ export default {
     }
   }
   .head-prize{
-    margin-left: 24px;
+    margin:0 24px;
   }
   .prize-no{
     // height: calc(100vh - 260px);
