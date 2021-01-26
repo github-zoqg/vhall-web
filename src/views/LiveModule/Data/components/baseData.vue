@@ -584,7 +584,7 @@ export default {
               color:#666;
             }
             h1{
-              font-size: 32px;
+              font-size: 28px;
               color:#1A1A1A;
               font-weight: bold;
               line-height: 35px;

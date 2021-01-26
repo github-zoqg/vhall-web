@@ -351,6 +351,9 @@ export default {
     /deep/.el-table .cell {
       line-height: 25px;
     }
+    /deep/button.el-button.el-button--mini{
+      font-size: 14px;
+    }
   }
   .dev-show-tips {
     font-size: 14px;

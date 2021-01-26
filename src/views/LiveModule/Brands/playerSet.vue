@@ -1143,7 +1143,7 @@ export default {
     position: relative;
     .vod-controller{
       position: absolute;
-      z-index: 1000;
+      z-index: 50;
       width: 100%;
       height: 32px;
       bottom: 0;

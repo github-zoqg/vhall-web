@@ -33,7 +33,7 @@
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" @onHandleBtnClick='onHandleBtnClick' :width="180" @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
-      <noData :nullType="'search'" v-if="isSearch"></noData>
+      <noData :nullType="'search'" v-if="!total"></noData>
     </div>
     <template v-if="isShowQuestion">
       <div class="show-question">

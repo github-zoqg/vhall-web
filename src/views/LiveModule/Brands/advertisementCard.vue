@@ -46,7 +46,7 @@
           @changeTableCheckbox="changeTableCheckbox"
           >
         </table-list>
-        <noData :nullType="'search'" v-if="isSearch"></noData>
+        <noData :nullType="'search'" v-if="!total"></noData>
       </div>
       <create-advise ref="adviseSonChild" :advInfo="advInfo" @reload="getAdvTableList" :maxTotal="total"></create-advise>
     </div>

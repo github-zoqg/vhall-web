@@ -32,7 +32,7 @@
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        @changeTableCheckbox="changeTableCheckbox" :isHandle="true" :width="150" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
       </table-list>
-      <noData :nullType="'search'" v-if="isSearch"></noData>
+      <noData :nullType="'search'" v-if="!total"></noData>
     </div>
     <div class="no-live" v-else>
       <noData :nullType="'nullData'" :text="'暂未上传音视频'">

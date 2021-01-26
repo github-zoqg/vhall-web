@@ -24,7 +24,7 @@
           @switchChange="onSwitchChange"
         >
         </table-list>
-        <noData :nullType="'search'" v-if="isSearch"></noData>
+        <noData :nullType="'search'" v-if="!total"></noData>
       </div>
        <div class="empty" v-show="!total && !isSearch">
         <noData :nullType="'nullData'" :text="'您还没有商品，快来创建吧！'">

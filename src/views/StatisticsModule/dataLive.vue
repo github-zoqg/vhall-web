@@ -59,7 +59,6 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import noData from '@/views/PlatformModule/Error/nullPage';
-import { getRangeDays } from '@/utils/general';
 export default {
   name: "dataLive",
   components: {
@@ -270,9 +269,6 @@ export default {
 
 <style lang="less" scoped >
 .data-live{
-  /deep/.el-card__body{
-    padding: 24px 32px;
-  }
   .box-card{
     background: #fff;
     padding: 24px 32px;
@@ -297,6 +293,9 @@ export default {
       /deep/.el-input__icon{
         line-height: 36px;
       }
+      // /deep/.el-picker-panel__shortcut:nth-child(2) {
+      //   color: #fb3a32;
+      // }
     }
     .search-tag {
       width: 180px;
