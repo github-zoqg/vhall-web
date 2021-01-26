@@ -54,6 +54,7 @@
 import { secondToDateZH } from '@/utils/general';
 import controle from './js/control';
 import { sessionOrLocal } from '@/utils/utils';
+import Env from '@/api/env';
 export default {
   data() {
     this.$Vhallplayer = null;
@@ -71,7 +72,7 @@ export default {
       loading: true,
       hoveVideo: false,
       audioImg: require('@/common/images/gif/MP3.gif'),
-      audioEnd: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/fb/40/fb40e62abba02933ada7d97495f81ef1.jpg',
+      audioEnd: `${Env.staticImgs.video[0]}`,
       videoType: 1, // 1为视频   2为音频
       tipsType: 0, // 1为音频封面   2 播放结束
     };
@@ -133,6 +134,13 @@ export default {
         },
         subtitleOption: {
           enable: true
+        },
+        otherOption: {
+          vid: 0, // hostId
+          vfid: 0,
+          guid: 0,
+          biz_id: 0,
+          report_extra: "{'join_id':0,'switch_id':0,'is_filter':1}"
         }
       };
       return new Promise((resolve) => {

@@ -101,7 +101,7 @@
           @getTableList="getIncomeList"
           >
         </table-list>
-        <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂未数据'"></noData>
+        <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂无数据'"></noData>
       </el-tabs>
     </div>
     <cash-box ref="cashBox" :money="money" :type="type" @onreload="onreload"></cash-box>

@@ -14,10 +14,8 @@
           </VhallInput>
           <!-- <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" class="add-living-input" clearable></el-input> -->
         </div>
-        <el-scrollbar v-loadMore="moreLoadData">
+        <el-scrollbar class="scroll-modify" v-loadMore="moreLoadData">
           <div class="vh-chose-active-box"
-          v-loading="loading"
-          element-loading-spinner="el-icon-loading"
           v-show="total"
           >
           <!-- 单个视频 -->
@@ -220,13 +218,18 @@ export default {
 }
 </script>
 <style lang="less">
+.scroll-modify {
+    /deep/.el-scrollbar__bar {
+      right:-29px;
+    }
+}
   .vh-chose-active-box{
     // width: 560px;
     max-height: 310px;
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    // display: flex;
+    // justify-content: space-between;
+    // flex-wrap: wrap;
     // overflow: auto;
     // overflow-x: hidden;
     // position: relative;
@@ -259,13 +262,13 @@ export default {
     overflow: hidden;
     background: #F7F7F7;
     border-radius: 4px;
-    margin-bottom: 12px;
-    // margin: 0 12px 12px 0;
+    // margin-bottom: 12px;
+    margin: 0 12px 12px 0;
     border: 1px solid #ffffff;
     position: relative;
-    // &:nth-of-type(3n) {
-    //   margin-right: 0;
-    // }
+    &:nth-of-type(3n + 0) {
+      margin-right: 0;
+    }
     .img-tangle{
         position: absolute;
         right: -1px;

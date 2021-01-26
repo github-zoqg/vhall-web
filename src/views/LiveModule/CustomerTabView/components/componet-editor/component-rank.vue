@@ -163,5 +163,9 @@ export default {
   }
   .switch-box{
     margin-bottom: 13px;
+    /deep/.el-switch{
+      margin-top: -2px;
+    }
   }
+
 </style>

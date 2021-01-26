@@ -25,7 +25,7 @@ export default {
     },
     text: {
       type: String,
-      default: '贫瘠之地，毛都没有'
+      default: '暂无数据'
     },
     height: {
       type: Number,
@@ -33,7 +33,7 @@ export default {
     },
     noSearchText: {
       type: String,
-      default: '暂未搜索到您想要的内容'
+      default: '暂无搜索到您想要的内容'
     }
   }
 };

@@ -115,7 +115,7 @@
       <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false'>
         <img class="imgLoading" src="//t-alistatic01.e.vhall.com/static/images/delFlash/load.gif" v-show="isLoading">
         <div class="preview-doc">
-          <img v-for="sIndex of docParam.page" :key="`s_${sIndex}`"  v-show="activeIns === sIndex" :index="sIndex" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${sIndex}.jpg`" alt="" />
+          <img v-for="sIndex of docParam.page" :key="`s_${sIndex}`"  v-show="activeIns === sIndex" :index="sIndex" :src="`http://cnstatic01.e.vhall.com/document/${docParam.hash}/${sIndex}.jpg`" alt="" />
         </div>
         <div class="preview-pages">
           <span class="left" @click="showLastImg">&lt;</span><span class="current">{{ activeIns }}</span><span class="side">/</span><span class="total">{{ docParam.page }}</span><span class="right" @click="showNextImg">&gt;</span>
@@ -128,7 +128,6 @@
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
-// import DocPreview from './DocPreview/index.vue';
 import NullPage from '../PlatformModule/Error/nullPage.vue';
 import SelectWord from './components/selectWord.vue';
 import Env from '@/api/env';
@@ -253,7 +252,7 @@ export default {
       let that = this;
       if (this.activeIns == 1) {
         let img = new Image();
-        img.src = `http:${this.env.wordShowUrl}/${this.docParam.hash}/${this.activeIns}.jpg`;
+        img.src = `http://cnstatic01.e.vhall.com/document/${this.docParam.hash}/${this.activeIns}.jpg`;
         if (img.complete) {
           this.isLoading = true;
         }

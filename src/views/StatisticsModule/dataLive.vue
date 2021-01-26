@@ -50,7 +50,7 @@
       >
       </table-list>
       <div class="no-live" v-show="!totalNum">
-        <noData :nullType="'noData'" :text="'暂未数据'"></noData>
+        <noData :nullType="'noData'" :text="'暂无数据'"></noData>
       </div>
     </div>
   </div>
@@ -59,7 +59,6 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import noData from '@/views/PlatformModule/Error/nullPage';
-import { getRangeDays } from '@/utils/general';
 export default {
   name: "dataLive",
   components: {
@@ -267,12 +266,16 @@ export default {
   }
 };
 </script>
-
+<style lang="less">
+.el-picker-panel__shortcut:nth-of-type(2) {
+  color: #fb3a32;
+}
+.el-picker-panel__shortcut:nth-of-type(1) {
+  color: #666;
+}
+</style>
 <style lang="less" scoped >
 .data-live{
-  /deep/.el-card__body{
-    padding: 24px 32px;
-  }
   .box-card{
     background: #fff;
     padding: 24px 32px;
@@ -297,6 +300,9 @@ export default {
       /deep/.el-input__icon{
         line-height: 36px;
       }
+      // /deep/.el-picker-panel__shortcut:nth-child(2) {
+      //   color: #fb3a32;
+      // }
     }
     .search-tag {
       width: 180px;

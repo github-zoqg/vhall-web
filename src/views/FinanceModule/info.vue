@@ -31,7 +31,7 @@
           prefix-icon="iconfont-v3 saasicon_date"
           style="width: 240px"
         />
-          <el-select filterable clearable v-model="lineType" style="width: 160px;marginLeft:15px" @change="getLineList" v-if="type">
+          <el-select filterable v-model="lineType" style="width: 160px;marginLeft:15px" @change="getLineList" v-if="type">
             <el-option
               v-for="(opt, optIndex) in versionList"
               :key="optIndex"
@@ -82,7 +82,7 @@
         <VhallInput v-model.trim="subject" placeholder="请输入活动名称" style="width: 220px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" clearable>
           <i slot="suffix" class="iconfont-v3 saasicon_search" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
         </VhallInput>
-          <el-select filterable clearable v-model="accountType" style="width: 160px;marginLeft:15px" @change="getSearchList" v-if="type">
+          <el-select filterable v-model="accountType" style="width: 160px;marginLeft:15px" @change="getSearchList" v-if="type">
             <el-option
               v-for="(opt, optIndex) in versionList"
               :key="optIndex"
@@ -178,7 +178,7 @@
           @getTableList="getAccountList"
           >
         </table-list>
-        <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂未数据'"></noData>
+        <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂无数据'"></noData>
       </div>
       </div>
     </div>

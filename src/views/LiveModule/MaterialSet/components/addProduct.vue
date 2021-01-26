@@ -486,6 +486,9 @@ export default {
     }
     /deep/.el-upload--picture-card{
       height: 148px;
+      .box > div{
+        height: 148px;
+      }
     }
     /deep/.el-textarea .el-input__count{
       font-size: 14px;

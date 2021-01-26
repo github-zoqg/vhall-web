@@ -232,7 +232,7 @@
           :active-text="limitCapacityDesc"
           >
         </el-switch>
-         <el-input placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></el-input>
+         <VhallInput placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></VhallInput>
       </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" class="common-button length152" :disabled="!formData.title" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
@@ -605,26 +605,41 @@ export default {
     },
     submitForm(formName) {
       if (!this.versionType) {
-        if (this.formData.limitCapacitySwtich && this.formData.limitCapacity > this.limitInfo.total) {
-          this.$message({
-            message: '最大并发数不能大于并发剩余量',
-            showClose: true,
-            // duration: 0,
-            type: 'error',
-            customClass: 'zdy-info-box'
-          });
-          return;
+        if (this.formData.limitCapacitySwtich) {
+          if (this.formData.limitCapacity < 1) {
+            this.$message({
+              message: '最高并发请输入大于1的数值',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+            return;
+          }
+          if (this.formData.capacity) {
+            if (this.formData.limitCapacity > (this.limitInfo.total + this.limitInfo.extend)) {
+              this.$message({
+                message: '最大并发数不能大于并发剩余量',
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
+              return;
+            }
+          } else {
+            if (this.formData.limitCapacity > this.limitInfo.total) {
+              this.$message({
+                message: '最大并发数不能大于并发剩余量',
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
+              return;
+            }
+          }
         }
-      }
-      if (this.formData.limitCapacitySwtich && this.formData.limitCapacity < 1) {
-        this.$message({
-          message: '最高并发请输入大于1的数值',
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-        return;
       }
       if (this.webniarTypeToZH == '点播' && !this.selectMedia.id) {
         this.$message({
@@ -640,7 +655,7 @@ export default {
         webinar_id: this.webinarId || '',
         record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
         subject: this.formData.title, // 标题
-        introduction: this.formData.content, // 简介
+        introduction: this.formData.content || '<p></p>', // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
         webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
@@ -805,9 +820,6 @@ export default {
   /deep/.el-upload--picture-card{
     border-radius: 4px;
   }
-  // /deep/ .el-form-item__label{
-  //   float: none;
-  // }
   .line{
     text-align: center;
     width: 20px;
@@ -948,9 +960,12 @@ export default {
     margin-top: 30px;
   }
   .limitInput{
-    margin-left: 66px;
+    margin-left: 80px;
     max-width: 360px;
     margin-top: 15px;
+  }
+  .limitInput /deep/.el-input__inner{
+    padding: 0 12px;
   }
   .uploadDesc{
     line-height: 20px;
@@ -1005,9 +1020,10 @@ export default {
       }
       span{
         color: #fff;
+        font-size: 14px;
       }
       /deep/.saasicon-eye, /deep/.saasicon_shanchu{
-        font-size: 30px!important;
+        font-size: 18px!important;
         height: 30px;
       }
     }

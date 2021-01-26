@@ -20,7 +20,7 @@
       <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
        :totalNum="total" :width="180" @onHandleBtnClick='onHandleBtnClick' @getTableList="getTableList" @changeTableCheckbox="changeTableCheckbox">
       </table-list>
-      <noData :nullType="'search'" v-if="isSearch"></noData>
+      <noData :nullType="'search'" v-if="!total"></noData>
     </div>
     <div class="no-live" v-show="!total && !isSearch">
       <noData :nullType="'nullData'" :text="'您还没有问卷，快来创建吧！'">

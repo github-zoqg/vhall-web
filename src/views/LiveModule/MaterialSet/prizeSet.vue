@@ -152,6 +152,7 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import prizeList from '../../MaterialModule/prize';
 import beginPlay from '@/components/beginBtn';
+import Env from '@/api/env.js';
 export default {
   name: 'prizeSet',
   data() {
@@ -180,7 +181,7 @@ export default {
       isChecked: 0,
       localImg: 0,
       prizeImgList: [require('../../../common/images/gif/prize03.gif'), require('../../../common/images/gif/prize01.gif'), require('../../../common/images/gif/prize02.gif')],
-      prizeUrl: ['http://t-alistatic01.e.vhall.com/upload/sys/img_url/e0/2b/e02b57d63947b5ec20c57c144686cd7d.gif', 'http://t-alistatic01.e.vhall.com/upload/sys/img_url/47/2a/472ab6904c58829ebcf91d801e146945.gif', 'http://t-alistatic01.e.vhall.com/upload/sys/img_url/12/80/12806c4743aec43498cef45ea732c977.gif'],
+      prizeUrl: [Env.staticImgs.prize[0], Env.staticImgs.prize[1], Env.staticImgs.prize[2]],
       givePrizeList: [
         {
           is_system: 1,

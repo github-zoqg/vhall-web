@@ -27,7 +27,7 @@
       </div>
     </div>
     <!-- 无消息内容 -->
-    <null-page text="贫瘠之地，毛都没有" null-type="search" v-else></null-page>
+    <null-page  null-type="nullData" v-else></null-page>
   </div>
 </template>
 

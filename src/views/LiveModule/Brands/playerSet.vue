@@ -238,7 +238,7 @@
             <div class="transtant" v-show="isShowSpeed">
               <transition>
                 <div class="speed_list">
-                  <p v-for="(item, index) in speedList" :key="index" @click="choseOtherSpeed(item)" :class="speed == index + 1 ? 'active' : ''">{{ item.label }}</p>
+                  <p v-for="(item, index) in speedList" :key="index" @click="choseOtherSpeed(item)" :class="speed == item.value ? 'active' : ''">{{ item.label }}</p>
                 </div>
               </transition>
             </div>
@@ -305,23 +305,23 @@ export default {
       speedList: [
         {
           label: '0.5x',
-          value: 1
+          value: 0.5
         },
         {
           label: '1.0x',
-          value: 2
+          value: 1
         },
         {
           label: '1.25x',
-          value: 3
+          value: 1.25
         },
         {
           label: '1.5x',
-          value: 4
+          value: 1.5
         },
         {
           label: '2.0x',
-          value: 5
+          value: 2
         }
       ],
       pageThemeColors: ['FFFFFF','1A1A1A','FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
@@ -539,15 +539,18 @@ export default {
     },
     getMarqueeOptionInfo() {
       let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      if (!this.formHorse.text) {
+        this.formHorse.text = '版权所有，盗版必究'
+      }
       this.marqueeOption = {
         enable: Boolean(this.scrolling_open), // 默认 false
         text: this.formHorse.text_type == 2 ? `${this.formHorse.text}${userInfo.user_id}${userInfo.nick_name}` : this.formHorse.text,    // 跑马灯的文字
         alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
         size:this.formHorse.size,      // 文字大小
-        color: this.formHorse.color || '#fff',   //  文字颜色
-        interval: this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
-        speed: this.formHorse.speed, // 跑马灯移动速度  3000快     6000中   10000慢
-        position:this.formHorse.position
+        color: this.formHorse.color || '#FFFFFF',   //  文字颜色
+        interval: this.formHorse.interval || 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
+        speed: this.formHorse.speed || 6000, // 跑马灯移动速度  3000快     6000中   10000慢
+        position:this.formHorse.position || 1
       }
     },
     // 获取跑马灯基本信息
@@ -555,7 +558,6 @@ export default {
       this.$fetch('getScrolling', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200 && res.data.webinar_id) {
           this.formHorse = {...res.data};
-          this.getMarqueeOptionInfo();
           this.$nextTick(() => {
             this.$refs.pageThemeColors.initColor(res.data.color);
           })
@@ -716,14 +718,12 @@ export default {
     // 初始化播放器
     initPlayer() {
       this.showVideo = true;
-
-      // document.querySelector('.vhallPlayer-container').style.display = 'block';
       this.initSDK().then(() => {
         this.initSlider();
           this.totalTime = this.$Vhallplayer.getDuration(() => {
             console.log('获取总时间失败');
           });
-          // this.listen();
+          this.listen();
         // 初试完播放器获取其它设置
         this.getBaseOtherList()
 
@@ -1143,7 +1143,7 @@ export default {
     position: relative;
     .vod-controller{
       position: absolute;
-      z-index: 1000;
+      z-index: 50;
       width: 100%;
       height: 32px;
       bottom: 0;

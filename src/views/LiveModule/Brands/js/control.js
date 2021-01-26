@@ -59,7 +59,7 @@ const controle = {
     listen(){
       this.$Vhallplayer.on(window.VhallPlayer.ENDED, ()=>{
         console.log('播放结束');
-        this.tipsType = 2;
+        this.statePaly = false;
       });
     }
   },
