@@ -15,7 +15,7 @@
           <ul :key="`${item.id}${compontent.component_id}-${compontentindex}`" v-else-if="compontent.component_id == 3 || compontent.component_id == 4" class="lives">
             <li v-for="live in compontent.items" :key="live.id">
               <div class="cover">
-                <img :src="live.img_url || '//t-alistatic01.e.vhall.com/static/img/video_default.png'" alt="封面加载失败">
+                <img :src="live.img_url || default_url" alt="封面加载失败">
                 <i class="el-icon-video-play playBtn"></i>
                 <span :class="{'tag': true, red: live.type==1, blue: live.type==2, gray: live.type==3, green: live.auto_record==1}">{{ live | statusFilter}}</span>
                 <span class="lb">
@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import Env from '@/api/env';
 export default {
   data(){
     return {
@@ -75,7 +76,8 @@ export default {
       menus: [],
       fetching: false,
       rankActive: 0,
-      rankRuleShow: false
+      rankRuleShow: false,
+      default_url: `${Env.staticImgs.product[0]}`
     };
   },
   props: ['desc'],

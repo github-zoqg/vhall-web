@@ -47,7 +47,7 @@
               <el-radio class="reward-way-radio" v-model="radio" label="1">
                 <div class="radio-label">
                   <img
-                    src="//t-alistatic01.e.vhall.com/static/images/watch/alipay.png"
+                    :src="pay_zfb_url"
                     width="32"
                     height="32"
                     alt="支付宝支付"
@@ -58,7 +58,7 @@
               <el-radio class="reward-way-radio" v-model="radio" label="2">
                 <div class="radio-label">
                   <img
-                    src="//t-alistatic01.e.vhall.com/static/images/watch/weixin.png"
+                    :src="pay_wx_url"
                     width="32"
                     height="32"
                     alt="微信支付"
@@ -114,7 +114,9 @@ export default {
       rewardWord: '很精彩，赞一个！', // 显示打赏文字
       wechatPay: false,
       wechatPayImg: '',
-      defText: '打赏其他金额'
+      defText: '打赏其他金额',
+      pay_zfb_url: `${Env.staticImgs.pay[1]}`,
+      pay_wx_url: `${Env.staticImgs.pay[2]}`
     };
   },
   mounted () {
