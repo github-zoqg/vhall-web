@@ -45,6 +45,7 @@
             :baseInfo="baseInfo"
             v-show="rightComponent == 'fieldSet'"
             :questionArr.sync="questionArr"
+            :signUpSwtich="signUpSwtich"
             @setBaseInfo="setBaseInfo"
           ></fieldSet>
           <!-- 表单预览组件 -->
@@ -54,7 +55,7 @@
             :questionArr.sync="questionArr"
             @closeSignUp="closePreview"
           ></signUpForm>
-          <div class="disable_wrap" v-if="!signUpSwtich"></div>
+          <!-- <div class="disable_wrap" v-if="!signUpSwtich"></div> -->
         </div>
       </div>
     </div>

@@ -11,6 +11,7 @@
         v-model="title"
         @change="baseInfoChange('title')"
       ></VhallInput>
+      <div class="disable_wrap" v-show="!signUpSwtich"></div>
     </section>
     <section class="viewItem">
       <p class="label">表单简介</p>
@@ -25,6 +26,7 @@
         resize=none
         @change="baseInfoChange('intro')"
       ></VhallInput>
+      <div class="disable_wrap" v-show="!signUpSwtich"></div>
     </section>
     <section class="viewItem">
       <p class="label">表单头图</p>
@@ -42,6 +44,7 @@
         </div>
       </upload>
       <span class="header-img-tip">建议尺寸：840*240 px，小于2MB（支持格式jpg、png、gif、bmp）</span>
+      <div class="disable_wrap" v-show="!signUpSwtich"></div>
     </section>
     <!-- 表单名称、表单简介与表单头图为固定字段 -->
     <draggable
@@ -59,7 +62,7 @@
       <transition-group type="transition" :name="!drag ? 'flip-list' : null" >
         <li
           :ref="item.question_id"
-          :class="['viewItem', 'viewItemHover', item.privacy ? 'privacyItem' : '']"
+          :class="['viewItem', signUpSwtich ? 'viewItemHover' : '', item.privacy ? 'privacyItem' : '']"
           v-for="(item, index) in renderQuestion"
           :key="item.question_id"
         >
@@ -277,11 +280,12 @@
             </div>
           </div>
           <!-- 底部按钮 -->
+          <div class="disable_wrap" v-show="!signUpSwtich"></div>
         </li>
       </transition-group>
     </draggable>
     <section class="viewItem sureBtn">
-      <el-button round type="primary" @click="sureQuestionnaire">保存</el-button>
+      <el-button :disabled="!signUpSwtich" round type="primary" @click="sureQuestionnaire">保存</el-button>
     </section>
   </div>
 </template>
@@ -302,6 +306,9 @@ export default {
     },
     baseInfo: {
       type: Object,
+    },
+    signUpSwtich: {
+      type: Boolean
     }
   },
   watch:{
@@ -328,7 +335,6 @@ export default {
       title: '', // 基本信息——表单名称
       intro: '', // 基本信息——表单简介
       drag: false,
-      signUpSwtich: false,
       radio: 3,
       imageUrl: '',
       renderQuestion: [],
@@ -785,6 +791,16 @@ export default {
   border-radius: 4px;
   margin-bottom: 16px;
   border: 1px solid #FFFFFF;
+  position: relative;
+  .disable_wrap{
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5)
+  }
   /deep/ .avatar-uploader{
     .mask{
       top: 0;
