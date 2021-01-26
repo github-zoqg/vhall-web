@@ -482,8 +482,16 @@ export default {
   }
 };
 </script>
+<style lang="less">
+  .el-tooltip__popper {
+    max-width: 600px;
+  }
+</style>
 
 <style lang="less" scoped>
+// /deep/.el-tooltip__popper {
+//     max-width: 350px;
+//   }
 .finance-info{
   .serach-line{
     padding: 24px;
