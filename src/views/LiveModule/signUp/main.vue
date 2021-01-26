@@ -19,7 +19,7 @@
         </div>
       </pageTitle>
       <div id="settingBox" class="settingBox clearFix">
-        <ul :class="['options', menuBarFixed ? 'isFixed' : '']" v-show="rightComponent !='signUpForm'">
+        <ul :class="['options', menuBarFixed]" v-show="rightComponent !='signUpForm'">
           <template v-for="(item, key, index) in setOptions">
             <section :class="['block', index == 1 ? 'block-bto' : '']" :key="key">{{key}}</section>
             <li
@@ -125,7 +125,7 @@ export default {
         ]
       },
       questionArr: [],
-      menuBarFixed: false
+      menuBarFixed: ''
     };
   },
   computed: {
@@ -174,11 +174,25 @@ export default {
     handleScroll () {
       let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
       let offsetTop = document.querySelector('#settingBox').offsetTop
-      if (scrollTop > offsetTop) {
-        this.menuBarFixed = true
-      } else {
-        this.menuBarFixed = false
+      if (document.body.clientWidth > 1280) {
+        if (scrollTop > offsetTop) {
+          this.menuBarFixed = 'isFixed'
+        } else {
+          this.menuBarFixed = ''
+        }
+        return false
       }
+      // 对 1920*1080 屏幕缩放 150% 进行兼容
+      if(scrollTop > this.scrollTop && scrollTop > offsetTop) {
+        // 向下滚
+        this.menuBarFixed = 'isFixedBottom'
+      } else if (scrollTop < this.scrollTop && scrollTop > offsetTop) {
+        // 向上滚
+        this.menuBarFixed = 'isFixed'
+      } else {
+        this.menuBarFixed = ''
+      }
+      this.scrollTop = scrollTop
     },
     // 切换组件
     closePreview() {
@@ -596,6 +610,16 @@ export default {
       position:fixed!important;
       top:70px;
       z-index:999;
+    }
+    .isFixedBottom {
+      position:fixed!important;
+      z-index:999;
+      top:70px;
+      section{
+        &.block{
+          display: none;
+        }
+      }
     }
     .options{
       width: 170px;
