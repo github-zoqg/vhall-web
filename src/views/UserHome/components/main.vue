@@ -451,7 +451,7 @@ export default {
       }
     }
     .bottom{
-      height: 102px;
+      height: 94px;
       background: #f7f7f7;
       box-sizing: border-box;
       padding: 12px 16px;
@@ -464,6 +464,7 @@ export default {
       .liveTitle{
         color: #1A1A1A;
         font-size: 16px;
+        line-height: 24px;
         margin-bottom: 6px;
         text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
