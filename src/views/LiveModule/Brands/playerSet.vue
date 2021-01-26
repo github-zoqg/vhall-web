@@ -539,15 +539,18 @@ export default {
     },
     getMarqueeOptionInfo() {
       let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      if (!this.formHorse.text) {
+        this.formHorse.text = '版权所有，盗版必究'
+      }
       this.marqueeOption = {
         enable: Boolean(this.scrolling_open), // 默认 false
         text: this.formHorse.text_type == 2 ? `${this.formHorse.text}${userInfo.user_id}${userInfo.nick_name}` : this.formHorse.text,    // 跑马灯的文字
         alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
         size:this.formHorse.size,      // 文字大小
-        color: this.formHorse.color || '#fff',   //  文字颜色
-        interval: this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
-        speed: this.formHorse.speed, // 跑马灯移动速度  3000快     6000中   10000慢
-        position:this.formHorse.position
+        color: this.formHorse.color || '#FFFFFF',   //  文字颜色
+        interval: this.formHorse.interval || 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
+        speed: this.formHorse.speed || 6000, // 跑马灯移动速度  3000快     6000中   10000慢
+        position:this.formHorse.position || 1
       }
     },
     // 获取跑马灯基本信息
@@ -555,7 +558,6 @@ export default {
       this.$fetch('getScrolling', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200 && res.data.webinar_id) {
           this.formHorse = {...res.data};
-          this.getMarqueeOptionInfo();
           this.$nextTick(() => {
             this.$refs.pageThemeColors.initColor(res.data.color);
           })
