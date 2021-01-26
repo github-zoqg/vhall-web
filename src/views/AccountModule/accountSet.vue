@@ -129,4 +129,9 @@ export default {
     width: 40px;
     height: 40px;
   }
+  .card--blue{
+    /deep/.el-button.el-button--text{
+      color: #3562FA;
+    }
+  }
 </style>

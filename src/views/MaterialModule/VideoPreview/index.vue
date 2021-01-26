@@ -133,6 +133,13 @@ export default {
         },
         subtitleOption: {
           enable: true
+        },
+        otherOption: {
+          vid: 0, // hostId
+          vfid: 0,
+          guid: 0,
+          biz_id: 0,
+          report_extra: "{'join_id':0,'switch_id':0,'is_filter':1}"
         }
       };
       return new Promise((resolve) => {
