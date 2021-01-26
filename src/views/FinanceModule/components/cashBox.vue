@@ -5,6 +5,7 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       @close="sureBangWeixin"
+      style="margin-top:20vh"
       width="320px"
     >
       <div class="box-wei">

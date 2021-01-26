@@ -20,8 +20,8 @@
                   </p>
                 </el-form-item>
                 <el-form-item label="类型">
-                  <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open">固定文本</el-radio>
-                  <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open">固定文本+观看者ID和昵称</el-radio>
+                  <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open" @change="editHorseInfo">固定文本</el-radio>
+                  <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open" @change="editHorseInfo">固定文本+观看者ID和昵称</el-radio>
                 </el-form-item>
                 <el-form-item label="固定文本">
                   <VhallInput
@@ -32,10 +32,11 @@
                     autocomplete="off"
                     :maxlength="20"
                     show-word-limit
+                    @change="editHorseInfo"
                   ></VhallInput>
                 </el-form-item>
                 <el-form-item label="文字大小">
-                  <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open" style="margin-bottom:10px">
+                  <el-select v-model="formHorse.size" placeholder="请选择" :disabled="!scrolling_open" style="margin-bottom:10px" @change="editHorseInfo">
                     <el-option
                       v-for="item in fontList"
                       :key="item.value"
@@ -47,17 +48,17 @@
                 <el-form-item label="文字颜色" prop="color">
                   <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="formHorse.color"></color-set>
                 </el-form-item>
-                <el-form-item label="不透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
+                <el-form-item label="不透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px" @change="editHorseInfo"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
                 <el-form-item label="移动速度">
-                  <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open">慢</el-radio>
-                  <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open">中</el-radio>
-                  <el-radio v-model="formHorse.speed" :label="3000" :disabled="!scrolling_open">快</el-radio>
+                  <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open" @change="editHorseInfo">慢</el-radio>
+                  <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open" @change="editHorseInfo">中</el-radio>
+                  <el-radio v-model="formHorse.speed" :label="3000" :disabled="!scrolling_open" @change="editHorseInfo">快</el-radio>
                 </el-form-item>
                 <el-form-item label="显示位置">
-                  <el-radio v-model="formHorse.position" :label="1" :disabled="!scrolling_open">随机</el-radio>
-                  <el-radio v-model="formHorse.position" :label="2" :disabled="!scrolling_open">上</el-radio>
-                  <el-radio v-model="formHorse.position" :label="3" :disabled="!scrolling_open">中</el-radio>
-                  <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open">下</el-radio>
+                  <el-radio v-model="formHorse.position" :label="1" :disabled="!scrolling_open" @change="editHorseInfo">随机</el-radio>
+                  <el-radio v-model="formHorse.position" :label="2" :disabled="!scrolling_open" @change="editHorseInfo">上</el-radio>
+                  <el-radio v-model="formHorse.position" :label="3" :disabled="!scrolling_open" @change="editHorseInfo">中</el-radio>
+                  <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open" @change="editHorseInfo">下</el-radio>
                 </el-form-item>
                 <el-form-item label="间隔时间" prop="interval">
                   <el-input
@@ -65,6 +66,7 @@
                     :disabled="!scrolling_open"
                     maxlength="3"
                     @blur="blurChange"
+                    @keyup="editHorseInfo"
                     oninput="this.value=this.value.replace(/[^0-9]/g, '')"
                     placeholder="默认20，支持输入范围1-300">
                     <i slot="suffix">秒</i>
@@ -181,7 +183,7 @@
         </el-tab-pane>
       </el-tabs>
       <div class="show-purple">
-          <el-button type="white-primary" size="small" round class="preview-video" @click="previewVideo">预览</el-button>
+          <el-button type="white-primary" size="small" round class="preview-video" @click="previewVideo" v-show="activeName=='second'">预览</el-button>
           <div class="video-wrap">
             <div id="videoDom"></div>
             <div class="vod-controller" :class="{'active':hoveVideo}">
@@ -278,6 +280,7 @@ export default {
 
       }
     };
+    this.$Vhallplayer = null;
     return {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       activeName: 'first',
@@ -352,11 +355,20 @@ export default {
       videoParam: {
         paas_record_id: '922013fa'
       },
+      marqueeOption: {
+        enable: Boolean(this.scrolling_open),
+        text: '版权所有，盗版必究',
+        alpha: 100,    // 透明度  100 完全显示   0 隐藏
+        size: 20,      // 文字大小
+        color: '#FFFFFF',   //  文字颜色
+        interval: 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
+        speed: 6000, // 跑马灯移动速度  3000快     6000中   10000慢
+        position: 1
+      },
       rules: {
         interval: [{ required: true, validator: intervalValidate, trigger: 'blur' }]
       },
       vm: null,
-      $Vhallplayer:null,
       checkEnter: true, // 检验是否是第一次进来的
       audioImg: require('@/common/images/logo4.png'),
       audioEnd: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/fb/40/fb40e62abba02933ada7d97495f81ef1.jpg',
@@ -449,6 +461,7 @@ export default {
     // 页面样式色值
     pageStyleHandle(color) {
       this.formHorse.color = color;
+      this.editHorseInfo();
       console.log(color, '??????????????????')
     },
     getFontList() {
@@ -463,6 +476,12 @@ export default {
       if (!this.scrolling_open) {
         this.preFormHorse();
       }
+      this.editHorseInfo();
+    },
+    // 编辑跑马灯
+    editHorseInfo() {
+      this.getMarqueeOptionInfo();
+      this.$Vhallplayer.editMarquee(this.marqueeOption);
     },
     // 关闭水印
     openWaterMarkInfo() {
@@ -518,11 +537,25 @@ export default {
       // }
       // this.initNodePlay()
     },
+    getMarqueeOptionInfo() {
+      let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      this.marqueeOption = {
+        enable: Boolean(this.scrolling_open), // 默认 false
+        text: this.formHorse.text_type == 2 ? `${this.formHorse.text}${userInfo.user_id}${userInfo.nick_name}` : this.formHorse.text,    // 跑马灯的文字
+        alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
+        size:this.formHorse.size,      // 文字大小
+        color: this.formHorse.color || '#fff',   //  文字颜色
+        interval: this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
+        speed: this.formHorse.speed, // 跑马灯移动速度  3000快     6000中   10000慢
+        position:this.formHorse.position
+      }
+    },
     // 获取跑马灯基本信息
     getBasescrollingList() {
       this.$fetch('getScrolling', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200 && res.data.webinar_id) {
           this.formHorse = {...res.data};
+          this.getMarqueeOptionInfo();
           this.$nextTick(() => {
             this.$refs.pageThemeColors.initColor(res.data.color);
           })
@@ -701,25 +734,42 @@ export default {
       this.formWatermark.img_url  ='';
       this.domain_url = '';
     },
-    initSDK() {
-      let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-      // 判断水印的位置
-      let postion = 'tl';
-      let watermarkOptionPosition = ['10%','10%']
-      switch (this.formWatermark.img_position) {
-        case 2:
-          watermarkOptionPosition = ['75%','5%']
-          break;
+    fromalAlign (val) {
+      let text;
+      switch (parseInt(val)) {
         case 1:
-          watermarkOptionPosition = ['5%','5%']
+          text = 'tl';
+          break;
+        case 2:
+          text = 'tr';
           break;
         case 4:
-          watermarkOptionPosition = ['75%','70%']
+          text = 'bl';
           break;
         case 3:
-          watermarkOptionPosition = ['5%','70%']
+          text = 'br';
           break;
       }
+      return text;
+    },
+    initSDK() {
+      // 判断水印的位置
+      // let postion = 'tl';
+      // let watermarkOptionPosition = ['10%','10%']
+      // switch (this.formWatermark.img_position) {
+      //   case 2:
+      //     watermarkOptionPosition = ['75%','5%']
+      //     break;
+      //   case 1:
+      //     watermarkOptionPosition = ['5%','5%']
+      //     break;
+      //   case 4:
+      //     watermarkOptionPosition = ['75%','70%']
+      //     break;
+      //   case 3:
+      //     watermarkOptionPosition = ['5%','70%']
+      //     break;
+      // }
       const incomingData = {
         appId: 'd317f559', // 应用ID，必填
         accountId: this.accountIds, // 第三方用户ID，必填
@@ -727,23 +777,14 @@ export default {
         type: 'vod', // live 直播  vod 点播  必填
         videoNode: 'videoDom', // 播放器的容器， div的id 必填
         poster: '', // 封面地址  仅支持.jpg
-        vodOption: { recordId: 'c2d9bb91', forceMSE: false },
-        marqueeOption:{ // 选填
-          enable: Boolean(this.scrolling_open), // 默认 false
-          text: this.formHorse.text_type == 2 ? `${this.formHorse.text}${userInfo.user_id}${userInfo.nick_name}` : this.formHorse.text,    // 跑马灯的文字
-          alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
-          size:this.formHorse.size,      // 文字大小
-          color: this.formHorse.color || '#fff',   //  文字颜色
-          interval: this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
-          speed: this.formHorse.speed, // 跑马灯移动速度  3000快     6000中   10000慢
-          position:this.formHorse.position   // 跑马灯位置 ， 1 随机 2上  3中 4下
-        },
+        vodOption: { recordId: '922013fa', forceMSE: false },
+        marqueeOption: this.marqueeOption,
         watermarkOption: { // 选填
           enable: Boolean(this.watermark_open), // 默认 false
           url: this.domain_url || this.audioImg, // 水印图片的路径
-          align: 'tr', // 图片的对其方式， tl | tr | bl | br 分别对应：左上，右上，左下，右下
-          position: watermarkOptionPosition, // 对应的横纵位置，支持px,vh,vw,%
-          size: ['80px', '35px'], // 水印大小，支持px,vh,vw,%  默认 80 35
+          align: this.fromalAlign(this.formWatermark.img_position), // 图片的对其方式， tl | tr | bl | br 分别对应：左上，右上，左下，右下
+          position: ['20px', '20px'], // 对应的横纵位置，支持px,vh,vw,%
+          size: ['60px', '20px'], // 水印大小，支持px,vh,vw,%  默认 80 35
           alpha:this.formWatermark.img_alpha
         },
         subtitleOption: {
@@ -794,11 +835,14 @@ export default {
       });
     },
     // 初始化播放器节点，重新加载播放器
-   async initNodePlay() {
+   initNodePlay() {
      if (this.$Vhallplayer) {
-      //  await vp.destroy();
         this.$Vhallplayer.destroy();
-        await this.initPlayer()
+        this.$nextTick(() => {
+          document.querySelector('#videoDom').innerHTML = ''
+          this.initPlayer()
+        })
+
      }
     // if(document.querySelector('#videoDom')){
     //     await vp.destroy();
@@ -1099,7 +1143,7 @@ export default {
     position: relative;
     .vod-controller{
       position: absolute;
-      z-index: 1;
+      z-index: 1000;
       width: 100%;
       height: 32px;
       bottom: 0;

@@ -3,7 +3,7 @@
   <div class="show-question question-base" v-if="dataBaseVisible">
       <div class="show-main data-base">
         <p class="title">选择问卷 <i class="el-icon-close" @click="dataBaseVisible=false"></i></p>
-        <div class="data-search" v-show="total || isSearch">
+        <div class="data-search">
           <VhallInput class="search-dialog-tag" v-model.trim="keyword" placeholder="搜索问卷名称" clearable  @keyup.enter.native="getTitle" style="width: 220px" @clear="getTitle">
             <i slot="suffix" class="iconfont-v3 saasicon_search" style="cursor: pointer; line-height: 36px;" @click="getTitle"></i>
           </VhallInput>
@@ -46,7 +46,7 @@
                 fixed
                 label="操作">
                 <template slot-scope="scope">
-                  <span style="cursor: pointer;" @click="preview(scope.row)">预览</span>
+                  <span class="show-hover" style="cursor: pointer;" @click="preview(scope.row)">预览</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -57,8 +57,8 @@
             <el-button type="primary" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
           </noData>
         </div>
-        <p class="text" v-show="total || isSearch">已选择<span>{{ checkList.length }}</span>个问卷</p>
-        <div slot="footer" class="dialog-footer" v-show="total || isSearch">
+        <p class="text">已选择<span>{{ checkList.length }}</span>个问卷</p>
+        <div slot="footer" class="dialog-footer">
           <el-button round size="medium" type="primary" @click.prevent.stop="choseSureQuestion" :disabled="!checkList.length" v-preventReClick>确 定</el-button>
           <el-button round size="medium" @click.prevent.stop="handleCloseVisiton" v-preventReClick>取 消</el-button>
         </div>
@@ -300,6 +300,14 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  /deep/.el-table th{
+    background-color: #f7f7f7;
+  }
+  .show-hover{
+    &:hover{
+      color: #fb3a32;
+    }
   }
 }
   .text{
