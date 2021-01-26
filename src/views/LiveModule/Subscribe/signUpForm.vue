@@ -201,7 +201,9 @@
                     </el-checkbox>
                   </template>
                 </el-form-item>
-                <el-button style="margin-top: 11px;" :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitForm">报名</el-button>
+                <div class="btnBox">
+                  <el-button style="margin-top: 11px;" :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitForm">报名</el-button>
+                </div>
               </el-form>
             </template>
 
@@ -1021,7 +1023,7 @@
         }
       }
       .pageTitle{
-        font-size: 24px;
+        font-size: 22px;
         color: #1A1A1A;
         margin: 40px 0 22px;
         text-align: center;
@@ -1134,9 +1136,9 @@
       /deep/ .el-form-item__label{
         float: none;
       }
-      .el-checkbox-group{
+      /deep/ .el-checkbox-group{
         width: 100%;
-        padding-left: 20px;
+        padding-left: 0px;
         .el-checkbox{
           display: block;
         }
@@ -1147,9 +1149,9 @@
       .el-select{
         width: 100%;
       }
-      .el-radio-group{
+      /deep/ .el-radio-group{
         width: 100%;
-        padding-left: 20px;
+        padding-left: 0px;
         .el-radio{
           display: block;
         }
@@ -1211,10 +1213,15 @@
         margin-bottom: 28px;
       }
       // 必填form表单 * 颜色
-      /deep/ .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {
-        content: '*';
-        color: #FB3A32;
-        margin-right: 4px;
+      /deep/ .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label{
+        position: relative;
+        &:before {
+          content: '*';
+          color: #FB3A32;
+          margin-right: 4px;
+          position: absolute;
+          left: -10px;
+        }
       }
       // 错误提示文本颜色
       /deep/ .el-form-item__error {
@@ -1255,19 +1262,36 @@
       // form-item label 样式重置
       /deep/ .el-form-item__label {
         float: none;
-        height: 40px;
+        // height: 40px;
         display: block;
-        line-height: 40px;
+        line-height: 22px;
         text-align: left;
-        font-size: 16px;
+        font-size: 14px;
+        padding-bottom: 10px;
       }
       // 单选/多选 选项样式重置
       /deep/ .el-radio-group .el-radio, .el-checkbox-group .el-checkbox {
         display: flex;
         align-items: flex-start;
         line-height: 40px;
+        color: #1a1a1a;
         /deep/ .el-checkbox__input, .el-radio__input {
           padding-top: 3px;
+          &.is-checked+.el-radio__label, &.is-checked+.el-checkbox__label{
+            color: #FB3A32;
+          }
+          &.is-checked .el-radio__inner, &.is-checked .el-checkbox__inner{
+            border-color: #FB3A32!important;
+            background: #FB3A32!important;
+          }
+          .el-radio__inner, .el-checkbox__inner{
+            width: 16px;
+            height: 16px;
+            &:after{
+              width: 8px;
+              height: 8px;
+            }
+          }
         }
         /deep/ .el-checkbox__label,.el-radio__label {
           white-space: normal;
@@ -1432,7 +1456,14 @@
 </style>
 <style lang="less">
   .el-select-dropdown__list .el-select-dropdown__item {
-    max-width: 100%!important;
+    max-width: 608px!important;
     width: 100%;
+    line-height: 26px !important;
+    height: initial !important;
+    span{
+      white-space: normal;
+      word-wrap: break-word;
+      word-break: break-all;
+    }
   }
 </style>

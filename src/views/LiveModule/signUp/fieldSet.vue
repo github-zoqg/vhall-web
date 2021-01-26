@@ -785,6 +785,11 @@ export default {
   border-radius: 4px;
   margin-bottom: 16px;
   border: 1px solid #FFFFFF;
+  /deep/ .avatar-uploader{
+    .mask{
+      top: 0;
+    }
+  }
   &.viewItemHover:hover{
     border-color: #FB3A32;
   }
@@ -822,7 +827,7 @@ export default {
     .titleInput {
       font-size: 16px;
       /deep/ .el-input__inner {
-        padding-left: 4px;
+        padding-left: 10px;
         color: #1A1A1A;
         padding-right: 54px;
       }
@@ -835,13 +840,14 @@ export default {
   background: #fff;
   .el-checkbox-group{
     width: 100%;
-    padding-left: 20px;
+    padding-left: 0px;
     .el-checkbox{
       display: block;
       margin-top: 10px;
     }
     /deep/ .el-checkbox__label{
       width: calc(100% - 14px);
+      padding-left: 6px;
       .el-input__inner {
         padding-right: 74px;
       }
@@ -849,7 +855,7 @@ export default {
   }
   .el-radio-group{
     width: 100%;
-    padding-left: 20px;
+    padding-left: 0px;
     .el-radio{
       display: block;
       margin-top: 10px;
@@ -858,6 +864,7 @@ export default {
         margin-top: 0;
       }
       /deep/ .el-radio__label {
+        padding-left: 6px;
         .radioInput {
           width: calc(100% - 24px);
           .el-input__inner {
@@ -886,7 +893,7 @@ export default {
       top: 11px;
     }
     /deep/ .el-checkbox__label {
-      padding-left: 24px;
+      padding-left: 20px;
       width: 100%;
     }
     .other-input {
@@ -1004,7 +1011,7 @@ export default {
 }
 .sureBtn{
   background: none;
-  text-align: left;
+  text-align: center;
   border: 0;
   .el-button{
     width: 160px;
