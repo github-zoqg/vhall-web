@@ -156,6 +156,10 @@ export default {
 </script>
 <style lang="less" scoped>
 .scroll-modify {
+  overflow: inherit;
+  /deep/.el-scrollbar__wrap::-webkit-scrollbar {
+    display: none;
+  }
     /deep/.el-scrollbar__bar {
       right:-29px;
     }
