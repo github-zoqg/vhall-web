@@ -26,7 +26,7 @@
         </div>
       </div>
     </section>
-    <section>
+    <section v-if="isBrand">
       <p class="subject">品牌</p>
       <div class="subjectOuter">
         <template>
@@ -41,7 +41,7 @@
         </template>
       </div>
     </section>
-    <section>
+    <section v-if="isIntact">
       <p class="subject">互动</p>
       <div class="subjectOuter">
         <template v-for="item in liveDataList">
@@ -89,7 +89,6 @@
 </template>
 
 <script>
-import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: "index.vue",
   props: {
@@ -132,7 +131,7 @@ export default {
         { icon: 'icon_embedded@2x', id: 8, title: '推广嵌入', subText: `获取活动推广嵌入的方法`, path: `/live/embedCard/${this.$route.params.str}`, isShow: true}
       ],
       brandList: [
-        { icon: 'icon_brand@2x', id: 1, title: '品牌设置', subText: '设置观看页品牌信息', path: `/live/brandSet/${this.$route.params.str}`,isShow: true},
+        { icon: 'icon_brand@2x', id: 1, title: '品牌设置', subText: '设置观看页品牌信息', path: `/live/brandSet/${this.$route.params.str}`,isShow: this.perssionInfo['ui.brand_setting'] > 0 || this.perssionInfo.webinar_skins > 0},
         { icon: 'icon_custom@2x', id: 2, title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/live/customTab/${this.$route.params.str}`,isShow: this.isTrue},
         { icon: 'icon_player@2x',id: 3, title: '播放器设置', subText: `设置${this.type == 4 ? '点播' :'直播'}跑马灯水印`, path: `/live/playerSet/${this.$route.params.str}`,isShow: this.perssionInfo.player_config==1},
         { icon: 'icon_invitation@2x', id: 4, title: '邀请卡', subText: `用于${this.type == 4 ? '点播' :'直播'}邀请或裂变分享`, path: `/live/invCard/${this.$route.params.str}`,isShow: this.perssionInfo.btn_invite==1},
@@ -152,6 +151,24 @@ export default {
         { icon: 'icon_interactive@2x', id: 2, title: '互动统计', subText: `统计${this.type == 4 ? '点播' :'直播'}互动工具数据`, path: `/live/interactionData/${this.$route.params.str}`, isShow: true },
         { icon: 'icon_User statistics@2x', id: 3, title: '用户统计', subText: `统计${this.type == 4 ? '点播' :'直播'}观众详细数据`, path: `/live/userData/${this.$route.params.str}`, isShow: true },
       ]
+    }
+  },
+  computed: {
+    isBrand() {
+      let isbrand;
+      isbrand = this.brandList.some(item => {
+        // eslint-disable-next-line no-prototype-builtins
+        return item.isShow == true
+      })
+      return isbrand;
+    },
+    isIntact() {
+      let isIntact;
+      isIntact = this.liveDataList.some(item => {
+        // eslint-disable-next-line no-prototype-builtins
+        return item.isShow == true
+      })
+      return isIntact;
     }
   },
   methods: {
