@@ -2,8 +2,8 @@
  <div class="home-main console">
    <OldHeader class="head-wrap" v-if="$route.meta.type !== 'owner'"  scene="userHome" :isWhiteBg=true></OldHeader>
    <pageTitle title="个人主页" v-if="$route.meta.type === 'owner'"></pageTitle>
-   <div class="v-home-bg" v-if="$route.meta.type !== 'owner'" :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || 'https://t-alistatic01.e.vhall.com/upload/common/static-imgs/dc/d2/dcd284bd60054e12a1eefebc804a7802.png' :
-        'https://t-alistatic01.e.vhall.com/upload/common/static-imgs/dc/d2/dcd284bd60054e12a1eefebc804a7802.png'}) 0px center / 100% no-repeat`}"></div>
+   <div class="v-home-bg" v-if="$route.meta.type !== 'owner'" :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || static_img_url :
+        static_img_url }) 0px center / 100% no-repeat`}"></div>
    <div :class="$route.meta.type !== 'owner' ? userHomeVo && Number(userHomeVo.show_subject) === 0 && Number(userHomeVo.show_webinar_list) === 0 ? 'pc_bg no-creates' : 'pc_bg' : ''">
      <!-- 内容区域 -->
      <div :class="['user__layout--title', {'ctrl-layout': $route.meta.type === 'owner'}]">
@@ -123,6 +123,7 @@ export default {
     }
   },
   created() {
+    this.static_img_url = `${Env.staticImgs.home[0]}`
     this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     this.getHomePageInfo();
   },

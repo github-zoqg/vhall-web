@@ -15,6 +15,12 @@ let staticLinkVo = {
   downOldUrl: '//t.e.vhall.com', // 旧版控制台地址，AG: 下载邀请码等；跳转旧版控制台
   helpLinkUrl: 'https://www.vhall.com/help' // 帮助中心跳转地址
 };
+let staticImgs = {
+  home: [
+    'https://t-alistatic01.e.vhall.com/upload/common/static-imgs/dc/d2/dcd284bd60054e12a1eefebc804a7802.png'
+  ]
+}
 export default {
-  staticLinkVo
+  staticLinkVo,
+  staticImgs
 };

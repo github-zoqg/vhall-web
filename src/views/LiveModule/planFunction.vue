@@ -207,7 +207,7 @@ export default {
           value: Number(dataVo['ui.watch_record_chapter']) || 0
         })
       } else {
-        this.liveKeyList = [];
+        // this.liveKeyList = [];
       }
     },
     planErrorRender(err) {
