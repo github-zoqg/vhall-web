@@ -263,7 +263,7 @@ export default {
   margin-right: 16px;
 }
 .user__layout--main {
-  margin-top: 32px;
+  margin-top: 24px;
   width: 100%;
   min-height: 710px;
   margin-bottom: 56px;
