@@ -189,7 +189,7 @@ export default {
   height: 110px;
   align-items: center;
   margin-bottom: 24px;
-  margin-right: 18px;
+  margin-right: 17px;
   box-sizing: border-box;
   background-clip: content-box;
   cursor: pointer;

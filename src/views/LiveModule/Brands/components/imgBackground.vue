@@ -5,7 +5,7 @@
     :close-on-click-modal="false"
     width="700px"
   >
-    <el-scrollbar class="scrollbar">
+    <el-scrollbar class="scrollbar scroll-modify">
       <div class="background-list">
         <div class="list-item" @click.stop="domain_url && choseBackground(-1)">
           <upload
@@ -155,6 +155,11 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.scroll-modify {
+    /deep/.el-scrollbar__bar {
+      right:-29px;
+    }
+}
 .background-list {
   // border: 1px solid #ccc;
   max-height: 300px;
