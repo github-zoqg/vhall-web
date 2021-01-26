@@ -327,26 +327,28 @@
         });
       },
       // 获取账号可分配资源
-      allocMoreGet() {
-        this.$fetch('allocMoreGet', {}).then(res=>{
-          if (res && res.code === 200) {
-            this.resourcesVo = res.data;
-          } else {
-            this.resourcesVo = null;
-          }
-          let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-          if(userInfo) {
-            // is_dynamic > 0 表示动态， 其它表示固定。
-            this.tabType = userInfo.is_dynamic > 0 ? 'trends' : 'regular';
-            this.is_dynamic = userInfo.is_dynamic;
+      async allocMoreGet() {
+        let res = await this.$fetch('allocMoreGet', {}).catch(res => {
+           console.log('获取可分配资源异常', res)
+          this.resourcesVo = null;
+        })
+        if (res && res.code === 200) {
+          this.resourcesVo = res.data;
+          let userResult = await this.$fetch('getInfo', {scene_id: 2}).catch(error => {
+            console.log('获取账户信息异常', error)
+          });
+          if (userResult && res.code === 200) {
+            sessionOrLocal.set('userInfo', JSON.stringify(userResult.data));
+            sessionOrLocal.set('userId', JSON.stringify(userResult.data.user_id));
+            this.$EventBus.$emit('saas_vs_account_change', userResult.data);
+            // user下的is_dynamic > 0 表示动态， 其它表示固定。
+            this.tabType = userResult.data.is_dynamic > 0 ? 'trends' : 'regular';
+            this.is_dynamic = userResult.data.is_dynamic;
             if(!(this.is_dynamic > 0)) {
               this.getSonList();
             }
           }
-        }).catch(e=>{
-          console.log(e);
-          this.resourcesVo = null;
-        });
+        }
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
@@ -368,7 +370,6 @@
         }
         // 右侧最大可分配数据
         let maxVla = this.resourcesVo.type > 0 ? this.resourcesVo.flow : this.resourcesVo.total;
-
         // 判断流量是否超出可分配流量
         let params = {
           type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量,
@@ -415,6 +416,7 @@
           }
         });
       },
+      // 如果有row表示单行，无表示批量
       sendAllocSet(params, row) {
         this.$fetch('allocSetVal', params, {
           'Content-Type': 'application/json'
