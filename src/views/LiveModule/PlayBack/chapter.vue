@@ -1054,6 +1054,7 @@ export default {
       }
       .vhallPlayer-controller-box{
         background: #000;
+        padding: 0 16px;
       }
       .vh-video-chapter__operate {
         height:72px;
@@ -1071,7 +1072,7 @@ export default {
       }
       .vh-video-chapter__volume-box {
         position: relative;
-        width: 60px;
+        // width: 60px;
         height: 28px;
         line-height: 40px;
         float: right;
@@ -1092,7 +1093,7 @@ export default {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 40px;
+          // width: 40px;
           height: 28px;
           &:hover {
             & + .vh-video-chapter__slider {
@@ -1102,10 +1103,10 @@ export default {
         }
         .vh-video-chapter__slider {
           display: none;
-          width: 70px;
+          // width: 70px;
           position: absolute;
           z-index: 3;
-          right: -8px;
+          // right: -8px;
           top: -110px;
           padding: 0 10px;
           &:hover {
@@ -1121,7 +1122,7 @@ export default {
               width: 4px;
               background: #333;
               .el-slider__bar {
-                background-color: #E18B2E;
+                background-color: #FB3A32;
                 width: 4px;
               }
             }
