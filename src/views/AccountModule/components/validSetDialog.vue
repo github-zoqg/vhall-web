@@ -3,6 +3,7 @@
     :title="title"
     :visible.sync="visible"
     :lock-scroll=false
+    class="valid-set-dialog"
     width="400px">
     <div class="content">
       <el-form :model="form" ref="form" :rules="formRules" label-width="80px">
@@ -728,6 +729,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.valid-set-dialog {
+  /deep/.el-dialog__footer {
+    padding: 0 32px 24px 32px;
+  }
+}
 .errorText {
   color: #E2332C;
   font-size: 12px;
@@ -753,7 +759,7 @@ export default {
 }
 /deep/.el-form-item.link__to {
   text-align: right;
-  margin-bottom: 0;
+  margin-bottom: 24px;
   margin-top: -20px;
   a {
      color: #3562FA;
