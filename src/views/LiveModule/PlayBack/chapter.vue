@@ -46,7 +46,7 @@
               </div>
 
             </div>
-            <div class="vhallPlayer-time-component">
+            <div v-show="loadOver" class="vhallPlayer-time-component">
               <span class="vh-video-chapter__time">
                 <span class="vh-video-chapter__hover-time">{{ showTime }}</span>
                 /
@@ -275,7 +275,8 @@ export default {
       catchVoice: 0,
       videoTime: 0, // 视频实际时长
       chapterTotalInfo: {},
-      tutorialVisible: false
+      tutorialVisible: false,
+      loadOver: false
     };
   },
   provide () {
@@ -319,6 +320,7 @@ export default {
     }, 300)
     this.$EventBus.$on('all_complete', () => {
       this.loading = false;
+      this.loadOver = true;
     });
     this.$EventBus.$on('docSDK_ready', docsdk=>{
       // setTimeout(()=>{
@@ -956,7 +958,7 @@ export default {
     padding: 24px;
     background: #222222;
     display: flex;
-    min-height: 320px;
+    height: 366px;
     justify-content: space-between;
     >div{
       flex: 1;
@@ -1040,9 +1042,15 @@ export default {
     .playerBox{
       width: 480px;
       margin-right: 10px;
-      /deep/ .vh-player .vhallPlayer-controller-box{
-        display: flex;
-        justify-content: space-between;
+      >div:first-child{
+        height: calc(100% - 56px);
+      }
+      /deep/ .vh-player {
+        height: 100%;
+        .vhallPlayer-controller-box{
+          display: flex;
+          justify-content: space-between;
+        }
       }
       .vhallPlayer-controller-box{
         background: #000;

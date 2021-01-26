@@ -360,6 +360,13 @@ export default {
       width: 32%;
       height: 100%;
       .playerBox {
+        height: 170px;
+        >div{
+          height: 100%;
+          /deep/ .vh-player {
+            height: 100%;
+          }
+        }
         &.openControler{
           /deep/ .vhallPlayer-container{
             display: block!important;

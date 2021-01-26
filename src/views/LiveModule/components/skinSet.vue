@@ -6,7 +6,7 @@
           <el-form-item label="皮肤方案">
             <el-radio-group v-model="skinType" @change="previewShow">
               <el-radio :label="0">默认皮肤</el-radio>
-              <el-radio :label="1" v-if="perssionInfo.webinar_skins>0">自定义皮肤</el-radio>
+              <el-radio :label="1">自定义皮肤</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="页面底色" v-if="skinType === 1">
@@ -54,7 +54,6 @@
 import BrandSetPreview from '../../LiveModule/components/brandSetPreview';
 import Upload from '@/components/Upload/main';
 import ColorSet from '@/components/ColorSelect';
-import {sessionOrLocal} from "@/utils/utils";
 
 export default {
   name: "skinSet.vue",
@@ -66,7 +65,6 @@ export default {
   data() {
     return {
       skinType: null, // 0-默认皮肤；1-自定义皮肤
-      perssionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
       skinVo: {},
       pageBgColors: ['FFFFFF', 'F2F2F2', '1A1A1A'],
       pageThemeColors: ['FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
