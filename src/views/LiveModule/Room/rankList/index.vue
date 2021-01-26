@@ -3,7 +3,7 @@
   <div class="vhall-invite">
     <div class="no-info" v-if="noInfoShow">
       <img
-        src="https://t-alistatic01.e.vhall.com/static/images/mobile/shafa-icon.png?v=mntXScOgiTh6Da6AjjUMQA%3D%3D"
+        src="../img/shafa-icon.png"
         alt=""
       />
       <p>当前您还没邀请人，快去抢沙发吧~</p>

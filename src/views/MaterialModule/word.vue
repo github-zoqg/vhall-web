@@ -92,14 +92,14 @@
         <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>-->
       <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false' height="458px" :modalClick=true>
-        <img class="imgLoading" src="//t-alistatic01.e.vhall.com/static/images/delFlash/load.gif"  v-show="!docLoadComplete">
+        <img class="imgLoading" :src="loadingUrl"  v-show="!docLoadComplete">
         <div style="position: relative;height: 396px;" v-show="isDot && docLoadComplete">
           <!-- 动态文档区域-->
           <div :key="currentCid"  :id="currentCid" style="width: 704px;height: 396px;"></div>
         </div>
         <!-- 静态文档区域
         <div class="preview-doc" id="previewDoc" v-else>
-          <img v-for="sIndex of docParam.page" :key="`s_${sIndex}`"  v-show="activeIns === sIndex" :index="sIndex" :src="`${env.staticLinkVo.wordShowUrl}/${docParam.hash}/${sIndex}.jpg`" alt="" />
+          <img v-for="sIndex of docParam.page" :key="`s_${sIndex}`"  v-show="activeIns === sIndex" :index="sIndex" :src="`http://cnstatic01.e.vhall.com/document/${docParam.hash}/${sIndex}.jpg`" alt="" />
         </div>-->
         <div class="preview-pages" v-if="isDot && dotPageInfo.total > 0 && docLoadComplete">
           <span class="left" @click="prevStep">&lt;</span><span class="current">{{ dotPageInfo.pageIndex }}</span><span class="side">/</span><span class="total">{{ dotPageInfo.total }}</span><span class="right" @click="nextStep">&gt;</span>
@@ -137,7 +137,6 @@
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
-// import DocPreview from './DocPreview/index.vue';
 import NullPage from '../PlatformModule/Error/nullPage.vue';
 import SelectWord from './components/selectWord.vue';
 import Env from '@/api/env';
@@ -170,6 +169,7 @@ export default {
       no_show: false,
       token: sessionOrLocal.get('token', 'localStorage') || '',
       actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/interacts/document/upload-webinar-document`,
+      loadingUrl: `${Env.staticImgs.word[0]}`,
       formParams: {
         keyword: ''
       },
@@ -284,7 +284,7 @@ export default {
         return;
       } else {
         this.activeIns++;
-        this.setImgSize();
+        // this.setImgSize();
       }
     },
     nextStep() {
@@ -308,7 +308,7 @@ export default {
         return;
       } else {
         this.activeIns--;
-        this.setImgSize();
+        // this.setImgSize();
       }
     },
     prevStep() {
@@ -329,7 +329,7 @@ export default {
       let that = this;
       if (this.activeIns == 1) {
         let img = new Image();
-        img.src = `http:${this.env.wordShowUrl}/${this.docParam.hash}/${this.activeIns}.jpg`;
+        img.src = `http://cnstatic01.e.vhall.com/document/${this.docParam.hash}/${this.activeIns}.jpg`;
         if (img.complete) {
           this.isLoading = true;
         }
