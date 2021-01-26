@@ -16,8 +16,6 @@
         </div>
         <el-scrollbar class="scroll-modify" v-loadMore="moreLoadData">
           <div class="vh-chose-active-box"
-          v-loading="loading"
-          element-loading-spinner="el-icon-loading"
           v-show="total"
           >
           <!-- 单个视频 -->
@@ -229,9 +227,9 @@ export default {
     // width: 560px;
     max-height: 310px;
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    // display: flex;
+    // justify-content: space-between;
+    // flex-wrap: wrap;
     // overflow: auto;
     // overflow-x: hidden;
     // position: relative;
@@ -264,13 +262,13 @@ export default {
     overflow: hidden;
     background: #F7F7F7;
     border-radius: 4px;
-    margin-bottom: 12px;
-    // margin: 0 12px 12px 0;
+    // margin-bottom: 12px;
+    margin: 0 12px 12px 0;
     border: 1px solid #ffffff;
     position: relative;
-    // &:nth-of-type(3n) {
-    //   margin-right: 0;
-    // }
+    &:nth-of-type(3n + 0) {
+      margin-right: 0;
+    }
     .img-tangle{
         position: absolute;
         right: -1px;
@@ -381,6 +379,9 @@ export default {
         }
     }
   }
+  // .vh-chose-active-item:nth-of-type(3n + 0) {
+  //   margin-right: 0;
+  // }
   .no-live{
     padding-bottom: 24px;
   }
