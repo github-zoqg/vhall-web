@@ -196,6 +196,11 @@ export default {
       right: 0;
       top: 0;
     }
+    /deep/.el-select{
+      .el-select__caret.el-input__icon.el-icon-arrow-up{
+        line-height: 37px;
+      }
+    }
     .search-tag {
       width: 220px!important;
       /deep/.el-input__inner {
