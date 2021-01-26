@@ -238,7 +238,7 @@
             <div class="transtant" v-show="isShowSpeed">
               <transition>
                 <div class="speed_list">
-                  <p v-for="(item, index) in speedList" :key="index" @click="choseOtherSpeed(item)" :class="speed == index + 1 ? 'active' : ''">{{ item.label }}</p>
+                  <p v-for="(item, index) in speedList" :key="index" @click="choseOtherSpeed(item)" :class="speed == item.value ? 'active' : ''">{{ item.label }}</p>
                 </div>
               </transition>
             </div>
@@ -305,23 +305,23 @@ export default {
       speedList: [
         {
           label: '0.5x',
-          value: 1
+          value: 0.5
         },
         {
           label: '1.0x',
-          value: 2
+          value: 1
         },
         {
           label: '1.25x',
-          value: 3
+          value: 1.25
         },
         {
           label: '1.5x',
-          value: 4
+          value: 1.5
         },
         {
           label: '2.0x',
-          value: 5
+          value: 2
         }
       ],
       pageThemeColors: ['FFFFFF','1A1A1A','FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
@@ -718,14 +718,12 @@ export default {
     // 初始化播放器
     initPlayer() {
       this.showVideo = true;
-
-      // document.querySelector('.vhallPlayer-container').style.display = 'block';
       this.initSDK().then(() => {
         this.initSlider();
           this.totalTime = this.$Vhallplayer.getDuration(() => {
             console.log('获取总时间失败');
           });
-          // this.listen();
+          this.listen();
         // 初试完播放器获取其它设置
         this.getBaseOtherList()
 
