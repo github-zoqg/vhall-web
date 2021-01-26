@@ -50,7 +50,7 @@
       >
       </table-list>
       <div class="no-live" v-show="!totalNum">
-        <noData :nullType="'noData'" :text="'暂未数据'"></noData>
+        <noData :nullType="'noData'" :text="'暂无数据'"></noData>
       </div>
     </div>
   </div>

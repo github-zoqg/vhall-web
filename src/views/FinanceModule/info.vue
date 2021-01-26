@@ -178,7 +178,7 @@
           @getTableList="getAccountList"
           >
         </table-list>
-        <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂未数据'"></noData>
+        <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂无数据'"></noData>
       </div>
       </div>
     </div>
