@@ -451,7 +451,7 @@ export default {
       }
     }
     .bottom{
-      height: 94px;
+      height: 80px;
       background: #f7f7f7;
       box-sizing: border-box;
       padding: 12px 16px;
