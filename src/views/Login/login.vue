@@ -909,7 +909,7 @@ export default {
   text-align: center;
   margin-top: 20px;
   span {
-    color: #4DA1FF;
+    color: #3562FA;
     margin-left: 8px;
     cursor: pointer;
   }

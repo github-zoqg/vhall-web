@@ -904,9 +904,20 @@ export default {
   /deep/ .el-table__empty-block {
     display: none;
   }
-  /deep/ .create-gift .el-dialog__footer {
-    padding-top: 0;
+  /deep/ .create-gift {
+    .el-dialog__footer {
+      padding-top: 0;
+    }
+    .el-form-item {
+      .el-icon-refresh-left,.saasicon_shanchu{
+        color: #fff;
+      }
+      .saasicon_shangchuan{
+        color: #999;
+      }
+    }
   }
+
   /deep/ .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {
     content: '*';
     color: #FB3A32;

@@ -371,7 +371,7 @@ export default {
       vm: null,
       checkEnter: true, // 检验是否是第一次进来的
       audioImg: require('@/common/images/logo4.png'),
-      audioEnd: '//t-alistatic01.e.vhall.com/upload/webinars/img_url/fb/40/fb40e62abba02933ada7d97495f81ef1.jpg',
+      audioEnd: `${Env.staticImgs.video[0]}`,
     };
   },
   components: {

@@ -4,7 +4,7 @@
       <img
         v-if="seizeImageShow"
         class="seize-image"
-        src="http://t-alistatic01.e.vhall.com/upload/user/goods/27/18/27183f4abcc7f33af6616bd0b84c9f14.png"
+        src="./img/gz.png"
         alt
       />
       <div class="audio" v-show="audioStatus || isAudio">
