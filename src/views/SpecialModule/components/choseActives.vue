@@ -14,7 +14,7 @@
           </VhallInput>
           <!-- <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" class="add-living-input" clearable></el-input> -->
         </div>
-        <el-scrollbar v-loadMore="moreLoadData">
+        <el-scrollbar class="scroll-modify" v-loadMore="moreLoadData">
           <div class="vh-chose-active-box"
           v-loading="loading"
           element-loading-spinner="el-icon-loading"
@@ -220,6 +220,11 @@ export default {
 }
 </script>
 <style lang="less">
+.scroll-modify {
+    /deep/.el-scrollbar__bar {
+      right:-29px;
+    }
+}
   .vh-chose-active-box{
     // width: 560px;
     max-height: 310px;
