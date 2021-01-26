@@ -264,6 +264,7 @@ import { sessionOrLocal, debounce } from '@/utils/utils';
 import beginPlay from '@/components/beginBtn';
 import { secondToDateZH } from '@/utils/general';
 import controle from './js/control';
+import Env from '@/api/env';
 export default {
   name: 'playerSet',
   mixins: [controle],
