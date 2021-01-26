@@ -113,7 +113,7 @@
         <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>-->
       <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false'>
-        <img class="imgLoading" src="//t-alistatic01.e.vhall.com/static/images/delFlash/load.gif" v-show="isLoading">
+        <img class="imgLoading" :src="loadingUrl" v-show="isLoading">
         <div class="preview-doc">
           <img v-for="sIndex of docParam.page" :key="`s_${sIndex}`"  v-show="activeIns === sIndex" :index="sIndex" :src="`http://cnstatic01.e.vhall.com/document/${docParam.hash}/${sIndex}.jpg`" alt="" />
         </div>
@@ -152,6 +152,7 @@ export default {
       no_show: false,
       token: sessionOrLocal.get('token', 'localStorage') || '',
       actionUrl: `${process.env.VUE_APP_BASE_URL}/v3/interacts/document/upload-webinar-document`,
+      loadingUrl: `${Env.staticImgs.word[0]}`,
       formParams: {
         keyword: ''
       },

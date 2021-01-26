@@ -50,6 +50,7 @@
 </template>
 <script>
 import upload from '@/components/Upload/main';
+import Env from '@/api/env';
 export default {
   data() {
     return {
@@ -58,7 +59,17 @@ export default {
       imageUrl: '',
       domain_url: '',
       isType: 1,
-      fileList: ['https://t-alistatic01.e.vhall.com/static/images/invitation/bg_1@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_2@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_3@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_4@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_5@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_6@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_7@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_8@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0', 'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_9@2x.png?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0'],
+      fileList: [
+        `${Env.staticImgs.invitation[0]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
+        `${Env.staticImgs.invitation[1]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
+        `${Env.staticImgs.invitation[2]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
+        `${Env.staticImgs.invitation[3]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
+        `${Env.staticImgs.invitation[4]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
+        `${Env.staticImgs.invitation[5]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
+        `${Env.staticImgs.invitation[6]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
+        `${Env.staticImgs.invitation[7]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
+        `${Env.staticImgs.invitation[8]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
+      ],
     };
   },
   components: {
@@ -156,6 +167,10 @@ export default {
 </script>
 <style lang="less" scoped>
 .scroll-modify {
+  overflow: inherit;
+  /deep/.el-scrollbar__wrap::-webkit-scrollbar {
+    display: none;
+  }
     /deep/.el-scrollbar__bar {
       right:-29px;
     }

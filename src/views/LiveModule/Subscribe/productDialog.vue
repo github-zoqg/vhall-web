@@ -6,7 +6,7 @@
     width="770px">
     <div class="info">
       <div class="imageBox">
-        <img src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="">
+        <img :src="default_url" alt="">
       </div>
       <div class="detail">
         <p class="title">手持无绳擦地机机器人扫地人扫地器人扫地人</p>
@@ -24,17 +24,19 @@
         </p>
         <el-button type="primary" class="fullBut">即将发售</el-button>
       </div>
-      <img v-for="item in 3" :key="`thumbnail${item}`" @click="thumbnailActive=item" src="//t-alistatic01.e.vhall.com/static/img/video_default.png" alt="加载失败" :class="{thumbnail: true, active: thumbnailActive==item}">
+      <img v-for="item in 3" :key="`thumbnail${item}`" @click="thumbnailActive=item" :src="default_url" alt="加载失败" :class="{thumbnail: true, active: thumbnailActive==item}">
     </div>
   </VhallDialog>
 </template>
 
 <script>
+import Env from '@/api/env';
 export default {
   data(){
     return {
       dialogVisible: false,
-      thumbnailActive: 0
+      thumbnailActive: 0,
+      default_url: `${Env.staticImgs.product[0]}`
     };
   }
 };
