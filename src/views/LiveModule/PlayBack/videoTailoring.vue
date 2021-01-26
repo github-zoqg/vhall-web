@@ -541,7 +541,7 @@ export default {
         border-radius: 25px;
         border-color: #666666;
         border-width: 1px;
-        background: #17171e;
+        background: transparent;
         width: 72px;
         font-size: 14px;
         color: #999999;
@@ -549,7 +549,7 @@ export default {
       /deep/ .el-range-editor {
         border-radius: 25px;
         height: 36px;
-        background: #17171e;
+        background: transparent;
         border-color: #666666;
         border-width: 1px;
         width: 382px;
@@ -559,7 +559,7 @@ export default {
           font-size: 14px;
         }
         .el-range-input {
-          background: #17171e;
+          background: transparent;
           color: #666666;
           line-height: 26px;
           &::-webkit-input-placeholder {
