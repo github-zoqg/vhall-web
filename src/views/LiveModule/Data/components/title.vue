@@ -74,6 +74,7 @@ export default {
       font-family: @fontRegular;
       color: #fff;
       vertical-align: top;
+      font-style:normal;
       // line-height: 18px;
     }
   }

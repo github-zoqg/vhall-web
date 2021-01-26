@@ -99,8 +99,8 @@
     </div>
     <div class="no-live" v-else>
       <noData :nullType="nullText" :text="text">
-        <el-button type="primary" v-if="nullText == 'nullData'" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
-        <el-button round v-if="nullText == 'nullData' && vodPerssion == 1" class="transparent-btn"  @click="createLiveAction('2')" v-preventReClick size="medium">创建点播</el-button>
+        <el-button type="primary" v-if="nullText == 'nullData'" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length152">创建直播</el-button>
+        <el-button round v-if="nullText == 'nullData' && vodPerssion == 1" class="transparent-btn length152"  @click="createLiveAction('2')" v-preventReClick size="medium">创建点播</el-button>
       </noData>
     </div>
   </div>
