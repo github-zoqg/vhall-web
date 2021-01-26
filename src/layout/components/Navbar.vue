@@ -65,7 +65,7 @@ export default {
   },
   computed: {
     oldUrl: function() {
-      return `${this.env.staticLinkVo.downOldUrl}/auth/check-token?after_login=mywebinar/main&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`
+      return `${process.env.VUE_APP_E_COMPANY_URL}/auth/check-token?after_login=mywebinar/main&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`
     },
     show_name: function() {
       if (this.userInfo && this.userInfo.nick_name) {
