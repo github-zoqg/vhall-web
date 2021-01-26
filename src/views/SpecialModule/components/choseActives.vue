@@ -379,9 +379,6 @@ export default {
         }
     }
   }
-  // .vh-chose-active-item:nth-of-type(3n + 0) {
-  //   margin-right: 0;
-  // }
   .no-live{
     padding-bottom: 24px;
   }
