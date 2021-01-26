@@ -414,7 +414,7 @@ export default {
     }
     .littleBox{
       width: 302px;
-      height: 222px;
+      height: 190px;
       position: absolute;
       top: 16px;
       right: 16px;
@@ -425,6 +425,13 @@ export default {
       height: 100%;
       position: relative;
       .playerBox {
+        height: 100%;
+        >div{
+          height:100%;
+        }
+        /deep/ #vh-player {
+          height: 100%;
+        }
         /deep/ .vhallPlayer-container{
           position: absolute;
         }
