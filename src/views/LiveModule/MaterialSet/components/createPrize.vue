@@ -3,10 +3,12 @@
     <VhallDialog
       :title="`${title}奖品`"
       :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
+      v-if="dialogVisible"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
       :lock-scroll=false
       width="468px">
-      <el-form :model="prizeForm" :rules="rules" ref="prizeForm" label-width="80px">
+      <el-form :model="prizeForm" :rules="rules" ref="prizeForm" label-width="80px" onsubmit="return false;">
         <el-form-item label="图片上传" required>
           <upload
             class="giftUpload"
