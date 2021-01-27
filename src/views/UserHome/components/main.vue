@@ -465,7 +465,7 @@ export default {
         color: #1A1A1A;
         font-size: 16px;
         line-height: 24px;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
         text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
         text-overflow: ellipsis;

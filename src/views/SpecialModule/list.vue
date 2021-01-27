@@ -483,7 +483,7 @@ export default {
         .liveTitle{
           color: #1A1A1A;
           font-size: 16px;
-          margin-bottom: 6px;
+          margin-bottom: 8px;
           line-height: 24px;
           text-overflow: -o-ellipsis-lastline;
           overflow: hidden;
