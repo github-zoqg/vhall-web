@@ -12,6 +12,7 @@
         <div :class="`skin-preview preview-${switchType}`" :style="{ backgroundColor: `${skinSetVo.bgColor}`}">
           <header class="pc-header" v-if="signSetVo && signSetVo.view_status == 1">
             <img class="logo-image" :src="domain_url || signSetVo.logo_url" alt="标志图" v-if="(signSetVo && signSetVo.logo_url) || domain_url"/>
+            <img class="logo-image" src="../../../common/images/logo4.png" v-else/>
             <div class="title-right">
               <el-button class="button-style button-login" size="mini">登录</el-button>
               <el-button class="button-style button-register" size="mini" type="primary">注册</el-button>
