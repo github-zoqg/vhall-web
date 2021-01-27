@@ -303,7 +303,7 @@ export default {
           message: `用户统计数据导出申请成功，请去下载中心下载`,
           showClose: true,
           // duration: 0,
-          type: 'error',
+          type: 'success',
           customClass: 'zdy-info-box'
         });
         this.$EventBus.$emit('saas_vs_download_change');
