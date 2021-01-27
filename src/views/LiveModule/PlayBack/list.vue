@@ -710,6 +710,7 @@ export default {
       float: left;
       width: 160px;
       height: 90px;
+      background-color: #1a1a1a;
       .imageWrap{
         width: 100%;
         height: 100%;
@@ -798,6 +799,7 @@ export default {
       width: 100%;
       height: 100%;
       border-radius: 6px;
+      object-fit: scale-down;
     }
   }
   .operaBlock{

@@ -2,12 +2,14 @@ const controle = {
   methods: {
     jingYin(){
       if(this.isMute){
+        this.voice = 50;
         this.isMute = false;
         this.$Vhallplayer.setMute(false, ()=>{
           console.log('解除静音失败');
           this.isMute = true;
         });
       }else{
+        this.voice = -1;
         this.isMute = true;
         this.$Vhallplayer.setMute(true, ()=>{
           this.isMute = false;
