@@ -771,7 +771,7 @@ export default {
       float: left;
       .name{
         line-height: 20px;
-        height: 40px;
+        // height: 40px;
         word-break: break-all;
         text-overflow: ellipsis;
         display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
