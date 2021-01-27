@@ -262,6 +262,7 @@ export default {
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(()=>{
         this.$parent.isChange = false;
+        this.$parent.warmFlag = false;
         this.$router.push({path: "/material/video"});
       }).catch(()=>{});
     }
