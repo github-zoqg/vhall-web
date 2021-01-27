@@ -60,8 +60,11 @@
                 <!-- <div class=""></div> -->
               </div>
               <div class="bottom">
-                <div class="">
-                  <p class="liveTitle" :title="item.subject">{{item.subject}}</p>
+                <div class="live-title">
+                  <el-tooltip class="item" effect="dark" :content="item.subject" placement="top-start">
+                    <p class="liveTitle">{{item.subject}}</p>
+                  </el-tooltip>
+                  <!-- <p class="liveTitle" :title="item.subject">{{item.subject}}</p> -->
                   <p class="liveTime">{{item.start_time}}</p>
                 </div>
                 <p class="liveOpera">
@@ -99,8 +102,8 @@
     </div>
     <div class="no-live" v-else>
       <noData :nullType="nullText" :text="text">
-        <el-button type="primary" v-if="nullText == 'nullData'" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length152">创建直播</el-button>
-        <el-button round v-if="nullText == 'nullData' && vodPerssion == 1" class="transparent-btn length152"  @click="createLiveAction('2')" v-preventReClick size="medium">创建点播</el-button>
+        <el-button type="primary" v-if="nullText == 'nullData'" round @click="createLiveAction('1')" v-preventReClick  class="length152">创建直播</el-button>
+        <el-button round v-if="nullText == 'nullData' && vodPerssion == 1" class="transparent-btn length152"  @click="createLiveAction('2')" v-preventReClick >创建点播</el-button>
       </noData>
     </div>
   </div>
@@ -386,7 +389,11 @@ export default {
   },
 };
 </script>
-
+<style lang="less">
+  .el-tooltip__popper {
+    max-width: 285px;
+  }
+</style>
 <style lang="less" scoped>
   .liveListBox{
     user-select: none;
@@ -406,8 +413,8 @@ export default {
     //     background: #fc615b;
     //   }
     // }
-    /deep/.el-button{
-      padding: 4px 24px;
+    .no-live /deep/.el-button{
+      padding: 9px 24px;
     }
     /deep/.el-dropdown-menu__item:not(.is-disabled):hover{
       background-color: #FB3A32;
@@ -572,7 +579,7 @@ export default {
         .liveTitle{
           color: #1A1A1A;
           font-size: 16px;
-          margin-bottom: 6px;
+          margin-bottom: 8px;
           line-height: 24px;
           text-overflow: -o-ellipsis-lastline;
           overflow: hidden;

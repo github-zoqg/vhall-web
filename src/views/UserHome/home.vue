@@ -198,9 +198,9 @@ export default {
     display: inline-block;
     vertical-align: top;
     &.layout__center {
-      width: calc(100% - 330px);
+      width: calc(100% - 322px);
       &.one--btn {
-        width: calc(100% - 240px);
+        width: calc(100% - 232px);
       }
     }
     &:last-child {
@@ -209,7 +209,7 @@ export default {
         width: 76px;
       }
       text-align: right;
-      margin-left: 48px;
+      margin-left: 40px;
       vertical-align: top;
       padding-top: 8px;
     }
