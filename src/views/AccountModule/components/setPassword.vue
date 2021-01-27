@@ -118,12 +118,14 @@ export default {
       this.vo = vo;
       vo.has_password = 1;
       if(!(vo.has_password > 0)) {
-        this.$alert('为了保证您的账号安全，请您先绑定手机号', '提示', {
-          dangerouslyUseHTMLString: true,
-          customClass: 'zdy-alert-box',
-          type: 'warning',
-          center: true
-        });
+        this.$confirm(`为了保证您的账号安全，请您先绑定手机号`, '提示', {
+          confirmButtonText: '我知道了',
+          cancelButtonText: '',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel-hide'
+        }).then(() => {
+        }).catch(() => {});
       } else {
         this.step = 1;
         this.form.scene_id = vo.has_password > 0 ? 1 : 9;
