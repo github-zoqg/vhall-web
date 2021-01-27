@@ -83,7 +83,8 @@ export default {
       msgInfo: {},
       handleMsgTimer: '',
       isChange: false,
-      playerParams: {}
+      playerParams: {},
+      createRecordMsg: null
     };
   },
   watch: {
@@ -219,6 +220,7 @@ export default {
               if (!this.handleMsgTimer) {
                 this.isNew = true;
                 this.getPlayBackInfo(msg.data.paas_record_id, true, msg.data.paas_record_id);
+                this.createRecordMsg.close()
                 this.handleMsgTimer = setTimeout(() => {
                   this.handleMsgTimer = ''
                 }, 2000)
@@ -317,10 +319,10 @@ export default {
           if (res.code == 200) {
             if (res.data.status == 0) {
               // 点击创建，如果 status===0 视频未生成，等消息
-              this.$message({
+              this.createRecordMsg = this.$message({
                 message: `视频生成中,请稍侯...`,
                 showClose: true,
-                // duration: 0,
+                duration: 0,
                 type: 'success',
                 customClass: 'zdy-info-box'
               });

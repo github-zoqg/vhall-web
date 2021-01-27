@@ -7,13 +7,13 @@
         @mousemove="vhControlWrapMouseMove"
         @mouseleave="vhControlWrapMouseLeave"
       >-->
-      <div class="vh-video-tailoring__control fl" ref="vhControlWrap" v-if="videoTime">
+      <div id="sliderSelector" class="vh-video-tailoring__control fl" ref="vhControlWrap" v-if="videoTime">
         <el-slider
           v-model="sliderVal"
           :show-tooltip="false"
           ref="controllerRef"
           @change="setVideo"
-          @input="setVideo"
+          @input="setSilderVideo"
         ></el-slider>
         <controlEventPoint
           v-for="(item, index) in eventPointList"
@@ -356,7 +356,8 @@ export default {
       currentTimeLeft: '', // 鼠标滑过裁剪区域显示当前时间左侧位置
       delCutPoint: false, // 删除裁剪点弹窗显示隐藏
       formatEventTime: '', // 事件点弹窗中显示的格式化后的时间
-      isFullScreen: false // 当前是否是全屏
+      isFullScreen: false, // 当前是否是全屏
+      isUserInput: false // 是否是用户触发的视频进度条的 input 事件
     };
   },
   beforeDestroy () {
@@ -374,6 +375,7 @@ export default {
     this.$EventBus.$off('pointMouseUp');
     this.$EventBus.$off('deleteCutPointSuccess');
     window.clearInterval(this.previewSettimeOut);
+    document.removeEventListener("mouseup", this.sliderMouseUp);
   },
   created () {
     this.$nextTick(() => {
@@ -395,6 +397,11 @@ export default {
       setTimeout(() => {
         // 动态获取当前视频的总时长及当前播放的时间 当做刻度尺值，弱播放时间小于1200秒，则刻度尺最小赋值为1200秒
         this.videoTime = Math.round(window.vhallPlayer.getDuration());
+        this.$nextTick(() => {
+          const sliderBtn = document.querySelector('#sliderSelector .el-slider__button')
+          sliderBtn.onmousedown = () => { this.isUserInput = true }
+          document.addEventListener("mouseup", this.sliderMouseUp);
+        })
         this.$EventBus.$emit('blockInit', 0, this.videoTime);
         window.vhallPlayer.on(window.VhallPlayer.TIMEUPDATE, () => {
           this.currentTime = window.vhallPlayer.getCurrentTime(() => {
@@ -551,6 +558,22 @@ export default {
       const time = this.sliderVal / 100 * this.videoTime;
       this.setVideoCurrentTime(time);
       this.play();
+    },
+    /**
+     * 滑动滚动条滑块
+     */
+    setSilderVideo () {
+      if (this.isUserInput) {
+        const time = this.sliderVal / 100 * this.videoTime;
+        this.setVideoCurrentTime(time);
+        this.play();
+      }
+    },
+    /**
+     * 滑块鼠标松开事件执行函数
+     */
+    sliderMouseUp () {
+      this.isUserInput = false;
     },
     /**
      * 设置播放时间

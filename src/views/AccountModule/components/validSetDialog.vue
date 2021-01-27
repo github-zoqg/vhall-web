@@ -618,23 +618,25 @@ export default {
       this.vo = vo;
       this.showVo.executeType = btnType;
       if(!vo) {
-        this.$alert('信息获取失败，请您检查网络或重新登录', '提示', {
+        this.$confirm(`信息获取失败，请您检查网络或重新登录`, '提示', {
           confirmButtonText: '我知道了',
-          customClass: 'zdy-alert-box',
-          center: true,
-          lockScroll: false
-        }).then(()=>{
-        }).catch(()=>{});
+          cancelButtonText: '',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel-hide'
+        }).then(() => {
+        }).catch(() => {});
         return;
       } else if (btnType === 'pwd' && vo && !vo.phone) {
         // 无密码
-        this.$alert('为了保证您的账号安全，请您先绑定手机号', '提示', {
+        this.$confirm(`为了保证您的账号安全，请您先绑定手机号`, '提示', {
           confirmButtonText: '我知道了',
-          customClass: 'zdy-alert-box',
-          center: true,
-          lockScroll: false
-        }).then(()=>{
-        }).catch(()=>{});
+          cancelButtonText: '',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel-hide'
+        }).then(() => {
+        }).catch(() => {});
         return;
       } else if (btnType === 'pwd' && vo && vo.phone) {// 密码，并且手机号不为空
         this.showVo.step = 1;
