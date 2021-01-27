@@ -13,7 +13,7 @@
           :show-tooltip="false"
           ref="controllerRef"
           @change="setVideo"
-          disabled
+          @input="setVideo"
         ></el-slider>
         <controlEventPoint
           v-for="(item, index) in eventPointList"
@@ -972,7 +972,7 @@ export default {
     width: auto;
     height: 37px;
     background-color: #222222;
-    padding: 0px 10px 0px 20px;
+    padding: 0px 2px 0px 24px;
     .vh-video-tailoring__control {
       width: calc(100% - 60px);
       position: relative;
@@ -995,14 +995,11 @@ export default {
         height: 36px;
         line-height: 36px;
         top: -17px;
-        &:hover {
-          cursor: initial;
-        }
       }
 
       .el-slider__runway.disabled .el-slider__bar,
       .el-slider__runway.disabled {
-        background-color: #30303a;
+        background-color: #333;
       }
 
       .el-slider__button {
@@ -1013,7 +1010,6 @@ export default {
         background-repeat: no-repeat;
         background-size: 16px 16px;
         border: 0;
-        cursor: default !important;
       }
       &:hover {
         .el-slider__button {

@@ -79,6 +79,7 @@ export default {
         border-top: none;
         height: 26px;
         margin-bottom: 0;
+        border-bottom: 0;
       }
       &:nth-child(5n + 1) {
         border-right: 1px solid #333;
