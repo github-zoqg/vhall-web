@@ -321,9 +321,7 @@ export default {
           customClass: 'zdy-info-box'
         });
       }
-      if (!this.dotPageInfo.pageIndex === 1) {
-        this.$EventBus.$emit('prevStep');
-      }
+      this.$EventBus.$emit('prevStep');
     },
     setImgSize() {
       let that = this;
