@@ -5,7 +5,7 @@
         <el-tab-pane :label="item.label" :name="item.value" :key="ins" v-if="vo[item.compare_key]"></el-tab-pane>
       </template>
     </el-tabs>
-    <div class="search panel-btn" v-if="(vo.show_subject && vsQuanxian && this.vsQuanxian['subject_manager'] > 0) || vo.show_webinar_list">
+    <div class="search panel-btn" v-if="(vo.show_subject && vsQuanxian && vsQuanxian['subject_manager'] > 0) || vo.show_webinar_list">
       <div class="search-query">
         <el-input
           :placeholder="tabType === 'special' ? '请输入专题名称' : '请输入直播名称'"
@@ -100,7 +100,8 @@ export default {
      tabList: [],
      tabType: null,
      dataList: [],
-     vo: {}
+     vo: {},
+     vsQuanxian: []
    };
   },
   methods: {
@@ -229,12 +230,7 @@ export default {
         return url;
       }
     },
-    initComp(vo) {
-      this.vo = vo;
-      let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
-      if (vsPersonStr) {
-        this.vsQuanxian = JSON.parse(vsPersonStr);
-      }
+    getShow(vo) {
       // 根据个人主页信息，控制 直播 or 专题展示
       if(this.vsQuanxian && this.vsQuanxian['subject_manager'] > 0) {
         this.tabList = [
@@ -280,6 +276,33 @@ export default {
         } else {
           this.tabType = null;
         }
+      }
+    },
+    initComp(vo) {
+      this.vo = vo;
+      if(this.$route.meta.type !== 'owner') {
+        // 非控制台个人主页，单独调用权限信息页
+        this.$fetch('planFunctionGet', {
+          webinar_user_id: this.$route.params.str
+        }).then(result => {
+          if (result && result.code === 200) {
+            let permissions = result.data.permissions;
+            if(permissions) {
+              // 设置全部权限
+              this.vsQuanxian = JSON.parse(permissions);
+            }
+            this.getShow(vo);
+          }
+        }).catch(e => {
+          console.log(e);
+          this.getShow(vo);
+        });
+      } else {
+        let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+        if (vsPersonStr) {
+          this.vsQuanxian = JSON.parse(vsPersonStr);
+        }
+        this.getShow(vo);
       }
     }
   },
@@ -465,7 +488,7 @@ export default {
         color: #1A1A1A;
         font-size: 16px;
         line-height: 24px;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
         text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
         text-overflow: ellipsis;

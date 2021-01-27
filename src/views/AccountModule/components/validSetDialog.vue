@@ -20,13 +20,13 @@
           </div>
           <p class="errorText" v-show="errorMsgShow">图形码错误</p>
         </el-form-item>
-        <el-form-item label="验证码" key="code"  prop="code" v-if="showVo.step === 1">
-          <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入验证码" :maxlength="6">
+        <el-form-item label="动态密码" key="code"  prop="code" v-if="showVo.step === 1">
+          <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入动态密码" :maxlength="6">
             <el-button type="text" class="no-border" size="mini" slot="append" @click="getDyCode()"
                        v-preventReClick
                        :class="showCaptcha ? 'isLoginActive' : ''"
                        :disabled="isDisabledClick">
-              {{ time === 60 ? '发送验证码' : `${time}s 后刷新` }}
+              {{ time === 60 ? '获取验证码' : `${time}s 后发送` }}
             </el-button>
           </el-input>
           <p v-if="sendText" class="no-use">{{sendText}}</p>
@@ -43,13 +43,13 @@
           </div>
           <p class="errorText" v-show="errorMsgShow1">图形码错误</p>
         </el-form-item>
-        <el-form-item label="验证码" key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
-          <el-input v-model.trim="form.new_code" auto-complete="off" placeholder="请输入验证码"  :maxlength="6">
+        <el-form-item label="动态密码" key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
+          <el-input v-model.trim="form.new_code" auto-complete="off" placeholder="请输入动态密码"  :maxlength="6">
             <el-button  type="text" class="no-border" size="mini" slot="append"
                        v-preventReClick
                        @click="getDyCode1()"
                        :class="showCaptcha1 ? 'isLoginActive' : ''"
-                       :disabled="isDisabledClick1">{{ time1 === 60 ? '发送验证码' : `${time1}s 后刷新` }}</el-button>
+                       :disabled="isDisabledClick1">{{ time1 === 60 ? '获取验证码' : `${time1}s 后发送` }}</el-button>
           </el-input>
           <p v-if="sendText1" class="no-use">{{sendText1}}</p>
         </el-form-item>
@@ -127,8 +127,8 @@ export default {
       validate: {
         type: 1, // 发送类型： 1手机；2邮箱
         data: null,// 根据type值不同 分别传手机号、邮箱
-        validate: null,// 图形验证码数据
-        scene_id: null// 1账户信息-修改密码  2账户信息-修改密保手机 3账户信息-修改关联邮箱 4忘记密码-邮箱方式找回 5忘记密码-短信方式找回 6提现绑定时手机号验证 7快捷方式登录 8注册-验证码
+        validate: null,// 图形动态密码数据
+        scene_id: null// 1账户信息-修改密码  2账户信息-修改密保手机 3账户信息-修改关联邮箱 4忘记密码-邮箱方式找回 5忘记密码-短信方式找回 6提现绑定时手机号验证 7快捷方式登录 8注册-动态密码
       },
       form: {
         old_pwd: null,
@@ -139,7 +139,7 @@ export default {
         phone: null,
         new_phone: null, // 目标-手机号
         code: null,
-        new_code: null, // 目标-验证码
+        new_code: null, // 目标-动态密码
         imgCode: null,
         imgCode1: null
       },
@@ -157,32 +157,32 @@ export default {
           {required: true, min: 6, max: 30, pattern: /^1[0-9]{10}$/, message: '请输入手机号', trigger: 'blur'}
         ],*/
         code: [
-          {required: true, message: '请输入验证码', trigger: 'blur'}
+          {required: true, message: '请输入动态密码', trigger: 'blur'}
         ],
         new_phone: [
           {required: true, min: 6, max: 30, pattern: /^1[0-9]{10}$/, message: '请输入手机号', trigger: 'blur'}
         ],
         new_code: [
-          {required: true, message: '请输入验证码', trigger: 'blur'}
+          {required: true, message: '请输入动态密码', trigger: 'blur'}
         ]
       },
       downTimer: null,
       time: 60, // 倒计时
       isDisabledClick: false,
-      showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
+      showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形动态密码时使用
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey: '', // 云盾值
       captcha: null, // 云盾本身
-      codeKey: null, // 短信、邮箱验证码校验接口返回key值
+      codeKey: null, // 短信、邮箱动态密码校验接口返回key值
       errorMsgShow: '',
       downTimer1: null,
       time1: 60, // 倒计时
       isDisabledClick1: false,
-      showCaptcha1: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
+      showCaptcha1: false, // 专门用于 校验登录次数 接口返回 需要显示图形动态密码时使用
       captchakey1: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey1: '', // 云盾值
       captcha1: null, // 云盾本身
-      codeKey1: null, // 短信、邮箱验证码校验接口返回key值
+      codeKey1: null, // 短信、邮箱动态密码校验接口返回key值
       errorMsgShow1: '',
       sendText: ``,
       sendText1: ``
@@ -253,8 +253,8 @@ export default {
     // 场景适用： 设置密码、修改密码、修改手机号-第一步、修改邮箱-第一步
     getDyCode() {
       // scene_id场景ID：1账户信息-修改密码  2账户信息-修改密保手机 3账户信息-修改关联邮箱 4忘记密码-邮箱方式找回
-      // 5忘记密码-短信方式找回 6提现绑定时手机号验证 7快捷方式登录 8注册-验证码
-      // 获取短信验证码
+      // 5忘记密码-短信方式找回 6提现绑定时手机号验证 7快捷方式登录 8注册-动态密码
+      // 获取短信动态密码
       let data = this.form.phone;
       let flag = false;
       if (this.showVo.executeType !== 'email') {
@@ -302,7 +302,7 @@ export default {
         }).catch(res => {
           console.log(res);
           this.$message({
-            message:  res.msg || '验证码发送失败',
+            message:  res.msg || '动态密码发送失败',
             showClose: true,
             // duration: 0,
             type: 'error',
@@ -369,7 +369,7 @@ export default {
           console.log(res);
           // this.sendText1 = ``;
           this.$message({
-            message: res.msg || '验证码发送失败',
+            message: res.msg || '动态密码发送失败',
             showClose: true,
             // duration: 0,
             type: 'error',
@@ -759,7 +759,7 @@ export default {
 }
 /deep/.el-form-item.link__to {
   text-align: right;
-  margin-bottom: 24px;
+  margin-bottom: 11px;
   margin-top: -20px;
   a {
      color: #3562FA;
@@ -778,5 +778,35 @@ export default {
  .el-button {
    /deep/span { color: #666666; }
  }
+}
+
+.inputCode{
+  height: 38px;
+  width: 265px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  /deep/.el-input__inner {
+    border: none;
+    height: 38px;
+  }
+  span{
+    display: inline-block;
+    width: 113px;
+    height: 36px;
+    text-align: center;
+    line-height: 36px;
+    background: #F2F2F2;
+    color:#666666;
+    vertical-align: top;
+    cursor: pointer;
+    &.isLoginActive{
+      background: #fc5659;
+      color: #fff;
+    }
+  }
+  // i {
+  //   font-weight: normal;
+  //   color: #ff0000;
+  // }
 }
 </style>

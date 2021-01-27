@@ -139,6 +139,57 @@ export default {
           secret_key: null,
           callback_url: null
         }
+        this.keyList = [
+          {
+            type: 'key_1',
+            key_name: '活动状态',
+            openShow: '开启后，直播开始或结束时进行通知',
+            closeShow: '已开启，直播开始或结束时进行通知',
+            value: 0
+          },
+          {
+            type: 'key_4',
+            key_name: '生成回放',
+            openShow: '开启后，直播结束并生成回放成功进行通知',
+            closeShow: '已开启，直播结束并生成回放成功进行通知',
+            value: 0
+          },
+          {
+            type: 'key_8',
+            key_name: '裁剪回放',
+            openShow: '开启后，裁剪视频成功后进行通知',
+            closeShow: '已开启，裁剪视频成功后进行通知',
+            value: 0
+          },
+          {
+            type: 'key_5',
+            key_name: '回放分辨率',
+            openShow: '开启后，回放转码成功后支持获取不同分辨率',
+            closeShow: '已开启，回放转码成功后支持获取不同分辨率',
+            value: 0
+          },
+          {
+            type: 'key_6',
+            key_name: '回放下载',
+            openShow: '开启后，回放下载成功进行通知',
+            closeShow: '已开启，回放下载成功进行通知',
+            value: 0
+          },
+          {
+            type: 'key_3',
+            key_name: '视频转码',
+            openShow: '开启后，JSSDK上传视频并转码成功进行通知',
+            closeShow: '已开启，JSSDK上传视频并转码成功进行通知',
+            value: 0
+          },
+          {
+            type: 'key_7',
+            key_name: '文档转码',
+            openShow: '开启后，文档上传并转码成功进行通知',
+            closeShow: '已开启，文档上传并转码成功进行通知',
+            value: 0
+          }
+        ];
       })
     },
     saveCallbackInfo() {
