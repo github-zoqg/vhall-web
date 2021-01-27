@@ -422,6 +422,10 @@
     background: #FB3A32;
     border: 1px solid #FB3A32;
   }
+  &:focus {
+    background: #E2332C;
+    border: 1px solid #E2332C;
+  }
   &:active {
     background: #E2332C;
     border: 1px solid #E2332C;
@@ -430,7 +434,7 @@
     border: 1px solid #E6E6E6;
     background: transparent;
     color: #B3B3B3;
-    &:hover,&:active {
+    &:hover,&:focus,&:active {
       background: transparent;
     }
   }
@@ -484,7 +488,7 @@ body {
 
 /*-----------------------------------------表格 样式重置 ---------------------------------------------*/
 /deep/.el-table__row { /* WebKit, Blink, Edge */
-   &:hover,&:active {
+   &:hover,&:focus,&:active {
      /deep/.el-button--text {
        color: #FB3A32;
      }
@@ -602,6 +606,11 @@ body {
     background: #FB3A32;
     border: 1px solid #FB3A32;
   }
+  &:focus {
+    color: #fff;
+    background: #FB3A32;
+    border: 1px solid #FB3A32;
+  }
   &:active {
     color: #ffffff;
     background: #E2332C;
@@ -612,7 +621,7 @@ body {
     border: 1px solid #E6E6E6;
     cursor: not-allowed;
     color: #B3B3B3;
-    &:hover, &:active {
+    &:hover, &:focus, &:active {
       color: #B3B3B3;
       border: 1px solid #E6E6E6;
     }
@@ -623,6 +632,11 @@ body {
   background: #F7F7F7;
   border: 1px solid #F7F7F7;
   &:hover {
+    color: #666666;
+    background: #F7F7F7;
+    border: 1px solid #F7F7F7;
+  }
+  &:focus {
     color: #666666;
     background: #F7F7F7;
     border: 1px solid #F7F7F7;
@@ -683,6 +697,12 @@ button.el-button.el-button--primary {
     border: 1px solid #FC615B;
   }
 
+  &:focus {
+    color: #fff;
+    background: #FC615B;
+    border: 1px solid #FC615B;
+  }
+
   &:active {
     background: #E2332C;
     border: 1px solid #E2332C;
@@ -694,7 +714,7 @@ button.el-button.el-button--primary {
     cursor: not-allowed;
     color: #fff;
 
-    &:hover, &:active {
+    &:hover, &:focus, &:active {
       background: #F09D99;
       border: 1px solid #F09D99;
     }
@@ -708,6 +728,12 @@ button.el-button.el-button--white-primary {
   border: 1px solid #FB3A32;
 
   &:hover {
+    background: #FC615B;
+    color: #FFFFFF;
+    border: 1px solid #FC615B;
+  }
+
+  &:focus {
     background: #FC615B;
     color: #FFFFFF;
     border: 1px solid #FC615B;
