@@ -1,5 +1,5 @@
 <template>
-  <div :class="['signFormBox']">
+  <div :class="['signFormBox']" @click.self="closePreview">
     <div :class="['signWrap']">
       <vhscroll>
         <div class="entryFormBox">

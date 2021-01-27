@@ -78,7 +78,6 @@
     <template v-if="showDialog">
       <div class="preview-wrap">
         <el-dialog class="vh-dialog" title="" :visible.sync="showDialog" width="30%" center
-        :close-on-click-modal=false
         :close-on-press-escape=false>
           <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
         </el-dialog>
