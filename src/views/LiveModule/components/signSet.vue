@@ -171,6 +171,12 @@ export default {
     resetLogoUrl() {
       this.$nextTick(()=> {
         this.signSetForm.logo_url = '';
+        this.domain_url = '';
+        try {
+          this.$refs.brandSetPreviewComp.signSetVoInfo(this.signSetForm, this.domain_url);
+        } catch (e) {
+          console.log(e);
+        }
       });
     },
     uploadPreview(file){

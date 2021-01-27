@@ -69,7 +69,7 @@
     ></SPagination>
     <!-- 既无专题权限 且 无直播权限 -->
     <div :class="['no-create', {'no-border': $route.meta.type === 'owner'}]" :height=170  v-if="Number(vo.show_subject) === 0 && Number(vo.show_webinar_list) === 0">
-      <null-page text="贫瘠之地，毛都没有" nullType="create"></null-page>
+      <null-page text="暂无数据" nullType="create"></null-page>
     </div>
     <!-- 搜索全部，并且无数据 -->
     <null-page text="暂未添加内容" nullType="create" :height=200 v-if="query.keyword == '' && (tabType === 'live' ? (tabList[0] && tabList[0].total ? tabList[0].total : 0) === 0 : (tabList[1] && tabList[1].total ? tabList[1].total : 0) === 0)"></null-page>
