@@ -29,9 +29,9 @@
       </noData>
     </div>
     <template v-if="isShowQuestion">
-      <div class="show-question">
-        <div class="show-main">
-          <span class="close-btn"><i class="el-icon-close" @click="isShowQuestion=false"></i></span>
+      <div class="show-question" @click="isShowQuestion = false">
+        <div class="show-main" @click.stop="isShowQuestion=true">
+          <span class="close-btn"><i class="el-icon-close" @click.stop="isShowQuestion=false"></i></span>
           <el-scrollbar>
             <div class="question_main">
               <pre-question  :questionId="questionId"></pre-question>
