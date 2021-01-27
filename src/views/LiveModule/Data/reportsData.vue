@@ -97,7 +97,6 @@ import mapCharts from '@/components/Echarts/mapEcharts';
 import terCharts from '@/components/Echarts/terBroEcharts';
 import titleData from './components/title';
 import PageTitle from '@/components/PageTitle';
-import { getRangeDays } from '@/utils/general';
 export default {
   data() {
     return {

@@ -135,13 +135,28 @@ export default {
             }
           },
           {
-            text: '近7日',
+            text: '今日',
             onClick(picker) {
               let childrenArray = Array.from(picker.$el.firstChild.firstChild.children)
               childrenArray.forEach((item)=>{
                 item.style.color = '#666'
               })
               picker.$el.firstChild.firstChild.children[1].style.color = '#FB3A32'
+              const end = new Date();
+              const start = new Date();
+              end.setTime(end.getTime());
+              start.setTime(start.getTime());
+              picker.$emit('pick', [start, end]);
+            }
+          },
+          {
+            text: '近7日',
+            onClick(picker) {
+              let childrenArray = Array.from(picker.$el.firstChild.firstChild.children)
+              childrenArray.forEach((item)=>{
+                item.style.color = '#666'
+              })
+              picker.$el.firstChild.firstChild.children[2].style.color = '#FB3A32'
               const end = new Date();
               const start = new Date();
               end.setTime(end.getTime() - 3600 * 1000 * 24);
@@ -155,7 +170,7 @@ export default {
               childrenArray.forEach((item)=>{
                 item.style.color = '#666'
               })
-              picker.$el.firstChild.firstChild.children[2].style.color = '#FB3A32'
+              picker.$el.firstChild.firstChild.children[3].style.color = '#FB3A32'
               const end = new Date();
               const start = new Date();
               end.setTime(end.getTime() - 3600 * 1000 * 24);
@@ -183,7 +198,7 @@ export default {
     },
     dealDisabledData(time) {
       // return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
-      return time.getTime() > Date.now() - 8.64e7 //设置选择今天之前的日期（不能选择当天）
+      return time.getTime() > Date.now() //设置选择今天之前的日期（不能选择当天）
     },
     initPage() {
       // 初始化设置日期为最近一周
@@ -267,11 +282,14 @@ export default {
 };
 </script>
 <style lang="less">
-.el-picker-panel__shortcut:nth-of-type(2) {
+.el-picker-panel__shortcut:nth-of-type(3) {
   color: #fb3a32;
 }
 .el-picker-panel__shortcut:nth-of-type(1) {
   color: #666;
+}
+.el-tooltip__popper {
+  max-width: 400px;
 }
 </style>
 <style lang="less" scoped >

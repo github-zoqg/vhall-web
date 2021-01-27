@@ -407,10 +407,10 @@ export default {
         this.lotteryrank = res.data[res.data.length - 1].rank
         // 深拷贝一个对象做对比
         this.lotteryPageMessage = JSON.parse(JSON.stringify(res.data))
-        // this.givePrizeList.forEach(ele=>{
-        //   if(!ele.is_system)
-        //   this.givePrizeForm[ele.field_key] = ele.placeholder
-        // })
+        this.givePrizeList.forEach(ele=>{
+          if(!ele.is_system)
+          this.givePrizeForm[ele.field_key] = ele.placeholder
+        })
         this.givePrizeList.map(item => {
           item.is_required = Boolean(item.is_required);
         })
@@ -418,10 +418,10 @@ export default {
     },
     // 保存领奖页信息
     sureGivePrize() {
-      // this.givePrizeList.forEach(ele=>{
-      //   console.warn(this.givePrizeForm[ele.field_key], 789, this.givePrizeForm, ele.field_key);
-      //   ele.placeholder = this.givePrizeForm[ele.field_key]
-      // })
+      this.givePrizeList.forEach(ele=>{
+        // console.warn(this.givePrizeForm[ele.field_key], 789, this.givePrizeForm, ele.field_key);
+        ele.placeholder = this.givePrizeForm[ele.field_key]
+      })
       console.warn(this.givePrizeList);
       this.$fetch('saveDrawPrizeInfo', {webinar_id: this.$route.params.str,data:JSON.stringify(this.givePrizeList)}).then(res => {
         this.$message({
