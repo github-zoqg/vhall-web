@@ -13,7 +13,6 @@
           :show-tooltip="false"
           ref="controllerRef"
           @change="setVideo"
-          @input="setVideo"
         ></el-slider>
         <controlEventPoint
           v-for="(item, index) in eventPointList"
