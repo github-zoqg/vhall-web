@@ -20,7 +20,15 @@
           </div>
           <p class="errorText" v-show="errorMsgShow">图形码错误</p>
         </el-form-item>
-        <el-form-item label="动态密码" key="code"  prop="code" v-if="showVo.step === 1">
+        <el-form-item label="动态密码" key="code" prop="code" v-if="showVo.step === 1">
+          <div class="inputCode">
+            <el-input v-model.trim="form.code" auto-complete="off" style="width: 141px" :maxlength="6"></el-input>
+            <span @click="getDyCode()" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+          </div>
+          <p class="codeTitle" v-if="sendText">{{sendText}}</p>
+        </el-form-item>
+
+        <!-- <el-form-item label="动态密码" key="code"  prop="code" v-if="showVo.step === 1">
           <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入动态密码" :maxlength="6">
             <el-button type="text" class="no-border" size="mini" slot="append" @click="getDyCode()"
                        v-preventReClick
@@ -30,7 +38,7 @@
             </el-button>
           </el-input>
           <p v-if="sendText" class="no-use">{{sendText}}</p>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="邮箱地址" key="new_email"  prop="new_email" v-if="showVo.executeType === 'email' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_email" auto-complete="off" placeholder="请输入邮箱地址" :maxlength="30"/>
         </el-form-item>
@@ -43,6 +51,14 @@
           </div>
           <p class="errorText" v-show="errorMsgShow1">图形码错误</p>
         </el-form-item>
+        <el-form-item label="动态密码" key="new_code" prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
+          <div class="inputCode">
+            <el-input v-model.trim="form.new_code" auto-complete="off" style="width: 141px" :maxlength="6"></el-input>
+            <span @click="getDyCode1()" :class="showCaptcha1 ? 'isLoginActive' : ''">{{ time1 == 60 ? '获取验证码' : `${time1}秒后发送` }}</span>
+          </div>
+          <p class="codeTitle" v-if="sendText1">{{sendText1}}</p>
+        </el-form-item>
+        <!--
         <el-form-item label="动态密码" key="new_code"  prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_code" auto-complete="off" placeholder="请输入动态密码"  :maxlength="6">
             <el-button  type="text" class="no-border" size="mini" slot="append"
@@ -52,7 +68,7 @@
                        :disabled="isDisabledClick1">{{ time1 === 60 ? '获取验证码' : `${time1}s 后发送` }}</el-button>
           </el-input>
           <p v-if="sendText1" class="no-use">{{sendText1}}</p>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="原密码"  key="old_pwd"  prop="old_pwd" v-if="showVo.executeType === 'pwd' && showVo.step === 2 && !showVo.is_null">
           <pwd-input type="password" v-model.trim="form.old_pwd" auto-complete="off" placeholder="输入原密码"
            :maxlength="30"></pwd-input>
@@ -72,13 +88,13 @@
     </div>
     <span slot="footer">
       <el-button class="dialog-btn" type="primary" round size="medium"
-                 v-if="showVo.executeType !== 'pwd' && showVo.step === 1" v-preventReClick @click="changePhoneOrEmailStep">下一步</el-button>
+                 v-show="showVo.executeType !== 'pwd' && showVo.step === 1" v-preventReClick @click="changePhoneOrEmailStep">下一步</el-button>
       <el-button class="dialog-btn" type="primary" round size="medium"
-                 v-if="showVo.executeType === 'pwd'" v-preventReClick @click="changePwdStep">确定</el-button>
+                 v-show="showVo.executeType === 'pwd'" v-preventReClick @click="changePwdStep">确定</el-button>
       <el-button class="dialog-btn" round size="medium"
-                 v-if="showVo.executeType === 'pwd'" v-preventReClick @click="cancelPwdStep">取消</el-button>
+                 v-show="showVo.executeType === 'pwd'" v-preventReClick @click="cancelPwdStep">取消</el-button>
       <el-button class="dialog-btn" type="primary" round size="medium"
-                 v-if="showVo.executeType !== 'pwd' && showVo.step === 2" v-preventReClick @click="sendBindHandle">立即绑定</el-button>
+                 v-show="showVo.executeType !== 'pwd' && showVo.step === 2" v-preventReClick @click="sendBindHandle">立即绑定</el-button>
     </span>
   </VhallDialog>
 </template>
@@ -161,6 +177,9 @@ export default {
         ],
         new_phone: [
           {required: true, min: 6, max: 30, pattern: /^1[0-9]{10}$/, message: '请输入手机号', trigger: 'blur'}
+        ],
+        new_email: [
+          {required: true, min: 1, max: 30, pattern: /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/, message: '请输入正确的邮箱格式', trigger: 'blur'}
         ],
         new_code: [
           {required: true, message: '请输入动态密码', trigger: 'blur'}
@@ -252,6 +271,9 @@ export default {
     },
     // 场景适用： 设置密码、修改密码、修改手机号-第一步、修改邮箱-第一步
     getDyCode() {
+      if (this.isDisabledClick) {
+        return;
+      }
       // scene_id场景ID：1账户信息-修改密码  2账户信息-修改密保手机 3账户信息-修改关联邮箱 4忘记密码-邮箱方式找回
       // 5忘记密码-短信方式找回 6提现绑定时手机号验证 7快捷方式登录 8注册-动态密码
       // 获取短信动态密码
@@ -319,6 +341,9 @@ export default {
     },
     // 场景使用： 设置手机号、修改手机号-第二步、修改邮箱-第二步、设置邮箱
     getDyCode1() {
+      if(this.isDisabledClick1) {
+        return;
+      }
       // scene_id场景ID：1账户信息-修改密码  2账户信息-修改密保手机 3账户信息-修改关联邮箱 4忘记密码-邮箱方式找回
       // 5忘记密码-短信方式找回 6提现绑定时手机号验证 7快捷方式登录 8注册-验证码
       let data = this.form.new_phone;
@@ -395,7 +420,9 @@ export default {
         // 倒计时结束
         this.time = 60;
         this.isDisabledClick = false;
-        this.callCaptcha();
+        this.$nextTick(() => {
+          this.callCaptcha();
+        })
         // this.sendText = '';
       }
     },
@@ -410,7 +437,9 @@ export default {
       } else {
         this.time1 = 60;
         this.isDisabledClick1 = false;
-        this.callCaptcha(1);
+        this.$nextTick(() => {
+          this.callCaptcha(1);
+        })
         // this.sendText1 = '';
       }
     },
@@ -425,12 +454,12 @@ export default {
             code: this.form.code,
             scene_id: this.getScenedTitle().scene_id
           };
-          this.$fetch('codeCheck', params).then(res => {
+          this.$fetch('codeCheck', params).then(async res => {
             if (res.data.check_result > 0) {
               this.codeKey = res.data.key || '';
               // 验证码第一步，继续下一步
               this.showVo.step = 2;
-              this.$nextTick(() => {
+              await this.$nextTick(() => {
                 this.callCaptcha('1');
               });
             } else {
@@ -511,6 +540,8 @@ export default {
           customClass: 'zdy-info-box'
         });
         this.visible = false;
+        this.showCaptcha = false;
+        this.showCaptcha1 = false;
         // 刷新回显数据
         this.$emit('changeOk');
       }).catch(res => {
@@ -581,6 +612,8 @@ export default {
                 customClass: 'zdy-info-box'
               });
               this.visible = false;
+              this.showCaptcha = false;
+              this.showCaptcha1 = false;
             }).catch(res => {
               console.log(res);
               this.$message({
@@ -599,6 +632,8 @@ export default {
     cancelPwdStep() {
       // 关闭弹出框
       this.visible = false;
+      this.showCaptcha = false;
+      this.showCaptcha1 = false;
      /* if(this.showVo.step === 2) {
         // 返回上一步
         this.showVo.step = 1;
@@ -673,6 +708,8 @@ export default {
         this.form.new_phone = '';
         this.form.imgCode = '';
         this.form.imgCode1 = '';
+        this.showCaptcha = false;
+        this.showCaptcha1 = false;
         if(this.downTimer) {
           window.clearTimeout(this.downTimer);
           this.isDisabledClick = false;
@@ -684,10 +721,14 @@ export default {
           this.time1 = 60;
         }
         if(this.showVo.executeType !== 'email') {
-          this.callCaptcha();
+          this.$nextTick(() => {
+            this.callCaptcha();
+          })
         }
         if (this.showVo.executeType === 'phone' && (this.showVo.step === 2 || this.showVo.is_null)) {
-          this.callCaptcha(1);
+          this.$nextTick(() => {
+            this.callCaptcha(1);
+          })
         }
       });
     },
@@ -697,6 +738,13 @@ export default {
     callCaptcha(val = '') {
       try {
         const that = this;
+        let catp = document.getElementById(`setCaptcha${val}`)
+        if (!catp) {
+          that.form[`captcha${val}`] = '';
+          console.log('errr>>>', err);
+          that.form[`errorMsgShow${val}`] = true;
+          return;
+        }
         // eslint-disable-next-line
         initNECaptcha({
           captchaId: this.captchakey,
@@ -783,20 +831,21 @@ export default {
 }
 
 .inputCode{
-  height: 38px;
-  width: 265px;
+  height: 40px;
+  line-height: 40px;
+  width: 256px;
   border: 1px solid #ccc;
   border-radius: 2px;
   /deep/.el-input__inner {
     border: none;
-    height: 38px;
+    height: 40px;
   }
   span{
     display: inline-block;
     width: 113px;
-    height: 36px;
+    height: 38px;
     text-align: center;
-    line-height: 36px;
+    line-height: 38px;
     background: #F2F2F2;
     color:#666666;
     vertical-align: top;
