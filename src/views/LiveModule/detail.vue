@@ -371,7 +371,8 @@ export default {
     },
     toLive() {
       if (this.liveDetailInfo.webinar_type == 1) {
-        let href = `${window.location.origin}${process.env.VUE_APP_ROOM_WATCH}/lives/room/${this.$route.params.str}`;
+        // 跳转发起端地址 协议 +  域名
+        let href = `${window.location.protocol}${process.env.VUE_APP_ROOM_WATCH}/lives/room/${this.$route.params.str}`;
         window.open(href, '_blank');
       } else {
         const { href } = this.$router.resolve({path: `/live/chooseWay/${this.$route.params.str}/1?type=ctrl`});

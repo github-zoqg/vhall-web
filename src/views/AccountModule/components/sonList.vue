@@ -573,9 +573,6 @@ export default {
         } else {
           this.roleList = [];
         }
-        if (this.roleList.length > 0) {
-          this.initQuerySonList();
-        }
       }).catch(e => {
         console.log(e);
         this.roleList = [];
@@ -587,6 +584,7 @@ export default {
     },
     initComp() {
       this.getRoleList(); // 获取可选角色列表
+      this.initQuerySonList();
     },
     initQuerySonList() {
       this.query.pos = 0;
