@@ -34,7 +34,7 @@
         </p>
         <p>
           <span class="content-key">链接地址</span>
-          <el-input placeholder="请输入内容" v-model="sinaLink" class="input-with-select" id="linkBox">
+          <el-input readonly placeholder="请输入内容" v-model="sinaLink" class="input-with-select" id="linkBox">
             <el-button slot="append" @click="copy">复制</el-button>
           </el-input>
 
@@ -46,10 +46,6 @@
           <i @click="shareWX"></i>
         </p>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false" round size="medium">确 定</el-button>
-        <el-button @click="dialogVisible = false" round size="medium">取 消</el-button>
-      </span>
     </VhallDialog>
     <VhallDialog
       title="分享"
@@ -130,7 +126,7 @@ export default {
 <style lang="less" scoped>
   @iconpath: '../../../common/images/icon';
   /deep/ .share-dialog {
-    height: 372px;
+    height: 320px;
     border-radius: 4px;
     /deep/.el-button {
       background: transparent;

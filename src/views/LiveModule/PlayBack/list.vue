@@ -29,7 +29,7 @@
           </i>
         </VhallInput>
       </div>
-      <div class="tableBox" v-loading="loading">
+      <div :class="['tableBox', isDemand === true ? '' : 'recordTableBox']" v-loading="loading">
         <el-table
           :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
           v-if="isDemand !== ''"
@@ -44,7 +44,7 @@
             width="55">
           </el-table-column>
           <el-table-column
-            width="430"
+            :width="isDemand === true ? 430 : 420"
             label="内容标题">
             <template slot-scope="scope">
               {{ scope.row.date }}
@@ -64,7 +64,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column width="120">
+          <el-table-column :width="recordType != 3 ? 78 : 106">
             <template slot-scope="{ column, $index }" slot="header">
               <el-select v-if="!isDemand" v-model="recordType" @change="typeChange(column, $index)">
                 <el-option
@@ -671,6 +671,18 @@ export default {
     /deep/ .cell{
       color: #666;
     }
+    /deep/ .el-table__row td:nth-child(2) .cell{
+      padding-left: 10px;
+    }
+    /deep/&.recordTableBox .el-table__row td:nth-child(3) .cell{
+      padding-left: 10px;
+    }
+    /deep/ thead th:nth-child(2) .cell{
+      padding-left: 10px;
+    }
+    /deep/&.recordTableBox thead th:nth-child(3) .cell{
+      padding-left: 10px;
+    }
     .el-table{
       margin-bottom: 40px;
     }
@@ -711,6 +723,7 @@ export default {
       width: 160px;
       height: 90px;
       background-color: #1a1a1a;
+      border-radius: 4px;
       .imageWrap{
         width: 100%;
         height: 100%;

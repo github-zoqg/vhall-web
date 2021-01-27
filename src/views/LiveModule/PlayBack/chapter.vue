@@ -958,7 +958,7 @@ export default {
     padding: 24px;
     background: #222222;
     display: flex;
-    height: 366px;
+    height: 474px;
     justify-content: space-between;
     >div{
       flex: 1;
