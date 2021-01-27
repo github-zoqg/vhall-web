@@ -1,9 +1,11 @@
 <template>
   <div class="preview-wrap">
-    <div class="content" v-loading="loading" @mousemove="wrapEnter" @mouseleave="wrapLeave">
+    <div class="content" v-loading="loading" element-loading-text="加载中" element-loading-background="rgba(255,255,255,.9)" @mousemove="wrapEnter" @mouseleave="wrapLeave">
       <div id="videoDom"></div>
       <div class="tips" v-if="!loading">
-        <img v-if="videoParam.msg_url.toLowerCase()=='.mp3' || videoParam.msg_url.toLowerCase()=='.mav' || !videoParam.msg_url" class="audio-img" :src="audioImg" alt="">
+        <div class="video-img" v-if="videoParam.msg_url.toLowerCase()=='.mp3' || videoParam.msg_url.toLowerCase()=='.mav' || !videoParam.msg_url">
+          <img class="audio-img" :src="audioImg" alt="">
+        </div>
         <div v-if="tipsType == 2" class="video-end">
           <div class="reset-play" @click="resetPlay">
             <i class="iconfont-v3 saasicon_replay"></i>
@@ -247,10 +249,20 @@ export default {
     top: 0;
     width: 100%;
     height: 100%;
-    .audio-img{
-      height: 100%;
-      width: 100%;
+    .video-img{
+      width: 180px;
+      height: 110px;
+      position: absolute;
+      top:50%;
+      left:50%;
+      transform: translate(-50%, -50%);
+      .audio-img{
+        height: 100%;
+        width: 100%;
+        object-fit: scale-down;
+      }
     }
+
     .video-end{
       position: absolute;
       width: 100%;
