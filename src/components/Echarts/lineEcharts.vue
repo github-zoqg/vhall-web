@@ -11,6 +11,7 @@ export default {
   data() {
     return {
       isActive: true,
+      visitEchart: null,
       versionType: 0,
       visitDateList: [],
       visitValueList: [],
@@ -18,6 +19,9 @@ export default {
   },
   mounted() {
     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
+    // window.addEventListener('resize', () => {
+    //   this.
+    // })
     // this.initLintEcharts(this.lineDataList);
   },
   watch: {
@@ -26,6 +30,9 @@ export default {
         this.initLintEcharts(data);
       }
     }
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.resizeCharts);
   },
   methods: {
     initLintEcharts(data) {
@@ -38,9 +45,8 @@ export default {
       });
 
       // console.log(visitDataDate, visitDataValue);
-
       let that = this;
-      let visitEchart = echarts.init(this.$refs.visitEchart);
+      this.visitEchart = echarts.init(this.$refs.visitEchart);
       let options = {
         visualMap: {
           show: false,
@@ -192,8 +198,12 @@ export default {
       } else {
         options.dataZoom = [];
       }
-      visitEchart.setOption(options);
+      this.visitEchart.setOption(options);
+      window.addEventListener('resize', this.resizeCharts)
     },
+    resizeCharts() {
+      this.visitEchart.resize()
+    }
   },
 };
 </script>

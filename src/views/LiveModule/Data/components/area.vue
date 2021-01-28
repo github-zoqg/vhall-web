@@ -36,8 +36,12 @@ export default {
   data() {
     return{
       total: 0,
-      maxNum: 10
+      maxNum: 10,
+      mapChart: null
     }
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.resizeCharts);
   },
   methods: {
     initDataLimit() {
@@ -50,7 +54,7 @@ export default {
       this.initMapEcharts(this.areaDataList, this.maxNum);
     },
     initMapEcharts(data, maxNum) {
-      let mapChart = echarts.init(this.$refs.mapEchart); //这里是为了获得容器所在位置
+      this.mapChart = echarts.init(this.$refs.mapEchart); //这里是为了获得容器所在位置
       let options = {
         backgroundColor: '#fff',
         tooltip: {
@@ -115,8 +119,12 @@ export default {
           },
         ],
       };
-      mapChart.setOption(options);
+      this.mapChart.setOption(options);
+      window.addEventListener('resize', this.resizeCharts)
     },
+    resizeCharts() {
+      this.mapChart.resize()
+    }
   }
 }
 </script>

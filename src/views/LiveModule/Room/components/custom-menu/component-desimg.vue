@@ -28,5 +28,10 @@ export default {
     font-weight: 400;
     color: #1A1A1A;
     line-height: 24px;
+    p{
+      img{
+        object-fit: scale-down;
+      }
+    }
   }
 </style>

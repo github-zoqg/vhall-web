@@ -22,6 +22,7 @@ export default {
   data() {
     return {
       isActive: true,
+      terBarCharts: null,
       terColorList: ['#4383E4', '#FA9A32', '#7D43E4', '#FB3A32', '#ccc'],
       broColorList: ['#FB3A32', '#4383E4', '#10D3A8', '#FA9A32', '#7D43E4','#ccc']
     };
@@ -36,11 +37,14 @@ export default {
       }
     }
   },
+  destroyed() {
+    window.removeEventListener('resize', this.resizeCharts);
+  },
   methods: {
     initTerBroCharts(data) {
       // console.log(topList);
       let that = this;
-      let terBarCharts = echarts.init(this.$refs.terBroEchart);
+      this.terBarCharts = echarts.init(this.$refs.terBroEchart);
       let options = {
         tooltip: {
           trigger: 'item',
@@ -100,8 +104,13 @@ export default {
           data: data
         },
       };
-      terBarCharts.setOption(options);
+      this.terBarCharts.setOption(options);
+      window.addEventListener('resize', this.resizeCharts)
+      // window.onresize = terBarCharts.resize;
     },
+    resizeCharts() {
+      this.terBarCharts.resize()
+    }
   },
 };
 </script>

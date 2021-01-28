@@ -6,15 +6,15 @@
             <span :class="{'active': activeIndex == 1}" v-if="info.inSwitch == 1" @click="activeIndex = 1">邀请榜</span>
             <span :class="{'active': activeIndex == 2}" v-if="info.rewardSwitch == 1" @click="activeIndex = 2">打赏榜</span>
         </div>
-        <span class="bang-rule">排行榜规则</span>
+        <span class="bang-rule" @click="changeRule">排行榜规则<i class="iconfont-v3 saasicon_arrowdown1-copy" v-if="rankRule"></i><i class="iconfont-v3 saasicon_arrowdown1" v-else></i></span>
       </div>
-      <div class="ranking-box">
-          <vhscroll>
-            <div class="rank-con" v-show="activeIndex == 1" v-html="info.inContent">
-            </div>
-            <div class="rank-con" v-show="activeIndex == 2" v-html="info.rewardContent">
-            </div>
-          </vhscroll>
+      <div class="ranking-box" v-show="rankRule">
+          <!-- <vhscroll> -->
+          <div class="rank-con" v-show="activeIndex == 1" v-html="info.inContent">
+          </div>
+          <div class="rank-con" v-show="activeIndex == 2" v-html="info.rewardContent">
+          </div>
+          <!-- </vhscroll> -->
       </div>
       <div class="rank-band">
         <img v-if="activeIndex == 1 && pre == 1" src="./phone-bang02@2x.png" alt="" />
@@ -84,7 +84,8 @@ export default {
   },
   data() {
     return {
-      activeIndex: '1'
+      activeIndex: '1',
+      rankRule: false
     }
   },
 
@@ -100,6 +101,9 @@ export default {
   methods: {
     changeTab(index) {
       this.activeIndex = index
+    },
+    changeRule() {
+      this.rankRule = !this.rankRule
     }
   }
 }
@@ -126,6 +130,7 @@ export default {
       span{
         margin-right: 10px;
         opacity: 0.8;
+        cursor: pointer;
         &:hover {
           opacity: 1;
         }
@@ -138,6 +143,10 @@ export default {
         right: -10px;
 
         top: 0;
+        .iconfont-v3{
+          font-size: 14px;
+          padding-left: 3px;
+        }
       }
     }
 
@@ -156,7 +165,7 @@ export default {
       background: #fff;
       padding: 8px;
       line-height: 24px;
-      height: 120px;
+      min-height: 30px;
       overflow-y: scroll;
       word-break: break-all;
     }

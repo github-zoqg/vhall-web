@@ -97,8 +97,9 @@
               <el-progress :percentage="scope.row.percentage" v-if="Number(scope.row.file_status) === 0"></el-progress>
               <span :class="[scope.row.fileStatusCss, 'statusTag']" v-else>{{scope.row.fileStatusStr}}<span @click="handleBtnClick(scope, { name: '重新生成', methodName: 'resetDownload' })"><icon v-if="Number(scope.row.file_status) === 2" icon-class="saasicon-reset"></icon></span></span>
             </div>
-            <div v-else-if="item.key === 'imgOrText'">
-              <p v-html="scope.row.imgOrText"></p>
+            <div v-else-if="item.key === 'imgOrText'" class="imgAddText">
+              <!-- {{scope.row}} -->
+              <el-scrollbar><p v-html="scope.row.imgOrText"></p></el-scrollbar>
             </div>
             <!-- 文档，进度 (Old) <div v-else-if="scene === 'word' && item.key === 'transform_schedule_str'">
               <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span><el-progress :show-text=false status="success" :percentage="scope.row.codeProcess" v-if="!scope.row.transform_schedule_str"></el-progress>
@@ -487,6 +488,14 @@ export default {
     /deep/ .el-progress-bar__inner {
       background-color: #14BA6A;
     }
+  }
+  .imgAddText{
+   /deep/.el-scrollbar__view p{
+     padding: 0;
+     img{
+       vertical-align: middle;
+     }
+   }
   }
   .statusTag{
     font-size: 14px;

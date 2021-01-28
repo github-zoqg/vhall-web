@@ -96,7 +96,7 @@ export default {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      padding: 8px 30px 5px 0;
+      padding: 12px 30px 5px 0;
     }
   }
   .box-time {
