@@ -100,6 +100,13 @@ export default {
   created() {
     // 回放列表剪辑
     if (this.$route.query.recordId && this.$route.query.isRecordVideo != 1) {
+      this.createRecordMsg = this.$message({
+        message: `视频获取中,请稍侯...`,
+        showClose: true,
+        duration: 0,
+        type: 'success',
+        customClass: 'zdy-info-box'
+      });
       this.getPlayBackInfo();
     } else if(this.$route.query.switch_id) {
       // 回放录制剪辑
@@ -367,6 +374,7 @@ export default {
         opts.paas_record_id = recordId
       }
       this.$fetch('playBackPreview', opts).then(res => {
+        this.createRecordMsg.close()
         const data = res.data
         this.roomInfo = {
           app_id: data.paasAppId, // 应用 ID
