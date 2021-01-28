@@ -1,6 +1,6 @@
 <template>
   <div class="prize-card">
-    <pageTitle title="播放器设置"></pageTitle>
+    <pageTitle pageTitle="播放器设置"></pageTitle>
     <div class="player-set" style="min-height:741px;">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="防录屏跑马灯" name="first">

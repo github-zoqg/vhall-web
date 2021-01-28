@@ -1,6 +1,6 @@
 <template>
   <div class="offical-show">
-    <pageTitle title="开屏海报">
+    <pageTitle pageTitle="开屏海报">
       <div class="switch__box">
         <el-switch
           class="el-role-switch"

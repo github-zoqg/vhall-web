@@ -2,7 +2,7 @@
   <div class="vh-customer-menu-wrap">
     <page-title
       style="position: relative"
-      title="自定义菜单"
+      pageTitle="自定义菜单"
     >
       <div slot="content">所有设置对电脑端和移动浏览器同时生效</div>
       <div class="vh-customer-menu-btns">

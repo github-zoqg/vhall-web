@@ -1,6 +1,6 @@
 <template>
   <div class="data-detail">
-    <pageTitle :title='title'>
+    <pageTitle :pageTitle='title'>
        <div slot="content" v-if="title=='发群红包'">
         主办方发送的红包未领取完时，会在直播结束时退回到财务中心-账户收益-<br>红包收益中。
       </div>

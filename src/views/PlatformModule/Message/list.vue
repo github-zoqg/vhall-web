@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title='消息中心'></pageTitle>
+    <pageTitle pageTitle='消息中心'></pageTitle>
     <!-- 有消息内容 -->
     <div v-if="msgDao.total > 0">
       <div class="message--title">

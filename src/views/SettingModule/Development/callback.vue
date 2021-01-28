@@ -1,7 +1,7 @@
 <template>
   <div class="page-callback">
     <div class="title-callback">
-      <pageTitle title="回调设置"></pageTitle>
+      <pageTitle pageTitle="回调设置"></pageTitle>
       <a href="https://www.vhall.com/saas/doc/20.html" target="_blank">回调设置说明</a>
     </div>
     <div class="layout-callback">

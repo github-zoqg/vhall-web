@@ -1,7 +1,7 @@
 <template>
  <div class="home-main console">
    <OldHeader class="head-wrap" v-if="$route.meta.type !== 'owner'"  scene="userHome" :isWhiteBg=true></OldHeader>
-   <pageTitle title="个人主页" v-if="$route.meta.type === 'owner'"></pageTitle>
+   <pageTitle pageTitle="个人主页" v-if="$route.meta.type === 'owner'"></pageTitle>
    <div class="v-home-bg" v-if="$route.meta.type !== 'owner'" :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || static_img_url :
         static_img_url }) 0px center / 100% no-repeat`}"></div>
    <div :class="$route.meta.type !== 'owner' ? userHomeVo && Number(userHomeVo.show_subject) === 0 && Number(userHomeVo.show_webinar_list) === 0 ? 'pc_bg no-creates' : 'pc_bg' : ''">

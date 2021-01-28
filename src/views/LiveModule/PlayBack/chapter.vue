@@ -1,7 +1,7 @@
 <template>
   <div class="chapterManager">
     <div class="titleContainer clearFix">
-      <pageTitle title="章节打点">
+      <pageTitle pageTitle="章节打点">
         <div slot="content">
           章节功能支持文档格式：PPT、PPTX，其他格式不支持
         </div>

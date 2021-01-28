@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title="可用资源"></pageTitle>
+    <pageTitle pageTitle="可用资源"></pageTitle>
     <!-- 头部图形 + 右侧面板 -->
     <div class="alloc--top">
       <div class="echarts--tar" ref="allocTopChartDom" id="allocTopChartDom"></div>

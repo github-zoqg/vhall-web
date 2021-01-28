@@ -1,6 +1,6 @@
 <template>
   <div class="question-wrap">
-    <pageTitle title="奖品" v-if="$route.meta.title === '奖品'">
+    <pageTitle pageTitle="奖品" v-if="$route.meta.title === '奖品'">
       <div slot="content">
         1.创建奖品不限制数量
         <br>

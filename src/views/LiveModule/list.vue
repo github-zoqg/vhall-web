@@ -1,6 +1,6 @@
 <template>
   <div class="liveListBox" v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)" v-if="!loading">
-    <pageTitle title="直播列表">
+    <pageTitle pageTitle="直播列表">
       <div slot="content">
         1.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
         <br/>

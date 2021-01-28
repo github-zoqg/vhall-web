@@ -1,6 +1,6 @@
 <template>
   <div class="question-wrap">
-    <pageTitle title="商品"></pageTitle>
+    <pageTitle pageTitle="商品"></pageTitle>
       <div class="head-operat" v-show="total || isSearch">
         <el-button type="primary" size="medium" round  @click="addProduct" v-preventReClick>创建商品</el-button>
         <el-button round @click="batchDel(null)" size="medium" v-preventReClick :disabled="!checkedGoodsId.length">批量删除</el-button>

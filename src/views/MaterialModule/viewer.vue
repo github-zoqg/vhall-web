@@ -1,6 +1,6 @@
 <template>
   <div class="audienceBox">
-    <pageTitle title="观众">
+    <pageTitle pageTitle="观众">
       <span class="dev-show-tips">
         观众分组应用于观看限制中的白名单，设置后只有指定的观众才能观看活动
       </span>

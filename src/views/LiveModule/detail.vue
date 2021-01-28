@@ -1,6 +1,6 @@
 <template>
   <div class="detailBox" v-loading="loading" element-loading-text="数据获取中" v-if="!loading">
-    <pageTitle title="活动详情"></pageTitle>
+    <pageTitle pageTitle="活动详情"></pageTitle>
     <!--  <pageTitle :title='titleText(liveDetailInfo.webinar_state) + "详情"'></pageTitle> -->
     <el-row :gutter="16" class="basicInfo">
       <el-col :span="18" :lg='18' :md="24" :sm='24' :xs="24" :class="liveDetailInfo.webinar_state===4 ? 'active' : ''">

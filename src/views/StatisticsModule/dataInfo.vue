@@ -1,7 +1,7 @@
 <template>
   <div class="data-info">
     <!--v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)" -->
-    <pageTitle :title="$route.meta.title">
+    <pageTitle :pageTitle="$route.meta.title">
       <div slot="content">
         1.数据更新频率：天，不支持查看当日数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
       </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="word-wrap">
-    <pageTitle title="文档">
+    <pageTitle pageTitle="文档">
       <div slot="content">
         1.支持的文档格式: doc/docx，xls/xlsx，ppt/pptx，pdf，jpeg/jpg，png，bmp
         <br>

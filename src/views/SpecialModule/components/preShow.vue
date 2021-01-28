@@ -2,7 +2,7 @@
   <div class="show-special">
     <OldHeader scene="preShow" :isWhiteBg=true v-if="specialInfo && specialInfo.user_id" :user_id="specialInfo.user_id"></OldHeader>
     <div class="special-show-ctx">
-      <!-- <pageTitle title="专题详情"></pageTitle> -->
+      <!-- <pageTitle pageTitle="专题详情"></pageTitle> -->
       <div class="special-info">
         <div class="special-main">
           <div class="special-img">

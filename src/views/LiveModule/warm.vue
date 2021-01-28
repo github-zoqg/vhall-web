@@ -1,6 +1,6 @@
 <template>
   <div class="wramUp-wrap">
-    <pageTitle title="暖场视频">
+    <pageTitle pageTitle="暖场视频">
       <template  slot="default">
         <div class="switch__box">
           <el-switch

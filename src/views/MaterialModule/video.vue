@@ -1,6 +1,6 @@
 <template>
   <div class="video-wrap">
-    <pageTitle title="音视频">
+    <pageTitle pageTitle="音视频">
       <span class="video-text">音视频中的文件内容应用于暖场视频和点播</span>
       <div slot="content">
         1.上传单个文件最大2G，文件标题不能带有特殊字符和空格

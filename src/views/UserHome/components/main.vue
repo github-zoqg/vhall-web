@@ -474,10 +474,10 @@ export default {
       }
     }
     .bottom{
-      height: 80px;
+      height: 100px;
       background: #f7f7f7;
       box-sizing: border-box;
-      padding: 12px 16px;
+      padding: 14px 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;

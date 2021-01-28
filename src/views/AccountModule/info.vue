@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title="账户信息"></pageTitle>
+    <pageTitle pageTitle="账户信息"></pageTitle>
     <div class="account__panel">
       <!-- 左侧 -->
       <div class="account__panel--left">

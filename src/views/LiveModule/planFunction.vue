@@ -1,6 +1,6 @@
 <template>
   <div class="page-padding">
-    <pageTitle title="功能配置"></pageTitle>
+    <pageTitle pageTitle="功能配置"></pageTitle>
     <!-- 内容区域  -->
     <div class="plan-func-main">
       <div class="plan-func-form">

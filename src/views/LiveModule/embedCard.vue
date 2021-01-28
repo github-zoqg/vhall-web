@@ -1,6 +1,6 @@
 <template>
   <div class="embed-card">
-    <pageTitle title="推广嵌入"></pageTitle>
+    <pageTitle pageTitle="推广嵌入"></pageTitle>
     <div class="weixinWork">
       <h3>微信嵌入</h3>
       <div class="input-card">

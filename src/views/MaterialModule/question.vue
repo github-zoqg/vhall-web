@@ -1,6 +1,6 @@
 <template>
   <div class="question-wrap">
-    <pageTitle title="问卷">
+    <pageTitle pageTitle="问卷">
       <div slot="content">
         修改已收集数据的问卷，按照修改后的问卷重新统计，为确保
         <br>

@@ -6,7 +6,7 @@
       </null-page>
     </div>
     <div v-else>
-      <pageTitle title="聊天严禁词" iconCssType="gary">
+      <pageTitle pageTitle="聊天严禁词" iconCssType="gary">
         <!-- <div slot="content">
           1.聊天、评论，包含严禁词自动过滤,适用于所有直播。垃圾信息系统已过滤无需添加
           <br/>

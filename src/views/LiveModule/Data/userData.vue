@@ -1,7 +1,7 @@
 <template>
   <div class="user-data">
     <div class="title-data">
-      <pageTitle title="用户统计">
+      <pageTitle pageTitle="用户统计">
         <div slot="content">
           1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
         </div>
