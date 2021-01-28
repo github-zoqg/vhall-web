@@ -61,7 +61,7 @@
         </el-table-column>
         <el-table-column
           label="进度"
-          width="164px"
+          width="220px"
         >
           <template slot-scope="scope">
            <!--  <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span>

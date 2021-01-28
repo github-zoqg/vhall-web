@@ -194,7 +194,7 @@ export default {
         {
           label: '进度',
           key: 'transform_schedule_str',
-          width: 200
+          width: 220
         }
       ],
       tableRowBtnFun: [
@@ -580,8 +580,8 @@ export default {
                 // 非PPT静态转码完成
                 item.showEventType = 6;
                 item.fileStatusCss = 'success';
-                item.fileStatusStr = '转码成功';
-                item.transform_schedule_str = `转码成功`; // 静态转码完成，动态转码失败
+                item.fileStatusStr = '静态转码成功，动态转码中...';
+                item.transform_schedule_str = `静态转码成功，动态转码中...`; // 静态转码完成，动态转码失败
               }
             } else if (statusJpeg >= 500) {
               item.showEventType = 7;
