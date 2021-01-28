@@ -130,8 +130,8 @@
             <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；音频格式支持mp3、wav <br/>文件大小不超过2G</p>
           </div>
           <div class="mediaSlot" v-else>
-          <icon icon-class="saasshipinwenjian"></icon>
-            <p>{{selectMedia.name}}</p>
+            <icon icon-class="saasshipinwenjian"></icon>
+            <p class="selectMediaName">{{selectMedia.name}}</p>
           </div>
           <div class="abRight" v-if="selectMedia.id&&showChecked">
             <div class="tool" @click.stop="previewVideo">
@@ -1043,6 +1043,20 @@ export default {
       font-size: 12px;
       cursor: pointer;
       border-radius: 4px;
+      .selectMediaName{
+        text-overflow: -o-ellipsis-lastline;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        padding: 0 144px;
+        font-size: 14px;
+        color: #666;
+        padding-top: 12px;
+        line-height: 18px;
+      }
       i{
         font-size: 30px;
       }

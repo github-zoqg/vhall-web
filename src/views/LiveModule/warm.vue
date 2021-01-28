@@ -25,7 +25,7 @@
             </div>
             <div class="mediaSlot mediaOther" v-else>
               <icon icon-class="saasshipinwenjian"></icon>
-              <p>{{selectMedia.name}}</p>
+              <p class="selectMediaName">{{selectMedia.name}}</p>
             </div>
             <div class="abRight" v-if="selectMedia.paas_record_id&&showChecked">
               <div class="tool" @click.stop="previewVideo">
@@ -431,6 +431,20 @@ export default {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      .selectMediaName{
+        text-overflow: -o-ellipsis-lastline;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        padding: 0 144px;
+        font-size: 14px;
+        color: #666;
+        padding-top: 12px;
+        line-height: 18px;
+      }
       .tip{
         width: 100%;
       }
