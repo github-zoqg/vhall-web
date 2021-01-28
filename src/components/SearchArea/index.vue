@@ -56,7 +56,7 @@
       </el-form-item>
     </el-form>
     <div class="export-data" v-if="isExports">
-      <el-button round  size="medium" @click="exportData">导出数据</el-button>
+      <el-button :disabled="isForbidExport" round  size="medium" @click="exportData">导出数据</el-button>
     </div>
   </div>
 </template>
@@ -85,6 +85,10 @@ export default {
     isExports: {
       type: Boolean,
       default: true
+    },
+    isForbidExport: {
+      type: Boolean,
+      default: false
     },
     clearable: {
       type: Boolean,

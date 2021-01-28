@@ -81,6 +81,7 @@
         <el-tab-pane label="红包收益明细" name="2"></el-tab-pane>
         <div class="search-income">
           <search-area
+            :isForbidExport="!tableList.length"
             ref="searchIncome"
             @onExportData="exportAccount()"
             :searchAreaLayout="searchAccount"
