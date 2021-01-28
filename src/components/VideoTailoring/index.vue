@@ -5,7 +5,7 @@
         <h3 class="vh-video-tailoring__title">{{ videoName }}</h3>
       </div>
       <div class="vh-video-tailoring__media-wrap clearfix">
-        <div class="vh-video-tailoring__play" :class="{ fl: docReady || !vodReady}">
+        <div class="vh-video-tailoring__play" :class="{ fl: docReady || !vodReady, no_doc: !(docReady || !vodReady) }">
           <div class="vh-video-tailoring__noplay" v-show="!vodReady">
             <icon icon-class="saasicon_video"></icon>
           </div>
@@ -750,6 +750,12 @@ export default {
         display: inline-block;
         vertical-align: middle;
         overflow: hidden;
+        &.no_doc{
+          background-color: #222;
+          #vh-video {
+            background-color:#222!important;
+          }
+        }
         .vhallPlayer-barrage-box,
         .v-c-right {
           display: none;
@@ -1016,7 +1022,6 @@ export default {
           line-height: 20px;
           &.vh-video-tailoring__title {
             height: 120px;
-            line-height: 120px;
           }
         }
         .vh-video-tailoring__input-form {

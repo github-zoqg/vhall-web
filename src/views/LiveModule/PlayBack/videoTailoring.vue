@@ -374,7 +374,7 @@ export default {
         opts.paas_record_id = recordId
       }
       this.$fetch('playBackPreview', opts).then(res => {
-        this.createRecordMsg.close()
+        this.createRecordMsg && this.createRecordMsg.close()
         const data = res.data
         this.roomInfo = {
           app_id: data.paasAppId, // 应用 ID
