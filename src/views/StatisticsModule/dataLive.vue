@@ -290,6 +290,7 @@ export default {
 }
 .el-tooltip__popper {
   max-width: 400px;
+  line-height: 17px;
 }
 </style>
 <style lang="less" scoped >
