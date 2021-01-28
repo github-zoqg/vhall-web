@@ -31,7 +31,7 @@
               :before-upload="beforeUploadHandler"
               @delete="resetLogoUrl">
               <div slot="tip">
-                <p>建议尺寸：1920*1080px，小于2M</p>
+                <p>建议尺寸：1920*1080px，小于4M</p>
                 <p>支持jpg、gif、png、bmp</p>
               </div>
             </upload>
@@ -146,7 +146,7 @@ export default {
       console.log(file.type.toLowerCase())
       let typeArr = file.type.toLowerCase().split('/');
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt2M = file.size / 1024 / 1024 < 4;
       if (!isType) {
         this.$message({
           message: `背景图片只能是 ${typeList.join('、')} 格式!`,
@@ -159,7 +159,7 @@ export default {
       }
       if (!isLt2M) {
         this.$message({
-          message: `背景图片大小不能超过 2MB!`,
+          message: `背景图片大小不能超过 4MB!`,
           showClose: true,
           // duration: 0,
           type: 'error',
