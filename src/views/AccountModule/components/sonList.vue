@@ -58,7 +58,7 @@
     </div>
     <!-- 添加/ 观众子账号 -->
     <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false'
-                 width="520px">
+                 width="460px">
       <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth">
         <el-form-item label="批量创建" prop="is_batch" v-if="sonDialog.type === 'add'" class="switch--item">
           <div class="switch__box">
@@ -79,7 +79,7 @@
           <span>当前可创建子账号<strong>{{ sonCountVo.available_num }}</strong>个</span>
         </el-form-item>
         <el-form-item label="账号昵称" prop="nick_name">
-          <VhallInput type="text" placeholder="请输入账号昵称，不输入默认使用账号ID" autocomplete="off" v-model="sonForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
+          <VhallInput type="text" placeholder="请输入昵称，默认使用账号ID" autocomplete="off" v-model="sonForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="预设密码" prop="password" v-if="sonDialog.type === 'add'">
           <pwd-input type="password" v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
@@ -233,7 +233,7 @@ export default {
         title: '添加观众',
         type: 'add',
         row: null,
-        formLabelWidth: '80px'
+        formLabelWidth: '78px'
       },
       sonForm: {
         is_batch: 0,
@@ -602,10 +602,10 @@ export default {
   },
   computed: {
     phonePlaceholder() {
-      return this.sonForm.phone ? '' : '子账号登录后自行操作绑定，父账号允许重置';
+      return this.sonForm.phone ? '' : '登录后自行绑定，父账号允许重置';
     },
     emailPlaceholder() {
-      return this.sonForm.email ? '' : '子账号登录后自行操作绑定，父账号允许重置';
+      return this.sonForm.email ? '' : '登录后自行绑定，父账号允许重置';
     }
   }
 };
@@ -719,7 +719,7 @@ export default {
 }
 /deep/.el-dialog__wrapper {
   .el-select {
-    width: 376px;
+    width: 318px;
   }
 }
 /deep/.el-dialog__footer {

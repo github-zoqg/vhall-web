@@ -278,7 +278,7 @@ export default {
 <style lang="less" scoped>
 .date--data {
   /* .padding41-40(); */
-  padding: 24px 24px 0 24px;
+  padding: 24px 0px 0px;
 }
 .echarts--line {
   display: block;
@@ -288,6 +288,7 @@ export default {
 }
 .date__query__form {
   margin-bottom: 24px;
+  padding-left: 24px;
   /deep/.el-input__inner{
     border-radius: 18px;
     height: 36px;

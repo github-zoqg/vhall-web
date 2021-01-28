@@ -63,7 +63,7 @@
       <null-page class="search-no-data" :height="0" v-if="roleDao && roleDao.total === 0"></null-page>
     </div>
     <VhallDialog
-      width="520px"
+      width="460px"
       :visible.sync="roleDialogVisible"
       :title="roleForm.executeType === 'edit' ? '编辑角色' : '创建角色'"
       :lock-scroll=false
@@ -87,7 +87,7 @@
               inactive-color="#CECECE"
             >
             </el-switch>
-            <span class="leve3_title title--999">允许创建、设置以及发起直播，默认权限不可取消</span>
+            <span class="leve3_title title--999">可创建、设置、发起直播，默认不可取消</span>
           </div>
         </el-form-item>
         <el-form-item label="内容管理" prop="permission_content" class="switch--item">
@@ -100,7 +100,7 @@
               inactive-color="#CECECE"
             >
             </el-switch>
-            <span class="leve3_title title--999">控制子账号是否可生成回放及管理内容</span>
+            <span class="leve3_title title--999">控制子账号可否生成回放及管理内容</span>
           </div>
         </el-form-item>
         <el-form-item label="数据管理" prop="permission_data" class="switch--item">
@@ -113,7 +113,7 @@
               inactive-color="#CECECE"
             >
             </el-switch>
-            <span class="leve3_title title--999">控制子账号是否可查看直播/点播的数据及信息</span>
+            <span class="leve3_title title--999">控制子账号可否查看直播/点播的数据信息</span>
           </div>
         </el-form-item>
       </el-form>
