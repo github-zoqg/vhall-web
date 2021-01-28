@@ -197,7 +197,7 @@
       </el-table>
     </div>
     <associateDoc :tableDataLength="tableData.length" @getChapters="getChapters" ref="associateDialog"></associateDoc>
-    <div v-if="previewVisible" class="wraper">
+    <div v-if="previewVisible" class="wraper" @click.self="previewVisible = false">
       <div class="preViewChapters">
         <span class="close" @click="closePreview">&times;</span>
         <iframe width="100%" height="100%" :src="`${VUE_APP_WEB_URL}/previewChapter/${webinar_id}?recordId=${recordId}`" frameborder="0"></iframe>
@@ -209,7 +209,6 @@
       :visible.sync="tutorialVisible"
       width="740px"
       center
-      :close-on-click-modal=false
       :close-on-press-escape=false
     >
       <moduleTutorial></moduleTutorial>
