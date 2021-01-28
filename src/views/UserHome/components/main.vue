@@ -474,7 +474,7 @@ export default {
       }
     }
     .bottom{
-      height: 100px;
+      height: 96px;
       background: #f7f7f7;
       box-sizing: border-box;
       padding: 14px 14px;
