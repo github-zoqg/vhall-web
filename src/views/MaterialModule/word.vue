@@ -92,7 +92,8 @@
         <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>-->
       <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false' height="458px" :modalClick=true>
-        <img class="imgLoading" :src="loadingUrl"  v-show="!docLoadComplete">
+        <!-- <img class="imgLoading" :src="loadingUrl"  v-show="!docLoadComplete"> -->
+        <div class="loadingWrap"  element-loading-background="rgba(255,255,255)" v-loading="!docLoadComplete"></div>
         <div style="position: relative;height: 396px;" v-show="isDot && docLoadComplete">
           <!-- 动态文档区域-->
           <div :key="currentCid"  :id="currentCid" style="width: 704px;height: 396px;"></div>
@@ -1212,9 +1213,11 @@ export default {
   margin-bottom: 24px;
   margin-top: 24px;
 }
-.imgLoading {
-  width: 40px;
-  height: 40px;
-  margin: 200px calc(50% - 20px);
+.loadingWrap {
+  width: 736px;
+  height: 458px;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 </style>
