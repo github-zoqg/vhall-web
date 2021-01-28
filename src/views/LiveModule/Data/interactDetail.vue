@@ -115,6 +115,7 @@ export default {
         {
           label: '昵称',
           key: 'nickname',
+          width: 200
         },
         {
           label: '身份',
@@ -124,6 +125,7 @@ export default {
         {
           label: '发送时间',
           key: 'date_time',
+          width: 150
         },
         {
           label: '消息内容',
@@ -283,6 +285,7 @@ export default {
       return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
     },
     emojiToText (content) {
+      console.warn(content, 'content');
       return textToEmoji(content).map(c => {
         return c.msgType == 'text'
           ? c.msgCont
@@ -388,33 +391,32 @@ export default {
         this.$refs.tableList.clearSelect();
         params.start_time = this.searchTime[0] + ' 00:00:00';
         params.end_time = this.searchTime[1] + ' 23:59:59';
+        this.params = {
+          room_id: this.roomId,
+          start_time: this.searchTime[0] + ' 00:00:00',
+          end_time: this.searchTime[1] + ' 23:59:59'
+        }
+      } else {
+        this.params = {
+          room_id: this.roomId
+        }
       }
+
       let obj = Object.assign({}, pageInfo, params);
       this.$fetch('getChatListInfo', obj).then(res => {
         this.tableList = res.data.list;
         this.tableList.map(item => {
           item.name = item.role_name == 1 ? '主持人' : item.role_name == 2 ? '观众' : item.role_name == 3 ? '助理' : '助理';
-          // let contImg = this.emojiToText(item.data.text_content) || this.emojiToText(item.data.barrage_txt);
           if((/\[|\]/g).test(item.data.barrage_txt)) {
-            item.chatEmoji = this.emojiToText(item.data.barrage_txt) || '';
-          } else {
-            item.chatEmoji = '';
+            item.data.barrage_txt = this.emojiToText(item.data.barrage_txt) || '';
           }
           item.chatText = item.data.text_content || '';
-          if (item.data.image_urls) {
+          if (item.data.image_urls && item.data.image_urls.length != 0) {
             item.chatImg = this.chartsImgs(item.data.image_urls);
-            console.log(item.chatImg, '>>>>>>???????')
           } else {
-            item.chatImg = '';
+            item.chatImg = ''
           }
-          item.imgOrText = item.chatText + item.chatEmoji + item.chatImg;
-          // if (item.data.image_urls.length > 0 && this.num == item.data.image_urls.length) {
-          //   item.imgOrText = item.chatText + item.chatEmoji + item.chatImg;
-          // } else {
-          //   item.imgOrText = item.chatText + item.chatEmoji + item.chatImg;
-          // }
-
-          // item.revice = '主持人';
+          item.imgOrText = item.data.barrage_txt + item.chatImg
         })
         this.totalNum = res.data.total;
         if(this.searchTime) {
@@ -429,13 +431,10 @@ export default {
       });
     },
     chartsImgs(list) {
-      //  style="width: 100%;object-fit: scale-down;height: 100%;"
       let arr = '';
-      this.num = 0;
       if (list.length) {
         list.map((item, index) => {
-          this.num = index;
-          arr = `<span style="width: 80px;display: inline-block;height: 80px;background: #1a1a1a;border-radius: 4px;"><img style="width: 100%;object-fit: scale-down;height: 100%;" src="${item}" border="0" />`;
+          arr += `<img style="display:inline-block;width: 40px;object-fit: scale-down;height: 100%;" src="${item}" border="0" />`;
         }).join(' ')
       }
       return arr;
@@ -835,7 +834,7 @@ export default {
     },
     // 聊天
     exportChatInfo() {
-      this.$fetch('exportChat', {room_id: this.roomId}).then(res => {
+      this.$fetch('exportChat', this.params).then(res => {
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,

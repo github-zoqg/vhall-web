@@ -395,7 +395,7 @@ export default {
     }
     .detail{
       position: absolute;
-      top:0;
+      top:8px;
       right:0;
       color:#3B67F9;
       font-size: 14px;

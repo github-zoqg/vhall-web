@@ -30,11 +30,15 @@ export default {
   props: ['otherList'],
   data() {
     return {
-     total: 0
+     total: 0,
+     barEcharts: null
     }
   },
   mounted() {
     this.initDataLimit();
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.resizeCharts);
   },
   methods: {
     initDataLimit() {
@@ -53,7 +57,7 @@ export default {
     },
     initBarEcharts(xData, yData) {
       let that = this;
-      let barEcharts = echarts.init(this.$refs.barEchart);
+      this.barEcharts = echarts.init(this.$refs.barEchart);
       let option = {
         tooltip: {
           show: true,
@@ -86,8 +90,12 @@ export default {
           },
         ],
       };
-      barEcharts.setOption(option);
+      this.barEcharts.setOption(option);
+      window.addEventListener('resize', this.resizeCharts)
     },
+    resizeCharts() {
+      this.barEcharts.resize()
+    }
   }
 }
 </script>

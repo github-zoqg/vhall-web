@@ -80,7 +80,7 @@ export default {
     .textlink {
       position: relative;
       min-height: 40px;
-      line-height: 40px;
+      line-height: 20px;
       word-break: break-all;
       a{
         color: #3562fa;

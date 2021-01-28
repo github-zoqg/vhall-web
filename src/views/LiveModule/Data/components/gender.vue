@@ -9,10 +9,14 @@ export default {
   props: ['genderList'],
   data() {
     return {
+      terBarCharts: null,
     };
   },
   mounted() {
     this.initDataLimit();
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.resizeCharts);
   },
   methods: {
     initDataLimit() {
@@ -25,7 +29,7 @@ export default {
     initTerBroCharts(data) {
       // console.log(topList);
       let that = this;
-      let terBarCharts = echarts.init(this.$refs.terBroEchart);
+      this.terBarCharts = echarts.init(this.$refs.terBroEchart);
       let option = {
         tooltip: {
           trigger: 'item',
@@ -52,7 +56,7 @@ export default {
           },
           data: data,
         },
-        color: ['#FA9A32', '#4383E4'],
+        color: ['#FA9A32', '#4383E4', '#ff6250', '#ffd5c1', '#fff8e1'],
         series: {
           type: 'pie',
           radius: ['40%', '75%'],
@@ -84,8 +88,12 @@ export default {
           data: data,
         },
       };
-      terBarCharts.setOption(option);
+      this.terBarCharts.setOption(option);
+      window.addEventListener('resize', this.resizeCharts)
     },
+     resizeCharts() {
+      this.terBarCharts.resize()
+    }
   }
 }
 </script>

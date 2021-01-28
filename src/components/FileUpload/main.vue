@@ -186,11 +186,11 @@ export default {
     }
     i.img {
       font-size: 44px;
-      color: #8c939d;
+      color: #999;
     }
     i.saasicon_shangchuan {
       font-size: 44px!important;
-      color: #8c939d;
+      color: #999;
     }
     i.excel {
       font-size: 28px;
