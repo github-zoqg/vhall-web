@@ -112,8 +112,8 @@
         <div class="ac__allocation--user">
           <h1 class="title">可用资源</h1>
           <div class="allocation_icon">
-            <img src="../../common/images/account/saasliuliang_tubiao.png" alt="" v-if="resourcesVo && resourcesVo.type > 0"/>
-            <img src="../../common/images/account/saasbingfa_tubiao.png" alt="" v-else/>
+            <img src="../../common/images/account/saasliuliang_tubiao.png" alt="" v-show="tabType === 'trends'"/>
+            <img src="../../common/images/account/saasbingfa_tubiao.png" alt="" v-show="tabType === 'regular'"/>
             <!-- <i :class="`${resourcesVo && resourcesVo.type > 0 ? 'iconfont-v3 saasliuliang_tubiao' : 'iconfont-v3 saasbingfa_tubiao'}`"></i> -->
           </div>
           <ul class="allocation_one">
@@ -173,7 +173,7 @@
             total: 10
           }
         ],
-        tabType: null,
+        tabType: '',
         vipStatus: null, // trends_0 动态重分配；trends_1 动态已分配；regular_0 固态重分配；regular_1 固态已分配
         vipSelectStatus: null,
         dataList: [],
