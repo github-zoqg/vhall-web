@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title="子账号信息"></pageTitle>
+    <pageTitle pageTitle="子账号信息"></pageTitle>
     <!-- 子账号管理头部
     <div class="title--flex--top">
       <div class="top-item">

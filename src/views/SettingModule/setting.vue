@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title='设置中心'></pageTitle>
+    <pageTitle pageTitle='设置中心'></pageTitle>
     <div>
       <el-row type="flex" class="row-bg" justify="space-between" :gutter="24">
         <el-col :span="8"  v-for="(item, ins) in operas" :key='ins'>

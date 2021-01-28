@@ -6,7 +6,7 @@
   </div>
   <!-- 有权限内容 -->
   <div v-else>
-    <pageTitle title='控制台标识'></pageTitle>
+    <pageTitle pageTitle='控制台标识'></pageTitle>
     <div class="logo-ctx">
       <el-form :model="logoForm" ref="logoForm" :rules="logoFormRules" label-width="56px">
         <el-form-item label="图片" prop="logo" class="heightNo">

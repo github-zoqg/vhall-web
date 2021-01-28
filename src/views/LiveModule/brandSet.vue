@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title="品牌设置"></pageTitle>
+    <pageTitle pageTitle="品牌设置"></pageTitle>
     <div class="brand--set">
       <el-tabs v-model="tabType" @tab-click="handleClick">
         <el-tab-pane label="标识设置" name="signSet" v-if="perssionInfo['ui.brand_setting'] > 0"></el-tab-pane>

@@ -1,6 +1,6 @@
 <template>
   <div class="prize-card">
-    <pageTitle title="抽奖">
+    <pageTitle pageTitle="抽奖">
     </pageTitle>
     <div class="card__body">
        <el-tabs v-model="activeName" @tab-click="handleClick">

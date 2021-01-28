@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title="用量分配"></pageTitle>
+    <pageTitle pageTitle="用量分配"></pageTitle>
     <div class="ac__allocation__panel">
       <!-- 左侧 -->
       <div class="ac__allocation__panel--left">

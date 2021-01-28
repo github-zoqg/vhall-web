@@ -1,6 +1,6 @@
 <template>
   <div class="account-detail">
-    <pageTitle title="提现明细">
+    <pageTitle pageTitle="提现明细">
     </pageTitle>
     <div class="box-card">
       <search-area

@@ -1,6 +1,6 @@
 <template>
   <div  v-loading="fetching" element-loading-text="努力加载中">
-    <PageTitle :title="pageTitle"></PageTitle>
+    <PageTitle :pageTitle="pageTitle"></PageTitle>
     <!-- 按钮 -->
     <div class="app-btns" v-if="action==='detail'">
       <el-button size="medium" @click="modify" round>修改</el-button>

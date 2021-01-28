@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title="角色邀请">
+    <pageTitle pageTitle="角色邀请">
       <div slot="content">
         1、互动直播中，通过网页端和客户端登录的主持人和嘉宾，都可以进行连麦互动；<br/>
         2、权限控制可调整嘉宾和助理在直播中的功能；<br/>

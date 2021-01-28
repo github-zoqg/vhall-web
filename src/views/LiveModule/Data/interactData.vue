@@ -1,6 +1,6 @@
 <template>
   <div class="interaction-data">
-    <pageTitle title="互动统计"></pageTitle>
+    <pageTitle pageTitle="互动统计"></pageTitle>
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
     <base-data :isStatus="liveDetailInfo.webinar_state" :webinarType="liveDetailInfo.webinar_type"></base-data>
   </div>

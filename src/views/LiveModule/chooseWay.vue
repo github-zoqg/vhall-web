@@ -1,7 +1,7 @@
 <template>
   <div :class="['chooseWay', {'no-login': executeType !== 'ctrl'}]">
     <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl'" scene="chooseWay" :isWhiteBg="executeType !== 'ctrl'"></OldHeader>
-    <pageTitle title="选择发起方式" v-if="executeType === 'ctrl'"></pageTitle>
+    <pageTitle pageTitle="选择发起方式" v-if="executeType === 'ctrl'"></pageTitle>
     <div class="choose__way__main">
       <div class="choose__way__ctx">
         <h1 class="choose-method" v-if="executeType !== 'ctrl'" >选择发起方式</h1>

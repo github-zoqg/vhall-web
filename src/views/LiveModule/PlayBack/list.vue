@@ -1,6 +1,6 @@
 <template>
   <div class="listBox">
-    <pageTitle :title="title"></pageTitle>
+    <pageTitle :pageTitle="title"></pageTitle>
     <div class="noData" v-if="no_show === true">
       <null-page text="暂未创建回放" nullType="noAuth">
         <el-button class="length152" round type="primary" @click="toCreate">创建回放</el-button>
