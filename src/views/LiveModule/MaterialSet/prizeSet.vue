@@ -39,25 +39,25 @@
                           @delete="deleteImg"
                           :before-upload="beforeUploadHandler">
                         </upload>
-                        <label class="img-tangle" v-show="isChecked > 4" >
+                        <label class="img-tangle" v-show="isChecked==0" >
                           <i class="el-icon-check"></i>
                         </label>
                       </div>
-                      <p :class="isChecked == 0 ? 'active' : ''" class="przieImg" @click="changeType(0)">
-                        <img src="../../../common/images/gif/prize03.gif" alt="">
-                        <label class="img-tangle" v-show="isChecked == 0" >
-                          <i class="el-icon-check"></i>
-                        </label>
-                      </p>
                       <p :class="isChecked == 1 ? 'active' : ''" class="przieImg" @click="changeType(1)">
-                        <img src="../../../common/images/gif/prize01.gif" alt="" >
+                        <img src="../../../common/images/gif/prize03.gif" alt="">
                         <label class="img-tangle" v-show="isChecked == 1" >
                           <i class="el-icon-check"></i>
                         </label>
                       </p>
                       <p :class="isChecked == 2 ? 'active' : ''" class="przieImg" @click="changeType(2)">
-                        <img src="../../../common/images/gif/prize02.gif" alt="">
+                        <img src="../../../common/images/gif/prize01.gif" alt="" >
                         <label class="img-tangle" v-show="isChecked == 2" >
+                          <i class="el-icon-check"></i>
+                        </label>
+                      </p>
+                      <p :class="isChecked == 3 ? 'active' : ''" class="przieImg" @click="changeType(3)">
+                        <img src="../../../common/images/gif/prize02.gif" alt="">
+                        <label class="img-tangle" v-show="isChecked == 3" >
                           <i class="el-icon-check"></i>
                         </label>
                       </p>
@@ -181,7 +181,7 @@ export default {
       action: `${process.env.VUE_APP_BASE_URL}/v3/vss/lottery/save-prize-image`,
       total: 100,
       length: 0,
-      isChecked: 0,
+      isChecked: 1,
       localImg: 0,
       prizeImgList: [require('../../../common/images/gif/prize03.gif'), require('../../../common/images/gif/prize01.gif'), require('../../../common/images/gif/prize02.gif')],
       prizeUrl: [Env.staticImgs.prize[0], Env.staticImgs.prize[1], Env.staticImgs.prize[2]],
@@ -309,17 +309,15 @@ export default {
           this.formData.description = res.data.description;
           this.formData.title = res.data.title;
           this.localLottery = res.data
-          this.previewSrc = res.data.img_path;
-          this.backgroundImg = res.data.img_path || this.prizeImgList[0];
-          if (res.data.img_path) {
-            this.localImg = 10
-            this.isChecked = 10;
+          if (parseInt(res.data.img_order) > 0) {
+            this.isChecked = parseInt(res.data.img_order);
+            this.backgroundImg = res.data.img_path;
           } else {
             this.isChecked = 0;
+            this.backgroundImg = res.data.img_path;
+            this.previewSrc = res.data.img_path;
           }
-          } else {
-            this.backgroundImg = this.prizeImgList[0];
-          }
+        }
       }).catch((err)=>{
         this.$message({
           message: err.msg || `获取信息失败`,
@@ -332,10 +330,9 @@ export default {
     },
     // 抽奖页保存按钮
     lotterySave () {
-      console.log(this.isChecked, '???????????')
       let imgUrl = '';
-      if (parseInt(this.isChecked) < 4) {
-        imgUrl = this.prizeUrl[this.isChecked];
+      if (parseInt(this.isChecked) > 0) {
+        imgUrl = this.prizeUrl[this.isChecked - 1];
       } else {
         imgUrl = this.previewSrc;
       }
@@ -343,6 +340,7 @@ export default {
           webinar_id: this.$route.params.str,
           title: this.formData.title,
           img_path: imgUrl,
+          img_order: this.isChecked,
           description: this.formData.description
       }
       this.$fetch('savePrizeInfo', params).then(res => {
@@ -461,17 +459,17 @@ export default {
     },
     deleteImg() {
       this.previewSrc = '';
-      this.isChecked = 0;
+      this.isChecked = 1;
       this.backgroundImg = this.prizeImgList[0];
     },
     changeType(index) {
       this.isChecked = index;
-      this.backgroundImg = this.prizeImgList[index];
+      this.backgroundImg = this.prizeImgList[index - 1];
     },
      prizeLoadSuccess(res, file){
       console.log('图片上传',res,'ssssss', file);
       this.previewSrc = res.data.domain_url;
-      this.isChecked = 10;
+      this.isChecked = 0;
       this.backgroundImg = res.data.domain_url;
     },
     beforeUploadHandler(file){
