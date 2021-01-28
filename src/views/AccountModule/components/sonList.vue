@@ -102,13 +102,13 @@
         <el-form-item label="手机号码" class="no-execute">
           <VhallInput v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative"
                     :maxlength="30" disabled>
-            <el-button class="no-border" type="text" size="mini" slot="append" @click="resetPhoneOrEmail('phone')">重置</el-button>
+            <el-button v-show="sonDialog.type !== 'add'" class="no-border" type="text" size="mini" slot="append" @click="resetPhoneOrEmail('phone')">重置</el-button>
           </VhallInput>
         </el-form-item>
         <el-form-item label="邮箱地址" class="no-execute">
           <VhallInput v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative"
                     :maxlength="30" disabled>
-            <el-button class="no-border" type="text" size="mini" slot="append" @click="resetPhoneOrEmail('email')">重置</el-button>
+            <el-button v-show="sonDialog.type !== 'add'" class="no-border" type="text" size="mini" slot="append" @click="resetPhoneOrEmail('email')">重置</el-button>
           </VhallInput>
         </el-form-item>
       </el-form>
