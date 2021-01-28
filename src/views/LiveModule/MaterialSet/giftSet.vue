@@ -1,6 +1,6 @@
 <template>
   <div class="live-gift-wrap">
-    <pageTitle title="礼物管理">
+    <pageTitle pageTitle="礼物管理">
       <div slot="content">
         1.支持创建免费礼物，观看端最多显示40个礼物
         <br>

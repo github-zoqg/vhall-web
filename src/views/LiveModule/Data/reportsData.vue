@@ -1,6 +1,6 @@
 <template>
   <div class="contain-data">
-    <pageTitle title="数据报告">
+    <pageTitle pageTitle="数据报告">
       <div slot="content">
         <p>1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据</p>
         <p>2.控制台数据统计为真实数据，不统计虚拟数据</p>

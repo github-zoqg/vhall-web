@@ -2,7 +2,7 @@
   <div class="forget-password">
     <OldHeader :isShowLogin=false scene="forgetPwd"></OldHeader>
     <div class="section__main">
-      <pageTitle title="找回密码"></pageTitle>
+      <pageTitle pageTitle="找回密码"></pageTitle>
       <div class="forget__layout">
         <el-steps :active="findStep" class="forget__step" align-center>
           <el-step title="选择找回方式">

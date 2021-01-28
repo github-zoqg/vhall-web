@@ -1,6 +1,6 @@
 <template>
   <div class="titleBox">
-    <span class="pageTitle">{{title}}</span>
+    <span class="pageTitle">{{pageTitle}}</span>
     <el-tooltip
       v-if="!!$props.content || !!$slots.content"
       v-bind="$props">
@@ -17,7 +17,7 @@
 import { Tooltip } from 'element-ui';
 export default {
   props: {
-    title: {
+    pageTitle: {
       type: String,
       required: true
     },

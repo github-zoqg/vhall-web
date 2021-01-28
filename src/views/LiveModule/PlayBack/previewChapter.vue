@@ -42,7 +42,7 @@
           <vhscroll :ops="ops">
             <ul class="chapterList">
               <li v-for="(item, index) in tableData" @click="chapterHandler(index)" :key="index">
-                <span class="title">{{item.index}}. {{item.title}}</span>
+                <span class="title"><span class="titleIndex">{{item.index}}.</span>{{item.title}}</span>
                 <span class="times">{{item.createTimeShow}}</span>
               </li>
             </ul>
@@ -214,10 +214,10 @@ export default {
     },
     chapterHandler(index){
       console.log(index)
-      let opts = {
-        id: this.docsdk._currentDoc._currentContainer._id, // 容器id， 必填
-        page: Number(this.tableData[index].slideIndex) // 跳转到某页，数字，必填
-      };
+      // let opts = {
+      //   id: this.docsdk._currentDoc._currentContainer._id, // 容器id， 必填
+      //   page: Number(this.tableData[index].slideIndex) // 跳转到某页，数字，必填
+      // };
       console.log(this.tableData[index].createTime)
       // this.docsdk.gotoPage(opts);
       this.$refs.player.$PLAYER.setCurrentTime(this.tableData[index].createTime, (e) => console.log(e));
@@ -344,6 +344,7 @@ export default {
       .vhallPlayer-controller-box {
         height: 40px;
         padding: 0 10px;
+        background: rgba(0, 0, 0, 0.8);
       }
       .vhallPlayer-volume-component {
         margin-right: 3px;
@@ -397,7 +398,7 @@ export default {
             font-size: 12px;
             height: 32px;
             line-height: 32px;
-            padding-left: 8px;
+            padding-left: 12px;
             cursor: pointer;
             transition: all .1s linear;
             display: flex;
@@ -417,6 +418,9 @@ export default {
           }
           .title{
             flex: 1;
+          }
+          .titleIndex{
+            padding-right: 8px;
           }
         }
       }

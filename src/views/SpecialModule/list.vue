@@ -1,6 +1,6 @@
 <template>
   <div class="liveListBox" v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)" v-show="!loading">
-    <pageTitle title="专题列表">
+    <pageTitle pageTitle="专题列表">
       <div class="title_text">专题功能教您如何玩转不同场景下的多会场直播，<span @click="introduceDetail">了解一下</span></div>
     </pageTitle>
 

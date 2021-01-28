@@ -1,6 +1,6 @@
 <template>
   <div class="order-detail">
-    <pageTitle title="升级版本">
+    <pageTitle pageTitle="升级版本">
     </pageTitle>
     <div class="version-info">
       <div class="version-item">

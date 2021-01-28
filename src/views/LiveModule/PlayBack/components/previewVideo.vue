@@ -381,6 +381,7 @@ export default {
         background: #FB3A32;
       }
       .vhallPlayer-progress-container{
+        background-color: rgba(0, 0, 0, 0.7);
         .vhallPlayer-progress-scrubber>i {
           width: 6px;
           height: 6px;
@@ -392,6 +393,9 @@ export default {
         }
         &:hover{
           height: 4px;
+        }
+        .v-p-markpoint {
+          border: none;
         }
       }
       .vhallPlayer-verticalSlider-popup .vhallPlayer-verticalSlider-box .verticalSlider-range .verticalSlider-value{
@@ -445,6 +449,7 @@ export default {
         }
         /deep/ .vhallPlayer-controller-box{
           height: 40px;
+          padding: 0 10px;
         }
       }
       .changeBigElem{

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title="用量分配"></pageTitle>
+    <pageTitle pageTitle="用量分配"></pageTitle>
     <div class="ac__allocation__panel">
       <!-- 左侧 -->
       <div class="ac__allocation__panel--left">
@@ -127,8 +127,8 @@
         </div>
         <ul class="ac__allocation--info">
           <li>提示：</li>
-          <li><span>1、</span><span>动态分配方式：所有子账户共用所有可用的并发或流量，无需为单个账户分配</span></li>
-          <li><span>2、</span><span>固定分配方式：请为每个子账号分配用量，所有账号用量之和不能大于可分配用量</span></li>
+          <li><span>1.</span><span>动态分配方式：所有子账户共用所有可用的并发或流量，无需为单个账户分配</span></li>
+          <li><span>2.</span><span>固定分配方式：请为每个子账号分配用量，所有账号用量之和不能大于可分配用量</span></li>
         </ul>
       </div>
     </div>
@@ -592,7 +592,7 @@
       span {
         display: inline-block;
         vertical-align: top;
-        width: 20px;
+        width: 16px;
         &:last-child {
           width: calc(100% - 20px);
         }

@@ -477,7 +477,7 @@ export default {
       height: 96px;
       background: #f7f7f7;
       box-sizing: border-box;
-      padding: 12px 16px;
+      padding: 14px 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;

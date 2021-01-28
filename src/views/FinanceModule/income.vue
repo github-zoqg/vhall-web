@@ -1,6 +1,6 @@
 <template>
   <div class="account-income">
-    <pageTitle title="账户收益">
+    <pageTitle pageTitle="账户收益">
       <div slot="content">
         1.账户收益包含直播收益和红包收益<br>2.直播收益：观众对主办方打赏的金额，包含门票、打赏、礼物道具<br>3.红包收益：作为观众身份抢到主办方发送的红包，以及主办方发送红包后未被领取完，会退款到红包收益
       </div>

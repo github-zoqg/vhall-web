@@ -1,6 +1,6 @@
 <template>
 	<div class="download">
-    <pageTitle title="下载中心"></pageTitle>
+    <pageTitle pageTitle="下载中心"></pageTitle>
     <!-- 搜索 -->
     <div class="list--search">
       <el-button class="downloadBtn" size="medium" plain round @click.prevent.stop="multiDownload" v-preventReClick :disabled="!(selectRows && selectRows.length > 0)">批量下载</el-button>

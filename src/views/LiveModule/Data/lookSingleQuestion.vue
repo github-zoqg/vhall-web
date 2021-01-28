@@ -1,6 +1,6 @@
 <template>
   <div class="single-question">
-    <pageTitle title="问卷详情"></pageTitle>
+    <pageTitle pageTitle="问卷详情"></pageTitle>
       <div class="question-title">
         <h1>
           {{ $route.query.subject }}

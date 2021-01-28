@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title="虚拟人数">
+    <pageTitle pageTitle="虚拟人数">
       <div slot="content">
         1.人数：当前在线人数<br />2.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
       </div>

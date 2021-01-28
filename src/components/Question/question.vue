@@ -1,9 +1,10 @@
 <template>
   <div>
-    <div id="settingBox" v-show="isCreate">
+    <div id="settingBox" v-if="!questionId">
     </div>
-    <div v-loading="loading" element-loading-spinner="el-icon-loading" v-show="!isCreate">
-      <div class="qs-preview-box-content cef-q-wrap" id="qs-preview-box-content" v-show="showPreview">
+    <div v-else>
+      <div class="preview" v-loading="loading" element-loading-text="加载中" element-loading-background="rgba(255,255,255,.9)">
+        <div class="qs-preview-box-content cef-q-wrap" id="qs-preview-box-content"></div>
       </div>
     </div>
     <VhallDialog
@@ -36,7 +37,7 @@ export default {
       questionInfo: {},
       questionDataInfo: {},
       showPreview: false,
-      isCreate: false,
+      isCreate: true,
       $service: null,
       dialogTongVisible: false,
       sureChecked: true,
@@ -61,7 +62,6 @@ export default {
       })
     },
     preview (questionId) {
-      this.showPreview = true;
       this.previewId = questionId;
       this.$service.renderPagePC('#qs-preview-box-content', questionId);
       document.querySelector('#qs-preview-box-content .q-btns').style.display = 'none';
@@ -266,5 +266,8 @@ export default {
       text-align: center;
       margin-top: 20px;
     }
+  }
+  .preview{
+    min-height: 300px;
   }
 </style>

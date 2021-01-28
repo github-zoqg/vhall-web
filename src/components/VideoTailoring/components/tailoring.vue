@@ -50,7 +50,7 @@
 
       <div class="vh-video-tailoring__volume-box">
         <span @click="jingYin" class="vh-video-tailoring__icon-voice-warp">
-          <icon style="color:#fff" :icon-class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'"></icon>
+          <icon style="color:#999" :icon-class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'"></icon>
         </span>
         <div class="vh-video-tailoring__slider">
           <el-slider v-model="voice" :show-tooltip="false" vertical height="90px"></el-slider>
@@ -1011,6 +1011,7 @@ export default {
         margin: 11px 0 0;
         .el-slider__bar{
           height: 4px;
+          background-color: #4e4e4e;
         }
       }
       .el-slider__button-wrapper {
@@ -1091,20 +1092,20 @@ export default {
           .el-slider__runway{
             margin: 0 18px;
             background: #333;
-            .el-slider__bar {
-              background-color: #E18B2E;
-            }
+            // .el-slider__bar {
+            //   background-color: #E18B2E;
+            // }
           }
         }
         .el-slider.is-vertical .el-slider__runway,
         .el-slider.is-vertical .el-slider__bar {
-          width: 4px;
+          width: 6px;
         }
         .el-slider.is-vertical .el-slider__button-wrapper {
-          left: -16px;
+          left: -15px;
           .el-slider__button {
-            width: 8px;
-            height: 8px;
+            width: 14px;
+            height: 14px;
             border: none;
             box-shadow: 0px 0px 6px 0px rgba(30, 137, 228, 0.8);
             background: #ececec;

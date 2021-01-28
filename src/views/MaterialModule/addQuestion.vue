@@ -1,6 +1,6 @@
 <template>
   <div class="add-question">
-     <pageTitle :title="`${title}问卷`">
+     <pageTitle :pageTitle="`${title}问卷`">
         <!-- <div class="headBtnGroup">
           <el-button round size="medium" @click="returnBack">返回</el-button>
         </div> -->

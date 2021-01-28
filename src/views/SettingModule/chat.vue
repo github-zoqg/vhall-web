@@ -6,7 +6,7 @@
       </null-page>
     </div>
     <div v-else>
-      <pageTitle title="聊天严禁词" iconCssType="gary">
+      <pageTitle pageTitle="聊天严禁词" iconCssType="gary">
         <!-- <div slot="content">
           1.聊天、评论，包含严禁词自动过滤,适用于所有直播。垃圾信息系统已过滤无需添加
           <br/>
@@ -144,7 +144,7 @@
         </div>
       </VhallDialog>
       <!-- 批量上传 -->
-      <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false @close="closeImportChat">
+      <VhallDialog class="addForbidWord" width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false @close="closeImportChat">
         <div class="upload-dialog-content">
           <file-upload
             ref="chatUpload"
@@ -295,7 +295,7 @@ export default {
         let perVo = JSON.parse(permissions);
         console.log(perVo, '权限-用户');
         // perVo['ui.console_logo'] = 1; // TODO 默认配置项权限开启
-        if (perVo['front_keyword'] > 0) {
+        if (perVo['front_keywords'] > 0) {
           // 开启
           this.auth_show = true;
           this.getKeywordTemplate();
@@ -923,4 +923,11 @@ export default {
     background-color: #14BA6A;
   }
 }
+</style>
+<style lang="less">
+  .addForbidWord {
+    /deep/ .saasicon_shangchuan {
+      color: #999!important;
+    }
+  }
 </style>

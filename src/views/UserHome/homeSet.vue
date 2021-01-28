@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title="设置"></pageTitle>
+    <pageTitle pageTitle="设置"></pageTitle>
     <div class="home--set--info">
       <el-form :model="homeSetInfoForm" ref="homeSetInfoForm" :rules="homeSetInfoFormRules" label-width="94px">
         <el-form-item label="主页标题" prop="title">

@@ -1,7 +1,7 @@
 <template>
   <div class="chapterManager">
     <div class="titleContainer clearFix">
-      <pageTitle title="章节打点">
+      <pageTitle pageTitle="章节打点">
         <div slot="content">
           章节功能支持文档格式：PPT、PPTX，其他格式不支持
         </div>
@@ -957,7 +957,7 @@ export default {
     padding: 24px;
     background: #222222;
     display: flex;
-    height: 474px;
+    max-height: 474px;
     justify-content: space-between;
     >div{
       flex: 1;
@@ -1034,7 +1034,11 @@ export default {
       }
       .vhallPlayer-progress-box{
         .el-slider__runway {
+          height: 4px;
           margin: 0;
+          .el-slider__bar {
+            height: 4px;
+          }
         }
       }
     }
@@ -1046,6 +1050,9 @@ export default {
       }
       /deep/ .vh-player {
         height: 100%;
+        #vh-video{
+          background-color: #292929;
+        }
         .vhallPlayer-controller-box{
           display: flex;
           justify-content: space-between;

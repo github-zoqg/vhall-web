@@ -1,6 +1,6 @@
 <template>
   <div class="offical-show">
-    <pageTitle title="公众号">
+    <pageTitle pageTitle="公众号">
       <div class="switch__box">
         <el-switch
           class="el-role-switch"

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <pageTitle title='消息详情'></pageTitle>
+    <pageTitle pageTitle='消息详情'></pageTitle>
     <div class="msg__detail">
       <h1>{{msgDao && msgDao.title ? msgDao.title : ''}}</h1>
       <p class="msg__date"><span>接收时间：{{msgDao && msgDao.created_at ? msgDao.created_at : ''}}</span></p>
