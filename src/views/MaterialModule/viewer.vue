@@ -95,7 +95,7 @@
       </div>
     </VhallDialog>
     <!-- 添加观众/ 观众修改 -->
-    <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" :lock-scroll='false' width="544px">
+    <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" :lock-scroll='false' width="484px">
       <el-form :model="viewerForm" ref="viewerForm" :rules="viewerFormRules" :label-width="viewerDialog.formLabelWidth">
         <el-form-item label="姓名" prop="name">
           <VhallInput v-model.trim="viewerForm.name" auto-complete="off" placeholder="请输入姓名（最多50个字符）" :maxlength="50"/>
@@ -106,7 +106,7 @@
         <el-form-item label="邮箱" prop="email">
           <VhallInput v-model.trim="viewerForm.email" auto-complete="off" placeholder="请输入邮箱"/>
         </el-form-item>
-        <el-form-item label="手机号码" prop="phone">
+        <el-form-item label="手机" prop="phone">
           <VhallInput v-model.trim="viewerForm.phone" auto-complete="off" placeholder="请输入手机号码" :maxlength="11"/>
         </el-form-item>
         <el-form-item label="工号" prop="job_number">
@@ -271,7 +271,7 @@ export default {
         title: '添加观众',
         type: 'add',
         row: null,
-        formLabelWidth: '100px'
+        formLabelWidth: '50px'
       },
       viewerForm: {
         name: '',

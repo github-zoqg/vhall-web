@@ -144,7 +144,7 @@
         </div>
       </VhallDialog>
       <!-- 批量上传 -->
-      <VhallDialog width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false @close="closeImportChat">
+      <VhallDialog class="addForbidWord" width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false @close="closeImportChat">
         <div class="upload-dialog-content">
           <file-upload
             ref="chatUpload"
@@ -923,4 +923,11 @@ export default {
     background-color: #14BA6A;
   }
 }
+</style>
+<style lang="less">
+  .addForbidWord {
+    /deep/ .saasicon_shangchuan {
+      color: #999!important;
+    }
+  }
 </style>
