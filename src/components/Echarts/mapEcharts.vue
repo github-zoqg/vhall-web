@@ -29,6 +29,7 @@ import '../../../node_modules/echarts/map/js/china.js'; // 引入中国地图数
 export default {
   data() {
     return {
+      mapChart: null
     };
   },
   props: ['areaDataList'],
@@ -42,11 +43,14 @@ export default {
   mounted() {
     this.initMapEcharts(this.areaDataList);
   },
+  destroyed() {
+    window.removeEventListener('resize', this.resizeCharts);
+  },
   methods: {
     initMapEcharts(data) {
       // this.mapDataList = [];
       // let that = this;
-      let mapChart = echarts.init(this.$refs.mapEchart); //这里是为了获得容器所在位置
+      this.mapChart = echarts.init(this.$refs.mapEchart); //这里是为了获得容器所在位置
       let options = {
         backgroundColor: '#fff',
         tooltip: {
@@ -111,8 +115,12 @@ export default {
           },
         ],
       };
-      mapChart.setOption(options);
+      this.mapChart.setOption(options);
+      window.addEventListener('resize', this.resizeCharts)
     },
+    resizeCharts() {
+      this.mapChart.resize()
+    }
   },
 };
 </script>

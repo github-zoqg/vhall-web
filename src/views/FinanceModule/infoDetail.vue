@@ -76,6 +76,7 @@
                 >
               </template>
             </el-table-column>
+            <div slot="empty"><noData :nullType="'nullData'" v-if="!totalNum && activeIndex==1" :text="'暂无数据'"></noData></div>
           </el-table>
           <SPagination
             :total="totalNum"
@@ -97,6 +98,7 @@
           @getTableList="getDetailList"
           >
         </table-list>
+        <noData :nullType="'nullData'" v-if="!totalNum&&activeIndex==2" :text="'暂无数据'" :height="100"></noData>
       </el-tabs>
     </div>
   </div>
@@ -105,6 +107,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   name: "income",
   data() {
@@ -320,7 +323,8 @@ export default {
     };
   },
   components: {
-    PageTitle
+    PageTitle,
+    noData
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));

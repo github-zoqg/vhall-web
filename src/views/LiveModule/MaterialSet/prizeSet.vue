@@ -39,6 +39,9 @@
                           @delete="deleteImg"
                           :before-upload="beforeUploadHandler">
                         </upload>
+                        <label class="img-tangle" v-show="isChecked > 4" >
+                          <i class="el-icon-check"></i>
+                        </label>
                       </div>
                       <p :class="isChecked == 0 ? 'active' : ''" class="przieImg" @click="changeType(0)">
                         <img src="../../../common/images/gif/prize03.gif" alt="">
@@ -329,13 +332,17 @@ export default {
     },
     // 抽奖页保存按钮
     lotterySave () {
+      console.log(this.isChecked, '???????????')
+      let imgUrl = '';
       if (parseInt(this.isChecked) < 4) {
-        this.previewSrc = this.prizeUrl[this.isChecked];
+        imgUrl = this.prizeUrl[this.isChecked];
+      } else {
+        imgUrl = this.previewSrc;
       }
       let params = {
           webinar_id: this.$route.params.str,
           title: this.formData.title,
-          img_path: this.previewSrc,
+          img_path: imgUrl,
           description: this.formData.description
       }
       this.$fetch('savePrizeInfo', params).then(res => {

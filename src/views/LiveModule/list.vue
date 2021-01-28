@@ -61,10 +61,7 @@
               </div>
               <div class="bottom">
                 <div class="live-title">
-                  <el-tooltip class="item" effect="dark" :content="item.subject" placement="top-start">
-                    <p class="liveTitle">{{item.subject}}</p>
-                  </el-tooltip>
-                  <!-- <p class="liveTitle" :title="item.subject">{{item.subject}}</p> -->
+                  <p class="liveTitle">{{item.subject}}</p>
                   <p class="liveTime">{{item.start_time}}</p>
                 </div>
                 <p class="liveOpera">
@@ -389,12 +386,6 @@ export default {
   },
 };
 </script>
-<style lang="less">
-  .el-tooltip__popper {
-    max-width: 285px;
-    line-height: 17px;
-  }
-</style>
 <style lang="less" scoped>
   .liveListBox{
     user-select: none;
