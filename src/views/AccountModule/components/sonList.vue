@@ -12,7 +12,7 @@
     <div class="all-yes-data" v-else>
       <!-- 搜索 -->
       <div class="list--search">
-        <el-button size="medium" type="primary" round @click.prevent.stop="addSonShow(null)">创建</el-button>
+        <el-button :disabled="isForbidCreate" size="medium" type="primary" round @click.prevent.stop="addSonShow(null)">创建</el-button>
         <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
         <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="!(this.ids && this.ids.length > 0)">批量删除</el-button>
         <el-button size="medium" round @click="downloadHandle">导出</el-button>
@@ -551,6 +551,7 @@ export default {
           // item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : item.vip_info.type > 0 ? `${item.vip_info.total_flow}GB` : `${item.vip_info.total}方`}）`;
         });
         this.sonDao = dao;
+        this.sonCountGetHandle()
       }).catch(e => {
         this.loading = false;
         console.log(e);
@@ -606,6 +607,9 @@ export default {
     },
     emailPlaceholder() {
       return this.sonForm.email ? '' : '登录后自行绑定，父账号允许重置';
+    },
+    isForbidCreate() {
+      return this.sonCountVo.available_num == 0
     }
   }
 };
