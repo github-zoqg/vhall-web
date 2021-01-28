@@ -214,10 +214,10 @@ export default {
     },
     chapterHandler(index){
       console.log(index)
-      let opts = {
-        id: this.docsdk._currentDoc._currentContainer._id, // 容器id， 必填
-        page: Number(this.tableData[index].slideIndex) // 跳转到某页，数字，必填
-      };
+      // let opts = {
+      //   id: this.docsdk._currentDoc._currentContainer._id, // 容器id， 必填
+      //   page: Number(this.tableData[index].slideIndex) // 跳转到某页，数字，必填
+      // };
       console.log(this.tableData[index].createTime)
       // this.docsdk.gotoPage(opts);
       this.$refs.player.$PLAYER.setCurrentTime(this.tableData[index].createTime, (e) => console.log(e));
