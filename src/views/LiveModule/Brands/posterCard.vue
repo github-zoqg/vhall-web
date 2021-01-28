@@ -39,7 +39,7 @@
                   @delete="form.img = '', domain_url = ''">
                   <div slot="tip">
                     <p>建议尺寸：750*1334px</p>
-                    <p>小于2M(支持jpg、gif、png、bmp)</p>
+                    <p>小于4M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
               </div>
@@ -300,7 +300,7 @@ export default {
       console.log(file.type.toLowerCase())
       let typeArr = file.type.toLowerCase().split('/');
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt2M = file.size / 1024 / 1024 < 4;
       if (!isType) {
         this.$message({
           message:  `图片只能是 ${typeList.join('、')} 格式!`,
@@ -313,7 +313,7 @@ export default {
       }
       if (!isLt2M) {
         this.$message({
-          message: `图片大小不能超过 2MB!`,
+          message: `图片大小不能超过 4MB!`,
           showClose: true,
           // duration: 0,
           type: 'error',
