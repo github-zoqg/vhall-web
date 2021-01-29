@@ -93,7 +93,7 @@
       </el-dialog>-->
       <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false' height="458px" :modalClick=true>
         <!-- <img class="imgLoading" :src="loadingUrl"  v-show="!docLoadComplete"> -->
-        <div class="loadingWrap"  element-loading-background="rgba(255,255,255)" v-loading="!docLoadComplete"></div>
+        <div class="loadingWrap"  element-loading-background="rgba(255,255,255)" v-loading="!docLoadComplete"  v-show="!docLoadComplete"></div>
         <div style="position: relative;height: 396px;" v-show="isDot && docLoadComplete">
           <!-- 动态文档区域-->
           <div :key="currentCid"  :id="currentCid" style="width: 704px;height: 396px;"></div>
@@ -289,7 +289,7 @@ export default {
       }
     },
     nextStep() {
-      console.log(this.isDotEnd)
+      console.log('nextStep', this.docLoadComplete);
       if (!this.docLoadComplete) {
         return this.$message({
           message: `请文档加载完成以后再操作`,
@@ -313,6 +313,7 @@ export default {
       }
     },
     prevStep() {
+      console.log('prevStep', this.docLoadComplete);
       if (!this.docLoadComplete) {
         return this.$message({
           message: `请文档加载完成以后再操作`,
@@ -1158,6 +1159,9 @@ export default {
   }
   /deep/.el-dialog__body {
     padding: 16px 16px 0 16px;
+  }
+  /deep/.el-loading-mask {
+    border-radius: 4px;
   }
   .preview-box {
     width: 100%;
