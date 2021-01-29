@@ -70,7 +70,7 @@
                <!--  <el-input type="text" maxlength="5" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d]+/g, '')">
                   <template slot="append"> 方</template>
                 </el-input> -->
-                <VhallInput v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative" autocomplete="off"  @input="formatBFInputs($event, scope.row, 'inputCount')">
+                <VhallInput v-model.trim="scope.row.inputCount" :maxlength="8" v-if="scope.row.isHide" class="btn-relative" autocomplete="off"  @input="formatBFInputs($event, scope.row, 'inputCount')">
                   <template slot="append">方</template>
                 </VhallInput>
                 <span v-else>{{scope.row.count | unitCovert}} 方</span>
@@ -84,7 +84,7 @@
                 <!-- <el-input type="text" maxlength="5" v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d]+/g, '')">
                   <template slot="append"> 方</template>
                 </el-input> -->
-                <VhallInput v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative" autocomplete="off" placeholder="正整数" @input="formatBFInputs($event, scope.row, 'inputExtendDay')">
+                <VhallInput v-model.trim="scope.row.inputExtendDay" :maxlength="8" v-if="scope.row.isHide" class="btn-relative" autocomplete="off" @input="formatBFInputs($event, scope.row, 'inputExtendDay')">
                   <template slot="append">方</template>
                 </VhallInput>
                 <span v-else>{{scope.row.extend_day | unitCovert}} 方</span>
@@ -157,7 +157,7 @@
           </VhallInput>
          </el-form-item>
          <el-form-item label="分配数量" prop="count1" v-else>
-          <VhallInput v-model.trim="multiAllocForm.count1" class="btn-relative" autocomplete="off" placeholder="请输入分配数量" @input="formatBFInputs($event, 'multiAllocForm', 'count1')">
+          <VhallInput v-model.trim="multiAllocForm.count1" :maxlength="8" class="btn-relative" autocomplete="off" placeholder="请输入分配数量" @input="formatBFInputs($event, 'multiAllocForm', 'count1')">
           <template slot="append">方</template>
         </VhallInput>
          </el-form-item>
@@ -246,7 +246,7 @@
         }
         if (!/^\d{0,8}(\.\d{0,2})?$/.test(value)) {
           if(!value.match(/^\d{0,8}(\.\d{0,2})?$/g)) {
-            row[key] = row[key].substring(0, row[key].length - 1);
+            row[key] = row[key].replace(/[^\d^\.]+/g, '')
           } else {
             // 前两位不能是00开头
             if(`${value.substring(0, 2)}` === '00') {
@@ -263,14 +263,14 @@
       },
       formatBFInputs(value, row, key) {
         if(key === 'count' || key === 'count1') {
+          this[row][key] = this[row][key].replace(/[^\d]+/g, '')
           row = this[row];
-          console.log(111111111111)
+        } else {
+          row[key] = row[key].replace(/[^\d]+/g, '')
         }
         if (!/^\d{0,8}$/.test(value)) {
-          console.log(22222222222)
           if(!value.match(/^\d{0,8}$/g)) {
-             console.log(333333)
-            row[key] = row[key].replace(/[^\d]+/g, '');
+            row[key] = row[key].replace(/[^\d]+/g, '')
           } else {
             // 前两位不能是00开头
             if(`${value.substring(0, 2)}` === '00') {
