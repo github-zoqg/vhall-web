@@ -642,11 +642,11 @@ export default {
   },
   computed: {
     phonePlaceholder() {
-      if (this.isReset.phone) return '手机号已重置'
+      if (this.isReset.phone) return '手机号已重置，保存后生效'
       return this.sonForm.phone ? '' : '登录后自行绑定，父账号允许重置';
     },
     emailPlaceholder() {
-      if (this.isReset.email) return '邮箱已重置'
+      if (this.isReset.email) return '邮箱已重置，保存后生效'
       return this.sonForm.email ? '' : '登录后自行绑定，父账号允许重置';
     },
     isForbidCreate() {
