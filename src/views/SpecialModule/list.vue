@@ -279,9 +279,9 @@ export default {
       val = Number(val);
       if (isNaN(val)) return 0;
       if (val > 1e5 && val < 1e8) {
-        return `${(val / 1e4).toFixed(2)}万`;
+        return `${(val / 1e4).toFixed(1)}万`;
       } else if (val > 1e8) {
-        return `${(val / 1e8).toFixed(2)}亿`;
+        return `${(val / 1e8).toFixed(1)}亿`;
       } else {
         return val;
       }
