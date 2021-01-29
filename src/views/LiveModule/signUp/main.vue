@@ -1,7 +1,7 @@
 <template>
   <div class="signup-main">
     <div class="head">
-      <pageTitle title="报名表单">
+      <pageTitle pageTitle="报名表单">
         <div class="switchBox">
           <el-switch
             class="swtich"

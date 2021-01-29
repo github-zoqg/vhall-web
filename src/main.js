@@ -55,6 +55,7 @@ Vue.prototype.$parseURL = parseURL; // 去除域名//*/upload/
 Vue.prototype.$img = require('./common/images/small.png');
 Vue.prototype.$checkUploadType = checkUploadType; // 验证上传格式
 Vue.use(ELEMENT);
+import './utils/message';
 Vue.use(vhallSaas, {
   config: {
     playbill: [`/api/webinar/v1/webinar/adv-info`, 'POST'] // 开屏海报
