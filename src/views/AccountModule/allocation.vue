@@ -478,7 +478,7 @@
       line-height: 24px;
     }
     &.regular-list {
-      padding: 24px 32px 40px 32px;
+      padding: 24px 24px 40px 24px;
       /deep/.el-table td, /deep/.el-table th {
         padding: 9px 0;
       }
@@ -605,6 +605,7 @@
     height: auto;
     background: #FFFFFF;
     position: relative;
+    border-radius: 4px;
     .el-button {
       margin-top: 3px;
     }
