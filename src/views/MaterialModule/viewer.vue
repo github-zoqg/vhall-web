@@ -855,9 +855,19 @@ export default {
   /deep/ .el-table .el-button.el-button--text {
     font-size: 14px;
   }
-  /deep/ .noPic .saasicon_shangchuan {
-    font-size: 44px;
+  /deep/.el-upload--picture-card{
+    font-size: 36px;
+    i.saasicon_shangchuan{
+      font-size: 36px;
+    }
+    .picInco{
+      height: 32px;
+    }
   }
+  // /deep/ .noPic .saasicon_shangchuan {
+  //   font-size: 44px;
+  // }
+
   /deep/ .el-upload--picture-card {
     width: 100%;
     height: 130px;

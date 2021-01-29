@@ -46,7 +46,7 @@
           </div>
           <div class="bottom">
             <div class="">
-              <p class="liveTitle" :title="item.title">{{item.title}}</p>
+              <p class="liveTitle">{{item.title}}</p>
               <p class="liveTime">{{item.created_at | unitTime }}</p>
             </div>
             <p class="liveOpera">
