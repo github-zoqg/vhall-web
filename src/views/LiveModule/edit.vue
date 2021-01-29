@@ -126,8 +126,9 @@
       <el-form-item label="选择视频"  v-if="webniarType=='vod'" required>
         <div class="mediaBox" @mouseenter="showMenu" @mouseleave="hiddenMenu">
           <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
-            <i class="iconfont-v3 saasicon_shangchuan"></i>
-            <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；音频格式支持mp3、wav <br/>文件大小不超过2G</p>
+            <div class="picInco"><i class="iconfont-v3 saasicon_shangchuan"></i></div>
+            <!-- <i class="iconfont-v3 saasicon_shangchuan"></i> -->
+            <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；<br/>音频格式支持mp3、wav 文件大小不超过2G</p>
           </div>
           <div class="mediaSlot" v-else>
             <icon icon-class="saasshipinwenjian"></icon>
@@ -800,6 +801,9 @@ export default {
   .item-time .el-form-item {
     margin-bottom: 0px;
   }
+  /deep/.el-upload--picture-card i.saasicon_shangchuan{
+    font-size: 40px;
+  }
   .date{
     /deep/.el-input__prefix {
         left: 8px;
@@ -1064,8 +1068,11 @@ export default {
         font-size: 26px;
 
       }
+      .picInco{
+        height: 24px;
+      }
       /deep/.saasicon_shangchuan{
-        font-size: 44px;
+        font-size: 40px;
       }
       /deep/.saasshipinwenjian{
         color: #FF733C;

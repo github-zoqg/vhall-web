@@ -127,10 +127,20 @@ export default {
 </script>
 <style lang="less" scoped>
   .qr-previewbox{
+    img{
+      width: 100%;
+      height: 100%;
+    }
   }
-  /deep/.el-upload--picture-card i {
-    font-size: 44px;
-    color: #8c939d;
+  /deep/.el-upload--picture-card i.saasicon_shangchuan {
+    font-size: 36px;
+    color: #999;
+  }
+  /deep/.noPic{
+    .saasicon_shangchuan{
+      font-size: 36px;
+      color: #999;
+    }
   }
   /deep/.tips {
     p {
@@ -170,7 +180,7 @@ export default {
       border: 1px solid #ccc;
     }.tips{
       position: absolute;
-      top: 100px;
+      top: 93px;
       width: 100%;
       text-align: center;
       font-size: 12px;

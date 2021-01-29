@@ -12,7 +12,7 @@
               <th>填写人数</th>
               <th>占比</th>
             </tr>
-            <tr v-for="(item, index) in otherList" :key="index">
+            <tr v-for="(item, index) in tableList" :key="index">
               <td>{{ item.name }}</td>
               <td>{{ item.value }}</td>
               <td>{{ ((parseInt(item.value) / total) * 100).toFixed(2)}}%</td>
@@ -31,33 +31,57 @@ export default {
   data() {
     return {
      total: 0,
-     barEcharts: null
+     barEcharts: null,
+     tableList: []
     }
   },
   mounted() {
     this.initDataLimit();
   },
-  destroyed() {
+  beforeDestroy() {
     window.removeEventListener('resize', this.resizeCharts);
   },
   methods: {
     initDataLimit() {
       let Xline = [];
       let Yline = [];
+      this.tableList = [];
       this.otherList.map(item => {
-        Xline.push(item.item_subject)
-        Yline.push(item.num)
+        if (parseInt(item.item_id) > 0) {
+          Xline.push(item.item_subject)
+          Yline.push(item.num)
+          this.tableList.push({
+            name:item.item_subject,
+            value: item.num
+          })
+        }
       })
-      this.otherList.map(item => {
-        item.name = item.item_subject;
-        item.value = item.num;
-      })
+      // this.otherList.map(item => {
+      //   if (!item.item_id) {
+      //     item.name = item.item_subject;
+      //     item.value = item.num;
+      //   }
+      // })
       this.total = Yline.reduce((tem, item, index) =>{return tem + Number(item)}, 0);
       this.initBarEcharts(Xline, Yline);
     },
     initBarEcharts(xData, yData) {
       let that = this;
-      this.barEcharts = echarts.init(this.$refs.barEchart);
+      this.barEcharts = echarts.init(this.$refs.barEchart, {
+        noDataLoadingOption: {
+          text: '暂无数据',
+          effect:'bubble',
+          effectOption : {
+            effect: {
+                n: 0 //气泡个数为0
+            }
+          },
+          textStyle: {
+              fontSize: 24,
+              fontWeight: 'bold'
+          }
+        }
+      });
       let option = {
         tooltip: {
           show: true,

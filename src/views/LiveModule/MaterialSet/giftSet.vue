@@ -799,7 +799,13 @@ export default {
           return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
         })
       }
-
+      this.$message({
+        message: `删除成功`,
+        showClose: true,
+        // duration: 0,
+        type: 'success',
+        customClass: 'zdy-info-box'
+      });
       this.deleteId = ''
     },
     isCanDelete () {

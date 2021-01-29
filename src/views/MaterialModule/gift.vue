@@ -587,6 +587,15 @@ export default {
   /deep/.el-upload--picture-card .box img {
     width: auto
   }
+  // /deep/.el-upload--picture-card{
+  //   font-size: 36px;
+  //   i.saasicon_shangchuan{
+  //     font-size: 36px;
+  //   }
+  //   .picInco{
+  //     height: 40px;
+  //   }
+  // }
   .head-operat{
     margin-bottom: 20px;
     /deep/ .el-input__suffix-inner .el-input__icon {

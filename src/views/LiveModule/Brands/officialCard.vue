@@ -415,6 +415,9 @@ export default {
   pointer-events: none;
   user-select: none;
 }
+.saasicon_shangchuan{
+    font-size: 36px;
+  }
   .offical-show{
     .show-on{
       position: absolute;
@@ -699,6 +702,9 @@ export default {
   .img-box{
     width: 100%;
     height: 140px;
+    // .picInco{
+    //   height: 40px;
+    // }
   }
   /deep/.length152{
     margin-top: 0px!important;

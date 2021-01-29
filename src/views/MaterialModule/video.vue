@@ -29,10 +29,96 @@
       </VhallInput>
     </div>
     <div class="video-list" v-if="total || isSearch">
-      <table-list ref="tableList" :manageTableData="tableData" :tabelColumnLabel="tabelColumn" :tableRowBtnFun="tableRowBtnFun"
-       @changeTableCheckbox="changeTableCheckbox" :isHandle="true" :width="150" :totalNum="total" @onHandleBtnClick='operating' @getTableList="getTableList">
-      </table-list>
-      <noData :nullType="'search'" v-if="!total"></noData>
+       <el-table
+            :data="tableData"
+            @selection-change="changeTableCheckbox"
+            :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+           >
+            <el-table-column
+              type="selection"
+              width="55"
+              align="left"
+            />
+            <el-table-column
+              label="音视频名称"
+              show-overflow-tooltip>
+              <template slot-scope="scope">
+              <div class="videoName">
+                <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'"></i>
+                <i class="iconfont-v3 saasshipinwenjian" v-else></i>
+                {{ scope.row.video_name  || '- -'}}
+              </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              width="200"
+              prop="created_at"
+              label="上传时间">
+            </el-table-column>
+            <el-table-column
+              width="200"
+              prop="duration"
+              label="时长">
+            </el-table-column>
+            <el-table-column
+              prop="transcode_status_text"
+              width="200"
+              label="进度">
+              <template slot-scope="scope">
+                <div>
+                  <p v-if="scope.row.uploadObj">
+                    <!-- 上传 -->
+                    <span>{{
+                      scope.row.uploadObj.num == 100
+                        ? '上传已完成'
+                        : '文件上传中'
+                    }}</span>
+                    <el-progress
+                      :percentage="scope.row.uploadObj.num"
+                    ></el-progress>
+                  </p>
+                  <!-- {{scope.row}} -->
+                  <p v-if="scope.row.transcode_status_text">
+                    <!-- 列表 -->
+                    <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : 'failer'">{{ scope.row.transcode_status_text }}</span>
+                  </p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              width="150"
+              label="操作">
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  @click="preview(scope.row)"
+                  v-if="scope.row.transcode_status == 1"
+                  >预览</el-button
+                >
+                <el-button
+                  type="text"
+                  @click="update(scope.row)"
+                  v-if="scope.row.transcode_status >= 0 && scope.row.transcode_status != 2"
+                  >编辑</el-button
+                >
+                <el-button
+                  type="text"
+                  @click="del(scope.row)"
+                  v-if="scope.row.transcode_status >= 0"
+                  >删除</el-button
+                >
+              </template>
+            </el-table-column>
+            <div slot="empty"><noData :nullType="'search'" v-if="!total"></noData></div>
+          </el-table>
+          <SPagination
+            :total="total"
+            v-if="total > pageInfo.limit"
+            :currentPage="pageInfo.pageNum"
+            @current-change="currentChangeHandler"
+            align="center"
+          >
+          </SPagination>
     </div>
     <div class="no-live" v-else>
       <noData :nullType="'nullData'" :text="'暂未上传音视频'">
@@ -80,49 +166,31 @@ export default {
   name: 'video.vue',
   data() {
     return {
-      total: 1,
+      total: 0,
       // 预览
       showDialog: false,
       isSearch: false,
       errorText: false,
+      isLeave: false,
       videoName: '',
       lowName: '',
       videoId: '',
       keyword: '',
       loading: true,
       editShowDialog: false,
+      pageInfo: {
+        pageNum: 1,
+        pos: 0,
+        limit: 10
+      },
       videoParam: {},
       // 表格
       tableData: [],
       checkedList: [],
-      tableRowBtnFun: [{name:'预览', methodName: 'preview'},{name:'编辑', methodName: 'update'},{name:'删除', methodName: 'del'}],
-      tabelColumn: [
-        {
-          label: '音视频名称',
-          key: 'video_name',
-        },
-        {
-          label: '上传时间',
-          key: 'created_at',
-        },
-        {
-          label: '时长',
-          key: 'duration',
-        },
-        {
-          label: '进度',
-          key: 'transcode_status_text',
-        }
-      ],
       UploadSDK: null,
       uploadId: -1,
       uploadList: [],
-      searchAreaLayout: [
-        {
-          type: "",
-          key: "title",
-        }
-      ],
+      vm: null
     };
   },
   components: {
@@ -133,12 +201,12 @@ export default {
   created() {
     // 初始化聊天SDK
     // this.initChat();
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    this.getVideoAppid();
+    this.getTableList();
     this.loading = false;
   },
   mounted() {
-    this.userId = JSON.parse(sessionOrLocal.get("userId"));
-    this.getTableList();
-    this.getVideoAppid();
     EventBus.$on('sign_trans_code', res => { // 转码状态
       console.log(res, '监听到sign_trans_code未读消息提示事件');
       this.tableData.map(item => {
@@ -160,16 +228,31 @@ export default {
     searchTableList() {
       this.getTableList('search');
     },
+    initPayMessage() {
+      // let that = this;
+      this.vm = this.$message({
+        showClose: true,
+        duration: 0,
+        dangerouslyUseHTMLString: true,
+        message: '上传过程中请勿关闭或刷新浏览器',
+        type: 'warning'
+      });
+      // let open = document.querySelector('#openList');
+      // open.addEventListener('click', function(e){
+      //   that.vm.close();
+      //   that.getOrderArrear();
+      // });
+    },
     getTableList(params){
-      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      // let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       if (params == 'search') {
-        pageInfo.pageNum= 1;
-        pageInfo.pos= 0;
+        this.pageInfo.pageNum= 1;
+        this.pageInfo.pos= 0;
       }
       let formParams = {
         title: this.keyword,
         user_id: this.userId,
-        ...pageInfo
+        ...this.pageInfo
       }
       this.isSearch = this.keyword ? true : false;
       this.getList(formParams);
@@ -220,6 +303,7 @@ export default {
       //   });
       //   return;
       // }
+      this.initPayMessage();
       let param = {
         create_time: this.$moment(file.lastModifiedDate).format('YYYY-MM-DD HH:mm:ss'),
         file_name: beforeName,  //后端要求名称带上后缀名  如xxx 改成 xxx.mp4
@@ -232,9 +316,10 @@ export default {
       console.log(param, '33333333333333333');
       this.uploadList.unshift(param);
       this.tableData.unshift(param);
-      this.total = 1;
+      if (!this.total) {
+        this.total = 1;
+      }
       this.UploadSDK.upload([file],(pro)=>{
-        console.log(pro, '???????11111111111111111????????????????????')
         this.tableData.forEach((ele)=>{
           if(ele.id == file.id){
             ele.uploadObj = {
@@ -245,9 +330,12 @@ export default {
           }
         });
       },res=>{
-        console.log(res, '本地上传成功');
-        console.log(res, 11111);
-        this.createVod(res.file);
+        if (!this.isLeave) {
+          console.log(res, '本地上传成功');
+          console.log(res, 11111);
+          this.vm.close()
+          this.createVod(res.file);
+        }
       },err=>{
         console.log(err, '失败');
         this.tableData.shift();
@@ -260,6 +348,12 @@ export default {
           customClass: 'zdy-info-box'
         });
       });
+    },
+    // 页码改变按钮事件
+    currentChangeHandler(current) {
+      this.pageInfo.pageNum = current;
+      this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit);
+      this.getTableList();
     },
     createVod(_file){
       this.UploadSDK.createDemand({ file: _file, fileName: 'name'},(res)=>{
@@ -289,7 +383,7 @@ export default {
         this.tableData.shift();
         this.uploadList.shift();
         this.$message({
-          message: `创建点播失败`,
+          message: `创建音视频失败`,
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -361,11 +455,11 @@ export default {
       });
     },
     // 编辑
-    update(that, { rows }) {
-      that.editShowDialog = true;
-      that.errorText = false;
-      that.videoName = rows.name
-      that.videoId = rows.id;
+    update(rows) {
+      this.editShowDialog = true;
+      this.errorText = false;
+      this.videoName = rows.name
+      this.videoId = rows.id;
       // that.$prompt('', '编辑',{
       //     confirmButtonText: '确定',
       //     cancelButtonText: '取消',
@@ -439,15 +533,9 @@ export default {
         });
       }).catch(() => {});
     },
-    del(that, { rows }) {
-      that.checkedList = [];
-      console.log(rows, '????????')
-      if (!rows.transcode_status) {
-        that.getList();
-        // this.$message.error('正在转码的文件不能删除');
-        return;
-      }
-      if (that.audit_status) {
+    del(rows) {
+      this.checkedList = [];
+      if (this.audit_status) {
           this.$confirm('该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -455,10 +543,10 @@ export default {
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
-          that.confirmDelete(rows.id);
+          this.confirmDelete(rows.id);
         }).catch(() => {});
       } else {
-        that.confirmDelete(rows.id);
+        this.confirmDelete(rows.id);
       }
 
     },
@@ -467,19 +555,19 @@ export default {
       let id = this.checkedList.join(',');
       this.confirmDelete(id);
     },
-    preview(that, { rows }) {
+    preview(rows) {
       //  this.videoParam 进本信息
       if (rows.transcode_status == 1) {
-        that.showDialog = true;
-        that.videoParam = rows;
+        this.showDialog = true;
+        this.videoParam = rows;
       } else {
-        that.$message.warning('只有转码成功才能查看');
+        this.$message.warning('只有转码成功才能查看');
       }
     },
-    operating(val){
-      let methodsCombin = this.$options.methods;
-      methodsCombin[val.type](this, val);
-    },
+    // operating(val){
+    //   let methodsCombin = this.$options.methods;
+    //   methodsCombin[val.type](this, val);
+    // },
     changeTableCheckbox(item) {
       this.checkedList = item.map(val => val.id);
     },
@@ -490,14 +578,12 @@ export default {
       this.$refs.videoPreview.destroy();
       done();
     },
-    beforeDestroy() {
-    console.log('消亡')
-    if (this.$Chat) {
-        this.$Chat.destroy();
-        this.$Chat = null;
-      }
-    }
   },
+  beforeDestroy() {
+    this.isLeave = true
+    this.vm.close()
+    EventBus.$off("sign_trans_code");
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -509,6 +595,15 @@ export default {
 }
 /deep/.el-input__inner{
     padding: 0 12px;
+  }
+  /deep/.el-table td{
+    padding: 15px 0;
+  }
+  .pageBox{
+    margin-top: 30px;
+    /deep/.el-input__inner{
+      padding-right: 12px;
+    }
   }
 .search-tag{
   float: right;
@@ -531,6 +626,51 @@ export default {
       }
     }
 }
+.videoName{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    .iconfont-v3{
+      font-size: 20px;
+      vertical-align: middle;
+    }
+    .saasyinpinwenjian{
+      color: #10d3a8;
+      padding-right: 3px;
+    }
+    .saasshipinwenjian{
+      color: #ff733c;
+      padding-right: 3px;
+    }
+  }
+  .statusTag{
+    font-size: 14px;
+    &::before{
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    &.wating::before{
+      background:#FA9A32;
+    }
+    &.success::before{
+      background:#14BA6A;
+    }
+    &.failer::before{
+      background:#FB3A32;
+    }
+    .iconContainer {
+      padding-left: 10px;
+      cursor: pointer;
+    }
+    /deep/ .saasicon-reset {
+      color: #FB3A32;
+    }
+  }
 .video-wrap{
   height: 100%;
   width: 100%;

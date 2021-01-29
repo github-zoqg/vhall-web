@@ -57,6 +57,7 @@ let staticImgs = {
   ]
 }
 if (process.env === 'production') {
+  staticLinkVo.uploadBaseUrl = 'https://cnstatic01.e.vhall.com/upload/'
   staticLinkVo.tmplDownloadUrl = 'https://cnstatic01.e.vhall.com/static'
   staticImgs = {
     home: [

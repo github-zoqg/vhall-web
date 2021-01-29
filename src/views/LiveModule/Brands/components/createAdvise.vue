@@ -49,7 +49,7 @@
       :close-on-click-modal="false"
       :before-close="handleClose"
       width="620px">
-      <div class="content">
+      <div class="content" v-show="total || isSearch">
         <div class="search" v-show="total || isSearch">
            <VhallInput class="search-dialog-tag" v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" @keyup.enter.native="changeAdverment" maxlength="50" @clear="changeAdverment" clearable>
             <i slot="suffix" class="iconfont-v3 saasicon_search" @click="changeAdverment" style="cursor: pointer; line-height: 36px;"></i>
@@ -67,7 +67,7 @@
           </div>
         </el-scrollbar>
       </div>
-      <div class="no-live" v-show="!total">
+      <div class="no-live" :class="{'search': isSearch}" v-show="!total">
         <noData :nullType="nullText" :text="text" :height="0">
           <el-button type="primary" v-if="nullText == 'nullData'" round @click="$router.push({path: '/material/advertCard'})" v-preventReClick>创建广告</el-button>
         </noData>
@@ -520,9 +520,18 @@ export default {
     font-weight: 500;
     color: #1A1A1A;
   }
-  /deep/.saasicon_shangchuan::before {
-    font-size: 44px;
+  /deep/.el-upload--picture-card{
+    font-size: 36px;
+    i.saasicon_shangchuan{
+      font-size: 36px;
+    }
+    .picInco{
+      height: 40px;
+    }
   }
+  // /deep/.saasicon_shangchuan::before {
+  //   font-size: 44px;
+  // }
   /deep/.img-box ,/deep/.el-upload{
     width: 324px;
     height: 130px;
@@ -627,6 +636,14 @@ export default {
            font-weight: 400px;
          }
        }
+     }
+   }
+   .no-live{
+     padding-top: 40px;
+     padding-bottom: 10px;
+     &.search{
+       padding-top: 0px;
+      padding-bottom: 0px;
      }
    }
   .sureQuestion{

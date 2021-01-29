@@ -16,7 +16,7 @@
         <el-form-item label="选择视频" required>
           <div class="selet-video" @mouseenter="showMenu" @mouseleave="hiddenMenu">
             <div class="mediaSlot" v-if="!selectMedia.paas_record_id" @click="warmFlag && changeVideo()">
-              <div>
+              <div class="picInco">
                 <i class="iconfont-v3 saasicon_shangchuan"></i>
               </div>
               视频仅支持MP4格式，文件大小不超过200M<br>
@@ -326,6 +326,15 @@ export default {
     z-index: 9;
   }
 }
+/deep/.el-upload--picture-card{
+  font-size: 40px;
+  i.saasicon_shangchuan{
+    font-size: 40px;
+  }
+  .picInco{
+    height: 40px;
+  }
+}
 .demo-ruleForm {
   width: 600px;
 }
@@ -454,8 +463,12 @@ export default {
       /deep/.iconfont-v3{
         font-size: px;
       }
+      .picInco{
+        height: 30px;
+      }
       /deep/.saasicon_shangchuan{
-        font-size: 44px;
+        font-size: 40px;
+        color: #999;
       }
       /deep/.saasshipinwenjian{
         color: #FF733C;

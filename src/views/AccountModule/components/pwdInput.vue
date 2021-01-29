@@ -167,10 +167,18 @@ export default {
             let cursorPosition = new CursorPosition(this.inputEl);
             let positionIndex = cursorPosition.get();
             let value = e.target.value; //整个输入框的值
+            e.target.value = value = this.checkValue(value)
             this.pwdSetData(positionIndex,value);
             this.inputDataConversion(value);
             cursorPosition.set(positionIndex,this.inputEl);
             this.$emit("input",this.pwd);
+        },
+        checkValue(str) {
+          var temp=""
+          for(var i=0;i<str.length;i++)
+              if(str.charCodeAt(i)>0&&str.charCodeAt(i)<255)
+                  temp+=str.charAt(i)
+          return temp
         },
         handleCompositionStart() {
             //表示正在写

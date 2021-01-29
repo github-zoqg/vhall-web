@@ -489,6 +489,16 @@ export default {
       .box > div{
         height: 148px;
       }
+      .mask{
+        span{
+          &:nth-child(2){
+            margin: 0 10px;
+            i {
+              line-height: 1;
+            }
+          }
+        }
+      }
     }
     /deep/.el-textarea .el-input__count{
       font-size: 14px;

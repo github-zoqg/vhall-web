@@ -12,12 +12,11 @@
           <h3>直播收益</h3>
           <div class="live-all">
             <div class="all-come">
-              <p>总收益（元）</p>
+              <p>总收益<span class="moneyUnit">(元)</span></p>
               <h1>{{ incomeInfo.live_income | formatMoney }}</h1>
             </div>
             <div class="all-come">
-              <p>可用金额（元）
-                <span @click="cash('直播')">{{ incomeInfo.in_live_withdraw ? '提现中' : '提现' }}</span>
+              <p>可用金额<span class="moneyUnit">(元)</span><span class="withdraw" @click="cash('直播')">{{ incomeInfo.in_live_withdraw ? '提现中' : '提现' }}</span>
                 <el-tooltip effect="dark" placement="right-start">
                   <div slot="content">
                    Q1: 平台提现额度为多少？<br>
@@ -45,12 +44,11 @@
           <h3>红包收益</h3>
           <div class="live-all">
             <div class="all-come">
-              <p>总收益（元）</p>
+              <p>总收益<span class="moneyUnit">(元)</span></p>
               <h1>{{ incomeInfo.red_packet_income | formatMoney }}</h1>
             </div>
             <div class="all-come">
-              <p>可用金额（元）
-                <span @click="cash('红包')">{{ incomeInfo.in_red_withdraw ? '提现中' : '提现' }}</span>
+              <p>可用金额<span class="moneyUnit">(元)</span><span class="withdraw" @click="cash('红包')">{{ incomeInfo.in_red_withdraw ? '提现中' : '提现' }}</span>
                 <el-tooltip effect="dark" placement="right-start">
                   <div slot="content">
                    Q1: 红包提现额度为多少？<br>
@@ -423,7 +421,7 @@ export default {
         font-size: 14px;
         color: #999;
         font-weight: 400px;
-        padding-bottom: 5px;
+        padding-bottom: 8px;
       }
       h1{
         font-size: 28px;
@@ -431,7 +429,7 @@ export default {
         font-weight: bold;
         line-height: 32px;
       }
-      span{
+      .withdraw{
         padding: 2px 8px;
         border-radius: 10px;
         border: 1px solid #FB3A32;
@@ -439,9 +437,12 @@ export default {
         color:#FB3A32;
         cursor: pointer;
       }
+      .moneyUnit{
+        padding: 0 6px 0 8px;
+      }
       i{
         font-size: 14px;
-        padding: 0 2px;
+        padding: 0 5px;
         color: #1A1A1A;
         &.saasicon_help_m {
           color: #999;

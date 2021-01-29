@@ -325,8 +325,8 @@ export default {
     text-align: center;
     margin-bottom: 15px;
     img{
-      width: 100%;
-      height: 100%;
+      width: 160px;
+      height: 160px;
     }
   }
   .vh-copyUrl{
