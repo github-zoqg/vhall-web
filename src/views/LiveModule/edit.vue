@@ -1048,6 +1048,7 @@ export default {
       cursor: pointer;
       border-radius: 4px;
       .selectMediaName{
+        word-break: break-word;
         text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
         text-overflow: ellipsis;

@@ -1,6 +1,6 @@
 <template>
   <!-- 文档资料库 -->
-  <VhallDialog title="文档列表" :lock-scroll='false' :before-close="handleClose" :visible.sync="dialogVisible" :close-on-click-modal="false" width="878px">
+  <VhallDialog title="文档列表" :lock-scroll='false' :before-close="handleClose" :visible.sync="dialogVisible" :close-on-click-modal="false" width="800px">
     <div class="word-list">
       <VhallInput
         class="head-btn search-tag"
@@ -42,7 +42,7 @@
         />
         <el-table-column
           label="文档名称"
-          width="280"
+          width="200"
         >
           <template slot-scope="scope">
             <p class="text"><icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row.file_name }}</p>
@@ -481,6 +481,12 @@ export default {
   }
 }
 .word-list {
+  /deep/ .el-table__body .el-table__row td:nth-child(2) .cell{
+    padding-left: 10px;
+  }
+  /deep/ thead tr th:nth-child(2) .cell{
+    padding-left: 10px;
+  }
   /deep/.cell .imgs {
     width: 100px;
     height: 100px;

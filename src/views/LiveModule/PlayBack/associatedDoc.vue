@@ -489,6 +489,12 @@ export default {
   }
 }
 .word-list {
+  /deep/ .el-table__body .el-table__row td:nth-child(2) .cell{
+    padding-left: 10px;
+  }
+  /deep/ thead tr th:nth-child(2) .cell{
+    padding-left: 10px;
+  }
   /deep/.cell .imgs {
     width: 100px;
     height: 100px;

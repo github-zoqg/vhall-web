@@ -441,6 +441,7 @@ export default {
       left: 50%;
       transform: translate(-50%, -50%);
       .selectMediaName{
+        word-break: break-word;
         text-overflow: -o-ellipsis-lastline;
         overflow: hidden;
         text-overflow: ellipsis;
