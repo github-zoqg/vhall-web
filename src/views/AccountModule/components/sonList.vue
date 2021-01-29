@@ -427,7 +427,7 @@ export default {
       that.$set(that.sonForm, 'is_batch', rows.is_batch);
       that.$set(that.sonForm, 'nick_name', rows.nick_name);
       that.$set(that.sonForm, 'password', '');
-      that.$set(that.sonForm, 'role_id', rows.role_id);
+      that.$set(that.sonForm, 'role_id', rows.role_id || '');
       that.$set(that.sonForm, 'role_name', rows.role_name);
       that.$set(that.sonForm, 'nums', rows.nums);
       that.$set(that.sonForm, 'phone', rows.phone);
