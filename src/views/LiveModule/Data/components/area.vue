@@ -40,7 +40,7 @@ export default {
       mapChart: null
     }
   },
-  destroyed() {
+  beforeDestroy() {
     window.removeEventListener('resize', this.resizeCharts);
   },
   methods: {
