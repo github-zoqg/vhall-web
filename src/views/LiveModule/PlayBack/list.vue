@@ -239,7 +239,7 @@ export default {
         `,
         showClose: true,
         duration: 0,
-        offset: 80
+        offset: 74
       });
     }
   },
