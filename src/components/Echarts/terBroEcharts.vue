@@ -37,7 +37,7 @@ export default {
       }
     }
   },
-  destroyed() {
+  beforeDestroy() {
     window.removeEventListener('resize', this.resizeCharts);
   },
   methods: {
@@ -106,7 +106,6 @@ export default {
       };
       this.terBarCharts.setOption(options);
       window.addEventListener('resize', this.resizeCharts)
-      // window.onresize = terBarCharts.resize;
     },
     resizeCharts() {
       this.terBarCharts.resize()

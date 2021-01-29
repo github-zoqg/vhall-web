@@ -31,7 +31,7 @@ export default {
       }
     }
   },
-  destroyed() {
+  beforeDestroy() {
     window.removeEventListener('resize', this.resizeCharts);
   },
   methods: {
