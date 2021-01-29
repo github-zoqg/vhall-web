@@ -64,7 +64,7 @@
               align="left"
               width="200">
               <template slot-scope="scope">
-                <el-input type="text" maxlength="5" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
+                <el-input type="text" maxlength="5" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d]+/g, '')">
                   <template slot="append"> 方</template>
                 </el-input>
                 <span v-else>{{scope.row.count}} 方</span>
@@ -75,7 +75,7 @@
               align="left"
               width="200">
               <template slot-scope="scope">
-                <el-input type="text" maxlength="5" v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
+                <el-input type="text" maxlength="5" v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d]+/g, '')">
                   <template slot="append"> 方</template>
                 </el-input>
                 <span v-else>{{scope.row.extend_day}} 方</span>
@@ -117,11 +117,13 @@
             <!-- <i :class="`${resourcesVo && resourcesVo.type > 0 ? 'iconfont-v3 saasliuliang_tubiao' : 'iconfont-v3 saasbingfa_tubiao'}`"></i> -->
           </div>
           <ul class="allocation_one">
-            <li>可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量` : `并发`) : ''}}：{{resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total) : ''}}{{resourcesVo ? (resourcesVo.type > 0 ? `流量（GB）` : `并发（方）`) : ''}}</li>
+            <li>{{resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total) : ''}}</li>
+            <li>可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量` : `并发`) : ''}} {{resourcesVo ? (resourcesVo.type > 0 ? `（GB）` : `（方）`) : ''}}</li>
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
-          <ul class="allocation_one" v-if="resourcesVo && resourcesVo.extend_day">
-            <li>可分配并发扩展包（天）：{{ resourcesVo && resourcesVo.extend_day ? resourcesVo.extend_day : 0 }}</li>
+          <ul class="allocation_one mt32" v-if="resourcesVo && resourcesVo.extend_day">
+            <li>{{ resourcesVo && resourcesVo.extend_day ? resourcesVo.extend_day : 0 }}</li>
+            <li>可分配并发扩展包（天）</li>
             <li>有效期至 {{resourcesVo && resourcesVo.extend_end_time ? resourcesVo.extend_end_time : '--'}}</li>
           </ul>
         </div>
@@ -133,7 +135,7 @@
       </div>
     </div>
     <!-- 批量分配-弹出框 -->
-    <VhallDialog title="批量分配" :visible.sync="multiAllocShow" :lock-scroll='false' class="dialog__group" width="468px">
+    <VhallDialog title="批量分配" :visible.sync="multiAllocShow" :lock-scroll='false' class="dialog__group" width="380px" v-if="multiAllocShow" @close="closeAllocDialog">
       <el-form :model="multiAllocForm" ref="multiAllocForm" :rules="multiAllocFormRules" label-width="80px">
         <el-form-item label="分配数量" prop="count">
           <el-input v-model.trim="multiAllocForm.count" maxlength="5" auto-complete="off" placeholder="请输入分配数量" class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
@@ -143,7 +145,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary"  size="medium" round @click="saveMultiSetHandle">确 定</el-button>
-        <el-button @click.prevent.stop="multiAllocShow = false"  size="medium" round>取 消</el-button>
+        <el-button @click="closeAllocDialog"  size="medium" round>取 消</el-button>
       </div>
     </VhallDialog>
   </div>
@@ -416,6 +418,15 @@
           }
         });
       },
+      closeAllocDialog() {
+        this.multiAllocShow = false;
+        this.$nextTick(() => {
+          this.multiAllocForm.count = null;
+          if (this.$refs['multiAllocForm']) {
+            this.$refs['multiAllocForm'].resetFields();
+          }
+        })
+      },
       // 如果有row表示单行，无表示批量
       sendAllocSet(params, row) {
         this.$fetch('allocSetVal', params, {
@@ -431,7 +442,7 @@
           if (row) {
             row.isHide = true;
           }
-          this.multiAllocShow = false;
+          this.closeAllocDialog();
           this.allocMoreGet();
           // 保存完成后，更新数据
           this.getSonList();
@@ -448,6 +459,12 @@
       },
       // 取消按钮 => 编辑展示
       hideInput(row) {
+        if(row.inputExtendDay) {
+          row.inputExtendDay = `${row.extend_day}`;
+        }
+        if(row.inputCount) {
+          row.inputCount = `${row.count}`;
+        }
         row.isHide = false;
       },
       // 编辑按钮 => 保存 和 取消展示
@@ -546,7 +563,8 @@
     }
     .allocation_icon {
       text-align: center;
-      margin-top: 24px;
+      margin-top: 32px;
+      height: 62px;
       i.iconfont-v3 {
         font-size: 62px;
       }
@@ -558,13 +576,30 @@
     .allocation_one {
       margin-top: 24px;
       li {
+        text-align: center;
         list-style-type: none;
-        text-align: left;
-        font-size: 12px;
         font-family: @fontRegular;
+        font-size: 14px;
         font-weight: 400;
-        color: #999999;
+        color: #1A1A1A;
         line-height: 20px;
+        &:first-child {
+          font-size: 32px;
+          font-weight: bold;
+          color: #1A1A1A;
+          line-height: 24px;
+          padding-bottom: 8px;
+        }
+        &:last-child {
+          margin-top: 4px;
+          font-size: 14px;
+          font-weight: 400;
+          color: #999999;
+          line-height: 20px;
+        }
+      }
+      &.mt32 {
+        margin-top: 32px;
       }
     }
     .result_val {
@@ -581,8 +616,8 @@
   }
   .ac__allocation--info {
     border-top: 1px solid #E6E6E6;
-    margin-top: 24px;
-    padding-top: 22px;
+    margin-top: 32px;
+    padding-top: 16px;
     li {
       font-size: 12px;
       font-family: @fontRegular;
@@ -668,6 +703,9 @@
   .dialog__group{
     /deep/.el-input__inner{
       border-radius: 4px;
+    }
+    /deep/.el-form-item {
+      margin-bottom: 0;
     }
   }
   .el-table__row {
