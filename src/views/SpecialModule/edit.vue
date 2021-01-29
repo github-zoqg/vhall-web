@@ -159,7 +159,7 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import VEditor from '@/components/Tinymce';
 import Env from "@/api/env";
-import ChoseActives from './components/choseActives'
+import ChoseActives from './components/choseLiveList'
 
 export default {
   components: {

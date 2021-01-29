@@ -292,10 +292,13 @@ export default {
       if (this.scene === 'accountList') {
         return row.parent_id > 0 || (item.methodName === 'toSonDetail' && Number(row.parent_id) === 0);
       } else if (this.scene === 'word') {
-        // 静态转码完成，展示 演示、删除；动态转码完成，展示 演示、动画版演示、删除；转码失败展示 删除。
+        // 静态转码完成，展示 演示、删除；动态转码完成，展示 演示、动画版演示、删除；转码失败展示 删除。静态转码完成，动态转码中，展示预览、删除。
         if (row.showEventType == 4 || row.showEventType == 6) {
           // ppt or pptx 时展示动画演示
           return /pptx?/.test(row.ext) ? true : item.methodName !== 'preDocShow';
+        } else if (row.showEventType == 3) {
+          // 静态转码完成，动态转码中
+          return item.methodName !== 'preDocShow';
         } else if (row.showEventType == 5 || row.showEventType == 7) {
           // 转码失败
           return item.methodName === 'deleteHandle';

@@ -93,7 +93,7 @@
       </el-dialog>-->
       <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false' height="458px" :modalClick=true>
         <!-- <img class="imgLoading" :src="loadingUrl"  v-show="!docLoadComplete"> -->
-        <div class="loadingWrap"  element-loading-background="rgba(255,255,255)" v-loading="!docLoadComplete"></div>
+        <div class="loadingWrap"  element-loading-background="rgba(255,255,255)" v-loading="!docLoadComplete"  v-show="!docLoadComplete"></div>
         <div style="position: relative;height: 396px;" v-show="isDot && docLoadComplete">
           <!-- 动态文档区域-->
           <div :key="currentCid"  :id="currentCid" style="width: 704px;height: 396px;"></div>
@@ -244,6 +244,7 @@ export default {
         pageIndex: 0,
         total: 0
       },
+      vm: null,
       isDotEnd: false, // 是否播放完毕
       docLoadComplete: false, // 文档加载状态
     };
@@ -279,6 +280,15 @@ export default {
       this.importWordShow = true;
       this.fileUrl = null;
     },
+    initPayMessage() {
+      this.vm = this.$message({
+        showClose: true,
+        duration: 0,
+        dangerouslyUseHTMLString: true,
+        message: '上传过程中请勿关闭或刷新浏览器',
+        type: 'warning'
+      });
+    },
     // 下一页
     showNextImg() {
       if(this.activeIns === this.docParam.page) {
@@ -289,7 +299,7 @@ export default {
       }
     },
     nextStep() {
-      console.log(this.isDotEnd)
+      console.log('nextStep', this.docLoadComplete);
       if (!this.docLoadComplete) {
         return this.$message({
           message: `请文档加载完成以后再操作`,
@@ -313,6 +323,7 @@ export default {
       }
     },
     prevStep() {
+      console.log('prevStep', this.docLoadComplete);
       if (!this.docLoadComplete) {
         return this.$message({
           message: `请文档加载完成以后再操作`,
@@ -342,6 +353,7 @@ export default {
     uploadSuccess(res, file, fileList){
       console.log(res, file, fileList);
       this.importWordShow = false;
+      this.vm.close()
       if(res.code === 200) {
         if (this.$route.params.str) {
           this.asyncDialog.visible = true;
@@ -447,6 +459,7 @@ export default {
       if (isType && isLt2M) {
         this.totalNum = 1;
         this.no_show = false;
+        this.initPayMessage()
         // 若是当前为 this.no_show
         this.tableList.unshift({
           created_at: this.$moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
@@ -1040,6 +1053,10 @@ export default {
   },
   beforeDestroy() {
     console.log('docSDK消亡，chat消亡');
+    if (this.vm) {
+      this.vm.close()
+      this.vm = null
+    }
     if(this.docSDK) {
       this.docSDK.destroy();
       this.docSDK = null;
@@ -1158,6 +1175,9 @@ export default {
   }
   /deep/.el-dialog__body {
     padding: 16px 16px 0 16px;
+  }
+  /deep/.el-loading-mask {
+    border-radius: 4px;
   }
   .preview-box {
     width: 100%;

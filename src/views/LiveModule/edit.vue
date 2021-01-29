@@ -1026,7 +1026,7 @@ export default {
         font-size: 14px;
       }
       /deep/.saasicon-eye, /deep/.saasicon_shanchu{
-        font-size: 18px!important;
+        font-size: 20px!important;
         height: 30px;
       }
     }

@@ -20,7 +20,7 @@
           :picker-options="pickerOptions"
           style="width: 240px;margin-right:16px"
         />
-        <el-select filterable clearable v-model="versionType" v-if="parentId == 0 && childNum == 1" @change="getDataList"  style="width: 160px;vertical-align: top;">
+        <el-select filterable v-model="versionType" v-if="parentId == 0 && childNum == 1" @change="getDataList"  style="width: 160px;vertical-align: top;">
           <el-option
             v-for="(opt, optIndex) in versionOptions"
             :key="optIndex"

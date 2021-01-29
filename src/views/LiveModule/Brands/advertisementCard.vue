@@ -30,7 +30,7 @@
       <div class="no-live" v-if="!total && !isSearch">
         <noData :nullType="'nullData'" :text="'您还没有广告，快来创建吧！'">
           <el-button type="primary"  round @click="createAdvise()" v-preventReClick>创建广告</el-button>
-          <el-button size="white-primary" round v-if="$route.path !='/material/advertCard'" @click="createCenter()"  v-preventReClick>资料库</el-button>
+          <el-button type="white-primary" class="length152" round v-if="$route.path !='/material/advertCard'" @click="createCenter()"  v-preventReClick>资料库</el-button>
         </noData>
       </div>
       <div class="advert-card-list" v-show="total || isSearch">
