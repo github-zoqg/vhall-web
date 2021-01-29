@@ -29,6 +29,7 @@ export default {
 .phone-chat-img {
   width: 100%;
   height: auto;
+  border-radius: 0 0 4px 13px;
 }
 .phone-welcome {
   display: inline-block;

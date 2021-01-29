@@ -190,6 +190,7 @@ export default {
       UploadSDK: null,
       uploadId: -1,
       uploadList: [],
+      vm: null
     };
   },
   components: {
@@ -226,6 +227,21 @@ export default {
   methods: {
     searchTableList() {
       this.getTableList('search');
+    },
+    initPayMessage() {
+      // let that = this;
+      this.vm = this.$message({
+        showClose: true,
+        duration: 0,
+        dangerouslyUseHTMLString: true,
+        message: '上传过程中请勿关闭或刷新浏览器',
+        type: 'warning'
+      });
+      // let open = document.querySelector('#openList');
+      // open.addEventListener('click', function(e){
+      //   that.vm.close();
+      //   that.getOrderArrear();
+      // });
     },
     getTableList(params){
       // let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
@@ -287,6 +303,7 @@ export default {
       //   });
       //   return;
       // }
+      this.initPayMessage();
       let param = {
         create_time: this.$moment(file.lastModifiedDate).format('YYYY-MM-DD HH:mm:ss'),
         file_name: beforeName,  //后端要求名称带上后缀名  如xxx 改成 xxx.mp4
@@ -316,6 +333,7 @@ export default {
         if (!this.isLeave) {
           console.log(res, '本地上传成功');
           console.log(res, 11111);
+          this.vm.close()
           this.createVod(res.file);
         }
       },err=>{
@@ -563,6 +581,7 @@ export default {
   },
   beforeDestroy() {
     this.isLeave = true
+    this.vm.close()
     EventBus.$off("sign_trans_code");
   }
 };

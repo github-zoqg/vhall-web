@@ -115,7 +115,7 @@ export default {
         {
           label: '昵称',
           key: 'nickname',
-          width: 200
+          width: 300
         },
         {
           label: '身份',
@@ -134,7 +134,7 @@ export default {
         {
           label: '接收方',
           key: 'accept_name',
-          width:100
+          width: 100
         },
       ],
       // 问答
@@ -142,6 +142,7 @@ export default {
          {
           label: '问答',
           key: 'name',
+          width:100
         },
         {
           label: '问答内容',
@@ -150,14 +151,17 @@ export default {
         {
           label: '发送时间',
           key: 'created_at',
+          width: 200
         },
         {
           label: '私密',
           key: 'is_open',
+          width: 100
         },
         {
           label: '状态',
           key: 'statusText',
+          width: 150
         }
       ],
       // 问卷
@@ -961,7 +965,10 @@ export default {
 };
 </script>
 <style lang="less">
-
+  .el-tooltip__popper {
+    max-width: 400px;
+    line-height: 17px;
+  }
 </style>
 <style lang="less" scoped>
 .title-data {
