@@ -4,16 +4,16 @@
     <div class="noData" v-if="no_show === true">
       <null-page text="暂未创建回放" nullType="noAuth">
         <el-button class="length152" round type="primary" @click="toCreate">创建回放</el-button>
-        <el-button v-if="WEBINAR_PES.btn_record" class="length152 recordbtn" round type="white-primary" @click="toRecord">录制</el-button>
+        <el-button v-if="WEBINAR_PES.btn_record" class="length152 transparent-btn" round type="white-primary" @click="toRecord">录制</el-button>
         <!-- <el-button type="white-primary" class="length152" round @click="openCheckWord" v-if="$route.params.str">资料库</el-button> -->
       </null-page>
     </div>
     <template v-if="no_show === false">
       <div v-if="!isDemand" class="operaBlock">
         <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
-        <el-button v-if="WEBINAR_PES.btn_record" size="medium" plain round @click="toRecord">录制</el-button>
-        <el-button size="medium" round @click="settingHandler">回放设置</el-button>
-        <el-button size="medium" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
+        <el-button v-if="WEBINAR_PES.btn_record"  class="transparent-btn" size="medium" plain round @click="toRecord">录制</el-button>
+        <el-button size="medium"  class="transparent-btn" round @click="settingHandler">回放设置</el-button>
+        <el-button size="medium" class="transparent-btn" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
         <VhallInput
           clearable
           @keyup.enter.native="getList"
@@ -637,29 +637,6 @@ export default {
       margin-left: 0;
     }
     min-width: 1020px;
-    .noData {
-      /deep/.recordbtn {
-        background: transparent;
-        border-color: #ccc;
-        color: #666;
-        &:hover {
-          background: #FB3A32;
-          border: 1px solid #FB3A32;
-        }
-        &:active {
-          background: #E2332C;
-          border: 1px solid #E2332C;
-        }
-        &.is-disabled {
-          border: 1px solid #E6E6E6;
-          background: transparent;
-          color: #B3B3B3;
-          &:hover,&:active {
-            background: transparent;
-          }
-        }
-      }
-    }
   }
   .tableBox{
     padding: 24px 24px;
@@ -816,25 +793,6 @@ export default {
   }
   .operaBlock{
     margin-bottom: 20px;
-    .el-button.el-button--medium.el-button--default {
-      background: transparent;
-      &:hover {
-        background: #FB3A32;
-        border: 1px solid #FB3A32;
-      }
-      &:active {
-        background: #E2332C;
-        border: 1px solid #E2332C;
-      }
-      &.is-disabled {
-        border: 1px solid #E6E6E6;
-        background: transparent;
-        color: #B3B3B3;
-        &:hover,&:active {
-          background: transparent;
-        }
-      }
-    }
     .el-input{
       width: 220px;
       float: right;

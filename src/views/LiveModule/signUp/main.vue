@@ -13,8 +13,8 @@
           </el-switch>
         </div>
         <div class="headBtnGroup">
-          <el-button round size="medium" @click="openDialog('theme')">设置</el-button>
-          <el-button round size="medium" @click="openDialog('share')">分享</el-button>
+          <el-button round size="medium" class="transparent-btn" @click="openDialog('theme')">设置</el-button>
+          <el-button round size="medium"  class="transparent-btn" @click="openDialog('share')">分享</el-button>
           <el-button type="primary" round size="medium" @click="rightComponent='signUpForm'">预览</el-button>
         </div>
       </pageTitle>
@@ -288,7 +288,7 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           this.$message({
-            message:  `报名表单${ behaviour }成功！`,
+            message:  `报名表单${ behaviour }成功`,
             showClose: true, // 是否展示关闭按钮
             type: 'success', //  提示类型
             customClass: 'zdy-info-box' // 样式处理
@@ -304,7 +304,7 @@ export default {
           });
         } else {
           this.$message({
-            message:  `报名表单${ behaviour }失败！`,
+            message:  `报名表单${ behaviour }失败`,
             showClose: true, // 是否展示关闭按钮
             type: 'error', //  提示类型
             customClass: 'zdy-info-box' // 样式处理
@@ -580,7 +580,7 @@ export default {
   }
   .headBtnGroup{
     float: right;
-    /deep/.el-button {
+    /* /deep/.el-button {
       background: transparent;
       &:hover {
         background: #FB3A32;
@@ -598,7 +598,7 @@ export default {
           background: transparent;
         }
       }
-    }
+    } */
 
   }
   .titleBox{

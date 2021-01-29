@@ -21,9 +21,9 @@
            <div class="invitation-code">
             <img :src="showCode" alt="">
           </div>
-          <el-button round size="medium" slot="reference" :disabled="!invitation">扫码查看</el-button>
+          <el-button round size="medium" slot="reference" class="transparent-btn" :disabled="!invitation">扫码查看</el-button>
         </el-popover>
-        <el-button size="medium" round :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
+        <el-button size="medium" round :disabled="!invitation" class="transparent-btn" @click="loadDownInvition">本地下载</el-button>
       </div>
     </div>
     <div class="invitation-from">
@@ -976,14 +976,14 @@ export default {
       right: 0;
       top: 0;
       /deep/.el-button{
-        background-color: transparent;
+        /* background-color: transparent; */
         padding: 4px 23px;
-        &:hover{
+        /* &:hover{
           background-color: #FB3A32;
         }
         &.is-disabled:hover{
           background-color: transparent;
-        }
+        } */
       }
       /deep/.el-button:last-child{
         margin-left: 10px;

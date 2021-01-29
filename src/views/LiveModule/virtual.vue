@@ -27,7 +27,7 @@
           </div>
         </el-form-item>
         <el-form-item label="">
-          <el-button type="primary" @click.prevent.stop="virtualSetSave" round>保 存</el-button>
+          <el-button type="primary" class="length152" @click.prevent.stop="virtualSetSave" round>保 存</el-button>
         </el-form-item>
       </el-form>
     </div>
