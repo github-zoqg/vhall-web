@@ -4,7 +4,8 @@
       <vhscroll>
         <div class="entryFormBox">
           <header>
-            <img :src="`${ Env.staticLinkVo.uploadBaseUrl }${baseInfo.cover ? baseInfo.cover : 'sys/img_url/c7/b4/c7b43630a8699dc2608f846ff92d89d0.png'}`" alt="">
+            <img v-if="!baseInfo.cover" src="../signUp/images/formHeader.png" alt="">
+            <img v-else :src="`${ Env.staticLinkVo.uploadBaseUrl }${ baseInfo.cover }`" alt="">
           </header>
           <article>
             <h1 class="pageTitle">{{ baseInfo.title }}</h1>
