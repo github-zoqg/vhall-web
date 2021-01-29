@@ -147,6 +147,11 @@ export default {
     position: relative;
     background: #F7F7F7;
     border-radius: 4px;
+    .noPic{
+      i{
+        font-size: 44px;
+      }
+    }
     .tips{
       position: absolute;
       top: 100px;
@@ -155,6 +160,9 @@ export default {
       font-size: 12px;
       line-height: 24px;
       color: #999;
+      p{
+        line-height: 17px;
+      }
     }
     /deep/ .preview{
       border: 0;

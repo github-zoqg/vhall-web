@@ -92,7 +92,8 @@
         <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>-->
       <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false' height="458px" :modalClick=true>
-        <img class="imgLoading" :src="loadingUrl"  v-show="!docLoadComplete">
+        <!-- <img class="imgLoading" :src="loadingUrl"  v-show="!docLoadComplete"> -->
+        <div class="loadingWrap"  element-loading-background="rgba(255,255,255)" v-loading="!docLoadComplete"></div>
         <div style="position: relative;height: 396px;" v-show="isDot && docLoadComplete">
           <!-- 动态文档区域-->
           <div :key="currentCid"  :id="currentCid" style="width: 704px;height: 396px;"></div>
@@ -194,7 +195,7 @@ export default {
         {
           label: '进度',
           key: 'transform_schedule_str',
-          width: 200
+          width: 220
         }
       ],
       tableRowBtnFun: [
@@ -580,8 +581,8 @@ export default {
                 // 非PPT静态转码完成
                 item.showEventType = 6;
                 item.fileStatusCss = 'success';
-                item.fileStatusStr = '转码成功';
-                item.transform_schedule_str = `转码成功`; // 静态转码完成，动态转码失败
+                item.fileStatusStr = '静态转码成功，动态转码中...';
+                item.transform_schedule_str = `静态转码成功，动态转码中...`; // 静态转码完成，动态转码失败
               }
             } else if (statusJpeg >= 500) {
               item.showEventType = 7;
@@ -1212,9 +1213,11 @@ export default {
   margin-bottom: 24px;
   margin-top: 24px;
 }
-.imgLoading {
-  width: 40px;
-  height: 40px;
-  margin: 200px calc(50% - 20px);
+.loadingWrap {
+  width: 736px;
+  height: 458px;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 </style>

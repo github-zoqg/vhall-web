@@ -1,6 +1,6 @@
 <template>
   <div class="preview-wrap">
-    <div class="content" v-loading="loading" element-loading-text="加载中" element-loading-background="rgba(255,255,255,.9)" @mousemove="wrapEnter" @mouseleave="wrapLeave">
+    <div class="content" v-loading="loading" element-loading-text="加载中" element-loading-background="rgba(0,0,0,.9)"  @mousemove="wrapEnter" @mouseleave="wrapLeave">
       <div id="videoDom"></div>
       <div class="tips" v-if="!loading">
         <div class="video-img" v-if="videoParam.msg_url.toLowerCase()=='.mp3' || videoParam.msg_url.toLowerCase()=='.mav' || !videoParam.msg_url">
@@ -334,16 +334,28 @@ export default {
       &:hover{
         top: -2px;
         .el-slider__runway{
-          height: 8px;
+          height: 3px;
         }
         .el-slider__bar{
-          height: 8px;
+          height: 3px;
         }
       }
       .el-slider{
         .el-slider__runway{
           margin: 0;
+          height: 3px;
+          background-color: rgba(255,255,255,0.3);
         }
+      }
+      .el-slider__button-wrapper{
+        top: -16px;
+      }
+      .el-slider__bar{
+        height: 3px;
+      }
+      .el-slider__button{
+        width: 14px;
+        height: 14px;
       }
     }
     .wrap{

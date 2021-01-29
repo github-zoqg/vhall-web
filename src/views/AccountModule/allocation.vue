@@ -9,9 +9,9 @@
         </el-tabs>
         <el-button round @click.prevent.stop="multiSetHandle()" :class="['panel-btn length104', {'btn-right': resourcesVo && resourcesVo.extend_day}]"
                    size="medium"
-                   v-if="!(is_dynamic > 0) && dataList.length > 0">{{resourcesVo && Number(resourcesVo.type) === 1 ? '批量分配' : '分配并发包'}}</el-button>
+                   v-if="!(is_dynamic > 0) && dataList.length > 0" :disabled="!multipleSelection.length">{{resourcesVo && Number(resourcesVo.type) === 1 ? '批量分配' : '分配并发包'}}</el-button>
         <el-button round @click.prevent.stop="multiSetHandle('more')" class="panel-btn length104" size="medium"
-                   v-if="!(is_dynamic > 0) && dataList.length > 0 && resourcesVo && resourcesVo.extend_day">分配扩展包</el-button>
+                   v-if="!(is_dynamic > 0) && dataList.length > 0 && resourcesVo && resourcesVo.extend_day" :disabled="!multipleSelection.length">分配扩展包</el-button>
 
         <!-- 固定分配，有查询列表。 -->
         <div v-if="tabType === 'regular'" :class="['regular-ctx', {'regular-list': !(is_dynamic > 0)}]">
@@ -53,7 +53,7 @@
               align="left"
               width="200">
               <template slot-scope="scope">
-                <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative">
+                <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
                   <template slot="append">GB</template>
                 </el-input>
                 <span v-else>{{scope.row.count}} GB</span>
@@ -64,7 +64,7 @@
               align="left"
               width="200">
               <template slot-scope="scope">
-                <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative">
+                <el-input type="text" maxlength="5" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
                   <template slot="append"> 方</template>
                 </el-input>
                 <span v-else>{{scope.row.count}} 方</span>
@@ -75,7 +75,7 @@
               align="left"
               width="200">
               <template slot-scope="scope">
-                <el-input type="text" v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative">
+                <el-input type="text" maxlength="5" v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
                   <template slot="append"> 方</template>
                 </el-input>
                 <span v-else>{{scope.row.extend_day}} 方</span>
@@ -112,8 +112,8 @@
         <div class="ac__allocation--user">
           <h1 class="title">可用资源</h1>
           <div class="allocation_icon">
-            <img src="../../common/images/account/saasliuliang_tubiao.png" alt="" v-if="resourcesVo && resourcesVo.type > 0"/>
-            <img src="../../common/images/account/saasbingfa_tubiao.png" alt="" v-else/>
+            <img src="../../common/images/account/saasliuliang_tubiao.png" alt="" v-show="tabType === 'trends'"/>
+            <img src="../../common/images/account/saasbingfa_tubiao.png" alt="" v-show="tabType === 'regular'"/>
             <!-- <i :class="`${resourcesVo && resourcesVo.type > 0 ? 'iconfont-v3 saasliuliang_tubiao' : 'iconfont-v3 saasbingfa_tubiao'}`"></i> -->
           </div>
           <ul class="allocation_one">
@@ -134,9 +134,9 @@
     </div>
     <!-- 批量分配-弹出框 -->
     <VhallDialog title="批量分配" :visible.sync="multiAllocShow" :lock-scroll='false' class="dialog__group" width="468px">
-      <el-form :model="multiAllocForm" ref="multiAllocForm" :rules="multiAllocFormRules" label-width="120px">
-        <el-form-item label="分配数量：" prop="count">
-          <el-input v-model.trim="multiAllocForm.count" auto-complete="off" placeholder="请输入分配数量" class="btn-relative">
+      <el-form :model="multiAllocForm" ref="multiAllocForm" :rules="multiAllocFormRules" label-width="80px">
+        <el-form-item label="分配数量" prop="count">
+          <el-input v-model.trim="multiAllocForm.count" maxlength="5" auto-complete="off" placeholder="请输入分配数量" class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
             <template slot="append"> {{resourcesVo && Number(resourcesVo.type) === 1 ? 'GB' : '方' }}</template>
           </el-input>
         </el-form-item>
@@ -173,7 +173,7 @@
             total: 10
           }
         ],
-        tabType: null,
+        tabType: '',
         vipStatus: null, // trends_0 动态重分配；trends_1 动态已分配；regular_0 固态重分配；regular_1 固态已分配
         vipSelectStatus: null,
         dataList: [],
@@ -663,6 +663,11 @@
       border-bottom-right-radius: 4px;
       border-top-right-radius: 4px;
       color: #1A1A1A;
+    }
+  }
+  .dialog__group{
+    /deep/.el-input__inner{
+      border-radius: 4px;
     }
   }
   .el-table__row {

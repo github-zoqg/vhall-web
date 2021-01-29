@@ -33,7 +33,7 @@ export default {
       font-family: @fontRegular;
       font-weight: 400;
       color: #3562FA;
-      line-height: 22px;
+      line-height: 20px;
     }
   }
 </style>

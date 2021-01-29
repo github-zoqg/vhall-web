@@ -13,7 +13,7 @@
           <div class="live-all">
             <div class="all-come">
               <p>总收益（元）</p>
-              <h1>{{ incomeInfo.live_income }}</h1>
+              <h1>{{ incomeInfo.live_income | formatMoney }}</h1>
             </div>
             <div class="all-come">
               <p>可用金额（元）
@@ -35,7 +35,7 @@
                   <i class="iconfont-v3 saasicon_help_m"></i>
                 </el-tooltip>
               </p>
-              <h1>{{ incomeInfo.live_balance }}</h1>
+              <h1>{{ incomeInfo.live_balance | formatMoney }}</h1>
             </div>
           </div>
         </div>
@@ -46,7 +46,7 @@
           <div class="live-all">
             <div class="all-come">
               <p>总收益（元）</p>
-              <h1>{{ incomeInfo.red_packet_income }}</h1>
+              <h1>{{ incomeInfo.red_packet_income | formatMoney }}</h1>
             </div>
             <div class="all-come">
               <p>可用金额（元）
@@ -68,7 +68,7 @@
                    <i class="iconfont-v3 saasicon_help_m"></i>
                 </el-tooltip>
               </p>
-              <h1>{{ incomeInfo.red_packet_balance }}</h1>
+              <h1>{{ incomeInfo.red_packet_balance | formatMoney }}</h1>
             </div>
           </div>
         </div>
@@ -81,6 +81,7 @@
         <el-tab-pane label="红包收益明细" name="2"></el-tab-pane>
         <div class="search-income">
           <search-area
+            :isForbidExport="!tableList.length"
             ref="searchIncome"
             @onExportData="exportAccount()"
             :searchAreaLayout="searchAccount"
@@ -394,7 +395,7 @@ export default {
     }
     .detail{
       position: absolute;
-      top:0;
+      top:8px;
       right:0;
       color:#3B67F9;
       font-size: 14px;

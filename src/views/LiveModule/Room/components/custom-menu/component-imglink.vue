@@ -42,8 +42,8 @@ export default {
       margin: 20px auto 0px;
       background: #fff;
       img {
-        width: 420px;
-        height: 240px;
+        width: 100%;
+        height: 100%;
       }
     }
   }
