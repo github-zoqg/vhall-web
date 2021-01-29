@@ -15,7 +15,7 @@ export default {
   mounted() {
     this.initDataLimit();
   },
-  destroyed() {
+  beforeDestroy() {
     window.removeEventListener('resize', this.resizeCharts);
   },
   methods: {

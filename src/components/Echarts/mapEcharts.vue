@@ -43,7 +43,7 @@ export default {
   mounted() {
     this.initMapEcharts(this.areaDataList);
   },
-  destroyed() {
+  beforeDestroy() {
     window.removeEventListener('resize', this.resizeCharts);
   },
   methods: {
