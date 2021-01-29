@@ -1,24 +1,21 @@
 <template>
-  <el-dialog
+   <el-dialog
       title="添加直播"
-      :visible="visible"
+      width="590px"
+      style="overflow: hidden;"
+      v-if="visible"
+      :visible.sync="visible"
       :close-on-click-modal=false
       :close-on-press-escape=false
-      :before-close="handleClose"
-      @close="cancelSelect"
+      :before-close="cancelSelect"
       custom-class="choose-gift"
-      width="595px">
-        <div class="search" v-show="total || isSearch">
-          <VhallInput v-model.trim="keyword" placeholder="请输入直播标题" @keyup.enter.native="inputChange"  @clear="inputChange" class="add-living-input" clearable>
-            <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer; line-height: 36px;"></i>
-          </VhallInput>
-          <!-- <el-input v-model.trim="keyword" placeholder="请输入直播标题" suffix-icon="el-icon-search" @change="inputChange" class="add-living-input" clearable></el-input> -->
-        </div>
-        <el-scrollbar class="scroll-modify" v-loadMore="moreLoadData">
-          <div class="vh-chose-active-box"
-          v-show="total"
-          >
-          <!-- 单个视频 -->
+    >
+      <VhallInput v-model.trim="keyword" placeholder="请输入直播标题" @keyup.enter.native="inputChange"  @clear="inputChange" class="head-btn search resetRightBrn" clearable>
+        <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer; line-height: 36px;"></i>
+      </VhallInput>
+      <div class="select-matrial-wrap">
+        <div class="material-box" v-show="total">
+          <el-scrollbar style="height:100%" v-loadMore="moreLoadData">
             <div class="vh-chose-active-item"
               v-for="(item) in activeList"
               :key="item.webinar_id"
@@ -26,9 +23,6 @@
               :class="{'checkedActive': item.checked}"
             >
             <label  class="img-tangle" v-show="item.checked"><img src="../../../common/images/icon-choose.png" alt=""></label>
-              <!-- <label class="img-tangle" v-show="item.checked">
-                <i class="el-icon-check"></i>
-              </label> -->
               <div class="vh-chose-active-item__cover">
                 <img :src="item.img_url" alt="">
                 <div class="vh-chose-active-item__cover-status">
@@ -44,25 +38,28 @@
                 </div>
 
               </div>
-              <div class="vh-chose-active-item__title ellsips" :title="item.subject">
+              <div class="vh-chose-active-item__title">
                 {{ item.subject }}
               </div>
               <div class="vh-chose-active-item__info">
                 {{ item.created_at }}
               </div>
             </div>
-          </div>
-        </el-scrollbar>
-        <div class="no-live" v-show="!total">
+          </el-scrollbar>
+        </div>
+       <div class="no-live" v-show="!total">
           <noData :nullType="nullText" :text="text" :height="50">
             <el-button type="primary" round @click="$router.push({path:'/live/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建直播</el-button>
           </noData>
         </div>
-        <div class="select-option" v-if="total">已选择<span>{{ selectedOption.length }}</span>个</div>
-        <span slot="footer" class="dialog-footer">
-          <el-button type="primary" size="medium" round @click="saveSelect" v-preventReClick :disabled="!selectedOption.length">确 定</el-button>
-          <el-button round @click="cancelSelect" size="medium" v-preventReClick>取 消</el-button>
-        </span>
+      </div>
+      <div class="control">
+        <span>当前选中<span class="choosed-num"> {{selectedOption.length}} </span>个直播</span>
+        <div class="control-btn" style="text-align: right;">
+          <el-button @click="saveSelect" v-preventReClick :disabled="!selectedOption.length" type="primary" round>确定</el-button>
+          <el-button @click="cancelSelect" round>取消</el-button>
+        </div>
+      </div>
     </el-dialog>
 </template>
 <script>
@@ -185,23 +182,6 @@ export default {
       console.log( item )
       item.checked = !item.checked;
       this.selectedOption = this.activeList.filter(item => item.checked);
-      // this.activeList = this.activeList.map(active => {
-      //   if (item.webinar_id == active.webinar_id) {
-      //     if(active.checked) {
-      //       return{
-      //         ...active,
-      //         checked: false
-      //       }
-      //     } else {
-      //       return{
-      //         ...active,
-      //         checked: true
-      //       }
-      //     }
-      //   } else {
-      //     return {...active}
-      //   }
-      // })
     },
 
     saveSelect() {
@@ -217,48 +197,28 @@ export default {
 
 }
 </script>
-<style lang="less">
-.scroll-modify {
-  overflow: inherit;
-  /deep/.el-scrollbar__wrap::-webkit-scrollbar {
-    display: none;
+<style lang="less" scoped>
+.select-matrial-wrap{
+  box-sizing: border-box;
+  width: 100%;
+  height: 320px;
+  padding: 16px 0 0 32px;
+  overflow: hidden;
+  .material-box {
+    height: 335px;
+    margin-bottom: 10px;
   }
-    /deep/.el-scrollbar__bar {
-      right:-29px;
-    }
-}
-  .vh-chose-active-box{
-    // width: 560px;
-    max-height: 310px;
+  .head-btn{
     width: 100%;
-    // display: flex;
-    // justify-content: space-between;
-    // flex-wrap: wrap;
-    // overflow: auto;
-    // overflow-x: hidden;
-    // position: relative;
-  }
-  /deep/ .el-dialog {
-    .el-dialog__title {
-      line-height: 28px;
+    /deep/.el-input__inner{
+      width: 240px;
+      margin-left: 18px;
     }
-    .el-dialog__body {
-      padding: 0!important;
+    /deep/.el-input__prefix{
+      margin-left: 18px;
     }
   }
-  .add-living-input {
-    width: 220px;
-    /deep/ input {
-      border-radius: 20px;
-    }
-    /deep/.el-input__suffix{
-      right: 12px;
-    }
-  }
-  .search{
-    margin-bottom: 20px;
-  }
-  .vh-chose-active-item{
+   .vh-chose-active-item{
     cursor: pointer;
     display: inline-block;
     width: 168px;
@@ -294,7 +254,6 @@ export default {
       position: relative;
       width: 100%;
       height: 94px;
-      /* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
       background: #1A1A1A;
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
@@ -345,11 +304,10 @@ export default {
     }
     &__title{
       margin: 8px 8px 4px 8px;
-      line-height: 20px;
+      line-height: 17px;
       font-size: 14px;
       font-weight: 400;
       color: #1A1A1A;
-      line-height: 20px;
       text-overflow: -o-ellipsis-lastline;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -359,7 +317,7 @@ export default {
       -webkit-box-orient: vertical;
     }
     &__info{
-      margin: 8px 8px 4px 8px;
+      margin: 0px 8px 8px 8px;
       font-size: 12px;
       font-weight: 400;
       color: #666666;
@@ -383,21 +341,43 @@ export default {
         }
     }
   }
-  .no-live{
-    padding-bottom: 24px;
+}
+.control{
+  padding: 24px 32px;
+  width: 100%;
+  position:relative;
+  &>span {
+    display: inline-block;
+    line-height: 36px;
   }
-  .select-option{
-    position: absolute;
-    bottom: 32px;
-    left: 32px;
-    line-height: 20px;
-    span{
-      color: #FB3A32;
-      font-size: 16px;
-      padding: 0 10px;
+  /deep/ .disabled{
+    opacity: 0.5;
+  }
+  .control-btn {
+    float: right;
+    /deep/ .el-button.is-round {
+      padding: 7px 23px;
     }
   }
-  .no-create{
-    margin-bottom: 20px;
+  .choosed-num {
+    color: #FB3A32;
+  }
+  }
+  /deep/ .choose-gift {
+    .el-dialog__title {
+      line-height: 28px;
+    }
+    .el-dialog__body {
+      padding: 0;
+    }
+    .head-btn.el-input {
+      width: 220px;
+      height: 36px;
+      margin-left: 32px;
+      .el-input__inner {
+        border-radius: 18px;
+        border: 1px solid #CCC;
+      }
+    }
   }
 </style>

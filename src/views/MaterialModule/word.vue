@@ -244,6 +244,7 @@ export default {
         pageIndex: 0,
         total: 0
       },
+      vm: null,
       isDotEnd: false, // 是否播放完毕
       docLoadComplete: false, // 文档加载状态
     };
@@ -278,6 +279,15 @@ export default {
     importWordOpen() {
       this.importWordShow = true;
       this.fileUrl = null;
+    },
+    initPayMessage() {
+      this.vm = this.$message({
+        showClose: true,
+        duration: 0,
+        dangerouslyUseHTMLString: true,
+        message: '上传过程中请勿关闭或刷新浏览器',
+        type: 'warning'
+      });
     },
     // 下一页
     showNextImg() {
@@ -343,6 +353,7 @@ export default {
     uploadSuccess(res, file, fileList){
       console.log(res, file, fileList);
       this.importWordShow = false;
+      this.vm.close()
       if(res.code === 200) {
         if (this.$route.params.str) {
           this.asyncDialog.visible = true;
@@ -448,6 +459,7 @@ export default {
       if (isType && isLt2M) {
         this.totalNum = 1;
         this.no_show = false;
+        this.initPayMessage()
         // 若是当前为 this.no_show
         this.tableList.unshift({
           created_at: this.$moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
@@ -1041,6 +1053,10 @@ export default {
   },
   beforeDestroy() {
     console.log('docSDK消亡，chat消亡');
+    if (this.vm) {
+      this.vm.close()
+      this.vm = null
+    }
     if(this.docSDK) {
       this.docSDK.destroy();
       this.docSDK = null;
