@@ -535,6 +535,9 @@ export default {
       margin-right: 13px;
     }
   }
+  /deep/.el-upload--picture-card i.saasicon_shangchuan{
+    font-size: 40px;
+  }
   .switch__box{
     line-height: 35px;
     padding-bottom: 10px;

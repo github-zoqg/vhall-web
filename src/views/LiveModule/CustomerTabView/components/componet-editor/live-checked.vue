@@ -122,7 +122,11 @@ export default {
     background: #F7F7F7;
     border-radius: 4px;
     // margin: 0 16px 16px 0;
-    margin-bottom: 6px;
+    // margin-right: 10px;
+    margin-bottom: 10px;
+    &:nth-of-type(2n) {
+      margin-right: 0;
+    }
 
     &.checkedActive{
       border: 1px solid #FB3A32;

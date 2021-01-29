@@ -520,9 +520,18 @@ export default {
     font-weight: 500;
     color: #1A1A1A;
   }
-  /deep/.saasicon_shangchuan::before {
-    font-size: 44px;
+  /deep/.el-upload--picture-card{
+    font-size: 36px;
+    i.saasicon_shangchuan{
+      font-size: 36px;
+    }
+    .picInco{
+      height: 40px;
+    }
   }
+  // /deep/.saasicon_shangchuan::before {
+  //   font-size: 44px;
+  // }
   /deep/.img-box ,/deep/.el-upload{
     width: 324px;
     height: 130px;

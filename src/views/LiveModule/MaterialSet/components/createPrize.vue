@@ -459,6 +459,15 @@ export default {
       }
     }
   }
+  /deep/.el-upload--picture-card{
+    font-size: 36px;
+    i.saasicon_shangchuan{
+      font-size: 36px;
+    }
+    .picInco{
+      height: 40px;
+    }
+  }
 .prize-create{
   .prizeList{
     padding-bottom: 24px;

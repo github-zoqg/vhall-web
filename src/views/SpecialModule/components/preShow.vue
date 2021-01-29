@@ -159,11 +159,12 @@ export default {
       width: 722px;
       height: 406px;
       border-radius: 4px;
+      background-color: #1a1a1a;
       img{
-        width: 722px;
+        width: 100%;
         height: 100%;
-         border-radius: 4px;
-        // object-fit: scale-down;
+        border-radius: 4px;
+        object-fit: scale-down;
       }
     }
     .special-detail{

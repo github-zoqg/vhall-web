@@ -87,7 +87,6 @@ export default {
     padding-left: 10px;
   }
   .title-text {
-    padding-right: 50px;
     p {
       font-size: 20px;
       font-weight: 400;
@@ -96,7 +95,7 @@ export default {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      padding: 12px 30px 5px 0;
+      padding: 12px 24px 5px 0;
     }
   }
   .box-time {
