@@ -56,8 +56,9 @@ export default {
     padding-top: 16px;
   }
   .editor-preview{
-    line-height: 24px;
+    line-height: 20px;
     color: #1a1a1a;
+    font-size: 14px;
     /deep/ img{
       max-width: 100%;
     }
