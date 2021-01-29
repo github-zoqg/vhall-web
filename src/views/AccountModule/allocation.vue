@@ -56,7 +56,7 @@
                 <!-- <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide"  class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
                   <template slot="append">GB</template>
                 </el-input> -->
-                <VhallInput v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative" autocomplete="off"  @input="formatGBInputs($event, scope.row, 'inputCount')">
+                <VhallInput v-model.trim="scope.row.inputCount"  :maxlength="11" v-if="scope.row.isHide" class="btn-relative" autocomplete="off"  @input="formatGBInputs($event, scope.row, 'inputCount')">
                   <template slot="append">GB</template>
                 </VhallInput>
                 <span v-else>{{scope.row.count | unitCovert}} GB</span>
@@ -152,7 +152,7 @@
           </el-input>
         </el-form-item> -->
          <el-form-item label="分配数量" prop="count" v-if="resourcesVo && Number(resourcesVo.type) === 1">
-          <VhallInput v-model.trim="multiAllocForm.count" class="btn-relative" autocomplete="off" placeholder="请输入分配数量" @input="formatGBInputs($event, 'multiAllocForm', 'count')">
+          <VhallInput v-model.trim="multiAllocForm.count"  :maxlength="11" class="btn-relative" autocomplete="off" placeholder="请输入分配数量" @input="formatGBInputs($event, 'multiAllocForm', 'count')">
             <template slot="append">GB</template>
           </VhallInput>
          </el-form-item>
@@ -185,7 +185,7 @@
         } else if (isNaN(value)) {
           return callback(new Error('请输入正数'));
         } else if (parseFloat(value) < 0 || parseFloat(value) > 99999999.99) {
-          return callback(new Error('请输入正数'));
+          return callback(new Error('分配数量最多可输入'));
         } else {
           callback();
         }
@@ -218,12 +218,12 @@
         multiAllocFormRules: {
           count: [
             { required: true, message: '请输入分配数量', trigger: 'blur' },
-            { pattern: /^\d{0,8}(\.\d{0,2})?$/, message: '请输入正数' , trigger: 'blur'},
-            { validator: checkGB, trigger: 'blur' }
+           /*  { pattern: /^\d{0,8}(\.\d{0,2})?$/, message: '请输入正数' , trigger: 'blur'},
+            { validator: checkGB, trigger: 'blur' } */
           ],
           count1: [
             { required: true, message: '请输入分配数量', trigger: 'blur' },
-            { pattern: /^\d{0,8}$/, message: '请输入正整数' , trigger: 'blur'}
+           /*  { pattern: /^\d{0,8}$/, message: '请输入正整数' , trigger: 'blur'} */
           ]
         },
         sonDao: {},
