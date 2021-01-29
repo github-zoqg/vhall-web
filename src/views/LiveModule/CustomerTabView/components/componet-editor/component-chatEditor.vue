@@ -5,9 +5,10 @@
         欢迎短语
       </div>
       <div class="input-content">
-        <el-input
+        <VhallInput
           v-model="menuInfo.welcome_content"
-        ></el-input>
+          :maxlength="15" autocomplete="off"  show-word-limit
+        ></VhallInput>
       </div>
     </div>
 
@@ -60,7 +61,7 @@ export default {
     .chat-tips{
       margin-top: 24px;
       img{
-        max-width:442px ;
+        max-width:422px ;
       }
     }
   }

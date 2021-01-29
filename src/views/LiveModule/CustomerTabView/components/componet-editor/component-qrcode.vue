@@ -24,7 +24,7 @@
             <img :src="info.imageSrc" alt="">
           </div>
            <div data-v-4d7778f2="" class="noPic" v-show="!info.imageSrc || info.imageSrc == defaultQr">
-              <i data-v-4d7778f2="" class="iconfont-v3 saasicon_shangchuan"></i>
+             <i data-v-4d7778f2="" class="iconfont-v3 saasicon_shangchuan"></i>
               <div data-v-4d7778f2="" class="tips">
                 <div data-v-62244b0e="">
                   <p data-v-62244b0e="">建议尺寸：300*300px，小于2M</p>
@@ -149,12 +149,13 @@ export default {
     border-radius: 4px;
     .noPic{
       i{
-        font-size: 44px;
+        font-size: 36px;
+        color: #999;
       }
     }
     .tips{
       position: absolute;
-      top: 100px;
+      top: 93px;
       width: 100%;
       text-align: center;
       font-size: 12px;

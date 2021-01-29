@@ -26,7 +26,7 @@
           </div>
         </a>
         <div v-else class="noPic">
-          <i class="iconfont-v3 saasicon_shangchuan"></i>
+          <div class="picInco"><i class="iconfont-v3 saasicon_shangchuan"></i></div>
           <div class="tips">
             <slot name="tip"></slot>
           </div>
@@ -189,7 +189,7 @@ export default {
       color: #999;
     }
     i.saasicon_shangchuan {
-      font-size: 44px!important;
+      font-size: 44px;
       color: #999;
     }
     i.excel {
@@ -219,6 +219,9 @@ export default {
             line-height: 20px;
           }
         }
+      }
+      .picInco{
+        height: 40px;
       }
     }
     img{

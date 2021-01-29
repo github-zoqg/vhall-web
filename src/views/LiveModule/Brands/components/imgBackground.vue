@@ -175,6 +175,12 @@ export default {
       right:-29px;
     }
 }
+/deep/.el-upload--picture-card{
+  .tips p{
+    transform: scale(0.95);
+    line-height: 14px;
+  }
+}
 .background-list {
   // border: 1px solid #ccc;
   max-height: 300px;
@@ -186,7 +192,6 @@ export default {
     width: 140px;
     height: 140px;
     margin: 8px;
-    border: 1px solid #ccc;
     position: relative;
     border-radius: 4px;
     .bgImg {

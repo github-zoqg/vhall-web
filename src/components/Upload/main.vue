@@ -29,7 +29,7 @@
           </div>
         </div>
         <div v-else class="noPic">
-          <i class="iconfont-v3 saasicon_shangchuan"></i>
+          <div class="picInco"><i class="iconfont-v3 saasicon_shangchuan"></i></div>
           <div class="tips">
             <slot name="tip"></slot>
           </div>
@@ -197,9 +197,10 @@ export default {
     }
     i {
       color: #999;
+      display: inline-block;
     }
     i.saasicon_shangchuan {
-      font-size: 44px!important;
+      font-size: 36px;
       color: #999;
     }
     .box{
@@ -210,6 +211,7 @@ export default {
         width: 100%;
         height: 140px;
         position: relative;
+        // padding-top: 30px;
         display: table-cell;
         vertical-align: middle;
         text-align: center;
@@ -220,8 +222,12 @@ export default {
             align-items: center;
             color: #fff;
             line-height: 20px;
+            // padding: 0 10px;
           }
         }
+      }
+      .picInco{
+        height: 40px;
       }
     }
     img{
@@ -242,7 +248,7 @@ export default {
     span{
       font-size: 14px;
       &:nth-child(2){
-        margin: 0 10px;
+        margin: 0 0 0 10px;
         i {
           line-height: 1;
         }
@@ -250,6 +256,7 @@ export default {
       i{
         color: #fff;
         font-size: 18px;
+        vertical-align: middle;
       }
     }
   }
@@ -257,6 +264,9 @@ export default {
     font-size: 12px;
     color: #999;
     text-align: center;
-    line-height: 16px;
+    p{
+      line-height: 16px;
+      padding: 0;
+    }
   }
 </style>
