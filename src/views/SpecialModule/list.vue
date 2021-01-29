@@ -34,7 +34,7 @@
     <!-- 操作栏 -->
 
     <el-row :gutter="40" class="lives" v-show="totalElement">
-      <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
+      <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
         <router-link :to="{path:'/special/edit', query: {id: item.id, title: '编辑'}}" target="_blank" class="inner">
           <!-- @click="editSpecialInfo(item.id)" -->
           <div class="top">
