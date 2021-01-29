@@ -21,9 +21,9 @@
            <div class="invitation-code">
             <img :src="showCode" alt="">
           </div>
-          <el-button round size="medium" slot="reference" :disabled="!invitation">扫码查看</el-button>
+          <el-button round size="medium" class="transparent-btn" slot="reference" :disabled="!invitation">扫码查看</el-button>
         </el-popover>
-        <el-button size="medium" round :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
+        <el-button size="medium" round class="transparent-btn" :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
       </div>
     </div>
     <div class="invitation-from">
@@ -71,7 +71,7 @@
           </el-form-item>
           <el-form-item label="时间">
             <VhallInput
-              v-model.trim="formInvitation.webinar_date"
+              v-model="formInvitation.webinar_date"
               :maxlength="20"
               autocomplete="off"
               show-word-limit
@@ -278,26 +278,6 @@ export default {
         `${Env.staticImgs.invitation[6]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
         `${Env.staticImgs.invitation[7]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
         `${Env.staticImgs.invitation[8]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
-      ],
-      showList: [
-        {
-          url: '../../../common/images/invite-card/tmpl1.png',
-          isCheck: true,
-          show_type: 1,
-          show: 'first'
-        },
-        {
-          url: '../../../common/images/invite-card/tmpl2.png',
-          isCheck: false,
-          show_type: 2,
-          show: 'second'
-        },
-        {
-          url: '../../../common/images/invite-card/tmpl3.png',
-          isCheck: false,
-          show_type: 3,
-          show: 'third'
-        }
       ],
       rules: {
         title: [
@@ -533,7 +513,7 @@ export default {
     cursor: pointer;
     .advor_img{
       width: 70px;
-      height: 130px;
+      height: 132px;
       position: absolute;
       margin: 0 125px;
       img {
@@ -975,16 +955,6 @@ export default {
       position: absolute;
       right: 0;
       top: 0;
-      /deep/.el-button{
-        background-color: transparent;
-        padding: 4px 23px;
-        &:hover{
-          background-color: #FB3A32;
-        }
-        &.is-disabled:hover{
-          background-color: transparent;
-        }
-      }
       /deep/.el-button:last-child{
         margin-left: 10px;
       }

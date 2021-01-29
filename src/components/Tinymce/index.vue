@@ -185,7 +185,9 @@ export default {
   .blue{
   }
 }
-
+/deep/.tox-tinymce{
+  padding-bottom: 25px !important;
+}
 /deep/.tox .tox-tbtn svg {
   display: block;
   fill: #666!important;
@@ -223,8 +225,8 @@ export default {
 }
 .word-count{
   position: absolute;
-  right: 12px;
-  bottom: 5px;
+  right: 25px;
+  bottom: -5px;
   font-size: 14px;
   color: #999;
   .blue{
