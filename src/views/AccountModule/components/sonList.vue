@@ -57,7 +57,7 @@
       <null-page class="search-no-data" :height="0" v-if="sonDao && sonDao.total === 0"></null-page>
     </div>
     <!-- 添加/ 观众子账号 -->
-    <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false'
+    <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false' :before-close='handleClose'
                  width="460px">
       <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth">
         <el-form-item label="批量创建" prop="is_batch" v-if="sonDialog.type === 'add'" class="switch--item">
@@ -71,12 +71,12 @@
               @change="sonCountGetHandle"
             >
             </el-switch>
-            <span class="leve3_title title--999" v-if="sonForm.is_batch">批量创建时，所生成子账号的昵称、密码、角色一致</span>
+            <span class="leve3_title title--999" v-if="sonForm.is_batch">生成子账号的昵称、密码、角色一致</span>
           </div>
         </el-form-item>
         <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums" class="account--nums">
           <VhallInput v-model.trim="sonForm.nums" autocomplete="off" ></VhallInput>
-          <span>当前可创建子账号<strong>{{ sonCountVo.available_num }}</strong>个</span>
+          <span>可创建<strong>{{ sonCountVo.available_num }}</strong>个</span>
         </el-form-item>
         <el-form-item label="账号昵称" prop="nick_name">
           <VhallInput type="text" placeholder="请输入昵称，默认使用账号ID" autocomplete="off" v-model="sonForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
@@ -102,19 +102,33 @@
         <el-form-item label="手机号码" class="no-execute">
           <VhallInput v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative"
                     :maxlength="30" disabled>
-            <el-button v-show="sonDialog.type !== 'add'" class="no-border" type="text" size="mini" slot="append" @click="resetPhoneOrEmail('phone')">重置</el-button>
+            <el-button
+              v-show="sonDialog.type !== 'add'"
+              class="no-border"
+              type="text"
+              size="mini"
+              slot="append"
+              @click="resetPhoneOrEmail('phone', isReset.phone)"
+            >{{ isReset.phone ? '取消重置' : '重置' }}</el-button>
           </VhallInput>
         </el-form-item>
         <el-form-item label="邮箱地址" class="no-execute">
           <VhallInput v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative"
                     :maxlength="30" disabled>
-            <el-button v-show="sonDialog.type !== 'add'" class="no-border" type="text" size="mini" slot="append" @click="resetPhoneOrEmail('email')">重置</el-button>
+            <el-button
+              v-show="sonDialog.type !== 'add'"
+              class="no-border"
+              type="text"
+              size="mini"
+              slot="append"
+              @click="resetPhoneOrEmail('email', isReset.email)"
+            >{{ isReset.email ? '取消重置' : '重置' }}</el-button>
           </VhallInput>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" v-preventReClick @click="sonSaveSend('sonForm')" size="medium" round>确 定</el-button>
-        <el-button @click="sonDialog.visible = false" size="medium" round>取 消</el-button>
+        <el-button @click="handleClose" size="medium" round>取 消</el-button>
       </div>
     </VhallDialog>
     <!-- 添加子账号 -->
@@ -262,9 +276,25 @@ export default {
           {required: true, message: '请填写账号数量', trigger: 'blur'}
         ]
       },
+      isReset: {
+        phone: false,
+        email: false
+      },
+      cacheForm: {
+        phone: '',
+        email: ''
+      }
     };
   },
   methods: {
+    handleClose() {
+      console.log(1111111)
+      this.isReset = {
+        phone: false,
+        email: false
+      }
+      this.sonDialog.visible = false
+    },
     // 表格操作列回调函数， val表示每行
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
@@ -485,7 +515,7 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box'
             });
-            this.sonDialog.visible = false;
+            this.handleClose()
             // 新增成功后，重查列表
             this.initQuerySonList();
             // 通知父级头部更新
@@ -580,8 +610,17 @@ export default {
       });
     },
     // 重置选项
-    resetPhoneOrEmail(type) {
-      this.sonForm[type] = '';
+    resetPhoneOrEmail(type, status) {
+      this.isReset[type] = !status;
+      if (status) {
+        // 如果是取消重置
+        this.sonForm[type] = this.cacheForm[type];
+        this.cacheForm[type] = ''
+      } else {
+        // 如果是重置
+        this.cacheForm[type] = this.sonForm[type];
+        this.sonForm[type] = ''
+      }
     },
     initComp() {
       this.getRoleList(); // 获取可选角色列表
@@ -603,9 +642,11 @@ export default {
   },
   computed: {
     phonePlaceholder() {
+      if (this.isReset.phone) return '手机号已重置'
       return this.sonForm.phone ? '' : '登录后自行绑定，父账号允许重置';
     },
     emailPlaceholder() {
+      if (this.isReset.email) return '邮箱已重置'
       return this.sonForm.email ? '' : '登录后自行绑定，父账号允许重置';
     },
     isForbidCreate() {
@@ -719,6 +760,9 @@ export default {
     font-size: 14px;
     font-weight: 400;
     color: #666666;
+    &:hover {
+      color: #3562fa;
+    }
   }
 }
 /deep/.el-dialog__wrapper {
