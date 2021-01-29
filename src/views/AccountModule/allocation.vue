@@ -51,34 +51,43 @@
             <el-table-column
               label="分配流量" v-if="resourcesVo && (resourcesVo.type > 0)"
               align="left"
-              width="200">
+              width="230">
               <template slot-scope="scope">
-                <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
+                <!-- <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide"  class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
                   <template slot="append">GB</template>
-                </el-input>
-                <span v-else>{{scope.row.count}} GB</span>
+                </el-input> -->
+                <VhallInput v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative" autocomplete="off"  @input="formatGBInputs($event, scope.row, 'inputCount')">
+                  <template slot="append">GB</template>
+                </VhallInput>
+                <span v-else>{{scope.row.count | unitCovert}} GB</span>
               </template>
             </el-table-column>
             <el-table-column
               label="分配并发" v-if="resourcesVo && !(resourcesVo.type > 0)"
               align="left"
-              width="200">
+              width="230">
               <template slot-scope="scope">
-                <el-input type="text" maxlength="5" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d]+/g, '')">
+               <!--  <el-input type="text" maxlength="5" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d]+/g, '')">
                   <template slot="append"> 方</template>
-                </el-input>
-                <span v-else>{{scope.row.count}} 方</span>
+                </el-input> -->
+                <VhallInput v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative" autocomplete="off"  @input="formatBFInputs($event, scope.row, 'inputCount')">
+                  <template slot="append">方</template>
+                </VhallInput>
+                <span v-else>{{scope.row.count | unitCovert}} 方</span>
               </template>
             </el-table-column>
             <el-table-column
               label="分配扩展包" v-if="resourcesVo && resourcesVo.extend_day"
               align="left"
-              width="200">
+              width="230">
               <template slot-scope="scope">
-                <el-input type="text" maxlength="5" v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d]+/g, '')">
+                <!-- <el-input type="text" maxlength="5" v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d]+/g, '')">
                   <template slot="append"> 方</template>
-                </el-input>
-                <span v-else>{{scope.row.extend_day}} 方</span>
+                </el-input> -->
+                <VhallInput v-model.trim="scope.row.inputExtendDay" v-if="scope.row.isHide" class="btn-relative" autocomplete="off" placeholder="正整数" @input="formatBFInputs($event, scope.row, 'inputExtendDay')">
+                  <template slot="append">方</template>
+                </VhallInput>
+                <span v-else>{{scope.row.extend_day | unitCovert}} 方</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -117,12 +126,12 @@
             <!-- <i :class="`${resourcesVo && resourcesVo.type > 0 ? 'iconfont-v3 saasliuliang_tubiao' : 'iconfont-v3 saasbingfa_tubiao'}`"></i> -->
           </div>
           <ul class="allocation_one">
-            <li>{{resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total) : ''}}</li>
+            <li>{{ (resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total ) : 0) | unitCovert }}  </li>
             <li>可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量` : `并发`) : ''}} {{resourcesVo ? (resourcesVo.type > 0 ? `（GB）` : `（方）`) : ''}}</li>
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
           <ul class="allocation_one mt32" v-if="resourcesVo && resourcesVo.extend_day">
-            <li>{{ resourcesVo && resourcesVo.extend_day ? resourcesVo.extend_day : 0 }}</li>
+            <li>{{ (resourcesVo && resourcesVo.extend_day ? resourcesVo.extend_day : 0)  | unitCovert}} </li>
             <li>可分配并发扩展包（天）</li>
             <li>有效期至 {{resourcesVo && resourcesVo.extend_end_time ? resourcesVo.extend_end_time : '--'}}</li>
           </ul>
@@ -137,11 +146,21 @@
     <!-- 批量分配-弹出框 -->
     <VhallDialog title="批量分配" :visible.sync="multiAllocShow" :lock-scroll='false' class="dialog__group" width="380px" v-if="multiAllocShow" @close="closeAllocDialog">
       <el-form :model="multiAllocForm" ref="multiAllocForm" :rules="multiAllocFormRules" label-width="80px">
-        <el-form-item label="分配数量" prop="count">
+        <!--  <el-form-item label="分配数量" prop="count">
           <el-input v-model.trim="multiAllocForm.count" maxlength="5" auto-complete="off" placeholder="请输入分配数量" class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
             <template slot="append"> {{resourcesVo && Number(resourcesVo.type) === 1 ? 'GB' : '方' }}</template>
           </el-input>
-        </el-form-item>
+        </el-form-item> -->
+         <el-form-item label="分配数量" prop="count" v-if="resourcesVo && Number(resourcesVo.type) === 1">
+          <VhallInput v-model.trim="multiAllocForm.count" class="btn-relative" autocomplete="off" placeholder="请输入分配数量" @input="formatGBInputs($event, 'multiAllocForm', 'count')">
+            <template slot="append">GB</template>
+          </VhallInput>
+         </el-form-item>
+         <el-form-item label="分配数量" prop="count1" v-else>
+          <VhallInput v-model.trim="multiAllocForm.count1" class="btn-relative" autocomplete="off" placeholder="请输入分配数量" @input="formatBFInputs($event, 'multiAllocForm', 'count1')">
+          <template slot="append">方</template>
+        </VhallInput>
+         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary"  size="medium" round @click="saveMultiSetHandle">确 定</el-button>
@@ -160,6 +179,17 @@
       PageTitle
     },
     data() {
+      let checkGB = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('请输入分配数量'));
+        } else if (isNaN(value)) {
+          return callback(new Error('请输入正数'));
+        } else if (parseFloat(value) < 0 || parseFloat(value) > 99999999.99) {
+          return callback(new Error('请输入正数'));
+        } else {
+          callback();
+        }
+      };
       return {
         is_dynamic: null,
         resourcesVo: null,
@@ -182,11 +212,18 @@
         total: 0,
         multiAllocShow: false,
         multiAllocForm: {
-          count: null
+          count: null,
+          count1: null
         },
         multiAllocFormRules: {
           count: [
-            { required: true, message: '请输入分配数量', trigger: 'blur' }
+            { required: true, message: '请输入分配数量', trigger: 'blur' },
+            { pattern: /^\d{0,8}(\.\d{0,2})?$/, message: '请输入正数' , trigger: 'blur'},
+            { validator: checkGB, trigger: 'blur' }
+          ],
+          count1: [
+            { required: true, message: '请输入分配数量', trigger: 'blur' },
+            { pattern: /^\d{0,8}$/, message: '请输入正整数' , trigger: 'blur'}
           ]
         },
         sonDao: {},
@@ -199,6 +236,55 @@
       };
     },
     methods: {
+      formatGBInputs(value, row, key) {
+        if(key === 'count' || key === 'count1') {
+          console.log('1111111')
+          this[row][key] = this[row][key].replace(/[^\d^\.]+/g, '')
+          row = this[row];
+        } else {
+          row[key] = row[key].replace(/[^\d^\.]+/g, '')
+        }
+        if (!/^\d{0,8}(\.\d{0,2})?$/.test(value)) {
+          if(!value.match(/^\d{0,8}(\.\d{0,2})?$/g)) {
+            row[key] = row[key].substring(0, row[key].length - 1);
+          } else {
+            // 前两位不能是00开头
+            if(`${value.substring(0, 2)}` === '00') {
+              row[key] = row[key].substring(0, row[key].length - 1);
+            } else {
+              row[key] = parseFloat(value).toFixed(2);
+            }
+          }
+        } else {
+          if(`${value.substring(0, 2)}` === '00') {
+            row[key] = row[key].substring(0, row[key].length - 1);
+          }
+        }
+      },
+      formatBFInputs(value, row, key) {
+        if(key === 'count' || key === 'count1') {
+          row = this[row];
+          console.log(111111111111)
+        }
+        if (!/^\d{0,8}$/.test(value)) {
+          console.log(22222222222)
+          if(!value.match(/^\d{0,8}$/g)) {
+             console.log(333333)
+            row[key] = row[key].replace(/[^\d]+/g, '');
+          } else {
+            // 前两位不能是00开头
+            if(`${value.substring(0, 2)}` === '00') {
+              row[key] = row[key].substring(0, row[key].length - 1);
+            } else {
+              row[key] = parseInt(value);
+            }
+          }
+        } else {
+          if(`${value.substring(0, 2)}` === '00') {
+            row[key] = row[key].substring(0, row[key].length - 1);
+          }
+        }
+      },
       // 切换选项卡[每次点击切换时，设定其需要点击保存按钮]
       handleClick(tab, event) {
         console.log(tab, event);
@@ -361,14 +447,21 @@
         console.log(regA);
         let flag = true;
         if (row === null || row === undefined || row === '') {
-          flag = true;
+          this.$message({
+            message: '请输入数量',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+          flag = false;
         } else if (row.inputCount === null || row.inputCount === undefined) {
-          flag = true;
+          flag = false;
         } else if (regA.test(row.inputCount)) {
           row.inputCount = Number(this.resourcesVo.type) === 1 ? parseFloat(row.inputCount) : parseInt(row.inputCount);
           flag = true;
         } else {
-          flag = false;
+          flag = true;
         }
         // 右侧最大可分配数据
         let maxVla = this.resourcesVo.type > 0 ? this.resourcesVo.flow : this.resourcesVo.total;
@@ -382,7 +475,13 @@
             extend_day: row.inputExtendDay || 0
           }]
         };
-        flag ? this.sendAllocSet(params, row) : null;
+        flag ? this.sendAllocSet(params, row) :  this.$message({
+          message: '请输入数量',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       },
       saveMultiSetHandle(){
         this.$refs.multiAllocForm.validate((valid) => {
@@ -395,7 +494,7 @@
               }
               if (this.dialogType === 1) {
                 // 并发-分配并发包，设置resources， type为并发
-                result.resources = Number(this.multiAllocForm.count);
+                result.resources = Number(this.multiAllocForm.count1);
                 result.extend_day = item.extend_day;
               } else if (this.dialogType === 2) {
                 // 流量-批量分配，设置 resources， type为流量
@@ -403,7 +502,7 @@
                 result.extend_day = item.extend_day;
               }  else if (this.dialogType === 3) {
                 // 并发-分配扩展包，设置 extend_day， type为并发
-                result.extend_day = Number(this.multiAllocForm.count);
+                result.extend_day = Number(this.multiAllocForm.count1);
                 result.resources = item.count;
               }
               console.log(result, '批量数据')
@@ -422,6 +521,7 @@
         this.multiAllocShow = false;
         this.$nextTick(() => {
           this.multiAllocForm.count = null;
+          this.multiAllocForm.count1 = null;
           if (this.$refs['multiAllocForm']) {
             this.$refs['multiAllocForm'].resetFields();
           }
@@ -501,7 +601,7 @@
       }
       /deep/.btn-relative {
         position: relative;
-        width: 95px;
+        width: 125px;
       }
       /deep/.el-table .cell {
         line-height: 36px;
@@ -519,6 +619,7 @@
     /deep/.btn-relative .el-input__inner {
       border-top-right-radius: 4px;
       border-bottom-right-radius: 4px;
+      padding: 0 40px 0 12px!important;
     }
   }
   .pageBox {
