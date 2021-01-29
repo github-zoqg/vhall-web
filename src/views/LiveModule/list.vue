@@ -47,7 +47,8 @@
     <!-- 操作栏 -->
     <div v-if="totalElement">
       <el-row :gutter="40" class="lives">
-          <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
+          <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
+            <!-- :xs="24" :sm="12" :md="12" :lg="8" :xl="6" -->
             <router-link :to="{path: `/live/detail/${item.webinar_id}`}" target="_blank" class="inner">
               <!--  @click.prevent.stop="toDetail(item.webinar_id)" -->
               <div class="top">
