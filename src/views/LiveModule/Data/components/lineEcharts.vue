@@ -67,7 +67,21 @@ export default {
     },
     initBarEcharts(xData, yData) {
       let that = this;
-      this.barEcharts = echarts.init(this.$refs.barEchart);
+      this.barEcharts = echarts.init(this.$refs.barEchart, {
+        noDataLoadingOption: {
+          text: '暂无数据',
+          effect:'bubble',
+          effectOption : {
+            effect: {
+                n: 0 //气泡个数为0
+            }
+          },
+          textStyle: {
+              fontSize: 24,
+              fontWeight: 'bold'
+          }
+        }
+      });
       let option = {
         tooltip: {
           show: true,

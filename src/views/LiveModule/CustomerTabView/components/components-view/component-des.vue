@@ -14,5 +14,8 @@ export default {
   .menu-cont {
     width: 286px;
     margin: 0 auto;
+    img{
+      border-radius: 0 0 13px 13px;
+    }
   }
 </style>
