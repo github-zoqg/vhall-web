@@ -77,6 +77,12 @@
       height: 100%;
       width: 100% !important;
       /*padding-bottom: 136px;*/
+      .el-submenu__icon-arrow {
+        transform: rotateZ(360deg);
+      }
+      .el-submenu.is-opened>.el-submenu__title .el-submenu__icon-arrow {
+          transform: rotateZ(180deg);
+      }
     }
     // menu hover
     .submenu-title-noDropdown,
