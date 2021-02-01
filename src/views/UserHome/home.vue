@@ -91,6 +91,8 @@ export default {
     getHomePageInfo() {
       this.$fetch('homeInfoGet', {
         home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
+      }, {
+        'gray-id': this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
       }).then(res => {
         console.log(res);
         if (res && res.code === 200) {
