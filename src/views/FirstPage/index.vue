@@ -277,6 +277,7 @@ export default {
         text-align: center;
         cursor: pointer;
         border: 1px solid transparent;
+        transition: all 0.15s ease-in;
         &:hover{
           background: #FFFFFF;
           box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);

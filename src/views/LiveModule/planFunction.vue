@@ -53,7 +53,13 @@
           </div>
         </div>
         <!--手机预览,begin-->
-        <div :class="['plan-func-app', {'zj': !chapterCompute }]" v-show="switchType === 'app'">
+        <div :class="['plan-func-app', {'visible': chapterCompute}]" v-show="switchType === 'app'">
+          <span class="chat-span">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
+          <div class="icon-spans">
+            <span class="gift-span" v-if="giftCompute"></span><span  class="reward-span" v-if="rewardCompute"></span><span class="like-span" v-if="likeCompute"></span>
+          </div>
+        </div>
+        <div :class="['plan-func-app', 'zj', {'visible': !chapterCompute}]" v-show="switchType === 'app'">
           <span class="chat-span">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
           <div class="icon-spans">
             <span class="gift-span" v-if="giftCompute"></span><span  class="reward-span" v-if="rewardCompute"></span><span class="like-span" v-if="likeCompute"></span>
@@ -295,6 +301,9 @@ export default {
 }
 
 /* 右侧 */
+.plan-func-preview {
+  position: relative;
+}
 .plan-func-pc {
   width: 421px;
   height: 254px;
@@ -350,7 +359,17 @@ export default {
   background-size: 100%;
   background-position: center;
   background-size: cover;
-  position: relative;
+  position: absolute;
+  left:0;
+  top:54px;
+  -webkit-transition: opacity 0.5s ease-in-out;
+  -moz-transition: opacity 0.5s ease-in-out;
+  -o-transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
+  &.visible {
+    opacity:0;
+    filter: alpha(opacity=0);
+  }
   &.zj {
     background-image: url('../../common/images/plan-function/phone-zj.png');
   }

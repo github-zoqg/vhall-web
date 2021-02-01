@@ -547,6 +547,7 @@ export default {
         background: #fff;
         border: 1px solid transparent;
         cursor: pointer;
+        transition: all 0.15s ease-in;
         &:nth-child(3n) {
           margin-right: 0;
         }
