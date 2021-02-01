@@ -74,9 +74,26 @@ export default {
         // TODO 模拟 perVo['child_num_limit'] = 0;
         if (perVo && Number(perVo['child_num_limit']) !== 1) {
           // 父账号，但是没有子账号管理
-          return children.filter(item => item.meta.name !== 'sonMgr');
+          return children.filter(item => {
+            if(item.meta.auth_key) {
+              // 配置了该项，表示按照此权限处理；未配置该项，正常处理
+               console.log('4')
+              return item.meta.name !== 'sonMgr' && item.meta.auth_key && perVo && perVo[item.meta.auth_key] > 0
+            } else {
+               console.log('3')
+              return item.meta.name !== 'sonMgr';
+            }
+          });
         } else {
-          return children;
+          return children.filter(item => {
+            if(item.meta.auth_key) {
+              console.log('1')
+              return item.meta.auth_key && perVo && perVo[item.meta.auth_key] > 0;
+            } else {
+              console.log('2')
+              return item;
+            }
+          });
         }
       }
     } else {

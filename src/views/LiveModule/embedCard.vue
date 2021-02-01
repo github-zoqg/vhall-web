@@ -96,7 +96,7 @@ export default {
     },
     goEmbedForm() {
       // https://t.e.vhall.com/auth/check-token?after_login=webinar/marketing/index&token=aca55f6b78b2e246a1a38ff143531099
-      let url = `${window.location.protocol + process.VUE_APP_E_COMPANY_URL}/auth/check-token?after_login=webinar/marketing/index&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`;
+      let url = `${process.env.VUE_APP_E_COMPANY_URL}/auth/check-token?after_login=webinar/marketing/index&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`;
       window.open(url, "_blank");
     },
     cope(url) {

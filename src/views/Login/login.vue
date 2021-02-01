@@ -440,10 +440,34 @@ export default {
         sessionOrLocal.set('SAAS_V3_CHANNEL_ID', res.data.channel_id || '', 'localStorage');
         // 存储控制台-channel_id频道
         sessionOrLocal.set('SAAS_V3_SSO_TOKEN', res.data.sso_token || '', 'localStorage');
-        this.$router.push({path: '/'});
+        // 登录完成后，获取当前用户的权限
+        this.$fetch('planFunctionGet', {}).then(vRes => {
+          let permissions = vRes.data.permissions;
+          if(permissions) {
+            // 设置全部权限
+            sessionOrLocal.set('SAAS_VS_PES', permissions, 'localStorage');
+            this.$router.push({path: '/'});
+          } else {
+            this.$message({
+              message: vRes.msg || `用户权限获取失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+          }
+        }).catch(vRes => {
+          console.log(vRes);
+          this.$message({
+            message: vRes.msg || `用户权限获取失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+        });
       }).catch(res => {
         if (this.isActive == 1) {
-            console.log(res.msg, '1111111111111111');
             this.errorText = res.msg || '登录失败！';
           } else {
             this.errorMsgShow = res.msg || '登录失败！';
