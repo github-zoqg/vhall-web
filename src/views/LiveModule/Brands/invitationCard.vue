@@ -89,6 +89,7 @@
           </el-form-item>
           <el-form-item label="简介" prop="desciption">
             <VhallInput
+              class="desc"
               style="width: 320px"
               v-model.trim="formInvitation.desciption"
               type="textarea"
@@ -502,6 +503,9 @@ export default {
   .form-data {
     padding: 10px 0 10px;
     margin-right: 100px;
+    /deep/ .desc .el-textarea__inner{
+      font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    }
   }
   .data-img {
     width: 320px;
