@@ -86,6 +86,7 @@ export default {
       } else {
         // TODO 左侧导航菜单
         if (route.meta && route.meta.auth_key && this.vsQuanxian) {
+           console.log('左侧', route.meta.auth_key, this.vsQuanxian[route.meta.auth_key])
            if(this.vsQuanxian[route.meta.auth_key] > 0) {
              // 由权限限制的字段，若大于0，则返回
              return true;

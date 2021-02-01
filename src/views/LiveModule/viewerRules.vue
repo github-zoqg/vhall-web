@@ -1,9 +1,9 @@
 <template>
   <div>
     <pageTitle pageTitle="观看限制">
-      <div slot="content">
+      <!-- <div slot="content">
         可联系客服开通“单点观看”功能，即开启付费/邀请码/白名单后，一个账号仅允许同时一台设备观看直播。
-      </div>
+      </div> -->
     </pageTitle>
     <!-- 内容区域 -->
     <div class="viewer-rules">
