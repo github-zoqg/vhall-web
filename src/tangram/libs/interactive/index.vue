@@ -53,7 +53,7 @@
           <span v-if="roleName == 3">助理</span>
           <span v-if="roleName == 4">嘉宾</span>
 
-          <el-tooltip :content="videoMuteStatus ? '打开摄像头': '关闭摄像头'" placement="top">
+          <el-tooltip :content="videoMuteStatus ? '打开摄像头': '关闭摄像头'" placement="top" v-tooltipMove>
             <a
               href="javascript:void(0);"
               @click="muteDevice('video')"
@@ -61,7 +61,7 @@
             'iconfont iconicon_shexiangtouguanbi' : 'iconfont iconicon_shexiangtoukaiqi'"
             ></a>
           </el-tooltip>
-          <el-tooltip :content="audioMuteStatus ? '打开麦克风': '关闭麦克风'" placement="top">
+          <el-tooltip :content="audioMuteStatus ? '打开麦克风': '关闭麦克风'" placement="top" v-tooltipMove>
             <a
               href="javascript:void(0);"
               @click="muteDevice('audio')"
@@ -80,12 +80,12 @@
         </p>
         <p>
           <span>视图</span>
-          <el-tooltip content="切换" placement="bottom">
+          <el-tooltip content="切换" placement="bottom" v-tooltipMove>
             <a v-if="!isFullScreen" href="javascript:void(0);" class="iconfont iconicon_qiehuan" @click="exchange()">
               <!-- 切换 -->
             </a>
           </el-tooltip>
-          <el-tooltip content="全屏" placement="bottom">
+          <el-tooltip content="全屏" placement="bottom" v-tooltipMove>
             <a
               href="javascript:void(0);"
               class="iconfont"
@@ -95,7 +95,7 @@
               <!-- 全屏 -->
             </a>
           </el-tooltip>
-          <el-tooltip content="下麦" placement="bottom">
+          <el-tooltip content="下麦" placement="bottom" v-tooltipMove>
             <a
               v-if="roleName != 1 "
               href="javascript:void(0);"
@@ -110,7 +110,7 @@
       <!-- 右侧小窗体 区域 -->
       <div class="action-mini-pop" v-else>
         <p>
-          <el-tooltip :content="videoMuteStatus ? '打开摄像头': '关闭摄像头'" placement="top">
+          <el-tooltip :content="videoMuteStatus ? '打开摄像头': '关闭摄像头'" placement="top" v-tooltipMove>
             <a
               href="javascript:void(0);"
               @click="muteDevice('video')"
@@ -118,14 +118,14 @@
               'iconfont iconicon_shexiangtouguanbi' : 'iconfont iconicon_shexiangtoukaiqi'"
             ></a>
           </el-tooltip>
-          <el-tooltip :content="audioMuteStatus ? '打开麦克风': '关闭麦克风'" placement="top">
+          <el-tooltip :content="audioMuteStatus ? '打开麦克风': '关闭麦克风'" placement="top" v-tooltipMove>
             <a
               href="javascript:void(0);"
               @click="muteDevice('audio')"
               :class="audioMuteStatus ? 'iconfont iconicon_maikefengguanbi' : 'iconfont iconyinliang'"
             ></a>
           </el-tooltip>
-          <el-tooltip content="下麦" placement="top">
+          <el-tooltip content="下麦" placement="top" v-tooltipMove>
             <a
               v-if="roleName != 1"
               href="javascript:void(0);"
@@ -137,7 +137,7 @@
           </el-tooltip>
         </p>
         <p v-if="roleName == 1">
-          <el-tooltip content="设为主讲人" placement="bottom">
+          <el-tooltip content="设为主讲人" placement="bottom" v-tooltipMove>
             <a
               href="javascript:void(0);"
               class="iconfont iconsheweizhujiangren"
@@ -146,7 +146,7 @@
               <!-- 设为主屏 -->
             </a>
           </el-tooltip>
-          <el-tooltip content="下麦" placement="bottom">
+          <el-tooltip content="下麦" placement="bottom" v-tooltipMove>
             <a
               href="javascript:void(0);"
               class="iconfont iconicon_xiamai"

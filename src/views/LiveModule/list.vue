@@ -66,14 +66,14 @@
                   <p class="liveTime">{{item.start_time}}</p>
                 </div>
                 <p class="liveOpera">
-                  <el-tooltip class="item" effect="dark" content="开播" placement="top" v-if="item.webinar_state!=4">
+                  <el-tooltip class="item" effect="dark" content="开播" placement="top" v-if="item.webinar_state!=4" v-tooltipMove>
                     <i class="iconfont-v3 saasicon_kaibo" @click.prevent.stop="goLivePlay(item)"></i>
                     <!-- <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link> -->
                   </el-tooltip>
-                  <el-tooltip class="item" effect="dark" content="回放" placement="top" v-if="!(childPremission && Number(childPremission.permission_content) === 0)">
+                  <el-tooltip v-tooltipMove class="item" effect="dark" content="回放" placement="top" v-if="!(childPremission && Number(childPremission.permission_content) === 0)">
                   <i class="iconfont-v3 saasicon_huifang" @click.prevent.stop="goPlayback(item)"></i>
                   </el-tooltip>
-                  <el-tooltip class="item" effect="dark" content="详情" placement="top">
+                  <el-tooltip v-tooltipMove class="item" effect="dark" content="详情" placement="top">
                     <i class="iconfont-v3 saasicon_xiangqing" @click.prevent.stop="toDetail(item.webinar_id)"></i>
                   </el-tooltip>
                   <span @click.prevent.stop>

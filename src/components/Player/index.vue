@@ -31,7 +31,7 @@
     <div class="video-doc-exchange" :class="{visible: hoveVideo}" v-if="exchangeVideoDoc && !isFullscreen && !BackEnd && docVisible">
       <p>
         <!-- <span>视图</span> -->
-        <el-tooltip content="切换" placement="top">
+        <el-tooltip content="切换" placement="top" v-tooltipMove>
           <a
             href="javascript:void(0);"
             class="iconfont iconfuzhi"

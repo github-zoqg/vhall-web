@@ -23,6 +23,7 @@
             </el-switch>
             <el-tooltip
               placement="right"
+              v-tooltipMove
               content="">
                 <pre slot="content">开启独立报名功能后，可为报名表单生成独立的链接地
 址。通过分享链接，用户填写报名表单后就能观看直播

@@ -1,7 +1,6 @@
 const loadMore =  (Vue) => {
   Vue.directive('loadMore',{
        bind: (el, binding) => {
-         console.log(binding, '???????????????')
            let targetDom = el.querySelector('.el-table__body-wrapper') || el.querySelector('.el-scrollbar__wrap') || el.querySelector('.el-tabs__content')
            targetDom.addEventListener('scroll', function() {
                let scrollDistance = this.scrollHeight - this.scrollTop - this.clientHeight
@@ -12,4 +11,18 @@ const loadMore =  (Vue) => {
        }
    })
 }
-export { loadMore }
+const tooltipMove = (Vue) => {
+  //让tooltip快速消失
+  Vue.directive('tooltipMove',{
+    inserted: (el, binding) => {
+    el.addEventListener('mouseout', () => {
+    let toolTipAll=document.getElementsByClassName('el-tooltip__popper')
+      toolTipAll.forEach((item)=>{
+        item.style.display='none'
+        })
+      });
+    }
+  });
+}
+
+export { loadMore, tooltipMove }

@@ -50,16 +50,16 @@
               <p class="liveTime">{{item.created_at | unitTime }}</p>
             </div>
             <p class="liveOpera">
-              <el-tooltip class="item" effect="dark" content="编辑" placement="top">
+              <el-tooltip class="item" effect="dark" content="编辑" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-pencil" @click.prevent.stop="editSpecialInfo(item.id)"></i>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="预览" placement="top">
+              <el-tooltip class="item" effect="dark" content="预览" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-eye" @click.prevent.stop="specialDetail(item)"></i>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="分享" placement="top">
+              <el-tooltip class="item" effect="dark" content="分享" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-share" @click.prevent.stop="toShare(item.id)"></i>
               </el-tooltip>
-              <el-tooltip class="item isDelete" effect="dark" content="删除" placement="top">
+              <el-tooltip class="item isDelete" effect="dark" content="删除" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-trash" @click.prevent.stop="deleteHandle(item.id)"></i>
               </el-tooltip>
             </p>

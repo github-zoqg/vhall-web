@@ -264,14 +264,14 @@
               inactive-text="必填项">
             </el-switch>
             <div class="controlBtnBox">
-              <el-tooltip class="item" effect="dark" content="删除" placement="top">
+              <el-tooltip class="item" effect="dark" content="删除" placement="top" v-tooltipMove>
                 <i
                   class="iconfont-v3 saasicon-trash"
                   v-if="item.bottomBtn.includes('delete')"
                   @click="deleteQuestion(questionArr, index)"
                 ></i>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="移动" placement="top">
+              <el-tooltip class="item" effect="dark" content="移动" placement="top" v-tooltipMove>
                 <i
                   class="iconfont-v3 saasicon_move moveBtn"
                   v-if="item.bottomBtn.includes('move')"

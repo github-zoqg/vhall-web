@@ -41,7 +41,7 @@
       </el-row>
       <div class="row-list" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
         <p class="list-title">数据统计</p>
-         <el-tooltip effect="dark" placement="right-start">
+         <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
             <div slot="content">
             统计近7日数据
             </div>
@@ -101,7 +101,7 @@
       <div class="line-updata">
         <div class="line-tip">
           <p>用量统计</p>
-          <el-tooltip effect="dark" placement="right-start">
+          <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
             <div slot="content">
             统计近7日数据
             </div>

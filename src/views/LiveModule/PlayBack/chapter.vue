@@ -24,12 +24,12 @@
           <div class="vhallPlayer-controller-box">
             <div class="v-c-left">
               <div class="vh-video-chapter__operate">
-                <el-tooltip content="上一秒" placement="top">
+                <el-tooltip content="上一秒" placement="top" v-tooltipMove>
                   <span @click="seekBack" class="vh-btn vh-video-chapter__seek-back">
                     <icon icon-class="saasicon_shangyimiao"></icon>
                   </span>
                 </el-tooltip>
-                <el-tooltip :content="statePaly ? '暂停' : '播放'" placement="top">
+                <el-tooltip :content="statePaly ? '暂停' : '播放'" placement="top" v-tooltipMove>
                   <span
                     @click="videoPlayBtn"
                     class="vh-btn vh-video-chapter__play"
@@ -38,7 +38,7 @@
                     <icon :icon-class="statePaly ? 'saasicon_bofang' : 'saasicon_zanting'"></icon>
                   </span>
                 </el-tooltip>
-                <el-tooltip content="下一秒" placement="top">
+                <el-tooltip content="下一秒" placement="top" v-tooltipMove>
                   <span @click="seekForward" class="vh-btn vh-video-chapter__seek-forward">
                     <icon icon-class="saasicon_xiayimiao"></icon>
                   </span>
@@ -54,7 +54,7 @@
               </span>
             </div>
             <div class="vh-video-chapter__volume-box">
-              <el-tooltip :enterable="false" :content="voice > 0 ? '静音' : '开启声音'" placement="top">
+              <el-tooltip :enterable="false" :content="voice > 0 ? '静音' : '开启声音'" placement="top" v-tooltipMove>
                 <span @click="jingYin" class="vh-video-chapter__icon-voice-warp">
                   <icon style="color:#fff" :icon-class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'"></icon>
                 </span>
@@ -87,25 +87,25 @@
         </div>
         <div class="actionBar">
           <span class="pages">
-            <el-tooltip content="上一页" placement="top">
+            <el-tooltip content="上一页" placement="top" v-tooltipMove>
               <span class="translatePage" @click="prevPage">
                 <icon icon-class="saasicon_arrowleft"></icon>
               </span>
             </el-tooltip>
             <em> {{pageInfo.pageIndex}} </em> / {{pageInfo.total}}
-            <el-tooltip content="下一页" placement="top">
+            <el-tooltip content="下一页" placement="top" v-tooltipMove>
               <span class="translatePage" @click="nextPage">
                 <icon icon-class="saasicon_arrowright1"></icon>
               </span>
             </el-tooltip>
           </span>
           <span class="docs">
-            <el-tooltip content="上一个文档" placement="top">
+            <el-tooltip content="上一个文档" placement="top" v-tooltipMove>
               <span @click="prevDoc">
                 <icon icon-class="saasicon_wordleft"></icon>
               </span>
             </el-tooltip>
-            <el-tooltip content="下一个文档" placement="top">
+            <el-tooltip content="下一个文档" placement="top" v-tooltipMove>
               <span @click="nextDoc">
                 <icon icon-class="saasicon_wordright"></icon>
               </span>

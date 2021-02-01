@@ -1,6 +1,6 @@
 <template>
   <div class="begin-play">
-    <el-tooltip class="item" effect="dark" content="发起直播" placement="top">
+    <el-tooltip class="item" effect="dark" v-tooltipMove content="发起直播" placement="top">
       <div class="begin-btn" @click="toRoom">
         <i class="iconfont-v3 saasicon_kaibo"></i>
       </div>

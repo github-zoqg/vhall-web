@@ -47,7 +47,7 @@
       <div class="statistical-title">统计图表</div>
       <div class="statistical-line" v-if="titleType != 4">
         <span>并发趋势图</span>
-        <el-tooltip effect="dark" placement="right-start">
+        <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
           <div slot="content">
             筛选条件内，并发随时间变化的趋势图
           </div>
@@ -57,7 +57,7 @@
       </div>
       <div class="statistical-line statistical-dark">
         <span>观看人数趋势</span>
-        <el-tooltip effect="dark" placement="right-start">
+        <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
           <div slot="content">
             筛选条件内，观看人数随时间变化的趋势图
           </div>
@@ -72,7 +72,7 @@
       <div class="statistical-map">
         <div class="map-title">
           <span>观看地域TOP10占比</span>
-          <el-tooltip effect="dark" placement="right-start">
+          <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
             <div slot="content">统计观看地域TOP10占比情况</div>
            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>

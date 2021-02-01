@@ -3,6 +3,7 @@
     <span class="pageTitle">{{pageTitle}}</span>
     <el-tooltip
       v-if="!!$props.content || !!$slots.content"
+      v-tooltipMove
       v-bind="$props">
       <div slot="content">
         <slot name="content"></slot>
