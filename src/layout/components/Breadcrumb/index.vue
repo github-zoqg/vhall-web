@@ -118,12 +118,11 @@ export default {
   line-height: 32px;
   margin-left: 8px;
   .no-redirect {
-    cursor: text;
     font-size: 14px;
     font-family: @fontRegular;
     font-weight: 400;
     color: #1A1A1A;
-    cursor: default;
+    cursor: not-allowed;
     &.level_0 {
       color: #666666;
       cursor: not-allowed;

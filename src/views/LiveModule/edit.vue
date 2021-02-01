@@ -800,7 +800,15 @@ export default {
   }
   .item-time .el-form-item {
     margin-bottom: 0px;
+    /deep/.iconfont-v3{
+      color: #999;
+      font-size: 14px;
+    }
+    /deep/.el-input__icon{
+      color: #999;
+    }
   }
+
   /deep/.el-upload--picture-card i.saasicon_shangchuan{
     font-size: 40px;
   }
