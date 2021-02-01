@@ -330,6 +330,11 @@ export default {
     z-index: 9;
   }
 }
+/deep/.upload__avatar{
+  .mask{
+    top:0;
+  }
+}
 /deep/.el-upload--picture-card{
   font-size: 40px;
   i.saasicon_shangchuan{

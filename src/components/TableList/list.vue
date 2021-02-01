@@ -437,39 +437,6 @@ export default {
     .grayText{
       color: #666;
     }
-  /deep/.el-button.el-button--text {
-    color: #1A1A1A;
-    border: 0;
-    &:hover{
-      color: #FB3A32;
-    }
-    // /deep/.el-button.text--default {
-    //   margin-right: 20px;
-    //   color: #999999;
-    //   font-size: 14px;
-    //   &:last-child {
-    //     margin-right: 0;
-    //   }
-    //   &:hover {
-    //     color: #5d81fb;
-    //     &:after {
-    //       border-bottom: 1px solid #5d81fb;
-    //     }
-    //   }
-    //   &:active {
-    //     color: #3157e1;
-    //     &:after {
-    //       border-bottom: 1px solid #3157e1;
-    //     }
-    //   }
-    //   &:disabled {
-    //     color: #9db3fc;
-    //     &:after {
-    //       border-bottom: 1px solid #9db3fc;
-    //     }
-    //   }
-    // }
-  }
    .icon_tag {
     width: 8px;
     height: 8px;

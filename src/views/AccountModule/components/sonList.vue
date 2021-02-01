@@ -696,8 +696,8 @@ export default {
       height: 36px;
       line-height: 36px;
     }
-    /deep/.el-input__suffix{
-      line-height: 45px;
+    /deep/.el-select__caret.el-input__icon.el-icon-arrow-up{
+      line-height: 36px;
     }
   }
 

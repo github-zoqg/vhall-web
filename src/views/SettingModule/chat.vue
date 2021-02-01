@@ -743,6 +743,7 @@ export default {
   overflow-y: auto;
   border-radius: 4px;
   border: 1px solid #CCCCCC;
+  cursor: not-allowed;
 }
 .notice {
   margin-top: 8px;
