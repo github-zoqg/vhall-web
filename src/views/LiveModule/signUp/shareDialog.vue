@@ -74,7 +74,7 @@ export default {
       dialogVisible: false,
       wxDialogVisible: false,
       shareSwtich: true,
-      link: `${process.env.VUE_APP_WAP_WATCH}/lives/signup/${this.$route.params.str}`,
+      link: `${process.env.VUE_APP_WEB_URL}/lives/entryform/${this.$route.params.str}`,
       sinaLink: `${process.env.VUE_APP_WEB_URL}/lives/entryform/${this.$route.params.str}`,
       wxUrl: ''
     };
