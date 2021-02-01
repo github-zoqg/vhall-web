@@ -9,7 +9,7 @@
     </pageTitle>
     <div class="head-operat">
       <el-button type="primary" size="medium" round class="head-btn set-upload" @click="addGift">创建礼物</el-button>
-      <el-button round size="medium" :class="{'no-data': selectIds.length <= 0}"
+      <el-button round size="medium" :class="['transparent-btn',{'no-data': selectIds.length <= 0}]"
                  :disabled="selectIds.length <= 0"
                  @click="handleDelete">批量删除</el-button>
       <VhallInput
@@ -665,25 +665,6 @@ export default {
       input{
         border-radius: 18px;
         border: 1px solid #CCC;
-      }
-    }
-    /deep/.el-button--default {
-      background: transparent;
-      &:hover {
-        background: #FB3A32;
-        border: 1px solid #FB3A32;
-      }
-      &:active {
-        background: #E2332C;
-        border: 1px solid #E2332C;
-      }
-      &.is-disabled {
-        border: 1px solid #E6E6E6;
-        background: transparent;
-        color: #B3B3B3;
-        &:hover,&:active {
-          background: transparent;
-        }
       }
     }
   }

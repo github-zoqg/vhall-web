@@ -4,7 +4,7 @@
       <el-col :span="14"
         > <div :style="{ height: '300px', width: '100%' }" ref="barEchart"></div></el-col>
       <el-col :span="10">
-        <div class="grid-table">
+        <div class="grid-table" v-if="tableList.length > 0">
           <el-scrollbar>
           <table border="0">
             <tr>
@@ -68,19 +68,19 @@ export default {
     initBarEcharts(xData, yData) {
       let that = this;
       this.barEcharts = echarts.init(this.$refs.barEchart, {
-        noDataLoadingOption: {
-          text: '暂无数据',
-          effect:'bubble',
-          effectOption : {
-            effect: {
-                n: 0 //气泡个数为0
-            }
-          },
-          textStyle: {
-              fontSize: 24,
-              fontWeight: 'bold'
-          }
-        }
+        // noDataLoadingOption: {
+        //   text: '暂无数据',
+        //   effect:'bubble',
+        //   effectOption : {
+        //     effect: {
+        //         n: 0 //气泡个数为0
+        //     }
+        //   },
+        //   textStyle: {
+        //     fontSize: 24,
+        //     fontWeight: 'bold'
+        //   }
+        // }
       });
       let option = {
         tooltip: {
@@ -94,9 +94,31 @@ export default {
         xAxis: {
           type: 'category',
           data: xData,
+          axisLine: {
+            lineStyle: {
+              color:'#999'
+            }
+          }
         },
         yAxis: {
           type: 'value',
+          axisLine: {
+            lineStyle: {
+              color:'#999'
+            }
+          }
+        },
+        title: {
+          text: '暂无数据',
+          x: 'center',
+          y: 'center',
+          show: !xData.length&&!yData.length,
+          textStyle: {
+            fontSize: 14,
+            fontStyle: 'normal',
+            fontWeight: 'normal',
+            color: '#1a1a1a'
+          }
         },
         color: ['#FB3A32'],
         series: [
@@ -108,8 +130,19 @@ export default {
             backgroundStyle: {
               color: 'rgba(220, 220, 220, 0.8)',
             },
+            labelLine: {
+              show: false
+            },
             emphasis: {
-              barWidth: '20%'
+              barWidth: '20%',
+              lineStyle: {
+                color: '#000000'
+              },
+              labelLine: {
+                lineStyle: {
+                  color: '#000000'
+                }
+              }
             }
           },
         ],

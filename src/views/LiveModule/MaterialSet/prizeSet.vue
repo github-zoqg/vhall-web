@@ -183,7 +183,6 @@ export default {
       length: 0,
       isChecked: 1,
       localImg: 0,
-      prizeImgList: [require('../../../common/images/gif/prize03.gif'), require('../../../common/images/gif/prize01.gif'), require('../../../common/images/gif/prize02.gif')],
       prizeUrl: [Env.staticImgs.prize[0], Env.staticImgs.prize[1], Env.staticImgs.prize[2]],
       givePrizeList: [
         {
@@ -278,6 +277,9 @@ export default {
         this.getGivePrize();
       }
     }
+  },
+  created() {
+    this.backgroundImg = this.prizeUrl[0]
   },
   async mounted() {
     this.activeName = this.$route.query.index || 'first';
@@ -460,11 +462,11 @@ export default {
     deleteImg() {
       this.previewSrc = '';
       this.isChecked = 1;
-      this.backgroundImg = this.prizeImgList[0];
+      this.backgroundImg = this.prizeUrl[0];
     },
     changeType(index) {
       this.isChecked = index;
-      this.backgroundImg = this.prizeImgList[index - 1];
+      this.backgroundImg = this.prizeUrl[index - 1];
     },
      prizeLoadSuccess(res, file){
       console.log('图片上传',res,'ssssss', file);

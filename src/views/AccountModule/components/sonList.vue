@@ -696,6 +696,9 @@ export default {
       height: 36px;
       line-height: 36px;
     }
+    /deep/.el-input__suffix{
+      line-height: 45px;
+    }
   }
 
   .el-input {

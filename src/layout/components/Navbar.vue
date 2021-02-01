@@ -292,6 +292,11 @@ export default {
   float: left;
   padding-left: 24px;
 }
+@media (max-width: 1366px) {
+  .breadcrumb-container {
+    display: none;
+  }
+}
 .right-menu {
   float: right;
   height: 32px;

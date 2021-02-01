@@ -41,8 +41,12 @@ export default {
   created() {
   },
   mounted() {
+    window.addEventListener('resize', this.resizeCharts)
   },
   methods: {
+    resizeCharts() {
+      this.myChart.resize()
+    },
     dealDisabledData(time) {
       // 设置选择的日期小于当前的日期,小于返回true,日期不可选
       // return time.getTime() < Date.now() - 8.64e7

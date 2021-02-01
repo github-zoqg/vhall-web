@@ -3,7 +3,7 @@
     <pageTitle pageTitle="商品"></pageTitle>
       <div class="head-operat" v-show="total || isSearch">
         <el-button type="primary" size="medium" round  @click="addProduct" v-preventReClick>创建商品</el-button>
-        <el-button round @click="batchDel(null)" size="medium" v-preventReClick :disabled="!checkedGoodsId.length">批量删除</el-button>
+        <el-button round @click="batchDel(null)" size="medium" class="transparent-btn" v-preventReClick :disabled="!checkedGoodsId.length">批量删除</el-button>
          <div class="inputKey">
           <VhallInput v-model.trim="keyword" placeholder="请输入商品名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>
             <i slot="suffix" @click="searchTableList" class="iconfont-v3 saasicon_search" style="cursor: pointer; line-height: 36px;"></i>
@@ -232,8 +232,8 @@ export default {
     // 编辑
     edit(that, {rows}) {
       if (!rows.status) {
-        that.$alert('商品已上架，如需编辑请先做下架处理？', '提示', {
-          confirmButtonText: '知道了',
+        that.$alert('商品已上架，如需编辑请先做下架处理', '提示', {
+          confirmButtonText: '我知道了',
           customClass: 'zdy-message-box'
         });
         return;

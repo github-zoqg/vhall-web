@@ -237,11 +237,6 @@ export default {
         message: '上传过程中请勿关闭或刷新浏览器',
         type: 'warning'
       });
-      // let open = document.querySelector('#openList');
-      // open.addEventListener('click', function(e){
-      //   that.vm.close();
-      //   that.getOrderArrear();
-      // });
     },
     getTableList(params){
       // let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
@@ -581,7 +576,14 @@ export default {
   },
   beforeDestroy() {
     this.isLeave = true
-    this.vm.close()
+    if (this.vm) {
+      this.vm.close()
+      this.vm = null
+    }
+    if (this.UploadSDK) {
+      this.UploadSDK.destroy()
+      this.UploadSDK = null;
+    }
     EventBus.$off("sign_trans_code");
   }
 };

@@ -12,7 +12,7 @@
     <div class="head-operat" v-show="total || isSearch" :class="source==0 ? 'head-prize' : ''">
       <el-button size="medium" type="primary" round class="head-btn length104" @click="createPrize">创建奖品</el-button>
       <el-button size="medium" round class="head-btn length104" v-if="$route.meta.title !== '奖品'" @click="prizeMeterial">资料库</el-button>
-      <el-button size="medium" round class="head-btn batch-del" @click="allDelete(null)" :disabled="!prizeChecked.length">批量删除</el-button>
+      <el-button size="medium" round class="head-btn batch-del transparent-btn" @click="allDelete(null)" :disabled="!prizeChecked.length">批量删除</el-button>
       <VhallInput
         class="search-tag"
         placeholder="请输入奖品名称"
@@ -35,7 +35,7 @@
     <div class="no-live" v-if="!total && !isSearch">
       <noData :nullType="'nullData'" :text="'您还未添加奖品，快去添加吧~'">
         <el-button type="primary"  round @click="createPrize" v-preventReClick>创建奖品</el-button>
-        <el-button v-if="$route.meta.title !== '奖品'" class="length152" round @click="prizeMeterial" v-preventReClick>资料库</el-button>
+        <el-button v-if="$route.meta.title !== '奖品'" type="white-primary" class="length152" round @click="prizeMeterial" v-preventReClick>资料库</el-button>
       </noData>
     </div>
     <div class="question-list" v-show="total || isSearch">

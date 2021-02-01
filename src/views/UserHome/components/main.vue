@@ -31,7 +31,7 @@
         col-sm-*  一般用于小屏设备（min-width：768px）
         col-xs  -*用于超小型设备（max-width：768px）
         -->
-        <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="8" :xl="6" v-for="(item, index) in dataList" :key="index">
+        <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="6" v-for="(item, index) in dataList" :key="index">
           <a class="inner" :href="toPageHandle(item)" target="_blank">
             <div class="top">
               <span class="liveTag" v-if="tabType === 'live' && item.webinar_type">

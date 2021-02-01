@@ -115,6 +115,16 @@ export default {
     },
     changeImg() {
       console.log(111111111111);
+    },
+    pageResize(){
+      this.$nextTick(()=>{
+        let screenWidth = window.screen.width;
+        if (screenWidth < 1366) {
+         this.sidebar.opened = false;
+         sessionOrLocal.set('v3-control-sidebar', JSON.stringify(this.sidebar));
+         this.$EventBus.$emit('hamburger', false);
+        }
+      })
     }
   },
   async created() {
@@ -155,8 +165,14 @@ export default {
         this.logo_jump_url = process.env.VUE_APP_COMPANY_URL;
       }
     });
+    let _this = this;//赋值vue的this
+    window.onresize = () => {
+  　　// 调用methods中的事件
+      _this.pageResize();
+    }
   },
   destroyed() {
+    window.onresize = null;
   }
 };
 </script>
