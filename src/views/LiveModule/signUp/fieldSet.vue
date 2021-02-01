@@ -324,7 +324,7 @@ export default {
       handler(newVal){
         this.title = newVal.title;
         this.intro = newVal.intro;
-        this.imageUrl = newVal.cover ? `http:${Env.staticLinkVo.uploadBaseUrl}${ newVal.cover }` : this.defaultHeader;
+        this.imageUrl = newVal.cover ? `${Env.staticLinkVo.uploadBaseUrl}${ newVal.cover }` : this.defaultHeader;
       },
       deep: true,
       immediate: true
