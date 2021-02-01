@@ -73,7 +73,7 @@
       <div class="white-box" v-show="!warmFlag">
       </div>
     </div>
-    <selectMedias ref="selecteMedia" @selected='mediaSelected' :videoSize="videoSize" :videoType="videoType"></selectMedias>
+    <selectMedias ref="selecteMedia" @selected='mediaSelected' :videoSize="videoSize" :videoType="videoType" @closeWarm="closeWarm"></selectMedias>
     <!-- 预览 -->
     <template v-if="showDialog">
       <div class="preview-wrap">
@@ -147,6 +147,10 @@ export default {
     showMenu () {
       this.showChecked = true
     },
+    closeWarm() {
+      this.warmFlag = false
+      this.openCloseWarm(1);
+    },
     // 开启或关闭暖场视频
     openCloseWarm(index) {
       let params = {
@@ -154,7 +158,7 @@ export default {
         is_open_warm_video: Number(this.warmFlag)
       }
       this.$fetch('warmOpen', params).then(res=>{
-        if(res.code == 200){
+        if(res.code == 200 && index != 1){
           this.$message({
             message: this.warmFlag ? '开启暖场视频成功' : '关闭暖场视频成功',
             showClose: true,
