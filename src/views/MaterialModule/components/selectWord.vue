@@ -37,7 +37,7 @@
         /> -->
         <el-table-column
           type="selection"
-          width="55"
+          width="52"
           align="left"
         />
         <el-table-column
