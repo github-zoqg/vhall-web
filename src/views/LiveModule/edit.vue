@@ -1025,8 +1025,12 @@ export default {
         color: #fff;
         font-size: 14px;
       }
-      /deep/.saasicon-eye, /deep/.saasicon_shanchu{
+      /deep/.saasicon_shanchu{
         font-size: 20px!important;
+        height: 30px;
+      }
+      /deep/.saasicon-eye{
+        font-size: 22px!important;
         height: 30px;
       }
     }

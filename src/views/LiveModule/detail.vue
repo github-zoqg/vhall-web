@@ -550,7 +550,7 @@ export default {
       border-radius: 20px;
       background: #F2F2F2;
       font-size: 12px;
-      padding: 2px 8px;
+      padding: 4px 8px;
       margin-right: 8px;
     }
   }
