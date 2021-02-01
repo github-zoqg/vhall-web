@@ -162,6 +162,7 @@ export default {
         keyword: this.formParams.keyword,
         type: 1,
         webinar_id: this.$route.params.str,
+        ext: 'ppt,pptx',
         ...this.pageInfo
       }
       this.$fetch('getWordList', this.$params(params)).then(res=>{
