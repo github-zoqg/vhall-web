@@ -266,7 +266,7 @@ export default {
   margin-top: 24px;
   width: 100%;
   min-height: 710px;
-  margin-bottom: 56px;
+  margin-bottom: 16px;
   height: auto;
   background: #FFFFFF;
   position: relative;
