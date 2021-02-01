@@ -225,7 +225,7 @@ export default {
           path: routerStr
         });
          window.open(routeData.href, '_blank');*/
-        let url = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}${routerStr}`;
+        let url = `${VUE_APP_WAP_WATCH}${routerStr}`;
         // window.open(url, '_blank');
         return url;
       }
