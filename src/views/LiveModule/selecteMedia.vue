@@ -263,6 +263,7 @@ export default {
       }).then(()=>{
         this.$parent.isChange = false;
         this.$parent.warmFlag = false;
+        this.$emit('closeWarm')
         this.$router.push({path: "/material/video"});
       }).catch(()=>{});
     }
