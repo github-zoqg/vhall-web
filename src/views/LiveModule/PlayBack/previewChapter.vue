@@ -390,9 +390,13 @@ export default {
         .listBox {
           height: calc(100% - 32px);
           overflow-y: auto;
+          /deep/ .__view{
+            width: 100%!important;
+          }
         }
         .chapterList{
           padding-right: 10px;
+          width: 100%;
           li{
             color: #CCCCCC;
             font-size: 12px;
