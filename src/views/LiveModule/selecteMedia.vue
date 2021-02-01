@@ -29,7 +29,7 @@
       @selection-change="handleSelectionChange">
       <el-table-column
         type="selection"
-        width="55">
+        width="52">
       </el-table-column>
       <el-table-column
         label="音视频名称">
@@ -314,6 +314,12 @@ export default {
     // /deep/.el-dialog__footer{
     //   padding:24px 32px;
     // }
+    /deep/ .el-table__body .el-table__row td:nth-child(2) .cell{
+      padding-left: 10px;
+    }
+    /deep/ thead tr th:nth-child(2) .cell{
+      padding-left: 10px;
+    }
   }
   .statusTag{
     &::before{

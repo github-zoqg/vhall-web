@@ -36,7 +36,7 @@
            >
             <el-table-column
               type="selection"
-              width="55"
+              width="52"
               align="left"
             />
             <el-table-column
@@ -594,6 +594,12 @@ export default {
   .layout--right--main();
   .padding-table-list();
   .min-height();
+  /deep/ .el-table__body .el-table__row td:nth-child(2) .cell{
+    padding-left: 10px;
+  }
+  /deep/ thead tr th:nth-child(2) .cell{
+    padding-left: 10px;
+  }
 }
 /deep/.el-input__inner{
     padding: 0 12px;

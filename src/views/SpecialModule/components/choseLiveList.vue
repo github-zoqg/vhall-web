@@ -11,7 +11,7 @@
       custom-class="choose-gift"
     >
       <VhallInput v-model.trim="keyword" placeholder="请输入直播标题" @keyup.enter.native="inputChange"  @clear="inputChange" class="head-btn search resetRightBrn" clearable>
-        <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer; line-height: 36px;"></i>
+        <i slot="suffix" class="iconfont-v3 saasicon_search" :class="{'disabled': !keyword}" @click="inputChange(true)"></i>
       </VhallInput>
       <div class="select-matrial-wrap">
         <div class="material-box" v-show="total">
@@ -98,7 +98,9 @@ export default {
   },
 
   methods: {
-    inputChange() {
+    inputChange(isSearch) {
+      if (isSearch && !this.keyword) return;
+
       this.activeList = [];
       // this.activeList.map(item => item.checked = false);
       this.selectedOption = [];
@@ -377,6 +379,13 @@ export default {
       .el-input__inner {
         border-radius: 18px;
         border: 1px solid #CCC;
+      }
+    }
+    /deep/ .saasicon_search {
+      cursor: pointer;
+      line-height: 36px;
+      &.disabled {
+        cursor: not-allowed;
       }
     }
   }
