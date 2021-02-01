@@ -56,7 +56,7 @@ let staticImgs = {
     'http://t-alistatic01.e.vhall.com/static/images/watch/weixin.png'
   ]
 }
-if (process.env === 'production') {
+if (process.env.NODE_ENV === 'production') {
   staticLinkVo.uploadBaseUrl = 'https://cnstatic01.e.vhall.com/upload/'
   staticLinkVo.tmplDownloadUrl = 'https://cnstatic01.e.vhall.com/static'
   staticImgs = {
