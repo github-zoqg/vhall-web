@@ -39,7 +39,7 @@ export default {
 }
 .box-item {
   width: 146px;
-  height: 81px;
+  height: 82px;
   margin: 16px 21px 17px 16px;
   border-radius: 4px;
   background: #1a1a1a;
