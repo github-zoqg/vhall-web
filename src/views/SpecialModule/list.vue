@@ -42,7 +42,7 @@
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"> {{item.pv | unitCovert}}</i>
             </span>
-            <img :src="item.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
+            <div class="img-box"><img :src="item.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
           </div>
           <div class="bottom">
             <div class="">
@@ -435,15 +435,30 @@ export default {
         position: relative;
         border-radius: 4px 4px 0 0;
         cursor: pointer;
-        img{
-          width: 100%;
+        .img-box{
+          width: 101%;
           height: 100%;
           position: absolute;
-          object-fit: scale-down;
           top:0;
           left: 0;
-          border-radius: 4px;
+          border-radius: 4px 8px 0 0;
+          img{
+            width: 100%;
+            height: 100%;
+            object-fit: scale-down;
+            cursor: pointer;
+            border-radius: 4px 8px 0 0;
+          }
         }
+        // img{
+        //   width: 100%;
+        //   height: 100%;
+        //   position: absolute;
+        //   object-fit: scale-down;
+        //   top:0;
+        //   left: 0;
+        //   border-radius: 4px;
+        // }
         .liveTag{
           background: rgba(0,0,0, .7);
           color: #fff;

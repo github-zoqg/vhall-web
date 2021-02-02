@@ -607,4 +607,45 @@ export default {
 .withdrawBtn{
   // padding-top: 20px;
 }
+.captcha {
+  /deep/.yidun_slider {
+    .yidun_slider__icon {
+      background-image: url(./images/icon-slide1.png)!important;
+      background-size: 28px 20px!important;
+      background-position: center!important;
+      margin-top: -5px!important;
+    }
+    &:hover {
+      // background-color: #FB3A32;
+      .yidun_slider__icon {
+        background-image: url(./images/icon-slide.png)!important;
+      }
+    }
+  }
+  /deep/ .yidun--success {
+    // .yidun_control--moving {
+    //   background-color: #F0F1FE!important;
+    //   .yidun_slide_indicator {
+    //     background-color: #F0F1FE!important;
+    //   }
+    // }
+    .yidun_control {
+      .yidun_slider {
+        .yidun_slider__icon {
+          background-image: url(./images/icon-succeed.png);
+          background-size: 28px 20px;
+          background-position: center;
+        }
+        &:hover {
+          // background-color: #FB3A32;
+          .yidun_slider__icon {
+            background-image: url(./images/icon-succeed.png);
+            background-size: 28px 20px;
+            background-position: center;
+          }
+        }
+      }
+    }
+  }
+}
 </style>

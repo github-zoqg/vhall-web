@@ -44,7 +44,7 @@ export default {
       margin-right: 16px;
       margin-bottom: 20px;
       .vh-chose-active-item__cover{
-        height: 136px;
+        height: 135px;
       }
       .vh-chose-active-item__title ellsips{
         font-size: 16px;

@@ -426,7 +426,7 @@ export default {
     }
     .top{
       cursor: pointer;
-      height: 175px;
+      height: 170px;
      /*  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
       background: #1A1A1A;
       background-size: 400% 400%;

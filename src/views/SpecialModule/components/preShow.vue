@@ -24,14 +24,12 @@
             <div class="text" v-html="specialInfo.intro"></div>
           </el-tab-pane>
           <el-tab-pane label="目录列表" name="second">
-            <!-- <el-scrollbar v-loadMore="moreLoadData"> -->
               <el-row :gutter="40" class="lives">
                   <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
                     <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
-                      <!-- @click="goWatchData(item)" -->
                       <div class="top">
                         <span class="liveTag">{{item | liveTag }}</span>
-                        <img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt="">
+                        <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
                       </div>
                       <div class="bottom">
                         <div class="">
@@ -42,7 +40,6 @@
                     </a>
                   </el-col>
               </el-row>
-            <!-- </el-scrollbar> -->
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -154,8 +151,8 @@ export default {
       display: flex;
     }
     .special-img{
-      width: 722px;
-      height: 406px;
+      width: 720px;
+      height: 400px;
       border-radius: 4px;
       background-color: #1a1a1a;
       img{
@@ -250,6 +247,7 @@ export default {
         .liveItem{
           height: 255px;
           margin-bottom: 20px;
+          border-radius: 4px;
           // border: 1px solid #ccc;
           .inner{
             display: inline-block;
@@ -261,7 +259,7 @@ export default {
             box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.15);
           }
           .top{
-            height: 175px;
+            height: 150px;
             /* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
             background: #1A1A1A;
             background-size: 400% 400%;
@@ -269,14 +267,31 @@ export default {
             padding: 10px 10px;
             box-sizing: border-box;
             position: relative;
-            img{
-              width: 100%;
+            border-radius: 4px 4px 0 0;
+            .img-box{
+              // width: 101%;
               height: 100%;
-              object-fit: scale-down;
               position: absolute;
               top:0;
               left: 0;
+              overflow: hidden;
+              border-radius: 4px 4px 0 0;
+              img{
+                width: 100%;
+                height: 100%;
+                object-fit: scale-down;
+                cursor: pointer;
+                border-radius: 4px 4px 0 0;
+              }
             }
+            // img{
+            //   width: 100%;
+            //   height: 100%;
+            //   object-fit: scale-down;
+            //   position: absolute;
+            //   top:0;
+            //   left: 0;
+            // }
             .liveTag{
               background: rgba(0,0,0, .7);
               color: #fff;

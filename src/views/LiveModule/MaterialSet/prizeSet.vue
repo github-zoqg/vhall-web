@@ -102,7 +102,7 @@
                       </p>
                     </div>
                 </el-form-item>
-                <div class="add-prize" @click="addField">
+                <div class="add-prize" @click="addField" v-if="givePrizeList.length < 6">
                   <i class="el-icon-plus"></i>
                   添加字段
                 </div>

@@ -197,8 +197,9 @@ export default {
           this.getOpenLive();
         }
         if (res.data.webinar_state == 2) {
-          let date = new Date();
-          let nowTime = date.setTime(date.getTime());
+          // let date = new Date();
+          // let nowTime = date.setTime(date.getTime());
+          let nowTime = res.data.time * 1000;
           this.downTime(formateDates(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
         }
       }).catch(res=>{

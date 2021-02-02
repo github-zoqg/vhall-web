@@ -186,7 +186,7 @@ export default {
     // padding: 0 8px;
     height: 202px;
     .vh-chose-active-item__cover{
-      height: 136px;
+      height: 135px;
     }
   }
 }
