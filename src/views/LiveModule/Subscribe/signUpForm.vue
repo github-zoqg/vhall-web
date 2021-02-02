@@ -245,7 +245,7 @@
         </div>
       </vhscroll>
       <i v-if="!isEntryForm" class="closeBtn" @click="closePreview">
-        <icon icon-class="saasicon_close"></icon>
+        <i class="iconfont-v3 saasicon_close"></i>
       </i>
     </div>
   </div>
@@ -1065,9 +1065,9 @@
         padding: 0 75px;
       }
       .closeBtn{
-        width: 32px;
-        height: 32px;
-        background: rgba(0, 0, 0, 0.6);
+        width: 24px;
+        height: 24px;
+        background: rgba(0, 0, 0, 0.4);
         border-radius: 28px;
         color: #fff;
         position: absolute;
@@ -1078,6 +1078,9 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        .saasicon_close{
+          font-size: 14px;
+        }
       }
       .tabsBox{
         width: 100%;
