@@ -8,7 +8,7 @@
           <span>我的主页</span>
           <el-input v-model="myMain" readonly style="max-width:640px">
             <template slot="suffix" >
-              <el-tooltip class="item" effect="dark" content="复制" placement="top">
+              <el-tooltip class="item" effect="dark" content="复制" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(myMain)"></i>
               </el-tooltip>
             </template>
@@ -21,7 +21,7 @@
           </el-tooltip> -->
           <el-input v-model="liveContent" readonly style="max-width:640px">
             <template slot="suffix" >
-              <el-tooltip class="item" effect="dark" content="复制" placement="top">
+              <el-tooltip class="item" effect="dark" content="复制" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(liveContent)"></i>
               </el-tooltip>
             </template>
@@ -37,7 +37,7 @@
           <span>完全嵌入</span>
           <el-input v-model="completion" readonly style="max-width:640px">
             <template slot="suffix" >
-              <el-tooltip class="item" effect="dark" content="复制" placement="top">
+              <el-tooltip class="item" effect="dark" content="复制" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(completion)"></i>
               </el-tooltip>
             </template>
@@ -47,7 +47,7 @@
           <span>视频嵌入</span>
           <el-input v-model="video" readonly style="max-width:640px">
             <template slot="suffix" >
-              <el-tooltip class="item" effect="dark" content="复制" placement="top">
+              <el-tooltip class="item" effect="dark" content="复制" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(video)"></i>
               </el-tooltip>
             </template>

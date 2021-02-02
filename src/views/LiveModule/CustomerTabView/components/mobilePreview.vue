@@ -31,7 +31,7 @@
                   <li @click="addLeft(index)"> 左侧新增菜单 </li>
                   <li v-if="item.type == 1">
                     <el-checkbox type="checkbox" :checked="item.status == 4" @change="showOrHide(index)" /> 预告/结束显示
-                    <el-tooltip class="item" effect="dark" placement="right">
+                    <el-tooltip v-tooltipMove class="item" effect="dark" placement="right">
                       <div slot="content" style="line-height:24px">勾选后，该直播为预告和结束状态时也会显示此菜单；<br />不勾选则只在直播和回放状态显示。</div>
                       <i class="iconfont-v3 saasicon_help_m"></i>
                     </el-tooltip>

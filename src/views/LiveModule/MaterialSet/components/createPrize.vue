@@ -41,6 +41,8 @@
       :close-on-click-modal="false"
       :before-close="handleClose"
       :lock-scroll=false
+      style="overflow: hidden;"
+      custom-class="choose-gift"
       width="588px">
      <div class="prizeList">
        <div class="search" v-show="total || isSearch">
@@ -48,8 +50,8 @@
            <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer;line-height: 36px;"></i>
          </VhallInput>
        </div>
-       <div v-show="total">
-        <el-scrollbar v-loadMore="moreLoadData">
+       <div v-show="total" class="material-box">
+        <el-scrollbar  style="height:100%" v-loadMore="moreLoadData">
          <div class="prize">
            <div class="prize-item" v-for="(item, index) in list" :key="index" :class="item.isChecked ? 'active' : ''" @click.stop="choisePrize(item)">
              <span class="prize-img"><img :src="item.img_path" alt=""></span>
@@ -468,20 +470,43 @@ export default {
       height: 40px;
     }
   }
+  /deep/ .choose-gift {
+    .el-dialog__title {
+      line-height: 28px;
+    }
+    .el-dialog__body {
+      padding: 0;
+    }
+    .head-btn.el-input {
+      width: 220px;
+      height: 36px;
+      margin-left: 32px;
+      .el-input__inner {
+        border-radius: 18px;
+        border: 1px solid #CCC;
+      }
+    }
+  }
 .prize-create{
   .prizeList{
     padding-bottom: 24px;
-    .search{
-      margin-bottom: 16px;
-      /deep/.el-input__inner{
-      border-radius: 20px;
-      height: 36px;
-      background: transparent;
+      .search{
+        margin-bottom: 16px;
+        padding: 0 32px;
+        /deep/.el-input__inner{
+        border-radius: 20px;
+        height: 36px;
+        background: transparent;
+      }
     }
+    .material-box {
+      height: 300px;
+      margin-bottom: 10px;
     }
     .prize{
       max-height: 300px;
       display: flex;
+      padding: 0 32px;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
@@ -568,7 +593,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 24px;
+    padding: 24px 32px 0 32px;
     .prize-check{
      span{
        color: #666;

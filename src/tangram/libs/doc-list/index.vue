@@ -47,7 +47,7 @@
             >
             <button class="upload" >上传</button>
           </el-upload>
-          <el-tooltip placement="right">
+          <el-tooltip placement="right" v-tooltipMove>
             <div slot="content">
               <div class="help-tips">
                 <p style="line-height: 20px">1.支持的文档格式： doc/docx,xls/xlsx,ppt</p>

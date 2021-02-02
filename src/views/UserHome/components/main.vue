@@ -144,7 +144,9 @@ export default {
         need_flash: 0 // 是否需要flash数据 0 否 1 是liveStatus
       };
       this.loading = true;
-      this.$fetch('liveList', this.$params(params)).then(res=>{
+      this.$fetch('liveList', this.$params(params), {
+        'gray-id': this.$route.params.str
+      }).then(res=>{
         this.loading = false;
         if (res && res.code === 200) {
           let list = res.data.list;
@@ -177,7 +179,9 @@ export default {
         order_type: 1 // 排序规则 1 按照创建时间排序 2 按照最后直播时间排序
       };
       this.loading = true;
-      this.$fetch('subjectList', this.$params(params)).then(res=>{
+      this.$fetch('subjectList', this.$params(params), {
+        'gray-id': this.$route.params.str
+      }).then(res=>{
         this.loading = false;
         if (res && res.code === 200) {
           console.log(res);
@@ -225,7 +229,7 @@ export default {
           path: routerStr
         });
          window.open(routeData.href, '_blank');*/
-        let url = `${VUE_APP_WAP_WATCH}${routerStr}`;
+        let url = `${process.env.VUE_APP_WAP_WATCH}${routerStr}`;
         // window.open(url, '_blank');
         return url;
       }
@@ -284,8 +288,10 @@ export default {
         // 非控制台个人主页，单独调用权限信息页
         this.$fetch('planFunctionGet', {
           webinar_user_id: this.$route.params.str
+        }, {
+          'gray-id': this.$route.params.str
         }).then(result => {
-          if (result && result.code === 200) {
+            if (result && result.code === 200) {
             let permissions = result.data.permissions;
             if(permissions) {
               // 设置全部权限

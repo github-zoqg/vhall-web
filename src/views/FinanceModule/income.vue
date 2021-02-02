@@ -17,7 +17,7 @@
             </div>
             <div class="all-come">
               <p>可用金额<span class="moneyUnit">(元)</span><span class="withdraw" @click="cash('直播')">{{ incomeInfo.in_live_withdraw ? '提现中' : '提现' }}</span>
-                <el-tooltip effect="dark" placement="right-start">
+                <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
                   <div slot="content">
                    Q1: 平台提现额度为多少？<br>
                     A1: 平台余额1元以上方可提现。线上最大支持单笔提现额度为800元。<br>应国家税务局要求，个人用户单次提现超过800元将产生个人所得税，<br>请发送以下资料至：finance@vhall.com<br>
@@ -49,7 +49,7 @@
             </div>
             <div class="all-come">
               <p>可用金额<span class="moneyUnit">(元)</span><span class="withdraw" @click="cash('红包')">{{ incomeInfo.in_red_withdraw ? '提现中' : '提现' }}</span>
-                <el-tooltip effect="dark" placement="right-start">
+                <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
                   <div slot="content">
                    Q1: 红包提现额度为多少？<br>
                     A1: 红包余额1元以上方可提现，线上最大支持单笔提现额度为800元。<br>应国家税务局要求，个人用户单次提现超过800元将产生个人所得税，<br>请发送以下资料至：finance@vhall.com<br>

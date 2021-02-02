@@ -3,7 +3,8 @@
     title="选择封面背景"
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
-    width="700px"
+    style="overflow: hidden;"
+    width="670px"
   >
     <el-scrollbar class="scrollbar scroll-modify">
       <div class="background-list">
@@ -186,14 +187,19 @@ export default {
   max-height: 300px;
   display: flex;
   // justify-content: space-between;
-  align-items: center;
+  // align-items: center;
   flex-wrap: wrap;
   .list-item {
     width: 140px;
     height: 140px;
-    margin: 8px;
+    // margin: 8px;
+    margin-bottom: 10px;
     position: relative;
     border-radius: 4px;
+    margin-right: 15px;
+    &:nth-of-type(4n) {
+      margin-right: 0;
+    }
     .bgImg {
       width: 100%;
       border-radius: 4px;

@@ -33,7 +33,7 @@
                 </template>
                 <span class="show-span" v-else>{{appForm[node.modelKey]}}</span>
                 <span class="copy" v-if="action === 'detail' && node.nodeType == 'text'" @click="copy(appForm[node.modelKey])">
-                  <el-tooltip class="item" effect="dark" content="复制" placement="top">
+                  <el-tooltip class="item" effect="dark" content="复制" placement="top" v-tooltipMove>
                     <i class="iconfont-v3 saasicon_copy"></i>
                   </el-tooltip>
                 </span>

@@ -533,7 +533,7 @@
             <div class="mask">
               <p>
                 <span>视图</span>
-                <el-tooltip content="切换" placement="top">
+                <el-tooltip content="切换" placement="top" v-tooltipMove>
                   <a
                     href="javascript:void(0);"
                     class="iconfont iconfuzhi"
@@ -543,6 +543,7 @@
                 <el-tooltip
                   content="全屏"
                   placement="top"
+                  v-tooltipMove
                   v-show="miniElement == 'video'"
                 >
                   <a

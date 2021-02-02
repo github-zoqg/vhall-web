@@ -31,7 +31,7 @@
       <el-form-item label="直播模式" required v-if="webniarType=='live'">
         <div class="titleBox">
           <span class="pageTitle">直播创建成功后，直播模式将不可修改</span>
-          <el-tooltip>
+          <el-tooltip v-tooltipMove>
             <div slot="content">
               <p>1.视频直播：音频+视频直播，需要保证摄像头和麦克风正常</p>
               <p>2.互动直播：音视频互动连麦，最多支持6人连麦直播</p>
@@ -144,7 +144,7 @@
               <el-button type="text" class="operaBtn" >删除</el-button>
             </div>
           </div>
-          <el-tooltip v-if="!$route.query.record_id">
+          <el-tooltip v-if="!$route.query.record_id" v-tooltipMove>
             <div slot="content">
               1.上传单个文件最大2G，文件标题不能带有特殊字符和空格<br/>
               2.视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV<br/>
@@ -800,7 +800,15 @@ export default {
   }
   .item-time .el-form-item {
     margin-bottom: 0px;
+    /deep/.iconfont-v3{
+      color: #999;
+      font-size: 14px;
+    }
+    /deep/.el-input__icon{
+      color: #999;
+    }
   }
+
   /deep/.el-upload--picture-card i.saasicon_shangchuan{
     font-size: 40px;
   }

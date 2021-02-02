@@ -62,7 +62,7 @@
           <div class="role-card-head">
             <div class="title--box">
               <label class="title--label role2">嘉宾</label>
-              <el-tooltip>
+              <el-tooltip v-tooltipMove>
                 <div slot="content">
                   1、嘉宾可凭口令进入直播间；<br/>
                   2、互动直播中，通过网页端和客户端登录的主持人和<br/>
@@ -110,7 +110,7 @@
           <div class="role-card-head">
             <div class="title--box">
               <label class="title--label role3">助理</label>
-              <el-tooltip>
+              <el-tooltip v-tooltipMove>
                 <div slot="content">
                   1、助理可凭口令进入直播间；<br />
                   2、每个直播间最多可以登录10位助理；<br />

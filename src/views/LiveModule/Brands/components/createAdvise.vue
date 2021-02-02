@@ -48,7 +48,9 @@
       :visible.sync="dialogAdverVisible"
       :close-on-click-modal="false"
       :before-close="handleClose"
-      width="620px">
+      style="overflow: hidden;"
+      custom-class="choose-gift"
+      width="590px">
       <div class="content" v-show="total || isSearch">
         <div class="search" v-show="total || isSearch">
            <VhallInput class="search-dialog-tag" v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" @keyup.enter.native="changeAdverment" maxlength="50" @clear="changeAdverment" clearable>
@@ -511,6 +513,23 @@ export default {
       }
     }
   }
+  /deep/ .choose-gift {
+    .el-dialog__title {
+      line-height: 28px;
+    }
+    .el-dialog__body {
+      padding: 0;
+    }
+    .head-btn.el-input {
+      width: 220px;
+      height: 36px;
+      margin-left: 32px;
+      .el-input__inner {
+        border-radius: 18px;
+        border: 1px solid #CCC;
+      }
+    }
+  }
   /deep/.el-dialog {
     border-radius: 4px;
     // padding-bottom: 15px;
@@ -566,6 +585,7 @@ export default {
      .search{
        height: 40px;
        margin-bottom: 18px;
+       padding: 0 32px;
        /deep/.el-input__inner{
          border-radius: 20px;
        }
@@ -575,6 +595,7 @@ export default {
      }
      .ad-list{
        display: flex;
+       padding: 0 32px;
       //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
@@ -594,6 +615,9 @@ export default {
           // box-sizing: border-box;
           // position: relative;
           border-radius: 4px;
+          &:nth-of-type(3n) {
+            margin-right: 0;
+          }
           &.active{
             background: #FFFFFF;
             box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
@@ -672,9 +696,10 @@ export default {
     }
   }
   .text{
-       margin-top: 10px;
+      margin-top: 10px;
       position: absolute;
       bottom: 40px;
+      padding-left: 32px;
        span{
          color: #FB3A32;
          padding: 0 5px;

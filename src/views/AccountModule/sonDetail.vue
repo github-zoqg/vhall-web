@@ -21,7 +21,7 @@
       </div>
       <div class="page--son-tab">
          <div class="son__detail--user">
-          <h1 class="title">子账号信息<span class="copy" @click="copy(sonText)"> <el-tooltip class="item" effect="dark" content="复制" placement="top">
+          <h1 class="title">子账号信息<span class="copy" @click="copy(sonText)"> <el-tooltip class="item" effect="dark" content="复制" placement="top" v-tooltipMove>
                     <i class="iconfont-v3 saasicon_copy"></i>
                   </el-tooltip></span></h1>
           <div class="son__detail_icon">

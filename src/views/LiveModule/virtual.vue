@@ -204,6 +204,7 @@ export default {
   }
   /deep/.el-input__inner {
     border-radius: 4px;
+    padding: 0 12px;
   }
   /deep/.el-input-group__append {
     background: transparent;
