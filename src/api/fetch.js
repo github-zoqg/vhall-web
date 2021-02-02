@@ -64,9 +64,17 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
     'request-id': uuidV1()
   };
 
+  // 若head里面存在，以head传入的灰度ID为准
+  if (header['gray-id'] > 0) {
+    headers['gray-id'] = header['gray-id']
+  } else {
+    // 取缓存userId相关
+    if (window.sessionStorage.getItem('userId')) {
+      headers['gray-id'] = window.sessionStorage.getItem('userId')
+    }
+  }
   // interact_token && (headers['interact-token'] = interact_token)
   if(window.location.hash.indexOf('/live/watch/') !== -1) {
-
     // pc观看等
     headers.platform = 7;
   }
@@ -83,6 +91,7 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   } else {
     headers['Content-Type'] = 'application/x-www-form-urlencoded';
   }
+
   let option = {
     method, // *GET, POST, PUT, DELETE, etc.
     mode: 'cors',
@@ -103,6 +112,9 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   } else {
     api = `${process.env.VUE_APP_BASE_URL}${api}`;
   }
+
+  console.log('request.then', option, api)
+
   return fetch(api, option).then((res) => {
     return res.json();
   }).then(res => {
