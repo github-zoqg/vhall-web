@@ -319,6 +319,7 @@ export default {
     }
     /deep/ thead tr th:nth-child(2) .cell{
       padding-left: 10px;
+    }
     // 滚动条的宽度
     /deep/ .el-table__body-wrapper::-webkit-scrollbar {
       width: 6px; // 横向滚动条
