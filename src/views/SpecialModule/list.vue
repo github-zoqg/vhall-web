@@ -22,7 +22,7 @@
           @keyup.enter.native="searchHandler"
           @clear="searchHandler"
           clearable
-          v-model.trim="keyWords">
+          v-model="keyWords">
           <i
             class="el-icon-search el-input__icon"
             slot="suffix"

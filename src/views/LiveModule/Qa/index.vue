@@ -118,14 +118,14 @@
         :close-on-click-modal="false"
         width="50%">
         <div id="send-content">
-          <el-input
+          <VhallInput
             type="textarea"
             maxlength="1000"
             :rows="5"
             placeholder="请输入内容"
             v-model="sendMessage.text"
             show-word-limit>
-          </el-input>
+          </VhallInput>
         </div>
         <div slot="footer">
           <p class="send-left">

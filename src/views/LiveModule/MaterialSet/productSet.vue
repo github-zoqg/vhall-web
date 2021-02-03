@@ -5,7 +5,7 @@
         <el-button type="primary" size="medium" round  @click="addProduct" v-preventReClick>创建商品</el-button>
         <el-button round @click="batchDel(null)" size="medium" class="transparent-btn" v-preventReClick :disabled="!checkedGoodsId.length">批量删除</el-button>
          <div class="inputKey">
-          <VhallInput v-model.trim="keyword" placeholder="请输入商品名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>
+          <VhallInput v-model="keyword" placeholder="请输入商品名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>
             <i slot="suffix" @click="searchTableList" class="iconfont-v3 saasicon_search" style="cursor: pointer; line-height: 36px;"></i>
           </VhallInput>
         </div>

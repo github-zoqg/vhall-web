@@ -27,7 +27,7 @@
           </upload>
         </el-form-item>
         <el-form-item label="奖品名称" prop="prize_name">
-          <VhallInput v-model.trim="prizeForm.prize_name" :maxlength="10" autocomplete="off"  show-word-limit></VhallInput>
+          <VhallInput v-model="prizeForm.prize_name" :maxlength="10" autocomplete="off"  show-word-limit></VhallInput>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -46,7 +46,7 @@
       width="588px">
      <div class="prizeList">
        <div class="search" v-show="total || isSearch">
-         <VhallInput v-model.trim="keyword" class="search-dialog-tag" placeholder="请输入奖品名称" style="width:220px;" @keyup.enter.native="inputChange" @clear="inputChange" clearable>
+         <VhallInput v-model="keyword" class="search-dialog-tag" placeholder="请输入奖品名称" style="width:220px;" @keyup.enter.native="inputChange" @clear="inputChange" clearable>
            <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer;line-height: 36px;"></i>
          </VhallInput>
        </div>

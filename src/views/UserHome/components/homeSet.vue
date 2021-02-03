@@ -2,7 +2,7 @@
   <div class="home--set--info">
     <el-form :model="homeSetInfoForm" ref="homeSetInfoForm" :rules="homeSetInfoFormRules" label-width="94px">
       <el-form-item label="主页标题" prop="title">
-        <el-input type="text" placeholder="请输入账号昵称" v-model.trim="homeSetInfoForm.title" maxlength="30" show-word-limit />
+        <VhallInput type="text" placeholder="请输入账号昵称" v-model="homeSetInfoForm.title" maxlength="30" show-word-limit />
       </el-form-item>
       <el-form-item label="主页头像" prop="homepage_avatar">
         <upload
@@ -30,12 +30,12 @@
                    v-model="homeSetInfoForm.content"
                    toolbar="fontsizeselect bold italic underline anchor | alignleft aligncenter alignright alignjustify | fullscreen">
         </v-editor>-->
-        <el-input
+        <VhallInput
         type="textarea"
         :rows="5"
-        v-model.trim="homeSetInfoForm.content"
+        v-model="homeSetInfoForm.content"
         maxlength="150"
-        show-word-limit></el-input>
+        show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item label="背景图片" prop="img_url">
         <upload

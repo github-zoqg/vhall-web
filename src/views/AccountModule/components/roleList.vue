@@ -14,13 +14,13 @@
       <div class="role--list--search">
         <el-button size="medium" type="primary" round @click.prevent.stop="addRole">创建角色</el-button>
         <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="!(this.ids && this.ids.length > 0)">批量删除</el-button>
-        <el-input placeholder="搜索角色名称" v-model.trim="role_name"
+        <VhallInput placeholder="搜索角色名称" v-model="role_name"
                   clearable
                   @clear="initQuerySonList"
                   class="search-query"
                   @keyup.enter.native="initQuerySonList">
           <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
-        </el-input>
+        </VhallInput>
       </div>
       <!-- 有消息内容 -->
       <div>

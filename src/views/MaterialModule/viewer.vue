@@ -113,7 +113,7 @@
           <VhallInput v-model.trim="viewerForm.job_number" auto-complete="off" placeholder="请输入工号（最多50个字符）" :maxlength="50"/>
         </el-form-item>
         <el-form-item label="其他" prop="other">
-          <VhallInput v-model.trim="viewerForm.other" auto-complete="off" placeholder="请输入其他内容（最多50个字符）" :maxlength="50"/>
+          <VhallInput v-model="viewerForm.other" auto-complete="off" placeholder="请输入其他内容（最多50个字符）" :maxlength="50"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

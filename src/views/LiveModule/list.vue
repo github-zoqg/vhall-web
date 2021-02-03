@@ -32,7 +32,7 @@
           <VhallInput
             class="search-tag"
             placeholder="搜索直播标题"
-            v-model.trim="keyWords"
+            v-model="keyWords"
             clearable
             @change="searchHandler"
             @keyup.enter.native="searchHandler">

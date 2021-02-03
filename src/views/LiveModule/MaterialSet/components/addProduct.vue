@@ -4,7 +4,7 @@
     <div class="add-product">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="商品名称" prop="name">
-          <VhallInput v-model.trim="form.name" :maxlength="30" autocomplete="off"  show-word-limit placeholder="请输入商品名称"></VhallInput>
+          <VhallInput v-model="form.name" :maxlength="30" autocomplete="off"  show-word-limit placeholder="请输入商品名称"></VhallInput>
         </el-form-item>
         <el-form-item label="商品图片" prop="img_id">
           <div class="imgList">
@@ -45,7 +45,7 @@
           <p class="imgText">建议尺寸600*600，小于2M，支持jpg、gif、png、bmp</p>
         </el-form-item>
         <el-form-item label="商品描述" prop="description">
-          <VhallInput type="textarea" v-model.trim="form.description" :maxlength="140" autocomplete="off"  show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></VhallInput>
+          <VhallInput type="textarea" v-model="form.description" :maxlength="140" autocomplete="off"  show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></VhallInput>
         </el-form-item>
         <el-form-item label="商品原价" prop="price">
           <VhallInput v-model.trim="form.price" placeholder="请输入价格" autocomplete="off"  :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></VhallInput>

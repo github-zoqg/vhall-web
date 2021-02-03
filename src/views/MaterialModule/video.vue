@@ -17,7 +17,7 @@
       <VhallInput
         class="search-tag"
         placeholder="请输入音视频名称"
-        v-model.trim="keyword"
+        v-model="keyword"
         clearable
         @clear="searchTableList"
         @keyup.enter.native="searchTableList">
@@ -143,7 +143,7 @@
       :close-on-press-escape=false>
       <div class="edit-contianer">
         <div class="main-edit">
-          <VhallInput v-model.trim="videoName" :maxlength="100" autocomplete="off" show-word-limit  type="text" style="width:356px" placeholder="请输入名称" oninput="this.value=this.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi, '')"></VhallInput>
+          <VhallInput v-model="videoName" :maxlength="100" autocomplete="off" show-word-limit  type="text" style="width:356px" placeholder="请输入名称"></VhallInput>
           <p v-show="errorText">请输入正确的格式文件</p>
         </div>
         <div class="dialog-footer">

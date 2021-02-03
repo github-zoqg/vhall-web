@@ -19,7 +19,7 @@
       <VhallInput
         class="search-tag"
         placeholder="搜索文件名称"
-        v-model.trim="file_name"
+        v-model="file_name"
         clearable
         @change="search"
         @keyup.enter.native="search">
