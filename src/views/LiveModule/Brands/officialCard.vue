@@ -576,7 +576,7 @@ export default {
         color: #666666;
         background: #f7f7f7;
         position: absolute;
-        top: 38px;
+        top: 40px;
         left: 50%;
         transform: translateX(-50%);
       }
@@ -641,11 +641,11 @@ export default {
         text-align: center;
         width: 310px;
         height: 566px; */
-        right: calc(50% - 156px);
-        top: 75px;
+        right: calc(50% - 155px);
+        top: 80px;
         text-align: center;
         width: 312px;
-        height: 576px;
+        height: 580px;
         background: #000000;
         border-radius: 0px 0px 26px 26px;
         opacity: 0.6;

@@ -448,7 +448,7 @@ export default {
     padding-top: 30px;
   }
 .changeOption {
-  width: 120px;
+  // width: 120px;
   height: 32px;
   border-radius: 100px;
   border: 1px solid #ccc;

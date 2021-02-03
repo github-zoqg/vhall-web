@@ -376,7 +376,7 @@ export default {
       &__btn{
         cursor: pointer;
         float: left;
-        width: 79px;
+        width: 78px;
         font-size: 14px;
         font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
         font-weight: 400;
