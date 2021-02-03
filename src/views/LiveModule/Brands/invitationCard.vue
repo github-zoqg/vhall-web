@@ -709,14 +709,13 @@ export default {
       background: #FFFFFF;
       height: 620px;
       position: relative;
-      border-radius: 4px;
       border: 1px solid #E6E6E6;
       // box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
       // height: 360px;
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: 100% 100%;
       background-repeat: no-repeat;
-      border-radius: 4px 4px 0 0;
+      border-radius: 4px 4px 6px 6px;
       z-index: 0;
       .watch-bg{
         height: 360px;
@@ -740,7 +739,7 @@ export default {
               border-radius: 50%;
               // border: 1px solid #ccc;
               margin: auto;
-              margin-bottom: 4px;
+              margin-bottom: 10px;
               img{
                 width: 100%;
                 height: 100%;
@@ -762,6 +761,7 @@ export default {
       z-index: 1;
       height: 258px;
       position: relative;
+      border-radius: 0 0 4px 4px;
       h1{
         padding:0;
         font-size: 28px;

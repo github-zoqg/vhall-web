@@ -214,6 +214,9 @@ export default {
       margin-left: 40px;
       vertical-align: top;
       padding-top: 8px;
+      /deep/button.el-button.el-button--medium{
+        padding: 4px 23px;
+      }
     }
     .button__share {
       margin-left: 12px;

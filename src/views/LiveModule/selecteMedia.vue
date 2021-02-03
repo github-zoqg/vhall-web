@@ -1,5 +1,5 @@
 <template>
-<div class="select-video" v-if="dialogVisible">
+<div class="select-video">
   <el-dialog
     title="选择音视频"
     @closed="closeHandler"
@@ -18,69 +18,71 @@
       </el-input>
       <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
     </div>
-    <el-table
-      ref="docList"
-      :data="docList"
-      tooltip-effect="dark"
-      style="width: 100%"
-      max-height="300"
-      v-show="total"
-      v-loadMore="moreLoadData"
-      @selection-change="handleSelectionChange">
-      <el-table-column
-        type="selection"
-        width="52">
-      </el-table-column>
-      <el-table-column
-        label="音视频名称">
+    <div v-if="total || isSearch">
+      <el-table
+        ref="docList"
+        :data="docList"
+        tooltip-effect="dark"
+        style="width: 100%"
+        max-height="300"
+        v-loadMore="moreLoadData"
+        @selection-change="handleSelectionChange">
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column
+          label="音视频名称">
+            <template slot-scope="scope">
+              <span class="mediaName" :title="scope.row.name">
+                <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.MP3' || scope.row.msg_url == '.MAV'"></i>
+                <i class="iconfont-v3 saasshipinwenjian" v-else></i>
+                {{scope.row.name}}
+              </span>
+            </template>
+          </el-table-column>
+        <el-table-column
+          prop="created_at"
+          label="上传日期"
+          width="180">
+        </el-table-column>
+
+        <el-table-column
+          label="时长"
+          prop="duration"
+          width="100"
+          show-overflow-tooltip>
+        </el-table-column>
+
+        <el-table-column
+          label="进度"
+          width="120"
+          show-overflow-tooltip>
           <template slot-scope="scope">
-            <span class="mediaName" :title="scope.row.name">
-              <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.MP3' || scope.row.msg_url == '.MAV'"></i>
-              <i class="iconfont-v3 saasshipinwenjian" v-else></i>
-              {{scope.row.name}}
-            </span>
+            <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : 'failer'">{{ scope.row.transcode_status_text }}</span>
+            <!-- <el-progress v-if="scope.row.status=='transcoding'" color="#14BA6A" :percentage="scope.row.process" :stroke-width="8" :width="100"></el-progress>
+            <span v-else :class="[scope.row.status, 'statusTag']">{{scope.row.status | statusStr}}</span> -->
           </template>
         </el-table-column>
-      <el-table-column
-        prop="created_at"
-        label="上传日期"
-        width="180">
-      </el-table-column>
 
-      <el-table-column
-        label="时长"
-        prop="duration"
-        width="100"
-        show-overflow-tooltip>
-      </el-table-column>
-
-      <el-table-column
-        label="进度"
-        width="120"
-        show-overflow-tooltip>
-        <template slot-scope="scope">
-          <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : 'failer'">{{ scope.row.transcode_status_text }}</span>
-          <!-- <el-progress v-if="scope.row.status=='transcoding'" color="#14BA6A" :percentage="scope.row.process" :stroke-width="8" :width="100"></el-progress>
-          <span v-else :class="[scope.row.status, 'statusTag']">{{scope.row.status | statusStr}}</span> -->
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        label="操作"
-        width="80"
-        align="left"
-        show-overflow-tooltip>
-        <template slot-scope="scope">
-          <el-button type="text" class="actionBtn" @click="preVidio(scope.row)">预览</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="no-live" v-show="!total">
-      <noData :nullType="nullText" :text="text" :height="0">
-        <el-button type="primary" v-if="nullText == 'nullData'" @click="uploadHandler" round size="medium">上传</el-button>
+        <el-table-column
+          label="操作"
+          width="80"
+          align="left"
+          show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-button type="text" class="actionBtn" @click="preVidio(scope.row)"  v-if="scope.row.transcode_status == 1">预览</el-button>
+          </template>
+        </el-table-column>
+        <div slot="empty"><noData :nullType="'search'" v-if="!total" :height="50"></noData></div>
+      </el-table>
+    </div>
+    <div class="no-live" v-else>
+      <noData :nullType="'nullData'" text="您还上传过音视频，快来创建吧！" :height="0">
+        <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
       </noData>
     </div>
-    <span slot="footer" class="dialog-footer" v-show="total || isSearch">
+    <span slot="footer" class="dialog-footer">
       <el-button type="primary" @click="handlerConfirm" :disabled="!tableSelect.length" round size="medium" v-preventReClick>确定</el-button>
       <el-button @click="dialogVisible = false" round size="medium">取消</el-button>
     </span>
@@ -107,9 +109,7 @@ export default {
       videoParam: {},
       docList: [],
       total: 0,
-      nullText: 'nullData',
       isSearch: false, //是否是搜索
-      text: '您还上传过音视频，快来创建吧！',
       pageInfo: {
         pos: 0,
         limit: 6,
@@ -202,15 +202,7 @@ export default {
           this.docList.push(...res.data.list);
           this.total = res.data.total;
           this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
-          if (this.keyWords) {
-            this.nullText = 'search';
-            this.text = '';
-            this.isSearch = true;
-          } else {
-            this.nullText = 'nullData';
-            this.text = '您还上传过音视频，快来创建吧！';
-            this.isSearch = false;
-          }
+          this.isSearch = this.keyWords ? true : false
         }
       });
     },

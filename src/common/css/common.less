@@ -554,9 +554,9 @@ body {
     }
   }
   td.end-date, td.start-date{
-    div{
-      background-color: #fff6f6;
-    }
+    // div{
+    //   background-color: #fff6f6;
+    // }
     span{
       background-color: transparent;
       color: #fb3a32;
@@ -564,15 +564,17 @@ body {
   }
   td.available{
     span:hover{
-      background-color: #fff6f6;
+      // background-color: #fff6f6;
       color: #fb3a32;
     }
   }
   td.in-range{
     div{
       background-color: #fff6f6;
+      border-radius: 0;
       &:hover{
         background-color: #fff6f6;
+        border-radius: 0;
       }
     }
     span{
@@ -951,6 +953,9 @@ button.el-button.el-button--white-primary {
 /deep/.el-tabs__active-bar {
   background-color: #FB3A32;
 }
+/deep/.el-date-editor .el-range__icon{
+  color: #999;
+}
 
 /*-----------------------------------------重置Tab 结束 ---------------------------------------------*/
 
@@ -1270,14 +1275,11 @@ button.el-button.el-button--white-primary {
       color: #888888;
       line-height: 38px;
     }
-    .yidun_slider {
-      // .yidun_slider__icon {
-        // background-image: none;
-      // }
-      &:hover {
-        background-color: #3562FA;
-      }
-    }
+    // .yidun_slider {
+    //   &:hover {
+    //     background-color: #3562FA;
+    //   }
+    // }
     &.yidun_control--moving .yidun_slide_indicator {
       border-color: #3562FA;
       background-color: #F0F1FE;

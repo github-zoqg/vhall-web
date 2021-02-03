@@ -57,7 +57,9 @@
                 <span class="hot">
                   <i class="iconfont-v3 saasicon_redu"> {{item.pv | unitCovert}}</i>
                 </span>
-                <img :src="`${item.img_url}`" alt="">
+                <div class="img-box">
+                  <img :src="`${item.img_url}`" alt="">
+                </div>
                 <!-- <div class=""></div> -->
               </div>
               <div class="bottom">
@@ -514,31 +516,48 @@ export default {
         box-sizing: border-box;
         position: relative;
         border-radius: 4px 4px 0 0;
-        img{
-          width: 100%;
+        // img{
+        //   width: 100%;
+        //   height: 100%;
+        //   object-fit: scale-down;
+        //   cursor: pointer;
+        //   border-radius: 4px 8px 0 0;
+        // }
+        .img-box{
+          width: 101%;
           height: 100%;
-          object-fit: scale-down;
           position: absolute;
-          cursor: pointer;
-          border-radius: 4px 4px 0 0;
           top:0;
           left: 0;
+          border-radius: 4px 8px 0 0;
+          img{
+            width: 100%;
+            height: 100%;
+            object-fit: scale-down;
+            cursor: pointer;
+            border-radius: 4px 8px 0 0;
+          }
         }
+
         .liveTag{
           background: rgba(0,0,0, .7);
           color: #fff;
           font-size: 12px;
-          padding: 2px 9px;
+          padding: 3px 8px;
           border-radius: 20px;
           position: relative;
           z-index: 2;
         }
         .live-status{
-         padding: 5px;
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          margin: 0 6px 0 2px;
           img{
-            margin:6px 7px;
-            width: 8px;
-            height: 8px;
+            // margin:6px 7px;
+            width: 100%;
+            height: 100%;
+            object-fit: scale-down;
           }
         }
         .hot{

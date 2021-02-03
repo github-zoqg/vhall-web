@@ -50,7 +50,8 @@
         {{ item.subject }}
       </div>
       <div class="vh-chose-active-item__info">
-        {{ item.created_at || item.start_time }}
+        <!-- item.created_at | unitTime || -->
+        {{ item.start_time }}
       </div>
     </div>
   </div>
@@ -210,7 +211,8 @@ export default {
     padding: 0 8px;
     height: 123px;
     .vh-chose-active-item__cover{
-      height: 75px;
+      height: 68px;
+      border-radius: 4px;
     }
   }
 }

@@ -108,7 +108,7 @@
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
         </div>
-        <line-echarts :lineDataList="lineDataList" :type="1"></line-echarts>
+        <line-echarts :lineDataList="lineDataList" :type="parseInt(versionType)"></line-echarts>
       </div>
     </div>
     <div class="advert-banner">
@@ -506,10 +506,11 @@ export default {
       right: 0;
       bottom: 60px;
       width: 30px;
-      background: #FB3A32;
+      background: #999;
       color: #fff;
       padding: 12px 7px;
       cursor: pointer;
+      border-radius: 4px;
       i{
         color: #fff;
         font-size: 20px;

@@ -78,6 +78,7 @@ export default {
 .section__main {
   padding-top: 104px;
   width: 1020px;
+  min-width: 1024px;
   /*min-height: 650px;*/
   min-height: 100vh;
   height: auto;
@@ -87,6 +88,7 @@ export default {
 @media (min-width: 1920px) {
   .section__main {
     width: 1374px;
+    min-width: 1374px;
   }
 }
 </style>

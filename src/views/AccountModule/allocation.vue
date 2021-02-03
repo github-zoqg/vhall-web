@@ -837,7 +837,7 @@
     /deep/.el-input-group__append {
       position: absolute;
       right: 10px;
-      top: 10px;
+      top: 7px;
       width: 20px!important;
       background-color: transparent;
       border: 0;
