@@ -56,7 +56,7 @@
           <span :class="isActive ? 'span-active' : ''" @click="changeTime('直播')">直播</span>
           <span :class="isActive ? '' : 'span-active'" @click="changeTime('回放')">回放</span>
         </div>
-        <lint-charts :lineDataList="lineDataList"></lint-charts>
+        <lint-charts :lineDataList="lineDataList" :type="3"></lint-charts>
       </div>
       <div class="statistical-map">
         <div class="map-title">

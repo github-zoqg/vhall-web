@@ -53,7 +53,7 @@
           </div>
           <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>
-        <lint-charts :lineDataList="limitDataList" :type="3"></lint-charts>
+        <lint-charts :lineDataList="limitDataList" :type="parseInt(versionType)"></lint-charts>
       </div>
       <div class="statistical-line statistical-dark">
         <span>观看人数趋势</span>
@@ -67,7 +67,7 @@
           <span :class="isActive ? 'span-active' : ''" @click="changeTime('直播')">直播</span>
           <span :class="isActive ? '' : 'span-active'" @click="changeTime('回放')">回放</span>
         </div>
-        <lint-charts :lineDataList="lineDataList"></lint-charts>
+        <lint-charts :lineDataList="lineDataList" :type="3"></lint-charts>
       </div>
       <div class="statistical-map">
         <div class="map-title">
@@ -97,6 +97,7 @@ import mapCharts from '@/components/Echarts/mapEcharts';
 import terCharts from '@/components/Echarts/terBroEcharts';
 import titleData from './components/title';
 import PageTitle from '@/components/PageTitle';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
     return {
@@ -122,6 +123,7 @@ export default {
       dateValue: '',
       switchList: [],
       type: '1',
+      versionType: 0,
       timeData: [
         {
           label: '按时间筛选',
@@ -209,6 +211,7 @@ export default {
   created() {
     this.initPage();
     this.getLiveDetail();
+    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
   },
   mounted() {
     // this.getLiveDetail();

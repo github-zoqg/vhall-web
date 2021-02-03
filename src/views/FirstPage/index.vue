@@ -108,7 +108,7 @@
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
         </div>
-        <line-echarts :lineDataList="lineDataList" :type="1"></line-echarts>
+        <line-echarts :lineDataList="lineDataList" :type="parseInt(versionType)"></line-echarts>
       </div>
     </div>
     <div class="advert-banner">

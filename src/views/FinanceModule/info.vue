@@ -51,7 +51,7 @@
             @onSearchFun="getLineList()"
           >
           </search-area> -->
-          <lint-charts :lineDataList="lintData" :type="1"></lint-charts>
+          <lint-charts :lineDataList="lintData" :type="parseInt(versionType)"></lint-charts>
         </div>
     </div>
     <div class="statistical-line">
