@@ -16,7 +16,7 @@
         <VhallInput
           class="search-tag"
           placeholder="请输入广告标题"
-          v-model.trim="paramsObj.keyword"
+          v-model="paramsObj.keyword"
           clearable
           @clear="searchAdvTableList"
           @keyup.enter.native="searchAdvTableList">

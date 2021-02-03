@@ -16,13 +16,13 @@
         <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
         <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="!(this.ids && this.ids.length > 0)">批量删除</el-button>
         <el-button size="medium" round @click="downloadHandle">导出</el-button>
-        <el-input placeholder="搜索账号/昵称/手机号码" v-model.trim="query.keyword"
+        <VhallInput placeholder="搜索账号/昵称/手机号码" v-model="query.keyword"
                   clearable
                   @clear="initQuerySonList"
                   class="search-query"
                   @keyup.enter.native="initQuerySonList">
           <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
-        </el-input>
+        </VhallInput>
         <el-select placeholder="全部" round v-model="query.role_id" @change="initQuerySonList">
           <el-option value="">全部</el-option>
           <el-option

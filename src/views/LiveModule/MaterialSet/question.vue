@@ -11,7 +11,7 @@
       <el-button round  @click="dataBase" class="transparent-btn" size="medium">资料库</el-button>
       <el-button round class="transparent-btn" @click="deleteAll(null)" size="medium" :disabled="!selectChecked.length">批量删除</el-button>
       <div class="inputKey">
-        <VhallInput v-model.trim="keyword" placeholder="请输入问卷名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>
+        <VhallInput v-model="keyword" placeholder="请输入问卷名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>
           <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchTableList" style="cursor: pointer; line-height: 36px;"></i>
         </VhallInput>
       </div>

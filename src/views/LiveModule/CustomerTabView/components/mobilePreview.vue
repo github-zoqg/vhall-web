@@ -76,7 +76,7 @@
         label-width="0">
         <el-form-item prop="name">
           <VhallInput
-            v-model.trim="addCustomForm.name"
+            v-model="addCustomForm.name"
             auto-complete="off"
             placeholder="请输入菜单名称"
             :maxlength="8"

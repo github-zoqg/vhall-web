@@ -1,14 +1,14 @@
 <template>
 <div style="height: 100%; min-height: 320px">
   <div class="search" >
-    <el-input
-      v-model.trim="keyword"
+    <VhallInput
+      v-model="keyword"
       placeholder="请输入专题标题"
       @change="inputChange"
       suffix-icon="el-icon-search"
       style="width:220px; border-radius:24px"
       class="input-box"
-    ></el-input>
+    ></VhallInput>
   </div>
   <div class="vh-chose-active-box"
     v-infinite-scroll="getActiveList"

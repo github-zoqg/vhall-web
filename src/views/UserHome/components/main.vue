@@ -7,7 +7,7 @@
     </el-tabs>
     <div class="search panel-btn" v-if="(vo.show_subject && vsQuanxian && vsQuanxian['subject_manager'] > 0) || vo.show_webinar_list">
       <div class="search-query">
-        <el-input
+        <VhallInput
           :placeholder="tabType === 'special' ? '请输入专题名称' : '请输入直播名称'"
           v-model="query.keyword"
           clearable
@@ -19,7 +19,7 @@
             slot="suffix"
             @click="searchHandle">
           </i>
-        </el-input>
+        </VhallInput>
       </div>
     </div>
     <!-- 专题列表 or  专题列表 -->

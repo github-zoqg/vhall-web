@@ -15,12 +15,12 @@
         :picker-options="pickerOptions"
         @change="queryList"
       />
-      <el-input placeholder="请输入活动标题" v-model.trim="query.title"
+      <VhallInput placeholder="请输入活动标题" v-model="query.title"
                 clearable
                 @keyup.enter.native="queryList"
                 @clear="queryList">
         <i class="el-icon-search el-input__icon" slot="suffix" @click="queryList"></i>
-      </el-input>
+      </VhallInput>
       <el-button size="medium" round @click="downloadHandle">导出数据</el-button>
     </div>
     <!-- 数据 -->

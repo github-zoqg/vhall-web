@@ -18,7 +18,7 @@
         @clear="searchGifts"
         style="width: 220px;"
         class="head-btn fr search resetRightBrn search-tag"
-        v-model.trim="searchName"
+        v-model="searchName"
         autocomplete="off"
         placeholder="请输入礼物名称"
       >

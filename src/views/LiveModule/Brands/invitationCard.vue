@@ -53,7 +53,7 @@
           </el-form-item>
           <el-form-item label="标题" prop="title">
             <VhallInput
-              v-model.trim="formInvitation.title"
+              v-model="formInvitation.title"
               :maxlength="16"
               autocomplete="off"
               show-word-limit
@@ -62,7 +62,7 @@
           </el-form-item>
           <el-form-item label="主办方" prop="company">
             <VhallInput
-              v-model.trim="formInvitation.company"
+              v-model="formInvitation.company"
               :maxlength="10"
               autocomplete="off"
               show-word-limit
@@ -80,7 +80,7 @@
           </el-form-item>
           <el-form-item label="地点" prop="location">
             <VhallInput
-              v-model.trim="formInvitation.location"
+              v-model="formInvitation.location"
               :maxlength="20"
               autocomplete="off"
               show-word-limit
@@ -91,7 +91,7 @@
             <VhallInput
               class="desc"
               style="width: 320px"
-              v-model.trim="formInvitation.desciption"
+              v-model="formInvitation.desciption"
               type="textarea"
               :maxlength="45"
               autocomplete="off"

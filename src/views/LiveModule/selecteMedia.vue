@@ -9,13 +9,13 @@
     :before-close="handleClose"
     width="800px">
     <div class="search"  v-show="total || isSearch">
-      <el-input placeholder="请输入音视频名称" v-model.trim="keyWords" @keyup.enter.native="searchHandler" clearable @clear="searchHandler">
+      <VhallInput placeholder="请输入音视频名称" v-model="keyWords" @keyup.enter.native="searchHandler" clearable @clear="searchHandler">
         <i class="el-icon-search el-input__icon"
         @click="searchHandler"
           slot="suffix"
         >
         </i>
-      </el-input>
+      </VhallInput>
       <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
     </div>
     <div v-if="total || isSearch">

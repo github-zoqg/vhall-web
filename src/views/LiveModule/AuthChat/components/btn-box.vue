@@ -17,7 +17,7 @@
                 <div class="el-message-box__content">
                     <div class="el-message-box__message"><p>请输入回复信息</p></div>
                     <div class="el-message-box__input" style="">
-                       <el-input v-model="replayData.text_content"></el-input>
+                       <VhallInput v-model="replayData.text_content"></VhallInput>
                         <div class="el-message-box__errormsg" :style="`visibility:${replyError ? 'visible' : 'hidden'}`" ref="replyError">{{ replyError }}</div>
                     </div>
                 </div>

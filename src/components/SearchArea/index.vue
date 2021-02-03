@@ -43,7 +43,7 @@
           v-else
           class="search-tag"
           :placeholder="placeholder"
-          v-model.trim="searchParams[item.key]"
+          v-model="searchParams[item.key]"
           clearable
           @change="changeInput"
           @keyup.enter.native="changeInput">

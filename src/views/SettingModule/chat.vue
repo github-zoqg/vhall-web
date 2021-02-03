@@ -130,7 +130,7 @@
               <VhallInput
                 :type="addForm.executeType === 'add' ? 'textarea' : 'text'"
                 :placeholder="addForm.executeType === 'add' ? '可同时添加多个严禁词，中间以逗号(不区分中英文)分隔,每个严禁词的长度为1~20个字符，超出范围的会自动丢弃' : '每个严禁词的长度为1~20个字符'"
-                v-model.trim="addForm.name"
+                v-model="addForm.name"
                 :maxlength="addForm.executeType === 'add' ? 1000 : 20"
                 autocomplete="off"
                 show-word-limit

@@ -46,7 +46,7 @@
           </el-form-item>
            <el-form-item label="动态密码">
             <div class="inputCode">
-              <el-input v-model="code" style="width: 150px"></el-input>
+              <VhallInput v-model.trim="code" style="width: 150px"></VhallInput>
               <span @click="mobileKey && getBangCode()" :class="mobileKey ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
             </div>
             <p class="codeTitle" v-if="phone">已向绑定手机号{{ phone | filterPhone }}发送验证码</p>
@@ -86,7 +86,7 @@
         </el-form-item>
         <el-form-item label="动态密码" prop="code">
           <div class="inputCode">
-            <el-input v-model.trim="withdrawForm.code" style="width: 150px"></el-input>
+            <VhallInput v-model.trim="withdrawForm.code" style="width: 150px"></VhallInput>
             <span @click="getCode()" :class="(mobileKey && isTrue) ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
           </div>
           <p class="codeTitle" v-if="phone">已向绑定手机号{{ phone }}发送验证码</p>

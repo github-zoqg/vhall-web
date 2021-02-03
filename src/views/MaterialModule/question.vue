@@ -13,7 +13,7 @@
       <VhallInput
         class="search-tag"
         placeholder="请输入问卷名称"
-        v-model.trim="keyword"
+        v-model="keyword"
         clearable
         @clear="searchTableList"
         @keyup.enter.native="searchTableList">

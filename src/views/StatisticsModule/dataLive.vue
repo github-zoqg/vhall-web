@@ -23,7 +23,7 @@
         <VhallInput
           class="search-tag"
           placeholder="请输入活动标题"
-          v-model.trim="title"
+          v-model="title"
           clearable
           @change="searchTableList"
           @keyup.enter.native="searchTableList">

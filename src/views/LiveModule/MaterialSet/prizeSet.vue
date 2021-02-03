@@ -65,10 +65,10 @@
                     <p style="color:#999">建议尺寸：240*240px，小于2M 支持jpg、gif、png、bmp</p>
                 </el-form-item>
                 <el-form-item label="标题">
-                    <VhallInput v-model.trim="formData.title" autocomplete="off" :maxlength="10"  placeholder="请输入抽奖标题" show-word-limit></VhallInput>
+                    <VhallInput v-model="formData.title" autocomplete="off" :maxlength="10"  placeholder="请输入抽奖标题" show-word-limit></VhallInput>
                 </el-form-item>
                 <el-form-item label="说明">
-                    <VhallInput v-model.trim="formData.description" autocomplete="off" :maxlength="20" placeholder="正在进行抽奖" show-word-limit></VhallInput>
+                    <VhallInput v-model="formData.description" autocomplete="off" :maxlength="20" placeholder="正在进行抽奖" show-word-limit></VhallInput>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary"  round @click="lotterySave" v-preventReClick>保存</el-button>
