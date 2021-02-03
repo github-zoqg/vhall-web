@@ -26,7 +26,7 @@
         {{ item.title }}
       </div>
       <div class="vh-chose-active-item__info">
-        {{ item.created_at }}
+        {{ item.created_at  | unitTime}}
       </div>
     </div>
   </div>

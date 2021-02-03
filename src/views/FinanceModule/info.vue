@@ -159,7 +159,7 @@
             <p>回放使用流量（GB）</p>
               <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
                 <div slot="content">
-                  筛选条件内的回放使用流量汇总，包含回放、点播、下载回放视频到本地消耗的总流量
+                  筛选条件内的回放使用流量汇总，包含回放、点播消耗的总流量
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>

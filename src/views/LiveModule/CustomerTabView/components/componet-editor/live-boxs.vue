@@ -45,7 +45,7 @@
           {{ item.subject }}
         </div>
         <div class="vh-chose-active-item__info">
-          {{ item.created_at }}
+          {{ item.start_time }}
         </div>
       </div>
     </vhscroll>

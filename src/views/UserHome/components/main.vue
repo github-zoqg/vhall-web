@@ -50,7 +50,7 @@
             <div class="bottom">
               <div class="">
                 <p class="liveTitle">{{tabType === 'live' ? item.subject : item.title}}</p>
-                <p class="liveTime">{{tabType === 'live' ? item.start_time : item.created_at}}</p>
+                <p class="liveTime">{{tabType === 'live' ? item.start_time : item.created_at | unitTime }}</p>
               </div>
             </div>
             <transition name="el-zoom-in-bottom">
