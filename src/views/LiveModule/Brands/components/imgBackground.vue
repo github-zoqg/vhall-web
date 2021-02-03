@@ -8,7 +8,7 @@
   >
     <el-scrollbar class="scrollbar scroll-modify">
       <div class="background-list">
-        <div class="list-item" @click.stop="domain_url && choseBackground(-1)">
+        <div :class="['list-item', isType === 0 ? 'active' : '']" @click.stop="domain_url && choseBackground(-1)">
           <upload
             v-model="imageUrl"
             :domain_url="domain_url"
@@ -34,7 +34,7 @@
             <i class="el-icon-check"></i>
           </label> -->
         </div>
-        <div class="list-item list-imgs is-success" v-for="(item, index) in fileList" :key="index">
+        <div :class="['list-item', 'list-imgs', 'is-success', isType === index + 1 ? 'active' : '']" v-for="(item, index) in fileList" :key="index">
           <label  class="img-tangle" v-if="isType === index + 1"><img src="../../../../common/images/icon-choose.png" alt=""></label>
           <!-- <label class="img-tangle" v-if="isType === index + 1">
             <i class="el-icon-check"></i>
@@ -197,6 +197,16 @@ export default {
     position: relative;
     border-radius: 4px;
     margin-right: 15px;
+    border: 1px solid #fff;
+    transition: all 0.15s ease-in;
+    &.active {
+      border: 1px solid #fb3a32;
+      box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
+    }
+    &:hover {
+      border: 1px solid #fb3a32;
+      box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
+    }
     &:nth-of-type(4n) {
       margin-right: 0;
     }

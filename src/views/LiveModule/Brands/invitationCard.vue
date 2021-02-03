@@ -555,6 +555,7 @@ export default {
       height: 128px;
       border: 1px solid transparent;
       cursor: pointer;
+      transition: all 0.15s ease-in;
       img {
         width: 100%;
         height: 125px;
@@ -572,6 +573,10 @@ export default {
         }
       }
       &.isActiveColor{
+        box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
+        border: 1px solid #FB3A32;
+      }
+      &:hover {
         box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
         border: 1px solid #FB3A32;
       }
