@@ -705,7 +705,6 @@ export default {
     }
     .watch-img{
       width: 330px;
-      border-radius: 8px;
       background: #FFFFFF;
       height: 620px;
       position: relative;
@@ -715,14 +714,14 @@ export default {
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: 100% 100%;
       background-repeat: no-repeat;
-      border-radius: 4px 4px 6px 6px;
+      border-radius: 4px;
       z-index: 0;
       .watch-bg{
         height: 360px;
         // background-image: url('../../../common/images/v35-webinar.png');
         // background-size: 100% 100%;
         // background-repeat: no-repeat;
-        // border-radius: 4px 4px 0 0;
+        border-radius: 4px 4px 0 0;
         // background-color: rgba(0, 0, 0, 0.1);
         .watch-color{
           width: 100%;
@@ -761,7 +760,7 @@ export default {
       z-index: 1;
       height: 258px;
       position: relative;
-      border-radius: 0 0 4px 4px;
+      border-radius: 0 0 3px 3px;
       h1{
         padding:0;
         font-size: 28px;
@@ -863,7 +862,7 @@ export default {
           padding: 0;
           font-size: 14px;
           font-weight: 400;
-          line-height: 20px;
+          line-height: 18px;
           color:#fff;
         }
       }
