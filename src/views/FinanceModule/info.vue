@@ -9,7 +9,7 @@
     <div class="statistical-line">
         <div class="serach-line">
           <span>用量统计</span>
-        <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
+        <el-tooltip effect="dark" placement="right" v-tooltipMove>
           <div slot="content" v-if="versionType">
            数据更新频率：直播使用流量1小时更新，回放/点播使用流量1小时更新
           </div>
@@ -57,7 +57,7 @@
     <div class="statistical-line">
       <div class="serach-line">
         <span>消费账单</span>
-        <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
+        <el-tooltip effect="dark" placement="right" v-tooltipMove>
           <div slot="content" v-if="versionType">
            数据更新频率：直播使用流量1小时更新，回放/点播使用流量1小时更新
           </div>
@@ -120,7 +120,7 @@
         <div class="content-item">
           <div class="grid-content">
             <p>累计活动（个）</p>
-            <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
+            <el-tooltip effect="dark" placement="right" v-tooltipMove>
               <div slot="content">
                 筛选条件内的活动总数，包含直播+点播活动
               </div>
@@ -132,7 +132,7 @@
         <div class="content-item">
           <div class="grid-content">
             <p>累计使用流量（GB）</p>
-              <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
+              <el-tooltip effect="dark" placement="right" v-tooltipMove>
               <div slot="content">
                 筛选条件内的直播使用流量+回放使用流量的总和
               </div>
@@ -145,7 +145,7 @@
         <div class="content-item">
           <div class="grid-content">
             <p>直播使用流量（GB）</p>
-              <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
+              <el-tooltip effect="dark" placement="right" v-tooltipMove>
                 <div slot="content">
                   筛选条件内的直播使用流量汇总，包含视频直播、互动直播、音频直播消耗的总流量
                 </div>
@@ -157,7 +157,7 @@
         <div class="content-item">
           <div class="grid-content">
             <p>回放使用流量（GB）</p>
-              <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
+              <el-tooltip effect="dark" placement="right" v-tooltipMove>
                 <div slot="content">
                   筛选条件内的回放使用流量汇总，包含回放、点播消耗的总流量
                 </div>

@@ -178,7 +178,6 @@ export default {
   },
 };
 </script>
-</style>
 <style lang="less" scoped>
 /deep/ .tox-statusbar{
   display: none !important;

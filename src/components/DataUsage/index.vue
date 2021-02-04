@@ -18,7 +18,7 @@
       <el-col :span="typeChange ? 8 : 6">
         <div class="top-item">
           <p>并发扩展包（人次）<span class="level" @click="levelVersion('购买')" v-if="buttonList.includes('extend')">购买</span>
-          <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
+          <el-tooltip effect="dark" placement="right" v-tooltipMove>
             <div slot="content">
               1.当全部并发套餐到期，若有扩展包则会开始扣除扩展包；<br>
               若无扩展包，则不可发直播且直播回放不可播放<br>
@@ -50,7 +50,7 @@
       <el-col :span="typeChange ? 15 : 9" v-if="userInfo.edition === '无极版'">
         <div class="top-item usage-item">
           <p>总流量/回放流量（GB）
-            <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
+            <el-tooltip effect="dark" placement="right" v-tooltipMove>
               <div slot="content">
                 1.优先消耗较早购买或赠送的流量包，消耗完自动启用下一个流量包<br>
                 2.自启用之日起，赠送的流量包有效期为7天<br>
@@ -66,7 +66,7 @@
       <el-col :span="typeChange ? 15 : 9" v-else>
         <div class="top-item usage-item">
           <p>总流量/可用流量（GB）<span class="level" @click="buyVersion()" v-if ="buttonList.includes('flow')">购买</span>
-          <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
+          <el-tooltip effect="dark" placement="right" v-tooltipMove>
               <div slot="content">
                 1.优先消耗较早购买或赠送的流量包，消耗完自动启用下一个流量包<br>
                 2.自启用之日起，赠送的流量包有效期为7天<br>

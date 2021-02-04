@@ -46,7 +46,7 @@
       <div class="statistical-title">统计图表</div>
       <div class="statistical-line">
         <span>观看人数访问趋势</span>
-        <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
+        <el-tooltip effect="dark" placement="right" v-tooltipMove>
           <div slot="content">
             筛选条件内，观看人数随时间变化的趋势图
           </div>
@@ -61,7 +61,7 @@
       <div class="statistical-map">
         <div class="map-title">
           <span>观看地域TOP10占比</span>
-          <el-tooltip effect="dark" placement="right-start" v-tooltipMove>
+          <el-tooltip effect="dark" placement="right" v-tooltipMove>
             <div slot="content">统计观看地域TOP10占比情况</div>
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>

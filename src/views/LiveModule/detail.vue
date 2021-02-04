@@ -496,7 +496,7 @@ export default {
       .title_hover{
         position: absolute;
         left: 370px;
-        top: 50px;
+        top: 55px;
         border-radius: 4px;
         max-width: 368px;
         line-height: 17px;

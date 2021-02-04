@@ -2,6 +2,7 @@
   <!-- 文档资料库 -->
   <VhallDialog title="文档列表" :lock-scroll='false' :before-close="handleClose" :visible.sync="dialogVisible" :close-on-click-modal="false" width="800px">
     <div class="word-list">
+      <div v-if="isSearch || total">
       <VhallInput
         class="head-btn search-tag"
         placeholder="请输入文档名称"
@@ -24,7 +25,6 @@
         style="width: 100%"
         height="336px"
         v-loadMore="moreLoadData"
-        v-if="dialogTableList.length > 0"
         :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
         @selection-change="changeDialogCheck"
         @select-all="checkAllRow"
@@ -80,9 +80,11 @@
             </div>
           </template>
         </el-table-column>
+        <div slot="empty"><null-page :nullType="'search'" v-if="!total" :height="60"></null-page></div>
       </el-table>
-      <null-page text="未搜索到相关内容" nullType="search" v-else :height=60></null-page>
-      <div class="btn-center">
+      </div>
+      <null-page :nullType="'nullData'" v-else :height=60></null-page>
+      <div class="btn-center" v-if="isSearch || total">
         <span class="select-option">当前选中 <strong>{{dialogMulti.length}}</strong> 个文档</span>
         <el-button  v-preventReClick type="primary" round size="medium" @click="saveCheckHandle" :disabled="!(dialogMulti && dialogMulti.length > 0)">确定</el-button>
         <el-button  round size="medium" @click="cancelCheckHandle">取消</el-button>
@@ -104,6 +106,8 @@ export default {
     return {
       dialogVisible: false,
       total: 0,
+      isSearch: false,
+      nullText: 'search',
       isCheckAll: false,
       dialogTableList: [],
       dialogMulti: [],
@@ -157,6 +161,7 @@ export default {
         webinar_id: this.$route.params.str,
         ...this.pageInfo
       }
+      this.isSearch = this.formParams.keyword ? true : false
       this.$fetch('getWordList', this.$params(params)).then(res=>{
         if(res && res.code === 200) {
           let list = res.data.list;

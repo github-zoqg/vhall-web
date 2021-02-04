@@ -3,7 +3,7 @@
   <div class="show-question question-base" v-if="dataBaseVisible">
       <div class="show-main data-base">
         <p class="title">选择问卷 <i class="el-icon-close" @click="dataBaseVisible=false"></i></p>
-        <div class="data-search">
+        <div class="data-search" v-show="total || isSearch">
           <VhallInput class="search-dialog-tag" v-model="keyword" placeholder="搜索问卷名称" clearable  @keyup.enter.native="getTitle" style="width: 220px" @clear="getTitle">
             <i slot="suffix" class="iconfont-v3 saasicon_search" style="cursor: pointer; line-height: 36px;" @click="getTitle"></i>
           </VhallInput>
@@ -53,14 +53,16 @@
             <noData :nullType="'search'" :height="50" v-if="isSearch"></noData>
         </div>
         <div class="no-live" v-show="!total && !isSearch">
-          <noData :nullType="'nullData'" :text="'您还没有问卷，快来创建吧！'" :height="50">
+          <noData :nullType="'nullData'" :text="'您还没有问卷，快来创建吧！'" :height="10">
             <el-button type="primary" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
           </noData>
         </div>
-        <p class="text">已选择<span>{{ checkList.length }}</span>个问卷</p>
-        <div slot="footer" class="dialog-footer">
-          <el-button round size="medium" type="primary" @click.prevent.stop="choseSureQuestion" :disabled="!checkList.length" v-preventReClick>确 定</el-button>
-          <el-button round size="medium" @click.prevent.stop="handleCloseVisiton" v-preventReClick>取 消</el-button>
+        <div v-show="total || isSearch">
+          <p class="text">已选择<span>{{ checkList.length }}</span>个问卷</p>
+          <div slot="footer" class="dialog-footer">
+            <el-button round size="medium" type="primary" @click.prevent.stop="choseSureQuestion" :disabled="!checkList.length" v-preventReClick>确 定</el-button>
+            <el-button round size="medium" @click.prevent.stop="handleCloseVisiton" v-preventReClick>取 消</el-button>
+          </div>
         </div>
       </div>
   </div>
