@@ -21,7 +21,7 @@ export const formatNum = (value) => {
 	i;
 	if (value > k) {
     i = Math.floor(Math.log(value) / Math.log(k));
-    value = ((value/Math.pow(k, i))).toFixed(2)
+    value = ((value / Math.pow(k / 10, i))).toFixed(1);
     unit = sizes[i]
   }
   return value + unit;
