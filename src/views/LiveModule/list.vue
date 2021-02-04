@@ -478,7 +478,7 @@ export default {
         /deep/ .el-input__icon {
           width: auto;
           margin-right: 5px;
-          line-height: 36px;
+          line-height: 40px;
         }
       }
     }

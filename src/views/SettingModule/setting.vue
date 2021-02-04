@@ -2,7 +2,7 @@
   <div>
     <pageTitle pageTitle='设置中心'></pageTitle>
     <div>
-      <el-row type="flex" class="row-bg" justify="space-between" :gutter="24">
+      <el-row type="flex" class="row-bg" :gutter="24">
         <el-col :span="8"  v-for="(item, ins) in operas" :key='ins'>
           <div class="subjectInner"  @click="blockHandler(item)">
             <i :class="`icon png_${item.icon}`"></i>
@@ -19,6 +19,7 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: "setting.vue",
   components: {
@@ -28,10 +29,18 @@ export default {
     return {
       operas: [
         { icon: 'saasicon_xiaoxiyanjinci', title: '聊天严禁词', subText: '设置聊天过滤词', path: `/setting/chat/1`},
-        { icon: 'saasicon_kaifashezhi', title: '开发设置', subText: '设置API接口信息' , path: '/dev/list'},
+        // { icon: 'saasicon_kaifashezhi', title: '开发设置', subText: '设置API接口信息' , path: '/dev/list'},
         { icon: 'saasicon_kongzhitaibiaoshi', title: '控制台标识', subText: '设置控制台的品牌标识' , path: '/setting/logo/1'}
       ]
     };
+  },
+  created() {
+    let parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
+    let childNum = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['child_num_limit'];
+    if (parentId == 0 && childNum == 1) {
+      let obj = {icon: 'saasicon_kaifashezhi', title: '开发设置', subText: '设置API接口信息' , path: '/dev/list'}
+      this.operas.splice(1, 0, obj)
+    }
   },
   methods: {
     blockHandler(item) {
