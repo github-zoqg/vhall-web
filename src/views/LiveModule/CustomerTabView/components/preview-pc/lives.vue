@@ -19,7 +19,7 @@
         </div>
         <div class="vh-chose-active-item__cover-hots">
           <i class="iconfont-v3 saasicon_redu"></i>
-          {{ item.pv }}
+          {{ item.pv | formatNum }}
         </div>
       </div>
       <div class="vh-chose-active-item__title ellsips">

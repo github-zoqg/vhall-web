@@ -34,7 +34,7 @@
                   </span>
                 </div>
                 <div class="vh-chose-active-item__cover-hots">
-                <i class="iconfont-v3 saasicon_redu"> {{ item.pv }}</i>
+                <i class="iconfont-v3 saasicon_redu"> {{ item.pv | formatNum }}</i>
                 </div>
 
               </div>

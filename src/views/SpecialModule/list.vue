@@ -40,7 +40,7 @@
           <div class="top">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
             <span class="hot">
-              <i class="iconfont-v3 saasicon_redu"> {{item.pv | unitCovert}}</i>
+              <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
             </span>
             <div class="img-box"><img :src="item.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
           </div>

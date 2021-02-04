@@ -55,7 +55,7 @@
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
                   <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
                 <span class="hot">
-                  <i class="iconfont-v3 saasicon_redu"> {{item.pv | unitCovert}}</i>
+                  <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
                 </span>
                 <div class="img-box">
                   <img :src="`${item.img_url}`" alt="">
@@ -164,8 +164,8 @@ export default {
   methods: {
     searchHandler() {
       this.pageNum = 1;
+      this.pagePos = 0;
       this.getLiveList();
-      console.log('searchHandler');
     },
     dropDownVisibleChange(item) {
       this.$set(item, 'liveDropDownVisible', !item.liveDropDownVisible);

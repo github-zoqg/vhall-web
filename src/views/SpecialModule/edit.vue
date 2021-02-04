@@ -128,7 +128,7 @@
                   </template> -->
                 </div>
                 <div class="vh-sort-tables__tbody-hots">
-                  {{ item.pv }}
+                  {{ item.pv | formatNum }}
                 </div>
                 <div class="vh-sort-tables__tbody-editor">
                   <i class="iconfont-v3 saasicon-trash" @click="deleteSpecial(item.webinar_id)"></i>

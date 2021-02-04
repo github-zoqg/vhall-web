@@ -41,7 +41,7 @@
                 </label>{{item | liveTag}}
               </span>
               <span class="hot" v-if="item.hide_pv > 0">
-                 <i class="iconfont-v3 saasicon_redu"> {{ item.pv | unitCovert}}</i>
+                 <i class="iconfont-v3 saasicon_redu"> {{ item.pv | formatNum}}</i>
               </span>
               <a :href="item.share_link" target="_blank" v-if="tabType === 'live' ? item.img_url : item.cover">
                 <img :src="tabType === 'live' ? item.img_url : item.cover" alt="" />

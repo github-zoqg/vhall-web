@@ -13,6 +13,20 @@ export const formatMoney = (value,  decimals = 2) => {
   return `${sign}${head}${$int.slice(i).replace(digitsRE, '$1,')}${$float}`;
 };
 
+export const formatNum = (value) => {
+  value = parseInt(value);
+  let unit = '';
+  let k = 99999,
+  sizes = ['', '万', '亿', '万亿'],
+	i;
+	if (value > k) {
+    i = Math.floor(Math.log(value) / Math.log(k));
+    value = ((value/Math.pow(k, i))).toFixed(2)
+    unit = sizes[i]
+  }
+  return value + unit;
+}
+
 export const liveTag = (val) => {
    /**
      * webinar_state  1直播 2预约 3结束 4点播 5回放
