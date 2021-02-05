@@ -183,9 +183,12 @@
         </el-tab-pane>
       </el-tabs>
       <div class="show-purple">
-          <el-button type="white-primary" size="small" round class="preview-video" @click="previewVideo" v-show="activeName=='second'">预览</el-button>
+          <!-- <el-button type="white-primary" size="small" round class="preview-video" @click="previewVideo" v-show="activeName=='second'">预览</el-button> -->
           <div class="video-wrap">
             <div id="videoDom"></div>
+            <div class="waterMark" :class="`position_${formWatermark.img_position}`" v-if="watermark_open">
+              <img :src="domain_url || audioImg" alt="" :style="{opacity: formWatermark.img_alpha + '%'}">
+            </div>
             <div class="vod-controller" :class="{'active':hoveVideo}">
               <div class="slider line-slider">
                 <el-slider v-model="sliderVal" :show-tooltip="false" ref="controllerRef" @change="setVideo" v-if="formOther.progress"></el-slider>
@@ -1142,6 +1145,32 @@ export default {
   }
   .video-wrap{
     position: relative;
+    .waterMark{
+      position: absolute;
+      width: 80px;
+      height: 30px;
+      &.position_1{
+        top: 10px;
+        left: 8px;
+      }
+      &.position_2{
+        top: 10px;
+        right: 8px;
+      }
+      &.position_3{
+        bottom: 40px;
+        right: 8px;
+      }
+      &.position_4{
+        bottom: 40px;
+        left: 8px;
+      }
+      img{
+        width: 100%;
+        height: 100%;
+        object-fit: scale-down;
+      }
+    }
     .vod-controller{
       position: absolute;
       z-index: 50;

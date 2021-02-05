@@ -99,6 +99,11 @@ export default {
         fontsize_formats: '12px 14px 16px 18px 24px 36px 48px 56px 72px',
         // paste_data_images: false, // 允许粘贴图像
         images_file_types: 'jpeg,jpg,png,gif,bmp',
+        setup(editor) {
+          editor.on('init', function(e){
+            this.getBody().style.fontSize = '14px';
+          })
+        },
         urlconverter_callback: (url, node, onSave, name) => {
           if (node === 'img' && url.startsWith('blob:')) {
             // Do some custom URL conversion
@@ -197,6 +202,26 @@ export default {
 /deep/.tox .tox-tbtn:hover, /deep/.tox .tox-tbtn:active {
   background: #e6e6e6;
   color: #666!important;
+}
+/deep/.tox-sidebar-wrap{
+  /deep/.tox-edit-area__iframe {
+    ::-webkit-scrollbar{
+      width: 6px;
+      height: 10px;
+      background-color: #F5F5F5;
+    }
+    /*定义滚动条轨道 内阴影+圆角*/
+    ::-webkit-scrollbar-track{
+      border-radius: 5px;
+      background-color: #F5F5F5;
+    }
+    /*定义滑块 内阴影+圆角*/
+    ::-webkit-scrollbar-thumb{
+      border-radius: 5px;
+      background-color: #ccc;
+    }
+  }
+
 }
 
 .vh-editor-wrapbox{

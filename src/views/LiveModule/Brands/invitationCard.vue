@@ -603,8 +603,10 @@ export default {
       .show-container{
         margin: 50px 24px;
         width: 282px;
-        height: 520px;
-        background-color: #fff;
+        height: 566px;
+        background-image: url('../../../common/images/invite-card/show.png');
+        background-size: 100% 100%;
+        // background-color: #fff;
         // box-shadow: 0px 0 6px 0px rgba(0, 0, 0, 0.1);
         position: relative;
         border-radius: 4px;
@@ -668,10 +670,9 @@ export default {
           // width: 180px;
           position: absolute;
           display: flex;
-          bottom: 20px;
+          bottom: 80px;
           left: 30px;
           padding: 20px 20px 0 20px;
-          border-top: 1px dashed #ccc;
           justify-content: center;
           align-items: center;
           .show-code{
