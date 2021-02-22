@@ -5,6 +5,7 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       :lock-scroll=false
+      custom-class="advinfo-dialog"
       width="468px">
       <el-form label-width="80px" :model="advertisement" ref="advertisementForm" :rules="rules">
       <el-form-item label="推广图片" prop="img_url">
@@ -54,7 +55,7 @@
       <div class="content" v-show="total || isSearch">
         <div class="search" v-show="total || isSearch">
            <VhallInput class="search-dialog-tag" v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" @keyup.enter.native="changeAdverment" maxlength="50" @clear="changeAdverment" clearable>
-            <i slot="suffix" class="iconfont-v3 saasicon_search" @click="changeAdverment" style="cursor: pointer; line-height: 36px;"></i>
+            <i slot="prefix" class="iconfont-v3 saasicon_search" @click="changeAdverment" style="cursor: pointer; line-height: 36px;"></i>
           </VhallInput>
           </div>
         <el-scrollbar v-loadMore="moreLoadData" v-show="total">
@@ -498,19 +499,14 @@ export default {
     /deep/.el-input__inner {
       border-radius: 20px;
       height: 36px;
-      padding-right: 50px!important;
+      padding-right: 30px!important;
     }
-    /deep/ .el-input__suffix {
-      .el-input__suffix-inner {
-        i {
-          margin-right: 5px;
-          line-height: 36px;
-          cursor: pointer;
-        }
-      }
-      /deep/ .el-input__icon {
-        width: auto;
-      }
+    /deep/ .el-input__icon {
+      line-height: 36px;
+    }
+    /deep/ .el-input__prefix {
+      left: 9px;
+      cursor: pointer;
     }
   }
   /deep/ .choose-gift {
@@ -555,7 +551,7 @@ export default {
     width: 324px;
     height: 130px;
   }
-  /deep/.el-input__inner{
+  .advinfo-dialog /deep/.el-input__inner{
    padding: 0 12px;
   }
   /deep/.el-input__count-inner {

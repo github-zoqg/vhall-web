@@ -23,7 +23,7 @@
         @keyup.enter.native="searchTableList">
         <i
           class="el-icon-search el-input__icon"
-          slot="suffix"
+          slot="prefix"
           @click="searchTableList">
         </i>
       </VhallInput>
@@ -601,9 +601,9 @@ export default {
     padding-left: 10px;
   }
 }
-/deep/.el-input__inner{
-    padding: 0 12px;
-  }
+// /deep/.el-input__inner{
+//     padding: 0 12px;
+//   }
   /deep/.el-table td{
     padding: 15px 0;
   }
@@ -620,18 +620,18 @@ export default {
     border-radius: 18px;
     padding: 0 12px;
   } */
+  /deep/ .el-input__icon{
+    line-height: 36px;
+  }
    /deep/.el-input__inner {
-      border-radius: 20px;
+      border-radius: 50px;
+      user-select: none;
       height: 36px;
-      padding-right: 50px!important;
+      line-height: 36px;
+      padding-right: 30px!important;
     }
-    /deep/ .el-input__suffix {
+    /deep/ .el-input__prefix {
       cursor: pointer;
-      /deep/ .el-input__icon {
-        width: auto;
-        margin-right: 5px;
-        line-height: 36px;
-      }
     }
 }
 .videoName{

@@ -13,7 +13,7 @@
         >
         <i
           class="el-icon-search el-input__icon"
-          slot="suffix"
+          slot="prefix"
           @click="searchHandle">
         </i>
       </VhallInput>
@@ -455,15 +455,10 @@ export default {
     /deep/.el-input__inner {
       border-radius: 20px;
       height: 36px;
-      padding-right: 50px!important;
+      padding-right: 30px!important;
     }
     /deep/ .el-input__suffix {
       cursor: pointer;
-      /deep/ .el-input__icon {
-        width: auto;
-        margin-right: 5px;
-        line-height: 36px;
-      }
     }
   }
 }

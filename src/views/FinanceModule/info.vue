@@ -80,7 +80,7 @@
           style="width: 240px"
         />
         <VhallInput v-model="subject" placeholder="请输入活动名称" style="width: 220px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" clearable>
-          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
+          <i slot="prefix" class="iconfont-v3 saasicon_search" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
         </VhallInput>
           <el-select filterable v-model="accountType" style="width: 160px;marginLeft:15px" @change="getSearchList" v-if="type">
             <el-option
@@ -504,15 +504,16 @@ export default {
       border-radius: 18px;
       height: 36px;
       background: transparent;
-      padding-left: 12px;
-      padding-right: 50px;
+      // padding-left: 12px;
+      padding-right: 30px!important;
     }
      /deep/.el-input__icon {
         // margin-bottom: 5px;
-        line-height: 33px;
+        line-height: 36px;
       }
-      /deep/.el-input__suffix{
-        top: 0px;
+      /deep/.el-input__prefix{
+        left: 9px;
+        cursor: pointer;
       }
     /deep/.el-range-editor.el-input__inner{
       padding: 1px 10px;

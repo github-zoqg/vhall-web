@@ -47,7 +47,7 @@
      <div class="prizeList">
        <div class="search" v-show="total || isSearch">
          <VhallInput v-model="keyword" class="search-dialog-tag" placeholder="请输入奖品名称" style="width:220px;" @keyup.enter.native="inputChange" @clear="inputChange" clearable>
-           <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer;line-height: 36px;"></i>
+           <i slot="prefix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer;line-height: 36px;"></i>
          </VhallInput>
        </div>
        <div v-show="total" class="material-box">
@@ -443,22 +443,17 @@ export default {
 </script>
 <style lang="less" scoped>
 .search-dialog-tag {
+    /deep/ .el-input__icon {
+      line-height: 36px;
+    }
     /deep/.el-input__inner {
       border-radius: 20px;
       height: 36px;
-      padding-right: 50px!important;
+      padding-right: 30px!important;
     }
-    /deep/ .el-input__suffix {
-      .el-input__suffix-inner {
-        i {
-          margin-right: 5px;
-          line-height: 36px;
-          cursor: pointer;
-        }
-      }
-      /deep/ .el-input__icon {
-        width: auto;
-      }
+    /deep/ .el-input__prefix {
+      left: 9px;
+      cursor: pointer;
     }
   }
   /deep/.el-upload--picture-card{
