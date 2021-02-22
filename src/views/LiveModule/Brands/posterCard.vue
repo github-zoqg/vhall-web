@@ -20,7 +20,7 @@
       <div class="form-phone">
         <div class="official-form">
           <el-form label-width="120px" :model="form" ref="officialForm" :rules="formRules" >
-            <el-form-item label="图片"  prop="img">
+            <el-form-item label="手机图片"  prop="img">
               <div class="img-box">
                 <upload
                   class="giftUpload"
@@ -44,8 +44,32 @@
                 </upload>
               </div>
             </el-form-item>
+            <el-form-item label="PC图片"  prop="pc_img">
+              <div class="img-box">
+                <upload
+                  class="giftUpload"
+                  v-model="form.pc_img"
+                  :domain_url="pc_domain_url"
+                  :saveData="{
+                     path: pathUrl,
+                     type: 'image',
+                  }"
+                  :on-success="pcUploadAdvSuccess"
+                  :on-progress="pcUploadProcess"
+                  :on-error="pcUploadError"
+                  :on-preview="pcUploadPreview"
+                  @handleFileChange="handlePcFileChange"
+                  :before-upload="beforePcUploadHnadler"
+                  @delete="form.pc_img = '', pc_domain_url = ''">
+                  <div slot="tip">
+                    <p>建议尺寸：1920*1080px</p>
+                    <p>小于4M(支持jpg、gif、png、bmp)</p>
+                  </div>
+                </upload>
+              </div>
+            </el-form-item>
             <el-form-item label="链接" prop="url">
-              <VhallInput v-model.trim="form.url" placeholder="请输入跳转链接" :maxlength="200" autocomplete="off" show-word-limit></VhallInput>
+              <VhallInput v-model.trim="form.url" placeholder="请输入http://或https://开头的链接" :maxlength="200" autocomplete="off" show-word-limit></VhallInput>
             </el-form-item>
             <el-form-item label="自动关闭">
               <!--{{alertType 0手动关闭 1自动关闭}}-->
@@ -122,6 +146,7 @@ export default {
     return {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       domain_url: '',
+      pc_domain_url: '',
       imgShowUrl: '',
       status: 1,
       alertType: null,
@@ -129,16 +154,20 @@ export default {
       showPoster: false,
       form: {
         img: '',
+        pc_img: '',
         url: ''
       },
       formRules: {
         img: [
-          { required: true, message: '请上传二维码', trigger: 'blur' },
+          { required: true, message: '请上传手机图片', trigger: 'blur' },
+        ],
+        pc_img: [
+          { required: true, message: '请上传PC图片', trigger: 'blur' },
         ],
         url: [
-          { required: false, message: '请输入跳转链接', trigger: 'blur'},
+          { required: false, message: '请输入http://或https://开头的链接', trigger: 'blur'},
           // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
-          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入跳转链接' , trigger: 'blur'},
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入http://或https://开头的链接' , trigger: 'blur'},
           { maxlength: 200, message: '跳转链接最多可输入200个字符', trigger: 'blur' }
         ]
       }
@@ -220,8 +249,10 @@ export default {
       }).then(res => {
         if(res && res.code === 200) {
           this.form.img = res.data.img || '';
+          this.form.pc_img = res.data.pc_img || '';
           this.form.url = res.data.url || '';
           this.domain_url = res.data.img || '';
+          this.pc_domain_url = res.data.pc_img || '';
           /* if (this.domain_url) {
             if (this.switchType == 'pc') {
               this.resizePcImg(this.domain_url)
@@ -247,7 +278,8 @@ export default {
       let params = {
         webinar_id: this.$route.params.str,
         status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭
-        img: this.form.img ? this.$parseURL(this.form.img).path : '' // 公众号/开屏海报  图片地址
+        img: this.form.img ? this.$parseURL(this.form.img).path : '', // 开屏海报  手机图片地址
+        pc_img: this.form.pc_img ? this.$parseURL(this.form.pc_img).path : '' // 开屏海报  PC图片地址
       };
       let type = this.alertType;
       params.shutdown_type = type;
@@ -369,6 +401,74 @@ export default {
           }
         }
       })
+    },
+    // pc
+    pcUploadAdvSuccess(res, file) {
+      console.log(res, file);
+      // this.img = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+      if(res.data) {
+        let pc_domain_url = res.data.domain_url || ''
+        let pc_file_url = res.data.file_url || '';
+        this.form.pc_img = pc_file_url;
+        this.pc_domain_url = pc_domain_url;
+        /* if (this.domain_url) {
+          if (this.switchType == 'pc') {
+            this.resizePcImg(this.domain_url)
+          } else {
+            this.resizeImg(this.domain_url)
+          }
+        } */
+      }
+      // 触发验证
+      this.$refs.officialForm.validateField('pc_img');
+    },
+    beforePcUploadHnadler(file){
+      console.log(file);
+     const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
+      const isLt2M = file.size / 1024 / 1024 < 4;
+      if (!isType) {
+        this.$message({
+          message:  `图片只能是 ${typeList.join('、')} 格式!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
+      }
+      if (!isLt2M) {
+        this.$message({
+          message: `图片大小不能超过 4MB!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
+      }
+      return isType && isLt2M;
+    },
+    pcUploadProcess(event, file, fileList){
+      console.log('uploadProcess', event, file, fileList);
+    },
+    pcUploadError(err, file, fileList){
+      console.log('pcUploadError', err, file, fileList);
+      this.$message({
+        message: `PC图片上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
+    },
+    pcUploadPreview(file){
+      console.log('pcUploadPreview', file);
+    },
+    handlePcFileChange(file) {
+      console.log(file);
     },
     resizePcImg (data) {
       let img = new Image()
