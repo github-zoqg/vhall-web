@@ -43,6 +43,7 @@
 <script>
 import Breadcrumb from './Breadcrumb/index.vue';
 import { sessionOrLocal } from "@/utils/utils";
+import Cookies from 'js-cookie'
 import Env from "@/api/env";
 import EventBus from "@/utils/Events";
 
@@ -114,6 +115,8 @@ export default {
       this.$fetch('loginOut', {}).then(res =>{
         sessionOrLocal.clear();
         sessionOrLocal.clear('localStorage');
+        // 清除cookies
+        Cookies.remove('user_id');
         // 监听消息变化
         this.$EventBus.$emit('saas_vs_login_out', true);
         this.$router.push({
