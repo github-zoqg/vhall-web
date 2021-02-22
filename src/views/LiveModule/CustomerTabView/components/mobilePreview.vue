@@ -314,7 +314,7 @@ export default {
     },
     // 左侧增加菜单
     addLeft(index) {
-      this.$insertIndex = (index - 1 < 0 ? 0 : index - 1)
+      this.$insertIndex = index
       console.log(this.$insertIndex)
       this.type = 'add' // 编辑类型！
       this.addCustomForm.name = ''
@@ -330,10 +330,10 @@ export default {
     },
     // 删除
     delThis(index) {
-      let activeTab = (index - 1)
-      this.choseMenu(activeTab)
+      let activeTab = index === 0 ? 0 : (index - 1)
       setTimeout(() => {
         this.menus.splice(index, 1)
+        this.choseMenu(activeTab)
       }, 100);
     },
     // 隐藏
