@@ -562,14 +562,6 @@ export default {
  /deep/.el-tabs__content{
    min-height: 700px;
  }
- /deep/.el-input{
-   input {
-     padding: 0 12px;
-   }
-   input::-webkit-input-placeholder{
-    color:#999;
-    }
- }
   .prize-info{
     margin: 32px 0;
     // .question-list{
@@ -590,6 +582,14 @@ export default {
     }
     /deep/.el-input__inner{
       height: 40px;
+    }
+    /deep/.el-input{
+      input {
+        padding: 0 12px;
+      }
+      input::-webkit-input-placeholder{
+        color:#999;
+        }
     }
     .give-prize{
       width: 480px;

@@ -38,7 +38,7 @@
             @keyup.enter.native="searchHandler">
             <i
               class="el-icon-search el-input__icon"
-              slot="suffix"
+              slot="prefix"
               @click="searchHandler">
             </i>
           </VhallInput>
@@ -478,7 +478,7 @@ export default {
         /deep/ .el-input__icon {
           width: auto;
           margin-right: 5px;
-          line-height: 40px;
+          line-height: 38px;
         }
       }
     }

@@ -19,7 +19,7 @@
                   @clear="initQuerySonList"
                   class="search-query"
                   @keyup.enter.native="initQuerySonList">
-          <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
+          <i class="el-icon-search el-input__icon" slot="prefix" @click="initQuerySonList"></i>
         </VhallInput>
       </div>
       <!-- 有消息内容 -->
@@ -431,18 +431,16 @@ export default {
   .el-input{
     width: 220px;
     float: right;
+    /deep/ .el-input__icon{
+      line-height: 36px;
+    }
     /deep/ .el-input__inner{
       border-radius: 20px;
       height: 36px;
-      padding-right: 50px;
+      padding-right: 30px !important;
     }
-    /deep/ .el-input__suffix{
+    /deep/ .el-input__prefix{
       cursor: pointer;
-      /deep/ .el-input__icon{
-        width: auto;
-        margin-right: 5px;
-        line-height: 36px;
-      }
     }
   }
   .search-input {

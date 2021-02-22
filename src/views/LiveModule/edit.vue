@@ -22,7 +22,7 @@
             <el-form-item prop="date2" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
-            <el-time-picker placeholder="选择时间" :disabled="!formData.date1" type="datetime" :picker-options="{
+            <el-time-picker placeholder="选择时间" :default-value="dafaultTime" :disabled="!formData.date1" type="datetime" :picker-options="{
               selectableRange: rangHourMins
             }" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
@@ -285,6 +285,12 @@ export default {
         return `${str}:00 - 23:59:00`;
       }
     },
+    dafaultTime() {
+      let sysDate = new Date().getTime();
+      let str = this.$moment(sysDate + 10 * 60 * 1000).format('HH:mm');
+      let selectDate = this.$moment(this.formData.date1).format('YYYY-MM-DD');
+      return selectDate + ' ' + `${str}:00`;
+    },
     pathUrl: function() {
       return `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
     },
@@ -419,7 +425,6 @@ export default {
       selectMedia: {},
       expireTimeOption: {
         disabledDate(time) {
-          console.log(time, '?????????????')
           // formData.date1
           this.startVal = this.formData.date1.getTime() < Date.now() - 24 * 60 * 60 * 1000;
           return startVal;
