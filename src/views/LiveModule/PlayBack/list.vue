@@ -51,9 +51,12 @@
               {{ scope.row.date }}
               <div class="content">
                 <div class="imageBox">
-                  <div class="imageWrap" v-if="scope.row.transcode_status != 1">
-                    <p class="statusDesc">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : scope.row.transcode_status == 2 ? '转码失败' : '' }}</p>
+                  <div class="imageWrap">
+                    <p class="statusDesc" @click="reTranscode(scope.row)">转码失败</p>
                   </div>
+                  <!-- <div class="imageWrap" v-if="scope.row.transcode_status != 1">
+                    <p class="statusDesc">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : scope.row.transcode_status == 2 ? '转码失败' : '' }}</p>
+                  </div> -->
                   <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
                   <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
                 </div>
@@ -264,6 +267,9 @@ export default {
       } else {
         this.$message.warning('只有转码成功才能查看');
       }
+    },
+    reTranscode() {
+      // this.$fetch()
     },
     closeBefore(done){
       // this.$refs.videoPreview.destroy();
@@ -723,6 +729,9 @@ export default {
           text-align: center;
           color: #fff;
           font-size: 12px;
+          background: #FB3A32;
+          border-radius: 15px;
+          cursor: pointer;
         }
       }
       .defaultSign{
