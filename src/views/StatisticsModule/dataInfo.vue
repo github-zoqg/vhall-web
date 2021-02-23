@@ -212,7 +212,7 @@ export default {
     },
     getDataList() {
       let params = {
-        account_id: this.userId,
+        // account_id: this.userId,
         type: this.versionType || 1,
         start_time: this.dateValue ? this.dateValue[0] : '',
         end_time: this.dateValue ? this.dateValue[1] : ''

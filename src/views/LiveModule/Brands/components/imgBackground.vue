@@ -22,6 +22,9 @@
             :on-preview="uploadPreview"
             :restPic="true"
             @delete="daleteImg()"
+            @fullCover="choseBackground(-1)"
+            :isFullCover="false"
+            :bottom="4"
             @handleFileChange="handleFileChange"
             :before-upload="beforeUploadHnadler">
             <div slot="tip">

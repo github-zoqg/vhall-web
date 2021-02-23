@@ -380,7 +380,8 @@ export default {
         bottom: 24px;
         cursor: pointer;
         &:hover{
-          color: #FB3A32;
+          background: #FB3A32;
+          color: #fff;
           border: 1px solid #FB3A32;
         }
       }

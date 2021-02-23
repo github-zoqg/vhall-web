@@ -230,7 +230,7 @@ export default {
       versionType: '',
       lineParams: {},
       dataParams: {},
-      totalNum: 1000,
+      totalNum: 0,
       vm: {},
       status: 0,
       tableList: [],
@@ -333,7 +333,6 @@ export default {
     // 用量统计数据
     getLineList() {
       let paramsObj = {
-        account_id: this.userId,
         type: this.lineType || 1
       };
       if (this.lineSearchDate) {
@@ -374,7 +373,6 @@ export default {
     getAccountList(params) {
       let pageInfo = this.$refs.accountTableList.pageInfo;
       let paramsObj = {
-        account_id: this.userId,
         subject: this.subject,
         type: this.accountType || 1
       };
@@ -382,7 +380,6 @@ export default {
         pageInfo.pos= 0;
         pageInfo.pageNum = 1;
       }
-      console.log(this.accountSearchDate, '?????????????')
       if (this.accountSearchDate) {
         paramsObj['start_time'] = this.accountSearchDate[0];
         paramsObj['end_time'] = this.accountSearchDate[1];

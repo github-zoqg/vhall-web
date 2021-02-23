@@ -42,18 +42,18 @@ const clearEmoij = (Vue) => {
         obj.dispatchEvent(new Event('input'));
       }
       let zblur = function (e) {
-        zclearNoNum(e);
+        // zclearNoNum(e);
         setTimeout(()=>{
           let match = regex.exec(obj.value);
           if(match) {
             obj.value = obj.value.replace(/[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030|(^\s*)/gi, "");
-            zclearNoNum(e);
+            // zclearNoNum(e);
           }
           // 触发v-model的更新
           obj.dispatchEvent(new Event('input'));
         }, 50)
       }
-      obj.onkeyup = zclearNoNum;
+      // obj.onkeyup = zclearNoNum;
       // obj.onblur = zblur;
       obj.oninput = zblur;
 

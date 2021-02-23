@@ -37,6 +37,8 @@
                           :on-error="uploadError"
                           :on-preview="uploadPreview"
                           @delete="deleteImg"
+                          @fullCover="changeType(0)"
+                          :isFullCover="false"
                           :before-upload="beforeUploadHandler">
                         </upload>
                         <label class="img-tangle" v-show="isChecked==0" >
@@ -95,7 +97,7 @@
                       <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
                       <p class="switch__box">
                         <el-switch
-                          v-if="index > 1"
+                          v-if="index > 0"
                         v-model="item.is_required"
                         inactive-text="必填">
                       </el-switch>
@@ -465,6 +467,7 @@ export default {
       this.backgroundImg = this.prizeUrl[0];
     },
     changeType(index) {
+      console.log(index, "1314154325")
       this.isChecked = index;
       this.backgroundImg = this.prizeUrl[index - 1];
     },

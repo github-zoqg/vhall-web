@@ -10,7 +10,7 @@
     <!-- 操作栏 -->
       <div class="operaBox" v-if="totalElement || isSearch">
         <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
-        <el-button size="medium" class="is_medium" round @click="createLiveAction('2')" v-if="vodPerssion == 1" v-preventReClick>创建点播</el-button>
+        <el-button size="medium"  round @click="createLiveAction('2')" v-if="vodPerssion == 1" v-preventReClick>创建点播</el-button>
         <!--  v-if="vodPerssion == 1"  -->
         <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
@@ -202,9 +202,16 @@ export default {
           });
         });
       } else if (command === '/live/edit') {
-        const { href } = this.$router.resolve({path: command, query: {id: this.webinarInfo.webinar_id, type: 3 }});
-        window.open(href, '_blank');
-        // this.$router.push({path: command, query: {id: this.webinarInfo.webinar_id, type: 3 }});
+        this.$confirm('支持复制活动下设置的功能，不支持复制回放视频、统计的数据', '复制活动', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {
+          const { href } = this.$router.resolve({path: command, query: {id: this.webinarInfo.webinar_id, type: 3 }});
+          window.open(href, '_blank');
+        }).catch(() => {});
       } else {
         // 新标签页打开
         // this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id, status: this.webinarInfo.webinar_state }});
@@ -493,7 +500,7 @@ export default {
     .liveItem{
       // width: 312px;
       height: 314px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       // float: left;
       // margin-right: 40px;
       .inner{
