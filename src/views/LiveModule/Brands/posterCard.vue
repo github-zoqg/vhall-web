@@ -20,31 +20,7 @@
       <div class="form-phone">
         <div class="official-form">
           <el-form label-width="120px" :model="form" ref="officialForm" :rules="formRules" >
-            <el-form-item label="手机图片"  prop="img">
-              <div class="img-box">
-                <upload
-                  class="giftUpload"
-                  v-model="form.img"
-                  :domain_url="domain_url"
-                  :saveData="{
-                     path: pathUrl,
-                     type: 'image',
-                  }"
-                  :on-success="uploadAdvSuccess"
-                  :on-progress="uploadProcess"
-                  :on-error="uploadError"
-                  :on-preview="uploadPreview"
-                  @handleFileChange="handleFileChange"
-                  :before-upload="beforeUploadHnadler"
-                  @delete="form.img = '', domain_url = ''">
-                  <div slot="tip">
-                    <p>建议尺寸：750*1334px</p>
-                    <p>小于4M(支持jpg、gif、png、bmp)</p>
-                  </div>
-                </upload>
-              </div>
-            </el-form-item>
-            <el-form-item label="PC图片"  prop="m_img">
+            <el-form-item label="手机图片"  prop="m_img">
               <div class="img-box">
                 <upload
                   class="giftUpload"
@@ -63,6 +39,30 @@
                   @delete="form.m_img = '', m_domain_url = ''">
                   <div slot="tip">
                     <p>建议尺寸：1920*1080px</p>
+                    <p>小于4M(支持jpg、gif、png、bmp)</p>
+                  </div>
+                </upload>
+              </div>
+            </el-form-item>
+            <el-form-item label="PC图片"  prop="img">
+              <div class="img-box">
+                <upload
+                  class="giftUpload"
+                  v-model="form.img"
+                  :domain_url="domain_url"
+                  :saveData="{
+                     path: pathUrl,
+                     type: 'image',
+                  }"
+                  :on-success="uploadAdvSuccess"
+                  :on-progress="uploadProcess"
+                  :on-error="uploadError"
+                  :on-preview="uploadPreview"
+                  @handleFileChange="handleFileChange"
+                  :before-upload="beforeUploadHnadler"
+                  @delete="form.img = '', domain_url = ''">
+                  <div slot="tip">
+                    <p>建议尺寸：750*1334px</p>
                     <p>小于4M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
@@ -122,8 +122,8 @@
             <!-- 开屏海报 -->
             <div class="hb_app">
               <div class="poster-img">
-                <img class="domain_url" :src="domain_url" alt=""  v-if="status <= 0 && domain_url">
-                <img class="default" src="../../../common/images/poster/phone_poster_default@2x.png"  v-if="!domain_url" />
+                <img class="domain_url" :src="m_domain_url" alt=""  v-if="status <= 0 && m_domain_url">
+                <img class="default" src="../../../common/images/poster/phone_poster_default@2x.png"  v-if="!m_domain_url" />
               </div>
               <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s 关闭' : '关闭'}}</el-button>
             </div>
@@ -159,10 +159,10 @@ export default {
       },
       formRules: {
         img: [
-          { required: true, message: '请上传手机图片', trigger: 'blur' },
+          { required: true, message: '请上传PC图片', trigger: 'blur' },
         ],
         m_img: [
-          { required: true, message: '请上传PC图片', trigger: 'blur' },
+          { required: true, message: '请上传手机图片', trigger: 'blur' },
         ],
         url: [
           { required: false, message: '请输入http://或https://开头的链接', trigger: 'blur'},
@@ -278,8 +278,8 @@ export default {
       let params = {
         webinar_id: this.$route.params.str,
         status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭
-        img: this.form.img ? this.$parseURL(this.form.img).path : '', // 开屏海报  手机图片地址
-        m_img: this.form.m_img ? this.$parseURL(this.form.m_img).path : '' // 开屏海报  PC图片地址
+        img: this.form.img ? this.$parseURL(this.form.img).path : '', // 开屏海报  PC图片地址
+        m_img: this.form.m_img ? this.$parseURL(this.form.m_img).path : '' // 开屏海报  手机图片地址
       };
       let type = this.alertType;
       params.shutdown_type = type;
