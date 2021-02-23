@@ -44,12 +44,12 @@
                 </upload>
               </div>
             </el-form-item>
-            <el-form-item label="PC图片"  prop="pc_img">
+            <el-form-item label="PC图片"  prop="m_img">
               <div class="img-box">
                 <upload
                   class="giftUpload"
-                  v-model="form.pc_img"
-                  :domain_url="pc_domain_url"
+                  v-model="form.m_img"
+                  :domain_url="m_domain_url"
                   :saveData="{
                      path: pathUrl,
                      type: 'image',
@@ -60,7 +60,7 @@
                   :on-preview="pcUploadPreview"
                   @handleFileChange="handlePcFileChange"
                   :before-upload="beforePcUploadHnadler"
-                  @delete="form.pc_img = '', pc_domain_url = ''">
+                  @delete="form.m_img = '', m_domain_url = ''">
                   <div slot="tip">
                     <p>建议尺寸：1920*1080px</p>
                     <p>小于4M(支持jpg、gif、png、bmp)</p>
@@ -146,7 +146,7 @@ export default {
     return {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       domain_url: '',
-      pc_domain_url: '',
+      m_domain_url: '',
       imgShowUrl: '',
       status: 1,
       alertType: null,
@@ -154,14 +154,14 @@ export default {
       showPoster: false,
       form: {
         img: '',
-        pc_img: '',
+        m_img: '',
         url: ''
       },
       formRules: {
         img: [
           { required: true, message: '请上传手机图片', trigger: 'blur' },
         ],
-        pc_img: [
+        m_img: [
           { required: true, message: '请上传PC图片', trigger: 'blur' },
         ],
         url: [
@@ -249,10 +249,10 @@ export default {
       }).then(res => {
         if(res && res.code === 200) {
           this.form.img = res.data.img || '';
-          this.form.pc_img = res.data.pc_img || '';
+          this.form.m_img = res.data.m_img || '';
           this.form.url = res.data.url || '';
           this.domain_url = res.data.img || '';
-          this.pc_domain_url = res.data.pc_img || '';
+          this.m_domain_url = res.data.m_img || '';
           /* if (this.domain_url) {
             if (this.switchType == 'pc') {
               this.resizePcImg(this.domain_url)
@@ -279,7 +279,7 @@ export default {
         webinar_id: this.$route.params.str,
         status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭
         img: this.form.img ? this.$parseURL(this.form.img).path : '', // 开屏海报  手机图片地址
-        pc_img: this.form.pc_img ? this.$parseURL(this.form.pc_img).path : '' // 开屏海报  PC图片地址
+        m_img: this.form.m_img ? this.$parseURL(this.form.m_img).path : '' // 开屏海报  PC图片地址
       };
       let type = this.alertType;
       params.shutdown_type = type;
@@ -407,10 +407,10 @@ export default {
       console.log(res, file);
       // this.img = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
       if(res.data) {
-        let pc_domain_url = res.data.domain_url || ''
-        let pc_file_url = res.data.file_url || '';
-        this.form.pc_img = pc_file_url;
-        this.pc_domain_url = pc_domain_url;
+        let m_domain_url = res.data.domain_url || ''
+        let m_file_url = res.data.file_url || '';
+        this.form.m_img = m_file_url;
+        this.m_domain_url = m_domain_url;
         /* if (this.domain_url) {
           if (this.switchType == 'pc') {
             this.resizePcImg(this.domain_url)
@@ -420,7 +420,7 @@ export default {
         } */
       }
       // 触发验证
-      this.$refs.officialForm.validateField('pc_img');
+      this.$refs.officialForm.validateField('m_img');
     },
     beforePcUploadHnadler(file){
       console.log(file);
