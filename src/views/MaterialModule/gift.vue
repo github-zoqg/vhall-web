@@ -17,6 +17,7 @@
         clearable
         @clear="searchGifts"
         style="width: 220px;"
+        v-clearEmoij
         class="head-btn fr search resetRightBrn search-tag"
         v-model="searchName"
         autocomplete="off"
@@ -25,7 +26,7 @@
         <i
           style="cursor: pointer; line-height: 36px;"
           class="el-icon-search el-input__icon"
-          slot="suffix"
+          slot="prefix"
           @click="searchGifts">
         </i>
       </VhallInput>
@@ -107,7 +108,7 @@
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
-            <VhallInput v-model.trim="editParams.name" show-word-limit :maxlength="10" autocomplete="off"  placeholder="请输入礼物名称"></VhallInput>
+            <VhallInput v-model.trim="editParams.name" v-clearEmoij show-word-limit :maxlength="10" autocomplete="off"  placeholder="请输入礼物名称"></VhallInput>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
             <VhallInput @input="handleInput" v-model.trim.number="editParams.price" autocomplete="off"  :maxlength="10" placeholder="请输入0-9999.99">
@@ -598,7 +599,7 @@ export default {
   // }
   .head-operat{
     margin-bottom: 20px;
-    /deep/ .el-input__suffix-inner .el-input__icon {
+    /deep/ .el-input__prefix-inner .el-input__icon {
       line-height: 36px;
     }
     .search-tag{
@@ -608,19 +609,17 @@ export default {
         border-radius: 18px;
         padding: 0 12px;
       } */
+      /deep/ .el-input__icon {
+        line-height: 36px;
+      }
       /deep/.el-input__inner {
-          border-radius: 20px;
-          height: 36px;
-          padding-right: 50px!important;
-        }
-        /deep/ .el-input__suffix {
-          cursor: pointer;
-          /deep/ .el-input__icon {
-            width: auto;
-            margin-right: 5px;
-            line-height: 36px;
-          }
-        }
+        border-radius: 20px;
+        height: 36px;
+        padding-right: 30px!important;
+      }
+      /deep/ .el-input__prefix {
+        cursor: pointer;
+      }
     }
     .head-btn{
       display: inline-block;

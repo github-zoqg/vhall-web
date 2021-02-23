@@ -19,6 +19,7 @@
       <VhallInput
         class="search-tag"
         placeholder="搜索文件名称"
+        v-clearEmoij
         v-model="file_name"
         clearable
         @change="search"

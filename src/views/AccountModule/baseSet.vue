@@ -2,7 +2,7 @@
   <div class="base--set">
     <el-form :model="baseSetForm" ref="baseSetForm" :rules="baseSetFormRules" label-width="94px">
       <el-form-item label="账号昵称" prop="nick_name">
-        <VhallInput type="text" placeholder="请输入账号昵称" autocomplete="off" v-model="baseSetForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
+        <VhallInput type="text" placeholder="请输入账号昵称" v-clearEmoij autocomplete="off" v-model="baseSetForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item label="账号头像" prop="avatar">
         <upload
@@ -27,10 +27,10 @@
         </upload>
       </el-form-item>
       <el-form-item label="公司名称" prop="company">
-        <VhallInput type="text" placeholder="请输入公司名称" autocomplete="off" v-model="baseSetForm.company" :maxlength="100" show-word-limit></VhallInput>
+        <VhallInput type="text" v-clearEmoij placeholder="请输入公司名称" autocomplete="off" v-model="baseSetForm.company" :maxlength="100" show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item label="您的职业" prop="position">
-        <VhallInput type="text" placeholder="请输入您的职业" autocomplete="off" v-model="baseSetForm.position" :maxlength="150" show-word-limit></VhallInput>
+        <VhallInput type="text" v-clearEmoij placeholder="请输入您的职业" autocomplete="off" v-model="baseSetForm.position" :maxlength="150" show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="baseSetSave">保 存</el-button>

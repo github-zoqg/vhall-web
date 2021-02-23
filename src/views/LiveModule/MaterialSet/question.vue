@@ -11,8 +11,8 @@
       <el-button round  @click="dataBase" class="transparent-btn" size="medium">资料库</el-button>
       <el-button round class="transparent-btn" @click="deleteAll(null)" size="medium" :disabled="!selectChecked.length">批量删除</el-button>
       <div class="inputKey">
-        <VhallInput v-model="keyword" placeholder="请输入问卷名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>
-          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchTableList" style="cursor: pointer; line-height: 36px;"></i>
+        <VhallInput v-model="keyword" v-clearEmoij placeholder="请输入问卷名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>
+          <i slot="prefix" class="iconfont-v3 saasicon_search" @click="searchTableList" style="cursor: pointer; line-height: 36px;"></i>
         </VhallInput>
       </div>
     </div>
@@ -308,11 +308,18 @@ export default {
       float: right;
       height: 35px;
       width: 220px;
-      /deep/.el-input__inner{
-        border-radius: 18px;
+      /deep/ .el-input__icon {
+        line-height: 36px;
       }
-      /deep/.el-input__suffix{
-        right: 12px;
+      /deep/.el-input__inner {
+        border-radius: 20px;
+        height: 36px;
+        line-height: 36px;
+        padding-right: 30px!important;
+      }
+      /deep/.el-input__prefix{
+        left: 9px;
+        cursor: pointer;
       }
     }
   }

@@ -4,7 +4,7 @@
     <div class="add-product">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="商品名称" prop="name">
-          <VhallInput v-model="form.name" :maxlength="30" autocomplete="off"  show-word-limit placeholder="请输入商品名称"></VhallInput>
+          <VhallInput v-model="form.name" v-clearEmoij :maxlength="30" autocomplete="off"  show-word-limit placeholder="请输入商品名称"></VhallInput>
         </el-form-item>
         <el-form-item label="商品图片" prop="img_id">
           <div class="imgList">
@@ -54,13 +54,13 @@
          <VhallInput v-model.trim="form.discount_price" placeholder="请输入价格" autocomplete="off" :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></VhallInput>
         </el-form-item>
         <el-form-item label="商品链接" prop="url">
-          <VhallInput v-model.trim="form.url" placeholder="请输入商品链接" autocomplete="off" ></VhallInput>
+          <VhallInput v-model.trim="form.url" v-clearEmoij placeholder="请输入商品链接" autocomplete="off" ></VhallInput>
         </el-form-item>
         <el-form-item label="淘口令">
-          <VhallInput v-model.trim="form.tao_password" placeholder="请输入淘口令" autocomplete="off" ></VhallInput>
+          <VhallInput v-model.trim="form.tao_password" v-clearEmoij placeholder="请输入淘口令" autocomplete="off" ></VhallInput>
         </el-form-item>
         <el-form-item label="店铺链接" prop="shop_url">
-          <VhallInput v-model.trim="form.shop_url" placeholder="请输入店铺链接" autocomplete="off" ></VhallInput>
+          <VhallInput v-model.trim="form.shop_url" v-clearEmoij placeholder="请输入店铺链接" autocomplete="off" ></VhallInput>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" round class="length152" v-preventReClick @click="onSubmit">保存</el-button>

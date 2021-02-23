@@ -251,6 +251,7 @@
             v-model="eventLabel"
             :placeholder="t('请输入标记文字')"
             maxlength="20"
+            v-clearEmoij
             show-word-limit
           ></VhallInput>
         </div>

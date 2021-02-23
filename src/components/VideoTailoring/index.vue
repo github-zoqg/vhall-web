@@ -130,7 +130,7 @@
       <div class="vh-video-tailoring__form">
         <span class="vh-video-tailoring__label vh-video-tailoring__title">{{ t('回放标题') }}</span>
         <div class="vh-video-tailoring__input-form">
-          <VhallInput resize=none type="textarea" v-model="videoTitle" :placeholder="t('请输入回放标题')" maxlength="100" show-word-limit ></VhallInput>
+          <VhallInput resize=none type="textarea" v-clearEmoij v-model="videoTitle" :placeholder="t('请输入回放标题')" maxlength="100" show-word-limit ></VhallInput>
           <!-- <span class="vh-invitation-card__title-length">
             <span :class="videoTitle.length != 0 ? 'vh-invitation-card__curLength' : ''">{{ videoTitleLength }}</span>/100
           </span> -->
