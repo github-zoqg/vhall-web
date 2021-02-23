@@ -28,6 +28,7 @@
       <VhallInput
         @keyup.enter.native="searchGifts"
         clearable
+        v-clearEmoij
         @clear="searchGifts"
         class="head-btn fr search resetRightBrn search-tag"
         v-model="searchName"
@@ -129,7 +130,7 @@
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
-            <VhallInput v-model="editParams.name" show-word-limit :maxlength="10" autocomplete="off"  placeholder="请输入礼物名称"></VhallInput>
+            <VhallInput v-model="editParams.name" v-clearEmoij show-word-limit :maxlength="10" autocomplete="off"  placeholder="请输入礼物名称"></VhallInput>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
             <VhallInput @input="handleInput" v-model.trim.number="editParams.price" autocomplete="off" :maxlength="10" placeholder="请输入0-9999.99">

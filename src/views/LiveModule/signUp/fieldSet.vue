@@ -9,6 +9,7 @@
         show-word-limit
         placeholder="请输入表单标题"
         v-model="title"
+        v-clearEmoij
         @change="baseInfoChange('title')"
       ></VhallInput>
       <div class="disable_wrap" v-show="!signUpSwtich"></div>
@@ -79,6 +80,7 @@
               show-word-limit
               placeholder="请输入题目"
               v-model="item.label"
+              v-clearEmoij
               class="radioInput titleInput"
               @change="subjectChange(item)"
             ></VhallInput>

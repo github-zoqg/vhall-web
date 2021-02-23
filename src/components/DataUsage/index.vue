@@ -1,23 +1,23 @@
 <template>
   <div :class=" typeChange ? 'data-finance' : 'data-usage'">
     <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.concurrency">
-      <el-col :span="typeChange ? 8 : 6">
+      <el-col :span="buttonList.includes('extend') ? (typeChange ? 8 : 6) : (typeChange ? 15 : 9)">
         <div class="top-item">
           <p>当前版本</p>
           <h2>{{ userInfo.edition }}</h2>
           <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.edition_valid_time || '' }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
-      <el-col :span="typeChange ? 8 : 6">
+      <el-col :span="buttonList.includes('extend') ? (typeChange ? 8 : 6) : (typeChange ? 15 : 9)">
         <div class="top-item">
           <p>总并发（方）<span class="level" @click="levelVersion('升级')" v-if="buttonList.includes('upgrade')">升级</span></p>
           <h2>{{ userInfo.concurrency.total_concurrency }}</h2>
           <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.concurrency.concurrency_valid_time || ''  }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
-      <el-col :span="typeChange ? 8 : 6">
+      <el-col :span="typeChange ? 8 : 6" v-if="buttonList.includes('extend')">
         <div class="top-item">
-          <p>并发扩展包（人次）<span class="level" @click="levelVersion('购买')" v-if="buttonList.includes('extend')">购买</span>
+          <p>并发扩展包（人次）<span class="level" @click="levelVersion('购买')">购买</span>
           <el-tooltip effect="dark" placement="right" v-tooltipMove>
             <div slot="content">
               1.当全部并发套餐到期，若有扩展包则会开始扣除扩展包；<br>
@@ -28,7 +28,7 @@
           </el-tooltip>
           </p>
           <h2>{{ userInfo.concurrency.extend || userInfo.arrears.extend }}</h2>
-          <p class="account pointer" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">订单明细</p>
+          <!-- <p class="account pointer" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">订单明细</p> -->
         </div>
       </el-col>
       <el-col :span="typeChange ? 8 : 6" v-if="userInfo.concurrency.extend_day">
@@ -60,7 +60,7 @@
             </el-tooltip>
           </p>
           <h2>无限流量/{{ userInfo.flow.playback_flow || userInfo.arrears.flow  }}</h2>
-          <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p>
+          <!-- <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p> -->
         </div>
       </el-col>
       <el-col :span="typeChange ? 15 : 9" v-else>
@@ -76,7 +76,7 @@
             </el-tooltip>
           </p>
           <h2 v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
-          <p class="account"  @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p>
+          <!-- <p class="account"  @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p> -->
         </div>
       </el-col>
     </el-row>

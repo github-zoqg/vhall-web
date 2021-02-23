@@ -19,6 +19,7 @@
           @keyup.enter.native="getList"
           placeholder="请输入内容标题"
           autocomplete="off"
+          v-clearEmoij
           class="resetRightBrn"
           @clear="getList"
           v-model="keyWords">
@@ -138,6 +139,7 @@
         placeholder="请输入标题"
         :maxlength="100"
         autocomplete="off"
+        v-clearEmoij
         :autosize="{ minRows: 3 }"
         resize=none
         show-word-limit

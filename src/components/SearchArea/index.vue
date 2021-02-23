@@ -45,6 +45,7 @@
           :placeholder="placeholder"
           v-model="searchParams[item.key]"
           clearable
+          v-clearEmoij
           @change="changeInput"
           @keyup.enter.native="changeInput">
           <i

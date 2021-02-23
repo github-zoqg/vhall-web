@@ -4,7 +4,7 @@
     <div class="home--set--info">
       <el-form :model="homeSetInfoForm" ref="homeSetInfoForm" :rules="homeSetInfoFormRules" label-width="94px">
         <el-form-item label="主页标题" prop="title">
-          <VhallInput type="text" placeholder="请输入账号昵称" v-model="homeSetInfoForm.title" autocomplete="off" :maxlength="30" class="input-length" show-word-limit>
+          <VhallInput type="text" v-clearEmoij placeholder="请输入账号昵称" v-model="homeSetInfoForm.title" autocomplete="off" :maxlength="30" class="input-length" show-word-limit>
             <!-- <template slot="append">
               <span class="">{{homeSetInfoForm && homeSetInfoForm.title ? homeSetInfoForm.title.length : 0}}</span>/<span>30</span>
             </template> -->

@@ -2,7 +2,7 @@
   <div class="home--set--info">
     <el-form :model="homeSetInfoForm" ref="homeSetInfoForm" :rules="homeSetInfoFormRules" label-width="94px">
       <el-form-item label="主页标题" prop="title">
-        <VhallInput type="text" placeholder="请输入账号昵称" v-model="homeSetInfoForm.title" maxlength="30" show-word-limit />
+        <VhallInput type="text" v-clearEmoij placeholder="请输入账号昵称" v-model="homeSetInfoForm.title" maxlength="30" show-word-limit />
       </el-form-item>
       <el-form-item label="主页头像" prop="homepage_avatar">
         <upload

@@ -59,6 +59,7 @@
           placeholder="请输入文档名称"
           v-model="formParams.keyword"
           clearable
+          v-clearEmoij
           @clear="initPage"
           @keyup.enter.native="initPage">
           <i

@@ -22,6 +22,7 @@
           @keyup.enter.native="searchHandler"
           @clear="searchHandler"
           clearable
+          v-clearEmoij
           v-model="keyWords">
           <i
             class="el-icon-search el-input__icon"

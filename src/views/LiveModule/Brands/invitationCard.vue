@@ -55,6 +55,7 @@
             <VhallInput
               v-model="formInvitation.title"
               :maxlength="16"
+              v-clearEmoij
               autocomplete="off"
               show-word-limit
               style="width: 320px"
@@ -64,6 +65,7 @@
             <VhallInput
               v-model="formInvitation.company"
               :maxlength="10"
+              v-clearEmoij
               autocomplete="off"
               show-word-limit
               style="width: 320px"
@@ -73,6 +75,7 @@
             <VhallInput
               v-model="formInvitation.webinar_date"
               :maxlength="20"
+              v-clearEmoij
               autocomplete="off"
               show-word-limit
               style="width: 320px"
@@ -82,6 +85,7 @@
             <VhallInput
               v-model="formInvitation.location"
               :maxlength="20"
+              v-clearEmoij
               autocomplete="off"
               show-word-limit
               style="width: 320px"

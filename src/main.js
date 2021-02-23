@@ -32,7 +32,7 @@ import vhallSaas from './tangram/buTemplates/index.js';
 import 'nprogress/nprogress.css';
 // 系统通用重置样式
 import '@/common/css/index.less';
-import { loadMore, tooltipMove }  from '@/utils/directive';
+import { loadMore, tooltipMove, clearEmoij }  from '@/utils/directive';
 
 //过滤器
 import * as filters from './utils/filter';
@@ -107,6 +107,7 @@ import VueI18n from 'vue-i18n';
 Vue.use(VueI18n);
 Vue.use(loadMore)
 Vue.use(tooltipMove)
+Vue.use(clearEmoij)
 const i18n = new VueI18n({
   locale: ['en', 'cn'].includes(getParams('lang')) ? getParams('lang') : 'cn', // 语言标识
   messages: {

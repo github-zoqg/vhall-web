@@ -7,10 +7,10 @@
     <div class="layout-callback">
       <el-form :model="form" ref="form" :rules="formRules" label-width="91px">
         <el-form-item label="签名Key" prop="secret_key">
-          <VhallInput v-model.trim="form.secret_key" auto-complete="off" placeholder="请输入签名规则" :maxlength="32" show-word-limit></VhallInput>
+          <VhallInput v-model.trim="form.secret_key" v-clearEmoij auto-complete="off" placeholder="请输入签名规则" :maxlength="32" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="回调地址" prop="callback_url">
-          <VhallInput v-model.trim="form.callback_url" auto-complete="off" placeholder="请输入Https或http开头的完整url" :maxlength="255" show-word-limit></VhallInput>
+          <VhallInput v-model.trim="form.callback_url" v-clearEmoij auto-complete="off" placeholder="请输入Https或http开头的完整url" :maxlength="255" show-word-limit></VhallInput>
         </el-form-item>
       </el-form>
       <div class="div__func div__view" v-if="keyList.length > 0">

@@ -9,7 +9,7 @@
     :before-close="handleClose"
     width="800px">
     <div class="search"  v-show="total || isSearch">
-      <VhallInput placeholder="请输入音视频名称" v-model="keyWords" @keyup.enter.native="searchHandler" clearable @clear="searchHandler">
+      <VhallInput placeholder="请输入音视频名称" v-model="keyWords" v-clearEmoij @keyup.enter.native="searchHandler" clearable @clear="searchHandler">
         <i class="el-icon-search el-input__icon"
         @click="searchHandler"
           slot="suffix"

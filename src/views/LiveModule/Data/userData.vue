@@ -47,6 +47,7 @@
         <VhallInput
             class="search-tag"
             placeholder="请输入用户昵称"
+            v-clearEmoij
             v-model.trim="title"
             clearable
             @change="searchTableList"

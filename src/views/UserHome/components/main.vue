@@ -11,6 +11,7 @@
           :placeholder="tabType === 'special' ? '请输入专题名称' : '请输入直播名称'"
           v-model="query.keyword"
           clearable
+          v-clearEmoij
           @keyup.enter.native="searchHandle"
           @clear="searchHandle"
         >

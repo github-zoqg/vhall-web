@@ -19,6 +19,7 @@
         placeholder="请输入音视频名称"
         v-model="keyword"
         clearable
+        v-clearEmoij
         @clear="searchTableList"
         @keyup.enter.native="searchTableList">
         <i
@@ -143,7 +144,7 @@
       :close-on-press-escape=false>
       <div class="edit-contianer">
         <div class="main-edit">
-          <VhallInput v-model="videoName" :maxlength="100" autocomplete="off" show-word-limit  type="text" style="width:356px" placeholder="请输入名称"></VhallInput>
+          <VhallInput v-model="videoName" v-clearEmoij :maxlength="100" autocomplete="off" show-word-limit  type="text" style="width:356px" placeholder="请输入名称"></VhallInput>
           <p v-show="errorText">请输入正确的格式文件</p>
         </div>
         <div class="dialog-footer">

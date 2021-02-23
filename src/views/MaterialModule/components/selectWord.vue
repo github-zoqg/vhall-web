@@ -6,6 +6,7 @@
       <VhallInput
         class="head-btn search-tag"
         placeholder="请输入文档名称"
+        v-clearEmoij
         v-model="formParams.keyword"
         @keyup.enter.native="searchHandle"
         clearable

@@ -17,6 +17,7 @@
       />
       <VhallInput placeholder="请输入活动标题" v-model="query.title"
                 clearable
+                v-clearEmoij
                 @keyup.enter.native="queryList"
                 @clear="queryList">
         <i class="el-icon-search el-input__icon" slot="suffix" @click="queryList"></i>

@@ -4,7 +4,7 @@
       <div class="show-main data-base">
         <p class="title">选择问卷 <i class="el-icon-close" @click="dataBaseVisible=false"></i></p>
         <div class="data-search" v-show="total || isSearch">
-          <VhallInput class="search-dialog-tag" v-model="keyword" placeholder="搜索问卷名称" clearable  @keyup.enter.native="getTitle" style="width: 220px" @clear="getTitle">
+          <VhallInput class="search-dialog-tag" v-clearEmoij v-model="keyword" placeholder="搜索问卷名称" clearable  @keyup.enter.native="getTitle" style="width: 220px" @clear="getTitle">
             <i slot="prefix" class="iconfont-v3 saasicon_search" style="cursor: pointer; line-height: 36px;" @click="getTitle"></i>
           </VhallInput>
         </div>

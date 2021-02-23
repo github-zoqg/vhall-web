@@ -18,6 +18,7 @@
           placeholder="请输入广告标题"
           v-model="paramsObj.keyword"
           clearable
+          v-clearEmoij
           @clear="searchAdvTableList"
           @keyup.enter.native="searchAdvTableList">
           <i

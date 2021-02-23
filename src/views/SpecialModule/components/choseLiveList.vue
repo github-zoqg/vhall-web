@@ -10,7 +10,7 @@
       :before-close="cancelSelect"
       custom-class="choose-gift"
     >
-      <VhallInput v-model="keyword" placeholder="请输入直播标题" @keyup.enter.native="inputChange"  @clear="inputChange" class="head-btn search resetRightBrn" clearable>
+      <VhallInput v-model="keyword" v-clearEmoij placeholder="请输入直播标题" @keyup.enter.native="inputChange"  @clear="inputChange" class="head-btn search resetRightBrn" clearable>
         <i slot="prefix" class="iconfont-v3 saasicon_search" :class="{'disabled': !keyword}" @click="inputChange(true)"></i>
       </VhallInput>
       <div class="select-matrial-wrap">

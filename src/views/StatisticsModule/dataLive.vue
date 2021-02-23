@@ -25,6 +25,7 @@
           placeholder="请输入活动标题"
           v-model="title"
           clearable
+          v-clearEmoij
           @change="searchTableList"
           @keyup.enter.native="searchTableList">
           <i

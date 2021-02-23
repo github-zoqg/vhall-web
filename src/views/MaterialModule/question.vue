@@ -15,6 +15,7 @@
         placeholder="请输入问卷名称"
         v-model="keyword"
         clearable
+        v-clearEmoij
         @clear="searchTableList"
         @keyup.enter.native="searchTableList">
         <i

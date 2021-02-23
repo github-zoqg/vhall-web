@@ -31,6 +31,7 @@
                     :disabled="!scrolling_open"
                     autocomplete="off"
                     :maxlength="20"
+                    v-clearEmoij
                     show-word-limit
                     @change="editHorseInfo"
                   ></VhallInput>
