@@ -22,6 +22,18 @@ const router = [
     hidden: true
   },
   {
+    path: '/chapter/:str(\\d+)',
+    component: () => import('@/views/LiveModule/PlayBack/chapter'),
+    meta:{ auth: true, title: '章节打点', name: 'chapter', activeMenu: '/live/list'},
+    hidden: true
+  },
+  {
+    path: '/recordchapter/:str(\\d+)',
+    component: () => import('@/views/LiveModule/PlayBack/chapter'),
+    meta:{ auth: true, title: '章节打点', name: 'recordchapter', activeMenu: '/live/list'},
+    hidden: true
+  },
+  {
     path: '/live',
     component: Layout,
     redirect: '/live/list',
@@ -216,18 +228,6 @@ const router = [
         path: 'recordplayback/:str(\\d+)',
         component: () => import('@/views/LiveModule/PlayBack/list'),
         meta:{ auth: true, title: '点播管理', name: 'recordplayback', activeMenu: '/live/list'},
-        hidden: true
-      },
-      {
-        path: 'chapter/:str(\\d+)',
-        component: () => import('@/views/LiveModule/PlayBack/chapter'),
-        meta:{ auth: true, title: '章节打点', name: 'chapter', activeMenu: '/live/list'},
-        hidden: true
-      },
-      {
-        path: 'recordchapter/:str(\\d+)',
-        component: () => import('@/views/LiveModule/PlayBack/chapter'),
-        meta:{ auth: true, title: '章节打点', name: 'recordchapter', activeMenu: '/live/list'},
         hidden: true
       },
       {

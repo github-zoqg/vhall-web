@@ -559,7 +559,9 @@ export default {
             customClass: 'zdy-info-box' // 样式处理
           });
         } else {
-          this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+          this.$router.push({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+          // const routeData = this.$router.resolve({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+          // window.open(routeData.href, '_blank');
         }
       })
     },
@@ -698,7 +700,6 @@ export default {
       float: left;
       width: 160px;
       height: 90px;
-      background-color: #1a1a1a;
       border-radius: 4px;
       .imageWrap{
         width: 100%;
