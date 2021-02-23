@@ -11,8 +11,7 @@
               {{ liveDetailInfo | liveTag }}
             </span>
             <span class="hot">
-              <i class="iconfont-v3 saasicon_redu"></i>
-              {{ liveDetailInfo.pv | unitCovert }}
+              <i class="iconfont-v3 saasicon_redu"> {{ liveDetailInfo.pv | unitCovert }}</i>
             </span>
           </div>
 
@@ -540,12 +539,30 @@ export default {
         }
       }
       .hot{
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
-        color: #fff;
-        font-size: 14px;
-      }
+          position: absolute;
+          height: 50px;
+          width: 100%;
+          /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
+          background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.2));
+          bottom: 0px;
+          left: 0px;
+          color: #fff;
+          font-size: 14px;
+          z-index: 2;
+          cursor: pointer;
+          i{
+            position: absolute;
+            left: 14px;
+            bottom: 10px;
+          }
+        }
+      // .hot{
+      //   position: absolute;
+      //   bottom: 10px;
+      //   left: 10px;
+      //   color: #fff;
+      //   font-size: 14px;
+      // }
     }
     .tag{
       border-radius: 20px;

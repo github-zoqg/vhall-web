@@ -8,7 +8,7 @@
     <div class="operaBox">
       <div class="searchBox" v-show="totalNum || isSearch">
         <VhallInput v-model="searchText" v-clearEmoij :placeholder="placeholder"  v-if="title=='邀请排名'" style="margin-right: 20px;" @keyup.enter.native="inviteInfo"  @clear="inviteInfo" clearable>
-          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inviteInfo" style="cursor: pointer; line-height: 36px;"></i>
+          <i slot="suffix" class="el-icon-search el-input__icon" @click="inviteInfo" style="cursor: pointer; line-height: 36px;"></i>
         </VhallInput>
         <!-- <el-input
           :placeholder="placeholder"

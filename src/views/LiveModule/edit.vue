@@ -609,11 +609,21 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
-      if (!this.versionType) {
-        if (this.formData.limitCapacitySwtich) {
-          if (this.formData.limitCapacity < 1) {
+      if (this.formData.limitCapacitySwtich && this.formData.limitCapacity < 1) {
+          this.$message({
+            message: '最高并发请输入大于1的数值',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+          return;
+      }
+      if (!this.versionType && this.formData.limitCapacitySwtich) {
+        if (this.formData.capacity) {
+          if (this.formData.limitCapacity > (this.limitInfo.total + this.limitInfo.extend)) {
             this.$message({
-              message: '最高并发请输入大于1的数值',
+              message: '最大并发数不能大于并发剩余量',
               showClose: true,
               // duration: 0,
               type: 'error',
@@ -621,28 +631,16 @@ export default {
             });
             return;
           }
-          if (this.formData.capacity) {
-            if (this.formData.limitCapacity > (this.limitInfo.total + this.limitInfo.extend)) {
-              this.$message({
-                message: '最大并发数不能大于并发剩余量',
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box'
-              });
-              return;
-            }
-          } else {
-            if (this.formData.limitCapacity > this.limitInfo.total) {
-              this.$message({
-                message: '最大并发数不能大于并发剩余量',
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box'
-              });
-              return;
-            }
+        } else {
+          if (this.formData.limitCapacity > this.limitInfo.total) {
+            this.$message({
+              message: '最大并发数不能大于并发剩余量',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+            return;
           }
         }
       }

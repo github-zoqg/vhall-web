@@ -1125,6 +1125,7 @@ export default {
       }
       /deep/ .el-input__icon{
         line-height: 36px;
+        color: #666;
       }
     }
     /deep/ .el-input__inner{

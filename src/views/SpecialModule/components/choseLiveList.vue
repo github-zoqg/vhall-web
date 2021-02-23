@@ -11,7 +11,7 @@
       custom-class="choose-gift"
     >
       <VhallInput v-model="keyword" v-clearEmoij placeholder="请输入直播标题" @keyup.enter.native="inputChange"  @clear="inputChange" class="head-btn search resetRightBrn" clearable>
-        <i slot="prefix" class="iconfont-v3 saasicon_search" :class="{'disabled': !keyword}" @click="inputChange(true)"></i>
+        <i slot="prefix" class="el-icon-search el-input__icon" :class="{'disabled': !keyword}" @click="inputChange(true)"></i>
       </VhallInput>
       <div class="select-matrial-wrap">
         <div class="material-box" v-show="total">
@@ -390,7 +390,6 @@ export default {
       }
       /deep/.el-input__prefix{
         cursor: pointer;
-        left: 9px;
       }
     }
     /deep/ .saasicon_search {
