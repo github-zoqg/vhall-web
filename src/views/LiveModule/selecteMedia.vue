@@ -32,6 +32,7 @@
           width="55">
         </el-table-column>
         <el-table-column
+        show-overflow-tooltip
           label="音视频名称">
             <template slot-scope="scope">
               <span class="mediaName" :title="scope.row.name">
@@ -285,7 +286,12 @@ export default {
   }
 };
 </script>
-
+<style lang="less">
+.el-tooltip__popper {
+  max-width: 180px;
+  line-height: 17px;
+}
+</style>
 <style lang="less" scoped>
   @red: #FB3A32;
   @redBg: #FFEBEB;
