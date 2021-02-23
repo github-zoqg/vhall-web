@@ -47,7 +47,7 @@
      <div class="prizeList">
        <div class="search" v-show="total || isSearch">
          <VhallInput v-model="keyword" class="search-dialog-tag" placeholder="请输入奖品名称" style="width:220px;" @keyup.enter.native="inputChange" @clear="inputChange" clearable>
-           <i slot="prefix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer;line-height: 36px;"></i>
+           <i slot="prefix" class="el-icon-search el-input__icon" @click="inputChange" style="cursor: pointer;line-height: 36px;"></i>
          </VhallInput>
        </div>
        <div v-show="total" class="material-box">
@@ -59,9 +59,7 @@
                <h1>{{item.prize_name}}</h1>
                <p>{{item.prize_id}}</p>
              </div>
-             <label class="img-tangle" v-show="item.isChecked">
-              <i class="el-icon-check"></i>
-            </label>
+             <label  class="img-tangle" v-show="item.isChecked"><img src="../../../../common/images/icon-choose.png" alt=""></label>
            </div>
          </div>
        </el-scrollbar>
@@ -452,7 +450,6 @@ export default {
       padding-right: 30px!important;
     }
     /deep/ .el-input__prefix {
-      left: 9px;
       cursor: pointer;
     }
   }
@@ -548,19 +545,14 @@ export default {
         }
         .img-tangle{
           position: absolute;
-          right: 0;
-          top:0;
-          width: 0;
-          height: 0;
-          border: 10px solid transparent;
-          border-right-color: #FB3A32;
-          border-top-color: #FB3A32;
-          i{
-            color:#fff;
-            position: absolute;
-            top: -8px;
-            right:-11px;
-            font-size: 10px;
+          right: -1px;
+          top:-1px;
+          width: 20px;
+          height: 20px;
+          font-size: 0;
+          img{
+            width: 100%;
+            height: 100%;
           }
         }
       }

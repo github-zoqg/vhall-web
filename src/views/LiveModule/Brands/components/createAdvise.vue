@@ -55,7 +55,7 @@
       <div class="content" v-show="total || isSearch">
         <div class="search" v-show="total || isSearch">
            <VhallInput class="search-dialog-tag" v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" @keyup.enter.native="changeAdverment" maxlength="50" @clear="changeAdverment" clearable>
-            <i slot="prefix" class="iconfont-v3 saasicon_search" @click="changeAdverment" style="cursor: pointer; line-height: 36px;"></i>
+            <i slot="prefix" class="el-icon-search el-input__icon" @click="changeAdverment" style="cursor: pointer; line-height: 36px;"></i>
           </VhallInput>
           </div>
         <el-scrollbar v-loadMore="moreLoadData" v-show="total">
@@ -63,9 +63,10 @@
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
               <span class="spanImg"> <img :src="`${item.img_url}`" alt=""></span>
               <p>{{ item.subject }}</p>
-              <label class="img-tangle" v-show="item.isChecked">
+              <label  class="img-tangle" v-show="item.isChecked"><img src="../../../../common/images/icon-choose.png" alt=""></label>
+              <!-- <label class="img-tangle" v-show="item.isChecked">
                 <i class="el-icon-check"></i>
-              </label>
+              </label> -->
             </div>
           </div>
         </el-scrollbar>
@@ -505,7 +506,7 @@ export default {
       line-height: 36px;
     }
     /deep/ .el-input__prefix {
-      left: 9px;
+      // left: 9px;
       cursor: pointer;
     }
   }
@@ -619,23 +620,18 @@ export default {
             box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
             border: 1px solid #FB3A32;
           }
-         .img-tangle{
-          position: absolute;
-          right: 0;
-          top:0;
-          width: 0;
-          height: 0;
-          border: 10px solid transparent;
-          border-right-color: #FB3A32;
-          border-top-color: #FB3A32;
-          i{
-            color:#fff;
+          .img-tangle{
             position: absolute;
-            top: -8px;
-            right:-11px;
-            font-size: 10px;
+            right: -1px;
+            top:-1px;
+            width: 20px;
+            height: 20px;
+            font-size: 0;
+            img{
+              width: 100%;
+              height: 100%;
+            }
           }
-        }
         .spanImg{
           display: block;
           width: 163px;

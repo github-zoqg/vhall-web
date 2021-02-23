@@ -188,9 +188,10 @@
                 <span class="gift-price">￥{{item.price}}</span>
               </div>
               <!-- <i v-if="item.isChecked" class="el-icon-check"></i> -->
-              <label class="img-tangle" v-show="item.isChecked">
+              <!-- <label class="img-tangle" v-show="item.isChecked">
                 <i class="el-icon-check"></i>
-              </label>
+              </label> -->
+              <label  class="img-tangle" v-show="item.isChecked"><img src="../../../common/images/icon-choose.png" alt=""></label>
             </div>
           </el-scrollbar>
         </div>
@@ -1118,22 +1119,17 @@ export default {
         cursor: pointer;
       }
       .img-tangle{
-        position: absolute;
-        right: 0;
-        top:0;
-        width: 0;
-        height: 0;
-        border: 10px solid transparent;
-        border-right-color: #FB3A32;
-        border-top-color: #FB3A32;
-        i{
-          color:#fff;
           position: absolute;
-          top: -8px;
-          right:-11px;
-          font-size: 10px;
+          right: -1px;
+          top:-1px;
+          width: 20px;
+          height: 20px;
+          font-size: 0;
+          img{
+            width: 100%;
+            height: 100%;
+          }
         }
-      }
     }
     .matrial-item.active{
       border: 1px solid #fb3a32;

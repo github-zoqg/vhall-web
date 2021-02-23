@@ -199,7 +199,7 @@ export default {
 <style lang="less" scoped>
   /deep/ .el-upload--picture-card{
     width: 100%;
-    height: 140px;
+    height: 138px;
     line-height: unset;
     overflow: hidden;
     background-color: #F7F7F7;

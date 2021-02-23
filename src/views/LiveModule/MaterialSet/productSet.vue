@@ -6,7 +6,7 @@
         <el-button round @click="batchDel(null)" size="medium" class="transparent-btn" v-preventReClick :disabled="!checkedGoodsId.length">批量删除</el-button>
          <div class="inputKey">
           <VhallInput v-model="keyword" v-clearEmoij placeholder="请输入商品名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>
-            <i slot="prefix" @click="searchTableList" class="iconfont-v3 saasicon_search" style="cursor: pointer; line-height: 36px;"></i>
+            <i slot="prefix" @click="searchTableList" class="el-icon-search el-input__icon" style="cursor: pointer; line-height: 36px;"></i>
           </VhallInput>
         </div>
       </div>
@@ -373,7 +373,6 @@ export default {
         padding-right: 30px!important;
       }
       /deep/ .el-input__prefix {
-        left: 9px;
         cursor: pointer;
       }
     }
