@@ -3,7 +3,7 @@
     <div class="sys-date" v-if="this.$route.meta.name === 'sysHome'">
       今日，{{sysDateStr}}，<span>欢迎您回到微吼控制台。</span>
     </div>
-    <el-breadcrumb class="app-breadcrumb" separator=">" v-else>
+    <el-breadcrumb class="app-breadcrumb" separator-class="el-icon-arrow-right" v-else>
       <transition-group name="breadcrumb">
         <el-breadcrumb-item v-for="(item,index) in levelList" :key="item.path">
           <span v-if="item.redirect==='noRedirect'||index==levelList.length-1" :class="`no-redirect level_${index}`">{{ item.title }}</span>
