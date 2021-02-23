@@ -244,7 +244,7 @@ export default {
   }
   .desc{
     .mainText{
-      font-size: 20px;
+      font-size: 18px;
       color: #1A1A1A;
       margin-bottom: 8px;
     }

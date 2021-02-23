@@ -410,7 +410,7 @@ export default {
     .liveItem{
       // width: 312px;
       height: 314px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       // float: left;
       // margin-right: 40px;
       .inner{

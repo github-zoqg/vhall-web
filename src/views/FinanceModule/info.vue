@@ -81,7 +81,7 @@
           style="width: 240px"
         />
         <VhallInput v-model="subject"  placeholder="请输入活动名称" class="search-tag" style="width: 220px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" v-clearEmoij clearable>
-          <i slot="prefix" class="iconfont-v3 saasicon_search" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
+          <i slot="prefix" class="el-icon-search el-input__icon" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
         </VhallInput>
           <el-select filterable v-model="accountType" style="width: 160px;marginLeft:15px" @change="getSearchList" v-if="type">
             <el-option
@@ -230,7 +230,7 @@ export default {
       versionType: '',
       lineParams: {},
       dataParams: {},
-      totalNum: 1000,
+      totalNum: 0,
       vm: {},
       status: 0,
       tableList: [],
@@ -333,7 +333,6 @@ export default {
     // 用量统计数据
     getLineList() {
       let paramsObj = {
-        account_id: this.userId,
         type: this.lineType || 1
       };
       if (this.lineSearchDate) {
@@ -374,7 +373,6 @@ export default {
     getAccountList(params) {
       let pageInfo = this.$refs.accountTableList.pageInfo;
       let paramsObj = {
-        account_id: this.userId,
         subject: this.subject,
         type: this.accountType || 1
       };
@@ -382,7 +380,6 @@ export default {
         pageInfo.pos= 0;
         pageInfo.pageNum = 1;
       }
-      console.log(this.accountSearchDate, '?????????????')
       if (this.accountSearchDate) {
         paramsObj['start_time'] = this.accountSearchDate[0];
         paramsObj['end_time'] = this.accountSearchDate[1];
@@ -393,7 +390,7 @@ export default {
       this.dataParams = this.$params(paramsObj);
       let obj = Object.assign({}, pageInfo, paramsObj);
 
-      this.getOnlinePay(this.$params(obj));
+      this.getOnlinePay(this.$params(this.dataParams));
       this.getDataList(this.$params(obj));
     },
     getDataList(obj) {
@@ -521,6 +518,9 @@ export default {
       height: 36px;
       background: transparent;
     }
+    /deep/.el-select__caret .el-input__icon .el-icon-arrow-up{
+      line-height: 36px;
+    }
     .search-tag{
       /deep/.el-input__inner{
         padding-right: 30px!important;
@@ -529,7 +529,6 @@ export default {
           line-height: 36px;
         }
         /deep/.el-input__prefix{
-          left: 9px;
           cursor: pointer;
         }
     }

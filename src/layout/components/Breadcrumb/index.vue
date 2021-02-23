@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="sys-date" v-if="this.$route.meta.name === 'sysHome'">
-      今日，{{sysDateStr}}，欢迎您回到微吼控制台。
+      今日，{{sysDateStr}}，<span>欢迎您回到微吼控制台。</span>
     </div>
     <el-breadcrumb class="app-breadcrumb" separator=">" v-else>
       <transition-group name="breadcrumb">
@@ -101,10 +101,11 @@ export default {
 .sys-date {
   font-size: 14px;
   font-weight: 400;
-  color: #1a1a1a;
+  color: #666;
   span {
-    font-weight: bold;
-    font-size: 18px;
+    // font-weight: bold;
+    // font-size: 18px;
+    // color: #666;
   }
 }
 /deep/.el-breadcrumb__separator {

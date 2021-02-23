@@ -27,11 +27,6 @@
           @click="searchTableList">
         </i>
       </VhallInput>
-      <!-- <div class="inputKey">
-        <VhallInput v-model.trim="keyword" placeholder="请输入奖品名称" @keyup.enter.native="searchTableList"  @clear="searchTableList" clearable>
-          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchTableList" style="cursor: pointer; line-height: 36px;"></i>
-        </VhallInput>
-      </div> -->
     </div>
     <div class="no-live" v-if="!total && !isSearch">
       <noData :nullType="'nullData'" :text="'您还未添加奖品，快去添加吧~'">
