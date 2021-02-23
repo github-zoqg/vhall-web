@@ -34,11 +34,12 @@
             placeholder="搜索直播标题"
             v-model="keyWords"
             clearable
+            v-clearEmoij
             @change="searchHandler"
             @keyup.enter.native="searchHandler">
             <i
               class="el-icon-search el-input__icon"
-              slot="suffix"
+              slot="prefix"
               @click="searchHandler">
             </i>
           </VhallInput>
@@ -391,7 +392,7 @@ export default {
 </script>
 <style lang="less" scoped>
   .liveListBox{
-    user-select: none;
+    // user-select: none;
     // padding: 0px 60px;
     // .el-button{
     //   color:#FB3A32;
@@ -453,7 +454,7 @@ export default {
         }
       }
       /deep/ .el-input__inner{
-        user-select: none;
+        // user-select: none;
         border-radius: 50px;
         font-size: 14px;
         color: #666666;
@@ -478,7 +479,7 @@ export default {
         /deep/ .el-input__icon {
           width: auto;
           margin-right: 5px;
-          line-height: 40px;
+          line-height: 38px;
         }
       }
     }

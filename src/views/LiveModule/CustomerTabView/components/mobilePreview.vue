@@ -78,6 +78,7 @@
           <VhallInput
             v-model="addCustomForm.name"
             auto-complete="off"
+            v-clearEmoij
             placeholder="请输入菜单名称"
             :maxlength="8"
             show-word-limit />

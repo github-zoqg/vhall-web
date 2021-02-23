@@ -5,6 +5,7 @@
       v-model="keyword"
       placeholder="请输入直播标题"
       @change="inputChange"
+      v-clearEmoij
       suffix-icon="el-icon-search"
       style="width:220px; border-radius:24px"
       class="input-box"

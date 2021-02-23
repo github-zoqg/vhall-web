@@ -16,10 +16,11 @@
         <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="!(this.ids && this.ids.length > 0)">批量删除</el-button>
         <VhallInput placeholder="搜索角色名称" v-model="role_name"
                   clearable
+                  v-clearEmoij
                   @clear="initQuerySonList"
                   class="search-query"
                   @keyup.enter.native="initQuerySonList">
-          <i class="el-icon-search el-input__icon" slot="suffix" @click="initQuerySonList"></i>
+          <i class="el-icon-search el-input__icon" slot="prefix" @click="initQuerySonList"></i>
         </VhallInput>
       </div>
       <!-- 有消息内容 -->
@@ -71,10 +72,10 @@
       append-to-body>
       <el-form :model="roleForm" ref="roleForm" :rules="roleFormRules" label-width="80px">
         <el-form-item label="角色名称" prop="role_name">
-          <VhallInput type="text" placeholder="请输入角色名称" autocomplete="off"  v-model="roleForm.role_name" :maxlength="15" show-word-limit></VhallInput>
+          <VhallInput type="text" v-clearEmoij placeholder="请输入角色名称" autocomplete="off"  v-model="roleForm.role_name" :maxlength="15" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="备注信息" prop="remark"  class="remark--item">
-          <VhallInput type="text" placeholder="请输入备注信息" autocomplete="off" v-model="roleForm.remark" :maxlength="30" show-word-limit></VhallInput>
+          <VhallInput type="text" v-clearEmoij placeholder="请输入备注信息" autocomplete="off" v-model="roleForm.remark" :maxlength="30" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="直播管理" prop="permission_webinar" class="switch--item">
           <div class="switch__box">
@@ -431,18 +432,16 @@ export default {
   .el-input{
     width: 220px;
     float: right;
+    /deep/ .el-input__icon{
+      line-height: 36px;
+    }
     /deep/ .el-input__inner{
       border-radius: 20px;
       height: 36px;
-      padding-right: 50px;
+      padding-right: 30px !important;
     }
-    /deep/ .el-input__suffix{
+    /deep/ .el-input__prefix{
       cursor: pointer;
-      /deep/ .el-input__icon{
-        width: auto;
-        margin-right: 5px;
-        line-height: 36px;
-      }
     }
   }
   .search-input {

@@ -51,6 +51,7 @@
         show-word-limit
         v-model="titleEdit"
         type="textarea"
+        v-clearEmoij
         resize=none
       ></VhallInput>
       <span slot="footer" class="dialog-footer">

@@ -3,7 +3,7 @@
     <pageTitle :pageTitle="`${$route.query.title || '创建'}专题`"></pageTitle>
     <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="80px">
       <el-form-item label="专题标题" prop="title">
-        <VhallInput v-model="formData.title" :maxlength="100" autocomplete="off" placeholder="请输入专题标题" show-word-limit></VhallInput>
+        <VhallInput v-model="formData.title" v-clearEmoij :maxlength="100" autocomplete="off" placeholder="请输入专题标题" show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item label="专题封面">
         <upload

@@ -10,6 +10,7 @@
         v-model="formParams.keyword"
         @keyup.enter.native="searchHandle"
         clearable
+        v-clearEmoij
         @clear="searchHandle"
         >
         <i
