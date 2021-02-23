@@ -556,10 +556,13 @@ export default {
         margin: 110px auto 0;
       } */
       img {
-        width: 400px;
+        /* width: 400px;
         height: 242px;
         display: block;
-        margin: 24px auto 0;
+        margin: 24px auto 0; */
+        width: 442px;
+        margin-top: -24px;
+        margin-left: -18px;
       }
       .pc-poster-wrap{
         /* position: absolute;
@@ -574,13 +577,20 @@ export default {
         background: rgba(0, 0, 0, 0.4);
         width: 106px;
         height: 195px; */
-        position: absolute;
+        /* position: absolute;
         top: 15px;
         right: 0;
         background: rgba(0, 0, 0, 0.4);
         width: 106px;
         height: 227px;
+        border-bottom-right-radius: 22px; */
+        position: absolute;
+        top: 9px;
+        left: 0;
+        background: rgba(0, 0, 0, 0.4);
         border-bottom-right-radius: 22px;
+        width: 400px;
+        height: 226px;
       }
       .v-poster-preview {
         /* display: inline-block;
@@ -622,10 +632,14 @@ export default {
       .hb_pc {
         .poster-btn {
           position: absolute;
-          right: 6px;
+          right: 34px;
+          top: 19px;
+          width: 40px;
+          height: 16px;
+          /* right: 6px;
           top: 21px;
           width: 28px;
-          height: 12px;
+          height: 12px; */
           background: url('../../../common/images/poster/pc_poster_close@2x.png') no-repeat;
           background-size: 100% 100%;
           &.five {
