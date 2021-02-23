@@ -9,8 +9,8 @@
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">
-          <img :src="domain_url || domainUrl" class="avatar" alt="" @click.stop="false"/>
-          <div class="mask" @click="isProduct && refresh($event)">
+          <img :src="domain_url || domainUrl" class="avatar" alt="" @click.stop.prevent="!isFullCover&&fullCover()"/>
+          <div class="mask" @click="isProduct && refresh($event)" v-if="isFullCover">
             <span v-if="!!$props.coverPic" @click.stop.prevent="coverPage">
               <i class="el-icon-collection"></i>
               <br/>
@@ -26,6 +26,10 @@
               <br/>
               删除
             </span>
+          </div>
+          <div class="bottom-mask" v-else :style="`bottom: ${bottom}px;`">
+            <span @click="refresh($event)">重置</span>
+            <span @click.stop.prevent="deletes">删除</span>
           </div>
         </div>
         <div v-else class="noPic">
@@ -108,6 +112,14 @@ export default {
       type: Boolean,
       default: false
     },
+    isFullCover: {
+      type: Boolean,
+      default: true
+    },
+    bottom: {
+      type: Number,
+      default: 15
+    },
     'on-success': {
       type: Function,
       default: ()=>{}
@@ -166,6 +178,9 @@ export default {
     coverPage() {
       this.$emit('coverPage', '');
     },
+    fullCover() {
+      this.$emit('fullCover');
+    },
     refresh(event){
       this.$emit('resetImage');
       // event.stopPropagation();
@@ -184,7 +199,7 @@ export default {
 <style lang="less" scoped>
   /deep/ .el-upload--picture-card{
     width: 100%;
-    height: 140px;
+    height: 138px;
     line-height: unset;
     overflow: hidden;
     background-color: #F7F7F7;
@@ -224,6 +239,12 @@ export default {
             line-height: 20px;
             // padding: 0 10px;
           }
+          .bottom-mask{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            color: #fff;
+          }
         }
       }
       .picInco{
@@ -258,6 +279,21 @@ export default {
         font-size: 18px;
         vertical-align: middle;
       }
+    }
+  }
+  .bottom-mask{
+    position: absolute;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    border-radius: 2px 2px 0 0;
+    padding: 0 5px;
+    span{
+      font-size: 14px;
+      display: inline-block;
+      line-height: 26px;
+      color: #fff;
     }
   }
   /deep/ .tips{

@@ -19,6 +19,7 @@
           @keyup.enter.native="getList"
           placeholder="请输入内容标题"
           autocomplete="off"
+          v-clearEmoij
           class="resetRightBrn"
           @clear="getList"
           v-model="keyWords">
@@ -138,6 +139,7 @@
         placeholder="请输入标题"
         :maxlength="100"
         autocomplete="off"
+        v-clearEmoij
         :autosize="{ minRows: 3 }"
         resize=none
         show-word-limit
@@ -559,7 +561,9 @@ export default {
             customClass: 'zdy-info-box' // 样式处理
           });
         } else {
-          this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+          this.$router.push({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+          // const routeData = this.$router.resolve({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+          // window.open(routeData.href, '_blank');
         }
       })
     },
@@ -698,7 +702,6 @@ export default {
       float: left;
       width: 160px;
       height: 90px;
-      background-color: #1a1a1a;
       border-radius: 4px;
       .imageWrap{
         width: 100%;

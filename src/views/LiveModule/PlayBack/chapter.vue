@@ -1,6 +1,7 @@
 <template>
-  <div class="chapterManager">
+  <div class="chapterManager clearFix">
     <div class="titleContainer clearFix">
+      <i class="el-icon-back" @click="$router.back()"></i>
       <pageTitle pageTitle="章节打点">
         <div slot="content">
           章节功能支持文档格式：PPT、PPTX，其他格式不支持
@@ -8,193 +9,200 @@
       </pageTitle>
       <p class="chapterTutorial">设置章节打点后，通过点击文档目录快速查看精彩看点，适用于培训场景。<span @click="startTutorial" class="startTutorial">了解一下</span></p>
     </div>
-    <div class="contentView" v-loading="loading">
-      <div class="playerBox">
-        <!-- v-if="docSDKReady" -->
-        <player ref="player" v-if="docSDKReady"  v-bind="playerProps" :autoPlay="false" :playerParams="playerParams"></player>
-        <div v-show="docSDKReady" class="vhallPlayer-container">
-          <div class="vhallPlayer-progress-box">
-            <el-slider
-              v-model="sliderVal"
-              :show-tooltip="false"
-              ref="controllerRef"
-              @change="setVideo"
-            ></el-slider>
-          </div>
-          <div class="vhallPlayer-controller-box">
-            <div class="v-c-left">
-              <div class="vh-video-chapter__operate">
-                <el-tooltip content="上一秒" placement="top" v-tooltipMove>
-                  <span @click="seekBack" class="vh-btn vh-video-chapter__seek-back">
-                    <icon icon-class="saasicon_shangyimiao"></icon>
-                  </span>
-                </el-tooltip>
-                <el-tooltip :content="statePaly ? '暂停' : '播放'" placement="top" v-tooltipMove>
-                  <span
-                    @click="videoPlayBtn"
-                    class="vh-btn vh-video-chapter__play"
-                    :class="{ 'is-pause': statePaly }"
-                  >
-                    <icon :icon-class="statePaly ? 'saasicon_bofang' : 'saasicon_zanting'"></icon>
-                  </span>
-                </el-tooltip>
-                <el-tooltip content="下一秒" placement="top" v-tooltipMove>
-                  <span @click="seekForward" class="vh-btn vh-video-chapter__seek-forward">
-                    <icon icon-class="saasicon_xiayimiao"></icon>
-                  </span>
-                </el-tooltip>
-              </div>
+    <div class="contentContainer clearFix">
+      <div class="contentView" v-loading="loading">
+        <div class="playerBox">
+          <!-- v-if="docSDKReady" -->
+          <player ref="player" v-if="docSDKReady"  v-bind="playerProps" :autoPlay="false" :playerParams="playerParams"></player>
+          <div v-show="docSDKReady" class="vhallPlayer-container">
+            <div class="vhallPlayer-progress-box">
+              <el-slider
+                v-model="sliderVal"
+                :show-tooltip="false"
+                ref="controllerRef"
+                @change="setVideo"
+              ></el-slider>
+            </div>
+            <div class="vhallPlayer-controller-box">
+              <div class="v-c-left">
+                <div class="vh-video-chapter__operate">
+                  <el-tooltip content="上一秒" placement="top" v-tooltipMove>
+                    <span @click="seekBack" class="vh-btn vh-video-chapter__seek-back">
+                      <icon icon-class="saasicon_shangyimiao"></icon>
+                    </span>
+                  </el-tooltip>
+                  <el-tooltip :content="statePaly ? '暂停' : '播放'" placement="top" v-tooltipMove>
+                    <span
+                      @click="videoPlayBtn"
+                      class="vh-btn vh-video-chapter__play"
+                      :class="{ 'is-pause': statePaly }"
+                    >
+                      <icon :icon-class="statePaly ? 'saasicon_bofang' : 'saasicon_zanting'"></icon>
+                    </span>
+                  </el-tooltip>
+                  <el-tooltip content="下一秒" placement="top" v-tooltipMove>
+                    <span @click="seekForward" class="vh-btn vh-video-chapter__seek-forward">
+                      <icon icon-class="saasicon_xiayimiao"></icon>
+                    </span>
+                  </el-tooltip>
+                </div>
 
+              </div>
+              <div v-show="loadOver" class="vhallPlayer-time-component">
+                <span class="vh-video-chapter__time">
+                  <span class="vh-video-chapter__hover-time">{{ showTime }}</span>
+                  /
+                  {{ showVideoTime }}
+                </span>
+              </div>
+              <div class="vh-video-chapter__volume-box">
+                <el-tooltip :enterable="false" :content="voice > 0 ? '静音' : '开启声音'" placement="top" v-tooltipMove>
+                  <span @click="jingYin" class="vh-video-chapter__icon-voice-warp">
+                    <icon style="color:#fff" :icon-class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'"></icon>
+                  </span>
+                </el-tooltip>
+                <div class="vh-video-chapter__slider">
+                  <el-slider v-model="voice" :show-tooltip="false" vertical height="90px"></el-slider>
+                </div>
+              </div>
             </div>
-            <div v-show="loadOver" class="vhallPlayer-time-component">
-              <span class="vh-video-chapter__time">
-                <span class="vh-video-chapter__hover-time">{{ showTime }}</span>
-                /
-                {{ showVideoTime }}
-              </span>
-            </div>
-            <div class="vh-video-chapter__volume-box">
-              <el-tooltip :enterable="false" :content="voice > 0 ? '静音' : '开启声音'" placement="top" v-tooltipMove>
-                <span @click="jingYin" class="vh-video-chapter__icon-voice-warp">
-                  <icon style="color:#fff" :icon-class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'"></icon>
+          </div>
+        </div>
+        <div class="docBox">
+          <div class="docInner">
+            <doc
+              v-if="showDoc"
+              ref="doc"
+              :webinarId='webinar_id'
+              :isInteract="true"
+              :roleType="2"
+              :roomId="playerProps.roomId"
+              :channelId="playerProps.channel_id"
+              :appId="playerProps.appId"
+              :token="playerProps.token"
+              :liveStatus="2"
+              :joinId="playerProps.accountId"
+              :accountId="playerProps.accountId"
+              :isVod="true"
+              :preloadDocs="true"
+            ></doc>
+          </div>
+          <div class="actionBar">
+            <span class="pages">
+              <el-tooltip content="上一页" placement="top" v-tooltipMove>
+                <span class="translatePage" @click="prevPage">
+                  <icon icon-class="saasicon_arrowleft"></icon>
                 </span>
               </el-tooltip>
-              <div class="vh-video-chapter__slider">
-                <el-slider v-model="voice" :show-tooltip="false" vertical height="90px"></el-slider>
-              </div>
-            </div>
+              <em> {{pageInfo.pageIndex}} </em> / {{pageInfo.total}}
+              <el-tooltip content="下一页" placement="top" v-tooltipMove>
+                <span class="translatePage" @click="nextPage">
+                  <icon icon-class="saasicon_arrowright1"></icon>
+                </span>
+              </el-tooltip>
+            </span>
+            <span class="docs">
+              <el-tooltip content="上一个文档" placement="top" v-tooltipMove>
+                <span @click="prevDoc">
+                  <icon icon-class="saasicon_wordleft"></icon>
+                </span>
+              </el-tooltip>
+              <el-tooltip content="下一个文档" placement="top" v-tooltipMove>
+                <span @click="nextDoc">
+                  <icon icon-class="saasicon_wordright"></icon>
+                </span>
+              </el-tooltip>
+            </span>
+            <!-- <span class="thumbnail"></span> -->
           </div>
         </div>
       </div>
-      <div class="docBox">
-        <div class="docInner">
-          <doc
-            v-if="showDoc"
-            ref="doc"
-            :webinarId='webinar_id'
-            :isInteract="true"
-            :roleType="2"
-            :roomId="playerProps.roomId"
-            :channelId="playerProps.channel_id"
-            :appId="playerProps.appId"
-            :token="playerProps.token"
-            :liveStatus="2"
-            :joinId="playerProps.accountId"
-            :accountId="playerProps.accountId"
-            :isVod="true"
-            :preloadDocs="true"
-          ></doc>
+      <div class="cont">
+        <div class="btnGroup">
+          <el-button v-if="isDemand == 'true'" size="medium" type="primary" round @click="associateHandler">关联文档</el-button>
+          <!-- <el-button v-if="isDemand == 'true'" size="medium" round @click="addChapter">新增章节</el-button> -->
+          <el-dropdown style="margin: 0 10px;" trigger="click" v-if="isDemand == 'true'" @command="addChapter" placement="bottom-start">
+            <el-button class="createChapter" :disabled="tableData.length == 0" size="medium" round>
+              新增章节<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item
+                v-for="item in docs"
+                :key="item.document_id"
+                :command="item"
+              >{{ item.file_name }}</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <el-button :disabled="!selectedData.length" size="medium" round @click="deleteChapter">批量删除</el-button>
+          <div class="right">
+            <el-button :disabled="tableData.length == 0" size="medium" round @click="saveChapters">保存</el-button>
+            <el-button size="medium" round @click="previewChapters">预览</el-button>
+          </div>
         </div>
-        <div class="actionBar">
-          <span class="pages">
-            <el-tooltip content="上一页" placement="top" v-tooltipMove>
-              <span class="translatePage" @click="prevPage">
-                <icon icon-class="saasicon_arrowleft"></icon>
-              </span>
-            </el-tooltip>
-            <em> {{pageInfo.pageIndex}} </em> / {{pageInfo.total}}
-            <el-tooltip content="下一页" placement="top" v-tooltipMove>
-              <span class="translatePage" @click="nextPage">
-                <icon icon-class="saasicon_arrowright1"></icon>
-              </span>
-            </el-tooltip>
-          </span>
-          <span class="docs">
-            <el-tooltip content="上一个文档" placement="top" v-tooltipMove>
-              <span @click="prevDoc">
-                <icon icon-class="saasicon_wordleft"></icon>
-              </span>
-            </el-tooltip>
-            <el-tooltip content="下一个文档" placement="top" v-tooltipMove>
-              <span @click="nextDoc">
-                <icon icon-class="saasicon_wordright"></icon>
-              </span>
-            </el-tooltip>
-          </span>
-          <!-- <span class="thumbnail"></span> -->
+        <el-table
+          v-if="tableData.length != 0"
+          ref="chapterTable"
+          :data.sync="tableData"
+          tooltip-effect="dark"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+          :tree-props="{children: 'sub'}"
+          default-expand-all
+          row-key="index"
+          height="calc(100% - 60px)"
+        >
+          <el-table-column
+            type="selection"
+            width="55">
+          </el-table-column>
+          <el-table-column
+            label="序号"
+            prop="index"
+            width="120">
+          </el-table-column>
+          <el-table-column
+            label="章节标题">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.title" placeholder="请输入章节标题"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="页码/步数"
+            width="110">
+            <template slot-scope="scope">
+              <el-input :disabled="isDemand == 'false'" @input="handleInput(scope.row)" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            label="章节时间"
+            width="126"
+            show-overflow-tooltip>
+            <template slot-scope="scope">
+              <el-input :disabled="isDemand == 'false'" v-model="scope.row.userCreateTime" @change="scope.row.isChange = true" placeholder="请输入章节时间"></el-input>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            v-if="isDemand == 'true'"
+            label="操作"
+            width="190"
+            show-overflow-tooltip>
+            <template slot-scope="scope">
+              <el-button type="text" @click="getTime(scope.row)">获取时间</el-button>
+              <el-button
+                v-show="chapterTotalInfo[scope.row.docId] ? scope.row.sub.length < chapterTotalInfo[scope.row.docId][scope.row.slideIndex - 1] : true"
+                v-if="scope.row.sub"
+                type="text"
+                @click="addSonNode(scope.row)"
+              >添加子章节</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="noChapters" v-show="tableData.length == 0">
+          <noData :nullType="'nullData'" :text="'暂无内容，请先关联文档'"></noData>
         </div>
       </div>
-    </div>
-    <div class="cont">
-      <div class="btnGroup">
-        <el-button v-if="isDemand == 'true'" size="medium" type="primary" round @click="associateHandler">关联文档</el-button>
-        <!-- <el-button v-if="isDemand == 'true'" size="medium" round @click="addChapter">新增章节</el-button> -->
-        <el-dropdown style="margin: 0 10px;" trigger="click" v-if="isDemand == 'true'" @command="addChapter">
-          <el-button :disabled="tableData.length == 0" size="medium" round>
-            新增章节<i class="el-icon-arrow-down el-icon--right"></i>
-          </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item
-              v-for="item in docs"
-              :key="item.document_id"
-              :command="item"
-            >{{ item.file_name }}</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-        <el-button :disabled="!selectedData.length" size="medium" round @click="deleteChapter">批量删除</el-button>
-        <div class="right">
-          <el-button :disabled="tableData.length == 0" size="medium" round @click="saveChapters">保存</el-button>
-          <el-button size="medium" round @click="previewChapters">预览</el-button>
-        </div>
-      </div>
-      <el-table
-        ref="chapterTable"
-        :data.sync="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        @selection-change="handleSelectionChange"
-        :tree-props="{children: 'sub'}"
-        default-expand-all
-        row-key="index"
-      >
-        <el-table-column
-          type="selection"
-          width="55">
-        </el-table-column>
-        <el-table-column
-          label="序号"
-          prop="index"
-          width="120">
-        </el-table-column>
-        <el-table-column
-          label="章节标题">
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.title" placeholder="请输入章节标题"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="页码/步数"
-          width="110">
-           <template slot-scope="scope">
-             <el-input :disabled="isDemand == 'false'" @input="handleInput(scope.row)" v-model="scope.row.slideIndex" placeholder="请输入文档页码"></el-input>
-           </template>
-        </el-table-column>
-
-        <el-table-column
-          label="章节时间"
-          width="126"
-          show-overflow-tooltip>
-          <template slot-scope="scope">
-            <el-input :disabled="isDemand == 'false'" v-model="scope.row.userCreateTime" @change="scope.row.isChange = true" placeholder="请输入章节时间"></el-input>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          v-if="isDemand == 'true'"
-          label="操作"
-          width="190"
-          show-overflow-tooltip>
-          <template slot-scope="scope">
-            <el-button type="text" @click="getTime(scope.row)">获取时间</el-button>
-            <el-button
-              :disabled="chapterTotalInfo[scope.row.docId] ? scope.row.sub.length >= chapterTotalInfo[scope.row.docId][scope.row.slideIndex - 1] : false"
-              v-if="scope.row.sub"
-              type="text"
-              @click="addSonNode(scope.row)"
-            >添加子章节</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
     </div>
     <associateDoc :tableDataLength="tableData.length" @getChapters="getChapters" ref="associateDialog"></associateDoc>
     <div v-if="previewVisible" class="wraper" @click.self="previewVisible = false">
@@ -223,6 +231,7 @@ import doc from '@/components/Doc/watch-doc';
 import associateDoc from './associatedDoc';
 import moduleTutorial from './components/moduleTutorial'
 import { debounce } from "@/utils/utils"
+import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   name: 'Chapters',
   data(){
@@ -275,7 +284,9 @@ export default {
       videoTime: 0, // 视频实际时长
       chapterTotalInfo: {},
       tutorialVisible: false,
-      loadOver: false
+      loadOver: false,
+      isChaptersChange: false,
+      isInit: false
     };
   },
   provide () {
@@ -311,6 +322,35 @@ export default {
         console.log('设置音量失败');
       });
     },
+    tableData: {
+      handler() {
+        console.log('tableData变化了')
+        if (this.isInit) {
+          this.isChaptersChange = false
+        } else {
+          this.isChaptersChange = true
+        }
+        console.log('tableData变化了', this.isChaptersChange)
+      },
+      deep: true
+    }
+  },
+  beforeRouteLeave(to, from, next) {
+    // 离开页面前判断信息是否修改
+    if (!this.isChaptersChange) {
+      next()
+      return false;
+    } else {
+      this.$confirm('是否放弃当前编辑？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(() => {
+        next()
+      }).catch(() => {});
+    }
   },
   created(){
     this.loading = true;
@@ -385,6 +425,7 @@ export default {
     this.$EventBus.$on('vod_cuepoint_load_complete', chapters => {
       const ids = []
       console.log("=============所有文档加载完毕==============", chapters)
+      this.isInit = true
       this.tableData = chapters.map((item, index) => {
         ids.push(item.docId);
         return {
@@ -404,6 +445,7 @@ export default {
           }))
         }
       });
+      setTimeout(() => { this.isInit = false })
       this.docIds = [...new Set(ids)]
       this.getDocTitles();
       this.getChapterTotalInfo(this.docIds);
@@ -612,6 +654,7 @@ export default {
               type: 'success', //  提示类型
               customClass: 'zdy-info-box' // 样式处理
             });
+            this.isChaptersChange = false
             this.$router.go(-1);
           }
         }).catch(err => {
@@ -877,23 +920,51 @@ export default {
     player,
     doc,
     associateDoc,
-    moduleTutorial
+    moduleTutorial,
+    noData
   }
 };
 </script>
 
+<style lang="less">
+  // 页面底部插入了一个一像素高元素，影响一屏页面，不知作用是啥，先隐藏
+  #myVodNode {
+    height: 0px!important;
+  }
+</style>
 <style lang="less" scoped>
   .chapterManager {
+    background: #222222;
+    height: 100%;
     .titleContainer {
+      background: #000000;
       /deep/ .titleBox {
         float:left;
+        margin-bottom: 0;
+        .pageTitle {
+          font-size: 20px;
+          height: 56px;
+          font-size: 20px;
+          font-weight: 600;
+          color: #FFFFFF;
+          line-height: 56px;
+        }
+      }
+      .el-icon-back {
+        float: left;
+        color: #fff;
+        line-height: 56px;
+        font-size: 20px;
+        margin-left: 24px;
+        margin-right: 10px;
+        cursor: pointer;
       }
       .chapterTutorial {
         font-size: 14px;
         font-family: PingFangSC-Regular, PingFang SC;
         font-weight: 400;
         color: #999999;
-        line-height: 30px;
+        line-height: 56px;
         float:left;
         padding-left: 8px;
         .startTutorial {
@@ -901,6 +972,10 @@ export default {
           cursor: pointer;
         }
       }
+    }
+    .contentContainer {
+      background: #222;
+      height: calc(100% - 56px);
     }
     /deep/ .el-dialog__wrapper .dialog-tutorial-wrap {
       padding: 0px 0px 30px;
@@ -954,13 +1029,19 @@ export default {
     }
   }
   .contentView{
-    padding: 24px;
+    padding: 84px 0 24px 32px;
     background: #222222;
+    width: 520px;
+    float: left;
+    height: 100%;
     display: flex;
-    max-height: 474px;
+    flex-direction: column;
     justify-content: space-between;
-    >div{
-      flex: 1;
+    // display: flex;
+    // max-height: 474px;
+    // justify-content: space-between;
+    @media (min-width: 1920px) {
+      width: 680px;
     }
     /deep/ .el-loading-mask{
       z-index: 1000!important;
@@ -968,6 +1049,8 @@ export default {
     .docBox{
       display: flex;
       flex-direction: column;
+      // max-height: 50%;
+      height: calc(50% - 12px);
       .docInner{
         height: 100%;
         background-color: #292929;
@@ -1039,12 +1122,15 @@ export default {
           .el-slider__bar {
             height: 4px;
           }
+          .el-slider__button-wrapper {
+            top: -16px;
+          }
         }
       }
     }
     .playerBox{
-      width: 480px;
-      margin-right: 10px;
+      // max-height: 50%;
+      height: calc(50% - 12px);
       >div:first-child{
         height: calc(100% - 56px);
       }
@@ -1214,21 +1300,120 @@ export default {
   }
 
   .cont{
-    padding: 24px;
-    background: #fff;
-    .el-table{
-      margin-top: 24px;
+    padding: 24px 32px 24px 24px;
+    background: #222;
+    width: calc(100% - 520px);
+    height: 100%;
+    float: left;
+    @media (min-width: 1920px) {
+      width: calc(100% - 680px);
     }
-    /deep/ .el-table__header{
-      th{
-        background: #F7F7F7;
+    // 滚动条的宽度
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+      width: 6px; // 横向滚动条
+      height: 6px; // 纵向滚动条 必写
+    }
+    // 滚动条的滑块
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      transition: all 0.3s;
+      cursor: pointer;
+      display: none;
+      background-color: #cccccc;
+      &:hover {
+        background-color: #cccccc;
+      }
+      &:active {
+        background-color: #cccccc;
       }
     }
-    .el-input {
+    &:hover {
+      /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+        display: block;
+      }
+    }
+    .noChapters {
+      height: calc(100% - 84px);
+      .null-page {
+        margin-top: 0!important;
+        position: relative;
+        top: 50%; /*偏移*/
+        transform: translateY(-50%);
+      }
+    }
+    /deep/ .el-table{
+      margin-top: 24px;
+      color: #999;
+      background-color: #222;
+      .el-checkbox__inner {
+        background: #000;
+        border-color: #999;
+      }
+      .is-indeterminate .el-checkbox__inner {
+        background-color: #FB3A32;
+        border-color: #FB3A32;
+      }
+      .is-checked .el-checkbox__inner {
+        background-color: #FB3A32;
+        border-color: #FB3A32;
+      }
+      th {
+        background-color: #222;
+      }
+      .cell {
+        .el-table__indent {
+          padding-left: 0;
+        }
+        .el-table__placeholder {
+          width: 0;
+        }
+      }
+      .el-table_2_column_7 .cell {
+        padding-left: 0px;
+      }
+      .el-table__row.expanded {
+        &:not(.el-table__row--level-0) {
+          .el-table_2_column_7  .cell {
+            padding-left: 24px;
+          }
+        }
+      }
+      th.el-table_2_column_7 .cell {
+        padding-left: 24px;
+      }
+    }
+    /deep/ .el-table--enable-row-hover .el-table__body tr:hover>td {
+      background-color: #222;
+      .el-checkbox__inner {
+        background: #222;
+        border-color: #999;
+      }
+      .is-checked .el-checkbox__inner {
+        background-color: #FB3A32;
+        border-color: #FB3A32;
+      }
+      /deep/ .el-tooltip .el-button--text span {
+        color: #fb3a32;
+      }
+    }
+    /deep/ .el-table td, /deep/ .el-table th.is-leaf {
+      border-bottom: 1px solid #E6E6E6;
+      background: #000;
+      border-color: #222;
+      border-width: 2px;
+    }
+    /deep/ .el-input {
       width: 95%;
+      .el-input__inner {
+        border-color: #666;
+        color: #999;
+      }
+    }
+    /deep/ .el-button.el-button--text {
+      color: #999;
     }
     /deep/ .el-button.el-button--text.is-disabled span {
-      color: #1a1a1a;
+      color: #999;
     }
     /deep/ .el-tooltip .el-button--text span:hover {
       color: #3562fa;
@@ -1237,7 +1422,25 @@ export default {
       &:hover {
         border: 0;
         span {
-          color: #1a1a1a;
+          color: #999;
+        }
+      }
+    }
+    .btnGroup {
+      .el-button--default {
+        background: transparent;
+        border: 1px solid #666;
+        color: #ccc;
+
+      }
+      .el-button {
+        &.is-disabled {
+          border: 1px solid #666;
+          background: transparent;
+          color: #B3B3B3;
+          &:hover,&:focus,&:active {
+            background: transparent;
+          }
         }
       }
     }

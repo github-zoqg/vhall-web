@@ -7,6 +7,7 @@
       <div class="input-content">
         <VhallInput
           v-model="menuInfo.welcome_content"
+          v-clearEmoij
           :maxlength="15" autocomplete="off"  show-word-limit
         ></VhallInput>
       </div>

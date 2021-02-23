@@ -246,7 +246,7 @@ export default {
         // max-height: 500px;
         .liveItem{
           height: 255px;
-          margin-bottom: 20px;
+          margin-bottom: 24px;
           border-radius: 4px;
           // border: 1px solid #ccc;
           .inner{

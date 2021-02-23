@@ -69,7 +69,7 @@
               </div>
             </el-form-item>
             <el-form-item label="链接" prop="url">
-              <VhallInput v-model.trim="form.url" placeholder="请输入http://或https://开头的链接" :maxlength="200" autocomplete="off" show-word-limit></VhallInput>
+              <VhallInput v-model.trim="form.url"  v-clearEmoij placeholder="请输入http://或https://开头的链接" :maxlength="200" autocomplete="off" show-word-limit></VhallInput>
             </el-form-item>
             <el-form-item label="自动关闭">
               <!--{{alertType 0手动关闭 1自动关闭}}-->

@@ -19,12 +19,13 @@
               v-model="query.keyword"
               clearable
               autocomplete="off"
+              v-clearEmoij
               @keyup.enter.native="queryList"
               class="resetRightBrn"
               @clear="queryList">
               <i
                 class="el-icon-search el-input__icon"
-                slot="suffix"
+                slot="prefix"
                 @click="queryList">
               </i>
             </VhallInput>
@@ -98,13 +99,13 @@
     <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" :lock-scroll='false' width="484px">
       <el-form :model="viewerForm" ref="viewerForm" :rules="viewerFormRules" :label-width="viewerDialog.formLabelWidth">
         <el-form-item label="姓名" prop="name">
-          <VhallInput v-model.trim="viewerForm.name" auto-complete="off" placeholder="请输入姓名（最多50个字符）" :maxlength="50"/>
+          <VhallInput v-model="viewerForm.name" v-clearEmoij auto-complete="off" placeholder="请输入姓名（最多50个字符）" :maxlength="50"/>
         </el-form-item>
         <el-form-item label="行业" prop="industry">
-          <VhallInput v-model.trim="viewerForm.industry" auto-complete="off" placeholder="请输入行业（最多50个字符）" :maxlength="50"/>
+          <VhallInput v-model="viewerForm.industry" v-clearEmoij auto-complete="off" placeholder="请输入行业（最多50个字符）" :maxlength="50"/>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <VhallInput v-model.trim="viewerForm.email" auto-complete="off" placeholder="请输入邮箱"/>
+          <VhallInput v-model="viewerForm.email" v-clearEmoij auto-complete="off" placeholder="请输入邮箱"/>
         </el-form-item>
         <el-form-item label="手机" prop="phone">
           <VhallInput v-model.trim="viewerForm.phone" auto-complete="off" placeholder="请输入手机号码" :maxlength="11"/>
@@ -113,7 +114,7 @@
           <VhallInput v-model.trim="viewerForm.job_number" auto-complete="off" placeholder="请输入工号（最多50个字符）" :maxlength="50"/>
         </el-form-item>
         <el-form-item label="其他" prop="other">
-          <VhallInput v-model="viewerForm.other" auto-complete="off" placeholder="请输入其他内容（最多50个字符）" :maxlength="50"/>
+          <VhallInput v-model="viewerForm.other" v-clearEmoij auto-complete="off" placeholder="请输入其他内容（最多50个字符）" :maxlength="50"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -919,20 +920,18 @@ export default {
       line-height: 36px;
     }
     .resetRightBrn {
+      /deep/ .el-input__icon {
+        line-height: 36px;
+      }
       /deep/ .el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px!important;
+        line-height: 36px;
+        padding-right: 30px!important;
       }
 
-      /deep/ .el-input__suffix {
+      /deep/ .el-input__prefix {
         cursor: pointer;
-
-        /deep/ .el-input__icon {
-          width: auto;
-          margin-right: 5px;
-          line-height: 36px;
-        }
       }
     }
   }

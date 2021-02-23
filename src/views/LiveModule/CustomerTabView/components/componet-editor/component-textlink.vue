@@ -17,6 +17,7 @@
             v-model="info.text"
             @change="changeText"
             :maxlength="30"
+            v-clearEmoij
             autocomplete="off"
             show-word-limit
           ></VhallInput>

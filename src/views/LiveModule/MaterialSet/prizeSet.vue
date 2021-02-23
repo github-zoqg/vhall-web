@@ -37,38 +37,45 @@
                           :on-error="uploadError"
                           :on-preview="uploadPreview"
                           @delete="deleteImg"
+                          @fullCover="changeType(0)"
+                          :isFullCover="false"
+                          :bottom="15"
                           :before-upload="beforeUploadHandler">
                         </upload>
-                        <label class="img-tangle" v-show="isChecked==0" >
+                        <label  class="img-tangle" v-show="isChecked == 0"><img src="../../../common/images/icon-choose.png" alt=""></label>
+                        <!-- <label class="img-tangle" v-show="isChecked==0" >
                           <i class="el-icon-check"></i>
-                        </label>
+                        </label> -->
                       </div>
                       <p :class="isChecked == 1 ? 'active' : ''" class="przieImg" @click="changeType(1)">
                         <img src="../../../common/images/gif/prize03.gif" alt="">
-                        <label class="img-tangle" v-show="isChecked == 1" >
+                        <label  class="img-tangle" v-show="isChecked == 1"><img src="../../../common/images/icon-choose.png" alt=""></label>
+                        <!-- <label class="img-tangle" v-show="isChecked == 1" >
                           <i class="el-icon-check"></i>
-                        </label>
+                        </label> -->
                       </p>
                       <p :class="isChecked == 2 ? 'active' : ''" class="przieImg" @click="changeType(2)">
                         <img src="../../../common/images/gif/prize01.gif" alt="" >
-                        <label class="img-tangle" v-show="isChecked == 2" >
+                        <label  class="img-tangle" v-show="isChecked == 2"><img src="../../../common/images/icon-choose.png" alt=""></label>
+                        <!-- <label class="img-tangle" v-show="isChecked == 2" >
                           <i class="el-icon-check"></i>
-                        </label>
+                        </label> -->
                       </p>
                       <p :class="isChecked == 3 ? 'active' : ''" class="przieImg" @click="changeType(3)">
                         <img src="../../../common/images/gif/prize02.gif" alt="">
-                        <label class="img-tangle" v-show="isChecked == 3" >
+                        <label  class="img-tangle" v-show="isChecked == 3"><img src="../../../common/images/icon-choose.png" alt=""></label>
+                        <!-- <label class="img-tangle" v-show="isChecked == 3" >
                           <i class="el-icon-check"></i>
-                        </label>
+                        </label> -->
                       </p>
                     </div>
                     <p style="color:#999">建议尺寸：240*240px，小于2M 支持jpg、gif、png、bmp</p>
                 </el-form-item>
                 <el-form-item label="标题">
-                    <VhallInput v-model="formData.title" autocomplete="off" :maxlength="10"  placeholder="请输入抽奖标题" show-word-limit></VhallInput>
+                    <VhallInput v-model="formData.title" autocomplete="off" v-clearEmoij :maxlength="10"  placeholder="请输入抽奖标题" show-word-limit></VhallInput>
                 </el-form-item>
                 <el-form-item label="说明">
-                    <VhallInput v-model="formData.description" autocomplete="off" :maxlength="20" placeholder="正在进行抽奖" show-word-limit></VhallInput>
+                    <VhallInput v-model="formData.description" autocomplete="off" v-clearEmoij :maxlength="20" placeholder="正在进行抽奖" show-word-limit></VhallInput>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary"  round @click="lotterySave" v-preventReClick>保存</el-button>
@@ -95,7 +102,7 @@
                       <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
                       <p class="switch__box">
                         <el-switch
-                          v-if="index > 1"
+                          v-if="index > 0"
                         v-model="item.is_required"
                         inactive-text="必填">
                       </el-switch>
@@ -465,6 +472,7 @@ export default {
       this.backgroundImg = this.prizeUrl[0];
     },
     changeType(index) {
+      console.log(index, "1314154325")
       this.isChecked = index;
       this.backgroundImg = this.prizeUrl[index - 1];
     },
@@ -562,14 +570,6 @@ export default {
  /deep/.el-tabs__content{
    min-height: 700px;
  }
- /deep/.el-input{
-   input {
-     padding: 0 12px;
-   }
-   input::-webkit-input-placeholder{
-    color:#999;
-    }
- }
   .prize-info{
     margin: 32px 0;
     // .question-list{
@@ -590,6 +590,14 @@ export default {
     }
     /deep/.el-input__inner{
       height: 40px;
+    }
+    /deep/.el-input{
+      input {
+        padding: 0 12px;
+      }
+      input::-webkit-input-placeholder{
+        color:#999;
+        }
     }
     .give-prize{
       width: 480px;
@@ -750,17 +758,12 @@ export default {
           position: absolute;
           right: 0;
           top:0;
-          width: 0;
-          height: 0;
-          border: 10px solid transparent;
-          border-right-color: #FB3A32;
-          border-top-color: #FB3A32;
-          i{
-            color:#fff;
-            position: absolute;
-            top: -8px;
-            right:-11px;
-            font-size: 10px;
+          width: 20px;
+          height: 20px;
+          font-size: 0;
+          img{
+            width: 100%;
+            height: 100%;
           }
         }
       }

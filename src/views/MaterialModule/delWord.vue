@@ -55,6 +55,7 @@
         <el-button round @click="wordMultiDel" size="medium" :disabled="multipleSelection && multipleSelection.length === 0">批量删除</el-button>
         <VhallInput
           class="head-btn search-tag"
+          v-clearEmoij
           placeholder="请输入文档名称"
           v-model="formParams.keyword"
           clearable

@@ -5,6 +5,7 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       :lock-scroll=false
+      custom-class="advinfo-dialog"
       width="468px">
       <el-form label-width="80px" :model="advertisement" ref="advertisementForm" :rules="rules">
       <el-form-item label="推广图片" prop="img_url">
@@ -32,10 +33,10 @@
         </div>
       </el-form-item>
       <el-form-item label="标题" prop="subject">
-        <VhallInput v-model="advertisement.subject" :maxlength="15" show-word-limit placeholder="请输入广告标题" autocomplete="off"></VhallInput>
+        <VhallInput v-model="advertisement.subject" v-clearEmoij :maxlength="15" show-word-limit placeholder="请输入广告标题" autocomplete="off"></VhallInput>
       </el-form-item>
       <el-form-item label="链接" prop="url">
-        <VhallInput v-model="advertisement.url" placeholder="请输入广告链接" autocomplete="off" ></VhallInput>
+        <VhallInput v-model="advertisement.url" v-clearEmoij placeholder="请输入广告链接" autocomplete="off" ></VhallInput>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer create-footer">
@@ -54,7 +55,7 @@
       <div class="content" v-show="total || isSearch">
         <div class="search" v-show="total || isSearch">
            <VhallInput class="search-dialog-tag" v-model.trim="advertisementTitle" placeholder="请输入广告标题" style="width: 220px" @keyup.enter.native="changeAdverment" maxlength="50" @clear="changeAdverment" clearable>
-            <i slot="suffix" class="iconfont-v3 saasicon_search" @click="changeAdverment" style="cursor: pointer; line-height: 36px;"></i>
+            <i slot="prefix" class="el-icon-search el-input__icon" @click="changeAdverment" style="cursor: pointer; line-height: 36px;"></i>
           </VhallInput>
           </div>
         <el-scrollbar v-loadMore="moreLoadData" v-show="total">
@@ -62,9 +63,10 @@
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
               <span class="spanImg"> <img :src="`${item.img_url}`" alt=""></span>
               <p>{{ item.subject }}</p>
-              <label class="img-tangle" v-show="item.isChecked">
+              <label  class="img-tangle" v-show="item.isChecked"><img src="../../../../common/images/icon-choose.png" alt=""></label>
+              <!-- <label class="img-tangle" v-show="item.isChecked">
                 <i class="el-icon-check"></i>
-              </label>
+              </label> -->
             </div>
           </div>
         </el-scrollbar>
@@ -498,19 +500,14 @@ export default {
     /deep/.el-input__inner {
       border-radius: 20px;
       height: 36px;
-      padding-right: 50px!important;
+      padding-right: 30px!important;
     }
-    /deep/ .el-input__suffix {
-      .el-input__suffix-inner {
-        i {
-          margin-right: 5px;
-          line-height: 36px;
-          cursor: pointer;
-        }
-      }
-      /deep/ .el-input__icon {
-        width: auto;
-      }
+    /deep/ .el-input__icon {
+      line-height: 36px;
+    }
+    /deep/ .el-input__prefix {
+      // left: 9px;
+      cursor: pointer;
     }
   }
   /deep/ .choose-gift {
@@ -555,7 +552,7 @@ export default {
     width: 324px;
     height: 130px;
   }
-  /deep/.el-input__inner{
+  .advinfo-dialog /deep/.el-input__inner{
    padding: 0 12px;
   }
   /deep/.el-input__count-inner {
@@ -623,23 +620,18 @@ export default {
             box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
             border: 1px solid #FB3A32;
           }
-         .img-tangle{
-          position: absolute;
-          right: 0;
-          top:0;
-          width: 0;
-          height: 0;
-          border: 10px solid transparent;
-          border-right-color: #FB3A32;
-          border-top-color: #FB3A32;
-          i{
-            color:#fff;
+          .img-tangle{
             position: absolute;
-            top: -8px;
-            right:-11px;
-            font-size: 10px;
+            right: -1px;
+            top:-1px;
+            width: 20px;
+            height: 20px;
+            font-size: 0;
+            img{
+              width: 100%;
+              height: 100%;
+            }
           }
-        }
         .spanImg{
           display: block;
           width: 163px;

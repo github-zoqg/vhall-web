@@ -59,11 +59,12 @@
           placeholder="请输入文档名称"
           v-model="formParams.keyword"
           clearable
+          v-clearEmoij
           @clear="initPage"
           @keyup.enter.native="initPage">
           <i
             class="el-icon-search el-input__icon"
-            slot="suffix"
+            slot="prefix"
             @click="initPage">
           </i>
         </VhallInput>
@@ -1124,6 +1125,7 @@ export default {
       }
       /deep/ .el-input__icon{
         line-height: 36px;
+        color: #666;
       }
     }
     /deep/ .el-input__inner{
@@ -1133,16 +1135,15 @@ export default {
       color: #666666;
       height: 36px;
       line-height: 36px;
-      padding-right: 50px!important;
+      padding-right: 30px!important;
     }
-    /deep/ .el-input__suffix {
+    /deep/ .el-input__prefix {
       cursor: pointer;
 
-      /deep/ .el-input__icon {
-        width: auto;
-        margin-right: 5px;
-        line-height: 36px;
-      }
+      // /deep/ .el-input__icon {
+      //   // width: auto;
+      //   line-height: 38px;
+      // }
     }
     ::v-deep.set-upload{
       position: relative;

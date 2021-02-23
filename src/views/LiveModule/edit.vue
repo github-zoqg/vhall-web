@@ -6,7 +6,7 @@
       :rules="[
         { required: true, max: 100,  message: `请输入${webniarTypeToZH}标题`, trigger: 'blur' },
       ]">
-        <VhallInput v-model="formData.title" :maxlength="100" class="title-inform" autocomplete="off" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
+        <VhallInput v-model="formData.title" v-clearEmoij :maxlength="100" class="title-inform" autocomplete="off" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item label="直播时间" required v-if="webniarType=='live'" class="item-time">
           <el-col :span="11.5">
@@ -22,7 +22,7 @@
             <el-form-item prop="date2" style="width:270px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
-            <el-time-picker placeholder="选择时间" :disabled="!formData.date1" type="datetime" :picker-options="{
+            <el-time-picker placeholder="选择时间" :default-value="dafaultTime" :disabled="!formData.date1" type="datetime" :picker-options="{
               selectableRange: rangHourMins
             }" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
@@ -285,6 +285,12 @@ export default {
         return `${str}:00 - 23:59:00`;
       }
     },
+    dafaultTime() {
+      let sysDate = new Date().getTime();
+      let str = this.$moment(sysDate + 10 * 60 * 1000).format('HH:mm');
+      let selectDate = this.$moment(this.formData.date1).format('YYYY-MM-DD');
+      return selectDate + ' ' + `${str}:00`;
+    },
     pathUrl: function() {
       return `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
     },
@@ -419,7 +425,6 @@ export default {
       selectMedia: {},
       expireTimeOption: {
         disabledDate(time) {
-          console.log(time, '?????????????')
           // formData.date1
           this.startVal = this.formData.date1.getTime() < Date.now() - 24 * 60 * 60 * 1000;
           return startVal;
@@ -604,11 +609,21 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
-      if (!this.versionType) {
-        if (this.formData.limitCapacitySwtich) {
-          if (this.formData.limitCapacity < 1) {
+      if (this.formData.limitCapacitySwtich && this.formData.limitCapacity < 1) {
+          this.$message({
+            message: '最高并发请输入大于1的数值',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+          return;
+      }
+      if (!this.versionType && this.formData.limitCapacitySwtich) {
+        if (this.formData.capacity) {
+          if (this.formData.limitCapacity > (this.limitInfo.total + this.limitInfo.extend)) {
             this.$message({
-              message: '最高并发请输入大于1的数值',
+              message: '最大并发数不能大于并发剩余量',
               showClose: true,
               // duration: 0,
               type: 'error',
@@ -616,28 +631,16 @@ export default {
             });
             return;
           }
-          if (this.formData.capacity) {
-            if (this.formData.limitCapacity > (this.limitInfo.total + this.limitInfo.extend)) {
-              this.$message({
-                message: '最大并发数不能大于并发剩余量',
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box'
-              });
-              return;
-            }
-          } else {
-            if (this.formData.limitCapacity > this.limitInfo.total) {
-              this.$message({
-                message: '最大并发数不能大于并发剩余量',
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box'
-              });
-              return;
-            }
+        } else {
+          if (this.formData.limitCapacity > this.limitInfo.total) {
+            this.$message({
+              message: '最大并发数不能大于并发剩余量',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+            return;
           }
         }
       }

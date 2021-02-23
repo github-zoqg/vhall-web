@@ -19,11 +19,12 @@
         placeholder="请输入音视频名称"
         v-model="keyword"
         clearable
+        v-clearEmoij
         @clear="searchTableList"
         @keyup.enter.native="searchTableList">
         <i
           class="el-icon-search el-input__icon"
-          slot="suffix"
+          slot="prefix"
           @click="searchTableList">
         </i>
       </VhallInput>
@@ -143,7 +144,7 @@
       :close-on-press-escape=false>
       <div class="edit-contianer">
         <div class="main-edit">
-          <VhallInput v-model="videoName" :maxlength="100" autocomplete="off" show-word-limit  type="text" style="width:356px" placeholder="请输入名称"></VhallInput>
+          <VhallInput v-model="videoName" v-clearEmoij :maxlength="100" autocomplete="off" show-word-limit  type="text" style="width:356px" placeholder="请输入名称"></VhallInput>
           <p v-show="errorText">请输入正确的格式文件</p>
         </div>
         <div class="dialog-footer">
@@ -588,6 +589,12 @@ export default {
   }
 };
 </script>
+<style lang="less">
+  .el-tooltip__popper {
+    max-width: 372px;
+    line-height: 17px;
+  }
+</style>
 <style lang="less" scoped>
 .video-list{
   width: 100%;
@@ -601,9 +608,9 @@ export default {
     padding-left: 10px;
   }
 }
-/deep/.el-input__inner{
-    padding: 0 12px;
-  }
+// /deep/.el-input__inner{
+//     padding: 0 12px;
+//   }
   /deep/.el-table td{
     padding: 15px 0;
   }
@@ -620,18 +627,18 @@ export default {
     border-radius: 18px;
     padding: 0 12px;
   } */
+  /deep/ .el-input__icon{
+    line-height: 36px;
+  }
    /deep/.el-input__inner {
-      border-radius: 20px;
+      border-radius: 50px;
+      user-select: none;
       height: 36px;
-      padding-right: 50px!important;
+      line-height: 36px;
+      padding-right: 30px!important;
     }
-    /deep/ .el-input__suffix {
+    /deep/ .el-input__prefix {
       cursor: pointer;
-      /deep/ .el-input__icon {
-        width: auto;
-        margin-right: 5px;
-        line-height: 36px;
-      }
     }
 }
 .videoName{
