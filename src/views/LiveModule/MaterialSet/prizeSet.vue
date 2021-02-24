@@ -162,7 +162,9 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import prizeList from '../../MaterialModule/prize';
 import beginPlay from '@/components/beginBtn';
-import Env from '@/api/env.js';
+import prize0 from './images/prize0.gif'
+import prize1 from './images/prize1.gif'
+import prize2 from './images/prize2.gif'
 export default {
   name: 'prizeSet',
   data() {
@@ -190,7 +192,7 @@ export default {
       length: 0,
       isChecked: 1,
       localImg: 0,
-      prizeUrl: [Env.staticImgs.prize[0], Env.staticImgs.prize[1], Env.staticImgs.prize[2]],
+      prizeUrl: [prize0, prize1, prize2],
       givePrizeList: [
         {
           is_system: 1,

@@ -47,7 +47,7 @@
               <el-radio class="reward-way-radio" v-model="radio" label="1">
                 <div class="radio-label">
                   <img
-                    :src="pay_zfb_url"
+                    src="../../../common/images/alipay.png"
                     width="32"
                     height="32"
                     alt="支付宝支付"
@@ -58,7 +58,7 @@
               <el-radio class="reward-way-radio" v-model="radio" label="2">
                 <div class="radio-label">
                   <img
-                    :src="pay_wx_url"
+                    src="../../../common/images/weixin.png"
                     width="32"
                     height="32"
                     alt="微信支付"
@@ -115,8 +115,6 @@ export default {
       wechatPay: false,
       wechatPayImg: '',
       defText: '打赏其他金额',
-      pay_zfb_url: `${Env.staticImgs.pay[1]}`,
-      pay_wx_url: `${Env.staticImgs.pay[2]}`
     };
   },
   mounted () {
