@@ -251,7 +251,6 @@
               </transition>
             </div>
           </div>
-          <!-- <img :src="audioEnd" alt="" v-show="!showVideo"> -->
           <!-- <div id="videoDom" v-show="showVideo"></div> -->
           <p class="show-purple-info">
             <span>提示</span>
@@ -272,7 +271,6 @@ import { sessionOrLocal, debounce } from '@/utils/utils';
 import beginPlay from '@/components/beginBtn';
 import { secondToDateZH } from '@/utils/general';
 import controle from './js/control';
-import Env from '@/api/env';
 export default {
   name: 'playerSet',
   mixins: [controle],
@@ -382,7 +380,6 @@ export default {
       vm: null,
       checkEnter: true, // 检验是否是第一次进来的
       audioImg: require('@/common/images/logo4.png'),
-      audioEnd: `${Env.staticImgs.video[0]}`,
     };
   },
   components: {

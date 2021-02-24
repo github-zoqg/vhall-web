@@ -25,7 +25,7 @@
         <p>总金额：<span>￥{{ payInfo.total_amount }}</span></p>
       </div>
       <div class="pay-over-time" v-if="timeOut">
-        <p><img :src="default_url" alt=""></p>
+        <p><img src="../../common/images/pay-fail.png" alt=""></p>
         <p>支付超时</p>
         <span @click="repurchase">重新购买</span>
       </div>
@@ -99,8 +99,7 @@ export default {
       time:'0:0',
       method: 'ALIPAY',
       payInfo: {},
-      arrearInfo: {}, //欠费订单
-      default_url: `${Env.staticImgs.pay[0]}`
+      arrearInfo: {} //欠费订单
     };
   },
   created() {

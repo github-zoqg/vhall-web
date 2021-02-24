@@ -101,7 +101,7 @@
           <div class="panel__preview">
             <header class="h5-title"  v-if="signSetVo && signSetVo.organizers_status == 1">
               <!-- <img :src="domain_url || signSetVo.logo_url" alt v-if="(signSetVo && signSetVo.logo_url) || domain_url" class="logo"/> -->
-              <img :src="default_url" class="logo"/>
+              <img src="./image/vhall-logo.png" class="logo"/>
               <span class="title">北京微吼时代科技有限公司</span>
               <div class="title-icons" :style="{'color': skinSetVo.pageStyle }">
                 <icon icon-class="saasguanzhu"></icon>
@@ -130,7 +130,6 @@
   </div>
 </template>
 <script>
-import Env from "@/api/env";
 export default {
   name: "brandSetPreview.vue",
   data() {
@@ -145,7 +144,6 @@ export default {
       },
       logoUrl: null,
       domain_url: '',
-      default_url: `${Env.staticImgs.brand[0]}`
     };
   },
   methods: {
