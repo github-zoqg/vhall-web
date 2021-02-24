@@ -880,7 +880,7 @@ export default {
     font-size: 14px;
     font-family: @fontRegular;
     font-weight: 400;
-    color: #999999;
+    // color: #999999;
     resize: none;
   }
   /deep/.el-input__count {
