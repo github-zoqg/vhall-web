@@ -204,11 +204,13 @@ export default {
     transition: all 0.15s ease-in;
     &.active {
       border: 1px solid #fb3a32;
-      box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+      /deep/.el-upload--picture-card{
+        border: 0;
+      }
     }
     &:hover {
-      border: 1px solid #fb3a32;
-      box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
     }
     &:nth-of-type(4n) {
       margin-right: 0;

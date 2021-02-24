@@ -18,6 +18,7 @@
 <script>
 import * as pathToRegexp from 'path-to-regexp';
 import { CrumbSet } from "@/router/crumb"; // progress bar style
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
     return {
@@ -40,8 +41,9 @@ export default {
     }
     // 获取本地系统时间字符串
     // this.sysDateStr = this.$moment(new Date().getTime()).format('llll');
-    this.sysDateStr = this.$moment(new Date().getTime()).format('YYYY年MM月DD日');
-    this.updateData();
+    let nowTime = JSON.parse(sessionOrLocal.get('currentDate'));
+    this.sysDateStr = this.$moment(nowTime).format('YYYY年MM月DD日');
+    // this.updateData();
     this.getBreadcrumb();
   },
   methods: {

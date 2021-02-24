@@ -336,7 +336,7 @@ export default {
     background: rgba(0, 0, 0, .3);
     .show-main{
       position: absolute;
-      top: 50%;
+      top: 48%;
       left: 50%;
       background: #fff;
       transform: translate(-50%, -50%);

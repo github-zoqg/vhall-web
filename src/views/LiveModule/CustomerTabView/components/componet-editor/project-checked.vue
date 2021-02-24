@@ -121,7 +121,7 @@ export default {
     margin-bottom: 6px;
     // margin: 0 14px 14px 0;
     &:hover{
-      box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       border-radius: 4px;
     }
     &.checkedActive{

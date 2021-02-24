@@ -62,8 +62,8 @@
                   <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open" @change="editHorseInfo">下</el-radio>
                 </el-form-item>
                 <el-form-item label="显示方式">
-                  <el-radio v-model="formHorse.displayType" :label="2" :disabled="!scrolling_open" @change="editHorseInfo">滚动</el-radio>
-                  <el-radio v-model="formHorse.displayType" :label="1" :disabled="!scrolling_open" @change="editHorseInfo">闪烁</el-radio>
+                  <el-radio v-model="formHorse.scroll_type" :label="1" :disabled="!scrolling_open" @change="editHorseInfo">滚动</el-radio>
+                  <el-radio v-model="formHorse.scroll_type" :label="2" :disabled="!scrolling_open" @change="editHorseInfo">闪烁</el-radio>
                 </el-form-item>
                 <el-form-item label="间隔时间" prop="interval">
                   <el-input
@@ -340,7 +340,7 @@ export default {
         text: '版权所有，盗版必究',
         position: 1,
         alpha: 100,
-        displayType:2,
+        scroll_type: 1,
         interval: 20
       },
       accountIds:10000127,
@@ -558,7 +558,7 @@ export default {
         color: this.formHorse.color || '#FFFFFF',   //  文字颜色
         interval: this.formHorse.interval || 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: this.formHorse.speed || 6000, // 跑马灯移动速度  3000快     6000中   10000慢
-        displayType: this.formHorse.displayType == 1 ? 1 : 2,
+        displayType: this.formHorse.scroll_type == 1 ? 0 : 1,
         position:this.formHorse.position || 1
       }
     },
@@ -567,9 +567,6 @@ export default {
       this.$fetch('getScrolling', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200 && res.data.webinar_id) {
           this.formHorse = {...res.data};
-          if (!this.formHorse.displayType) {
-            this.formHorse.displayType = 2
-          }
           this.$nextTick(() => {
             this.$refs.pageThemeColors.initColor(res.data.color);
           })

@@ -554,15 +554,16 @@ export default {
       width: 70px;
       margin-right: 20px;
       border-radius: 2px;
-      border: 1px solid #E6E6E6;
+      // border: 1px solid #E6E6E6;
       position: relative;
-      height: 128px;
-      border: 1px solid transparent;
+      height: 124px;
+      // border: 1px solid transparent;
       cursor: pointer;
       transition: all 0.15s ease-in;
       img {
         width: 100%;
-        height: 125px;
+        height: 100%;
+        object-fit: scale-down;
       }
       .img-tangle{
         position: absolute;
@@ -577,12 +578,12 @@ export default {
         }
       }
       &.isActiveColor{
-        box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
+        box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
         border: 1px solid #FB3A32;
       }
       &:hover {
-        box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
-        border: 1px solid #FB3A32;
+        box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        // border: 1px solid transparent;
       }
     }
 

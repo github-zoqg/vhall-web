@@ -511,6 +511,8 @@ export default {
         border-radius: 4px;
         cursor: pointer;
         position: relative;
+        border: 1px solid transparent;
+        transition: all 0.15s ease-in;
         .prize-img{
           display: inline-block;
           width: 72px;
@@ -538,9 +540,12 @@ export default {
             // line-height: 30px;
           }
         }
+        &:hover{
+          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        }
         &.active{
           background: #FFFFFF;
-          box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
+          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
           border: 1px solid #FB3A32;
         }
         .img-tangle{

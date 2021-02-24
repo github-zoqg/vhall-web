@@ -545,7 +545,7 @@ export default {
   }
   .el-form-item{
     width: 100%;
-    max-width: 640px;
+    max-width: 668px;
     &:last-child{
       padding: 16px 0;
     }
