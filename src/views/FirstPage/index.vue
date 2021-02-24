@@ -225,7 +225,7 @@ export default {
         start_time: this.$moment(start).format('YYYY-MM-DD'),
         end_time: this.$moment(end).format('YYYY-MM-DD')
       };
-      this.$fetch('getDataCenterInfo', params).then(res =>{
+      this.$fetch('getDataCenterInfo', this.$params(params)).then(res =>{
         this.mainKeyData = {...res.data.key_data};
         // this.lineDataList = res.data.trend.live;
       }).catch(e=>{
