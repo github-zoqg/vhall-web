@@ -15,7 +15,7 @@
         >
         <i
           class="el-icon-search el-input__icon"
-          slot="suffix"
+          slot="prefix"
           @click="searchHandle">
         </i>
       </VhallInput>
