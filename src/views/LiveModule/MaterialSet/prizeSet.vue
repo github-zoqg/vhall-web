@@ -27,7 +27,7 @@
                 </el-form-item> -->
                 <el-form-item label="模板库">
                     <div class="prize-type">
-                      <div class="przieImg prizeNoBorder">
+                      <div class="przieImg prizeNoBorder" :class="isChecked == 0 ? 'checkedBorder' : ''">
                         <upload
                           class="giftUpload"
                           v-model="previewSrc"
@@ -43,30 +43,18 @@
                           :before-upload="beforeUploadHandler">
                         </upload>
                         <label  class="img-tangle" v-show="isChecked == 0"><img src="../../../common/images/icon-choose.png" alt=""></label>
-                        <!-- <label class="img-tangle" v-show="isChecked==0" >
-                          <i class="el-icon-check"></i>
-                        </label> -->
                       </div>
                       <p :class="isChecked == 1 ? 'active' : ''" class="przieImg" @click="changeType(1)">
                         <img src="../../../common/images/gif/prize03.gif" alt="">
                         <label  class="img-tangle" v-show="isChecked == 1"><img src="../../../common/images/icon-choose.png" alt=""></label>
-                        <!-- <label class="img-tangle" v-show="isChecked == 1" >
-                          <i class="el-icon-check"></i>
-                        </label> -->
                       </p>
                       <p :class="isChecked == 2 ? 'active' : ''" class="przieImg" @click="changeType(2)">
                         <img src="../../../common/images/gif/prize01.gif" alt="" >
                         <label  class="img-tangle" v-show="isChecked == 2"><img src="../../../common/images/icon-choose.png" alt=""></label>
-                        <!-- <label class="img-tangle" v-show="isChecked == 2" >
-                          <i class="el-icon-check"></i>
-                        </label> -->
                       </p>
                       <p :class="isChecked == 3 ? 'active' : ''" class="przieImg" @click="changeType(3)">
                         <img src="../../../common/images/gif/prize02.gif" alt="">
                         <label  class="img-tangle" v-show="isChecked == 3"><img src="../../../common/images/icon-choose.png" alt=""></label>
-                        <!-- <label class="img-tangle" v-show="isChecked == 3" >
-                          <i class="el-icon-check"></i>
-                        </label> -->
                       </p>
                     </div>
                     <p style="color:#999">建议尺寸：240*240px，小于2M 支持jpg、gif、png、bmp</p>
@@ -474,9 +462,11 @@ export default {
       this.backgroundImg = this.prizeUrl[0];
     },
     changeType(index) {
-      console.log(index, "1314154325")
       this.isChecked = index;
       this.backgroundImg = this.prizeUrl[index - 1];
+      if (!index) {
+        this.backgroundImg = this.previewSrc;
+      }
     },
      prizeLoadSuccess(res, file){
       console.log('图片上传',res,'ssssss', file);
@@ -748,9 +738,13 @@ export default {
         border-radius: 4px;
         border: 1px solid #ccc;
         position: relative;
+        transition: all 0.15s ease-in;
+        &:hover{
+          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        }
         &.active{
           border: 1px solid #FB3A32;
-          box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
+          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
         }
         img{
           width: 100%;
@@ -776,6 +770,13 @@ export default {
         }
         /deep/.el-upload--picture-card .box > div{
           height: 88px;
+        }
+      }
+      .checkedBorder{
+        border: 1px solid #FB3A32 !important;
+        /deep/.el-upload--picture-card{
+          border: 0;
+          height: 86px;
         }
       }
     }

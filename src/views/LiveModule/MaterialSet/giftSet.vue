@@ -1075,6 +1075,7 @@ export default {
       border-radius: 4px;
       padding: 11px;
       border: 1px solid #F5F5F5;
+      transition: all 0.15s ease-in;
       margin-bottom: 12px;
       &:nth-child(2n + 1) {
         margin-right: 12px;
@@ -1117,6 +1118,7 @@ export default {
       }
       &:hover{
         cursor: pointer;
+        box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       }
       .img-tangle{
           position: absolute;
@@ -1134,7 +1136,7 @@ export default {
     .matrial-item.active{
       border: 1px solid #fb3a32;
       position: relative;
-      box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
     }
   }
   .pageBox{

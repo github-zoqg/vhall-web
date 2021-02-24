@@ -354,6 +354,7 @@ export default {
     position: relative;
     // margin-right: 24px;
     cursor: pointer;
+    transition: all 0.15s ease-in;
     .isMark{
       display: inline-block;
       font-weight: normal;
@@ -375,32 +376,22 @@ export default {
           width: 100%;
           height: 100%;
         }
-      }
-    // .img-tangle{
-    //   position: absolute;
-    //   right: 0;
-    //   top:0;
-    //   width: 0;
-    //   height: 0;
-    //   border: 10px solid transparent;
-    //   border-right-color: #FB3A32;
-    //   border-top-color: #FB3A32;
-    //   i{
-    //     color:#fff;
-    //     position: absolute;
-    //     top: -8px;
-    //     right:-11px;
-    //     font-size: 10px;
-    //   }
-    // }
+    }
     &:last-child{
       margin-right: 0;
     }
+    &:hover {
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+      // border: 1px solid transparent;
+    }
+    &.active{
+      // box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+      border: 1px solid #FB3A32;
+    }
   }
-  .active{
-    box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
-    border: 1px solid #FB3A32;
-  }
+
+
 }
 .inputNums {
   line-height: 20px;

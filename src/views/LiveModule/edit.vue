@@ -696,7 +696,7 @@ export default {
             this.isChange = false;
             console.log(res);
             setTimeout(()=>{
-              this.$router.push({path: '/live/list'});
+              this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
             }, 500);
           }).catch(res=>{
             this.$message({
@@ -854,6 +854,7 @@ export default {
     display: flex;
     justify-content: space-between;
     position: relative;
+    transition: all 0.15s ease-in;
     >div{
       // height: 112px;
       width: 185px;
@@ -885,8 +886,12 @@ export default {
             }
           }
         }
+        &:hover{
+          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        }
         &.active{
-          box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
+          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+          // box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
         }
       }
       // position: relative;
