@@ -31,8 +31,8 @@
             <span>{{show_name}}</span>
           </div>
           <el-dropdown-menu slot="dropdown" class="user-dropdown">
-            <el-dropdown-item divided @click.native="toAccountPage">账户信息</el-dropdown-item>
-            <el-dropdown-item divided @click.native="logout">退出</el-dropdown-item>
+            <el-dropdown-item divided @click.native="toAccountPage"><i class="iconfont-v3 saasicon_account1"></i> 账户信息</el-dropdown-item>
+            <el-dropdown-item divided @click.native="logout"><i class="iconfont-v3 saasicon_exit"></i>退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -269,7 +269,7 @@ export default {
 .user-dropdown {
   border-radius: 4px;
   /deep/.el-dropdown-menu__item{
-    padding: 0 10px!important;
+    padding: 0 16px!important;
     min-width: 160px;
     height: 40px;
     background: #FFFFFF;
@@ -277,9 +277,17 @@ export default {
     font-weight: 400;
     color: rgba(0, 0, 0, 0.65);
     border-radius: 0 0 4px 4px;
+    text-align: left;
   }
   li:first-child {
     border-radius: 4px 4px 0 0;
+  }
+  .iconfont-v3{
+    font-size: 16px;
+    vertical-align: bottom;
+  }
+  .saasicon_exit{
+    font-size: 17px;
   }
   /deep/.el-dropdown-menu__item--divided:before {
     display: none!important;
@@ -304,6 +312,7 @@ export default {
   float: right;
   height: 32px;
   line-height: 32px;
+  margin-right: 17px;
   &:focus {
     outline: none;
   }

@@ -388,6 +388,7 @@ export function checkAuth(to, from, next) {
       if(res.code === 200) {
         sessionOrLocal.set('userInfo', JSON.stringify(res.data));
         sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+        sessionOrLocal.set('currentDate', JSON.stringify(res.data.current_date));
       } else {
         sessionOrLocal.set('userInfo', null);
       }

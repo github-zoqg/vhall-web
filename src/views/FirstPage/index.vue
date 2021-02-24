@@ -188,9 +188,11 @@ export default {
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
-    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     // this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
     this.getLiveList();
+    this.$nextTick(() => {
+      this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
+    })
   },
   beforeDestroy() {
     document.getElementById('app').style.minWidth="1366px"
@@ -214,9 +216,11 @@ export default {
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       end.setTime(end.getTime() - 3600 * 1000 * 24 * 1);
+      let parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
       // parent_id > 0 子账号
       let params = {
-        account_id: this.userId,
+        // account_id: this.userId,
+        child_user_id: parentId == 0 ? '' : this.userId,
         type: 1,
         start_time: this.$moment(start).format('YYYY-MM-DD'),
         end_time: this.$moment(end).format('YYYY-MM-DD')
@@ -227,7 +231,7 @@ export default {
       }).catch(e=>{
         console.log(e);
       });
-      this.getLineData(params);
+      this.getLineData(this.$params(params));
     },
     getLineData(obj) {
       let url = this.versionType == '1' ? 'getFlowLineInfo' : 'getTrendLineInfo';
@@ -280,8 +284,9 @@ export default {
         transition: all 0.15s ease-in;
         &:hover{
           background: #FFFFFF;
-          box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);
+          // box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);
           border-radius: 4px;
+          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
           border: 1px solid #FB3A32;
         }
         p{
