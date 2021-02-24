@@ -881,6 +881,15 @@ export default {
       padding: 4px 23px;
     }
   }
+  /deep/ .mask span {
+    font-size: 14px;
+    line-height: 20px;
+    i {
+      font-size: 18px;
+      vertical-align: middle;
+      display: inline-block;
+    }
+  }
 }
 .uploadtips {
   padding-top: 8px;
