@@ -71,16 +71,17 @@ export default {
       this.getDateInfo();
     },
     getUserPayDetail() {
-      console.log(this.vip_info, 'this.vip_info')
+      let parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
       let params = {
-        account_id: this.$route.params.str, // 子账号内容，传递子账号数据
+        // account_id: this.$route.params.str, // 子账号内容，传递子账号数据
+        child_user_id: parentId == 0 ? '' : this.$route.params.str,
         type: 1 // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
       };
       if (this.timeStr) {
         params.start_time = this.timeStr[0] || '';
         params.end_time = this.timeStr[1] || '';
       }
-      this.$fetch(this.sonVo.vip_info.type > 0 ? 'getFlowLineInfo' : 'getTrendLineInfo', params).then(res=>{
+      this.$fetch(this.sonVo.vip_info.type > 0 ? 'getFlowLineInfo' : 'getTrendLineInfo', this.$params(params)).then(res=>{
         if (res && res.code === 200) {
           let costList = res.data.list;
           costList.map(item => {

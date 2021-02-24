@@ -44,7 +44,7 @@
         <div class="top-item usage-item">
           <p>当前版本</p>
           <h2>{{ userInfo.edition }} <span class="level pointer" v-if ="buttonList.includes('standard_upgrade')" @click="upgradeVersion()">升级</span></h2>
-          <p v-if="userInfo.edition_valid_time">有效期: {{ userInfo.edition_valid_time }}</p>
+          <p v-if="userInfo.edition_valid_time">有效期: {{ userInfo.edition_valid_time }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
       <el-col :span="typeChange ? 15 : 9" v-if="userInfo.edition === '无极版'">
@@ -131,7 +131,8 @@ export default {
       this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
         this.userInfo = res.data;
         this.versionType = res.data.edition;
-        this.outTime(res.data.edition_valid_time);
+        this.isOutTime = res.data.expired == 1 ? true : false;
+        // this.outTime(res.data.edition_valid_time);
         this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
         sessionOrLocal.set('versionType', JSON.stringify(res.data.type));
         sessionOrLocal.set('versionText', JSON.stringify(res.data.edition));
