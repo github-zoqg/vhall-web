@@ -71,10 +71,9 @@ export default {
       this.getDateInfo();
     },
     getUserPayDetail() {
-      let parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
       let params = {
         // account_id: this.$route.params.str, // 子账号内容，传递子账号数据
-        child_user_id: parentId == 0 ? '' : this.$route.params.str,
+        child_user_id: this.$route.params.str,
         type: 1 // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
       };
       if (this.timeStr) {
