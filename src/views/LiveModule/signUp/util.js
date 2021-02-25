@@ -84,6 +84,7 @@ let filedJson = {
     ],
     reqType: 1,
     default_type: '',
+    disabledEdit: true
   },
   inputs: {
     "label": "小结",
@@ -144,6 +145,7 @@ export function getfiledJson({name, type}){
           label: '生日',
           "required": true,
           "bottomBtn": ["move", "phoneValid"],
+          disabledEdit: false
         });
 
         break;
@@ -199,6 +201,7 @@ export function getfiledJson({name, type}){
           label: '行业',
           "required": true,
           "bottomBtn": ["delete", "move", "requireSwtich"],
+          disabledEdit: false
         });
 
         break;
@@ -316,6 +319,7 @@ export function getfiledJson({name, type}){
           ],
           reqType: 6,
           default_type: '',
+          disabledEdit: false
         });
         break;
 
