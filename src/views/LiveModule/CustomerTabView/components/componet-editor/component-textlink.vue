@@ -66,7 +66,7 @@ export default {
       if(result) {
         this.$emit('updateInfo', this.info)
       } else {
-        this.$message.warning('跳转地址，必须以http或https 开头')
+        this.$message.warning('请输入http://或https://开头的地址？')
       }
     },
 

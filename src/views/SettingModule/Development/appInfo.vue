@@ -1,6 +1,6 @@
 <template>
   <div  v-loading="fetching" element-loading-text="努力加载中">
-    <PageTitle :pageTitle="pageTitle"></PageTitle>
+    <PageTitle :pageTitle="pageTitle"><div class="title_text">SecretKey适用于API和JSSDK，App SecretKey适用于移动端SDK</div></PageTitle>
     <!-- 按钮 -->
     <div class="app-btns" v-if="action==='detail'">
       <el-button size="medium" @click="modify" round>修改</el-button>
@@ -8,7 +8,7 @@
     <!-- 面板 -->
     <div class="app-layout">
       <div :class="`app--info-ctx ${action=='detail' ? 'detail-show' : 'edit-show'}`">
-        <el-form :model="appForm" ref="appForm" label-width="220px">
+        <el-form :model="appForm" ref="appForm" label-width="160px">
           <template v-for="(node, index) in nodesShowData">
             <div :class="node.subject ? 'app-node-item padding' : 'app-node-item'">
               <p class="subject" v-if="node.subject" :key="index" v-html="node.label"></p>
@@ -106,12 +106,12 @@ export default {
         {
           nodeType: 'text',
           modelKey: 'secret_key',
-          label: 'SecretKey（API使用）',
+          label: 'SecretKey',
         },
         {
           nodeType: 'text',
           modelKey: 'app_secret_key',
-          label: 'App SecretKey（SDK使用）',
+          label: 'App SecretKey',
         },
         {
           subject: true,
@@ -401,7 +401,7 @@ export default {
     }
     .copy {
       position: absolute;
-      right: 10px;
+      right: 67px;
       top: 0;
       color: #666666;
       font-size: 15px;
@@ -462,6 +462,10 @@ export default {
       }
     }
   }
+}
+.title_text{
+  color: #999;
+  font-size: 14px;
 }
 .app-node-item {
   background: #ffffff;

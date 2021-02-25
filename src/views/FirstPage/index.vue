@@ -136,11 +136,11 @@
         <a href="http://e.vhall.com/app" class="download-btn" target="_blank">立即下载</a>
       </div>
       <div class="data-document">
-        <h2>文档中心<a href="https://www.vhall.com/saas/doc" target="_blank">更多</a></h2>
-        <p><a href="https://www.vhall.com/saas/doc/6.html" target="_blank">API文档</a></p>
+        <h2>文档中心<a href="https://saas-doc.vhall.com/document/document/index" target="_blank">更多</a></h2>
+        <p><a href="https://saas-doc.vhall.com/docs/show/947" target="_blank">API文档</a></p>
         <p><a href="https://www.vhall.com/saas/doc/260.html" target="_blank">JSSDK文档</a></p>
-        <p><a href="https://www.vhall.com/saas/doc/262.html" target="_blank">IOS SDK文档</a></p>
-        <p><a href="https://www.vhall.com/saas/doc/261.html" target="_blank">Andriod SDK文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1175" target="_blank">IOS SDK文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1203" target="_blank">Andriod SDK文档</a></p>
       </div>
       <div class="helpMsg" @click="contactUs">
         <i class="el-icon-chat-dot-round"></i>
@@ -216,11 +216,11 @@ export default {
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       end.setTime(end.getTime() - 3600 * 1000 * 24 * 1);
-      let parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
+      // let parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
       // parent_id > 0 子账号
       let params = {
         // account_id: this.userId,
-        child_user_id: parentId == 0 ? '' : this.userId,
+        // child_user_id: parentId == 0 ? '' : this.userId,
         type: 1,
         start_time: this.$moment(start).format('YYYY-MM-DD'),
         end_time: this.$moment(end).format('YYYY-MM-DD')
