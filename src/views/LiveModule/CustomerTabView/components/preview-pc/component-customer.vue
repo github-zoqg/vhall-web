@@ -29,7 +29,7 @@
       <div :key="index" v-if="item.component_id == 6">
         <img-link :info="item" mode="1"></img-link>
       </div>
-      <div :key="index" v-if="item.component_id == 7">
+      <div :key="index" v-if="item.component_id == 7" style="margin-bottom: 16px;">
         <component-title :info="item" mode="1"></component-title>
       </div>
       <div :key="index" v-if="item.component_id == 8">
@@ -88,5 +88,4 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-
 </style>

@@ -23,6 +23,9 @@ export default {
 #showQuestion /deep/ .h5-text i{
  color:#FB3A32;
 }
+#showQuestion /deep/.q-title{
+  padding: 0 15px !important;
+}
 #showQuestion /deep/ .el-button{
  background:#FB3A32;
 }

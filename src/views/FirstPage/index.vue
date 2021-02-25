@@ -372,11 +372,12 @@ export default {
       .download-btn{
         // outline: none;
         width: 110px;
-        height: 36px;
+        // height: 36px;
         border-radius: 18px;
         border: 1px solid #ccc;
         text-align: center;
-        line-height: 36px;
+        padding: 10px 0;
+        // line-height: 36px;
         background: #fff;
         font-size: 14px;
         color: #1a1a1a;

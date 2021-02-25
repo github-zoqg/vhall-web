@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="!auth_show">
-      <null-page text="聊天严禁词为高级功能，设置后可以防止观众在聊天内容中输入不符合自身利益的词语，保障直播间健康有序地交流。联系您的客户经理获取权限后方可使用。" nullType="noAuth">
+      <null-page text="聊天严禁词为高级功能，设置后可以防止观众在聊天内容中输入不符合自身利益的词语，<br/>保障直播间健康有序地交流。联系您的客户经理获取权限后方可使用。" nullType="noAuth">
         <el-button type="primary" round @click="openChat">联系客服</el-button>
       </null-page>
     </div>

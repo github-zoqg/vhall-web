@@ -10,6 +10,7 @@
       <!--PC预览,begin-->
       <div class="pc" v-show="switchType === 'pc'">
         <div :class="`skin-preview preview-${switchType}`" :style="{ backgroundColor: `${skinSetVo.bgColor}`}">
+          <div class="logo-brand"></div>
           <header class="pc-header" v-if="signSetVo && signSetVo.view_status == 1">
             <img class="logo-image" :src="domain_url || signSetVo.logo_url" alt="标志图" v-if="(signSetVo && signSetVo.logo_url) || domain_url"/>
             <img class="logo-image" src="../../../common/images/logo4.png" v-else/>
@@ -42,13 +43,13 @@
               <div class="player">
                 <div class="player-content">
                   <div class="player-video">
-                    <img width="350" src="../../../common/images/skin/white/player.png"/>
+                    <img width="350" src="../../../common/images/skin/white/player1.png"/>
                   </div>
                 </div>
               </div>
             </div>
           </section>
-          <div class="recommend">
+          <!-- <div class="recommend">
             <div class="rcm-list">
               <div class="rcm-title">
                 <div class="title-text" :style="{'borderBottomColor': skinSetVo.pageStyle}">
@@ -65,7 +66,7 @@
                      v-else/>
               </div>
             </div>
-          </div>
+          </div> -->
           <div class="discription">
             <div class="dct-list">
               <div class="dct-title">
@@ -242,14 +243,23 @@ export default {
 .skin-preview.preview-pc{
   width: 400px;
   border: 1px solid #d2d2d2;
-  padding-bottom: 40px;
+  padding-bottom: -10px;
   border-radius: 4px;
+  border-top: 0;
+  position: relative;
 }
 .zdy--switch {
   margin-bottom: 16px;
 }
+.logo-brand{
+  width: 100%;
+  height: 20px;
+  background: url(../../../common/images/skin/white/headerLogo.png) no-repeat;
+  background-size: 100% 100%;
+}
 .pc-header {
   padding: 0 24px;
+
   .logo-image {
     width: auto;
     height: 26px;
@@ -378,11 +388,6 @@ export default {
   text-align: center;
   margin-top: 10px;
 }
-.discription {
-  height: 110px;
-  width: 100%;
-  margin-top: 5px;
-}
 .dct-list {
   margin: 0 auto;
   height: 110px;
@@ -390,9 +395,11 @@ export default {
   border: 1px solid rgba(210,210,210,0.08);
   border-radius: 2px;
   background: rgba(255,255,255,0.08);
+  padding-top: 12px;
 }
 .dct-title {
   height: 18px;
+  padding: 0 24px;
   border-bottom: 1px solid rgba(210, 210, 210, 0.08);
   .title-text {
     text-align: center;
@@ -415,7 +422,7 @@ export default {
 }
 .copyright {
   width: 100%;
-  margin-top: 10px;
+  padding-top: 10px;
   .content {
     margin: 0 auto;
     height: 42px;
@@ -423,7 +430,6 @@ export default {
     width: 402px;
     text-align: center;
     border-top: 1px solid rgba(210,210,210,0.08);
-    padding-top: 20px;
   }
 }
 .skin-preview.preview-app {

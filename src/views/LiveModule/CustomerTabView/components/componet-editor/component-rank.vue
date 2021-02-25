@@ -155,6 +155,7 @@ export default {
       margin: 0 10px;
       text-align: center;
       padding-bottom: 10px;
+      border-radius: 2px;
       img{
         width: 90%;
       }

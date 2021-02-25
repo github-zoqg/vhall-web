@@ -52,6 +52,7 @@
               <div class="content">
                 <div class="imageBox">
                   <div class="imageWrap" v-if="scope.row.transcode_status != 1">
+
                     <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">转码失败</p>
                     <p v-else class="statusDesc">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
                   </div>

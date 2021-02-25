@@ -52,7 +52,7 @@ export default {
 .title-previewbox{
   color: #1A1A1A;
   font-size: 14px;
-  line-height: 20px;
+  line-height: 22px;
 }
   .qr-editor-box{
     padding-top: 16px;
