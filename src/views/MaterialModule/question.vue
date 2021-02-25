@@ -280,7 +280,7 @@ export default {
       left: 50%;
       background: #fff;
       transform: translate(-50%, -50%);
-      width: 700px;
+      width: 760px;
       padding-bottom: 24px;
       // padding: 0 32px 24px 32px;
       border-radius: 4px;
