@@ -74,9 +74,9 @@
         </div>
         <div class="login-other">
           其他登录方式<span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
-          <div class="other-img" v-show="!isOpenOther">
-            <img src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('/v3/commons/auth/qq?jump_url=')">
-            <img src="../../common/images/icon/wechat.png" alt="" @click="thirdLogin('/v3/commons/auth/weixin?source=pc&jump_url=')">
+          <div :class="['other-img', !isOpenOther ? 'noVisible' : '']">
+            <img v-show="isOpenOther" src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('/v3/commons/auth/qq?jump_url=')">
+            <img v-show="isOpenOther" src="../../common/images/icon/wechat.png" alt="" @click="thirdLogin('/v3/commons/auth/weixin?source=pc&jump_url=')">
             <!-- <img src="../../common/images/icon/weibo.png" alt=""> -->
           </div>
         </div>
@@ -956,6 +956,10 @@ export default {
 
 .other-img {
   margin-top: 16px;
+  transition: height .5s;
+  overflow: hidden;
+  height: 26px;
+  line-height: 26px;
   img {
     width: 24px;
     height: 24px;
@@ -963,6 +967,9 @@ export default {
     &:first-child {
       margin-right: 8px;
     }
+  }
+  &.noVisible {
+    height: 0px;
   }
 }
 
