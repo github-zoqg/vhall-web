@@ -114,7 +114,7 @@ export default {
         callback(new Error('请输入广告链接'));
       } else {
         if (!this.linkCodeMatch(value)) {
-          callback && callback('请输入正确的广告链接');
+          callback && callback('请输入以http://或https://开头的广告链接？');
         } else {
           callback();
         }

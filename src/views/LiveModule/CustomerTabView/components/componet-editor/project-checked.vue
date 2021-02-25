@@ -131,10 +131,11 @@ export default {
       position: relative;
       width: 100%;
       height: 94px;
+      background: #1A1A1A;
       // background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
       // background-size: 400% 400%;
       // animation: gradientBG 15s ease infinite;
-      background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.2));
+      // background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.2));
       img{
         width: 100%;
         height: 100%;

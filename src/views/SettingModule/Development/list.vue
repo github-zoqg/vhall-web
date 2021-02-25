@@ -7,9 +7,9 @@
   </div>
   <div v-else  class="dev-show-layout" v-loading="fetching" element-loading-text="获取数据中">
     <pageTitle pageTitle="开发设置">
-      <span class="dev-show-tips">
+      <!-- <span class="dev-show-tips">
         使用说明：当添加多个包时，使用<a href="https://www.vhall.com/index.php?r=doc/index/index#verify/access-token_%E8%8E%B7%E5%8F%96SDK%E7%9B%B4%E6%92%AD%E6%93%8D%E4%BD%9Ctoken" target="_blank">获取SDK直播操作token</a>的API时需要传app_key参数以确保双方加密数据一致
-      </span>
+      </span> -->
     </pageTitle>
     <!-- 未创建 -->
     <div class="all-no-data"  v-if="totalNum === 0">

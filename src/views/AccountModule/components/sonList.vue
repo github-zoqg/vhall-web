@@ -80,14 +80,14 @@
           <span>可创建<strong>{{ sonCountVo.available_num }}</strong>个</span>
         </el-form-item>
         <el-form-item label="账号昵称" prop="nick_name">
-          <VhallInput type="text" placeholder="请输入昵称，默认使用账号ID" autocomplete="off" v-clearEmoij v-model="sonForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
+          <VhallInput type="text" placeholder="请输入昵称，默认使用账号ID" autocomplete="off"  v-model="sonForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="预设密码" prop="password" v-if="sonDialog.type === 'add'">
-          <pwd-input type="password" v-model.trim="sonForm.password" v-clearEmoij auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
+          <pwd-input type="password" v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
                     :maxlength="30" :minlength="6" show-word-limit></pwd-input>
         </el-form-item>
         <el-form-item label="预设密码" prop="editPwd" v-else>
-          <pwd-input type="password" v-model.trim="sonForm.editPwd" v-clearEmoij auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
+          <pwd-input type="password" v-model.trim="sonForm.editPwd" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
                     :maxlength="30" show-word-limit></pwd-input>
         </el-form-item>
         <el-form-item label="账号角色" prop="role_id">

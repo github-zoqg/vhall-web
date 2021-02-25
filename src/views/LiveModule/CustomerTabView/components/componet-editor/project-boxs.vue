@@ -6,7 +6,8 @@
       placeholder="请输入专题标题"
       @change="inputChange"
       v-clearEmoij
-      suffix-icon="el-icon-search"
+      clearable
+      prefix-icon="el-icon-search"
       style="width:220px; border-radius:24px"
       class="input-box"
     ></VhallInput>
@@ -193,6 +194,9 @@ export default {
     .input-box{
       /deep/ input{
         border-radius: 24px !important;
+      }
+      /deep/.el-input__icon{
+        line-height: 36px;
       }
     }
   }
