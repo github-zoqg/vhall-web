@@ -518,9 +518,9 @@ export default {
       height: 36px;
       background: transparent;
     }
-    /deep/.el-select__caret .el-input__icon .el-icon-arrow-up{
-      line-height: 36px;
-    }
+    // /deep/.el-select__caret .el-input__icon{
+    //   line-height: 36px;
+    // }
     .search-tag{
       /deep/.el-input__inner{
         padding-right: 30px!important;
@@ -531,6 +531,9 @@ export default {
         /deep/.el-input__prefix{
           cursor: pointer;
         }
+    }
+    /deep/.el-icon-arrow-up, .is-reverse{
+      line-height: 36px;
     }
     /deep/.el-range-editor.el-input__inner{
       padding: 1px 10px;

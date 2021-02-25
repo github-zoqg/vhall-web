@@ -250,7 +250,7 @@ export default {
 .word-count{
   position: absolute;
   right: 25px;
-  bottom: -5px;
+  bottom: 0px;
   font-size: 14px;
   color: #999;
   .blue{
