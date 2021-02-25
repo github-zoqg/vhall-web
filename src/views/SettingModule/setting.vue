@@ -111,7 +111,7 @@ export default {
   }
   .desc{
     .mainText{
-      margin-bottom: 4px;
+      margin-bottom: 2px;
       font-size: 18px;
       font-family: @fontRegular;
       font-weight: 400;
