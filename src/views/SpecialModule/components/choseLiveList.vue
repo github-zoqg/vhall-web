@@ -203,7 +203,7 @@ export default {
 .select-matrial-wrap{
   box-sizing: border-box;
   width: 100%;
-  height: 320px;
+  height: 350px;
   padding: 16px 0 0 32px;
   overflow: hidden;
   .material-box {
