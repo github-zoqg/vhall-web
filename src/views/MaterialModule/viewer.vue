@@ -52,28 +52,28 @@
       </div>
       <div  class="group__container">
         <p class="group__title">全部分组</p>
-        <ul v-if="groupList && groupList.length > 0">
-          <el-dropdown
-            placement="bottom-start"
-            split-button
-            size="medium"
-            round
-            @command="handleCommand($event, item)"
-            trigger="click"
-            v-for="(item, ins) in groupList"
-            :key="`group${ins}`"
-            @click.prevent.stop="changeViewerList(item, ins)"
-            :class="{'active': activeGroupIndex == ins}"
-          >{{ item.subject }}
-            <el-dropdown-menu slot="dropdown" style="width: 152px;">
-              <el-dropdown-item command="rename">重命名</el-dropdown-item>
-              <el-dropdown-item command="delete">删除</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </ul>
         <div class="group_button__add" @click.prevent.stop="addGroupDialogShow(null)">
           <el-button size="medium" v-preventReClick type="primary" round>点击添加分组</el-button>
         </div>
+        <ul v-if="groupList && groupList.length > 0">
+            <el-dropdown
+              placement="bottom-start"
+              split-button
+              size="medium"
+              round
+              @command="handleCommand($event, item)"
+              trigger="click"
+              v-for="(item, ins) in groupList"
+              :key="`group${ins}`"
+              @click.prevent.stop="changeViewerList(item, ins)"
+              :class="{'active': activeGroupIndex == ins}"
+            >{{ item.subject }}
+              <el-dropdown-menu slot="dropdown" style="width: 152px;">
+                <el-dropdown-item command="rename">重命名</el-dropdown-item>
+                <el-dropdown-item command="delete">删除</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+        </ul>
         <div class="clear"></div>
       </div>
     </div>
@@ -967,12 +967,43 @@ export default {
   margin-bottom: 32px;
 }
 .group__container {
-  width: 200px;
+  width: 210px;
   min-height: 120px;
   background: #FFFFFF;
   border-radius: 4px;
   margin-left: 24px;
   padding: 24px 24px;
+  max-height: 778px;
+  ul {
+    max-height: 646px;
+    overflow-y: auto;
+    position: relative;
+    left: 6px;
+    // 滚动条的宽度
+    &::-webkit-scrollbar {
+      width: 6px; // 横向滚动条
+      height: 6px; // 纵向滚动条 必写
+    }
+    // 滚动条的滑块
+    &::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      transition: all 0.3s;
+      cursor: pointer;
+      display: none;
+      background-color: #cccccc;
+      &:hover {
+        background-color: #cccccc;
+      }
+      &:active {
+        background-color: #cccccc;
+      }
+    }
+    &:hover {
+      &::-webkit-scrollbar-thumb {
+        display: block;
+      }
+    }
+  }
   li {
     list-style-type: none;
     text-align: center;
@@ -1062,6 +1093,7 @@ export default {
   text-align: center;
   color: @font_color_h1;
   cursor: pointer;
+  margin-bottom: 12px;
   /deep/ .el-button {
     width: 150px;
   }
