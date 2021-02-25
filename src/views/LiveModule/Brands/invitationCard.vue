@@ -608,11 +608,11 @@ export default {
       .show-container{
         margin: 50px 24px;
         width: 282px;
-        height: 566px;
-        background-image: url('../../../common/images/invite-card/show.png');
+        height: 520px;
+        // background-image: url('../../../common/images/invite-card/show.png');
         background-size: 100% 100%;
-        // background-color: #fff;
-        // box-shadow: 0px 0 6px 0px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        box-shadow: 0px 0 6px 0px rgba(0, 0, 0, 0.1);
         position: relative;
         border-radius: 4px;
         .show-header{
