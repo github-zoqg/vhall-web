@@ -4,7 +4,7 @@
     <div class="brand--set">
       <el-tabs v-model="tabType" @tab-click="handleClick">
         <el-tab-pane label="标识设置" name="signSet" v-if="perssionInfo['ui.brand_setting'] > 0"></el-tab-pane>
-        <el-tab-pane label="皮肤设置" name="skinSet" v-if="perssionInfo['webinar_skins']>0"></el-tab-pane>
+        <el-tab-pane label="皮肤设置" name="skinSet" v-if="perssionInfo['webinar_skins']> 0"></el-tab-pane>
       </el-tabs>
       <!-- 设置区域 -->
       <sign-set ref="signSetComp" v-show="tabType === 'signSet'"  v-if="perssionInfo['ui.brand_setting'] > 0"></sign-set>

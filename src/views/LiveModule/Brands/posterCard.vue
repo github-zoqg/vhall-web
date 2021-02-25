@@ -165,9 +165,9 @@ export default {
           { required: true, message: '请上传手机图片', trigger: 'blur' },
         ],
         url: [
-          { required: false, message: '请输入http://或https://开头的链接', trigger: 'blur'},
+          { required: false, message: '请输入链接', trigger: 'blur'},
           // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
-          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入http://或https://开头的链接' , trigger: 'blur'},
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入http://或https://开头的链接？' , trigger: 'blur'},
           { maxlength: 200, message: '跳转链接最多可输入200个字符', trigger: 'blur' }
         ]
       }

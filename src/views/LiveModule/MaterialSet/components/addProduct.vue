@@ -100,7 +100,7 @@ export default {
         callback(new Error('请输入商品链接'));
       } else {
         if (!this.linkCodeMatch(value)) {
-          callback && callback('请输入正确的商品链接地址');
+          callback && callback('请输入以http://或https://开头的商品链接地址？');
         } else {
           callback();
         }
@@ -110,7 +110,7 @@ export default {
     const shopValidate = (rule, value, callback) => {
       if (value) {
         if (!this.linkCodeMatch(value)) {
-          callback && callback('请输入正确的店铺链接地址');
+          callback && callback('请输入以http://或https://开头的店铺链接地址？');
         } else {
           callback();
         }
