@@ -59,6 +59,25 @@ export const debounce = (function () {
   }
 })()
 
+// 节流
+export const throttle = function(func, delay) {
+  let timer = null;
+  let startTime = Date.now();
+  return function() {
+      const curTime = Date.now();
+      const remaining = delay - (curTime - startTime);
+      const context = this;
+      const args = arguments;
+      clearTimeout(timer);
+      if (remaining <= 0) {
+          func.apply(context, args);
+          startTime = Date.now();
+      } else {
+          timer = setTimeout(func, remaining);
+      }
+  }
+}
+
 export function calculateAudioLevel (level) {
   let audioLevelValue = 1;
   if (level > 0 && level <= 0.04) {

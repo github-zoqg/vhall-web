@@ -4,23 +4,23 @@
     <breadcrumb class="breadcrumb-container" />
     <!-- 登录用户等 -->
     <div class="right-menu">
-      <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)"><a :href="oldUrl" class="set-font">返回旧版</a></div>
+      <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0) && !isMiniScreen"><a :href="oldUrl" class="set-font">返回旧版</a></div>
       <!-- 下载中心 -->
-      <div class="right-menu-item" @click.prevent.stop="toDownloadPage">
+      <div v-if="!isMiniScreen" class="right-menu-item" @click.prevent.stop="toDownloadPage">
         <el-badge is-dot :hidden="!down_num > 0">
           <span class="span--icon"><icon icon-class="saasicon_download"></icon></span>
         </el-badge>
         <span class="remak--text">下载</span>
       </div>
       <!-- 消息中心 -->
-      <div class="right-menu-item"  @click.prevent.stop="toMsgPage">
+      <div v-if="!isMiniScreen" class="right-menu-item"  @click.prevent.stop="toMsgPage">
         <el-badge :value="unread_num" :max="99" :class="unread_num > 9 ? 'more' : 'item'" :hidden="!unread_num>0">
           <span class="span--icon"><icon icon-class="saasicon_bell_m"></icon></span>
         </el-badge>
         <span class="remak--text">消息</span>
       </div>
       <!-- 帮助中心 -->
-      <div class="right-menu-item" @click.prevent.stop="toHelpPage">
+      <div v-if="!isMiniScreen" class="right-menu-item" @click.prevent.stop="toHelpPage">
         <span class="span--icon"><icon icon-class="saasicon_help_m"></icon></span>
         <span class="remak--text">帮助</span>
       </div>
@@ -33,6 +33,34 @@
           <el-dropdown-menu slot="dropdown" class="user-dropdown">
             <el-dropdown-item divided @click.native="toAccountPage"><i class="iconfont-v3 saasicon_account1"></i> 账户信息</el-dropdown-item>
             <el-dropdown-item divided @click.native="logout"><i class="iconfont-v3 saasicon_exit"></i>退出</el-dropdown-item>
+            <el-dropdown-item v-if="isMiniScreen" divided @click.native.prevent.stop="toDownloadPage">
+              <!-- 下载中心 -->
+              <div class="right-menu-item">
+                <el-badge is-dot :hidden="!down_num > 0">
+                  <span class="span--icon"><icon icon-class="saasicon_download"></icon></span>
+                </el-badge>
+                <span class="remak--text">下载</span>
+              </div>
+            </el-dropdown-item>
+            <el-dropdown-item v-if="isMiniScreen" divided @click.native.prevent.stop="toMsgPage">
+              <!-- 消息中心 -->
+              <div class="right-menu-item">
+                <el-badge :value="unread_num" :max="99" :class="unread_num > 9 ? 'more' : 'item'" :hidden="!unread_num>0">
+                  <span class="span--icon"><icon icon-class="saasicon_bell_m"></icon></span>
+                </el-badge>
+                <span class="remak--text">消息</span>
+              </div>
+            </el-dropdown-item>
+            <el-dropdown-item v-if="isMiniScreen" divided @click.native.prevent.stop="toHelpPage">
+              <!-- 帮助中心 -->
+              <div class="right-menu-item">
+                <span class="span--icon"><icon icon-class="saasicon_help_m"></icon></span>
+                <span class="remak--text">帮助</span>
+              </div>
+            </el-dropdown-item>
+            <el-dropdown-item v-if="isMiniScreen" divided @click.native.prevent.stop="toHelpPage">
+              <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)"><a :href="oldUrl" class="set-font">返回旧版</a></div>
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -46,6 +74,7 @@ import { sessionOrLocal } from "@/utils/utils";
 import Cookies from 'js-cookie'
 import Env from "@/api/env";
 import EventBus from "@/utils/Events";
+import { throttle } from '@/utils/utils';
 
 export default {
   components: {
@@ -61,7 +90,8 @@ export default {
       down_num: 0,
       avatarImgUrl: '',
       userInfo: null,
-      env: Env
+      env: Env,
+      isMiniScreen: false
     };
   },
   computed: {
@@ -204,6 +234,18 @@ export default {
           console.error(err);
         })
       }
+    },
+    handleResize() {
+      const handle = () => {
+        const htmlWidth = document.documentElement.clientWidth || document.body.clientWidth
+        if (htmlWidth <= 1120) {
+          this.isMiniScreen = true
+        } else {
+          this.isMiniScreen = false
+        }
+      }
+      return throttle(handle, 500)
+
     }
   },
   mounted() {
@@ -246,6 +288,7 @@ export default {
         this.$EventBus.$emit('saas_vs_down_num');
       }
     });
+    window.addEventListener('resize', this.handleResize())
   },
   created() {
     // 初始进入，获取未读消息条数
@@ -261,6 +304,7 @@ export default {
       this.$Chat.destroy();
       this.$Chat = null;
     }
+    window.removeEventListener('resize', this.handleResize())
   }
 };
 </script>
@@ -294,6 +338,25 @@ export default {
   }
   .hover-icon {
     margin-right: 12px;
+  }
+  /deep/ .el-badge.item .el-badge__content.is-fixed {
+    width: 18px;
+    height: 18px;
+    background: #FB3A32;
+    top: 10px;
+    right: 15px;
+    text-align: center;
+    line-height: 16px;
+    padding: 0 0;
+  }
+  /deep/ .el-badge__content.is-fixed.is-dot {
+    top: 10px;
+    right: 10px;
+  }
+  /deep/ .span--icon {
+    color: #666666;
+    display: inline-block;
+    vertical-align: bottom;
   }
 }
 .breadcrumb-container {
