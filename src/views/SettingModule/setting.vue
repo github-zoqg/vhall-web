@@ -36,8 +36,8 @@ export default {
   },
   created() {
     let parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
-    let isDeveloper = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['is_developer'];
-    if (parentId == 0 && isDeveloper == 1) {
+    // let isDeveloper = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['is_developer'];
+    if (parentId == 0) {
       let obj = {icon: 'saasicon_kaifashezhi', title: '开发设置', subText: '设置API接口信息' , path: '/dev/list'}
       this.operas.splice(1, 0, obj)
     }

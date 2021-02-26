@@ -19,7 +19,11 @@
                     </el-switch>
                   </p>
                 </el-form-item>
-                <el-form-item label="类型">
+                 <el-form-item label="显示方式">
+                  <el-radio v-model="formHorse.scroll_type" :label="1" :disabled="!scrolling_open" @change="editHorseInfo">滚动</el-radio>
+                  <el-radio v-model="formHorse.scroll_type" :label="2" :disabled="!scrolling_open" @change="editHorseInfo">闪烁</el-radio>
+                </el-form-item>
+                <el-form-item label="文本类型">
                   <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open" @change="editHorseInfo">固定文本</el-radio>
                   <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open" @change="editHorseInfo">固定文本+观看者ID和昵称</el-radio>
                 </el-form-item>
@@ -50,7 +54,7 @@
                   <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="formHorse.color"></color-set>
                 </el-form-item>
                 <el-form-item label="不透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px" @change="editHorseInfo"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
-                <el-form-item label="移动速度">
+                <el-form-item label="移动速度" v-if="formHorse.scroll_type == 1">
                   <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open" @change="editHorseInfo">慢</el-radio>
                   <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open" @change="editHorseInfo">中</el-radio>
                   <el-radio v-model="formHorse.speed" :label="3000" :disabled="!scrolling_open" @change="editHorseInfo">快</el-radio>
@@ -61,11 +65,7 @@
                   <el-radio v-model="formHorse.position" :label="3" :disabled="!scrolling_open" @change="editHorseInfo">中</el-radio>
                   <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open" @change="editHorseInfo">下</el-radio>
                 </el-form-item>
-                <el-form-item label="显示方式">
-                  <el-radio v-model="formHorse.scroll_type" :label="1" :disabled="!scrolling_open" @change="editHorseInfo">滚动</el-radio>
-                  <el-radio v-model="formHorse.scroll_type" :label="2" :disabled="!scrolling_open" @change="editHorseInfo">闪烁</el-radio>
-                </el-form-item>
-                <el-form-item label="间隔时间" prop="interval">
+                <el-form-item label="间隔时间" prop="interval" v-if="formHorse.scroll_type == 1">
                   <el-input
                     v-model="formHorse.interval"
                     :disabled="!scrolling_open"
@@ -388,7 +388,16 @@ export default {
     ColorSet,
     beginPlay
   },
-   computed: {
+  // watch: {
+  //   'formHorse.scroll_type'() {
+  //     if (this.formHorse.scroll_type == 2) {
+  //       this.formHorse.interval = 1
+  //     } else {
+  //       this.formHorse.interval = 20
+  //     }
+  //   }
+  // },
+  computed: {
     horseLampText(){
       if(this.scrolling_open){
         return '已开启，文字以跑马灯的形式出现在播放器画面中';
@@ -433,6 +442,7 @@ export default {
   created() {
     this.getFontList();
     this.getBasescrollingList();
+    this.getBaseOtherList();
     // 获取其他信息
     this.getBaseOtherList();
   },
@@ -556,7 +566,7 @@ export default {
         alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
         size:this.formHorse.size,      // 文字大小
         color: this.formHorse.color || '#FFFFFF',   //  文字颜色
-        interval: this.formHorse.interval || 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
+        interval: this.formHorse.scroll_type == 2 ? 1 : this.formHorse.interval || 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: this.formHorse.speed || 6000, // 跑马灯移动速度  3000快     6000中   10000慢
         displayType: this.formHorse.scroll_type == 1 ? 0 : 1,
         position:this.formHorse.position || 1
@@ -567,6 +577,9 @@ export default {
       this.$fetch('getScrolling', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200 && res.data.webinar_id) {
           this.formHorse = {...res.data};
+          // if (res.data.scroll_type == 2) {
+          //   this.formHorse.interval = 1
+          // }
           this.$nextTick(() => {
             this.$refs.pageThemeColors.initColor(res.data.color);
           })
@@ -616,7 +629,7 @@ export default {
     // 保存跑马灯
     preFormHorse() {
       // 校验间隔时间的输入
-      if(this.formHorse.interval > 300){
+      if(this.formHorse.scroll_type == 1 && this.formHorse.interval > 300){
         this.$message({
           message: `间隔时间只能输入1-300之间的数字`,
           showClose: true,
@@ -969,15 +982,15 @@ export default {
     },
     handleClick(tab) {
       this.activeName = tab.name;
-      if (tab.name === 'first') {
-        this.getBasescrollingList();
-      } else if(tab.name === 'second') {
-        this.getBaseWaterList();
-      } else {
-        this.checkEnter = true
-        this.getBaseOtherList();
-        this.otherOtherInfo(1)
-      }
+      // if (tab.name === 'first') {
+      //   this.getBasescrollingList();
+      // } else if(tab.name === 'second') {
+      //   this.getBaseWaterList();
+      // } else {
+      //   this.checkEnter = true
+      //   this.getBaseOtherList();
+      //   this.otherOtherInfo(1)
+      // }
     },
   },
 };
@@ -1011,7 +1024,6 @@ export default {
   // }
 
 }
-
 .prize-card {
   height: 100%;
  .player-set{
