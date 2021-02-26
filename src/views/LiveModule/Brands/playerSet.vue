@@ -629,7 +629,7 @@ export default {
     // 保存跑马灯
     preFormHorse() {
       // 校验间隔时间的输入
-      if(this.formHorse.interval > 300){
+      if(this.formHorse.scroll_type == 1 && this.formHorse.interval > 300){
         this.$message({
           message: `间隔时间只能输入1-300之间的数字`,
           showClose: true,
