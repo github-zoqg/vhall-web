@@ -8,7 +8,7 @@
     </pageTitle>
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
     <div class="search">
-      <el-select filterable clearable v-model="type" @change="changeType" v-if="liveDetailInfo.webinar_state!=4"  style="width: 160px;vertical-align: top;margin-right:16px">
+      <el-select filterable v-model="type" @change="changeType" v-if="liveDetailInfo.webinar_state!=4"  style="width: 160px;vertical-align: top;margin-right:16px">
         <el-option
           v-for="(opt, optIndex) in timeData"
           :key="optIndex"
