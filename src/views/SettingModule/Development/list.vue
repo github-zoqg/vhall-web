@@ -138,7 +138,7 @@ export default {
     },
     // 查看文档-开发设置
     openDoc() {
-      window.open('https://www.vhall.com/saas/doc/6.html', '_blank');
+      window.open('https://saas-doc.vhall.com/docs/show/947', '_blank');
     },
     initPage() {
       // 取得当前系统配置项
