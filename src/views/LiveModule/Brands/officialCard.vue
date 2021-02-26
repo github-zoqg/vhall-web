@@ -654,7 +654,7 @@ export default {
         top: 80px;
         text-align: center;
         width: 312px;
-        height: 580px;
+        height: 574px;
         background: #000000;
         border-radius: 0px 0px 26px 26px;
         opacity: 0.6;
