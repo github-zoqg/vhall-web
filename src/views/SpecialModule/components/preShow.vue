@@ -311,8 +311,8 @@ export default {
             }
           }
           .bottom{
-            height: 80px;
-            background: #fff;
+            height: 84px;
+            background: #f7f7f7;
             box-sizing: border-box;
             padding: 10px 14px;
             display: flex;
