@@ -28,7 +28,7 @@
           placeholder="选择日期">
         </el-date-picker>
         <!-- 下拉框 -->
-        <el-select filterable clearable v-model="searchParams[item.key]" v-else-if="item.type==3"  style="width: 160px" @change="changeDate" :placeholder="item.placeholder">
+        <el-select filterable v-model="searchParams[item.key]" v-else-if="item.type==3"  style="width: 160px" @change="changeDate" :placeholder="item.placeholder">
           <el-option
             v-for="(opt, optIndex) in item.options"
             :key="optIndex"

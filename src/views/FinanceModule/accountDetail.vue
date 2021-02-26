@@ -47,16 +47,20 @@ export default {
           placeholder: '提现状态',
           options: [
             {
+              label: '全部',
+              value: ''
+            },
+            {
               label: '审核中',
-              value: '0'
+              value: 0
             },
             {
               label: '成功',
-              value: '1'
+              value: 1
             },
             {
               label: '失败',
-              value: '2'
+              value: 2
             }
           ]
         },
@@ -66,12 +70,16 @@ export default {
           placeholder: '提现类型',
           options: [
             {
+              label: '全部',
+              value: ''
+            },
+            {
               label: '直播收益',
-              value: '0'
+              value: 0
             },
             {
               label: '红包收益',
-              value: '1'
+              value: 1
             }
           ]
         }
@@ -140,7 +148,7 @@ export default {
       let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
       this.params = paramsObj;
-      this.$fetch('accountList', obj).then(res =>{
+      this.$fetch('accountList', this.$params(obj)).then(res =>{
         console.log(res);
         this.totalNum = res.data.total;
         this.tableList = res.data.list;
@@ -158,7 +166,7 @@ export default {
       });
     },
     exportAccount() {
-       this.$fetch('exportWithdraw', this.params).then(res => {
+       this.$fetch('exportWithdraw', this.$params(this.params)).then(res => {
         this.$message({
           message: `账单明细导出申请成功，请去下载中心下载`,
           showClose: true,

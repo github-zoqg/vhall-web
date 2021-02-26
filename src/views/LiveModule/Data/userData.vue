@@ -14,7 +14,7 @@
         <el-tab-pane label="回放" name="2"></el-tab-pane>
       </el-tabs>
       <div class="search">
-        <el-select filterable clearable v-model="type" @change="changeType" v-if="isSwitch"  style="width: 160px;vertical-align: top;margin-right: 16px">
+        <el-select filterable v-model="type" @change="changeType" v-if="isSwitch"  style="width: 160px;vertical-align: top;margin-right: 16px">
         <el-option
         v-for="(opt, optIndex) in timeData"
         :key="optIndex"

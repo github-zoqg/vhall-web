@@ -590,9 +590,9 @@ export default {
 };
 </script>
 <style lang="less">
-  .el-tooltip__popper {
-    max-width: 372px;
-    line-height: 17px;
+ .el-tooltip__popper {
+    max-width: 390px;
+    // line-height: 17px;
   }
 </style>
 <style lang="less" scoped>
