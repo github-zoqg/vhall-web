@@ -83,7 +83,7 @@
       </el-form>
      </div>
      <!-- 手机号登录 -->
-     <div class="phone-wapper form-items" v-if="isActive===2">
+     <div class="phone-wapper form-items" v-show="isActive==2">
         <el-form ref="dynamicForm" :model="dynamicForm" :rules="loginRules">
           <el-form-item prop="phoneNumber" class="loginUsername">
             <p class="itemLable" :class="{'active': isLoginPhoneFocus || dynamicForm.phoneNumber}">手机号</p>
@@ -132,7 +132,7 @@
      </div>
     </div>
     <!-- 注册 -->
-    <div class="login-box register" v-else>
+    <div class="login-box register" v-show="$route.path!=='/login'">
       <h3>欢迎注册微吼直播</h3>
       <div class="login-line"></div>
       <div class="form-items">
@@ -178,7 +178,7 @@
             </el-form-item>
             <el-form-item prop="password" class="password">
               <p class="itemLable" :class="{'active': isPasswordFocus || registerForm.password}">密码</p>
-              <el-input
+              <pwdinput
                 clearable
                 @focus="handleFocus('isPasswordFocus')"
                 @blur="handleBlur('isPasswordFocus')"
@@ -187,13 +187,13 @@
                 auto-complete="off"
                 onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]/g,'')"
                 style="ime-mode:disabled"
-                :type="isPassWordType ? 'password' : 'text'"
+                :isPasswordVisible="!isPassWordType"
                 v-model="registerForm.password">
                 <span slot="suffix" @click="passWordType" class="closePwd">
                   <icon class="icon" icon-class="saaseyeclose_huaban1" v-show="isPassWordType"></icon>
                   <icon class="icon" icon-class="saasicon-eye" v-show="!isPassWordType"></icon>
                 </span>
-              </el-input>
+              </pwdinput>
               <p class="errorText" v-show="registerText">{{registerText}}</p>
             </el-form-item>
             <div class="login-btn">
@@ -215,9 +215,11 @@ import {sessionOrLocal} from "@/utils/utils";
 import Cookies from 'js-cookie'
 import footerSection from '../../components/Footer/index';
 import Env from "@/api/env";
+import pwdinput from './components/pwdInput'
 export default {
   components: {
-    footerSection
+    footerSection,
+    pwdinput
   },
   data() {
     var validatePhone = (rule, value, callback) => {
