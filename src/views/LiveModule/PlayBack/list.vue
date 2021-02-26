@@ -207,7 +207,8 @@ export default {
         { label: '打点录制', value: '3' }
       ],
       // 权限配置
-      WEBINAR_PES: sessionOrLocal.get('WEBINAR_PES', 'localStorage') && JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')) || {},
+      WEBINAR_PES: {}
+      // WEBINAR_PES: sessionOrLocal.get('WEBINAR_PES', 'localStorage') && JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')) || {},
     };
   },
   computed: {
@@ -231,6 +232,7 @@ export default {
     this.getList();
     this.getLiveDetail();
     EventBus.$on('record_download', this.handleDownload)
+    this.getPermission(this.$route.params.str)
   },
   mounted(){
     if (!this.WEBINAR_PES['forbid_delrecord']) {
@@ -258,6 +260,23 @@ export default {
     EventBus.$off('record_download', this.handleDownload)
   },
   methods: {
+    getPermission(id) {
+      let userId = JSON.parse(sessionOrLocal.get('userId'));
+      // 活动权限
+      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: userId, scene_id: 1}).then(res => {
+        if(res.code == 200) {
+          if(res.data.permissions) {
+            sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
+            this.WEBINAR_PES = JSON.parse(res.data.permissions)
+          } else {
+            sessionOrLocal.removeItem('WEBINAR_PES');
+          }
+        }
+      }).catch(e => {
+        console.log(e);
+        sessionOrLocal.removeItem('SAAS_VS_PES');
+      });
+    },
     preview(data) {
       //  this.videoParam 进本信息
       if (data.transcode_status == 1) {
