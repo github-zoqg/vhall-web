@@ -1,36 +1,33 @@
 <template>
   <div>
-    <VhallDialog
-      title="分享"
-      :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
-      customClass="share-dialog"
-      :lock-scroll='false'
-      width="570px">
-      <div class="content">
-        <div class="share-div">
-          <ul class="icons">
-            <li><i @click="toShare('qq')"></i><p>QQ</p></li>
-            <li><i @click="toShare('sina')"></i><p>微博</p></li>
-            <li><i @click="toShare('wechat')"></i><p>微信</p></li>
-          </ul>
-          <div class="inputCode">
-             <el-input :value="shareVo.pcUrl || url" class="input-with-select" id="linkBox">
-              <!-- <template slot="append" class="zdy-copy-btn">复制</template> -->
-              <!-- <i slot="suffix">.com</i> -->
-              <!-- <el-button  size="medium" slot="append" @click="doCopy" class="zdy-copy-btn">复制</el-button> -->
-            </el-input>
-            <span @click="doCopy">复制</span>
-          </div>
+    <div class="content-share">
+      <div class="share-div">
+        <ul class="icons">
+          <li><i @click="toShare('qq')"></i><p>QQ</p></li>
+          <li><i @click="toShare('sina')"></i><p>微博</p></li>
+          <li><i @click="toShare('wechat')"></i><p>微信</p></li>
+        </ul>
+        <div class="inputCode">
+            <el-input :value="shareVo.pcUrl || url" class="input-with-select" id="linkBox">
+          </el-input>
+          <span @click="doCopy">复制</span>
         </div>
-        <div class="code-div">
-          <div class="code-img"><img :src="env.staticLinkVo.aliQr + (shareVo.url || url)" alt="二维码加载失败"><br></div>
-          <p class="img-code">手机扫码观看</p>
-        </div>
-
       </div>
-    </VhallDialog>
-    <VhallDialog
+      <div class="code-div">
+        <div class="code-img"><img :src="env.staticLinkVo.aliQr + (shareVo.url || url)" alt="二维码加载失败"><br></div>
+        <p class="img-code">手机扫码观看</p>
+      </div>
+    </div>
+    <div class="wx-dialog" v-if="wxDialogVisible">
+      <div class="wximg-content">
+        <p class="title">分享 <i class="iconfont-v3 saasclose" @click="cancelWx"></i></p>
+        <div class="wximg-box">
+          <img :src="`//aliqr.e.vhall.com/qr.png?t=${this.shareVo.url || this.url}`" alt="">
+        </div>
+        <p class="wximg-intro">打开微信，点击底部的“发现”，使用 “扫一扫” 即可将网页分享到我的朋友圈。</p>
+      </div>
+    </div>
+    <!-- <VhallDialog
       title="分享"
       :visible.sync="wxDialogVisible"
       :close-on-click-modal="false"
@@ -39,7 +36,7 @@
         <img :src="`//aliqr.e.vhall.com/qr.png?t=${this.shareVo.url || this.url}`" alt="">
       </div>
       <p class="wximg-intro">打开微信，点击底部的“发现”，使用 “扫一扫” 即可将网页分享到我的朋友圈。</p>
-    </VhallDialog>
+    </VhallDialog> -->
   </div>
 </template>
 
@@ -47,7 +44,6 @@
 import Env from "@/api/env";
 export default {
   name: 'share',
-  created() {},
   props: {
     url:{
       type: String,
@@ -80,6 +76,9 @@ export default {
         window.open(url, '_blank');
       }
     },
+    cancelWx() {
+      this.wxDialogVisible = false;
+    },
     doCopy () {
       let url = this.shareVo.url || this.url;
       this.$copyText(url).then(e => {
@@ -106,31 +105,7 @@ export default {
 
 <style lang="less" scoped>
   @iconpath: '../../../common/images/icon';
-  /deep/ .share-dialog {
-    max-height: 314px;
-    height: auto;
-    padding-bottom: 4px;
-    border-radius: 4px;
-  }
-  /deep/ .smallSwtich{
-    margin-left: 12px;
-    vertical-align: text-bottom;
-    .el-switch__core{
-      height: 16px;
-      &::after{
-        width: 12px;
-        height: 12px;
-      }
-    }
-    &.is-checked{
-      .el-switch__core{
-        &::after{
-          margin-left: -13px;
-        }
-      }
-    }
-  }
-  .content{
+  .content-share{
     .content-wrap{
       position: absolute;
       z-index: 2;
@@ -217,7 +192,7 @@ export default {
     text-align: left;
     width: 322px;
     display: inline-block;
-    margin-bottom: 40px;
+    margin-bottom: 38px;
     li {
       list-style-type: none;
       display: inline-block;
@@ -272,6 +247,7 @@ export default {
       height: 148px;
       border: 1px solid #CCCCCC;
       padding: 8px;
+      font-size: 0;
       border-radius: 4px;
     }
     img {
@@ -281,6 +257,36 @@ export default {
     .img-code {
       margin-top: 8px;
       line-height: 20px;
+    }
+  }
+  .wx-dialog{
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, .5);
+    .wximg-content{
+      width: 320px;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      background: #fff;
+      transform: translate(-50%, -50%);
+      padding: 24px 32px;
+      border-radius: 4px;
+      .title{
+        font-size: 20px;
+        font-weight: 500;
+        color: #1A1A1A;
+        line-height: 28px;
+        padding-bottom: 24px;
+        i{
+          float: right;
+          cursor: pointer;
+        }
+      }
     }
   }
   .wximg-box {
