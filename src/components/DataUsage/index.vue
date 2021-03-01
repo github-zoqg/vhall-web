@@ -75,7 +75,7 @@
               <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
           </p>
-          <h2 class="flow-num custom-font-barlow" v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
+          <h2 class="custom-font-barlow" v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
           <!-- <p class="account"  @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p> -->
         </div>
       </el-col>
@@ -247,9 +247,6 @@ export default {
     position: relative;
     margin-right: 16px;
     border-radius: 4px;
-    .flow-num {
-      font-family: 'Barlow';
-    }
     .level {
       border: 1px solid #FB3A32;
       font-size: 12px;
@@ -317,9 +314,6 @@ export default {
     position: relative;
     background: #fff;
     border-radius: 4px;
-    .flow-num {
-      font-family: 'Barlow';
-    }
     .level {
       border: 1px solid #FB3A32;
       font-size: 12px;
