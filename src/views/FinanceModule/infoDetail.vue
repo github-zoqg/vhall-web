@@ -113,7 +113,7 @@ export default {
   data() {
     return {
       activeIndex: '1',
-      totalNum: 1000,
+      totalNum: 0,
       isHandle: true,
       params: {},
       pageInfo: {
@@ -548,7 +548,7 @@ export default {
       min-height: 550px;
     }
     .box-card{
-      padding: 24px 0 40px 0;
+      padding: 0 0 40px 0;
       border-radius: 4px;
       background: #fff;
     }

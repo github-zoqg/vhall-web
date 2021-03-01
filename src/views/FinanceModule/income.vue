@@ -385,7 +385,7 @@ export default {
     position: relative;
     .box-card{
       background: #fff;
-      padding: 24px 0 40px 0;
+      padding: 0 0 40px 0;
       border-radius: 4px;
     }
     /deep/.el-tabs__content{
