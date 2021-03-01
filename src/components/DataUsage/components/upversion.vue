@@ -14,15 +14,17 @@
             <span>{{ title === '升级'? '升级套餐' : '扩展包'}}</span>
           </div>
         </el-form-item>
+        <!-- :style="{width: title== '升级'? '414px' : '428px'}" -->
+        <!-- :style="{width: title== '升级'? '414px' : '428px'}" -->
         <el-form-item :label="title === '升级'? '升级到并发' : '扩展包'">
-          <el-input v-model="number" :style="{width: title== '升级'? '414px' : '428px'}"
+          <el-input v-model="number"
             oninput="this.value=this.value.replace(/[^\d]/g, '')" maxlength="5" @blur="changeInput"><i slot="suffix" style="font-style: normal;">人</i></el-input
           >
           <!-- <template slot="append">人</template> -->
           <p class="inputNums">当前并发{{ currentInfo.total_concurrency}}人 {{ currentInfo.total_concurrency }}-99999</p>
         </el-form-item>
         <el-form-item label="订单信息">
-          <div class="informtion" :style="{width: title== '升级'? '414px' : '428px'}">
+          <div class="informtion">
             <div class="inform-pay">
               <h3>支付金额: <b>￥{{ totalConcurrency > 0 ? totalConcurrency : 0 }}</b></h3>
               <p v-if="title === '升级'">有效期{{ concurrentPrice.left_months }}个月<span> ({{ concurrentPrice.upgrade_start }}至{{ concurrentPrice.upgrade_end }})</span></p>
@@ -398,7 +400,7 @@ export default {
   padding-top: 8px;
 }
 .informtion {
-  width: 428px;
+  width: 414px;
   .inform-pay {
     max-height: 90px;
     background: #f7f7f7;
