@@ -253,7 +253,7 @@ export default {
       color: #FB3A32;
       text-align: center;
       padding: 1px 7px;
-      margin-left: 5px;
+      // margin-left: 5px;
       border-radius: 10px;
       cursor: pointer;
     }
@@ -323,7 +323,7 @@ export default {
       color: #FB3A32;
       text-align: center;
       padding: 1px 7px;
-      margin-left: 5px;
+      // margin-left: 5px;
       border-radius: 10px;
       cursor: pointer;
     }
