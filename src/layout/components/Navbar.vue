@@ -4,7 +4,12 @@
     <breadcrumb class="breadcrumb-container" />
     <!-- 登录用户等 -->
     <div class="right-menu">
-      <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0) && !isMiniScreen"><a :href="oldUrl" class="set-font">返回旧版</a></div>
+      <div
+        class="right-menu-item"
+        v-if="!(userInfo && userInfo.is_new_regist > 0) && (userInfo && userInfo.user_extends.extends_remark !== 1) && !isMiniScreen"
+      >
+        <a :href="oldUrl" class="set-font">返回旧版</a>
+      </div>
       <!-- 下载中心 -->
       <div v-if="!isMiniScreen" class="right-menu-item" @click.prevent.stop="toDownloadPage">
         <el-badge is-dot :hidden="!down_num > 0">
@@ -59,7 +64,12 @@
               </div>
             </el-dropdown-item>
             <el-dropdown-item v-if="isMiniScreen" divided @click.native.prevent.stop="toHelpPage">
-              <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)"><a :href="oldUrl" class="set-font">返回旧版</a></div>
+              <div
+                class="right-menu-item"
+                v-if="!(userInfo && userInfo.is_new_regist > 0) && (userInfo && userInfo.user_extends.extends_remark !== 1)"
+              >
+                <a :href="oldUrl" class="set-font">返回旧版</a>
+              </div>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
