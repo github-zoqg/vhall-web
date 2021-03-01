@@ -5,7 +5,7 @@
     <div class="title--flex--top">
       <div class="top-item">
         <p>{{sonInfo && sonInfo.vip_info && sonInfo.vip_info.type > 0 ? '总流量（GB）' : '总并发（方）'}}</p>
-        <p>
+        <p class="custom-font-barlow">
           <count-to :startVal="0"
                     :endVal="vipTotal"
                     :duration="1500"
@@ -15,14 +15,14 @@
       </div>
       <div class="top-item">
         <p>子账号（个）</p>
-        <p>
+        <p class="custom-font-barlow">
           <count-to :startVal="0" :endVal="sonInfo.child_count" :duration="1500" v-if="sonInfo && sonInfo.child_count > 0"></count-to>
           <span v-else>0</span>
         </p>
       </div>
       <div class="top-item">
         <p>活动数量（个）</p>
-        <p>
+        <p class="custom-font-barlow">
           <count-to :startVal="0" :endVal="sonInfo.webinar_count" :duration="1500" v-if="sonInfo && sonInfo.webinar_count > 0"></count-to>
           <span v-else>0</span>
         </p>
@@ -146,7 +146,6 @@ export default {
       margin-top: 4px;
       span {
         font-size: @font_size_28;
-        font-family: @fontDINAL;
         font-weight: bold;
         color: @font_color_h1;
         line-height: 32px;

@@ -107,13 +107,13 @@
          <div class="grid-item">
           <div class="grid-content">
             <p>累计直播（个）</p>
-            <h1>{{ trendData.webinar_num || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ trendData.webinar_num || 0 }}</h1>
           </div>
         </div>
          <div class="grid-item">
           <div class="grid-content">
             <p>最高并发（方）</p>
-            <h1>{{ trendData.max_uv || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ trendData.max_uv || 0 }}</h1>
           </div>
         </div>
       </div>
@@ -127,7 +127,7 @@
               </div>
              <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
-            <h1>{{ trendData.webinar_num || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ trendData.webinar_num || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
@@ -140,7 +140,7 @@
               <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
 
-            <h1>{{ trendData.total_flow || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ trendData.total_flow || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
@@ -152,7 +152,7 @@
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
-            <h1>{{ trendData.live_flow || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ trendData.live_flow || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
@@ -164,7 +164,7 @@
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
-            <h1>{{ trendData.vod_flow || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ trendData.vod_flow || 0 }}</h1>
           </div>
         </div>
       </div>

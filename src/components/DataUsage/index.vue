@@ -11,7 +11,7 @@
       <el-col :span="buttonList.includes('extend') ? (typeChange ? 8 : 6) : (typeChange ? 15 : 9)">
         <div class="top-item">
           <p>总并发（方）<span class="level" @click="levelVersion('升级')" v-if="buttonList.includes('upgrade')">升级</span></p>
-          <h2>{{ userInfo.concurrency.total_concurrency }}</h2>
+          <h2 class="custom-font-barlow">{{ userInfo.concurrency.total_concurrency }}</h2>
           <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.concurrency.concurrency_valid_time || ''  }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
@@ -27,14 +27,14 @@
            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           </p>
-          <h2>{{ userInfo.concurrency.extend || userInfo.arrears.extend }}</h2>
+          <h2 class="custom-font-barlow">{{ userInfo.concurrency.extend || userInfo.arrears.extend }}</h2>
           <!-- <p class="account pointer" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">订单明细</p> -->
         </div>
       </el-col>
       <el-col :span="typeChange ? 8 : 6" v-if="userInfo.concurrency.extend_day">
         <div class="top-item">
           <p>并发扩展包（天）</p>
-          <h2>{{ userInfo.concurrency.extend_day }}</h2>
+          <h2 class="custom-font-barlow">{{ userInfo.concurrency.extend_day }}</h2>
           <p>{{ userInfo.concurrency.extend_day_start }} 至 {{ userInfo.concurrency.extend_day_end }}</p>
         </div>
       </el-col>
@@ -59,7 +59,7 @@
              <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
           </p>
-          <h2>无限流量/{{ userInfo.flow.playback_flow || userInfo.arrears.flow  }}</h2>
+          <h2 class="custom-font-barlow">无限流量/{{ userInfo.flow.playback_flow || userInfo.arrears.flow  }}</h2>
           <!-- <p class="account" @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p> -->
         </div>
       </el-col>
@@ -75,7 +75,7 @@
               <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
           </p>
-          <h2 class="flow-num" v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
+          <h2 class="flow-num custom-font-barlow" v-if="userInfo.flow">{{ userInfo.flow.total_flow}}/{{ userInfo.flow.valid_flow || userInfo.arrears.flow  }}</h2>
           <!-- <p class="account"  @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p> -->
         </div>
       </el-col>

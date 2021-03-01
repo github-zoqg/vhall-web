@@ -63,13 +63,13 @@
         <div class="inner liveTime" v-if="!outLiveTime">
           <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
           <p class="mainColor" v-if="liveDetailInfo.webinar_state === 2">
-            <span>{{ time.day }}</span>
+            <span class="custom-font-barlow">{{ time.day }}</span>
             <i>天</i>
-            <span>{{ time.hours }}</span>
+            <span class="custom-font-barlow">{{ time.hours }}</span>
             <i>时</i>
-            <span>{{ time.minute }}</span>
+            <span class="custom-font-barlow">{{ time.minute }}</span>
             <i>分</i>
-            <span>{{ time.second }}</span>
+            <span class="custom-font-barlow">{{ time.second }}</span>
             <i>秒</i>
           </p>
           <p v-else><span>{{ liveDetailInfo.webinar_state | liveText }}</span></p>

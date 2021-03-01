@@ -51,7 +51,7 @@
           <el-col :span="6">
             <div class="buttom-item">
               <p>活动总数</p>
-              <h2>
+              <h2 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="mainKeyData.webinar_count"
                   :duration="1500"
@@ -63,7 +63,7 @@
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看次数</p>
-              <h2>
+              <h2 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="mainKeyData.watch_times"
                   :duration="1500"
@@ -75,7 +75,7 @@
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看人数</p>
-              <h2>
+              <h2 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="mainKeyData.watch_number"
                   :duration="1500"
@@ -87,7 +87,7 @@
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看时长(分)</p>
-              <h2>
+              <h2 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="mainKeyData.watch_duration"
                   :duration="1500"
