@@ -26,7 +26,7 @@
         @keyup.enter.native="search">
         <i
           class="el-icon-search el-input__icon"
-          slot="suffix"
+          slot="prefix"
           @click="search">
         </i>
       </VhallInput>
@@ -470,11 +470,11 @@ export default {
       border-radius: 20px;
       height: 36px;
     }
-    /deep/ .el-input__suffix{
+    /deep/ .el-input__icon{
+      line-height: 36px;
+    }
+    /deep/ .el-input__prefix{
       cursor: pointer;
-      /deep/ .el-input__icon{
-        line-height: 36px;
-      }
     }
   }
   .search-tag {
@@ -482,15 +482,10 @@ export default {
     /deep/.el-input__inner {
       border-radius: 20px;
       height: 36px;
-      padding-right: 50px!important;
+      padding-right: 30px!important;
     }
-    /deep/ .el-input__suffix {
+    /deep/ .el-input__prefix {
       cursor: pointer;
-      /deep/ .el-input__icon {
-        width: auto;
-        margin-right: 5px;
-        line-height: 36px;
-      }
     }
   }
 }
@@ -561,13 +556,13 @@ export default {
     margin-top: 0;
     margin-left: -4px;
   }
-  /deep/.el-button.el-button--text {
-    color: #1A1A1A;
-    border: 0;
-    &:hover{
-      color: #FB3A32;
-    }
-  }
+  // /deep/.el-button.el-button--text {
+  //   color: #1A1A1A;
+  //   border: 0;
+  //   &:hover{
+  //     color: #FB3A32;
+  //   }
+  // }
   .status-show{
     span{
       display: inline-block;

@@ -1067,6 +1067,12 @@ export default {
   }
 };
 </script>
+<style lang="less">
+ .el-tooltip__popper {
+    max-width: 450px;
+    // line-height: 17px;
+  }
+</style>
 <style lang="less" scoped>
 .btn-upload {
   display: inline-block;

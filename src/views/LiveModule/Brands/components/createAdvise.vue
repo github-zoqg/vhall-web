@@ -36,7 +36,7 @@
         <VhallInput v-model="advertisement.subject" v-clearEmoij :maxlength="15" show-word-limit placeholder="请输入广告标题" autocomplete="off"></VhallInput>
       </el-form-item>
       <el-form-item label="链接" prop="url">
-        <VhallInput v-model="advertisement.url" v-clearEmoij placeholder="请输入广告链接" autocomplete="off" ></VhallInput>
+        <VhallInput v-model="advertisement.url" v-clearEmoij placeholder="请输入以http://或https://开头广告链接" autocomplete="off" ></VhallInput>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer create-footer">
@@ -552,7 +552,7 @@ export default {
     width: 324px;
     height: 130px;
   }
-  .advinfo-dialog /deep/.el-input__inner{
+  /deep/.advinfo-dialog /deep/.el-input__inner{
    padding: 0 12px;
   }
   /deep/.el-input__count-inner {

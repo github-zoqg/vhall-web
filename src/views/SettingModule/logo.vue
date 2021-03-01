@@ -31,7 +31,7 @@
           </upload>
         </el-form-item>
         <el-form-item label="链接" prop="logo_jump_url" class="magBottom">
-          <el-input type="text" placeholder="请输入链接" v-model="logoForm.logo_jump_url" />
+          <el-input type="text" placeholder="请输入以http://或https://开头的链接" v-model="logoForm.logo_jump_url" />
         </el-form-item>
         <el-form-item label="">
           <el-button type="primary" v-preventReClick round @click="saveConsoleLogo('save')"  class="length152">保存</el-button>
@@ -234,6 +234,9 @@ export default {
     .min-height();
     /deep/.el-input {
       width: 500px;
+    }
+    /deep/.el-input__inner {
+      padding: 0 12px;
     }
     /deep/.el-form-item {
       margin-bottom: 32px;

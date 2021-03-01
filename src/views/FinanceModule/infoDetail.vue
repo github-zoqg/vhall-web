@@ -113,7 +113,7 @@ export default {
   data() {
     return {
       activeIndex: '1',
-      totalNum: 1000,
+      totalNum: 0,
       isHandle: true,
       params: {},
       pageInfo: {
@@ -122,6 +122,10 @@ export default {
         pos: 0
       },
       options: [
+        {
+          label: '全部',
+          value: ''
+        },
         {
           label: '流量包',
           value: 'flow'
@@ -169,6 +173,10 @@ export default {
           placeholder: '订单类型',
           options: [
             {
+              label: '全部',
+              value: ''
+            },
+            {
               label: '结清并发欠费',
               value: 7
             },
@@ -195,6 +203,10 @@ export default {
           key: "status",
           placeholder: '订单状态',
           options: [
+            {
+              label: '全部',
+              value: ''
+            },
             {
               label: '失败',
               value: -1
@@ -231,6 +243,10 @@ export default {
           placeholder: '订单状态',
           options: [
             {
+              label: '全部',
+              value: ''
+            },
+            {
               label: '待生效 ',
               value: 0
             },
@@ -249,6 +265,10 @@ export default {
           key: "source",
           placeholder: '订单来源',
           options: [
+            {
+              label: '全部',
+              value: ''
+            },
             {
               label: '线下购买',
               value: 5
@@ -499,7 +519,7 @@ export default {
     // 导出账单明细
     exportAccount() {
       let url = this.activeIndex == '1' ? 'exporOrder' : 'exportAdmin';
-      this.$fetch(url, this.params).then(res => {
+      this.$fetch(url, this.$params(this.params)).then(res => {
         this.$message({
           message: `${this.activeIndex == 1 ? '购买' : '开通'}账单明细导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -528,7 +548,7 @@ export default {
       min-height: 550px;
     }
     .box-card{
-      padding: 24px 0 40px 0;
+      padding: 0 0 40px 0;
       border-radius: 4px;
       background: #fff;
     }

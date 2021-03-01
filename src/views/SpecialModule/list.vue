@@ -77,15 +77,6 @@
         <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建专题</el-button>
       </noData>
     </div>
-    <!-- <VhallDialog
-      title="分享"
-      :visible.sync="dialogShareVisible"
-      :close-on-click-modal="false"
-      width="592px">
-      <div class="content">
-
-      </div>
-   </VhallDialog> -->
    <share ref="share" :shareVo="shareVo"></share>
    <el-dialog
       custom-class="dialog-tutorial-wrap"

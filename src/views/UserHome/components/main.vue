@@ -376,11 +376,16 @@ export default {
     color: #FB3A32;
   }
 }
+/deep/.el-tabs{
+  padding-left: 24px;
+}
 /deep/.el-tabs--bottom .el-tabs__item.is-bottom:nth-child(2),
 /deep/.el-tabs--bottom .el-tabs__item.is-top:nth-child(2),
 /deep/.el-tabs--top .el-tabs__item.is-bottom:nth-child(2),
 /deep/.el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 24px;
+  width: 56px;
+  text-align: center;
+  padding-left: 0!important;
 }
 /deep/.el-tabs__nav-wrap::after {
   height: 1px;

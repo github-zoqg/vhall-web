@@ -64,7 +64,7 @@
             </upload>
           </el-form-item>
           <el-form-item label="链接" prop="skip_url" class="item--skip__url">
-            <el-input v-model.trim="signSetForm.skip_url" />
+            <el-input v-model.trim="signSetForm.skip_url" placeholder="请输入http://或https://开头的链接" />
           </el-form-item>
           <el-form-item label="">
             <el-button type="primary" round v-preventReClick @click.prevent.stop="signSetSave">保 存</el-button>
@@ -281,6 +281,9 @@ export default {
 }
 /deep/.el-form-item {
   margin-bottom: 32px;
+}
+/deep/.el-input__inner {
+  padding: 0 12px;
 }
 /deep/.el-switch__label {
   color: #999999;

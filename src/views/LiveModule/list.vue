@@ -419,10 +419,10 @@ export default {
     .no-live /deep/.el-button{
       padding: 9px 24px;
     }
-    /deep/.el-dropdown-menu__item:not(.is-disabled):hover{
-      background-color: #FB3A32;
-      color: #FB3A32;
-    }
+    // /deep/.el-dropdown-menu__item:not(.is-disabled):hover{
+    //   background-color: #FB3A32;
+    //   color: #FB3A32;
+    // }
     /*.el-button.is-round{
       padding: 10px 23px;
     }*/
@@ -474,6 +474,9 @@ export default {
       &:hover{
         color: #fb3a32;
       }
+    }
+    .el-select /deep/.el-input__inner{
+      padding: 0 12px;
     }
     .search-tag {
       /deep/.el-input__inner {
