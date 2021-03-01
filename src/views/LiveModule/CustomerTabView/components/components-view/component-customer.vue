@@ -198,10 +198,10 @@ export default {
     height: 100%;
     .editor-component-box{
       position: relative;
-      padding: 5px;
+      padding: 0 5px;
       box-sizing: border-box;
       width: 285px;
-      margin: 10px auto;
+      margin: 0 auto;
       i{
         position: absolute;
         cursor: pointer;

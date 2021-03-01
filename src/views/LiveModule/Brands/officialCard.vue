@@ -651,10 +651,10 @@ export default {
         width: 310px;
         height: 566px; */
         right: calc(50% - 155px);
-        top: 80px;
+        top: 85px;
         text-align: center;
-        width: 312px;
-        height: 574px;
+        width: 310px;
+        height: 566px;
         background: #000000;
         border-radius: 0px 0px 26px 26px;
         opacity: 0.6;

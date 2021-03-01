@@ -55,6 +55,7 @@ export default {
   .editor-box{
     padding-top: 16px;
   }
+
   .editor-preview{
     line-height: 20px;
     color: #1a1a1a;
