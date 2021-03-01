@@ -365,6 +365,7 @@ export default {
       this.showCaptcha = false;
       this.errorMsgShow = '';
       this.errorText = '';
+      this.callCaptcha();
     },
     getDyCode() {
       // 获取短信验证码

@@ -469,8 +469,8 @@ export default {
         }
 
         &:hover{
-          background: #FFEBEB;
-          color: #FB3A32;
+          background: #e6e6e6;
+          color: #1a1a1a;
         }
         input{
           width: 16px;
