@@ -62,7 +62,7 @@
       <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24" v-if="liveDetailInfo.webinar_state !== 4" class="rightbox" style="padding-right:4px">
         <div class="inner liveTime" v-if="!outLiveTime">
           <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
-          <p class="mainColor" v-if="liveDetailInfo.webinar_state === 2">
+          <p class="mainColor timerBox" v-if="liveDetailInfo.webinar_state === 2">
             <span class="custom-font-barlow">{{ time.day }}</span>
             <i>天</i>
             <span class="custom-font-barlow">{{ time.hours }}</span>
@@ -611,6 +611,12 @@ export default {
 
 .mainColor{
   color: #1A1A1A;
+}
+.timerBox {
+  span {
+    display: inline-block;
+    width: 26px;
+  }
 }
 .subColor, .subDuration{
   color: #666666;
