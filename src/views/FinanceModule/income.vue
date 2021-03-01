@@ -13,7 +13,7 @@
           <div class="live-all">
             <div class="all-come">
               <p>总收益<span class="moneyUnit">(元)</span></p>
-              <h1>{{ incomeInfo.live_income | formatMoney }}</h1>
+              <h1 class="custom-font-barlow">{{ incomeInfo.live_income | formatMoney }}</h1>
             </div>
             <div class="all-come">
               <p>可用金额<span class="moneyUnit">(元)</span><span class="withdraw" @click="cash('直播')">{{ incomeInfo.in_live_withdraw ? '提现中' : '提现' }}</span>
@@ -34,7 +34,7 @@
                   <i class="iconfont-v3 saasicon_help_m"></i>
                 </el-tooltip>
               </p>
-              <h1>{{ incomeInfo.live_balance | formatMoney }}</h1>
+              <h1 class="custom-font-barlow">{{ incomeInfo.live_balance | formatMoney }}</h1>
             </div>
           </div>
         </div>
@@ -45,7 +45,7 @@
           <div class="live-all">
             <div class="all-come">
               <p>总收益<span class="moneyUnit">(元)</span></p>
-              <h1>{{ incomeInfo.red_packet_income | formatMoney }}</h1>
+              <h1 class="custom-font-barlow">{{ incomeInfo.red_packet_income | formatMoney }}</h1>
             </div>
             <div class="all-come">
               <p>可用金额<span class="moneyUnit">(元)</span><span class="withdraw" @click="cash('红包')">{{ incomeInfo.in_red_withdraw ? '提现中' : '提现' }}</span>
@@ -66,7 +66,7 @@
                    <i class="iconfont-v3 saasicon_help_m"></i>
                 </el-tooltip>
               </p>
-              <h1>{{ incomeInfo.red_packet_balance | formatMoney }}</h1>
+              <h1 class="custom-font-barlow">{{ incomeInfo.red_packet_balance | formatMoney }}</h1>
             </div>
           </div>
         </div>
