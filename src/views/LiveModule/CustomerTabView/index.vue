@@ -6,7 +6,7 @@
     >
       <div slot="content">所有设置对电脑端和移动浏览器同时生效</div>
       <div class="vh-customer-menu-btns">
-        <a href="http://www.vhall.com/saas/doc/1457.html" target="_blank" class="link__left">使用帮助</a>
+        <a href="https://saas-doc.vhall.com/docs/show/1235" target="_blank" class="link__left">使用帮助</a>
         <el-button type="primary" style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab">保存</el-button>
       </div>
     </page-title>
