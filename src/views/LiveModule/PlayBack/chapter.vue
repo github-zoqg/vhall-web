@@ -1407,6 +1407,7 @@ export default {
       .el-input__inner {
         border-color: #666;
         color: #999;
+        background-color: transparent;
       }
     }
     /deep/ .el-button.el-button--text {
