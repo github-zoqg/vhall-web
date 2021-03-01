@@ -200,7 +200,7 @@ export default {
       handleMsgTimer: '',
       no_show: '',
       typeOptions: [
-        { label: '来源', value: '-1' },
+        { label: '全部来源', value: '-1' },
         { label: '回放', value: '0' },
         { label: '录制', value: '1' },
         { label: '上传', value: '2' },
@@ -316,7 +316,7 @@ export default {
           ]
         } else {
           this.typeOptions = [
-            { label: '来源', value: '-1' },
+            { label: '全部来源', value: '-1' },
             { label: '回放', value: '0' },
             { label: '录制', value: '1' },
             { label: '打点录制', value: '3' }
@@ -676,6 +676,12 @@ export default {
       margin-left: 0;
     }
     min-width: 1020px;
+  }
+  /deep/.el-select-dropdown__list{
+    width: 120px;
+  }
+  /deep/.el-select{
+    width: 120px !important;
   }
   .tableBox{
     padding: 24px 24px;

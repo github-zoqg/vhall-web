@@ -32,7 +32,7 @@
     <div class="vh-menus-dragComponents__title">
       功能组件
     </div>
-    <div
+    <!-- <div
       class="vh-menus-dragComponents__item"
       :class="{'vh-menus-dragComponents__item-disabled': disableAll}"
       :draggable="!disableAll"
@@ -41,7 +41,19 @@
       @dragstart="dragStartHandler($event, item)"
     >
       <i class="iconfont-v3 saasicon_list"></i> {{ item.name }}
-    </div>
+    </div> -->
+     <template v-for="item in highComponents">
+      <div
+        v-if="item.is_vip == 1"
+        class="vh-menus-dragComponents__item"
+        :class="{'vh-menus-dragComponents__item-disabled': disableAll}"
+        :draggable="!disableAll"
+        :key="item.component_id"
+        @dragstart="dragStartHandler($event, item)"
+      >
+        <i class="iconfont-v3 saasicon_list"></i> {{ item.name }}
+      </div>
+    </template>
     <!-- <div class="vh-menus-dragComponents__item vh-menus-dragComponents__item-disabled">
       <i class="iconfont-v3 saasicon_list"></i> 敬请期待
     </div> -->
