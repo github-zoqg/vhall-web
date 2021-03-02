@@ -937,7 +937,7 @@ export default {
     height: 0px!important;
   }
   .chapter-popper.is-dark {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     color: #1a1a1a;
   }
 </style>
@@ -1056,6 +1056,7 @@ export default {
     }
     /deep/ .el-loading-mask{
       z-index: 1000!important;
+      background-color: rgba(0, 0, 0, 0.6);
     }
     .docBox{
       display: flex;
