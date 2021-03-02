@@ -476,7 +476,6 @@ export default {
   margin: 24px auto 0 auto;
   text-align: right;
   .el-button {
-    margin-right: 12px;
     &:last-child {
       margin-right: 0;
     }

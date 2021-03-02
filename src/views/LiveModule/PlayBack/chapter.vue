@@ -2,7 +2,7 @@
   <div class="chapterManager clearFix">
     <div class="titleContainer clearFix">
       <i class="el-icon-back" @click="$router.back()"></i>
-      <pageTitle pageTitle="章节打点">
+      <pageTitle pageTitle="章节打点" placement="bottom-start" popper-class="chapter-popper">
         <div slot="content">
           章节功能支持文档格式：PPT、PPTX，其他格式不支持
         </div>
@@ -58,7 +58,7 @@
               <div class="vh-video-chapter__volume-box">
                 <el-tooltip :enterable="false" :content="voice > 0 ? '静音' : '开启声音'" placement="top" v-tooltipMove>
                   <span @click="jingYin" class="vh-video-chapter__icon-voice-warp">
-                    <icon style="color:#fff" :icon-class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'"></icon>
+                    <icon class="volume-icon" :icon-class="voice > 0 ? 'saasicon_yangshengqion' : 'saasicon_yangshengqioff'"></icon>
                   </span>
                 </el-tooltip>
                 <div class="vh-video-chapter__slider">
@@ -70,6 +70,10 @@
         </div>
         <div class="docBox">
           <div class="docInner">
+            <div class="nodoc" v-show="tableData.length === 0">
+              <i class="saasicon_word iconfont-v3"></i>
+              <span>主讲人未添加文档，请稍等...</span>
+            </div>
             <doc
               v-if="showDoc"
               ref="doc"
@@ -85,6 +89,7 @@
               :accountId="playerProps.accountId"
               :isVod="true"
               :preloadDocs="true"
+              :isChapterWatch="true"
             ></doc>
           </div>
           <div class="actionBar">
@@ -199,7 +204,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div class="noChapters" v-show="tableData.length == 0">
+        <div class="noChapters" v-show="tableData.length == 0 && isDemand == 'true'">
           <noData :nullType="'nullData'" :text="'暂无内容，请先关联文档'"></noData>
         </div>
       </div>
@@ -931,6 +936,10 @@ export default {
   #myVodNode {
     height: 0px!important;
   }
+  .chapter-popper.is-dark {
+    background: rgba(255, 255, 255, 0.9);
+    color: #1a1a1a;
+  }
 </style>
 <style lang="less" scoped>
   .chapterManager {
@@ -1014,6 +1023,8 @@ export default {
       height: 64%;
       background: #222;
       position: relative;
+      border-radius: 4px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);
       .close {
         color: #FFFFFF;
         position: absolute;
@@ -1053,7 +1064,27 @@ export default {
       height: calc(50% - 12px);
       .docInner{
         height: 100%;
-        background-color: #292929;
+        background-color: #1a1a1a;
+        .nodoc {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
+          span {
+            color: #666;
+          }
+        }
+        .saasicon_word {
+          font-size: 90px;
+          color: #666;
+        }
+        /deep/ .vhall-watch-doc {
+          background-color: #1a1a1a;
+        }
+        /deep/ .watch-doc-placeholder {
+          background-color: #1a1a1a;
+        }
       }
     }
     .actionBar{
@@ -1119,6 +1150,7 @@ export default {
         .el-slider__runway {
           height: 4px;
           margin: 0;
+          background-color: rgba(255, 255, 255, 0.3);
           .el-slider__bar {
             height: 4px;
           }
@@ -1137,7 +1169,7 @@ export default {
       /deep/ .vh-player {
         height: 100%;
         #vh-video{
-          background-color: #292929;
+          background-color: #1a1a1a;
         }
         .vhallPlayer-controller-box{
           display: flex;
@@ -1178,6 +1210,12 @@ export default {
           cursor: pointer;
           &:hover {
             color: #1890FF;
+          }
+        }
+        .volume-icon {
+          color: #999;
+          &:hover{
+            color: #fff;
           }
         }
         .vh-video-chapter__icon-voice-warp {
@@ -1343,11 +1381,11 @@ export default {
     }
     /deep/ .el-table{
       margin-top: 24px;
-      color: #999;
+      color: #666;
       background-color: #222;
       .el-checkbox__inner {
-        background: #000;
-        border-color: #999;
+        background: #1a1a1a;
+        border-color: #666;
       }
       .is-indeterminate .el-checkbox__inner {
         background-color: #FB3A32;
@@ -1395,10 +1433,19 @@ export default {
       /deep/ .el-tooltip .el-button--text span {
         color: #fb3a32;
       }
+      /deep/ .el-input {
+        .el-input__inner {
+          border-color: #999;
+          color: #999;
+        }
+      }
+      .cell {
+        color: #999;
+      }
     }
     /deep/ .el-table td, /deep/ .el-table th.is-leaf {
       border-bottom: 1px solid #E6E6E6;
-      background: #000;
+      background: #1a1a1a;
       border-color: #222;
       border-width: 2px;
     }
@@ -1406,7 +1453,7 @@ export default {
       width: 95%;
       .el-input__inner {
         border-color: #666;
-        color: #999;
+        color: #666;
         background-color: transparent;
       }
     }

@@ -285,10 +285,10 @@ export default {
 <style lang="less" scoped>
   .contentView{
     min-height: 320px;
-    padding: 16px;
+    padding: 4px;
     width: 100%;
     height: 100%;
-    background: #222;
+    background: #1a1a1a;
     .docBox{
       float: left;
       width: 68%;
@@ -297,7 +297,10 @@ export default {
       flex-direction: column;
       .docInner{
         height: 100%;
-        background-color: #292929;
+        background-color: #1a1a1a;
+        /deep/ .vhall-watch-doc {
+          background-color: #1a1a1a;
+        }
       }
     }
     .actionBar{
@@ -393,6 +396,9 @@ export default {
           /deep/ .__view{
             width: 100%!important;
           }
+          /deep/ .__vuescroll .__bar-is-vertical {
+            background-color: #666!important;
+          }
         }
         .chapterList{
           padding-right: 10px;
@@ -407,7 +413,7 @@ export default {
             transition: all .1s linear;
             display: flex;
             &:hover{
-              background: #333333;
+              background: #222;
               color: #FB3A32;
             }
           }
