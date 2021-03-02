@@ -110,7 +110,7 @@ export default {
       };
       this.$fetch('orderInfo', params).then(res =>{
         this.payInfo = res.data;
-        this.downTime(res.data.current_time.replace(/-/g,'/'), res.data.expire_time.replace(/-/g,'/'));
+        this.downTime(res.data.current_time.replace(/-/g,'/'), res.data.exp_timeire_time.replace(/-/g,'/'));
       }).catch(res=>{
         this.$message({
           message: res.msg || "获取信息失败",
