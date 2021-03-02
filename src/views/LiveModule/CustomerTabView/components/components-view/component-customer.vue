@@ -113,14 +113,14 @@ export default {
         this.units.push({
           ...componentData,
           text: '',
-          src: 'http://',
+          src: '',
           cUid: uuidV1()
         })
       } else if(componentData.component_id == 6) {
         this.units.push({
           ...componentData,
           imageSrc: '',
-          src: 'http://',
+          src: '',
           cUid: uuidV1()
         })
       } else if(componentData.component_id == 7) {

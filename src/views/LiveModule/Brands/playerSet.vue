@@ -71,7 +71,6 @@
                     :disabled="!scrolling_open"
                     maxlength="3"
                     @blur="blurChange"
-                    @keyup="editHorseInfo"
                     oninput="this.value=this.value.replace(/[^0-9]/g, '')"
                     placeholder="默认20，支持输入范围1-300">
                     <i slot="suffix">秒</i>
@@ -343,7 +342,6 @@ export default {
         scroll_type: 1,
         interval: 20
       },
-      accountIds:10000127,
       fontList: [],
       formWatermark: {
         img_position: 2,
@@ -361,7 +359,7 @@ export default {
         imageUrl: '',
       },
       videoParam: {
-        paas_record_id: '922013fa'
+        paas_record_id: '27d23478'
       },
       marqueeOption: {
         enable: Boolean(this.scrolling_open),
@@ -380,6 +378,8 @@ export default {
       vm: null,
       checkEnter: true, // 检验是否是第一次进来的
       audioImg: require('@/common/images/logo4.png'),
+      appId: '',
+      appToken: ''
     };
   },
   components: {
@@ -440,14 +440,15 @@ export default {
     },
   },
   created() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getFontList();
+    this.getVideoAppid();
     this.getBasescrollingList();
-    this.getBaseOtherList();
+    this.getBaseWaterList();
     // 获取其他信息
     this.getBaseOtherList();
   },
   mounted () {
-    this.initPlayer();
   },
   beforeDestroy() {
     if(this.$Vhallplayer){
@@ -460,6 +461,7 @@ export default {
       if (!this.formHorse.interval || this.formHorse.interval < 0) {
         this.formHorse.interval = 20;
       }
+      this.editHorseInfo()
     },
     choseSpeed() {
       this.isShowSpeed = true;
@@ -469,6 +471,14 @@ export default {
       this.speedText = item.label;
       this.speed = item.value;
       this.$Vhallplayer.setPlaySpeed(this.speed)
+    },
+    // 获取appId
+    getVideoAppid() {
+      this.$fetch('getAppid').then(res => {
+        this.appId = res.data.app_id;
+        this.appToken = res.data.access_token;
+        this.initPlayer();
+      })
     },
     // 预览视频
     previewVideo () {
@@ -793,13 +803,13 @@ export default {
       //     break;
       // }
       const incomingData = {
-        appId: 'd317f559', // 应用ID，必填
-        accountId: this.accountIds, // 第三方用户ID，必填
-        token: 'access:d317f559:b3acfa862ae09232', // access_token，必填
+        appId: this.appId, // 应用ID，必填
+        accountId: this.userId || 1, // 第三方用户ID，必填
+        token: this.appToken, // access_token，必填
         type: 'vod', // live 直播  vod 点播  必填
         videoNode: 'videoDom', // 播放器的容器， div的id 必填
         poster: '', // 封面地址  仅支持.jpg
-        vodOption: { recordId: '922013fa', forceMSE: false },
+        vodOption: { recordId: this.videoParam.paas_record_id, forceMSE: false },
         marqueeOption: this.marqueeOption,
         watermarkOption: { // 选填
           enable: Boolean(this.watermark_open), // 默认 false
@@ -830,12 +840,6 @@ export default {
 
             if (this.formOther.doubleSpeed) {
               this.$Vhallplayer.setPlaySpeed(this.speed)
-              // this.speedList = this.$Vhallplayer.getUsableSpeed() || [];
-              // this.speedList.map((item, index) => {
-              //   if (item == 1) {
-              //     this.speed = this.speedList[index];
-              //   }
-              // })
             }
             this.$Vhallplayer.on(window.VhallPlayer.LOADED, () => {
               this.loading = false;
