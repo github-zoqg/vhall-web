@@ -534,7 +534,7 @@ export default {
             this.photoCpathaShow = true
             sessionOrLocal.set('sso', res.data.sso_token)
             sessionOrLocal.set('token', res.data.token, 'localStorage')
-            sessionOrLocal.set('tokenExpiredTime', res.data.exp, 'localStorage')
+            sessionOrLocal.set('tokenExpiredTime', res.data.exp_time, 'localStorage')
             // sessionOrLocal.set('userInfo', res.data)
             this.fetchData()
 
