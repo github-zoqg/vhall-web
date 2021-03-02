@@ -237,7 +237,7 @@ import doc from '@/components/Doc/watch-doc';
 import associateDoc from './associatedDoc';
 import moduleTutorial from './components/moduleTutorial'
 import { debounce } from "@/utils/utils"
-import noData from '@/views/PlatformModule/Error/nullPage';
+import noData from './components/nullPage';
 export default {
   name: 'Chapters',
   data(){
