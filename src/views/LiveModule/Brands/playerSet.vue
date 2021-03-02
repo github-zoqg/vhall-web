@@ -71,7 +71,6 @@
                     :disabled="!scrolling_open"
                     maxlength="3"
                     @blur="blurChange"
-                    @keyup="editHorseInfo"
                     oninput="this.value=this.value.replace(/[^0-9]/g, '')"
                     placeholder="默认20，支持输入范围1-300">
                     <i slot="suffix">秒</i>
@@ -445,7 +444,7 @@ export default {
     this.getFontList();
     this.getVideoAppid();
     this.getBasescrollingList();
-    this.getBaseOtherList();
+    this.getBaseWaterList();
     // 获取其他信息
     this.getBaseOtherList();
   },
@@ -462,6 +461,7 @@ export default {
       if (!this.formHorse.interval || this.formHorse.interval < 0) {
         this.formHorse.interval = 20;
       }
+      this.editHorseInfo()
     },
     choseSpeed() {
       this.isShowSpeed = true;
