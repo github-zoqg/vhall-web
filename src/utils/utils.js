@@ -400,6 +400,11 @@ export function checkAuth(to, from, next) {
       }
     }).catch(e => {
       console.log(e);
+      sessionStorage.clear()
+      localStorage.clear()
+      if(e.code == 11006){
+        next({path: '/login'});
+      }
       sessionOrLocal.removeItem('SAAS_VS_PES');
     });
     // 登录后，获取用户基本信息
