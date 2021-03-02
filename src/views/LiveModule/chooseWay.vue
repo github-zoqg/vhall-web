@@ -44,7 +44,7 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
-import {sessionOrLocal} from "@/utils/utils";
+import {sessionOrLocal, getQueryString} from "@/utils/utils";
 import OldHeader from '@/components/OldHeader';
 import { browserDetect } from '@/utils/utils';
 import Env from '@/api/env';
@@ -126,6 +126,9 @@ export default {
         type: this.arr[1],
         live_token: Number(this.arr[1]) !== 1 ? sessionOrLocal.get('liveToken', 'localStorage') : ''
       }; // 若非主持人登录，需传递用户token
+      if(location.search.includes('liveT') && params.live_token != '' && getQueryString('liveT')){
+        params.live_token = getQueryString('liveT')
+      }
       this.$fetch('getJoinUrl', this.$params(params)).then((res) => {
         if(res && res.code === 200) {
           // this.watchUrl = res.data.page_url;
@@ -162,7 +165,11 @@ export default {
     },
   },
   mounted() {
-    this.watchUrl = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}`
+    if(location.search == ''){
+      this.watchUrl = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}`
+    }else{
+      this.watchUrl = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}${location.search}`
+    }
   }
 };
 </script>
