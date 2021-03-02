@@ -117,7 +117,7 @@ export default {
   data() {
     return {
       activeIndex: '1',
-      totalNum: 100,
+      totalNum: 1,
       money: 0,
       phone: 0,
       type: 0,
@@ -379,7 +379,12 @@ export default {
   },
 };
 </script>
-
+<style lang="less">
+  .el-tooltip__popper {
+    max-width: 600px;
+    line-height: 17px;
+  }
+</style>
 <style lang="less" scoped>
   .account-income{
     position: relative;

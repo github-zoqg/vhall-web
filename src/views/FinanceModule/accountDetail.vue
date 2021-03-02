@@ -21,7 +21,7 @@
           @getTableList="getDetailList"
           >
         </table-list>
-        <noData v-show="tableList.length == 0" :nullType="'nullData'" :text="'暂无数据'" :height="100">
+        <noData v-if="totalNum == 0" :nullType="'nullData'" :text="'暂无数据'" :height="100">
         </noData>
       </div>
     </div>
@@ -34,7 +34,7 @@ import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
     return {
-      totalNum: 1000,
+      totalNum: 0,
       params: {},
       searchDetail: [
         {
