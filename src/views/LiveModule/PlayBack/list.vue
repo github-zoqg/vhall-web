@@ -235,23 +235,12 @@ export default {
     this.getPermission(this.$route.params.str)
   },
   mounted(){
-    if (!this.WEBINAR_PES['forbid_delrecord']) {
-      this.tipMsg = this.$message({
-        dangerouslyUseHTMLString: true,
-        message: `
-          ${this.WEBINAR_PES['forbid_delrecord'] ? '' : '<span class="msgGray">非默认回放暂存15天</span>'}
-          ${!this.WEBINAR_PES['forbid_delrecord'] && !this.WEBINAR_PES['publish_record'] ? '，' : ''}
-          ${this.WEBINAR_PES['publish_record'] ? "" : "<a href='http://webim.qiao.baidu.com/im/index?siteid=113762&ucid=2052738' target='_blank' class='msgBlue'>开通点播服务</a>"}
-        `,
-        showClose: true,
-        duration: 0,
-        offset: 74
-      });
-    }
+
+
   },
   beforeDestroy(){
     if (!this.WEBINAR_PES['forbid_delrecord'] || !this.WEBINAR_PES['publish_record']) {
-      this.tipMsg.close();
+      this.tipMsg && this.tipMsg.close();
     }
     if (this.chatSDK) {
       this.chatSDK.destroy()
@@ -260,6 +249,21 @@ export default {
     EventBus.$off('record_download', this.handleDownload)
   },
   methods: {
+    handleTipMsgVisible() {
+      if (!this.WEBINAR_PES['forbid_delrecord']) {
+        this.tipMsg = this.$message({
+          dangerouslyUseHTMLString: true,
+          message: `
+            ${this.WEBINAR_PES['forbid_delrecord'] ? '' : '<span class="msgGray">非默认回放暂存15天</span>'}
+            ${!this.WEBINAR_PES['forbid_delrecord'] && !this.WEBINAR_PES['publish_record'] ? '，' : ''}
+            ${this.WEBINAR_PES['publish_record'] ? "" : "<a href='http://webim.qiao.baidu.com/im/index?siteid=113762&ucid=2052738' target='_blank' class='msgBlue'>开通点播服务</a>"}
+          `,
+          showClose: true,
+          duration: 0,
+          offset: 74
+        });
+      }
+    },
     getPermission(id) {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
       // 活动权限
@@ -268,6 +272,7 @@ export default {
           if(res.data.permissions) {
             sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
             this.WEBINAR_PES = JSON.parse(res.data.permissions)
+            this.handleTipMsgVisible()
           } else {
             sessionOrLocal.removeItem('WEBINAR_PES');
           }
@@ -738,6 +743,7 @@ export default {
       width: 160px;
       height: 90px;
       border-radius: 4px;
+      background-color: #1a1a1a;
       .imageWrap{
         width: 100%;
         height: 100%;
@@ -828,7 +834,7 @@ export default {
     img{
       width: 100%;
       height: 100%;
-      border-radius: 6px;
+      border-radius: 4px;
       object-fit: scale-down;
     }
   }
