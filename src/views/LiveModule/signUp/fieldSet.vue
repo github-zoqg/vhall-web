@@ -666,14 +666,14 @@ export default {
       let matchPrivacy1 = item[1].value.trim() ? text.match(item[1].value) : null;
       if(matchPrivacy1){
         let reg = new RegExp(`(${matchPrivacy1[0]})`);
-        item[2].value && (text = text.replace(reg, `<a href="${item[2].value}" target="_blank">$1</a>`));
+        text = text.replace(reg, `<a href="${item[2].value || 'javascript:void(0);'}" target="_blank">$1</a>`);
       }else{
         item[1].value = '';
       }
       let matchPrivacy2 = (item[3] && item[3].value.trim()) ? text.match(item[3].value) : null;
       if(matchPrivacy2){
         let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
-        item[4].value && (text = text.replace(reg, `<a href="${item[4].value}" target="_blank">$1</a>`));
+        text = text.replace(reg, `<a href="${item[4].value || 'javascript:void(0);'}" target="_blank">$1</a>`);
       }else{
         item[3] && (item[3].value = '');
       }

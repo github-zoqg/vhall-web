@@ -304,7 +304,7 @@ export function getfiledJson({name, type}){
               "key": "color_text",
               "props": {
                 class: ['radioInput'],
-                placeholder: '请输入第一行中可点击跳转得文字'
+                placeholder: '请输入第1行中包含的文字才能实现跳转效果'
               },
               "value":"《隐私声明》",
               privacyAdd: true
@@ -312,7 +312,7 @@ export function getfiledJson({name, type}){
             {
               "key": "url",
               "props": {
-                placeholder: '跳转链接（可选）'
+                placeholder: '请输入以http://或https://开头的链接'
               },
               "value":""
             },
