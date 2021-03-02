@@ -20,6 +20,7 @@
             v-clearEmoij
             autocomplete="off"
             show-word-limit
+            placeholder="请输入文字"
           ></VhallInput>
         </div>
       </div>
