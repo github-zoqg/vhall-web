@@ -315,6 +315,9 @@ export default {
 /deep/.el-checkbox__input.is-checked+.el-checkbox__label{
   color: #666;
 }
+/deep/.el-input__suffix{
+  right: 12px;
+}
 .img-box {
   width: 182px;
   height: 104px;
@@ -398,6 +401,7 @@ export default {
 .inputNums {
   line-height: 20px;
   padding-top: 8px;
+  color: #999;
 }
 .informtion {
   width: 414px;

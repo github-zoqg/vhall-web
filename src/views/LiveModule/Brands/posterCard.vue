@@ -38,7 +38,7 @@
                   :before-upload="beforePcUploadHnadler"
                   @delete="form.m_img = '', m_domain_url = ''">
                   <div slot="tip">
-                    <p>建议尺寸：1920*1080px</p>
+                    <p>建议尺寸：750*1334px</p>
                     <p>小于4M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
@@ -62,14 +62,14 @@
                   :before-upload="beforeUploadHnadler"
                   @delete="form.img = '', domain_url = ''">
                   <div slot="tip">
-                    <p>建议尺寸：750*1334px</p>
+                    <p>建议尺寸：1920*1080px</p>
                     <p>小于4M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
               </div>
             </el-form-item>
             <el-form-item label="链接" prop="url">
-              <VhallInput v-model.trim="form.url"  v-clearEmoij placeholder="请输入http://或https://开头的链接" :maxlength="200" autocomplete="off" show-word-limit></VhallInput>
+              <VhallInput v-model.trim="form.url"  v-clearEmoij placeholder="请输入http://或https://开头的链接" :maxlength="200" autocomplete="off"></VhallInput>
             </el-form-item>
             <el-form-item label="自动关闭">
               <!--{{alertType 0手动关闭 1自动关闭}}-->

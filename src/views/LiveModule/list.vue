@@ -521,8 +521,8 @@ export default {
         height: 175px;
         // background: linear-gradient(-45deg, #797776, #b1adae, #e5e7e7, #f6fcfa);
         background: #1A1A1A;
-        background-size: 400% 400%;
-        animation: gradientBG 15s ease infinite;
+        // background-size: 100% 100%;
+        // animation: gradientBG 15s ease infinite;
         padding: 10px 10px;
         box-sizing: border-box;
         position: relative;
@@ -535,18 +535,20 @@ export default {
         //   border-radius: 4px 8px 0 0;
         // }
         .img-box{
-          width: 101%;
+          width: 100%;
           height: 100%;
           position: absolute;
           top:0;
           left: 0;
-          border-radius: 4px 8px 0 0;
+          border-radius: 4px 4px 0 0;
+          overflow: hidden;
           img{
             width: 100%;
             height: 100%;
             object-fit: scale-down;
             cursor: pointer;
-            border-radius: 4px 8px 0 0;
+            font-size: 0;
+            // border-radius: 4px 8px 0 0;
           }
         }
 
