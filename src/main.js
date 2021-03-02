@@ -131,6 +131,7 @@ function clientToken(param) {
 let clientTokenVal = clientToken('token');
 if(clientTokenVal) {
   sessionOrLocal.set('token', clientTokenVal , 'localStorage');
+  sessionOrLocal.set('tokenExpiredTime', res.data.exp, 'localStorage')
   sessionOrLocal.set('platform', clientToken('platform'), 'localStorage');
 }
 window.vm = new Vue({
