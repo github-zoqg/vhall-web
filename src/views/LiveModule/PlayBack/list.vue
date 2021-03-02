@@ -67,9 +67,9 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column :width="recordType != 3 ? 78 : 106">
+          <el-table-column :width="recordType != 3 && recordType != -1 ? 78 : 106">
             <template slot-scope="{ column, $index }" slot="header">
-              <el-select v-if="!isDemand" v-model="recordType" @change="typeChange(column, $index)">
+              <el-select popper-class="playback-list-popper" v-if="!isDemand" v-model="recordType" @change="typeChange(column, $index)">
                 <el-option
                   v-for="item in typeOptions"
                   :key="item.value"
@@ -682,12 +682,6 @@ export default {
     }
     min-width: 1020px;
   }
-  /deep/.el-select-dropdown__list{
-    width: 120px;
-  }
-  /deep/.el-select{
-    width: 120px !important;
-  }
   .tableBox{
     padding: 24px 24px;
     background: #fff;
@@ -896,6 +890,9 @@ export default {
   }
 </style>
 <style lang="less">
+  .playback-list-popper {
+    width: 120px;
+  }
   .msgGray{
     color: #1A1A1A;
   }
