@@ -1,7 +1,7 @@
 <template>
   <div class="chapterManager clearFix">
     <div class="titleContainer clearFix">
-      <i class="el-icon-back" @click="$router.back()"></i>
+      <i class="el-icon-back" @click="toPlaybackList"></i>
       <pageTitle pageTitle="章节打点" placement="bottom-start" popper-class="chapter-popper">
         <div slot="content">
           章节功能支持文档格式：PPT、PPTX，其他格式不支持
@@ -90,6 +90,7 @@
               :isVod="true"
               :preloadDocs="true"
               :isChapterWatch="true"
+              :isParentFullScreen="false"
             ></doc>
           </div>
           <div class="actionBar">
@@ -466,6 +467,11 @@ export default {
     this.$EventBus.$off('vod_cuepoint_load_complete');
   },
   methods: {
+    toPlaybackList() {
+      this.$router.push({
+        path: `/live/playback/${this.webinar_id}`
+      })
+    },
     startTutorial() {
       this.tutorialVisible = true
     },
@@ -785,7 +791,6 @@ export default {
           // 文档子章节总数信息
           !this.chapterTotalInfo[item.document_id] && (this.chapterTotalInfo[item.document_id] = {})
           this.chapterTotalInfo[item.document_id][item.page] = item.step_total
-          console.log(this.chapterTotalInfo)
         })
       })
     },

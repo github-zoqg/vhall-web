@@ -103,6 +103,10 @@ export default {
     isChapterWatch: {
       required: false,
       default: false
+    },
+    isParentFullScreen: {
+      required: false,
+      default: true
     }
   },
   data () {
@@ -160,7 +164,7 @@ export default {
           return false
         }
         let style = window.getComputedStyle(
-          this.$refs.watchDocWrapper.parentNode
+          this.isParentFullScreen ? this.$refs.watchDocWrapper.parentNode : this.$refs.watchDocWrapper
         );
         wrapWidth = parseFloat(style.width);
         wrapHeight = parseFloat(style.height);
