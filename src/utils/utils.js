@@ -294,7 +294,7 @@ export function checkAuth(to, from, next) {
         // 登录场景下，存储直接登录
         if(Number(scene_id) === 1) {
           sessionOrLocal.set('token', res.data.token || '', 'localStorage');
-          sessionOrLocal.set('tokenExpiredTime', res.data.exp, 'localStorage')
+          sessionOrLocal.set('tokenExpiredTime', res.data.exp_time, 'localStorage')
           sessionOrLocal.set('sso_token', res.data.sso_token || '');
           sessionOrLocal.set('userId', res.data.user_id || '');
         }
