@@ -17,6 +17,7 @@
           :joinId="playerProps.accountId"
           :accountId="playerProps.accountId"
           :isVod="true"
+          :isChapterWatch="true"
         ></doc>
       </div>
       <div class="actionBar">
@@ -285,10 +286,12 @@ export default {
 <style lang="less" scoped>
   .contentView{
     min-height: 320px;
-    padding: 4px;
+    padding: 0px;
     width: 100%;
     height: 100%;
     background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
     .docBox{
       float: left;
       width: 68%;
@@ -299,6 +302,9 @@ export default {
         height: 100%;
         background-color: #1a1a1a;
         /deep/ .vhall-watch-doc {
+          background-color: #1a1a1a;
+        }
+        /deep/ .watch-doc-placeholder {
           background-color: #1a1a1a;
         }
       }
@@ -383,9 +389,10 @@ export default {
           box-shadow: 0px 1px 0px 0px #1A1A1A;
           text-align: center;
           line-height: 32px;
+          color: #999;
           span{
-            color: #fff;
-            border-bottom: 1px solid #fff;
+            color: #999;
+            border-bottom: 1px solid #999;
             padding-bottom: 6px;
             font-size: 14px;
           }
@@ -404,10 +411,10 @@ export default {
           padding-right: 10px;
           width: 100%;
           li{
-            color: #CCCCCC;
+            color: #999;
             font-size: 12px;
-            height: 32px;
-            line-height: 32px;
+            height: 36px;
+            line-height: 36px;
             padding-left: 12px;
             cursor: pointer;
             transition: all .1s linear;

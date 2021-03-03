@@ -7,7 +7,7 @@
       <div class="vh-video-tailoring__media-wrap clearfix">
         <div class="vh-video-tailoring__play" :class="{ fl: docReady || !vodReady, no_doc: !(docReady || !vodReady) }">
           <div class="vh-video-tailoring__noplay" v-show="!vodReady">
-            <icon icon-class="saasicon_video"></icon>
+            <icon icon-class="saasicon_zanwushipin"></icon>
           </div>
           <template v-show="vodReady">
             <div id="vh-player"
@@ -32,7 +32,7 @@
             :isVod="true"
           ></doc>
           <div v-else class="vh-video-tailoring__nodoc-warp">
-            <icon icon-class="saasicon_word"></icon>
+            <icon icon-class="saasicon_zanwuwendang"></icon>
           </div>
         </div>
       </div>

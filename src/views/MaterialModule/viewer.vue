@@ -48,7 +48,7 @@
         >
         </table-list>
         <!-- 无消息内容 -->
-        <null-page v-if="!(viewerDao && viewerDao.total > 0)"></null-page>
+        <null-page nullType="other" v-if="!(viewerDao && viewerDao.total > 0)"></null-page>
       </div>
       <div  class="group__container">
         <p class="group__title">全部分组</p>

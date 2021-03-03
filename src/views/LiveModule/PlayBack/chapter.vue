@@ -71,7 +71,7 @@
         <div class="docBox">
           <div class="docInner">
             <div class="nodoc" v-show="tableData.length === 0">
-              <i class="saasicon_word iconfont-v3"></i>
+              <i class="saasicon_zanwuwendang iconfont-v3"></i>
               <span>主讲人未添加文档，请稍等...</span>
             </div>
             <doc
@@ -1071,6 +1071,9 @@ export default {
       .docInner{
         height: 100%;
         background-color: #1a1a1a;
+        /deep/ .vhall-watch-doc {
+          background-color: #1a1a1a;
+        }
         .nodoc {
           display: flex;
           flex-direction: column;
@@ -1081,7 +1084,7 @@ export default {
             color: #666;
           }
         }
-        .saasicon_word {
+        .saasicon_zanwuwendang {
           font-size: 90px;
           color: #666;
         }

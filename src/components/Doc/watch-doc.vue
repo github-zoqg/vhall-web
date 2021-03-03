@@ -2,7 +2,7 @@
   <div v-show="watchDocShow" class="vhall-watch-doc" ref="watchDocWrapper">
     <div v-show="!currentCid" class="watch-doc-placeholder">
       <i v-show="!isChapterWatch" class="iconfont iconzanwuwendang"></i>
-      <i v-show="isChapterWatch" class="iconfont iconfont-v3 saasicon_word"></i>
+      <i v-show="isChapterWatch" class="iconfont iconfont-v3 saasicon_zanwuwendang"></i>
 
       <span>主讲人未添加文档，请稍等...</span>
     </div>

@@ -337,6 +337,9 @@ export default {
 }
 /deep/.el-upload--picture-card{
   font-size: 40px;
+  .box >div {
+    height: 180px;
+  }
   i.saasicon_shangchuan{
     font-size: 40px;
   }

@@ -50,7 +50,7 @@
       <el-row :gutter="40" class="lives">
           <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
             <!-- :xs="24" :sm="12" :md="12" :lg="8" :xl="6" -->
-            <router-link :to="{path: `/live/detail/${item.webinar_id}`}" target="_blank" class="inner">
+            <div @click="toLiveDetail(item.webinar_id)" class="inner">
               <!--  @click.prevent.stop="toDetail(item.webinar_id)" -->
               <div class="top">
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
@@ -68,7 +68,7 @@
                   <p class="liveTitle">{{item.subject}}</p>
                   <p class="liveTime">{{item.start_time}}</p>
                 </div>
-                <p class="liveOpera">
+                <p class="liveOpera" @click.stop="nullFunc">
                   <el-tooltip class="item" effect="dark" content="开播" placement="top" v-if="item.webinar_state!=4" v-tooltipMove>
                     <i class="iconfont-v3 saasicon_kaibo" @click.prevent.stop="goLivePlay(item)"></i>
                     <!-- <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link> -->
@@ -96,7 +96,7 @@
               <transition name="el-zoom-in-bottom">
                 <div class="mask" v-show="!!item.liveDropDownVisible"></div>
               </transition>
-            </router-link>
+            </div>
           </el-col>
       </el-row>
       <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
@@ -163,6 +163,13 @@ export default {
     this.getLiveList();
   },
   methods: {
+    toLiveDetail(webinar_id) {
+      const routeData = this.$router.resolve({path: `/live/detail/${webinar_id}`});
+      window.open(routeData.href, '_blank');
+    },
+    nullFunc() {
+      return false;
+    },
     searchHandler() {
       this.pageNum = 1;
       this.pagePos = 0;
@@ -512,13 +519,14 @@ export default {
         border-radius: 4px;
         display: inline-block;
         width: 100%;
+        cursor: pointer;
       }
       .inner:hover{
         box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
         border-radius: 4px;
       }
       .top{
-        height: 175px;
+        height: 176.35px;
         // background: linear-gradient(-45deg, #797776, #b1adae, #e5e7e7, #f6fcfa);
         background: #1A1A1A;
         // background-size: 100% 100%;
@@ -527,6 +535,7 @@ export default {
         box-sizing: border-box;
         position: relative;
         border-radius: 4px 4px 0 0;
+        overflow: hidden;
         // img{
         //   width: 100%;
         //   height: 100%;
@@ -621,6 +630,7 @@ export default {
         .liveOpera{
           color: #666666;
           font-size: 18px;
+          cursor: default;
           a{
             color: rgb(44, 43, 43);
           }
