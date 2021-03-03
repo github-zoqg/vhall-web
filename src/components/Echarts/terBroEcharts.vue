@@ -12,7 +12,8 @@
         ></el-button> -->
       </el-tooltip>
     </div>
-    <div :style="{ height: '300px', width: '100%' }" ref="terBroEchart"></div>
+    <div :style="{ height: '300px', width: '100%' }" ref="terBroEchart" v-if="isShow"></div>
+    <div class="noPage" v-else>暂无数据</div>
   </div>
 </template>
 <script>
@@ -23,16 +24,18 @@ export default {
     return {
       isActive: true,
       terBarCharts: null,
+      isShow: true,
       terColorList: ['#4383E4', '#FA9A32', '#7D43E4', '#FB3A32', '#ccc'],
       broColorList: ['#FB3A32', '#4383E4', '#10D3A8', '#FA9A32', '#7D43E4','#ccc']
     };
   },
-  // mounted() {
-  //   this.initTerBroCharts();
-  // },
-   watch: {
+  watch: {
     terDataList: {
       handler(data) {
+        if (!data.length) {
+          this.isShow = false;
+          return
+        }
         this.initTerBroCharts(data);
       }
     }
@@ -42,7 +45,6 @@ export default {
   },
   methods: {
     initTerBroCharts(data) {
-      // console.log(topList);
       let that = this;
       this.terBarCharts = echarts.init(this.$refs.terBroEchart);
       let options = {
@@ -132,6 +134,12 @@ export default {
       font-size: 14px;
       padding: 0 2px;
     }
+  }
+  .noPage{
+    width: 100%;
+    height: 300px;
+    text-align: center;
+    line-height: 300px;
   }
 }
 /deep/.saasicon_help_m {

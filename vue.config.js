@@ -1,7 +1,7 @@
 const path = require('path');
 let cdn = {
   js: [
-    "//static.vhallyun.com/jssdk/vhall-jssdk-player/2.3.0/vhall-jssdk-player-2.3.0.js",
+    "//static.vhallyun.com/jssdk/vhall-jssdk-player/latest/vhall-jssdk-player-2.2.9.js",
     "//static.vhallyun.com/jssdk/vhall-jssdk-vodupload/latest/vhall-jssdk-upload-2.0.2.js",
     "//static01-open.e.vhall.com/jssdk/vhall-jssdk-form/vhall-jssdk-form-1.0.3.js",
     "//static.vhallyun.com/jssdk/vhall-jssdk-base/vhall-msg-1.0.9.js",

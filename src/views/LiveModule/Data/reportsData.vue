@@ -318,7 +318,7 @@ export default {
       });
       // 获取终端设备
       this.$fetch('getDeviceinfo', params).then(res => {
-        this.deviceDataList = res.data.list;
+        this.deviceDataList = res.data.list || [];
       });
       // 获取浏览器
       this.$fetch('getBrowserinfo', params).then(res => {
