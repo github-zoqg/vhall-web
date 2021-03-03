@@ -97,7 +97,7 @@ export default {
     getActiveList() {
       this.loading = true
       const pos = (this.page - 1) * this.pageSize
-      const limit = this.page * this.pageSize
+      const limit = this.pageSize
       const userId = sessionStorage.getItem('userId')
       let params = {
         pos: pos,
