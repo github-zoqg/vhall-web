@@ -193,6 +193,7 @@ export default {
   background: #FB3A32;
   text-align: center;
   overflow: hidden;
+  transition: width 0.3s;
   & .sidebar-logo-link {
     width: 224px;
     height: 64px;
