@@ -131,7 +131,7 @@
             <el-button class="createChapter" :disabled="tableData.length == 0" size="medium" round>
               新增章节<i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
-            <el-dropdown-menu slot="dropdown">
+            <el-dropdown-menu class="chapter-add-chapter-dropdown" slot="dropdown">
               <el-dropdown-item
                 v-for="item in docs"
                 :key="item.document_id"
@@ -944,6 +944,25 @@ export default {
   .chapter-popper.is-dark {
     background: rgba(255, 255, 255, 0.95);
     color: #1a1a1a;
+  }
+  .chapter-add-chapter-dropdown {
+    background: #222;
+    border-color: #222;
+    border: 1px solid #444;
+    padding: 4px 0;
+    width: 200px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+    .el-dropdown-menu__item {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      word-break: break-all;
+      color: #999;
+      &:hover {
+        background-color: #333;
+        color: #ccc;
+      }
+    }
   }
 </style>
 <style lang="less" scoped>
