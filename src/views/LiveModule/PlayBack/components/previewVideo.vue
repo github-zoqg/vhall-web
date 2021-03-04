@@ -328,18 +328,18 @@ export default {
 
 <style lang="less" scoped>
   .contentView{
-    padding: 16px;
+    padding: 4px;
     width: 100%;
     height: 560px;
     background: #222;
     position: relative;
     border-radius: 4px;
     .bigBox{
-      width: calc(100% - 32px);
-      height: calc(100% - 32px);
+      width: calc(100% - 8px);
+      height: calc(100% - 8px);
       position: absolute;
-      top: 16px;
-      right: 16px;
+      top: 4px;
+      right: 4px;
     }
     .docBox{
       width: 100%;
