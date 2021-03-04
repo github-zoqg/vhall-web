@@ -215,7 +215,7 @@ export default {
         {
           label: '领取时间',
           key: 'created_at',
-          width: 150,
+          width: 170,
         },
         {
           label: '领取金额（元）',

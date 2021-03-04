@@ -958,6 +958,7 @@ export default {
       overflow: hidden;
       word-break: break-all;
       color: #999;
+      text-align: left;
       &:hover {
         background-color: #333;
         color: #ccc;

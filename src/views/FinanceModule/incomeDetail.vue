@@ -75,22 +75,27 @@ export default {
         {
           label: '手机号',
           key: 'phone',
+          width: '150'
         },
         {
           label: '付费金额',
           key: 'pay_fee',
+          width: '110'
         },
         {
           label: '付费类型',
           key: 'type',
+          width: '110'
         },
         {
           label: '支付时间',
           key: 'pay_time',
+          width: '170'
         },
         {
           label: '是否参会',
           key: 'is_enter',
+          width: '110'
         }
       ]
     };

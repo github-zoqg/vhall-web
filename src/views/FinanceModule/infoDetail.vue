@@ -26,6 +26,7 @@
             <el-table-column
               prop="order_id"
               label="订单编号"
+              width="145"
               >
             </el-table-column>
             <el-table-column
@@ -35,18 +36,22 @@
             </el-table-column>
             <el-table-column
               prop="type"
-              label="订单类型">
+              label="订单类型"
+              width="90">
             </el-table-column>
             <el-table-column
               prop="amount"
-              label="交易金额">
+              label="交易金额"
+              width="110">
             </el-table-column>
             <el-table-column
               prop="content"
-              label="购买内容">
+              label="购买内容"
+              width="90">
             </el-table-column>
             <el-table-column
-              label="订单状态">
+              label="订单状态"
+              width="90">
               <template slot-scope="scope">
               <span class="buyStatus"><i :class="scope.row.status == '1' ? 'active-success': scope.row.status == '-1' ? 'active-error' : 'active-waiting'"></i>{{scope.row.statusText}}</span>
               </template>
@@ -305,7 +310,7 @@ export default {
         {
           label: '订单编号',
           key: 'id',
-          width: 110
+          width: 90
         },
         {
           label: '交易时间',
@@ -314,22 +319,22 @@ export default {
         {
           label: '订单类型',
           key: 'type',
-          width: 100
+          width: 90
         },
         {
           label: '购买内容',
           key: 'content',
-          width: 150
+          width: 95
         },
         {
           label: '订单状态',
           key: 'status',
-          width: 100
+          width: 95
         },
         {
           label: '来源',
           key: 'source',
-          width: 120
+          width: 95
         },
         {
           label: '启用日期',

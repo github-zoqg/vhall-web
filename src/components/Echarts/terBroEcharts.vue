@@ -54,7 +54,7 @@ export default {
         },
         legend: {
           orient: 'vertical',
-          top: 80,
+          top: 'middle',
           right: 40,
           icon: 'circle',
           itemWidth: 8,
