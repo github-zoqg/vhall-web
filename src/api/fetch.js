@@ -2,7 +2,7 @@ import 'whatwg-fetch';
 import { v1 as uuidV1 } from 'uuid';
 import qs from 'qs';
 import getApi from './config';
-import { sessionOrLocal } from '../utils/utils';
+import { sessionOrLocal,getQueryString } from '../utils/utils';
 import { Message } from 'element-ui';
 import errorMap from './errorMap'
 
@@ -35,7 +35,9 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
       if(_live_token.indexOf(ActiveID)!=-1){
         data.live_token = _live_token.split(`${ActiveID}_`)[1]
       }
-    } catch (error) {
+    } catch (error) {}
+    if(location.search.includes('liveT')){
+      data.live_token = getQueryString('liveT')
     }
   }
   // const interact_token = sessionStorage.getItem('interact_token') || null;
