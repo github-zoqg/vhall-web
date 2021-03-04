@@ -94,6 +94,7 @@ export default {
                /*  this.$router.push({
                   path: this.watchUrl
                 }) */
+                console.error(this.watchUrl);
                 window.location.href = this.watchUrl;
               }
             }).catch(res => {
@@ -165,6 +166,7 @@ export default {
     },
   },
   mounted() {
+    console.warn('最终的url', location.search == '', location.search);
     if(location.search == ''){
       this.watchUrl = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}`
     }else{
