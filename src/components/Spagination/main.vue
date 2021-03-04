@@ -48,7 +48,7 @@ export default {
 <style lang="less" scoped>
   .pageBox{
     /deep/.el-pagination.is-background .btn-next, /deep/.el-pagination.is-background .btn-prev, /deep/.el-pagination.is-background .el-pager li{
-      background-color: #fff;
+      background-color: transparent;
     }
     /deep/ .el-pager{
       .number{
@@ -61,7 +61,7 @@ export default {
 
     }
     /deep/.el-input__inner {
-     padding-right: 0px;
+     padding-right: -1px;
     }
     /deep/ .btn-next,/deep/ .btn-prev{
       border: 1px solid #CCCCCC;

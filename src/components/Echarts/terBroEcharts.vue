@@ -98,7 +98,7 @@ export default {
           itemStyle: {
             show: false,
             emphasis: {
-              shadowBlur: 10,
+              shadowBlur: 5,
               shadowOffsetX: 0,
               shadowColor: 'rgba(0, 0, 0, 0.5)'
             }
