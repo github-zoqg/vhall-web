@@ -363,6 +363,27 @@ export default {
       }
       .vhallPlayer-playBtn {
         margin-right: 10px;
+        &.play {
+          background-image: url(./images/play.png);
+          &:hover {
+            background-image: url(./images/play_hover.png);
+          }
+        }
+        &.pause {
+          background-image: url(./images/pause.png);
+          &:hover {
+            background-image: url(./images/pause_hover.png);
+          }
+        }
+      }
+      .vhallPlayer-volume-btn {
+        background-image: url(./images/volume.png);
+        &:hover {
+          background-image: url(./images/volume_hover.png);
+        }
+      }
+      .vhallPlayer-verticalSlider-popup {
+        padding-bottom: 4px;
       }
     }
     .playerBoxContainer{
