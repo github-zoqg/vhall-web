@@ -1092,6 +1092,9 @@ export default {
         background-color: #1a1a1a;
         /deep/ .vhall-watch-doc {
           background-color: #1a1a1a;
+          .vhall-doc-pager {
+            bottom: 8px;
+          }
         }
         .nodoc {
           display: flex;
