@@ -351,7 +351,7 @@ export default {
           return `请输入1-${this.limitInfo.total}的并发数`
         }
       } else {
-        return `请输入1-9999999.99的并发数`
+        return `请输入1-9999999的并发数`
       }
     },
     webniarType(){
