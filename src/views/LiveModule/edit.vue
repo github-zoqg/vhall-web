@@ -44,7 +44,7 @@
         <div class="modeBox">
           <div>
             <img src="../../common/images/live/mode-video_check@2x.png" :class="{active: liveMode== 2}" @click='liveModeChange(2)' v-if="liveMode== 2">
-            <img src="../../common/images/live/mode-video.png" alt="" @click='liveModeChange(2)' v-else>
+            <img src="../../common/images/live/mode-video@2x.png" alt="" @click='liveModeChange(2)' v-else>
             <p class="desc">视频直播</p>
             <!-- <el-container class='model'> -->
               <!-- :class="{active: liveMode== 2}" -->
@@ -59,11 +59,11 @@
           </div>
           <div>
             <template v-if="webniarIntact">
-              <img src="../../common/images/live/mode-active_disabled.png" alt="" style="cursor: default;">
+              <img src="../../common/images/live/mode-active_disabled@2x.png" alt="" style="cursor: default;">
             </template>
             <template v-else>
-             <img src="../../common/images/live/mode-active_check.png" alt="" :class="{active: liveMode== 3}" @click='!webniarIntact && liveModeChange(3)' v-if="liveMode== 3">
-              <img src="../../common/images/live/mode-active.png" alt="" @click='!webniarIntact && liveModeChange(3)' v-else>
+             <img src="../../common/images/live/mode-active_check@2x.png" alt="" :class="{active: liveMode== 3}" @click='!webniarIntact && liveModeChange(3)' v-if="liveMode== 3">
+              <img src="../../common/images/live/mode-active@2x.png" alt="" @click='!webniarIntact && liveModeChange(3)' v-else>
             </template>
             <!-- <el-container class='model'> -->
 
@@ -86,8 +86,8 @@
             <!-- <span class="notAllow" v-if="webniarIntact">未开通</span> -->
           </div>
           <div>
-            <img src="../../common/images/live/mode-media_check.png" :class="{active: liveMode == 1}" alt=""  @click='liveModeChange(1)' v-if="liveMode== 1">
-            <img src="../../common/images/live/mode-media.png" alt=""  @click='liveModeChange(1)' v-else>
+            <img src="../../common/images/live/mode-media_check@2x.png" :class="{active: liveMode == 1}" alt=""  @click='liveModeChange(1)' v-if="liveMode== 1">
+            <img src="../../common/images/live/mode-media@2x.png" alt=""  @click='liveModeChange(1)' v-else>
             <!-- <el-container class='model'>
               <img src="../../common/images/live/mode-media.png" alt="">
               <el-aside width="80px" class="block">
@@ -233,7 +233,7 @@
           :active-text="limitCapacityDesc"
           >
         </el-switch>
-         <VhallInput placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></VhallInput>
+        <VhallInput :placeholder="placeholder" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></VhallInput>
       </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" class="common-button length152" :disabled="!formData.title" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
@@ -341,6 +341,17 @@ export default {
         return '已开启，限制进入活动的观众最大并发数';
       }else{
         return "开启后，限制进入活动的观众最大并发数";
+      }
+    },
+    placeholder() {
+      if (!this.versionType && this.formData.limitCapacitySwtich) {
+        if (this.formData.capacity) {
+          return `请输入1-${this.limitInfo.total + this.limitInfo.extend}的并发数`
+        } else {
+          return `请输入1-${this.limitInfo.total}的并发数`
+        }
+      } else {
+        return `请输入1-9999999.99的并发数`
       }
     },
     webniarType(){
