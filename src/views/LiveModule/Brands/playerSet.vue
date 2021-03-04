@@ -568,7 +568,7 @@ export default {
         alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
         size:this.formHorse.size,      // 文字大小
         color: this.formHorse.color || '#FFFFFF',   //  文字颜色
-        interval: this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
+        interval:this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: this.formHorse.speed || 6000, // 跑马灯移动速度  3000快     6000中   10000慢
         // displayType: this.formHorse.scroll_type == 1 ? 0 : 1,
         position:this.formHorse.position
@@ -579,9 +579,6 @@ export default {
       this.$fetch('getScrolling', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200 && res.data.webinar_id) {
           this.formHorse = {...res.data};
-          // if (res.data.scroll_type == 2) {
-          //   this.formHorse.interval = 1
-          // }
           this.$nextTick(() => {
             this.$refs.pageThemeColors.initColor(res.data.color);
           })
