@@ -91,7 +91,7 @@
                     :maxlength="30" show-word-limit></pwd-input>
         </el-form-item>
         <el-form-item label="账号角色" prop="role_id">
-          <el-select placeholder="请选择角色" clearable round v-model="sonForm.role_id">
+          <el-select placeholder="请选择角色"  round v-model="sonForm.role_id">
             <el-option
               v-for="item in roleList"
               :key="item.id"

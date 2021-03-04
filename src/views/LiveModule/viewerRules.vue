@@ -332,7 +332,7 @@ export default {
         ]
       },
       pwdForm: {
-        password: null
+        password: ''
       },
       pwdFormRules: {
         password: [
