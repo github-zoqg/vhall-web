@@ -1437,9 +1437,9 @@ export default {
           width: 0;
         }
       }
-      .el-table_2_column_7 .cell {
-        padding-left: 0px;
-      }
+      // .el-table_2_column_7 .cell {
+      //   padding-left: 0px;
+      // }
       .el-table__row.expanded {
         &:not(.el-table__row--level-0) {
           .el-table_2_column_7  .cell {
