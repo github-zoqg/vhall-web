@@ -653,6 +653,9 @@ export default {
   }
   p{
     text-align: center;
+    i{
+      vertical-align: text-top;
+    }
     &:nth-child(1){
       margin-bottom: 10px;
     }
