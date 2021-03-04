@@ -78,7 +78,7 @@ export default {
 }
 /*主体*/
 .layout__left {
-  // min-height: 400px;
+  min-height: 400px;
   float: left;
   font-size: 20px;
   background: @color_1A;
