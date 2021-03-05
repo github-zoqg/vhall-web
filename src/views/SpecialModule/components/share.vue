@@ -72,12 +72,13 @@ export default {
         this.wxDialogVisible = true;
       }
       else if (type === 'sina') {
-        url = `http://service.weibo.com/share/share.php?url=${this.shareVo.url || this.url}`
+        url = `//service.weibo.com/share/share.php?url=${this.shareVo.url || this.url}`;
+        // url = `http://service.weibo.com/share/share.php?url=${this.shareVo.url || this.url}`
         window.open(url, '_blank');
       }
       else if (type === 'qq') {
-        // url = `//connect.qq.com/widget/shareqq/index.html?title=${this.baseInfo.title}&url=${this.link}&summary=${this.baseInfo.intro}&pics=${this.baseInfo.pic}`;
-        url = `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${this.shareVo.url || this.url}`
+        url = `//connect.qq.com/widget/shareqq/index.html?url=${this.shareVo.url || this.url}`;
+        // url = `https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=${this.shareVo.url || this.url}`
         window.open(url, '_blank');
       }
     },

@@ -26,11 +26,13 @@
             <el-table-column
               prop="order_id"
               label="订单编号"
-              width="145"
+              show-overflow-tooltip
+              width="90"
               >
             </el-table-column>
             <el-table-column
               prop="create_time"
+              show-overflow-tooltip
               label="交易时间"
               >
             </el-table-column>
@@ -41,31 +43,36 @@
             </el-table-column>
             <el-table-column
               prop="amount"
+              show-overflow-tooltip
               label="交易金额"
-              width="110">
+              width="95">
             </el-table-column>
             <el-table-column
               prop="content"
+              show-overflow-tooltip
               label="购买内容"
-              width="90">
+              width="95">
             </el-table-column>
             <el-table-column
               label="订单状态"
-              width="90">
+              show-overflow-tooltip
+              width="95">
               <template slot-scope="scope">
               <span class="buyStatus"><i :class="scope.row.status == '1' ? 'active-success': scope.row.status == '-1' ? 'active-error' : 'active-waiting'"></i>{{scope.row.statusText}}</span>
               </template>
             </el-table-column>
             <el-table-column
               prop="start_time"
+              show-overflow-tooltip
               label="启用日期">
             </el-table-column>
             <el-table-column
               prop="end_time"
+              show-overflow-tooltip
               label="失效日期">
             </el-table-column>
             <el-table-column
-              width="150"
+              width="130"
               label="操作">
               <template slot-scope="scope">
                 <el-button
