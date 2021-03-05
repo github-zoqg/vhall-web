@@ -38,8 +38,9 @@
             </el-table-column>
             <el-table-column
               prop="type"
+              show-overflow-tooltip
               label="订单类型"
-              width="90">
+              width="120">
             </el-table-column>
             <el-table-column
               prop="amount"
@@ -205,8 +206,24 @@ export default {
               value: 11
             },
             {
-              label: '并发扩展包(人/次)',
+              label: '并发扩展包',
               value: 12
+            },
+            {
+              label: '专业版',
+              value: 13
+            },
+            {
+              label: '回放流量包',
+              value: 14
+            },
+            {
+              label: '免费回放流量包',
+              value: 15
+            },
+            {
+              label: '并发预充值',
+              value: 16
             }
           ]
         },
