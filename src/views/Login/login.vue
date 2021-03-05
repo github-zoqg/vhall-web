@@ -446,7 +446,7 @@ export default {
         // 存储控制台-channel_id频道
         sessionOrLocal.set('SAAS_V3_SSO_TOKEN', res.data.sso_token || '', 'localStorage');
         // 用户登录完成后，用户ID写入Cookie
-        Cookies.set('user_id', res.data.user_id)
+        Cookies.set('gray-id', res.data.user_id)
         // 登录完成后，获取当前用户的权限
         this.$fetch('planFunctionGet', {}).then(vRes => {
           let permissions = vRes.data.permissions;
