@@ -34,8 +34,8 @@
           <el-button type="primary" round @click="goLive" class="length152" v-preventReClick>发起直播</el-button>
           <iframe src="" class="hide" frameborder="0" scrolling="no" id="start_live"></iframe>
         </div>
-        <div :class="['v-download', {'css': executeType === 'ctrl'} ]" v-if="chooseType === 'client'">
-          客户端启动遇到问题？您可以尝试：<a target="_blank" href="//t-alistatic01.e.vhall.com/upload/assistant/file_url/ac/12/VhallTool.exe" >下载客户端</a> 联系客服：400-888-9970
+        <div :class="['v-download', {'css': executeType === 'ctrl'} ]" v-if="chooseType === 'client' && downloadUrl">
+          客户端启动遇到问题？您可以尝试：<a target="_blank" :href="downloadUrl" >下载客户端</a> 联系客服：400-888-9970
         </div>
       </div>
     </div>
@@ -64,6 +64,7 @@ export default {
       browserStatus: false,
       clientOpen: '',
       executeType: 'ctrl', // 是否控制台 ctrl 控制台
+      downloadUrl: ''
     };
   },
   created(){
@@ -76,8 +77,16 @@ export default {
     let _data = this.$route.params
     this.arr = [_data.str, _data.role]
     this.getRoleUrl();
+    this.getDownloadUrl();
   },
   methods: {
+    getDownloadUrl() {
+      this.$fetch('getPCDownloadUrl', {
+        source: 'assistant'
+      }).then(res => {
+        this.downloadUrl = res.data.download_link
+      })
+    },
     changeChoose(type) {
       this.chooseType = type;
     },
