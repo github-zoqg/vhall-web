@@ -233,6 +233,30 @@ export default {
     padding: 20px;
     overflow: auto;
     max-height: 500px;
+    // 滚动条的宽度
+    &::-webkit-scrollbar {
+      width: 6px; // 横向滚动条
+      height: 6px; // 纵向滚动条 必写
+    }
+    // 滚动条的滑块
+    &::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      transition: all 0.3s;
+      cursor: pointer;
+      display: none;
+      background-color: #cccccc;
+      &:hover {
+        background-color: #cccccc;
+      }
+      &:active {
+        background-color: #cccccc;
+      }
+    }
+    &:hover {
+      &::-webkit-scrollbar-thumb {
+        display: block;
+      }
+    }
   }
   .special-info{
     background: #fff;
@@ -274,7 +298,7 @@ export default {
           box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.15);
         }
         .top{
-          height: 150px;
+          height: 150.4px;
           /* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
           background: #1A1A1A;
           background-size: 400% 400%;

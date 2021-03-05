@@ -17,7 +17,7 @@
       <div class="account__panel--right">
         <div class="account--user">
           <!--<icon icon-class="saaszizhanghao_tubiao" style="font-size: 56px;"></icon>-->
-          <img :src="avatarImgUrl" class="image-avatar" alt=""/>
+          <div class="image-contain"><img :src="avatarImgUrl" class="image-avatar" alt=""/></div>
           <p class="account--title" :title="userInfo && userInfo.nick_name ? userInfo.nick_name : ''">{{userInfo && userInfo.nick_name ? userInfo.nick_name : '--'}}</p>
           <p class="account--notice" :title="userInfo && userInfo.position ? userInfo.position : ''">{{userInfo && userInfo.position ? userInfo.position : '--'}}</p>
         </div>
@@ -181,13 +181,25 @@ export default {
 }
 .account--user {
   text-align: center;
-  img {
-    display: block;
+  .image-contain{
     margin: 0 auto;
     width: 100px;
     height: 100px;
-    border: 1px solid #E2E2E2;
-    border-radius: 100%;
+    overflow: hidden;
+    // border: 1px solid #E2E2E2;
+    border-radius: 50%;
+    background: #1a1a1a;
+  }
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit:cover;
+    // margin: 0 auto;
+    // width: 100px;
+    // height: 100px;
+    // border: 1px solid #E2E2E2;
+    border-radius: 50%;
   }
   .account--title {
     margin-top: 16px;

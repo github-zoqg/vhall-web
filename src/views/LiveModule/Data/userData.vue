@@ -412,7 +412,7 @@ export default {
   }
 
   @media screen and (max-width:1920px) {
-    /deep/.el-input {
+    .search-tag /deep/.el-input {
       width: 160px!important;
     }
   }

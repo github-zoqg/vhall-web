@@ -26,41 +26,54 @@
             <el-table-column
               prop="order_id"
               label="订单编号"
+              show-overflow-tooltip
+              width="145"
               >
             </el-table-column>
             <el-table-column
               prop="create_time"
+              show-overflow-tooltip
               label="交易时间"
               >
             </el-table-column>
             <el-table-column
               prop="type"
-              label="订单类型">
+              show-overflow-tooltip
+              label="订单类型"
+              width="120">
             </el-table-column>
             <el-table-column
               prop="amount"
-              label="交易金额">
+              show-overflow-tooltip
+              label="交易金额"
+              width="95">
             </el-table-column>
             <el-table-column
               prop="content"
-              label="购买内容">
+              show-overflow-tooltip
+              label="购买内容"
+              width="95">
             </el-table-column>
             <el-table-column
-              label="订单状态">
+              label="订单状态"
+              show-overflow-tooltip
+              width="95">
               <template slot-scope="scope">
               <span class="buyStatus"><i :class="scope.row.status == '1' ? 'active-success': scope.row.status == '-1' ? 'active-error' : 'active-waiting'"></i>{{scope.row.statusText}}</span>
               </template>
             </el-table-column>
             <el-table-column
               prop="start_time"
+              show-overflow-tooltip
               label="启用日期">
             </el-table-column>
             <el-table-column
               prop="end_time"
+              show-overflow-tooltip
               label="失效日期">
             </el-table-column>
             <el-table-column
-              width="150"
+              width="130"
               label="操作">
               <template slot-scope="scope">
                 <el-button
@@ -193,8 +206,24 @@ export default {
               value: 11
             },
             {
-              label: '并发扩展包(人/次)',
+              label: '并发扩展包',
               value: 12
+            },
+            {
+              label: '专业版',
+              value: 13
+            },
+            {
+              label: '回放流量包',
+              value: 14
+            },
+            {
+              label: '免费回放流量包',
+              value: 15
+            },
+            {
+              label: '并发预充值',
+              value: 16
             }
           ]
         },
@@ -305,7 +334,7 @@ export default {
         {
           label: '订单编号',
           key: 'id',
-          width: 110
+          width: 90
         },
         {
           label: '交易时间',
@@ -314,22 +343,22 @@ export default {
         {
           label: '订单类型',
           key: 'type',
-          width: 100
+          width: 90
         },
         {
           label: '购买内容',
           key: 'content',
-          width: 150
+          width: 95
         },
         {
           label: '订单状态',
           key: 'status',
-          width: 100
+          width: 95
         },
         {
           label: '来源',
           key: 'source',
-          width: 120
+          width: 95
         },
         {
           label: '启用日期',

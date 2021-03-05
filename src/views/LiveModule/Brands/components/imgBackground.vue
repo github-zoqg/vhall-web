@@ -263,7 +263,7 @@ export default {
   text-align: left;
 }
 .dialog-footer {
-  padding-top: 24px;
+  // padding-top: 24px;
   text-align: right;
   /deep/button.el-button{
     &:last-child{

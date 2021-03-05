@@ -812,9 +812,9 @@ export default {
             color: #666;
           }
         }
-        // .vhall-watch-doc[data-v-65e8c4ba] {
-        //   background-color: #000;
-        // }
+        .vhall-watch-doc .vhall-doc-pager{
+          bottom: 8px;
+        }
       }
     }
   }

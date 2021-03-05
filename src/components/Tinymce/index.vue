@@ -99,11 +99,6 @@ export default {
         fontsize_formats: '12px 14px 16px 18px 24px 36px 48px 56px 72px',
         // paste_data_images: false, // 允许粘贴图像
         images_file_types: 'jpeg,jpg,png,gif,bmp',
-        setup(editor) {
-          editor.on('init', function(e){
-            this.getBody().style.fontSize = '14px';
-          })
-        },
         urlconverter_callback: (url, node, onSave, name) => {
           if (node === 'img' && url.startsWith('blob:')) {
             // Do some custom URL conversion

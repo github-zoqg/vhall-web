@@ -294,10 +294,11 @@ export default {
     border-radius: 4px;
     .docBox{
       float: left;
-      width: 68%;
+      width: 68.4%;
       height: 100%;
       display: flex;
       flex-direction: column;
+      border-right: 1px solid #333;
       .docInner{
         height: 100%;
         background-color: #1a1a1a;
@@ -363,11 +364,32 @@ export default {
       }
       .vhallPlayer-playBtn {
         margin-right: 10px;
+        &.play {
+          background-image: url(./images/play.png);
+          &:hover {
+            background-image: url(./images/play_hover.png);
+          }
+        }
+        &.pause {
+          background-image: url(./images/pause.png);
+          &:hover {
+            background-image: url(./images/pause_hover.png);
+          }
+        }
+      }
+      .vhallPlayer-volume-btn {
+        background-image: url(./images/volume.png);
+        &:hover {
+          background-image: url(./images/volume_hover.png);
+        }
+      }
+      .vhallPlayer-verticalSlider-popup {
+        padding-bottom: 4px;
       }
     }
     .playerBoxContainer{
       float: left;
-      width: 32%;
+      width: 31.6%;
       height: 100%;
       .playerBox {
         height: 170px;

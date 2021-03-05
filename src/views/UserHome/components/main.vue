@@ -400,7 +400,7 @@ export default {
 }
 /* 直播、专题*/
 .live-panel {
-  padding: 0 24px;
+  padding: 0 20px;
 }
 .pageBox {
   padding: 16px 0 40px 0;
@@ -430,7 +430,7 @@ export default {
     }
     .top{
       cursor: pointer;
-      height: 170px;
+      height: 170.8px;
      /*  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
       background: #1A1A1A;
       background-size: 400% 400%;
@@ -439,6 +439,9 @@ export default {
       box-sizing: border-box;
       position: relative;
       border-radius: 4px 4px 0 0;
+      @media (max-width:1919px) {
+        height: 170px;
+      }
       img{
         width: 100%;
         height: 100%;

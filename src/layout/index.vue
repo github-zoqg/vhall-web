@@ -78,10 +78,16 @@ export default {
 }
 /*主体*/
 .layout__left {
-  min-height: 400px;
   float: left;
   font-size: 20px;
   background: @color_1A;
+  transition: all 0.3s;
+  &:before {
+    content: '';
+    display: block;
+    height: 1px;
+    background-color: #fff;
+  }
   &.hideSidebar {
     width: 84px;
   }

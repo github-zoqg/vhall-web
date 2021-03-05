@@ -302,6 +302,7 @@
     padding-top: 12px;
     padding-bottom: 12px;
     line-height: 22px;
+    font-size: @font_size_16;
     border-left: 4px solid @background_black;
     background: @background_black;
 
@@ -397,7 +398,9 @@
     }
   }
 }
-
+.el-checkbox__inner{
+  background-color: transparent;
+}
 /*悬浮退出重置*/
 .zdy-hover-dropdown.el-dropdown-menu {
   padding: 0 0;
@@ -475,13 +478,13 @@
 .el-select-dropdown__item{
   &.selected {
     color: #1A1A1A;
-    background: #e6e6e6;
-    background-color: #e6e6e6;
+    background: #f7f7f7;
+    background-color: #f7f7f7;
   }
   &.selected:hover{
     color: #1A1A1A;
-    background: #e6e6e6;
-    background-color: #e6e6e6;
+    background: #f7f7f7;
+    background-color: #f7f7f7;
   }
   &:hover{
     color: #1A1A1A;
@@ -1077,9 +1080,9 @@ button.el-button.el-button--white-primary {
   .el-message-box__message p {
     color: #1a1a1a;
   }
-  /deep/.el-message-box__btns {
+  .el-message-box__btns {
     padding: 24px 32px;
-    /deep/.el-button {
+    .el-button {
       border-radius: 20px;
       min-width: 76px!important;
       min-height: 36px!important;

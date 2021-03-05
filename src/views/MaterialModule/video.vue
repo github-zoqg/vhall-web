@@ -616,9 +616,6 @@ export default {
   }
   .pageBox{
     margin-top: 30px;
-    /deep/.el-input__inner{
-      padding-right: 12px;
-    }
   }
 .search-tag{
   float: right;

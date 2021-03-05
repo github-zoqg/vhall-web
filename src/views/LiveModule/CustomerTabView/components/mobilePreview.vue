@@ -469,7 +469,7 @@ export default {
         }
 
         &:hover{
-          background: #e6e6e6;
+          background: #f7f7f7;
           color: #1a1a1a;
         }
         input{

@@ -313,7 +313,7 @@ export default {
     text-align: left;
     max-width: 445px;
     height: 140px;
-    padding: 32px 40px;
+    padding: 32px 25px;
     position: relative;
     background: #fff;
     border-radius: 4px;

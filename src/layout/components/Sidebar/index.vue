@@ -1,7 +1,7 @@
 <template>
   <div :class="{'has-logo':showLogo}">
     <div class="sidebar-logo-container" :class="{'collapse':!sidebar.opened}">
-      <transition name="sidebarLogoFade">
+      <transition>
         <!-- 关闭情况下 -->
         <router-link v-if="!sidebar.opened" key="collapse" class="sidebar-logo-link" to="/">
           <img v-if="logo" :src="logo" class="sidebar-logo">
@@ -193,6 +193,7 @@ export default {
   background: #FB3A32;
   text-align: center;
   overflow: hidden;
+  transition: width 0.3s;
   & .sidebar-logo-link {
     width: 224px;
     height: 64px;

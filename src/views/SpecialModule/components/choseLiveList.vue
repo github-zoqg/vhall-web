@@ -259,7 +259,7 @@ export default {
     &__cover{
       position: relative;
       width: 100%;
-      height: 94px;
+      height: 93px;
       background: #1A1A1A;
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
