@@ -185,8 +185,9 @@ export default {
     margin: 0 auto;
     width: 100px;
     height: 100px;
-    border: 1px solid #E2E2E2;
-    border-radius: 100%;
+    overflow: hidden;
+    // border: 1px solid #E2E2E2;
+    border-radius: 50%;
     background: #1a1a1a;
   }
   img {
