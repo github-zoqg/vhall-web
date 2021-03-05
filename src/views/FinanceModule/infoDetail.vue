@@ -27,7 +27,7 @@
               prop="order_id"
               label="订单编号"
               show-overflow-tooltip
-              width="90"
+              width="145"
               >
             </el-table-column>
             <el-table-column
