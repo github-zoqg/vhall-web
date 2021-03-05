@@ -3,13 +3,13 @@
     <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
       <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
-          <template slot="title">
+          <!-- <template slot="title"> -->
             <!--
             <icon class="sidebar-font" :icon-class="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" v-if="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"></icon>
             -->
             <i :class="`sidebar-font ${onlyOneChild.meta.icon||(item.meta&&item.meta.icon)}`" v-if="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)"/>
             <span slot='title' v-if="onlyOneChild.meta.title">{{onlyOneChild.meta.title}}</span>
-          </template>
+          <!-- </template> -->
         </el-menu-item>
       </app-link>
     </template>

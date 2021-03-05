@@ -13,7 +13,7 @@
         openSidebar: openSidebar,
         withoutAnimation: false
       }">
-        <header class="header__nav">
+        <header class="header__nav" :class="showShadow ? 'show-shadow' : ''">
           <navbar />
         </header>
         <section class="section__main">
@@ -30,16 +30,31 @@ export default {
   components: { Sidebar, Navbar, AppMain },
   data() {
     return {
-      openSidebar: true
+      openSidebar: true,
+      showShadow: false
     };
   },
   mounted() {
     this.$EventBus.$on("hamburger", (status) => {
       this.openSidebar = !!status;
     });
+    this.$nextTick(() => {
+      window.addEventListener("scroll", this.handleScroll); // 监听（绑定）滚轮滚动事件
+    });
   },
-  destroyed() {
+  beforeDestroy() {
     this.$EventBus.$off('hamburger');
+    window.removeEventListener("scroll", this.handleScroll);
+  },
+  methods: {
+    handleScroll() {
+      let scrollHeight = document.documentElement.scrollTop || document.body.scrollTop; //滚动高度
+      if (scrollHeight > 40) {
+        this.showShadow = true;
+      } else {
+        this.showShadow = false;
+      }
+    }
   }
 };
 </script>
@@ -58,12 +73,21 @@ export default {
   z-index: 100;
   height: 64px;
 }
+.show-shadow{
+  box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.05);
+}
 /*主体*/
 .layout__left {
-  min-height: 400px;
   float: left;
   font-size: 20px;
   background: @color_1A;
+  transition: all 0.3s;
+  &:before {
+    content: '';
+    display: block;
+    height: 1px;
+    background-color: #fff;
+  }
   &.hideSidebar {
     width: 84px;
   }

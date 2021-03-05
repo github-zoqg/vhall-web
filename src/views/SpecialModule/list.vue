@@ -22,10 +22,11 @@
           @keyup.enter.native="searchHandler"
           @clear="searchHandler"
           clearable
+          v-clearEmoij
           v-model="keyWords">
           <i
             class="el-icon-search el-input__icon"
-            slot="suffix"
+            slot="prefix"
             @click="searchHandler">
           </i>
         </VhallInput>
@@ -51,13 +52,13 @@
             </div>
             <p class="liveOpera">
               <el-tooltip class="item" effect="dark" content="编辑" placement="top" v-tooltipMove>
-                <i class="iconfont-v3 saasicon-pencil" @click.prevent.stop="editSpecialInfo(item.id)"></i>
+                <i class="iconfont-v3 saasicon-pencil1" @click.prevent.stop="editSpecialInfo(item.id)"></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="预览" placement="top" v-tooltipMove>
-                <i class="iconfont-v3 saasicon-eye" @click.prevent.stop="specialDetail(item)"></i>
+                <i class="iconfont-v3 saasicon-eye1" @click.prevent.stop="specialDetail(item)"></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="分享" placement="top" v-tooltipMove>
-                <i class="iconfont-v3 saasicon-share" @click.prevent.stop="toShare(item.id)"></i>
+                <i class="iconfont-v3 saasicon-share1" @click.prevent.stop="toShare(item.id)"></i>
               </el-tooltip>
               <el-tooltip class="item isDelete" effect="dark" content="删除" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-trash" @click.prevent.stop="deleteHandle(item.id)"></i>
@@ -76,15 +77,6 @@
         <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建专题</el-button>
       </noData>
     </div>
-    <!-- <VhallDialog
-      title="分享"
-      :visible.sync="dialogShareVisible"
-      :close-on-click-modal="false"
-      width="592px">
-      <div class="content">
-
-      </div>
-   </VhallDialog> -->
    <share ref="share" :shareVo="shareVo"></share>
    <el-dialog
       custom-class="dialog-tutorial-wrap"
@@ -387,18 +379,16 @@ export default {
       }
     }
     .search-tag {
+      /deep/ .el-input__icon {
+        line-height: 36px;
+      }
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px!important;
+        padding-right: 30px!important;
       }
-      /deep/ .el-input__suffix {
+      /deep/ .el-input__prefix {
         cursor: pointer;
-        /deep/ .el-input__icon {
-          width: auto;
-          margin-right: 5px;
-          line-height: 36px;
-        }
       }
     }
   }
@@ -411,7 +401,7 @@ export default {
     .liveItem{
       // width: 312px;
       height: 314px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       // float: left;
       // margin-right: 40px;
       .inner{
@@ -425,7 +415,7 @@ export default {
         box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
       }
       .top{
-        height: 175px;
+        height: 176.8px;
         background: #1A1A1A;
         // background: linear- (-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
         background-size: 400% 400%;
@@ -436,18 +426,18 @@ export default {
         border-radius: 4px 4px 0 0;
         cursor: pointer;
         .img-box{
-          width: 101%;
+          width: 100%;
           height: 100%;
           position: absolute;
           top:0;
           left: 0;
-          border-radius: 4px 8px 0 0;
+          border-radius: 4px 4px 0 0;
           img{
             width: 100%;
             height: 100%;
             object-fit: scale-down;
             cursor: pointer;
-            border-radius: 4px 8px 0 0;
+            border-radius: 4px 4px 0 0;
           }
         }
         // img{
@@ -530,6 +520,11 @@ export default {
           }
           .isDelete{
             float: right;
+          }
+          .item{
+            &:hover{
+              color: #222;
+            }
           }
         }
       }

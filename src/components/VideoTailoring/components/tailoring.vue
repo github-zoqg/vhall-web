@@ -251,6 +251,7 @@
             v-model="eventLabel"
             :placeholder="t('请输入标记文字')"
             maxlength="20"
+            v-clearEmoij
             show-word-limit
           ></VhallInput>
         </div>
@@ -346,7 +347,7 @@ export default {
       currentUnit: this.initUnit, // 当前时间单位 共七档对应 1s、3s、6s、12s、30s、60s、120s
       isSliderDisabled: true,
       sliderVal: 0, // 视频时间
-      statePaly: true, // 默认播放状态
+      statePaly: false, // 默认播放状态
       voice: 60, // 音量
       catchVoice: 0,
       delCuttingPoint: '',

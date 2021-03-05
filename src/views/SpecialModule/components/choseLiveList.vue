@@ -10,8 +10,8 @@
       :before-close="cancelSelect"
       custom-class="choose-gift"
     >
-      <VhallInput v-model="keyword" placeholder="请输入直播标题" @keyup.enter.native="inputChange"  @clear="inputChange" class="head-btn search resetRightBrn" clearable>
-        <i slot="suffix" class="iconfont-v3 saasicon_search" :class="{'disabled': !keyword}" @click="inputChange(true)"></i>
+      <VhallInput v-model="keyword" v-clearEmoij placeholder="请输入直播标题" @keyup.enter.native="inputChange"  @clear="inputChange" class="head-btn search resetRightBrn" clearable>
+        <i slot="prefix" class="el-icon-search el-input__icon" :class="{'disabled': !keyword}" @click="inputChange(true)"></i>
       </VhallInput>
       <div class="select-matrial-wrap">
         <div class="material-box" v-show="total">
@@ -203,23 +203,27 @@ export default {
 .select-matrial-wrap{
   box-sizing: border-box;
   width: 100%;
-  height: 320px;
+  height: 350px;
   padding: 16px 0 0 32px;
   overflow: hidden;
   .material-box {
     height: 335px;
     margin-bottom: 10px;
   }
-  .head-btn{
-    width: 100%;
-    /deep/.el-input__inner{
-      width: 240px;
-      margin-left: 18px;
-    }
-    /deep/.el-input__prefix{
-      margin-left: 18px;
-    }
-  }
+  // .head-btn{
+  //   width: 100%;
+  //   /deep/.el-input__inner{
+  //     width: 240px;
+  //     margin-left: 18px;
+  //   }
+  //   /deep/ .el-input__icon {
+  //     line-height: 36px;
+  //   }
+  //   /deep/.el-input__prefix{
+  //     cursor: pointer;
+  //     left: 9px;
+  //   }
+  // }
    .vh-chose-active-item{
     cursor: pointer;
     display: inline-block;
@@ -255,7 +259,7 @@ export default {
     &__cover{
       position: relative;
       width: 100%;
-      height: 94px;
+      height: 93px;
       background: #1A1A1A;
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
@@ -376,9 +380,16 @@ export default {
       width: 220px;
       height: 36px;
       margin-left: 32px;
+      /deep/ .el-input__icon {
+        line-height: 36px;
+      }
       .el-input__inner {
         border-radius: 18px;
         border: 1px solid #CCC;
+        padding-right: 30px!important;
+      }
+      /deep/.el-input__prefix{
+        cursor: pointer;
       }
     }
     /deep/ .saasicon_search {

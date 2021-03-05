@@ -28,6 +28,7 @@
       <VhallInput
         @keyup.enter.native="searchGifts"
         clearable
+        v-clearEmoij
         @clear="searchGifts"
         class="head-btn fr search resetRightBrn search-tag"
         v-model="searchName"
@@ -37,7 +38,7 @@
         <i
           style="cursor: pointer; line-height: 36px;"
           class="el-icon-search el-input__icon"
-          slot="suffix"
+          slot="prefix"
           @click="searchGifts">
         </i>
       </VhallInput>
@@ -129,7 +130,7 @@
           </upload>
         </el-form-item>
         <el-form-item label="礼物名称" prop="name">
-            <VhallInput v-model="editParams.name" show-word-limit :maxlength="10" autocomplete="off"  placeholder="请输入礼物名称"></VhallInput>
+            <VhallInput v-model="editParams.name" v-clearEmoij show-word-limit :maxlength="10" autocomplete="off"  placeholder="请输入礼物名称"></VhallInput>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
             <VhallInput @input="handleInput" v-model.trim.number="editParams.price" autocomplete="off" :maxlength="10" placeholder="请输入0-9999.99">
@@ -165,7 +166,7 @@
         <i
           style="cursor: pointer;"
           class="el-icon-search el-input__icon"
-          slot="suffix"
+          slot="prefix"
           @click="searchMaterialGift">
         </i>
       </VhallInput>
@@ -187,9 +188,10 @@
                 <span class="gift-price">￥{{item.price}}</span>
               </div>
               <!-- <i v-if="item.isChecked" class="el-icon-check"></i> -->
-              <label class="img-tangle" v-show="item.isChecked">
+              <!-- <label class="img-tangle" v-show="item.isChecked">
                 <i class="el-icon-check"></i>
-              </label>
+              </label> -->
+              <label  class="img-tangle" v-show="item.isChecked"><img src="../../../common/images/icon-choose.png" alt=""></label>
             </div>
           </el-scrollbar>
         </div>
@@ -959,7 +961,7 @@ export default {
     }
   .head-operat{
     margin-bottom: 20px;
-    /deep/ .el-input__suffix-inner .el-input__icon {
+    /deep/ .el-input__prefix-inner .el-input__icon {
       line-height: 36px;
     }
     .search-tag{
@@ -969,18 +971,16 @@ export default {
         border-radius: 18px;
         padding: 0 12px;
       } */
+      /deep/ .el-input__icon {
+        line-height: 36px;
+      }
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px!important;
+        padding-right: 30px!important;
       }
-      /deep/ .el-input__suffix {
+      /deep/ .el-input__prefix {
         cursor: pointer;
-        /deep/ .el-input__icon {
-          width: auto;
-          margin-right: 5px;
-          line-height: 36px;
-        }
       }
     }
     .head-btn{
@@ -1075,6 +1075,7 @@ export default {
       border-radius: 4px;
       padding: 11px;
       border: 1px solid #F5F5F5;
+      transition: all 0.15s ease-in;
       margin-bottom: 12px;
       &:nth-child(2n + 1) {
         margin-right: 12px;
@@ -1117,29 +1118,25 @@ export default {
       }
       &:hover{
         cursor: pointer;
+        box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       }
       .img-tangle{
-        position: absolute;
-        right: 0;
-        top:0;
-        width: 0;
-        height: 0;
-        border: 10px solid transparent;
-        border-right-color: #FB3A32;
-        border-top-color: #FB3A32;
-        i{
-          color:#fff;
           position: absolute;
-          top: -8px;
-          right:-11px;
-          font-size: 10px;
+          right: -1px;
+          top:-1px;
+          width: 20px;
+          height: 20px;
+          font-size: 0;
+          img{
+            width: 100%;
+            height: 100%;
+          }
         }
-      }
     }
     .matrial-item.active{
       border: 1px solid #fb3a32;
       position: relative;
-      box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
     }
   }
   .pageBox{
@@ -1188,17 +1185,13 @@ export default {
     /deep/ .el-input__inner {
       border-radius: 20px;
       height: 36px;
-      padding-right: 50px!important;
+      padding-right: 30px!important;
     }
-
-    /deep/ .el-input__suffix {
+    /deep/ .el-input__icon {
+      line-height: 36px;
+    }
+    /deep/ .el-input__prefix {
       cursor: pointer;
-
-      /deep/ .el-input__icon {
-        width: auto;
-        margin-right: 5px;
-        line-height: 36px;
-      }
     }
   }
 }
@@ -1216,6 +1209,9 @@ export default {
     .el-input__inner {
       border-radius: 18px;
       border: 1px solid #CCC;
+    }
+    /deep/ .el-input__icon {
+      line-height: 36px;
     }
   }
 }

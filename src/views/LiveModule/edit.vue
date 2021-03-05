@@ -6,11 +6,11 @@
       :rules="[
         { required: true, max: 100,  message: `请输入${webniarTypeToZH}标题`, trigger: 'blur' },
       ]">
-        <VhallInput v-model="formData.title" :maxlength="100" class="title-inform" autocomplete="off" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
+        <VhallInput v-model="formData.title" v-clearEmoij :maxlength="100" class="title-inform" autocomplete="off" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item label="直播时间" required v-if="webniarType=='live'" class="item-time">
           <el-col :span="11.5">
-            <el-form-item prop="date1" style="width:270px;" :rules="[
+            <el-form-item prop="date1" style="width:283px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
             ]">
               <el-date-picker type="date" class="date" prefix-icon="iconfont-v3 saasicon_date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%">
@@ -19,10 +19,10 @@
           </el-col>
           <el-col class="line" :span="1">-</el-col>
           <el-col :span="11.5">
-            <el-form-item prop="date2" style="width:270px;" :rules="[
+            <el-form-item prop="date2" style="width:284px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
-            <el-time-picker placeholder="选择时间" :disabled="!formData.date1" type="datetime" :picker-options="{
+            <el-time-picker placeholder="选择时间" :default-value="dafaultTime" :disabled="!formData.date1" type="datetime" :picker-options="{
               selectableRange: rangHourMins
             }" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
@@ -43,8 +43,8 @@
         </div>
         <div class="modeBox">
           <div>
-            <img src="../../common/images/live/mode-video_check.png" :class="{active: liveMode== 2}" @click='liveModeChange(2)' v-if="liveMode== 2">
-            <img src="../../common/images/live/mode-video.png" alt="" @click='liveModeChange(2)' v-else>
+            <img src="../../common/images/live/mode-video_check@2x.png" :class="{active: liveMode== 2}" @click='liveModeChange(2)' v-if="liveMode== 2">
+            <img src="../../common/images/live/mode-video@2x.png" alt="" @click='liveModeChange(2)' v-else>
             <p class="desc">视频直播</p>
             <!-- <el-container class='model'> -->
               <!-- :class="{active: liveMode== 2}" -->
@@ -59,11 +59,11 @@
           </div>
           <div>
             <template v-if="webniarIntact">
-              <img src="../../common/images/live/mode-active_disabled.png" alt="" style="cursor: default;">
+              <img src="../../common/images/live/mode-active_disabled@2x.png" alt="" style="cursor: default;">
             </template>
             <template v-else>
-             <img src="../../common/images/live/mode-active_check.png" alt="" :class="{active: liveMode== 3}" @click='!webniarIntact && liveModeChange(3)' v-if="liveMode== 3">
-              <img src="../../common/images/live/mode-active.png" alt="" @click='!webniarIntact && liveModeChange(3)' v-else>
+             <img src="../../common/images/live/mode-active_check@2x.png" alt="" :class="{active: liveMode== 3}" @click='!webniarIntact && liveModeChange(3)' v-if="liveMode== 3">
+              <img src="../../common/images/live/mode-active@2x.png" alt="" @click='!webniarIntact && liveModeChange(3)' v-else>
             </template>
             <!-- <el-container class='model'> -->
 
@@ -86,8 +86,8 @@
             <!-- <span class="notAllow" v-if="webniarIntact">未开通</span> -->
           </div>
           <div>
-            <img src="../../common/images/live/mode-media_check.png" :class="{active: liveMode == 1}" alt=""  @click='liveModeChange(1)' v-if="liveMode== 1">
-            <img src="../../common/images/live/mode-media.png" alt=""  @click='liveModeChange(1)' v-else>
+            <img src="../../common/images/live/mode-media_check@2x.png" :class="{active: liveMode == 1}" alt=""  @click='liveModeChange(1)' v-if="liveMode== 1">
+            <img src="../../common/images/live/mode-media@2x.png" alt=""  @click='liveModeChange(1)' v-else>
             <!-- <el-container class='model'>
               <img src="../../common/images/live/mode-media.png" alt="">
               <el-aside width="80px" class="block">
@@ -233,7 +233,7 @@
           :active-text="limitCapacityDesc"
           >
         </el-switch>
-         <VhallInput placeholder="请输入限制并发数" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></VhallInput>
+        <VhallInput :placeholder="placeholder" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></VhallInput>
       </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" class="common-button length152" :disabled="!formData.title" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
@@ -285,6 +285,12 @@ export default {
         return `${str}:00 - 23:59:00`;
       }
     },
+    dafaultTime() {
+      let sysDate = new Date().getTime();
+      let str = this.$moment(sysDate + 10 * 60 * 1000).format('HH:mm');
+      let selectDate = this.$moment(this.formData.date1).format('YYYY-MM-DD');
+      return selectDate + ' ' + `${str}:00`;
+    },
     pathUrl: function() {
       return `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
     },
@@ -335,6 +341,17 @@ export default {
         return '已开启，限制进入活动的观众最大并发数';
       }else{
         return "开启后，限制进入活动的观众最大并发数";
+      }
+    },
+    placeholder() {
+      if (!this.versionType && this.formData.limitCapacitySwtich) {
+        if (this.formData.capacity) {
+          return `请输入1-${this.limitInfo.total + this.limitInfo.extend}的并发数`
+        } else {
+          return `请输入1-${this.limitInfo.total}的并发数`
+        }
+      } else {
+        return `请输入1-9999999的并发数`
       }
     },
     webniarType(){
@@ -419,7 +436,6 @@ export default {
       selectMedia: {},
       expireTimeOption: {
         disabledDate(time) {
-          console.log(time, '?????????????')
           // formData.date1
           this.startVal = this.formData.date1.getTime() < Date.now() - 24 * 60 * 60 * 1000;
           return startVal;
@@ -604,11 +620,21 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
-      if (!this.versionType) {
-        if (this.formData.limitCapacitySwtich) {
-          if (this.formData.limitCapacity < 1) {
+      if (this.formData.limitCapacitySwtich && this.formData.limitCapacity < 1) {
+          this.$message({
+            message: '最高并发请输入大于1的数值',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+          return;
+      }
+      if (!this.versionType && this.formData.limitCapacitySwtich) {
+        if (this.formData.capacity) {
+          if (this.formData.limitCapacity > (this.limitInfo.total + this.limitInfo.extend)) {
             this.$message({
-              message: '最高并发请输入大于1的数值',
+              message: '最大并发数不能大于并发剩余量',
               showClose: true,
               // duration: 0,
               type: 'error',
@@ -616,28 +642,16 @@ export default {
             });
             return;
           }
-          if (this.formData.capacity) {
-            if (this.formData.limitCapacity > (this.limitInfo.total + this.limitInfo.extend)) {
-              this.$message({
-                message: '最大并发数不能大于并发剩余量',
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box'
-              });
-              return;
-            }
-          } else {
-            if (this.formData.limitCapacity > this.limitInfo.total) {
-              this.$message({
-                message: '最大并发数不能大于并发剩余量',
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box'
-              });
-              return;
-            }
+        } else {
+          if (this.formData.limitCapacity > this.limitInfo.total) {
+            this.$message({
+              message: '最大并发数不能大于并发剩余量',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+            return;
           }
         }
       }
@@ -693,7 +707,7 @@ export default {
             this.isChange = false;
             console.log(res);
             setTimeout(()=>{
-              this.$router.push({path: '/live/list'});
+              this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
             }, 500);
           }).catch(res=>{
             this.$message({
@@ -819,7 +833,7 @@ export default {
   }
   /deep/ .el-form-item{
     // width: 100%;
-    max-width: 640px;
+    max-width: 668px;
     margin-bottom: 26px;
   }
   /deep/.el-col-11{
@@ -851,13 +865,14 @@ export default {
     display: flex;
     justify-content: space-between;
     position: relative;
+    transition: all 0.15s ease-in;
     >div{
       // height: 112px;
-      width: 180px;
+      width: 185px;
       border-radius: 4px;
       img{
         width: 100%;
-        height: 112px;
+        height: 116px;
         object-fit: scale-down;
         cursor: pointer;
         &.disabled{
@@ -882,8 +897,12 @@ export default {
             }
           }
         }
+        &:hover{
+          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        }
         &.active{
-          box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
+          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+          // box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
         }
       }
       // position: relative;

@@ -57,7 +57,7 @@ export default {
   .line{
     height: 1px;
     background: #E6E6E6;
-    margin: 16px 12px;
+    margin: 10px 12px;
      -webkit-transform: scaleY(0.5);
     -webkit-transform-origin:0 0;
     overflow: hidden;

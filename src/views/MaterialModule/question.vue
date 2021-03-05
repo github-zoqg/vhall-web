@@ -15,11 +15,12 @@
         placeholder="请输入问卷名称"
         v-model="keyword"
         clearable
+        v-clearEmoij
         @clear="searchTableList"
         @keyup.enter.native="searchTableList">
         <i
           class="el-icon-search el-input__icon"
-          slot="suffix"
+          slot="prefix"
           @click="searchTableList">
         </i>
       </VhallInput>
@@ -251,18 +252,17 @@ export default {
     .search-tag {
       float: right;
       width: 220px;
+      /deep/ .el-input__icon{
+        line-height: 36px;
+      }
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px!important;
+        line-height: 36px;
+        padding-right: 30px!important;
       }
-      /deep/ .el-input__suffix {
+      /deep/ .el-input__prefix {
         cursor: pointer;
-        /deep/ .el-input__icon {
-          width: auto;
-          margin-right: 5px;
-          line-height: 36px;
-        }
       }
     }
   }
@@ -276,11 +276,11 @@ export default {
     background: rgba(0, 0, 0, .3);
     .show-main{
       position: absolute;
-      top: 50%;
+      top: 48%;
       left: 50%;
       background: #fff;
       transform: translate(-50%, -50%);
-      width: 700px;
+      width: 760px;
       padding-bottom: 24px;
       // padding: 0 32px 24px 32px;
       border-radius: 4px;

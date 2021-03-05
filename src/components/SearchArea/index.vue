@@ -28,7 +28,7 @@
           placeholder="选择日期">
         </el-date-picker>
         <!-- 下拉框 -->
-        <el-select filterable clearable v-model="searchParams[item.key]" v-else-if="item.type==3"  style="width: 160px" @change="changeDate" :placeholder="item.placeholder">
+        <el-select filterable v-model="searchParams[item.key]" v-else-if="item.type==3"  style="width: 160px" @change="changeDate" :placeholder="item.placeholder">
           <el-option
             v-for="(opt, optIndex) in item.options"
             :key="optIndex"
@@ -45,11 +45,12 @@
           :placeholder="placeholder"
           v-model="searchParams[item.key]"
           clearable
+          v-clearEmoij
           @change="changeInput"
           @keyup.enter.native="changeInput">
           <i
             class="el-icon-search el-input__icon"
-            slot="suffix"
+            slot="prefix"
             @click="changeInput">
           </i>
         </VhallInput>
@@ -207,18 +208,17 @@ export default {
     }
     .search-tag {
       width: 220px!important;
+      /deep/ .el-input__icon {
+        line-height: 36px;
+      }
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px!important;
+        padding-right: 30px!important;
       }
-      /deep/ .el-input__suffix {
+      /deep/ .el-input__prefix {
         cursor: pointer;
-        /deep/ .el-input__icon {
-          width: auto;
-          margin-right: 5px;
-          line-height: 36px;
-        }
+
       }
     }
   }

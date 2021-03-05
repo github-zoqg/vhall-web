@@ -64,7 +64,7 @@
             </upload>
           </el-form-item>
           <el-form-item label="链接" prop="skip_url" class="item--skip__url">
-            <el-input v-model.trim="signSetForm.skip_url" />
+            <el-input v-model.trim="signSetForm.skip_url" placeholder="请输入http://或https://开头的链接" />
           </el-form-item>
           <el-form-item label="">
             <el-button type="primary" round v-preventReClick @click.prevent.stop="signSetSave">保 存</el-button>
@@ -102,9 +102,9 @@ export default {
           { required: false, message: '请选择标志', trigger: 'change'}
         ],
         skip_url: [
-          { required: false, message: '请填写标志链接', trigger: 'blur'},
+          { required: false, message: '请输入标志链接', trigger: 'blur'},
           // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
-          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入以http://或https://开头的标志链接' , trigger: 'blur'}
         ]
       }
     };
@@ -281,6 +281,9 @@ export default {
 }
 /deep/.el-form-item {
   margin-bottom: 32px;
+}
+/deep/.el-input__inner {
+  padding: 0 12px;
 }
 /deep/.el-switch__label {
   color: #999999;

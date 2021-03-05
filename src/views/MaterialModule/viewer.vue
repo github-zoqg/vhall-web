@@ -19,12 +19,13 @@
               v-model="query.keyword"
               clearable
               autocomplete="off"
+              v-clearEmoij
               @keyup.enter.native="queryList"
               class="resetRightBrn"
               @clear="queryList">
               <i
                 class="el-icon-search el-input__icon"
-                slot="suffix"
+                slot="prefix"
                 @click="queryList">
               </i>
             </VhallInput>
@@ -47,32 +48,32 @@
         >
         </table-list>
         <!-- 无消息内容 -->
-        <null-page v-if="!(viewerDao && viewerDao.total > 0)"></null-page>
+        <null-page nullType="other" v-if="!(viewerDao && viewerDao.total > 0)"></null-page>
       </div>
       <div  class="group__container">
         <p class="group__title">全部分组</p>
-        <ul v-if="groupList && groupList.length > 0">
-          <el-dropdown
-            placement="bottom-start"
-            split-button
-            size="medium"
-            round
-            @command="handleCommand($event, item)"
-            trigger="click"
-            v-for="(item, ins) in groupList"
-            :key="`group${ins}`"
-            @click.prevent.stop="changeViewerList(item, ins)"
-            :class="{'active': activeGroupIndex == ins}"
-          >{{ item.subject }}
-            <el-dropdown-menu slot="dropdown" style="width: 152px;">
-              <el-dropdown-item command="rename">重命名</el-dropdown-item>
-              <el-dropdown-item command="delete">删除</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </ul>
         <div class="group_button__add" @click.prevent.stop="addGroupDialogShow(null)">
           <el-button size="medium" v-preventReClick type="primary" round>点击添加分组</el-button>
         </div>
+        <ul v-if="groupList && groupList.length > 0">
+            <el-dropdown
+              placement="bottom-start"
+              split-button
+              size="medium"
+              round
+              @command="handleCommand($event, item)"
+              trigger="click"
+              v-for="(item, ins) in groupList"
+              :key="`group${ins}`"
+              @click.prevent.stop="changeViewerList(item, ins)"
+              :class="{'active': activeGroupIndex == ins}"
+            >{{ item.subject }}
+              <el-dropdown-menu slot="dropdown" style="width: 152px;">
+                <el-dropdown-item command="rename">重命名</el-dropdown-item>
+                <el-dropdown-item command="delete">删除</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+        </ul>
         <div class="clear"></div>
       </div>
     </div>
@@ -98,13 +99,13 @@
     <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" :lock-scroll='false' width="484px">
       <el-form :model="viewerForm" ref="viewerForm" :rules="viewerFormRules" :label-width="viewerDialog.formLabelWidth">
         <el-form-item label="姓名" prop="name">
-          <VhallInput v-model.trim="viewerForm.name" auto-complete="off" placeholder="请输入姓名（最多50个字符）" :maxlength="50"/>
+          <VhallInput v-model="viewerForm.name" v-clearEmoij auto-complete="off" placeholder="请输入姓名（最多50个字符）" :maxlength="50"/>
         </el-form-item>
         <el-form-item label="行业" prop="industry">
-          <VhallInput v-model.trim="viewerForm.industry" auto-complete="off" placeholder="请输入行业（最多50个字符）" :maxlength="50"/>
+          <VhallInput v-model="viewerForm.industry" v-clearEmoij auto-complete="off" placeholder="请输入行业（最多50个字符）" :maxlength="50"/>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <VhallInput v-model.trim="viewerForm.email" auto-complete="off" placeholder="请输入邮箱"/>
+          <VhallInput v-model="viewerForm.email" v-clearEmoij auto-complete="off" placeholder="请输入邮箱"/>
         </el-form-item>
         <el-form-item label="手机" prop="phone">
           <VhallInput v-model.trim="viewerForm.phone" auto-complete="off" placeholder="请输入手机号码" :maxlength="11"/>
@@ -113,7 +114,7 @@
           <VhallInput v-model.trim="viewerForm.job_number" auto-complete="off" placeholder="请输入工号（最多50个字符）" :maxlength="50"/>
         </el-form-item>
         <el-form-item label="其他" prop="other">
-          <VhallInput v-model="viewerForm.other" auto-complete="off" placeholder="请输入其他内容（最多50个字符）" :maxlength="50"/>
+          <VhallInput v-model="viewerForm.other" v-clearEmoij auto-complete="off" placeholder="请输入其他内容（最多50个字符）" :maxlength="50"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -880,6 +881,15 @@ export default {
       padding: 4px 23px;
     }
   }
+  /deep/ .mask span {
+    font-size: 14px;
+    line-height: 20px;
+    i {
+      font-size: 18px;
+      vertical-align: middle;
+      display: inline-block;
+    }
+  }
 }
 .uploadtips {
   padding-top: 8px;
@@ -919,20 +929,18 @@ export default {
       line-height: 36px;
     }
     .resetRightBrn {
+      /deep/ .el-input__icon {
+        line-height: 36px;
+      }
       /deep/ .el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px!important;
+        line-height: 36px;
+        padding-right: 30px!important;
       }
 
-      /deep/ .el-input__suffix {
+      /deep/ .el-input__prefix {
         cursor: pointer;
-
-        /deep/ .el-input__icon {
-          width: auto;
-          margin-right: 5px;
-          line-height: 36px;
-        }
       }
     }
   }
@@ -959,12 +967,43 @@ export default {
   margin-bottom: 32px;
 }
 .group__container {
-  width: 200px;
+  width: 210px;
   min-height: 120px;
   background: #FFFFFF;
   border-radius: 4px;
   margin-left: 24px;
   padding: 24px 24px;
+  max-height: 778px;
+  ul {
+    max-height: 646px;
+    overflow-y: auto;
+    position: relative;
+    left: 6px;
+    // 滚动条的宽度
+    &::-webkit-scrollbar {
+      width: 6px; // 横向滚动条
+      height: 6px; // 纵向滚动条 必写
+    }
+    // 滚动条的滑块
+    &::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      transition: all 0.3s;
+      cursor: pointer;
+      display: none;
+      background-color: #cccccc;
+      &:hover {
+        background-color: #cccccc;
+      }
+      &:active {
+        background-color: #cccccc;
+      }
+    }
+    &:hover {
+      &::-webkit-scrollbar-thumb {
+        display: block;
+      }
+    }
+  }
   li {
     list-style-type: none;
     text-align: center;
@@ -1054,6 +1093,7 @@ export default {
   text-align: center;
   color: @font_color_h1;
   cursor: pointer;
+  margin-bottom: 12px;
   /deep/ .el-button {
     width: 150px;
   }

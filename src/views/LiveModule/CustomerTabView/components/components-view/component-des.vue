@@ -1,5 +1,5 @@
 <template>
-  <div class="menu-cont show" style="background-color: #f8f8f8; ">
+  <div class="menu-cont show">
     <img style="width: 100%;" src="//cnstatic01.e.vhall.com/static/images/menu/detail-bg-new-h5.png" alt="" />
   </div>
 </template>

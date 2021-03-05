@@ -17,6 +17,7 @@
           :joinId="playerProps.accountId"
           :accountId="playerProps.accountId"
           :isVod="true"
+          :isChapterWatch="true"
         ></doc>
       </div>
       <div class="actionBar">
@@ -285,19 +286,28 @@ export default {
 <style lang="less" scoped>
   .contentView{
     min-height: 320px;
-    padding: 16px;
+    padding: 0px;
     width: 100%;
     height: 100%;
-    background: #222;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
     .docBox{
       float: left;
-      width: 68%;
+      width: 68.4%;
       height: 100%;
       display: flex;
       flex-direction: column;
+      border-right: 1px solid #333;
       .docInner{
         height: 100%;
-        background-color: #292929;
+        background-color: #1a1a1a;
+        /deep/ .vhall-watch-doc {
+          background-color: #1a1a1a;
+        }
+        /deep/ .watch-doc-placeholder {
+          background-color: #1a1a1a;
+        }
       }
     }
     .actionBar{
@@ -354,11 +364,32 @@ export default {
       }
       .vhallPlayer-playBtn {
         margin-right: 10px;
+        &.play {
+          background-image: url(./images/play.png);
+          &:hover {
+            background-image: url(./images/play_hover.png);
+          }
+        }
+        &.pause {
+          background-image: url(./images/pause.png);
+          &:hover {
+            background-image: url(./images/pause_hover.png);
+          }
+        }
+      }
+      .vhallPlayer-volume-btn {
+        background-image: url(./images/volume.png);
+        &:hover {
+          background-image: url(./images/volume_hover.png);
+        }
+      }
+      .vhallPlayer-verticalSlider-popup {
+        padding-bottom: 4px;
       }
     }
     .playerBoxContainer{
       float: left;
-      width: 32%;
+      width: 31.6%;
       height: 100%;
       .playerBox {
         height: 170px;
@@ -380,9 +411,10 @@ export default {
           box-shadow: 0px 1px 0px 0px #1A1A1A;
           text-align: center;
           line-height: 32px;
+          color: #999;
           span{
-            color: #fff;
-            border-bottom: 1px solid #fff;
+            color: #999;
+            border-bottom: 1px solid #999;
             padding-bottom: 6px;
             font-size: 14px;
           }
@@ -393,21 +425,24 @@ export default {
           /deep/ .__view{
             width: 100%!important;
           }
+          /deep/ .__vuescroll .__bar-is-vertical {
+            background-color: #666!important;
+          }
         }
         .chapterList{
           padding-right: 10px;
           width: 100%;
           li{
-            color: #CCCCCC;
+            color: #999;
             font-size: 12px;
-            height: 32px;
-            line-height: 32px;
+            height: 36px;
+            line-height: 36px;
             padding-left: 12px;
             cursor: pointer;
             transition: all .1s linear;
             display: flex;
             &:hover{
-              background: #333333;
+              background: #222;
               color: #FB3A32;
             }
           }

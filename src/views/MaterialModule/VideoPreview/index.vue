@@ -11,7 +11,6 @@
             <i class="iconfont-v3 saasicon_replay"></i>
             <p>重新播放</p>
           </div>
-          <!-- <img :src="audioEnd" alt="" srcset=""> -->
           <!-- <el-button class="reset-play" @click="resetPlay">再次播放</el-button> -->
         </div>
       </div>
@@ -56,7 +55,6 @@
 import { secondToDateZH } from '@/utils/general';
 import controle from './js/control';
 import { sessionOrLocal } from '@/utils/utils';
-import Env from '@/api/env';
 export default {
   data() {
     this.$Vhallplayer = null;
@@ -74,7 +72,6 @@ export default {
       loading: true,
       hoveVideo: false,
       audioImg: require('@/common/images/gif/MP3.gif'),
-      audioEnd: `${Env.staticImgs.video[0]}`,
       videoType: 1, // 1为视频   2为音频
       tipsType: 0, // 1为音频封面   2 播放结束
     };

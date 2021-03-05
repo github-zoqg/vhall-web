@@ -46,6 +46,7 @@ import PageTitle from '@/components/PageTitle';
 import HomeMain from './components/main.vue';
 import ShareDialog from './components/shareDialog';
 import OldHeader from '@/components/OldHeader';
+import defaultbg from './images/defaultbg.png'
 export default {
   name: 'info.vue',
   components: {
@@ -125,7 +126,7 @@ export default {
     }
   },
   created() {
-    this.static_img_url = `${Env.staticImgs.home[0]}`
+    this.static_img_url = `${defaultbg}`
     this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     this.getHomePageInfo();
   },

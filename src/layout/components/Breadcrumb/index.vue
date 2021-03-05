@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="sys-date" v-if="this.$route.meta.name === 'sysHome'">
-      今日，{{sysDateStr}}，欢迎您回到微吼控制台。
+      今日，{{sysDateStr}}，<span>欢迎回来~</span>
     </div>
-    <el-breadcrumb class="app-breadcrumb" separator=">" v-else>
+    <el-breadcrumb class="app-breadcrumb" separator-class="el-icon-arrow-right" v-else>
       <transition-group name="breadcrumb">
         <el-breadcrumb-item v-for="(item,index) in levelList" :key="item.path">
           <span v-if="item.redirect==='noRedirect'||index==levelList.length-1" :class="`no-redirect level_${index}`">{{ item.title }}</span>
@@ -18,6 +18,7 @@
 <script>
 import * as pathToRegexp from 'path-to-regexp';
 import { CrumbSet } from "@/router/crumb"; // progress bar style
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
     return {
@@ -40,8 +41,9 @@ export default {
     }
     // 获取本地系统时间字符串
     // this.sysDateStr = this.$moment(new Date().getTime()).format('llll');
-    this.sysDateStr = this.$moment(new Date().getTime()).format('YYYY年MM月DD日');
-    this.updateData();
+    let nowTime = JSON.parse(sessionOrLocal.get('currentDate'));
+    this.sysDateStr = this.$moment(nowTime).format('YYYY年MM月DD日');
+    // this.updateData();
     this.getBreadcrumb();
   },
   methods: {
@@ -101,10 +103,11 @@ export default {
 .sys-date {
   font-size: 14px;
   font-weight: 400;
-  color: #1a1a1a;
+  color: #666;
   span {
-    font-weight: bold;
-    font-size: 18px;
+    // font-weight: bold;
+    // font-size: 18px;
+    // color: #666;
   }
 }
 /deep/.el-breadcrumb__separator {

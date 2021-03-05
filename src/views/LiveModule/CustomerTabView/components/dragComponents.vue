@@ -1,38 +1,50 @@
 <template>
   <div id="settingBox" :class="['vh-menus-dragComponents', menuBarFixed ? 'isFixed' : '']">
-    <div class="vh-menus-dragComponents__title">
+    <div class="vh-menus-dragComponents__title" v-if="showBaseComponent">
       基础组件
     </div>
-    <div
+    <template v-for="item in baseComponents">
+     <div
+        class="vh-menus-dragComponents__item"
+        :class="{'vh-menus-dragComponents__item-disabled': disableAll}"
+        :draggable="!disableAll"
+        v-if="item.is_vip == 1"
+        :key="item.component_id"
+        @dragstart="dragStartHandler($event, item)"
+      >
+        <!-- 图文 -->
+        <i class="iconfont-v3 saasicon_graphic" v-if="item.component_id == 1"></i>
+        <!-- 二维码 -->
+        <i class="iconfont-v3 saasicon_gQrcode" v-if="item.component_id == 2"></i>
+        <!-- 直播 -->
+        <i class="iconfont-v3 saasicon_live" v-if="item.component_id == 3"></i>
+        <!-- 专题 -->
+        <i class="iconfont-v3 saasicon_project" v-if="item.component_id == 4"></i>
+        <!-- 图文链接 -->
+        <i class="iconfont-v3 saasicon_Picturesofchain" v-if="item.component_id == 5"></i>
+        <!-- 文字链接 -->
+        <i class="iconfont-v3 saasicon_Textchain" v-if="item.component_id == 6"></i>
+        <!-- 标题 -->
+        <i class="iconfont-v3 saasicon_title" v-if="item.component_id == 7"></i>
+        <!-- 分割线 -->
+        <i class="iconfont-v3 saasicon_divider" v-if="item.component_id == 8"></i>
+        {{ item.name }}
+      </div>
+    </template>
+    <div class="vh-menus-dragComponents__title" v-if="showHighComponent">
+      功能组件
+    </div>
+    <!-- <div
       class="vh-menus-dragComponents__item"
       :class="{'vh-menus-dragComponents__item-disabled': disableAll}"
       :draggable="!disableAll"
-      v-for="item in baseComponents"
+      v-for="item in highComponents"
       :key="item.component_id"
       @dragstart="dragStartHandler($event, item)"
     >
-      <!-- 图文 -->
-      <i class="iconfont-v3 saasicon_graphic" v-if="item.component_id == 1"></i>
-      <!-- 二维码 -->
-      <i class="iconfont-v3 saasicon_gQrcode" v-if="item.component_id == 2"></i>
-      <!-- 直播 -->
-      <i class="iconfont-v3 saasicon_live" v-if="item.component_id == 3"></i>
-      <!-- 专题 -->
-      <i class="iconfont-v3 saasicon_project" v-if="item.component_id == 4"></i>
-      <!-- 图文链接 -->
-      <i class="iconfont-v3 saasicon_Picturesofchain" v-if="item.component_id == 5"></i>
-      <!-- 文字链接 -->
-      <i class="iconfont-v3 saasicon_Textchain" v-if="item.component_id == 6"></i>
-      <!-- 标题 -->
-      <i class="iconfont-v3 saasicon_title" v-if="item.component_id == 7"></i>
-      <!-- 分割线 -->
-      <i class="iconfont-v3 saasicon_divider" v-if="item.component_id == 8"></i>
-      {{ item.name }}
-    </div>
-    <div class="vh-menus-dragComponents__title">
-      功能组件
-    </div>
-    <template v-for="item in highComponents">
+      <i class="iconfont-v3 saasicon_list"></i> {{ item.name }}
+    </div> -->
+     <template v-for="item in highComponents">
       <div
         v-if="item.is_vip == 1"
         class="vh-menus-dragComponents__item"
@@ -44,7 +56,6 @@
         <i class="iconfont-v3 saasicon_list"></i> {{ item.name }}
       </div>
     </template>
-    
     <!-- <div class="vh-menus-dragComponents__item vh-menus-dragComponents__item-disabled">
       <i class="iconfont-v3 saasicon_list"></i> 敬请期待
     </div> -->
@@ -68,6 +79,20 @@ export default {
     },
     highComponents:  function() {
       return this.compList.filter(item => item.type == 2)
+    },
+    showBaseComponent: function() {
+      let flag;
+      flag = this.baseComponents.some(item => {
+        return item.is_vip == 1
+      })
+      return flag;
+    },
+    showHighComponent: function() {
+      let flag;
+      flag = this.highComponents.some(item => {
+        return item.is_vip == 1
+      })
+      return flag;
     }
   },
   created() {

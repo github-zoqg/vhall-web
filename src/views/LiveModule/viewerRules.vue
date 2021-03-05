@@ -177,7 +177,7 @@
                 </li>
               </ul>
             </el-form-item>
-            <el-form-item label="试看" class="switch__height">
+            <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
               <div class="switch__box">
                 <el-switch
                   v-model="form.is_preview"
@@ -332,7 +332,7 @@ export default {
         ]
       },
       pwdForm: {
-        password: null
+        password: ''
       },
       pwdFormRules: {
         password: [

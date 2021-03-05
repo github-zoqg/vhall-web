@@ -126,12 +126,12 @@
             <!-- <i :class="`${resourcesVo && resourcesVo.type > 0 ? 'iconfont-v3 saasliuliang_tubiao' : 'iconfont-v3 saasbingfa_tubiao'}`"></i> -->
           </div>
           <ul class="allocation_one">
-            <li>{{ (resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total ) : 0) | unitCovert }}  </li>
+            <li class="custom-font-barlow">{{ (resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total ) : 0) | unitCovert }}  </li>
             <li>可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量` : `并发`) : ''}} {{resourcesVo ? (resourcesVo.type > 0 ? `（GB）` : `（方）`) : ''}}</li>
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
           <ul class="allocation_one mt32" v-if="resourcesVo && resourcesVo.extend_day">
-            <li>{{ (resourcesVo && resourcesVo.extend_day ? resourcesVo.extend_day : 0)  | unitCovert}} </li>
+            <li class="custom-font-barlow">{{ (resourcesVo && resourcesVo.extend_day ? resourcesVo.extend_day : 0)  | unitCovert}} </li>
             <li>可分配并发扩展包（天）</li>
             <li>有效期至 {{resourcesVo && resourcesVo.extend_end_time ? resourcesVo.extend_end_time : '--'}}</li>
           </ul>

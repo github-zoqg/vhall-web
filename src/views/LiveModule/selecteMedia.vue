@@ -9,7 +9,7 @@
     :before-close="handleClose"
     width="800px">
     <div class="search"  v-show="total || isSearch">
-      <VhallInput placeholder="请输入音视频名称" v-model="keyWords" @keyup.enter.native="searchHandler" clearable @clear="searchHandler">
+      <VhallInput placeholder="请输入音视频名称" v-model="keyWords" v-clearEmoij @keyup.enter.native="searchHandler" clearable @clear="searchHandler">
         <i class="el-icon-search el-input__icon"
         @click="searchHandler"
           slot="suffix"
@@ -32,9 +32,10 @@
           width="55">
         </el-table-column>
         <el-table-column
+        show-overflow-tooltip
           label="音视频名称">
             <template slot-scope="scope">
-              <span class="mediaName" :title="scope.row.name">
+              <span class="mediaName">
                 <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.MP3' || scope.row.msg_url == '.MAV'"></i>
                 <i class="iconfont-v3 saasshipinwenjian" v-else></i>
                 {{scope.row.name}}
@@ -285,7 +286,12 @@ export default {
   }
 };
 </script>
-
+<style lang="less">
+.el-tooltip__popper {
+  max-width: 280px;
+  line-height: 17px;
+}
+</style>
 <style lang="less" scoped>
   @red: #FB3A32;
   @redBg: #FFEBEB;

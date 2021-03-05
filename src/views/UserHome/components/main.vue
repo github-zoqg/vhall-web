@@ -11,12 +11,13 @@
           :placeholder="tabType === 'special' ? '请输入专题名称' : '请输入直播名称'"
           v-model="query.keyword"
           clearable
+          v-clearEmoij
           @keyup.enter.native="searchHandle"
           @clear="searchHandle"
         >
           <i
             class="el-icon-search el-input__icon"
-            slot="suffix"
+            slot="prefix"
             @click="searchHandle">
           </i>
         </VhallInput>
@@ -343,18 +344,16 @@ export default {
 .search-query {
   width: 220px;
   .el-input {
+    /deep/ .el-input__icon {
+      line-height: 36px;
+    }
     /deep/ .el-input__inner {
       border-radius: 20px;
       height: 36px;
-      padding-right: 50px;
+      padding-right: 30px !important;
     }
-    /deep/ .el-input__suffix {
+    /deep/ .el-input__prefix {
       cursor: pointer;
-      /deep/ .el-input__icon {
-        width: auto;
-        margin-right: 5px;
-        line-height: 36px;
-      }
     }
   }
 }
@@ -377,11 +376,16 @@ export default {
     color: #FB3A32;
   }
 }
+/deep/.el-tabs{
+  padding-left: 24px;
+}
 /deep/.el-tabs--bottom .el-tabs__item.is-bottom:nth-child(2),
 /deep/.el-tabs--bottom .el-tabs__item.is-top:nth-child(2),
 /deep/.el-tabs--top .el-tabs__item.is-bottom:nth-child(2),
 /deep/.el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 24px;
+  width: 56px;
+  text-align: center;
+  padding-left: 0!important;
 }
 /deep/.el-tabs__nav-wrap::after {
   height: 1px;
@@ -396,7 +400,7 @@ export default {
 }
 /* 直播、专题*/
 .live-panel {
-  padding: 0 24px;
+  padding: 0 20px;
 }
 .pageBox {
   padding: 16px 0 40px 0;
@@ -426,7 +430,7 @@ export default {
     }
     .top{
       cursor: pointer;
-      height: 170px;
+      height: 170.8px;
      /*  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
       background: #1A1A1A;
       background-size: 400% 400%;
@@ -435,6 +439,9 @@ export default {
       box-sizing: border-box;
       position: relative;
       border-radius: 4px 4px 0 0;
+      @media (max-width:1919px) {
+        height: 170px;
+      }
       img{
         width: 100%;
         height: 100%;

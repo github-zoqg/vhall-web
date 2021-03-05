@@ -27,7 +27,7 @@
             </template>
           </el-input>
         </div>
-        <p>提示：在微信公众号管理平台，自定义菜单添加链接，用户点击菜单可快速观看直播，详细信息参见<a @click="goForm('https://www.vhall.com/saas/doc/1692.html')"> 微信嵌入</a></p>
+        <p>提示：在微信公众号管理平台，自定义菜单添加链接，用户点击菜单可快速观看直播，详细信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1243')"> 微信嵌入</a></p>
       </div>
     </div>
     <div class="network">
@@ -53,7 +53,7 @@
             </template>
           </el-input>
         </div>
-        <p>提示：当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://www.vhall.com/saas/doc/163.html')"> 网页嵌入指南</a></p>
+        <p>提示：当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1238')"> 网页嵌入指南</a></p>
       </div>
     </div>
     <div class="thirdMethod">

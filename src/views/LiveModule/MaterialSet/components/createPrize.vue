@@ -47,7 +47,7 @@
      <div class="prizeList">
        <div class="search" v-show="total || isSearch">
          <VhallInput v-model="keyword" class="search-dialog-tag" placeholder="请输入奖品名称" style="width:220px;" @keyup.enter.native="inputChange" @clear="inputChange" clearable>
-           <i slot="suffix" class="iconfont-v3 saasicon_search" @click="inputChange" style="cursor: pointer;line-height: 36px;"></i>
+           <i slot="prefix" class="el-icon-search el-input__icon" @click="inputChange" style="cursor: pointer;line-height: 36px;"></i>
          </VhallInput>
        </div>
        <div v-show="total" class="material-box">
@@ -59,9 +59,7 @@
                <h1>{{item.prize_name}}</h1>
                <p>{{item.prize_id}}</p>
              </div>
-             <label class="img-tangle" v-show="item.isChecked">
-              <i class="el-icon-check"></i>
-            </label>
+             <label  class="img-tangle" v-show="item.isChecked"><img src="../../../../common/images/icon-choose.png" alt=""></label>
            </div>
          </div>
        </el-scrollbar>
@@ -443,22 +441,16 @@ export default {
 </script>
 <style lang="less" scoped>
 .search-dialog-tag {
+    /deep/ .el-input__icon {
+      line-height: 36px;
+    }
     /deep/.el-input__inner {
       border-radius: 20px;
       height: 36px;
-      padding-right: 50px!important;
+      padding-right: 30px!important;
     }
-    /deep/ .el-input__suffix {
-      .el-input__suffix-inner {
-        i {
-          margin-right: 5px;
-          line-height: 36px;
-          cursor: pointer;
-        }
-      }
-      /deep/ .el-input__icon {
-        width: auto;
-      }
+    /deep/ .el-input__prefix {
+      cursor: pointer;
     }
   }
   /deep/.el-upload--picture-card{
@@ -519,6 +511,8 @@ export default {
         border-radius: 4px;
         cursor: pointer;
         position: relative;
+        border: 1px solid transparent;
+        transition: all 0.15s ease-in;
         .prize-img{
           display: inline-block;
           width: 72px;
@@ -546,26 +540,24 @@ export default {
             // line-height: 30px;
           }
         }
+        &:hover{
+          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        }
         &.active{
           background: #FFFFFF;
-          box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
+          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
           border: 1px solid #FB3A32;
         }
         .img-tangle{
           position: absolute;
-          right: 0;
-          top:0;
-          width: 0;
-          height: 0;
-          border: 10px solid transparent;
-          border-right-color: #FB3A32;
-          border-top-color: #FB3A32;
-          i{
-            color:#fff;
-            position: absolute;
-            top: -8px;
-            right:-11px;
-            font-size: 10px;
+          right: -1px;
+          top:-1px;
+          width: 20px;
+          height: 20px;
+          font-size: 0;
+          img{
+            width: 100%;
+            height: 100%;
           }
         }
       }

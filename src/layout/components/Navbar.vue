@@ -4,35 +4,73 @@
     <breadcrumb class="breadcrumb-container" />
     <!-- 登录用户等 -->
     <div class="right-menu">
-      <div class="right-menu-item" v-if="!(userInfo && userInfo.is_new_regist > 0)"><a :href="oldUrl" class="set-font">返回旧版</a></div>
+      <div
+        class="right-menu-item"
+        v-if="!(userInfo && userInfo.is_new_regist > 0) && (userInfo && userInfo.user_extends.extends_remark !== 1) && !isMiniScreen"
+      >
+        <a :href="oldUrl" class="set-font">返回旧版</a>
+      </div>
       <!-- 下载中心 -->
-      <div class="right-menu-item" @click.prevent.stop="toDownloadPage">
+      <div v-if="!isMiniScreen" class="right-menu-item" @click.prevent.stop="toDownloadPage">
         <el-badge is-dot :hidden="!down_num > 0">
           <span class="span--icon"><icon icon-class="saasicon_download"></icon></span>
         </el-badge>
         <span class="remak--text">下载</span>
       </div>
       <!-- 消息中心 -->
-      <div class="right-menu-item"  @click.prevent.stop="toMsgPage">
+      <div v-if="!isMiniScreen" class="right-menu-item"  @click.prevent.stop="toMsgPage">
         <el-badge :value="unread_num" :max="99" :class="unread_num > 9 ? 'more' : 'item'" :hidden="!unread_num>0">
           <span class="span--icon"><icon icon-class="saasicon_bell_m"></icon></span>
         </el-badge>
         <span class="remak--text">消息</span>
       </div>
       <!-- 帮助中心 -->
-      <div class="right-menu-item" @click.prevent.stop="toHelpPage">
+      <div v-if="!isMiniScreen" class="right-menu-item" @click.prevent.stop="toHelpPage">
         <span class="span--icon"><icon icon-class="saasicon_help_m"></icon></span>
         <span class="remak--text">帮助</span>
       </div>
       <div class="right-menu-item">
         <el-dropdown class="avatar-container" trigger="click">
           <div class="avatar-wrapper">
-            <img :src="avatarImgUrl" class="user-avatar" alt="" />
+            <span class="user-contain"><img :src="avatarImgUrl" class="user-avatar" alt="" /></span>
             <span>{{show_name}}</span>
           </div>
           <el-dropdown-menu slot="dropdown" class="user-dropdown">
-            <el-dropdown-item divided @click.native="toAccountPage">账户信息</el-dropdown-item>
-            <el-dropdown-item divided @click.native="logout">退出</el-dropdown-item>
+            <el-dropdown-item divided @click.native="toAccountPage"><i class="iconfont-v3 saasicon_account1"></i> 账户信息</el-dropdown-item>
+            <el-dropdown-item divided @click.native="logout"><i class="iconfont-v3 saasicon_exit"></i>退出</el-dropdown-item>
+            <el-dropdown-item v-if="isMiniScreen" divided @click.native.prevent.stop="toDownloadPage">
+              <!-- 下载中心 -->
+              <div class="right-menu-item">
+                <el-badge is-dot :hidden="!down_num > 0">
+                  <span class="span--icon"><icon icon-class="saasicon_download"></icon></span>
+                </el-badge>
+                <span class="remak--text">下载</span>
+              </div>
+            </el-dropdown-item>
+            <el-dropdown-item v-if="isMiniScreen" divided @click.native.prevent.stop="toMsgPage">
+              <!-- 消息中心 -->
+              <div class="right-menu-item">
+                <el-badge :value="unread_num" :max="99" :class="unread_num > 9 ? 'more' : 'item'" :hidden="!unread_num>0">
+                  <span class="span--icon"><icon icon-class="saasicon_bell_m"></icon></span>
+                </el-badge>
+                <span class="remak--text">消息</span>
+              </div>
+            </el-dropdown-item>
+            <el-dropdown-item v-if="isMiniScreen" divided @click.native.prevent.stop="toHelpPage">
+              <!-- 帮助中心 -->
+              <div class="right-menu-item">
+                <span class="span--icon"><icon icon-class="saasicon_help_m"></icon></span>
+                <span class="remak--text">帮助</span>
+              </div>
+            </el-dropdown-item>
+            <el-dropdown-item v-if="isMiniScreen" divided @click.native.prevent.stop="toHelpPage">
+              <div
+                class="right-menu-item"
+                v-if="!(userInfo && userInfo.is_new_regist > 0) && (userInfo && userInfo.user_extends.extends_remark !== 1)"
+              >
+                <a :href="oldUrl" class="set-font">返回旧版</a>
+              </div>
+            </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -43,8 +81,10 @@
 <script>
 import Breadcrumb from './Breadcrumb/index.vue';
 import { sessionOrLocal } from "@/utils/utils";
+import Cookies from 'js-cookie'
 import Env from "@/api/env";
 import EventBus from "@/utils/Events";
+import { throttle } from '@/utils/utils';
 
 export default {
   components: {
@@ -60,7 +100,8 @@ export default {
       down_num: 0,
       avatarImgUrl: '',
       userInfo: null,
-      env: Env
+      env: Env,
+      isMiniScreen: false
     };
   },
   computed: {
@@ -114,6 +155,8 @@ export default {
       this.$fetch('loginOut', {}).then(res =>{
         sessionOrLocal.clear();
         sessionOrLocal.clear('localStorage');
+        // 清除cookies
+        Cookies.remove('user_id');
         // 监听消息变化
         this.$EventBus.$emit('saas_vs_login_out', true);
         this.$router.push({
@@ -201,6 +244,18 @@ export default {
           console.error(err);
         })
       }
+    },
+    handleResize() {
+      const handle = () => {
+        const htmlWidth = document.documentElement.clientWidth || document.body.clientWidth
+        if (htmlWidth <= 1120) {
+          this.isMiniScreen = true
+        } else {
+          this.isMiniScreen = false
+        }
+      }
+      return throttle(handle, 500)
+
     }
   },
   mounted() {
@@ -243,6 +298,7 @@ export default {
         this.$EventBus.$emit('saas_vs_down_num');
       }
     });
+    window.addEventListener('resize', this.handleResize())
   },
   created() {
     // 初始进入，获取未读消息条数
@@ -258,6 +314,7 @@ export default {
       this.$Chat.destroy();
       this.$Chat = null;
     }
+    window.removeEventListener('resize', this.handleResize())
   }
 };
 </script>
@@ -266,7 +323,7 @@ export default {
 .user-dropdown {
   border-radius: 4px;
   /deep/.el-dropdown-menu__item{
-    padding: 0 10px!important;
+    padding: 0 16px!important;
     min-width: 160px;
     height: 40px;
     background: #FFFFFF;
@@ -274,15 +331,42 @@ export default {
     font-weight: 400;
     color: rgba(0, 0, 0, 0.65);
     border-radius: 0 0 4px 4px;
+    text-align: left;
   }
   li:first-child {
     border-radius: 4px 4px 0 0;
+  }
+  .iconfont-v3{
+    font-size: 16px;
+    vertical-align: bottom;
+  }
+  .saasicon_exit{
+    font-size: 17px;
   }
   /deep/.el-dropdown-menu__item--divided:before {
     display: none!important;
   }
   .hover-icon {
     margin-right: 12px;
+  }
+  /deep/ .el-badge.item .el-badge__content.is-fixed {
+    width: 18px;
+    height: 18px;
+    background: #FB3A32;
+    top: 10px;
+    right: 15px;
+    text-align: center;
+    line-height: 16px;
+    padding: 0 0;
+  }
+  /deep/ .el-badge__content.is-fixed.is-dot {
+    top: 10px;
+    right: 10px;
+  }
+  /deep/ .span--icon {
+    color: #666666;
+    display: inline-block;
+    vertical-align: bottom;
   }
 }
 .breadcrumb-container {
@@ -301,6 +385,7 @@ export default {
   float: right;
   height: 32px;
   line-height: 32px;
+  margin-right: 17px;
   &:focus {
     outline: none;
   }
@@ -363,14 +448,6 @@ export default {
 }
 .avatar-wrapper {
   position: relative;
-  .user-avatar {
-    cursor: pointer;
-    width: 30px;
-    height: 30px;
-    display: inline-block;
-    vertical-align: middle;
-    border-radius: 100%;
-  }
   span {
     font-size: 14px;
     font-family: @fontRegular;
@@ -379,6 +456,21 @@ export default {
     margin-left: 10px;
     display: inline-block;
     vertical-align: middle;
+  }
+  .user-contain{
+    display: inline-block;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 100%;
+    .user-avatar {
+      width: 100%;
+      height: 100%;
+      object-fit:cover;
+      border-radius: 100%;
+    }
   }
   .el-icon-caret-bottom {
     cursor: pointer;

@@ -9,6 +9,7 @@
         show-word-limit
         placeholder="请输入表单标题"
         v-model="title"
+        v-clearEmoij
         @change="baseInfoChange('title')"
       ></VhallInput>
       <div class="disable_wrap" v-show="!signUpSwtich"></div>
@@ -25,6 +26,7 @@
         :autosize="{ minRows: 5 }"
         resize=none
         @change="baseInfoChange('intro')"
+        class="intro-input"
       ></VhallInput>
       <div class="disable_wrap" v-show="!signUpSwtich"></div>
     </section>
@@ -79,6 +81,7 @@
               show-word-limit
               placeholder="请输入题目"
               v-model="item.label"
+              v-clearEmoij
               class="radioInput titleInput"
               @change="subjectChange(item)"
             ></VhallInput>
@@ -663,14 +666,14 @@ export default {
       let matchPrivacy1 = item[1].value.trim() ? text.match(item[1].value) : null;
       if(matchPrivacy1){
         let reg = new RegExp(`(${matchPrivacy1[0]})`);
-        item[2].value && (text = text.replace(reg, `<a href="${item[2].value}" target="_blank">$1</a>`));
+        text = text.replace(reg, `<a href="${item[2].value || 'javascript:void(0);'}" target="_blank">$1</a>`);
       }else{
         item[1].value = '';
       }
       let matchPrivacy2 = (item[3] && item[3].value.trim()) ? text.match(item[3].value) : null;
       if(matchPrivacy2){
         let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
-        item[4].value && (text = text.replace(reg, `<a href="${item[4].value}" target="_blank">$1</a>`));
+        text = text.replace(reg, `<a href="${item[4].value || 'javascript:void(0);'}" target="_blank">$1</a>`);
       }else{
         item[3] && (item[3].value = '');
       }
@@ -787,7 +790,34 @@ export default {
 
 <style lang="less" scoped>
 .fieldSetBox {
-  width: 100%
+  width: 100%;
+  /deep/ .intro-input .el-textarea__inner{
+    max-height: 200px;
+    // 滚动条的宽度
+    &::-webkit-scrollbar {
+      width: 6px; // 横向滚动条
+      height: 6px; // 纵向滚动条 必写
+    }
+    // 滚动条的滑块
+    &::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      transition: all 0.3s;
+      cursor: pointer;
+      display: none;
+      background-color: #cccccc;
+      &:hover {
+        background-color: #cccccc;
+      }
+      &:active {
+        background-color: #cccccc;
+      }
+    }
+    &:hover {
+      &::-webkit-scrollbar-thumb {
+        display: block;
+      }
+    }
+  }
 }
 .viewItem{
   border-radius: 4px;

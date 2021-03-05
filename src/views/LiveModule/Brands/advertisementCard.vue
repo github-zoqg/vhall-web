@@ -8,21 +8,17 @@
         <el-button size="medium" class="length104" type="primary" @click="createAdvise()" round>创建广告</el-button>
         <el-button size="medium" class="head-btn length104 transparent-btn" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
         <el-button size="medium" class="head-btn length104 transparent-btn" round @click="allDelete(null)" :disabled="!adv_ids.length">批量删除</el-button>
-        <!-- <span class="searchTitle">
-          <VhallInput v-model.trim="paramsObj.keyword" placeholder="请输入广告标题" @keyup.enter.native="searchAdvTableList" @clear="searchAdvTableList" clearable>
-            <i slot="suffix" class="iconfont-v3 saasicon_search" @click="searchAdvTableList" style="cursor: pointer; line-height: 36px;"></i>
-          </VhallInput>
-        </span> -->
         <VhallInput
           class="search-tag"
           placeholder="请输入广告标题"
           v-model="paramsObj.keyword"
           clearable
+          v-clearEmoij
           @clear="searchAdvTableList"
           @keyup.enter.native="searchAdvTableList">
           <i
             class="el-icon-search el-input__icon"
-            slot="suffix"
+            slot="prefix"
             @click="searchAdvTableList">
           </i>
         </VhallInput>
@@ -226,7 +222,7 @@ export default {
 }
 .advertisement-card {
   .title-data {
-    margin: 10px 0 20px 0;
+    margin: 0 0 20px 0;
     text-align: left;
     line-height: 30px;
     span {
@@ -259,18 +255,17 @@ export default {
     .search-tag {
       float: right;
       width: 220px;
+      /deep/ .el-input__icon {
+        line-height: 36px;
+      }
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px!important;
+        line-height: 36px;
+        padding-right: 30px!important;
       }
-      /deep/ .el-input__suffix {
+      /deep/ .el-input__prefix {
         cursor: pointer;
-        /deep/ .el-input__icon {
-          width: auto;
-          margin-right: 5px;
-          line-height: 36px;
-        }
       }
     }
   }

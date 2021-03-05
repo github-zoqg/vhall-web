@@ -7,7 +7,7 @@
       <div class="vh-video-tailoring__media-wrap clearfix">
         <div class="vh-video-tailoring__play" :class="{ fl: docReady || !vodReady, no_doc: !(docReady || !vodReady) }">
           <div class="vh-video-tailoring__noplay" v-show="!vodReady">
-            <icon icon-class="saasicon_video"></icon>
+            <icon icon-class="saasicon_zanwushipin"></icon>
           </div>
           <template v-show="vodReady">
             <div id="vh-player"
@@ -32,7 +32,7 @@
             :isVod="true"
           ></doc>
           <div v-else class="vh-video-tailoring__nodoc-warp">
-            <icon icon-class="saasicon_word"></icon>
+            <icon icon-class="saasicon_zanwuwendang"></icon>
           </div>
         </div>
       </div>
@@ -130,7 +130,7 @@
       <div class="vh-video-tailoring__form">
         <span class="vh-video-tailoring__label vh-video-tailoring__title">{{ t('回放标题') }}</span>
         <div class="vh-video-tailoring__input-form">
-          <VhallInput resize=none type="textarea" v-model="videoTitle" :placeholder="t('请输入回放标题')" maxlength="100" show-word-limit ></VhallInput>
+          <VhallInput resize=none type="textarea" v-clearEmoij v-model="videoTitle" :placeholder="t('请输入回放标题')" maxlength="100" show-word-limit ></VhallInput>
           <!-- <span class="vh-invitation-card__title-length">
             <span :class="videoTitle.length != 0 ? 'vh-invitation-card__curLength' : ''">{{ videoTitleLength }}</span>/100
           </span> -->
@@ -812,9 +812,9 @@ export default {
             color: #666;
           }
         }
-        // .vhall-watch-doc[data-v-65e8c4ba] {
-        //   background-color: #000;
-        // }
+        .vhall-watch-doc .vhall-doc-pager{
+          bottom: 8px;
+        }
       }
     }
   }

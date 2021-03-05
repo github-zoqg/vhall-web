@@ -14,15 +14,17 @@
             <span>{{ title === '升级'? '升级套餐' : '扩展包'}}</span>
           </div>
         </el-form-item>
+        <!-- :style="{width: title== '升级'? '414px' : '428px'}" -->
+        <!-- :style="{width: title== '升级'? '414px' : '428px'}" -->
         <el-form-item :label="title === '升级'? '升级到并发' : '扩展包'">
-          <el-input v-model="number" :style="{width: title== '升级'? '414px' : '428px'}"
+          <el-input v-model="number"
             oninput="this.value=this.value.replace(/[^\d]/g, '')" maxlength="5" @blur="changeInput"><i slot="suffix" style="font-style: normal;">人</i></el-input
           >
           <!-- <template slot="append">人</template> -->
           <p class="inputNums">当前并发{{ currentInfo.total_concurrency}}人 {{ currentInfo.total_concurrency }}-99999</p>
         </el-form-item>
         <el-form-item label="订单信息">
-          <div class="informtion" :style="{width: title== '升级'? '414px' : '428px'}">
+          <div class="informtion">
             <div class="inform-pay">
               <h3>支付金额: <b>￥{{ totalConcurrency > 0 ? totalConcurrency : 0 }}</b></h3>
               <p v-if="title === '升级'">有效期{{ concurrentPrice.left_months }}个月<span> ({{ concurrentPrice.upgrade_start }}至{{ concurrentPrice.upgrade_end }})</span></p>
@@ -313,6 +315,9 @@ export default {
 /deep/.el-checkbox__input.is-checked+.el-checkbox__label{
   color: #666;
 }
+/deep/.el-input__suffix{
+  right: 12px;
+}
 .img-box {
   width: 182px;
   height: 104px;
@@ -354,6 +359,7 @@ export default {
     position: relative;
     // margin-right: 24px;
     cursor: pointer;
+    transition: all 0.15s ease-in;
     .isMark{
       display: inline-block;
       font-weight: normal;
@@ -375,39 +381,30 @@ export default {
           width: 100%;
           height: 100%;
         }
-      }
-    // .img-tangle{
-    //   position: absolute;
-    //   right: 0;
-    //   top:0;
-    //   width: 0;
-    //   height: 0;
-    //   border: 10px solid transparent;
-    //   border-right-color: #FB3A32;
-    //   border-top-color: #FB3A32;
-    //   i{
-    //     color:#fff;
-    //     position: absolute;
-    //     top: -8px;
-    //     right:-11px;
-    //     font-size: 10px;
-    //   }
-    // }
+    }
     &:last-child{
       margin-right: 0;
     }
+    &:hover {
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+      // border: 1px solid transparent;
+    }
+    &.active{
+      // box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+      border: 1px solid #FB3A32;
+    }
   }
-  .active{
-    box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
-    border: 1px solid #FB3A32;
-  }
+
+
 }
 .inputNums {
   line-height: 20px;
   padding-top: 8px;
+  color: #999;
 }
 .informtion {
-  width: 428px;
+  width: 414px;
   .inform-pay {
     max-height: 90px;
     background: #f7f7f7;

@@ -65,7 +65,7 @@
       :close-on-click-modal="false"
       v-if="addCustomVisbile"
       width="280px"
-      top="40vh"
+      top="32vh"
       class="add-menu-dialog"
     >
       <el-form
@@ -78,6 +78,7 @@
           <VhallInput
             v-model="addCustomForm.name"
             auto-complete="off"
+            v-clearEmoij
             placeholder="请输入菜单名称"
             :maxlength="8"
             show-word-limit />
@@ -314,7 +315,7 @@ export default {
     },
     // 左侧增加菜单
     addLeft(index) {
-      this.$insertIndex = (index - 1 < 0 ? 0 : index - 1)
+      this.$insertIndex = index
       console.log(this.$insertIndex)
       this.type = 'add' // 编辑类型！
       this.addCustomForm.name = ''
@@ -330,10 +331,10 @@ export default {
     },
     // 删除
     delThis(index) {
-      let activeTab = (index - 1)
-      this.choseMenu(activeTab)
+      let activeTab = index === 0 ? 0 : (index - 1)
       setTimeout(() => {
         this.menus.splice(index, 1)
+        this.choseMenu(activeTab)
       }, 100);
     },
     // 隐藏
@@ -446,7 +447,7 @@ export default {
   .vh-mobile-menus-item__popmenu{
       position: absolute;
       background: #fff;
-      width: 180px;
+      width: 160px;
       padding: 4px 0;
       background: #FFFFFF;
       box-shadow: 0px 8px 32px 0px rgba(51, 51, 51, 0.16);
@@ -459,17 +460,17 @@ export default {
         height: 40px;
         line-height: 40px;
         cursor: pointer;
-        text-align: center;
         font-size: 14px;
-        text-align: center;
+        text-align: left;
         color: #666666;
+        padding-left: 20px;
         &.disabled{
           color: #B3B3B3;
         }
 
         &:hover{
-          background: #FFEBEB;
-          color: #FB3A32;
+          background: #f7f7f7;
+          color: #1a1a1a;
         }
         input{
           width: 16px;

@@ -42,7 +42,7 @@
           <span style="color:#FB3A32">*</span>跳转链接
         </div>
         <div class="editorContent">
-          <el-input v-model="info.src" @change="changeLink"></el-input>
+          <el-input v-model="info.src" @change="changeLink" placeholder="请输入http://或https://开头的跳转地址"></el-input>
         </div>
       </div>
     </div>
@@ -108,7 +108,7 @@ export default {
       if(result) {
         this.$emit('updateInfo', this.info)
       } else {
-        this.$message.warning('跳转地址，必须以http或https 开头')
+        this.$message.warning('请输入http://或https://开头的链接')
       }
     },
 

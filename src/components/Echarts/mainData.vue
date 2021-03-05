@@ -13,7 +13,7 @@
             </div>
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
-          <h3>
+          <h3 class="custom-font-barlow">
             <count-to :startVal="0"
               :endVal="mainKeyData.total"
               :duration="1500"
@@ -29,7 +29,7 @@
             <div slot="content">{{ titleType == 1 ? '每场直播活动的时长，筛选条件内数据进行相加' : '点播视频的总时长'}}</div>
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
-           <h3>
+           <h3 class="custom-font-barlow">
              {{ mainKeyData.total_live_time }}
             <!-- <count-to :startVal="0"
               :endVal="mainKeyData.total_live_time"
@@ -46,7 +46,7 @@
             <div slot="content">筛选条件内的活动总数，包含直播、点播</div>
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
-          <h3>
+          <h3 class="custom-font-barlow">
             <count-to :startVal="0"
               :endVal="mainKeyData.webinar_count"
               :duration="1500"
@@ -64,7 +64,7 @@
             </div>
            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
-          <h3>
+          <h3 class="custom-font-barlow">
             <count-to :startVal="0"
               :endVal="mainKeyData.max_onlines"
               :duration="1500"
@@ -85,7 +85,7 @@
             </div>
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
-          <h3>
+          <h3 class="custom-font-barlow">
             <count-to :startVal="0"
               :endVal="mainKeyData.watch_number"
               :duration="1500"
@@ -106,7 +106,7 @@
             </div>
            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
-          <h3>
+          <h3 class="custom-font-barlow">
              <count-to :startVal="0"
               :endVal="mainKeyData.watch_times"
               :duration="1500"
@@ -126,7 +126,7 @@
             </div>
            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
-          <h3>
+          <h3 class="custom-font-barlow">
             <count-to :startVal="0"
               :endVal="mainKeyData.watch_times"
               :duration="1500"
@@ -143,7 +143,7 @@
             <div slot="content" v-else>人均观看次数=观看次数/观看人数</div>
            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
-          <h3>
+          <h3 class="custom-font-barlow">
             <count-to :startVal="0"
               :endVal="mainKeyData.watch_times_avg"
               :duration="1500"
@@ -160,7 +160,7 @@
             <div slot="content" v-else>筛选条件内的观看总时长</div>
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
-          <h3>
+          <h3 class="custom-font-barlow">
             {{ mainKeyData.watch_duration }}
           </h3>
         </div>
@@ -177,7 +177,7 @@
             </div>
           <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
-          <h3>
+          <h3 class="custom-font-barlow">
             {{ mainKeyData.watch_duration_avg }}
          </h3>
         </div>
@@ -242,7 +242,7 @@ export default {
   }
   .grid-content {
     text-align: left;
-    span {
+    >span {
       font-size: 14px;
       font-family: @fontRegular;
       color: #999;
@@ -255,12 +255,10 @@ export default {
     h3{
       padding-top: 6px;
       font-size: 28px;
-      font-family: @fontDINAL;
       font-weight: bold;
       color: #1a1a1a;
       span{
         font-size: 28px;
-        font-family: @fontDINAL;
         font-weight: bold;
         color: #1a1a1a;
         margin: 0;

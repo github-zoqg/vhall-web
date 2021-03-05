@@ -48,6 +48,10 @@ export default {
           placeholder: '请选择付费类型',
           options: [
             {
+              label: '全部',
+              value: ''
+            },
+            {
               label: '礼物',
               value: 13
             },
@@ -71,22 +75,27 @@ export default {
         {
           label: '手机号',
           key: 'phone',
+          width: '150'
         },
         {
           label: '付费金额',
           key: 'pay_fee',
+          width: '110'
         },
         {
           label: '付费类型',
           key: 'type',
+          width: '110'
         },
         {
           label: '支付时间',
           key: 'pay_time',
+          width: '170'
         },
         {
           label: '是否参会',
           key: 'is_enter',
+          width: '110'
         }
       ]
     };
@@ -139,7 +148,7 @@ export default {
       this.params = paramsObj;
       let obj = Object.assign({}, pageInfo, paramsObj);
       console.log(obj);
-      this.$fetch('liveIncomeDetailList', obj).then(res =>{
+      this.$fetch('liveIncomeDetailList', this.$params(obj)).then(res =>{
         this.totalNum = res.data.total;
         this.tableList = res.data.list;
         this.rowsList(this.tableList);
@@ -157,7 +166,7 @@ export default {
     },
     // 导出收益详情
     exportAccount() {
-      this.$fetch('exportIncomeDetail', this.params).then(res => {
+      this.$fetch('exportIncomeDetail', this.$params(this.params)).then(res => {
         this.$message({
           message: `收益详情导出申请成功，请去下载中心下载`,
           showClose: true,

@@ -20,7 +20,31 @@
       <div class="form-phone">
         <div class="official-form">
           <el-form label-width="120px" :model="form" ref="officialForm" :rules="formRules" >
-            <el-form-item label="图片"  prop="img">
+            <el-form-item label="手机图片"  prop="m_img">
+              <div class="img-box">
+                <upload
+                  class="giftUpload"
+                  v-model="form.m_img"
+                  :domain_url="m_domain_url"
+                  :saveData="{
+                     path: pathUrl,
+                     type: 'image',
+                  }"
+                  :on-success="pcUploadAdvSuccess"
+                  :on-progress="pcUploadProcess"
+                  :on-error="pcUploadError"
+                  :on-preview="pcUploadPreview"
+                  @handleFileChange="handlePcFileChange"
+                  :before-upload="beforePcUploadHnadler"
+                  @delete="form.m_img = '', m_domain_url = ''">
+                  <div slot="tip">
+                    <p>建议尺寸：750*1334px</p>
+                    <p>小于4M(支持jpg、gif、png、bmp)</p>
+                  </div>
+                </upload>
+              </div>
+            </el-form-item>
+            <el-form-item label="PC图片"  prop="img">
               <div class="img-box">
                 <upload
                   class="giftUpload"
@@ -38,14 +62,14 @@
                   :before-upload="beforeUploadHnadler"
                   @delete="form.img = '', domain_url = ''">
                   <div slot="tip">
-                    <p>建议尺寸：750*1334px</p>
+                    <p>建议尺寸：1920*1080px</p>
                     <p>小于4M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
               </div>
             </el-form-item>
             <el-form-item label="链接" prop="url">
-              <VhallInput v-model.trim="form.url" placeholder="请输入跳转链接" :maxlength="200" autocomplete="off" show-word-limit></VhallInput>
+              <VhallInput v-model.trim="form.url"  v-clearEmoij placeholder="请输入http://或https://开头的链接" :maxlength="200" autocomplete="off"></VhallInput>
             </el-form-item>
             <el-form-item label="自动关闭">
               <!--{{alertType 0手动关闭 1自动关闭}}-->
@@ -98,8 +122,8 @@
             <!-- 开屏海报 -->
             <div class="hb_app">
               <div class="poster-img">
-                <img class="domain_url" :src="domain_url" alt=""  v-if="status <= 0 && domain_url">
-                <img class="default" src="../../../common/images/poster/phone_poster_default@2x.png"  v-if="!domain_url" />
+                <img class="domain_url" :src="m_domain_url" alt=""  v-if="status <= 0 && m_domain_url">
+                <img class="default" src="../../../common/images/poster/phone_poster_default@2x.png"  v-if="!m_domain_url" />
               </div>
               <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s 关闭' : '关闭'}}</el-button>
             </div>
@@ -122,6 +146,7 @@ export default {
     return {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       domain_url: '',
+      m_domain_url: '',
       imgShowUrl: '',
       status: 1,
       alertType: null,
@@ -129,16 +154,20 @@ export default {
       showPoster: false,
       form: {
         img: '',
+        m_img: '',
         url: ''
       },
       formRules: {
         img: [
-          { required: true, message: '请上传二维码', trigger: 'blur' },
+          { required: true, message: '请上传PC图片', trigger: 'blur' },
+        ],
+        m_img: [
+          { required: true, message: '请上传手机图片', trigger: 'blur' },
         ],
         url: [
-          { required: false, message: '请输入跳转链接', trigger: 'blur'},
+          { required: false, message: '请输入链接', trigger: 'blur'},
           // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
-          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入跳转链接' , trigger: 'blur'},
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入http://或https://开头的链接？' , trigger: 'blur'},
           { maxlength: 200, message: '跳转链接最多可输入200个字符', trigger: 'blur' }
         ]
       }
@@ -220,8 +249,10 @@ export default {
       }).then(res => {
         if(res && res.code === 200) {
           this.form.img = res.data.img || '';
+          this.form.m_img = res.data.m_img || '';
           this.form.url = res.data.url || '';
           this.domain_url = res.data.img || '';
+          this.m_domain_url = res.data.m_img || '';
           /* if (this.domain_url) {
             if (this.switchType == 'pc') {
               this.resizePcImg(this.domain_url)
@@ -247,7 +278,8 @@ export default {
       let params = {
         webinar_id: this.$route.params.str,
         status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭
-        img: this.form.img ? this.$parseURL(this.form.img).path : '' // 公众号/开屏海报  图片地址
+        img: this.form.img ? this.$parseURL(this.form.img).path : '', // 开屏海报  PC图片地址
+        m_img: this.form.m_img ? this.$parseURL(this.form.m_img).path : '' // 开屏海报  手机图片地址
       };
       let type = this.alertType;
       params.shutdown_type = type;
@@ -370,6 +402,74 @@ export default {
         }
       })
     },
+    // pc
+    pcUploadAdvSuccess(res, file) {
+      console.log(res, file);
+      // this.img = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
+      if(res.data) {
+        let m_domain_url = res.data.domain_url || ''
+        let m_file_url = res.data.file_url || '';
+        this.form.m_img = m_file_url;
+        this.m_domain_url = m_domain_url;
+        /* if (this.domain_url) {
+          if (this.switchType == 'pc') {
+            this.resizePcImg(this.domain_url)
+          } else {
+            this.resizeImg(this.domain_url)
+          }
+        } */
+      }
+      // 触发验证
+      this.$refs.officialForm.validateField('m_img');
+    },
+    beforePcUploadHnadler(file){
+      console.log(file);
+     const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
+      const isLt2M = file.size / 1024 / 1024 < 4;
+      if (!isType) {
+        this.$message({
+          message:  `图片只能是 ${typeList.join('、')} 格式!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
+      }
+      if (!isLt2M) {
+        this.$message({
+          message: `图片大小不能超过 4MB!`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
+      }
+      return isType && isLt2M;
+    },
+    pcUploadProcess(event, file, fileList){
+      console.log('uploadProcess', event, file, fileList);
+    },
+    pcUploadError(err, file, fileList){
+      console.log('pcUploadError', err, file, fileList);
+      this.$message({
+        message: `PC图片上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
+    },
+    pcUploadPreview(file){
+      console.log('pcUploadPreview', file);
+    },
+    handlePcFileChange(file) {
+      console.log(file);
+    },
     resizePcImg (data) {
       let img = new Image()
       img.src = data
@@ -456,10 +556,13 @@ export default {
         margin: 110px auto 0;
       } */
       img {
-        width: 400px;
+        /* width: 400px;
         height: 242px;
         display: block;
-        margin: 24px auto 0;
+        margin: 24px auto 0; */
+        width: 442px;
+        margin-top: -24px;
+        margin-left: -18px;
       }
       .pc-poster-wrap{
         /* position: absolute;
@@ -474,13 +577,20 @@ export default {
         background: rgba(0, 0, 0, 0.4);
         width: 106px;
         height: 195px; */
-        position: absolute;
+        /* position: absolute;
         top: 15px;
         right: 0;
         background: rgba(0, 0, 0, 0.4);
         width: 106px;
         height: 227px;
+        border-bottom-right-radius: 22px; */
+        position: absolute;
+        top: 9px;
+        left: 0;
+        background: rgba(0, 0, 0, 0.4);
         border-bottom-right-radius: 22px;
+        width: 400px;
+        height: 226px;
       }
       .v-poster-preview {
         /* display: inline-block;
@@ -522,10 +632,14 @@ export default {
       .hb_pc {
         .poster-btn {
           position: absolute;
-          right: 6px;
+          right: 34px;
+          top: 19px;
+          width: 40px;
+          height: 16px;
+          /* right: 6px;
           top: 21px;
           width: 28px;
-          height: 12px;
+          height: 12px; */
           background: url('../../../common/images/poster/pc_poster_close@2x.png') no-repeat;
           background-size: 100% 100%;
           &.five {

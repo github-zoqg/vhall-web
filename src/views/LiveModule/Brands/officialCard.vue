@@ -74,20 +74,22 @@
           <div class="official-pc" v-show="switchType === 'pc'">
             <!-- status 控制是否阴影 -->
             <div class="v-preview-content">
-               <!-- 公众号 -->
-               <div class="gzh_pc_mask" v-if="!(alertType > 0)"></div>
-               <div class="gzh_pc">
-                 <img class="gzh_bg_default" src="../../../common/images/official/pc_yl@2x.png" alt=""/>
-                 <!-- 扫码外层 -->
-                 <div class="gzh_img_layout" v-if="!(alertType > 0)">
-                   <p><i class="iconfont-v3 saasicon_close"></i></p>
-                   <div class="gzh_img v-code-preview">
-                    <img :src="domain_url" alt=""  v-if="domain_url && !(alertType > 0)"/>
-                    <img src="../../../common/images/sys/default_code.jpeg" alt="" v-if="!domain_url && !(alertType > 0)"/>
+              <!-- 公众号 -->
+              <div class="gzh_app_mask_container" :style="{opacity: alertType > 0 ? 0 : 1}">
+                <div class="gzh_pc_mask"></div>
+                <!-- 扫码外层 -->
+                <div class="gzh_img_layout" >
+                  <p><i class="iconfont-v3 saasicon_close"></i></p>
+                  <div class="gzh_img v-code-preview">
+                    <img :src="domain_url" alt=""  v-if="domain_url"/>
+                    <img src="../../../common/images/sys/default_code.jpeg" alt="" v-if="!domain_url"/>
                   </div>
-                   <p class="gzh_txt">扫码关注公众号</p>
-                 </div>
-               </div>
+                  <p class="gzh_txt">扫码关注公众号</p>
+                </div>
+              </div>
+              <div class="gzh_pc">
+                <img class="gzh_bg_default" src="../../../common/images/official/pc_yl@2x.png" alt=""/>
+              </div>
             </div>
           </div>
           <!--PC预览,end-->
@@ -95,17 +97,19 @@
           <div :class="['official-app', {'show-code': !(alertType > 0)}]" v-show="switchType === 'app'">
             <span class="title">公众号</span>
             <!-- 公众号 -->
-            <div class="gzh_app_mask" v-if="!(alertType > 0)"></div>
-            <div class="gzh_app_close" v-if="!(alertType > 0)">
-              <i class="iconfont-v3 saasicon_close"></i>
-            </div>
-            <div class="gzh_app"  v-if="!(alertType > 0)">
-              <div class="gzh_img_layout">
-                <div class="img-code v-code-preview app-preview">
-                  <img :src="domain_url" alt=""  v-if="domain_url && !(alertType > 0)" />
-                  <img src="../../../common/images/sys/default_code.jpeg" v-if="!domain_url && !(alertType > 0)"/>
-                </div>
+            <div class="gzh_app_mask_container" :style="{opacity: alertType > 0 ? 0 : 1}">
+              <div class="gzh_app_mask"></div>
+              <div class="gzh_app_close">
+                <i class="iconfont-v3 saasicon_close"></i>
               </div>
+              <div class="gzh_app">
+                <div class="gzh_img_layout">
+                  <div class="img-code v-code-preview app-preview">
+                    <img :src="domain_url" alt=""  v-if="domain_url" />
+                    <img src="../../../common/images/sys/default_code.jpeg" v-if="!domain_url"/>
+                  </div>
+                </div>
+            </div>
               <!-- 非默认图，有文字
               <p class="gzh_txt" v-if="domain_url">扫码关注公众号</p> -->
             </div>
@@ -500,7 +504,9 @@ export default {
           margin: 0 0;
         }
       } */
-
+      .gzh_app_mask_container {
+        transition: all .15s;
+      }
       .gzh_pc_mask {
         position: absolute;
         display: block;
@@ -632,6 +638,9 @@ export default {
         right: 20px;
         top: 90px;
       }
+      .gzh_app_mask_container {
+        transition: all 0.15s;
+      }
       .gzh_app_mask {
         position: absolute;
         display: block;
@@ -642,10 +651,10 @@ export default {
         width: 310px;
         height: 566px; */
         right: calc(50% - 155px);
-        top: 80px;
+        top: 85px;
         text-align: center;
-        width: 312px;
-        height: 580px;
+        width: 310px;
+        height: 566px;
         background: #000000;
         border-radius: 0px 0px 26px 26px;
         opacity: 0.6;

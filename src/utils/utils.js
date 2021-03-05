@@ -59,6 +59,25 @@ export const debounce = (function () {
   }
 })()
 
+// 节流
+export const throttle = function(func, delay) {
+  let timer = null;
+  let startTime = Date.now();
+  return function() {
+      const curTime = Date.now();
+      const remaining = delay - (curTime - startTime);
+      const context = this;
+      const args = arguments;
+      clearTimeout(timer);
+      if (remaining <= 0) {
+          func.apply(context, args);
+          startTime = Date.now();
+      } else {
+          timer = setTimeout(func, remaining);
+      }
+  }
+}
+
 export function calculateAudioLevel (level) {
   let audioLevelValue = 1;
   if (level > 0 && level <= 0.04) {
@@ -275,6 +294,7 @@ export function checkAuth(to, from, next) {
         // 登录场景下，存储直接登录
         if(Number(scene_id) === 1) {
           sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+          sessionOrLocal.set('tokenExpiredTime', res.data.exp_time, 'localStorage')
           sessionOrLocal.set('sso_token', res.data.sso_token || '');
           sessionOrLocal.set('userId', res.data.user_id || '');
         }
@@ -380,6 +400,11 @@ export function checkAuth(to, from, next) {
       }
     }).catch(e => {
       console.log(e);
+      sessionStorage.clear()
+      localStorage.clear()
+      if(e.code == 11006){
+        next({path: '/login'});
+      }
       sessionOrLocal.removeItem('SAAS_VS_PES');
     });
     // 登录后，获取用户基本信息
@@ -388,6 +413,7 @@ export function checkAuth(to, from, next) {
       if(res.code === 200) {
         sessionOrLocal.set('userInfo', JSON.stringify(res.data));
         sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+        sessionOrLocal.set('currentDate', JSON.stringify(res.data.current_date));
       } else {
         sessionOrLocal.set('userInfo', null);
       }

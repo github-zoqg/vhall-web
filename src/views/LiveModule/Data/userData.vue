@@ -14,7 +14,7 @@
         <el-tab-pane label="回放" name="2"></el-tab-pane>
       </el-tabs>
       <div class="search">
-        <el-select filterable clearable v-model="type" @change="changeType" v-if="isSwitch"  style="width: 160px;vertical-align: top;margin-right: 16px">
+        <el-select filterable v-model="type" @change="changeType" v-if="isSwitch"  style="width: 160px;vertical-align: top;margin-right: 16px">
         <el-option
         v-for="(opt, optIndex) in timeData"
         :key="optIndex"
@@ -47,13 +47,14 @@
         <VhallInput
             class="search-tag"
             placeholder="请输入用户昵称"
+            v-clearEmoij
             v-model.trim="title"
             clearable
             @change="searchTableList"
             @keyup.enter.native="searchTableList">
             <i
               class="el-icon-search el-input__icon"
-              slot="suffix"
+              slot="prefix"
               @click="searchTableList">
             </i>
           </VhallInput>
@@ -390,18 +391,16 @@ export default {
     .search-tag {
       margin-left: 20px;
       width: 180px!important;
+      /deep/ .el-input__icon {
+        line-height: 36px;
+      }
       /deep/.el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px!important;
+        padding-right: 30px!important;
       }
-      /deep/ .el-input__suffix {
+      /deep/ .el-input__prefix {
         cursor: pointer;
-        /deep/ .el-input__icon {
-          width: auto;
-          margin-right: 5px;
-          line-height: 36px;
-        }
       }
     }
   }
@@ -413,7 +412,7 @@ export default {
   }
 
   @media screen and (max-width:1920px) {
-    /deep/.el-input {
+    .search-tag /deep/.el-input {
       width: 160px!important;
     }
   }

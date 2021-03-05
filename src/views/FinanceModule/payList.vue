@@ -25,7 +25,7 @@
         <p>总金额：<span>￥{{ payInfo.total_amount }}</span></p>
       </div>
       <div class="pay-over-time" v-if="timeOut">
-        <p><img :src="default_url" alt=""></p>
+        <p><img src="../../common/images/pay-fail.png" alt=""></p>
         <p>支付超时</p>
         <span @click="repurchase">重新购买</span>
       </div>
@@ -36,17 +36,11 @@
               <icon icon-class="saaszhifubao" class="payColor"></icon>
               <span>支付宝</span>
               <label class="img-tangle" v-if="isChecked== '1'"><img src="../../common/images/icon-choose.png" alt=""></label>
-              <!-- <label class="img-tangle" v-show="isChecked== '1'">
-                <i class="el-icon-check"></i>
-              </label> -->
             </div>
             <div class="pay-item" @click="changeColor('2')" :class="isChecked == '2' ? 'isActive' : ''">
               <icon icon-class="saasweixinzhifu" class="weixinColor"></icon>
               <span>微信</span>
               <label class="img-tangle" v-if="isChecked== '2'"><img src="../../common/images/icon-choose.png" alt=""></label>
-              <!-- <label class="img-tangle" v-show="isChecked== '2'">
-                <i class="el-icon-check"></i>
-              </label> -->
             </div>
           </div>
           <el-dialog
@@ -99,8 +93,7 @@ export default {
       time:'0:0',
       method: 'ALIPAY',
       payInfo: {},
-      arrearInfo: {}, //欠费订单
-      default_url: `${Env.staticImgs.pay[0]}`
+      arrearInfo: {} //欠费订单
     };
   },
   created() {
@@ -117,7 +110,7 @@ export default {
       };
       this.$fetch('orderInfo', params).then(res =>{
         this.payInfo = res.data;
-        this.downTime(res.data.current_time.replace(/-/g,'/'), res.data.expire_time.replace(/-/g,'/'));
+        this.downTime(res.data.current_time.replace(/-/g,'/'), res.data.exp_timeire_time.replace(/-/g,'/'));
       }).catch(res=>{
         this.$message({
           message: res.msg || "获取信息失败",
@@ -361,6 +354,7 @@ export default {
             line-height: 88px;
             border-radius: 4px;
             cursor: pointer;
+            transition: all 0.15s ease-in;
             /deep/.svg-icon{
               font-size: 32px;
               vertical-align: middle;
@@ -383,27 +377,14 @@ export default {
                 height: 100%;
               }
             }
-            // .img-tangle{
-            //    position: absolute;
-            //     right: 0;
-            //     top:0;
-            //     width: 0;
-            //     height: 0;
-            //     border: 10px solid transparent;
-            //     border-right-color: #FB3A32;
-            //     border-top-color: #FB3A32;
-            //     i{
-            //       color:#fff;
-            //       position: absolute;
-            //       top: -8px;
-            //       right:-11px;
-            //       font-size: 10px;
-            //     }
-            // }
+            &:hover {
+              box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+              // border: 1px solid transparent;
+            }
             &.isActive{
-                box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.3);
-                border: 1px solid #FB3A32;
-              }
+              box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+              border: 1px solid #FB3A32;
+            }
             img{
               width: 100%;
               height: 88px;

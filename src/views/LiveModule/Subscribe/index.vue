@@ -1304,6 +1304,7 @@ export default {
           this.$router.go(0) // 重新进入
           sessionOrLocal.set('sso', res.data.sso_token)
           sessionOrLocal.set('token', res.data.token, 'localStorage')
+          sessionOrLocal.set('tokenExpiredTime', res.data.exp_time, 'localStorage')
           sessionOrLocal.set('userInfo', res.data)
         })
         .catch(e => {

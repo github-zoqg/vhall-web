@@ -17,9 +17,10 @@
       />
       <VhallInput placeholder="请输入活动标题" v-model="query.title"
                 clearable
+                v-clearEmoij
                 @keyup.enter.native="queryList"
                 @clear="queryList">
-        <i class="el-icon-search el-input__icon" slot="suffix" @click="queryList"></i>
+        <i class="el-icon-search el-input__icon" slot="prefix" @click="queryList"></i>
       </VhallInput>
       <el-button size="medium" round @click="downloadHandle">导出数据</el-button>
     </div>
@@ -108,7 +109,8 @@ export default {
         this.query.limit = 10;
       }
       let params = {
-        account_id: this.$route.params.str, // b端账号id
+        // account_id: this.$route.params.str, // b端账号id
+        child_user_id: this.$route.params.str,
         type: 1, // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
         pos: this.query.pos,
         limit: this.query.limit,
@@ -118,7 +120,7 @@ export default {
         params.start_time = this.query.timeStr[0] || '';
         params.end_time = this.query.timeStr[1] || '';
       }
-      this.$fetch(this.sonVo.vip_info.type > 0 ? 'getBusinessList' : 'getAccountList', params).then(res=>{
+      this.$fetch(this.sonVo.vip_info.type > 0 ? 'getBusinessList' : 'getAccountList', this.$params(params)).then(res=>{
         if (res.data) {
           this.dataDao = {
             total: res.data.total || 0,
@@ -135,17 +137,18 @@ export default {
     },
     downloadHandle() {
       let params = {
-        account_id: this.$route.params.str, // 子账号内容，传递子账号数据
+        // account_id: this.$route.params.str, // 子账号内容，传递子账号数据
+        child_user_id: this.$route.params.str,
         subject: this.query.title,
-        pos: 0,
-        limit: 999999, // TODO 跟凯南约定，固定写死，下载99万数据
+        // pos: 0,
+        // limit: 999999, // TODO 跟凯南约定，固定写死，下载99万数据
         type: 1
       };
       if (this.query.timeStr) {
         params.start_time = this.query.timeStr[0] || '';
         params.end_time = this.query.timeStr[1] || '';
       }
-      this.$fetch(this.sonVo.vip_info.type > 0 ? 'exportFlowDetail' : 'exportOnlineDetail', params).then(res=>{
+      this.$fetch(this.sonVo.vip_info.type > 0 ? 'exportFlowDetail' : 'exportOnlineDetail', this.$params(params)).then(res=>{
         this.$message({
           message: `下载申请成功，请去下载中心下载该项`,
           showClose: true,
@@ -239,11 +242,11 @@ export default {
   .el-input{
     margin-left: 12px;
     width: 220px;
-    /deep/ .el-input__suffix{
+    /deep/ .el-input__prefix{
       cursor: pointer;
       /deep/ .el-input__icon{
-        width: auto;
-        margin-right: 5px;
+        // width: auto;
+        // margin-right: 5px;
         line-height: 36px;
       }
     }

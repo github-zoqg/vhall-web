@@ -93,6 +93,7 @@ const apis = {
   liveDel: ['/v3/webinars/webinar/delete', 'POST'], // 活动删除  √
   demandCreate: ['/v3/webinars/webinar/create-demand', 'POST'], // 点播创建
   checkLive: ['/v3/webinars/live/check', 'POST'], // 进入直播前检测
+  getPCDownloadUrl: ['/v3/commons/version/upgrade', 'POST'], // 客户端下载地址获取接口
 
   // 专题
   subjectCreate: ['/v3/webinars/subject/create', 'POST'], // 专题创建
@@ -232,6 +233,7 @@ const apis = {
   recordCheck: ['/v3/webinars/record/check', 'POST'], // 开始录制前检测 xiaodong.ding
   recordInfo: ['/v3/webinars/record/get-info', 'POST'], // 回放详情 xiaodong.ding
   getDefaultStartTime: ['/v3/webinars/record/get-record-time', 'POST'], // 获取创建回放初始时间-预览场景 xiaodong.ding
+  recordReTranscode: ['/v3/webinars/record/record-trans-code', 'POST'], // 回放重新生成
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √

@@ -2,9 +2,10 @@
   <div class="finance-info">
     <div class="title-data">
       <span>财务总览</span>
+      <div class="detail" v-if="buttonList.includes('details')" @click="goAccountDetail">订单明细</div>
     </div>
     <div class="version-info">
-      <version-info></version-info>
+      <version-info ref="versionInfo"></version-info>
     </div>
     <div class="statistical-line">
         <div class="serach-line">
@@ -79,8 +80,8 @@
           :picker-options="pickerOptions"
           style="width: 240px"
         />
-        <VhallInput v-model="subject" placeholder="请输入活动名称" style="width: 220px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" clearable>
-          <i slot="suffix" class="iconfont-v3 saasicon_search" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
+        <VhallInput v-model="subject"  placeholder="请输入活动名称" class="search-tag" style="width: 220px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" v-clearEmoij clearable>
+          <i slot="prefix" class="el-icon-search el-input__icon" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
         </VhallInput>
           <el-select filterable v-model="accountType" style="width: 160px;marginLeft:15px" @change="getSearchList" v-if="type">
             <el-option
@@ -106,13 +107,13 @@
          <div class="grid-item">
           <div class="grid-content">
             <p>累计直播（个）</p>
-            <h1>{{ trendData.webinar_num || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ trendData.webinar_num || 0 }}</h1>
           </div>
         </div>
          <div class="grid-item">
           <div class="grid-content">
             <p>最高并发（方）</p>
-            <h1>{{ trendData.max_uv || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ trendData.max_uv || 0 }}</h1>
           </div>
         </div>
       </div>
@@ -126,7 +127,7 @@
               </div>
              <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
-            <h1>{{ trendData.webinar_num || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ trendData.webinar_num || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
@@ -139,7 +140,7 @@
               <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
 
-            <h1>{{ trendData.total_flow || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ trendData.total_flow || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
@@ -151,7 +152,7 @@
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
-            <h1>{{ trendData.live_flow || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ trendData.live_flow || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
@@ -163,7 +164,7 @@
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
-            <h1>{{ trendData.vod_flow || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ trendData.vod_flow || 0 }}</h1>
           </div>
         </div>
       </div>
@@ -202,6 +203,7 @@ export default {
   data() {
     return {
       lintData: [],
+      buttonList: [],
       type: false,
       lineType: 1,
       accountType: 1,
@@ -228,7 +230,7 @@ export default {
       versionType: '',
       lineParams: {},
       dataParams: {},
-      totalNum: 1000,
+      totalNum: 0,
       vm: {},
       status: 0,
       tableList: [],
@@ -298,6 +300,7 @@ export default {
       this.initPayMessage();
     }
     this.initPage();
+    this.getVersion();
     this.getLineList();
     this.getAccountList();
   },
@@ -320,10 +323,16 @@ export default {
       this.lineSearchDate = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
       this.accountSearchDate = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')]
     },
+    getVersion() {
+      this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
+        this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
     // 用量统计数据
     getLineList() {
       let paramsObj = {
-        account_id: this.userId,
         type: this.lineType || 1
       };
       if (this.lineSearchDate) {
@@ -354,11 +363,16 @@ export default {
     getSearchList() {
       this.getAccountList('search')
     },
+    // 订单明细
+    goAccountDetail() {
+      this.$router.push({
+        path: '/finance/infoDetail'
+      });
+    },
     // 获取消费账单列表
     getAccountList(params) {
       let pageInfo = this.$refs.accountTableList.pageInfo;
       let paramsObj = {
-        account_id: this.userId,
         subject: this.subject,
         type: this.accountType || 1
       };
@@ -366,7 +380,6 @@ export default {
         pageInfo.pos= 0;
         pageInfo.pageNum = 1;
       }
-      console.log(this.accountSearchDate, '?????????????')
       if (this.accountSearchDate) {
         paramsObj['start_time'] = this.accountSearchDate[0];
         paramsObj['end_time'] = this.accountSearchDate[1];
@@ -377,7 +390,7 @@ export default {
       this.dataParams = this.$params(paramsObj);
       let obj = Object.assign({}, pageInfo, paramsObj);
 
-      this.getOnlinePay(this.$params(obj));
+      this.getOnlinePay(this.$params(this.dataParams));
       this.getDataList(this.$params(obj));
     },
     getDataList(obj) {
@@ -504,16 +517,24 @@ export default {
       border-radius: 18px;
       height: 36px;
       background: transparent;
-      padding-left: 12px;
-      padding-right: 50px;
     }
-     /deep/.el-input__icon {
-        // margin-bottom: 5px;
-        line-height: 33px;
+    // /deep/.el-select__caret .el-input__icon{
+    //   line-height: 36px;
+    // }
+    .search-tag{
+      /deep/.el-input__inner{
+        padding-right: 30px!important;
       }
-      /deep/.el-input__suffix{
-        top: 0px;
-      }
+      /deep/.el-input__icon {
+          line-height: 36px;
+        }
+        /deep/.el-input__prefix{
+          cursor: pointer;
+        }
+    }
+    /deep/.el-icon-arrow-up, .is-reverse{
+      line-height: 36px;
+    }
     /deep/.el-range-editor.el-input__inner{
       padding: 1px 10px;
     }
@@ -522,14 +543,23 @@ export default {
     }
   }
   .title-data {
-      margin: 10px 0 20px 0;
+      margin: 0 0 20px 0;
       text-align: left;
       line-height: 30px;
+      position: relative;
       span{
         font-size: 22px;
         font-family: @fontSemibold;
         font-weight: 600;
         color: #1a1a1a;
+      }
+      .detail{
+        position: absolute;
+        top:0;
+        right:0;
+        color:#3B67F9;
+        font-size: 14px;
+        cursor: pointer;
       }
     }
   .statistical-line {

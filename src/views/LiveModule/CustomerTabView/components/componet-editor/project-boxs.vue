@@ -5,7 +5,9 @@
       v-model="keyword"
       placeholder="请输入专题标题"
       @change="inputChange"
-      suffix-icon="el-icon-search"
+      v-clearEmoij
+      clearable
+      prefix-icon="el-icon-search"
       style="width:220px; border-radius:24px"
       class="input-box"
     ></VhallInput>
@@ -95,7 +97,7 @@ export default {
     getActiveList() {
       this.loading = true
       const pos = (this.page - 1) * this.pageSize
-      const limit = this.page * this.pageSize
+      const limit = this.pageSize
       const userId = sessionStorage.getItem('userId')
       let params = {
         pos: pos,
@@ -193,21 +195,26 @@ export default {
       /deep/ input{
         border-radius: 24px !important;
       }
+      /deep/.el-input__icon{
+        line-height: 36px;
+      }
     }
   }
 
   .vh-chose-active-item{
     cursor: pointer;
     display: inline-block;
-    width: 213px;
+    width: 215px;
     height: 182px;
     overflow: hidden;
     background: #F7F7F7;
     border-radius: 4px;
     margin: 0 16px 14px 0;
     position: relative;
+    transition: all 0.15s ease-in;
+    border: 1px solid #FFFFFF;
     &:hover{
-      box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       border-radius: 4px;
     }
     i.saasicon-choose-01{

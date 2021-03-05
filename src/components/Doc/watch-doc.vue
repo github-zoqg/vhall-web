@@ -1,7 +1,9 @@
 <template>
   <div v-show="watchDocShow" class="vhall-watch-doc" ref="watchDocWrapper">
     <div v-show="!currentCid" class="watch-doc-placeholder">
-      <i class="iconfont iconzanwuwendang"></i>
+      <i v-show="!isChapterWatch" class="iconfont iconzanwuwendang"></i>
+      <i v-show="isChapterWatch" class="iconfont iconfont-v3 saasicon_zanwuwendang"></i>
+
       <span>主讲人未添加文档，请稍等...</span>
     </div>
     <div
@@ -97,6 +99,14 @@ export default {
     preloadDocs: {
       required: false,
       default: false
+    },
+    isChapterWatch: {
+      required: false,
+      default: false
+    },
+    isParentFullScreen: {
+      required: false,
+      default: true
     }
   },
   data () {
@@ -154,7 +164,7 @@ export default {
           return false
         }
         let style = window.getComputedStyle(
-          this.$refs.watchDocWrapper.parentNode
+          this.isParentFullScreen ? this.$refs.watchDocWrapper.parentNode : this.$refs.watchDocWrapper
         );
         wrapWidth = parseFloat(style.width);
         wrapHeight = parseFloat(style.height);

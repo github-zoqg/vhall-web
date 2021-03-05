@@ -51,7 +51,7 @@
           <el-col :span="6">
             <div class="buttom-item">
               <p>活动总数</p>
-              <h2>
+              <h2 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="mainKeyData.webinar_count"
                   :duration="1500"
@@ -63,7 +63,7 @@
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看次数</p>
-              <h2>
+              <h2 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="mainKeyData.watch_times"
                   :duration="1500"
@@ -75,7 +75,7 @@
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看人数</p>
-              <h2>
+              <h2 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="mainKeyData.watch_number"
                   :duration="1500"
@@ -87,7 +87,7 @@
           <el-col :span="6">
             <div class="buttom-item">
               <p>观看时长(分)</p>
-              <h2>
+              <h2 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="mainKeyData.watch_duration"
                   :duration="1500"
@@ -136,11 +136,11 @@
         <a href="http://e.vhall.com/app" class="download-btn" target="_blank">立即下载</a>
       </div>
       <div class="data-document">
-        <h2>文档中心<a href="https://www.vhall.com/saas/doc" target="_blank">更多</a></h2>
-        <p><a href="https://www.vhall.com/saas/doc/6.html" target="_blank">API文档</a></p>
+        <h2>文档中心<a href="https://saas-doc.vhall.com/document/document/index" target="_blank">更多</a></h2>
+        <p><a href="https://saas-doc.vhall.com/docs/show/947" target="_blank">API文档</a></p>
         <p><a href="https://www.vhall.com/saas/doc/260.html" target="_blank">JSSDK文档</a></p>
-        <p><a href="https://www.vhall.com/saas/doc/262.html" target="_blank">IOS SDK文档</a></p>
-        <p><a href="https://www.vhall.com/saas/doc/261.html" target="_blank">Andriod SDK文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1175" target="_blank">IOS SDK文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1203" target="_blank">Andriod SDK文档</a></p>
       </div>
       <div class="helpMsg" @click="contactUs">
         <i class="el-icon-chat-dot-round"></i>
@@ -188,9 +188,11 @@ export default {
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
-    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     // this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
     this.getLiveList();
+    this.$nextTick(() => {
+      this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
+    })
   },
   beforeDestroy() {
     document.getElementById('app').style.minWidth="1366px"
@@ -214,20 +216,22 @@ export default {
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       end.setTime(end.getTime() - 3600 * 1000 * 24 * 1);
+      // let parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
       // parent_id > 0 子账号
       let params = {
-        account_id: this.userId,
+        // account_id: this.userId,
+        // child_user_id: parentId == 0 ? '' : this.userId,
         type: 1,
         start_time: this.$moment(start).format('YYYY-MM-DD'),
         end_time: this.$moment(end).format('YYYY-MM-DD')
       };
-      this.$fetch('getDataCenterInfo', params).then(res =>{
+      this.$fetch('getDataCenterInfo', this.$params(params)).then(res =>{
         this.mainKeyData = {...res.data.key_data};
         // this.lineDataList = res.data.trend.live;
       }).catch(e=>{
         console.log(e);
       });
-      this.getLineData(params);
+      this.getLineData(this.$params(params));
     },
     getLineData(obj) {
       let url = this.versionType == '1' ? 'getFlowLineInfo' : 'getTrendLineInfo';
@@ -280,8 +284,9 @@ export default {
         transition: all 0.15s ease-in;
         &:hover{
           background: #FFFFFF;
-          box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);
+          // box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);
           border-radius: 4px;
+          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
           border: 1px solid #FB3A32;
         }
         p{
@@ -367,11 +372,12 @@ export default {
       .download-btn{
         // outline: none;
         width: 110px;
-        height: 36px;
+        // height: 36px;
         border-radius: 18px;
         border: 1px solid #ccc;
         text-align: center;
-        line-height: 36px;
+        padding: 10px 0;
+        // line-height: 36px;
         background: #fff;
         font-size: 14px;
         color: #1a1a1a;
@@ -380,7 +386,8 @@ export default {
         bottom: 24px;
         cursor: pointer;
         &:hover{
-          color: #FB3A32;
+          background: #FB3A32;
+          color: #fff;
           border: 1px solid #FB3A32;
         }
       }

@@ -8,7 +8,7 @@
     </pageTitle>
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
     <div class="search">
-      <el-select filterable clearable v-model="type" @change="changeType" v-if="liveDetailInfo.webinar_state!=4"  style="width: 160px;vertical-align: top;margin-right:16px">
+      <el-select filterable v-model="type" @change="changeType" v-if="liveDetailInfo.webinar_state!=4"  style="width: 160px;vertical-align: top;margin-right:16px">
         <el-option
           v-for="(opt, optIndex) in timeData"
           :key="optIndex"
@@ -318,7 +318,7 @@ export default {
       });
       // 获取终端设备
       this.$fetch('getDeviceinfo', params).then(res => {
-        this.deviceDataList = res.data.list;
+        this.deviceDataList = res.data.list || [];
       });
       // 获取浏览器
       this.$fetch('getBrowserinfo', params).then(res => {

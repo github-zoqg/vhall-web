@@ -10,11 +10,12 @@
         v-model="formParams.keyword"
         @keyup.enter.native="searchHandle"
         clearable
+        v-clearEmoij
         @clear="searchHandle"
         >
         <i
           class="el-icon-search el-input__icon"
-          slot="suffix"
+          slot="prefix"
           @click="searchHandle">
         </i>
       </VhallInput>
@@ -475,7 +476,6 @@ export default {
   margin: 24px auto 0 auto;
   text-align: right;
   .el-button {
-    margin-right: 12px;
     &:last-child {
       margin-right: 0;
     }

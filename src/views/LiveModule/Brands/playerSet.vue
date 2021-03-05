@@ -19,7 +19,11 @@
                     </el-switch>
                   </p>
                 </el-form-item>
-                <el-form-item label="类型">
+                <!-- <el-form-item label="显示方式">
+                  <el-radio v-model="formHorse.scroll_type" :label="1" :disabled="!scrolling_open" @change="editHorseInfo">滚动</el-radio>
+                  <el-radio v-model="formHorse.scroll_type" :label="2" :disabled="!scrolling_open" @change="editHorseInfo">闪烁</el-radio>
+                </el-form-item> -->
+                <el-form-item label="文本类型">
                   <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open" @change="editHorseInfo">固定文本</el-radio>
                   <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open" @change="editHorseInfo">固定文本+观看者ID和昵称</el-radio>
                 </el-form-item>
@@ -31,6 +35,7 @@
                     :disabled="!scrolling_open"
                     autocomplete="off"
                     :maxlength="20"
+                    v-clearEmoij
                     show-word-limit
                     @change="editHorseInfo"
                   ></VhallInput>
@@ -60,13 +65,13 @@
                   <el-radio v-model="formHorse.position" :label="3" :disabled="!scrolling_open" @change="editHorseInfo">中</el-radio>
                   <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open" @change="editHorseInfo">下</el-radio>
                 </el-form-item>
+                <!-- v-if="formHorse.scroll_type == 1" -->
                 <el-form-item label="间隔时间" prop="interval">
                   <el-input
                     v-model="formHorse.interval"
                     :disabled="!scrolling_open"
                     maxlength="3"
                     @blur="blurChange"
-                    @keyup="editHorseInfo"
                     oninput="this.value=this.value.replace(/[^0-9]/g, '')"
                     placeholder="默认20，支持输入范围1-300">
                     <i slot="suffix">秒</i>
@@ -246,7 +251,6 @@
               </transition>
             </div>
           </div>
-          <!-- <img :src="audioEnd" alt="" v-show="!showVideo"> -->
           <!-- <div id="videoDom" v-show="showVideo"></div> -->
           <p class="show-purple-info">
             <span>提示</span>
@@ -267,7 +271,6 @@ import { sessionOrLocal, debounce } from '@/utils/utils';
 import beginPlay from '@/components/beginBtn';
 import { secondToDateZH } from '@/utils/general';
 import controle from './js/control';
-import Env from '@/api/env';
 export default {
   name: 'playerSet',
   mixins: [controle],
@@ -337,9 +340,9 @@ export default {
         text: '版权所有，盗版必究',
         position: 1,
         alpha: 100,
+        // scroll_type: 1,
         interval: 20
       },
-      accountIds:10000127,
       fontList: [],
       formWatermark: {
         img_position: 2,
@@ -357,7 +360,7 @@ export default {
         imageUrl: '',
       },
       videoParam: {
-        paas_record_id: '922013fa'
+        paas_record_id: '27d23478'
       },
       marqueeOption: {
         enable: Boolean(this.scrolling_open),
@@ -367,6 +370,7 @@ export default {
         color: '#FFFFFF',   //  文字颜色
         interval: 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: 6000, // 跑马灯移动速度  3000快     6000中   10000慢
+        // displayType: 0,
         position: 1
       },
       rules: {
@@ -375,7 +379,8 @@ export default {
       vm: null,
       checkEnter: true, // 检验是否是第一次进来的
       audioImg: require('@/common/images/logo4.png'),
-      audioEnd: `${Env.staticImgs.video[0]}`,
+      appId: '',
+      appToken: ''
     };
   },
   components: {
@@ -384,7 +389,7 @@ export default {
     ColorSet,
     beginPlay
   },
-   computed: {
+  computed: {
     horseLampText(){
       if(this.scrolling_open){
         return '已开启，文字以跑马灯的形式出现在播放器画面中';
@@ -427,13 +432,15 @@ export default {
     },
   },
   created() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getFontList();
+    this.getVideoAppid();
     this.getBasescrollingList();
+    this.getBaseWaterList();
     // 获取其他信息
     this.getBaseOtherList();
   },
   mounted () {
-    this.initPlayer();
   },
   beforeDestroy() {
     if(this.$Vhallplayer){
@@ -446,6 +453,7 @@ export default {
       if (!this.formHorse.interval || this.formHorse.interval < 0) {
         this.formHorse.interval = 20;
       }
+      this.editHorseInfo()
     },
     choseSpeed() {
       this.isShowSpeed = true;
@@ -455,6 +463,14 @@ export default {
       this.speedText = item.label;
       this.speed = item.value;
       this.$Vhallplayer.setPlaySpeed(this.speed)
+    },
+    // 获取appId
+    getVideoAppid() {
+      this.$fetch('getAppid').then(res => {
+        this.appId = res.data.app_id;
+        this.appToken = res.data.access_token;
+        this.initPlayer();
+      })
     },
     // 预览视频
     previewVideo () {
@@ -552,9 +568,10 @@ export default {
         alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
         size:this.formHorse.size,      // 文字大小
         color: this.formHorse.color || '#FFFFFF',   //  文字颜色
-        interval: this.formHorse.interval || 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
+        interval:this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: this.formHorse.speed || 6000, // 跑马灯移动速度  3000快     6000中   10000慢
-        position:this.formHorse.position || 1
+        // displayType: this.formHorse.scroll_type == 1 ? 0 : 1,
+        position:this.formHorse.position
       }
     },
     // 获取跑马灯基本信息
@@ -775,13 +792,13 @@ export default {
       //     break;
       // }
       const incomingData = {
-        appId: 'd317f559', // 应用ID，必填
-        accountId: this.accountIds, // 第三方用户ID，必填
-        token: 'access:d317f559:b3acfa862ae09232', // access_token，必填
+        appId: this.appId, // 应用ID，必填
+        accountId: this.userId || 1, // 第三方用户ID，必填
+        token: this.appToken, // access_token，必填
         type: 'vod', // live 直播  vod 点播  必填
         videoNode: 'videoDom', // 播放器的容器， div的id 必填
         poster: '', // 封面地址  仅支持.jpg
-        vodOption: { recordId: '922013fa', forceMSE: false },
+        vodOption: { recordId: this.videoParam.paas_record_id, forceMSE: false },
         marqueeOption: this.marqueeOption,
         watermarkOption: { // 选填
           enable: Boolean(this.watermark_open), // 默认 false
@@ -812,12 +829,6 @@ export default {
 
             if (this.formOther.doubleSpeed) {
               this.$Vhallplayer.setPlaySpeed(this.speed)
-              // this.speedList = this.$Vhallplayer.getUsableSpeed() || [];
-              // this.speedList.map((item, index) => {
-              //   if (item == 1) {
-              //     this.speed = this.speedList[index];
-              //   }
-              // })
             }
             this.$Vhallplayer.on(window.VhallPlayer.LOADED, () => {
               this.loading = false;
@@ -964,15 +975,15 @@ export default {
     },
     handleClick(tab) {
       this.activeName = tab.name;
-      if (tab.name === 'first') {
-        this.getBasescrollingList();
-      } else if(tab.name === 'second') {
-        this.getBaseWaterList();
-      } else {
-        this.checkEnter = true
-        this.getBaseOtherList();
-        this.otherOtherInfo(1)
-      }
+      // if (tab.name === 'first') {
+      //   this.getBasescrollingList();
+      // } else if(tab.name === 'second') {
+      //   this.getBaseWaterList();
+      // } else {
+      //   this.checkEnter = true
+      //   this.getBaseOtherList();
+      //   this.otherOtherInfo(1)
+      // }
     },
   },
 };
@@ -1006,7 +1017,6 @@ export default {
   // }
 
 }
-
 .prize-card {
   height: 100%;
  .player-set{

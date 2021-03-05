@@ -74,16 +74,16 @@
         </div>
         <div class="login-other">
           其他登录方式<span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
-          <div class="other-img" v-show="!isOpenOther">
-            <img src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('/v3/commons/auth/qq?jump_url=')">
-            <img src="../../common/images/icon/wechat.png" alt="" @click="thirdLogin('/v3/commons/auth/weixin?source=pc&jump_url=')">
+          <div :class="['other-img', !isOpenOther ? 'noVisible' : '']">
+            <img v-show="isOpenOther" src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('/v3/commons/auth/qq?jump_url=')">
+            <img v-show="isOpenOther" src="../../common/images/icon/wechat.png" alt="" @click="thirdLogin('/v3/commons/auth/weixin?source=pc&jump_url=')">
             <!-- <img src="../../common/images/icon/weibo.png" alt=""> -->
           </div>
         </div>
       </el-form>
      </div>
      <!-- 手机号登录 -->
-     <div class="phone-wapper form-items" v-if="isActive===2">
+     <div class="phone-wapper form-items" v-show="isActive==2">
         <el-form ref="dynamicForm" :model="dynamicForm" :rules="loginRules">
           <el-form-item prop="phoneNumber" class="loginUsername">
             <p class="itemLable" :class="{'active': isLoginPhoneFocus || dynamicForm.phoneNumber}">手机号</p>
@@ -132,7 +132,7 @@
      </div>
     </div>
     <!-- 注册 -->
-    <div class="login-box register" v-else>
+    <div class="login-box register" v-show="$route.path!=='/login'">
       <h3>欢迎注册微吼直播</h3>
       <div class="login-line"></div>
       <div class="form-items">
@@ -178,7 +178,7 @@
             </el-form-item>
             <el-form-item prop="password" class="password">
               <p class="itemLable" :class="{'active': isPasswordFocus || registerForm.password}">密码</p>
-              <el-input
+              <pwdinput
                 clearable
                 @focus="handleFocus('isPasswordFocus')"
                 @blur="handleBlur('isPasswordFocus')"
@@ -187,13 +187,13 @@
                 auto-complete="off"
                 onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]/g,'')"
                 style="ime-mode:disabled"
-                :type="isPassWordType ? 'password' : 'text'"
+                :isPasswordVisible="!isPassWordType"
                 v-model="registerForm.password">
                 <span slot="suffix" @click="passWordType" class="closePwd">
                   <icon class="icon" icon-class="saaseyeclose_huaban1" v-show="isPassWordType"></icon>
                   <icon class="icon" icon-class="saasicon-eye" v-show="!isPassWordType"></icon>
                 </span>
-              </el-input>
+              </pwdinput>
               <p class="errorText" v-show="registerText">{{registerText}}</p>
             </el-form-item>
             <div class="login-btn">
@@ -212,11 +212,14 @@
 </template>
 <script>
 import {sessionOrLocal} from "@/utils/utils";
+import Cookies from 'js-cookie'
 import footerSection from '../../components/Footer/index';
 import Env from "@/api/env";
+import pwdinput from './components/pwdInput'
 export default {
   components: {
-    footerSection
+    footerSection,
+    pwdinput
   },
   data() {
     var validatePhone = (rule, value, callback) => {
@@ -362,6 +365,7 @@ export default {
       this.showCaptcha = false;
       this.errorMsgShow = '';
       this.errorText = '';
+      this.callCaptcha();
     },
     getDyCode() {
       // 获取短信验证码
@@ -436,10 +440,13 @@ export default {
         this.errorText = '';
         this.errorMsgShow = '';
         sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+        sessionOrLocal.set('tokenExpiredTime', res.data.exp_time || '', 'localStorage');
         // 存储控制台-channel_id频道
         sessionOrLocal.set('SAAS_V3_CHANNEL_ID', res.data.channel_id || '', 'localStorage');
         // 存储控制台-channel_id频道
         sessionOrLocal.set('SAAS_V3_SSO_TOKEN', res.data.sso_token || '', 'localStorage');
+        // 用户登录完成后，用户ID写入Cookie
+        Cookies.set('gray-id', res.data.user_id)
         // 登录完成后，获取当前用户的权限
         this.$fetch('planFunctionGet', {}).then(vRes => {
           let permissions = vRes.data.permissions;
@@ -953,6 +960,10 @@ export default {
 
 .other-img {
   margin-top: 16px;
+  transition: height .5s;
+  overflow: hidden;
+  height: 26px;
+  line-height: 26px;
   img {
     width: 24px;
     height: 24px;
@@ -960,6 +971,9 @@ export default {
     &:first-child {
       margin-right: 8px;
     }
+  }
+  &.noVisible {
+    height: 0px;
   }
 }
 

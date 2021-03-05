@@ -21,7 +21,7 @@
             <!-- <icon icon-class="saasicon_yuyue"></icon> -->
             <div class="base-text">
               <span>预约（人）</span>
-              <h1>
+              <h1 class="custom-font-barlow">
                  <count-to :startVal="0"
                   :endVal="dataInfo.subscribeNum"
                   :duration="1500"
@@ -39,7 +39,7 @@
             <!-- <icon icon-class="saasicon_baomingbiaodan"></icon> -->
             <div class="base-text">
               <span>报名表单（人）</span>
-              <h1>
+              <h1 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="dataInfo.answerNum"
                   :duration="1500"
@@ -57,7 +57,7 @@
            <!-- <icon icon-class="saasicon_shikan"></icon> -->
             <div class="base-text">
               <span>试看（人）</span>
-              <h1>
+              <h1 class="custom-font-barlow">
                  <count-to :startVal="0"
                   :endVal="dataInfo.previewNum"
                   :duration="1500"
@@ -74,7 +74,7 @@
             <!-- <icon icon-class="saasicon_yaoqingpaiming"></icon> -->
             <div class="base-text">
               <span>邀请排名（人）</span>
-              <h1>
+              <h1 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="dataInfo.inviteNum"
                   :duration="1500"
@@ -92,7 +92,7 @@
 
             <div class="base-text">
               <span>分享排名（条）</span>
-              <h1>
+              <h1 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="dataInfo.shareNum"
                   :duration="1500"
@@ -125,7 +125,7 @@
 
             <div class="base-text">
               <span>聊天(条)</span>
-              <h1>
+              <h1 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="dataInfo.chatNum"
                   :duration="1500"
@@ -143,7 +143,7 @@
 
             <div class="base-text">
               <span>问答(条)</span>
-              <h1>
+              <h1 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="dataInfo.recordNum"
                   :duration="1500"
@@ -160,7 +160,7 @@
 
             <div class="base-text">
               <span>点赞(次)</span>
-              <h1>
+              <h1 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="dataInfo.likeNum"
                   :duration="1500"
@@ -178,7 +178,7 @@
 
             <div class="base-text">
               <span>签到(人)</span>
-              <h1>
+              <h1 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="dataInfo.signNum"
                   :duration="1500"
@@ -196,7 +196,7 @@
 
             <div class="base-text">
               <span>问卷(人)</span>
-              <h1>
+              <h1 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="dataInfo.submitNum"
                   :duration="1500"
@@ -214,7 +214,7 @@
 
             <div class="base-text">
               <span>抽奖(人)</span>
-              <h1>
+              <h1 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="dataInfo.prizeNum"
                   :duration="1500"
@@ -232,7 +232,7 @@
 
             <div class="base-text">
               <span>发群红包(元)</span>
-              <h1>{{ dataInfo.redpacketMoney }}</h1>
+              <h1 class="custom-font-barlow">{{ dataInfo.redpacketMoney }}</h1>
             </div>
           </div>
         </div>
@@ -244,7 +244,7 @@
 
             <div class="base-text">
               <span>打赏(元)</span>
-              <h1>{{ dataInfo.rewardMoney }}</h1>
+              <h1 class="custom-font-barlow">{{ dataInfo.rewardMoney }}</h1>
             </div>
           </div>
         </div>
@@ -256,7 +256,7 @@
 
             <div class="base-text">
               <span>礼物(元)</span>
-              <h1>
+              <h1 class="custom-font-barlow">
               {{ dataInfo.gitMoney }}
               </h1>
             </div>
@@ -269,7 +269,7 @@
 
             <div class="base-text">
               <span>连麦(条)</span>
-              <h1>
+              <h1 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="dataInfo.speakNum"
                   :duration="1500"
@@ -599,7 +599,7 @@ export default {
         }
         &:hover{
           border: 1px solid #fb3a32;
-          box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);
+          box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
           // border-radius: 4px;
         }
       }

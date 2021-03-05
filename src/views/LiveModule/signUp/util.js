@@ -84,6 +84,7 @@ let filedJson = {
     ],
     reqType: 1,
     default_type: '',
+    disabledEdit: true
   },
   inputs: {
     "label": "小结",
@@ -144,6 +145,7 @@ export function getfiledJson({name, type}){
           label: '生日',
           "required": true,
           "bottomBtn": ["move", "phoneValid"],
+          disabledEdit: false
         });
 
         break;
@@ -199,6 +201,7 @@ export function getfiledJson({name, type}){
           label: '行业',
           "required": true,
           "bottomBtn": ["delete", "move", "requireSwtich"],
+          disabledEdit: false
         });
 
         break;
@@ -301,7 +304,7 @@ export function getfiledJson({name, type}){
               "key": "color_text",
               "props": {
                 class: ['radioInput'],
-                placeholder: '请输入第一行中可点击跳转得文字'
+                placeholder: '请输入第1行中包含的文字才能实现跳转效果'
               },
               "value":"《隐私声明》",
               privacyAdd: true
@@ -309,13 +312,14 @@ export function getfiledJson({name, type}){
             {
               "key": "url",
               "props": {
-                placeholder: '跳转链接（可选）'
+                placeholder: '请输入以http://或https://开头的链接'
               },
               "value":""
             },
           ],
           reqType: 6,
           default_type: '',
+          disabledEdit: false
         });
         break;
 

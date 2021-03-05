@@ -19,12 +19,13 @@
           @keyup.enter.native="getList"
           placeholder="请输入内容标题"
           autocomplete="off"
+          v-clearEmoij
           class="resetRightBrn"
           @clear="getList"
           v-model="keyWords">
           <i
             class="el-icon-search el-input__icon"
-            slot="suffix"
+            slot="prefix"
             @click="getList">
           </i>
         </VhallInput>
@@ -51,7 +52,9 @@
               <div class="content">
                 <div class="imageBox">
                   <div class="imageWrap" v-if="scope.row.transcode_status != 1">
-                    <p class="statusDesc">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : scope.row.transcode_status == 2 ? '转码失败' : '' }}</p>
+
+                    <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">转码失败</p>
+                    <p v-else class="statusDesc">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
                   </div>
                   <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
                   <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
@@ -64,9 +67,9 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column :width="recordType != 3 ? 78 : 106">
+          <el-table-column :width="recordType != 3 && recordType != -1 ? 78 : 106">
             <template slot-scope="{ column, $index }" slot="header">
-              <el-select v-if="!isDemand" v-model="recordType" @change="typeChange(column, $index)">
+              <el-select popper-class="playback-list-popper" v-if="!isDemand" v-model="recordType" @change="typeChange(column, $index)">
                 <el-option
                   v-for="item in typeOptions"
                   :key="item.value"
@@ -138,6 +141,7 @@
         placeholder="请输入标题"
         :maxlength="100"
         autocomplete="off"
+        v-clearEmoij
         :autosize="{ minRows: 3 }"
         resize=none
         show-word-limit
@@ -196,14 +200,15 @@ export default {
       handleMsgTimer: '',
       no_show: '',
       typeOptions: [
-        { label: '来源', value: '-1' },
+        { label: '全部来源', value: '-1' },
         { label: '回放', value: '0' },
         { label: '录制', value: '1' },
         { label: '上传', value: '2' },
         { label: '打点录制', value: '3' }
       ],
       // 权限配置
-      WEBINAR_PES: sessionOrLocal.get('WEBINAR_PES', 'localStorage') && JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')) || {},
+      WEBINAR_PES: {}
+      // WEBINAR_PES: sessionOrLocal.get('WEBINAR_PES', 'localStorage') && JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')) || {},
     };
   },
   computed: {
@@ -227,25 +232,15 @@ export default {
     this.getList();
     this.getLiveDetail();
     EventBus.$on('record_download', this.handleDownload)
+    this.getPermission(this.$route.params.str)
   },
   mounted(){
-    if (!this.WEBINAR_PES['forbid_delrecord']) {
-      this.tipMsg = this.$message({
-        dangerouslyUseHTMLString: true,
-        message: `
-          ${this.WEBINAR_PES['forbid_delrecord'] ? '' : '<span class="msgGray">非默认回放暂存15天</span>'}
-          ${!this.WEBINAR_PES['forbid_delrecord'] && !this.WEBINAR_PES['publish_record'] ? '，' : ''}
-          ${this.WEBINAR_PES['publish_record'] ? "" : "<a href='http://webim.qiao.baidu.com/im/index?siteid=113762&ucid=2052738' target='_blank' class='msgBlue'>开通点播服务</a>"}
-        `,
-        showClose: true,
-        duration: 0,
-        offset: 74
-      });
-    }
+
+
   },
   beforeDestroy(){
     if (!this.WEBINAR_PES['forbid_delrecord'] || !this.WEBINAR_PES['publish_record']) {
-      this.tipMsg.close();
+      this.tipMsg && this.tipMsg.close();
     }
     if (this.chatSDK) {
       this.chatSDK.destroy()
@@ -254,6 +249,39 @@ export default {
     EventBus.$off('record_download', this.handleDownload)
   },
   methods: {
+    handleTipMsgVisible() {
+      if (!this.WEBINAR_PES['forbid_delrecord']) {
+        this.tipMsg = this.$message({
+          dangerouslyUseHTMLString: true,
+          message: `
+            ${this.WEBINAR_PES['forbid_delrecord'] ? '' : '<span class="msgGray">非默认回放暂存15天</span>'}
+            ${!this.WEBINAR_PES['forbid_delrecord'] && !this.WEBINAR_PES['publish_record'] ? '，' : ''}
+            ${this.WEBINAR_PES['publish_record'] ? "" : "<a href='http://webim.qiao.baidu.com/im/index?siteid=113762&ucid=2052738' target='_blank' class='msgBlue'>开通点播服务</a>"}
+          `,
+          showClose: true,
+          duration: 0,
+          offset: 74
+        });
+      }
+    },
+    getPermission(id) {
+      let userId = JSON.parse(sessionOrLocal.get('userId'));
+      // 活动权限
+      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: userId, scene_id: 1}).then(res => {
+        if(res.code == 200) {
+          if(res.data.permissions) {
+            sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
+            this.WEBINAR_PES = JSON.parse(res.data.permissions)
+            this.handleTipMsgVisible()
+          } else {
+            sessionOrLocal.removeItem('WEBINAR_PES');
+          }
+        }
+      }).catch(e => {
+        console.log(e);
+        sessionOrLocal.removeItem('SAAS_VS_PES');
+      });
+    },
     preview(data) {
       //  this.videoParam 进本信息
       if (data.transcode_status == 1) {
@@ -262,6 +290,20 @@ export default {
       } else {
         this.$message.warning('只有转码成功才能查看');
       }
+    },
+    reTranscode(data) {
+      this.$fetch('recordReTranscode', {
+        paas_record_id: data.paas_record_id,
+        webinar_id: this.webinar_id
+      }).then(res => {
+        this.$message({
+          message: `正在重新生成，请稍后...`,
+          showClose: true,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.getList()
+      })
     },
     closeBefore(done){
       // this.$refs.videoPreview.destroy();
@@ -279,7 +321,7 @@ export default {
           ]
         } else {
           this.typeOptions = [
-            { label: '来源', value: '-1' },
+            { label: '全部来源', value: '-1' },
             { label: '回放', value: '0' },
             { label: '录制', value: '1' },
             { label: '打点录制', value: '3' }
@@ -559,7 +601,9 @@ export default {
             customClass: 'zdy-info-box' // 样式处理
           });
         } else {
-          this.$router.push({path: `/live/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+          this.$router.push({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+          // const routeData = this.$router.resolve({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+          // window.open(routeData.href, '_blank');
         }
       })
     },
@@ -698,8 +742,8 @@ export default {
       float: left;
       width: 160px;
       height: 90px;
-      background-color: #1a1a1a;
       border-radius: 4px;
+      background-color: #1a1a1a;
       .imageWrap{
         width: 100%;
         height: 100%;
@@ -720,6 +764,9 @@ export default {
           text-align: center;
           color: #fff;
           font-size: 12px;
+          background: #FB3A32;
+          border-radius: 15px;
+          cursor: pointer;
         }
       }
       .defaultSign{
@@ -787,7 +834,7 @@ export default {
     img{
       width: 100%;
       height: 100%;
-      border-radius: 6px;
+      border-radius: 4px;
       object-fit: scale-down;
     }
   }
@@ -800,7 +847,7 @@ export default {
         border-radius: 20px;
         height: 36px;
       }
-      /deep/ .el-input__suffix{
+      /deep/ .el-input__prefix{
         cursor: pointer;
         /deep/ .el-input__icon{
           line-height: 36px;
@@ -843,6 +890,9 @@ export default {
   }
 </style>
 <style lang="less">
+  .playback-list-popper {
+    width: 120px;
+  }
   .msgGray{
     color: #1A1A1A;
   }

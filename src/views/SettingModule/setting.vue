@@ -36,8 +36,8 @@ export default {
   },
   created() {
     let parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
-    let childNum = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['child_num_limit'];
-    if (parentId == 0 && childNum == 1) {
+    // let isDeveloper = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['is_developer'];
+    if (parentId == 0) {
       let obj = {icon: 'saasicon_kaifashezhi', title: '开发设置', subText: '设置API接口信息' , path: '/dev/list'}
       this.operas.splice(1, 0, obj)
     }
@@ -111,7 +111,7 @@ export default {
   }
   .desc{
     .mainText{
-      margin-bottom: 4px;
+      margin-bottom: 2px;
       font-size: 18px;
       font-family: @fontRegular;
       font-weight: 400;

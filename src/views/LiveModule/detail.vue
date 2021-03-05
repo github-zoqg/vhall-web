@@ -11,8 +11,7 @@
               {{ liveDetailInfo | liveTag }}
             </span>
             <span class="hot">
-              <i class="iconfont-v3 saasicon_redu"></i>
-              {{ liveDetailInfo.pv | unitCovert }}
+              <i class="iconfont-v3 saasicon_redu"> {{ liveDetailInfo.pv | unitCovert }}</i>
             </span>
           </div>
 
@@ -63,14 +62,14 @@
       <el-col :span="6" :lg='6' :md="24" :sm='24' :xs="24" v-if="liveDetailInfo.webinar_state !== 4" class="rightbox" style="padding-right:4px">
         <div class="inner liveTime" v-if="!outLiveTime">
           <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
-          <p class="mainColor" v-if="liveDetailInfo.webinar_state === 2">
-            <span>{{ time.day }}</span>
+          <p class="mainColor timerBox" v-if="liveDetailInfo.webinar_state === 2">
+            <span class="custom-font-barlow">{{ time.day }}</span>
             <i>天</i>
-            <span>{{ time.hours }}</span>
+            <span class="custom-font-barlow">{{ time.hours }}</span>
             <i>时</i>
-            <span>{{ time.minute }}</span>
+            <span class="custom-font-barlow">{{ time.minute }}</span>
             <i>分</i>
-            <span>{{ time.second }}</span>
+            <span class="custom-font-barlow">{{ time.second }}</span>
             <i>秒</i>
           </p>
           <p v-else><span>{{ liveDetailInfo.webinar_state | liveText }}</span></p>
@@ -540,12 +539,30 @@ export default {
         }
       }
       .hot{
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
-        color: #fff;
-        font-size: 14px;
-      }
+          position: absolute;
+          height: 50px;
+          width: 100%;
+          /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
+          background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.2));
+          bottom: 0px;
+          left: 0px;
+          color: #fff;
+          font-size: 14px;
+          z-index: 2;
+          cursor: pointer;
+          i{
+            position: absolute;
+            left: 14px;
+            bottom: 10px;
+          }
+        }
+      // .hot{
+      //   position: absolute;
+      //   bottom: 10px;
+      //   left: 10px;
+      //   color: #fff;
+      //   font-size: 14px;
+      // }
     }
     .tag{
       border-radius: 20px;
@@ -595,6 +612,12 @@ export default {
 .mainColor{
   color: #1A1A1A;
 }
+.timerBox {
+  span {
+    display: inline-block;
+    width: 26px;
+  }
+}
 .subColor, .subDuration{
   color: #666666;
 }
@@ -630,6 +653,9 @@ export default {
   }
   p{
     text-align: center;
+    i{
+      vertical-align: text-top;
+    }
     &:nth-child(1){
       margin-bottom: 10px;
     }

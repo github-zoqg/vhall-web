@@ -53,13 +53,13 @@
           </div>
         </div>
         <!--手机预览,begin-->
-        <div :class="['plan-func-app', {'visible': chapterCompute}]" v-show="switchType === 'app'">
+        <div :class="['plan-func-app', {'visible': !chapterCompute}]" v-show="switchType === 'app'">
           <span class="chat-span">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
           <div class="icon-spans">
             <span class="gift-span" v-if="giftCompute"></span><span  class="reward-span" v-if="rewardCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
         </div>
-        <div :class="['plan-func-app', 'zj', {'visible': !chapterCompute}]" v-show="switchType === 'app'">
+        <div :class="['plan-func-app', 'zj', {'visible': chapterCompute}]" v-show="switchType === 'app'">
           <span class="chat-span">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
           <div class="icon-spans">
             <span class="gift-span" v-if="giftCompute"></span><span  class="reward-span" v-if="rewardCompute"></span><span class="like-span" v-if="likeCompute"></span>

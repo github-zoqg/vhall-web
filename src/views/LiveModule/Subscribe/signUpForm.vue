@@ -955,14 +955,14 @@
 
         let text = parseOptsFir.content;
         let matchPrivacy1 = parseOptsFir.color_text.trim() ? text.match(parseOptsFir.color_text) : null;
-        if(matchPrivacy1 && parseOptsFir.url){
+        if(matchPrivacy1){
           let reg = new RegExp(`(${matchPrivacy1[0]})`);
-          text = text.replace(reg, `<a href="${parseOptsFir.url}" target="_blank">$1</a>`);
+          text = text.replace(reg, `<a href="${parseOptsFir.url || 'javascript:void(0);'}" target="_blank">$1</a>`);
         }
         let matchPrivacy2 = (parseOptsSec && parseOptsSec.privacy_info.trim()) ? text.match(parseOptsSec.privacy_info) : null;
-        if(matchPrivacy2 && parseOptsSec.url){
+        if(matchPrivacy2){
           let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
-          text = text.replace(reg, `<a href="${parseOptsSec.privacy_link}" target="_blank">$1</a>`);
+          text = text.replace(reg, `<a href="${parseOptsSec.privacy_link || 'javascript:void(0);'}" target="_blank">$1</a>`);
         }
 
         this.provicyText = text;

@@ -75,6 +75,7 @@ export default {
       color: #fff;
       vertical-align: top;
       font-style:normal;
+      font-weight: normal;
       // line-height: 18px;
     }
   }
