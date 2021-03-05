@@ -199,7 +199,7 @@ export default {
     // width: 100px;
     // height: 100px;
     // border: 1px solid #E2E2E2;
-    border-radius: 100%;
+    border-radius: 50%;
   }
   .account--title {
     margin-top: 16px;
