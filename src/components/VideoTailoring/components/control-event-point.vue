@@ -128,7 +128,7 @@ export default {
     color: #fff;
     .vh-video-tailoring__content {
       font-size: 14px;
-      background: #fff;
+      background: rgba(255, 255, 255, 0.95);
       // border: 1px solid #333333;
       // box-shadow: 0px 0px 8px 0px rgba(#1C1C26, 0.3);
       border-radius: 4px;

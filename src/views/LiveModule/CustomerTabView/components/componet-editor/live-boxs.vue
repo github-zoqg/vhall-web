@@ -207,7 +207,7 @@ export default {
   .vh-chose-active-item{
     cursor: pointer;
     display: inline-block;
-    width: 213px;
+    width: 215px;
     height: 182px;
     overflow: hidden;
     background: #F7F7F7;
@@ -215,6 +215,7 @@ export default {
     margin: 0 16px 14px 0;
     position: relative;
     transition: all 0.15s ease-in;
+    border: 1px solid #FFFFFF;
     &:hover{
       box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       border-radius: 4px;

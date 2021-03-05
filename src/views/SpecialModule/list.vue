@@ -415,7 +415,7 @@ export default {
         box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.15);
       }
       .top{
-        height: 175px;
+        height: 176.8px;
         background: #1A1A1A;
         // background: linear- (-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
         background-size: 400% 400%;
@@ -426,18 +426,18 @@ export default {
         border-radius: 4px 4px 0 0;
         cursor: pointer;
         .img-box{
-          width: 101%;
+          width: 100%;
           height: 100%;
           position: absolute;
           top:0;
           left: 0;
-          border-radius: 4px 8px 0 0;
+          border-radius: 4px 4px 0 0;
           img{
             width: 100%;
             height: 100%;
             object-fit: scale-down;
             cursor: pointer;
-            border-radius: 4px 8px 0 0;
+            border-radius: 4px 4px 0 0;
           }
         }
         // img{
