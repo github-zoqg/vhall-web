@@ -231,6 +231,12 @@ const router = [
         hidden: true
       },
       {
+        path: 'vodreset/:str(\\d+)',
+        component: () => import('@/views/LiveModule/PlayBack/vodreset'),
+        meta:{ auth: true, title: '课件重制', name: 'vodreset', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'reportsData/:str(\\d+)',
         component: () => import('@/views/LiveModule/Data/reportsData'),
         meta:{ auth: true, title: '数据报告', name: 'reportsData', activeMenu: '/live/list'},

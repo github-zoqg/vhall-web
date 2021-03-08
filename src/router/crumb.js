@@ -607,6 +607,27 @@ export function CrumbSet(metaName, that) {
     }
     ];
   }
+  else if (metaName === 'vodreset') {// 回放重制
+    return [
+     ...CrumbLiveList('liveList'),
+     {
+      title: '活动详情',
+      path: `/live/detail/${that.$route.params.str}`,
+      isClick: true
+    },
+    {
+      title: '回放管理',
+      path: `/live/playback/${that.$route.params.str}`,
+      isClick: true,
+    },
+    {
+      title: '回放重制',
+      path: `/live/vodreset/${that.$route.params.str}`,
+      isClick: false,
+      redirect: 'noRedirect'
+    }
+    ];
+  }
   else if (metaName === 'recordplayback') {// 点播管理
     return [
      ...CrumbLiveList('liveList'),

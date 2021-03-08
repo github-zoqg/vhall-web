@@ -109,6 +109,7 @@
               <el-dropdown v-if="!isDemand" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
+                  <el-dropdown-item :command="{command: 'vodreset', data: scope.row}">回放重制</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
                   <el-dropdown-item v-if="WEBINAR_PES['publish_record']" :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'delete', data: scope.row}">删除</el-dropdown-item>
@@ -373,6 +374,8 @@ export default {
         this.toTailoring(param.data.id, param.data.name);
       } else if (param.command == 'publish') {
         this.toCreateDemand(param.data);
+      } else if (param.command == 'vodreset') {
+        this.toVodreset(param.data)
       }
     },
     currentChangeHandler(num){
@@ -517,6 +520,9 @@ export default {
     },
     settingHandler(){
       this.$router.push({path: `/live/planFunction/${this.webinar_id}`});
+    },
+    toVodreset() {
+      this.$router.push({path: `/live/vodreset/${this.webinar_id}`});
     },
     toCreate() {
       this.$router.push({path: `/videoTailoring/${this.webinar_id}`});
