@@ -159,6 +159,7 @@ export default {
     return {
       userInfo: {},
       mainKeyData: {},
+      versionType: 1,
       lineDataList: [],
       childPremission: {}
     };
@@ -191,7 +192,9 @@ export default {
     // this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
     this.getLiveList();
     this.$nextTick(() => {
-      this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
+      if (sessionOrLocal.get("versionType")) {
+        this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
+      }
     })
   },
   beforeDestroy() {
