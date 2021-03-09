@@ -43,7 +43,7 @@
         <p class="list-title">数据统计</p>
          <el-tooltip effect="dark" placement="right" v-tooltipMove>
             <div slot="content">
-            统计近7日数据
+            统计近7日数据，删除活动不影响已统计的历史数据
             </div>
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
@@ -103,7 +103,7 @@
           <p>用量统计</p>
           <el-tooltip effect="dark" placement="right" v-tooltipMove>
             <div slot="content">
-            统计近7日数据
+            统计近7日数据，删除活动不影响已统计的历史数据
             </div>
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>

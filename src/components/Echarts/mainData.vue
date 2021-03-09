@@ -43,7 +43,7 @@
         <div class="grid-content">
           <span>活动总数</span>
           <el-tooltip effect="dark" placement="right" v-tooltipMove>
-            <div slot="content">筛选条件内的活动总数，包含直播、点播</div>
+            <div slot="content">筛选条件内的活动总数，包含直播、点播<br />删除活动或者删除子账号不影响已统计的历史数据</div>
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           <h3 class="custom-font-barlow">
