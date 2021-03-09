@@ -57,7 +57,7 @@
             </upload>
           </div>
         </el-form-item>
-        <el-form-item v-show="showType === 2" label="位置" class="ratio-item">
+        <el-form-item v-show="showType === 2" label="位置" class="picture-item">
           <el-radio-group class="ratio-radio" v-model="vodresetForm.position">
             <el-radio :label="1">左上角</el-radio>
             <el-radio :label="2">右上角</el-radio>
@@ -216,9 +216,6 @@
     padding: 60px 48px 16px 0px;
     position: relative;
     border-radius: 4px;
-    .el-form-item__label,.el-form-item__content {
-      line-height: 20px;
-    }
     .el-form {
       width: 521px;
       margin-right: 40px;
@@ -246,13 +243,13 @@
       }
     }
     .pattern-item {
-      margin-bottom: 29px;
+      margin-bottom: 32px;
     }
     .picture-item {
-      margin-bottom: 31px;
+      margin-bottom: 32px;
     }
     .ratio-item {
-      margin-bottom: 51px;
+      margin-bottom: 40px;
     }
     .ratio-radio {
       /deep/ .el-radio__inner {
