@@ -16,6 +16,7 @@ let cdn = {
 
 let publicPath = null
 
+console.warn('配置环境变量----',process.env.VUE_APP_NODE_ENV, process.env.VUE_APP_WEB_URL);
 switch (process.env.VUE_APP_NODE_ENV)  {
   case 'development':
     publicPath = '/'
