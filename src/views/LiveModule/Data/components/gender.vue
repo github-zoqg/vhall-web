@@ -20,11 +20,16 @@ export default {
   },
   methods: {
     initDataLimit() {
+      let genderData = []
       this.genderList.map(item => {
-        item.name = item.item_subject
-        item.value = item.num
+        if (item.item_subject) {
+          genderData.push({
+            name: item.item_subject,
+            value:item.num
+          })
+        }
       })
-      this.initTerBroCharts(this.genderList);
+      this.initTerBroCharts(genderData);
     },
     initTerBroCharts(data) {
       // console.log(topList);
