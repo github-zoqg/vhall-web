@@ -79,7 +79,7 @@
       </el-table>
     </div>
     <div class="no-live" v-else>
-      <noData :nullType="'nullData'" text="您还上传过音视频，快来创建吧！" :height="0">
+      <noData :nullType="'nullData'" text="您还未上传过音视频，快来创建吧！" :height="0">
         <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
       </noData>
     </div>

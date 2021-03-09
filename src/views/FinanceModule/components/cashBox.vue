@@ -119,10 +119,10 @@ export default {
         this.isTrue = false;
         callback(new Error('请输入数字值'));
       } else {
-        if (value < 1 || value > 800) {
+        if (1 - value > 0 || value - 800 > 0) {
           this.isTrue = false;
           callback(new Error('请输入大于等于1且小于等于800的数字'));
-        } else if (value > parseInt(this.money)) {
+        } else if (value - this.money > 0) {
           this.isTrue = false;
           callback(new Error('提现值必须小于可用金额'));
         } else {

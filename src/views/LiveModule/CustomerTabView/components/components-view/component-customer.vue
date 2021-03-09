@@ -13,7 +13,7 @@
       >
         <div
           class="editor-component-box"
-          :class="{'editor': index == editorIndex}"
+          :class="{'editor': index == editorIndex, 'splitLine': item.component_id == 8}"
           v-for="(item,index) in units"
           :key="index"
           @click="doEditor(index)"
@@ -198,10 +198,10 @@ export default {
     height: 100%;
     .editor-component-box{
       position: relative;
-      padding: 0 5px;
+      padding: 10px 5px;
       box-sizing: border-box;
       width: 285px;
-      margin: 0 auto;
+      margin: 6px auto;
       i{
         position: absolute;
         cursor: pointer;
@@ -220,6 +220,9 @@ export default {
         i{
           display: block;
         }
+      }
+      &.splitLine{
+        padding: 0 5px;
       }
     }
   }

@@ -344,6 +344,10 @@ export default {
       this.getIncomeInfo();
     },
     detail(that, { rows }) {
+      if (rows.player == 1) {
+        that.$message.warning('flash活动，暂不支持查看！');
+        return
+      }
       that.$router.push({
         path: `/finance/incomeDetail/${rows.webinar_id}`
       });

@@ -125,7 +125,6 @@ export default {
         {
           label: '发送时间',
           key: 'date_time',
-          width: 150
         },
         {
           label: '消息内容',
@@ -289,6 +288,9 @@ export default {
       return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
     },
     emojiToText (content) {
+      if (!content) {
+        return '';
+      }
       console.warn(content, 'content');
       return textToEmoji(content).map(c => {
         return c.msgType == 'text'
