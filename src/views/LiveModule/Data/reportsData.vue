@@ -322,12 +322,7 @@ export default {
       });
       // 获取浏览器
       this.$fetch('getBrowserinfo', params).then(res => {
-        if (res.data) {
-          this.browerDataList = res.data.list;
-        } else {
-          this.browerDataList = [];
-        }
-
+        this.browerDataList = res.data.list || [];
       });
     },
     // 导出

@@ -75,7 +75,6 @@ module.exports = {
   chainWebpack: config=>{
     config.plugin('html').tap(options=>{
       options[0].cdn = cdn
-      options[0].favicon = path.resolve('public/favicon.ico')
       return options
     })
     // config.plugin('webpack-bundle-analyzer')
