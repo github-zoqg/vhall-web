@@ -1,6 +1,10 @@
 <template>
   <div>
-    <pageTitle pageTitle="子账号信息"></pageTitle>
+    <pageTitle pageTitle="子账号信息">
+      <div slot="content">
+        删除活动不影响已统计的历史数据
+      </div>
+    </pageTitle>
     <!-- 子账号管理头部
     <div class="title--flex--top">
       <div class="top-item">

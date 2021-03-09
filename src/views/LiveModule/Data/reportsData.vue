@@ -4,6 +4,7 @@
       <div slot="content">
         <p>1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据</p>
         <p>2.控制台数据统计为真实数据，不统计虚拟数据</p>
+        <p>3.删除活动或者删除子账号，不影响已统计的历史数据</p>
       </div>
     </pageTitle>
     <title-data :liveDetailInfo="liveDetailInfo"></title-data>
