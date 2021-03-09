@@ -31,7 +31,7 @@
           <!-- <p class="account pointer" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">订单明细</p> -->
         </div>
       </el-col>
-      <el-col :span="typeChange ? 8 : 6" v-if="userInfo.concurrency.extend_day">
+      <el-col :span="typeChange ? 8 : 6" v-if="userInfo.concurrency.display_extend_day">
         <div class="top-item">
           <p>并发扩展包（天）</p>
           <h2 class="custom-big custom-font-barlow">{{ userInfo.concurrency.extend_day }}</h2>
