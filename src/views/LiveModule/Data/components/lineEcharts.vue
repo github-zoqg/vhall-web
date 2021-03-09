@@ -117,7 +117,7 @@ export default {
             fontSize: 14,
             fontStyle: 'normal',
             fontWeight: 'normal',
-            color: '#1a1a1a'
+            color: '#666'
           }
         },
         color: ['#FB3A32'],
