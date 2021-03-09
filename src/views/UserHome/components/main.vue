@@ -44,7 +44,7 @@
               <span class="hot" v-if="item.hide_pv > 0">
                  <i class="iconfont-v3 saasicon_redu"> {{ item.pv | formatNum}}</i>
               </span>
-              <a :href="item.share_link" target="_blank" v-if="tabType === 'live' ? item.img_url : item.cover">
+              <a :href="toPageHandle(item)" target="_blank" v-if="tabType === 'live' ? item.img_url : item.cover">
                 <img :src="tabType === 'live' ? item.img_url : item.cover" alt="" />
               </a>
             </div>
@@ -152,7 +152,7 @@ export default {
         if (res && res.code === 200) {
           let list = res.data.list;
           list.map(item => {
-            item.share_link = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/watch/${item.webinar_id}`
+            item.share_link = `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${item.webinar_id}`
           });
           this.dataList = list;
           this.tabList[0].total = res.data.total;
