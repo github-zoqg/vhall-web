@@ -47,14 +47,12 @@ export default {
       let Yline = [];
       this.tableList = [];
       this.otherList.map(item => {
-        if (parseInt(item.item_id) > 0) {
-          Xline.push(item.item_subject)
-          Yline.push(item.num)
-          this.tableList.push({
-            name:item.item_subject,
-            value: item.num
-          })
-        }
+        Xline.push(item.item_subject || '未选择')
+        Yline.push(item.num)
+        this.tableList.push({
+          name:item.item_subject || '未选择',
+          value: item.num
+        })
       })
       // this.otherList.map(item => {
       //   if (!item.item_id) {
