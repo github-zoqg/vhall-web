@@ -159,7 +159,7 @@ export default {
     return {
       userInfo: {},
       mainKeyData: {},
-      versionType: 1,
+      versionType: 0,
       lineDataList: [],
       childPremission: {}
     };
@@ -177,6 +177,7 @@ export default {
   },
   created() {
     let userInfo = sessionOrLocal.get('userInfo');
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     if (userInfo) {
       this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
       if (this.parentId > 0) {
@@ -186,16 +187,15 @@ export default {
     if (document.body.clientWidth < 1366) {
       document.getElementById('app').style.minWidth="auto"
     }
+    this.getVersion();
   },
   mounted() {
-    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     // this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
-    this.getLiveList();
-    this.$nextTick(() => {
-      if (sessionOrLocal.get("versionType")) {
-        this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
-      }
-    })
+    // this.$nextTick(() => {
+    //   if (sessionOrLocal.get("versionType")) {
+    //     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
+    //   }
+    // })
   },
   beforeDestroy() {
     document.getElementById('app').style.minWidth="1366px"
@@ -208,6 +208,17 @@ export default {
       }).catch(res => {
         this.childPremission = {};
       })
+    },
+    getVersion() {
+      this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
+        this.versionType = res.data.type;
+        this.getLiveList();
+        sessionOrLocal.set('versionType', JSON.stringify(res.data.type));
+        sessionOrLocal.set('versionText', JSON.stringify(res.data.edition));
+        sessionOrLocal.set('arrears', JSON.stringify(res.data.arrears));
+      }).catch(e=>{
+        console.log(e);
+      });
     },
     // 联系我们
     contactUs() {
