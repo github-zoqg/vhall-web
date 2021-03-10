@@ -46,7 +46,7 @@ export default {
   methods: {
     initDataLimit() {
       this.areaDataList.map(item => {
-        item.name = item.item_subject
+        item.name = item.item_subject || '未选择'
         item.value = item.num
       })
       this.total = this.areaDataList.reduce((tem, item, index) =>{return tem + Number(item.value)}, 0);
