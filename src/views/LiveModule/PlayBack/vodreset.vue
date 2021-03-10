@@ -43,7 +43,7 @@
                   path: '/common/static-imgs',
                   type: 'image',
               }"
-              :on-success="uploadAdvSuccess"
+              :on-success="uploadSuccess"
               :on-progress="uploadProcess"
               :on-error="uploadError"
               :on-preview="uploadPreview"
@@ -82,6 +82,9 @@
             :src="showType == 1 ? pattern_third : showType == 2 ? pattern_mini : pattern_doc"
             class="preview-img"
           >
+          <div class="custom-img-box">
+            <img class="custom-img" v-if="domain_url" :src="domain_url">
+          </div>
         </div>
         <div class="preview-tip">
           <p>提示：</p>
@@ -146,7 +149,7 @@
       introduceDetail() {
         this.tutorialVisible = true;
       },
-      uploadAdvSuccess(res, file) {
+      uploadSuccess(res, file) {
         console.log(res, file);
         if(res.data) {
           let domain_url = res.data.domain_url || ''
@@ -161,7 +164,7 @@
         console.log(file.type.toLowerCase())
         let typeArr = file.type.toLowerCase().split('/');
         const isType = typeList.includes(typeArr[typeArr.length - 1]);
-        const isLt2M = file.size / 1024 / 1024 < 4;
+        const isLt2M = file.size / 1024 / 1024 < 2;
         if (!isType) {
           this.$message({
             message:  `图片只能是 ${typeList.join('、')} 格式!`,
@@ -173,7 +176,7 @@
         }
         if (!isLt2M) {
           this.$message({
-            message: `图片大小不能超过 4MB!`,
+            message: `图片大小不能超过 2MB!`,
             showClose: true,
             type: 'error',
             customClass: 'zdy-info-box'
@@ -229,9 +232,22 @@
       width: 394px;
       .preview-img-box {
         width: 100%;
-        img {
+        position: relative;
+        .preview-img {
           width: 100%;
           box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        }
+        .custom-img-box {
+          width: 56px;
+          height: 56px;
+          position: absolute;
+          bottom: 100px;
+          right: 33px;
+        }
+        .custom-img {
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
         }
       }
       .preview-tip {
