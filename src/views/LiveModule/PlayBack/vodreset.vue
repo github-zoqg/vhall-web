@@ -73,7 +73,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" class="save-btn" v-preventReClick round>保存</el-button>
+          <el-button @click="handleSave" type="primary" class="save-btn" v-preventReClick round>保存</el-button>
         </el-form-item>
       </el-form>
       <div class="preview-box">
@@ -127,8 +127,8 @@
         showType: 1,
         vodresetForm: {
           img: '',
-          ratio: '',
-          position: ''
+          ratio: 6,
+          position: 2
         },
         domain_url: ''
       }
@@ -137,6 +137,9 @@
 
     },
     methods: {
+      handleSave() {
+
+      },
       changeType(index) {
         this.showType = index;
       },
