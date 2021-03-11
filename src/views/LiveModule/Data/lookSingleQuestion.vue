@@ -22,7 +22,7 @@
         </div>
         <div class="question-subject" v-else>
           <p>{{ item.ques_title }}（{{ item.item_type == 2 ? '多选题' : '单选题'}}）</p>
-          <line-echarts :otherList="item.list"></line-echarts>
+          <line-echarts :otherList="item.list" :total="total"></line-echarts>
         </div>
       </div>
     </div>

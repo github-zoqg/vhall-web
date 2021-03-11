@@ -33,7 +33,7 @@ export default {
       let option = {
         tooltip: {
           trigger: 'item',
-          formatter: '{b}</br> 填写人数 {c}',
+          formatter: '{b}</br> 选择人数 {c}',
         },
         legend: {
           orient: 'vertical',

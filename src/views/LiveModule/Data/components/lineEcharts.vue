@@ -9,7 +9,7 @@
           <table border="0">
             <tr>
               <th>选项</th>
-              <th>填写人数</th>
+              <th>选择人数</th>
               <th>占比</th>
             </tr>
             <tr v-for="(item, index) in tableList" :key="index">
@@ -27,10 +27,10 @@
 <script>
 import echarts from 'echarts';
 export default {
-  props: ['otherList'],
+  props: ['otherList', 'total'],
   data() {
     return {
-     total: 0,
+    //  total: 0,
      barEcharts: null,
      tableList: []
     }
@@ -60,7 +60,7 @@ export default {
       //     item.value = item.num;
       //   }
       // })
-      this.total = Yline.reduce((tem, item, index) =>{return tem + Number(item)}, 0);
+      // this.total = Yline.reduce((tem, item, index) =>{return tem + Number(item)}, 0);
       this.initBarEcharts(Xline, Yline);
     },
     initBarEcharts(xData, yData) {
@@ -85,7 +85,7 @@ export default {
           show: true,
           formatter: function (params) {
             let value = params.value ? params.value : 0;
-            let res = params.name + '<br/>填写人数' + '  ' + parseInt(params.value || 0);
+            let res = params.name + '<br/>选择人数' + '  ' + parseInt(params.value || 0);
             return res;
           },
         },
