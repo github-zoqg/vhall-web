@@ -5,7 +5,7 @@
         <h1>
           {{ $route.query.subject }}
         </h1>
-        <p>填写人数: <span>{{ total }}人</span><b>|</b><span class="export" @click="exportSingleQuerstion">导出数据</span></p>
+        <p>填写总人数: <span>{{ total }}人</span><b>|</b><span class="export" @click="exportSingleQuerstion">导出数据</span></p>
         <p>提示：客观题支持报表分析展示（包含：性别、地域、单选题、多选题）</p>
       </div>
     <div class="question-item">
