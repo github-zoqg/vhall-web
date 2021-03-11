@@ -480,6 +480,7 @@ export default {
             this.errorMsgShow = res.msg || '登录失败！';
           }
           sessionOrLocal.set('token', '', 'localStorage');
+          this.mobileKey = '';
           this.callCaptcha();
       })
     },
@@ -526,6 +527,8 @@ export default {
         }, 1000)
       }).catch(res => {
         console.log(res);
+        this.callCaptcha();
+        this.mobileKey = '';
         this.registerText = res.msg || '注册失败';
       });
     },
@@ -539,6 +542,8 @@ export default {
           this.countDown();
         }, 1000);
       } else {
+        this.mobileKey = '';
+        this.callCaptcha();
         this.time = 60;
       }
     },

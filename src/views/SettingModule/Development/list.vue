@@ -139,7 +139,7 @@ export default {
     },
     // 查看文档-开发设置
     openDoc() {
-      window.open('https://saas-doc.vhall.com/docs/show/947', '_blank');
+      window.open('https://saas-doc.vhall.com/document/document/index', '_blank');
     },
     initPage() {
       // 取得当前系统配置项
