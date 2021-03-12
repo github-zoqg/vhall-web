@@ -336,6 +336,7 @@ export default {
               });
             } else if (res.data.status == 1) {
               // 点击创建，如果 status===1 视频已生成，直接初始化剪辑台
+              this.isNew = true
               this.getPlayBackInfo(res.data.pass_record_id, true, res.data.pass_record_id)
             }
             this.editLoading = false;
