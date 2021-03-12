@@ -340,7 +340,7 @@ export default {
       padding-bottom: 24px;
       // padding: 24px 32px;
       .question_main{
-        max-height: 700px;
+        max-height: 550px;
         position: relative;
       }
       .close-btn{

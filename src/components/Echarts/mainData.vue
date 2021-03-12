@@ -144,11 +144,12 @@
            <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
           <h3 class="custom-font-barlow">
-            <count-to :startVal="0"
+            {{ mainKeyData.watch_times_avg }}
+            <!-- <count-to :startVal="0"
               :endVal="mainKeyData.watch_times_avg"
               :duration="1500"
               v-if="mainKeyData.watch_times_avg >= 0">
-            </count-to>
+            </count-to> -->
           </h3>
         </div>
       </el-col>

@@ -18,10 +18,11 @@
         <!-- :style="{width: title== '升级'? '414px' : '428px'}" -->
         <el-form-item :label="title === '升级'? '升级到并发' : '扩展包'">
           <el-input v-model="number"
-            oninput="this.value=this.value.replace(/[^\d]/g, '')" maxlength="5" @blur="changeInput"><i slot="suffix" style="font-style: normal;">人</i></el-input
+            oninput="this.value=this.value.replace(/[^\d]/g, '')" maxlength="5"><i slot="suffix" style="font-style: normal;">人</i></el-input
           >
           <!-- <template slot="append">人</template> -->
-          <p class="inputNums">当前并发{{ currentInfo.total_concurrency}}人 {{ currentInfo.total_concurrency }}-99999</p>
+          <p class="inputNums" v-if="title === '升级'">当前并发{{ currentInfo.total_concurrency}}人 {{ currentInfo.total_concurrency }}-99999</p>
+          <p class="inputNums" v-if="title === '购买'">请输入100-99999的值</p>
         </el-form-item>
         <el-form-item label="订单信息">
           <div class="informtion">
@@ -42,7 +43,7 @@
           type="primary"
           @click="orderExtent"
           round
-          :disabled="!checked"
+          :disabled="!(checked && totalConcurrency)"
           >结算</el-button
         >
       </div>
@@ -141,7 +142,11 @@ export default {
       if (this.dialogVisible) {
         this.checked = false;
         this.currentInfo = this.concurrentPrice.concurrency;
-        this.number = this.currentInfo.total_concurrency + 100;
+        if (this.title == '升级') {
+          this.number = this.currentInfo.total_concurrency + 100;
+        } else {
+          this.number = 100
+        }
       }
 
     }
@@ -156,9 +161,9 @@ export default {
     },
     totalConcurrency() {
       if (this.title == '升级') {
-        return this.currentInfo.concurrency_fee * (this.number - this.currentInfo.total_concurrency) * this.concurrentPrice.left_months;
+        return this.number < this.currentInfo.total_concurrency ? 0 : this.currentInfo.concurrency_fee * (this.number - this.currentInfo.total_concurrency) * this.concurrentPrice.left_months;
       } else {
-        return this.currentInfo.extend_fee * (this.number - this.currentInfo.total_concurrency)
+        return this.number < 100 ? 0 : this.currentInfo.extend_fee * this.number
       }
     }
   },
@@ -263,7 +268,17 @@ export default {
       });
     },
     changeInput() {
-      if (this.number <= this.concurrentPrice.concurrency.total_concurrency) {
+      if (this.title == '购买' && this.number < 100) {
+        this.$message({
+          message: `请输入大于100的扩展包`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        })
+        return;
+      }
+      if (this.title == '升级' && this.number <= this.concurrentPrice.concurrency.total_concurrency) {
         this.$message({
           message: `请输入比当前并发数大的值`,
           showClose: true,
