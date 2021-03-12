@@ -266,7 +266,7 @@ export default {
             platform: sessionOrLocal.get('platform', 'localStorage') || 17,
             token: sessionOrLocal.get('token', 'localStorage') || '',
             'request-id': uuidV1(),
-            'interact-token': sessionStorage.getItem('interact_token') || null
+            // 'interact-token': sessionStorage.getItem('interact_token') || null
           };
           let option = {
             method: result.data.request_method, // *GET, POST, PUT, DELETE, etc.
@@ -293,11 +293,11 @@ export default {
             console.log(e);
           });
           // 重新拉取数据
-          this.search();
+          that.search();
         }
       } catch (e) {
         console.log(e);
-        this.$message({
+        that.$message({
           message: e.msg || '重新生成失败',
           showClose: true,
           // duration: 0,
