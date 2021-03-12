@@ -2,7 +2,7 @@
   <el-upload
     class="file-uploader"
     v-bind="$props"
-    :headers="{token: token, platform: 17}"
+    :headers="headersVo"
     :data=saveData
     name="resfile"
     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
@@ -39,6 +39,8 @@
 import {Upload} from 'element-ui';
 import Env from '@/api/env.js';
 import {sessionOrLocal} from "@/utils/utils";
+import {v1 as uuidV1} from "uuid";
+
 export default {
   data(){
     return {
@@ -46,6 +48,16 @@ export default {
       fileName: null,
       errText: ''
     };
+  },
+  computed: {
+    headersVo: function() {
+      let vo = {token: this.token, platform: 17, 'request-id': uuidV1()}
+      // 取缓存userId相关
+      if (window.sessionStorage.getItem('userId')) {
+        vo['gray-id'] = window.sessionStorage.getItem('userId')
+      }
+      return vo
+    },
   },
   props: {
     ...Object.assign(Upload.props, {
