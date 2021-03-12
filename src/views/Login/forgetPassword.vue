@@ -319,6 +319,8 @@ export default {
             this.findStep = 3;
           }
         }).catch(res => {
+          this.mobileKey = '';
+          this.callCaptcha();
           this.$message({
             message: res.msg,
             showClose: true,
@@ -381,6 +383,8 @@ export default {
           this.countDown();
         }, 1000);
       } else {
+        this.mobileKey = '';
+        this.callCaptcha();
         this.time = 60;
       }
     },

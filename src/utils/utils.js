@@ -1,7 +1,7 @@
 // session存储（设置、获取、删除）
 import fetchData from "@/api/fetch";
 import NProgress from "nprogress";
-
+import { message } from 'element-ui';
 
 export const sessionOrLocal = {
   set: (key, value, saveType = 'sessionStorage') => {
@@ -256,7 +256,7 @@ export function getQueryString(name) {
   if(r!=null)return  unescape(r[2]); return null;
 }
 // 判断是否登录成功
-export function checkAuth(to, from, next) {
+export function checkAuth(to, from, next, that) {
 
   if(to.path.indexOf('/keylogin-host') !== -1 ||
     to.path.indexOf('/keylogin') !== -1 || to.path.indexOf('/embedclient') !== -1 ||
@@ -320,7 +320,7 @@ export function checkAuth(to, from, next) {
             window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=2`;
           } else {
             // 获取回调token失败
-            this.$message({
+            that.$message({
               message: `登录信息获取失败，请重新登录`,
               showClose: true,
               // duration: 0,
@@ -331,7 +331,7 @@ export function checkAuth(to, from, next) {
             sessionOrLocal.clear();
           }
         } else{
-          this.$message({
+          that.$message({
             message: res.msg || '异常请求，无法操作',
             showClose: true,
             // duration: 0,
@@ -352,7 +352,7 @@ export function checkAuth(to, from, next) {
           window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=2`;
         } else {
           // 获取回调token失败
-          this.$message({
+          that.$message({
             message: '登录信息获取失败，请重新登录',
             showClose: true,
             // duration: 0,
@@ -364,7 +364,7 @@ export function checkAuth(to, from, next) {
         }
       } else{
         // 获取回调token失败
-        this.$message({
+        that.$message({
           message: e.msg || '登录信息获取失败，请重新登录',
           showClose: true,
           // duration: 0,
