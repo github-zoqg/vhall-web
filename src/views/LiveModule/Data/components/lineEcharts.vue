@@ -65,21 +65,7 @@ export default {
     },
     initBarEcharts(xData, yData) {
       let that = this;
-      this.barEcharts = echarts.init(this.$refs.barEchart, {
-        // noDataLoadingOption: {
-        //   text: '暂无数据',
-        //   effect:'bubble',
-        //   effectOption : {
-        //     effect: {
-        //         n: 0 //气泡个数为0
-        //     }
-        //   },
-        //   textStyle: {
-        //     fontSize: 24,
-        //     fontWeight: 'bold'
-        //   }
-        // }
-      });
+      this.barEcharts = echarts.init(this.$refs.barEchart);
       let option = {
         tooltip: {
           show: true,
@@ -89,28 +75,12 @@ export default {
             return res;
           },
         },
-        // grid: {
-        //   y2: 140,
-        //   left: '10%',
-        //   bottom:'35%'
-        // },
         xAxis: {
           type: 'category',
           data: xData,
           axisLine: {
             lineStyle: {
               color:'#999'
-            }
-          },
-          axisLabel: {
-            interval:0,
-            formatter:function(value,index) {
-              // return value.split("").join("\n");
-              if (index % 12 != 0) {
-                return '\n' + value
-              } else {
-                return value
-              }
             }
           }
         },
