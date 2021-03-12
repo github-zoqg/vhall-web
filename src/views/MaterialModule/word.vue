@@ -19,7 +19,7 @@
         <el-upload
            class="btn-upload"
           :action=actionUrl
-          :headers="{token: token, platform: 17}"
+          :headers="headersVo"
           :data=saveData
           accept="*"
           name="resfile"
@@ -38,7 +38,7 @@
         <el-upload
           class="btn-upload"
           :action=actionUrl
-          :headers="{token: token, platform: 17}"
+          :headers="headersVo"
           :data=saveData
           accept="*"
           name="resfile"
@@ -249,6 +249,14 @@ export default {
     };
   },
   computed: {
+    headersVo: function() {
+      let vo = {token: this.token, platform: 17, 'request-id': uuidV1()}
+      // 取缓存userId相关
+      if (window.sessionStorage.getItem('userId')) {
+        vo['gray-id'] = window.sessionStorage.getItem('userId')
+      }
+      return vo
+    },
     saveData: function() {
       let data = {
         path: 'interacts/docs',

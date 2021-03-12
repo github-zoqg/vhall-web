@@ -15,7 +15,7 @@
             class="upload-imglink"
             drag
             :show-file-list="false"
-            :headers="{token: token, platform: 17}"
+            :headers="headersVo"
             name="resfile"
             :data="saveData"
             :action="actionUrl"
@@ -51,6 +51,7 @@
 <script>
 import EventBus from '../../bus'
 import eventsType from '../../EventConts'
+import {v1 as uuidV1} from "uuid";
 
 export default {
   name: 'component-line',
@@ -64,7 +65,6 @@ export default {
       required: false
     }
   },
-
   data() {
     return {
       domain_url: '',
@@ -77,12 +77,19 @@ export default {
       token: localStorage.getItem('token') || ''
     }
   },
-
-
+  computed: {
+    headersVo: function() {
+      let vo = {token: this.token, platform: 17, 'request-id': uuidV1()}
+      // 取缓存userId相关
+      if (window.sessionStorage.getItem('userId')) {
+        vo['gray-id'] = window.sessionStorage.getItem('userId')
+      }
+      return vo
+    },
+  },
   mounted() {
     console.log('上传相关地址', this.actionUrl)
   },
-
   methods: {
     handleUploadSuccess(e) {
       console.log('二维码上传成功', e)
