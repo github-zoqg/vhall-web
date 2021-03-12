@@ -39,7 +39,7 @@ VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
 router.beforeEach((to, from, next) => {
-  checkAuth(to, from, next);
+  checkAuth(to, from, next, window.vm);
 });
 router.afterEach(() => {
   window.scrollTo(0,0);

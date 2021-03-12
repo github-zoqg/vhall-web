@@ -257,7 +257,7 @@
             <span>1. 移动端全屏播放时，跑马灯会失效</span>
             <span>2. 安卓手机浏览器劫持可能导致跑马灯失效</span>
           </p>
-        </div>
+      </div>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
@@ -360,7 +360,7 @@ export default {
         imageUrl: '',
       },
       videoParam: {
-        paas_record_id: '27d23478'
+        paas_record_id: process.env.NODE_ENV === 'production' ? '4b39a1a' : '27d23478'
       },
       marqueeOption: {
         enable: Boolean(this.scrolling_open),
@@ -990,6 +990,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+/deep/.div__sketch{
+  right: 0;
+}
 #videoDom {
   width: 100%;
   height: 100%;
