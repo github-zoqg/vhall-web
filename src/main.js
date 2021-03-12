@@ -61,7 +61,7 @@ Vue.use(vhallSaas, {
     playbill: [`/api/webinar/v1/webinar/adv-info`, 'POST'] // 开屏海报
   },
   baseUrl: process.env.VUE_APP_BASE_URL,
-  buHost: "https://t.e.vhall.com"
+  buHost: "https://e.vhall.com"
 });
 
 moment.locale(); // zh-cn
