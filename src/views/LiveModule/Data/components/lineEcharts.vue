@@ -47,10 +47,10 @@ export default {
       let Yline = [];
       this.tableList = [];
       this.otherList.map(item => {
-        Xline.push(item.item_subject || '未选择')
+        Xline.push(item.item_subject ? item.item_subject.substr(0, 8) : '未选择')
         Yline.push(item.num)
         this.tableList.push({
-          name:item.item_subject || '未选择',
+          name: item.item_subject || '未选择',
           value: item.num
         })
       })
@@ -89,12 +89,28 @@ export default {
             return res;
           },
         },
+        // grid: {
+        //   y2: 140,
+        //   left: '10%',
+        //   bottom:'35%'
+        // },
         xAxis: {
           type: 'category',
           data: xData,
           axisLine: {
             lineStyle: {
               color:'#999'
+            }
+          },
+          axisLabel: {
+            interval:0,
+            formatter:function(value,index) {
+              // return value.split("").join("\n");
+              if (index % 12 != 0) {
+                return '\n' + value
+              } else {
+                return value
+              }
             }
           }
         },
@@ -173,6 +189,10 @@ export default {
       font-size: 14px;
       padding: 0 10px;
       text-align: left;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
     }
   }
 </style>
