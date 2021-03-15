@@ -63,7 +63,7 @@
         <div class="inner liveTime" v-if="!outLiveTime">
           <p class="subColor">{{ liveDetailInfo.webinar_state | limitText}}</p>
           <p class="mainColor timerBox" v-if="liveDetailInfo.webinar_state === 2">
-            <span class="custom-font-barlow">{{ time.day }}</span>
+            <span class="custom-font-barlow first-downTime">{{ time.day }}</span>
             <i>天</i>
             <span class="custom-font-barlow">{{ time.hours }}</span>
             <i>时</i>
@@ -616,6 +616,11 @@ export default {
   span {
     display: inline-block;
     width: 26px;
+  }
+  .first-downTime{
+    padding: 0 3px;
+    text-align: right;
+    width: 70px;
   }
 }
 .subColor, .subDuration{
