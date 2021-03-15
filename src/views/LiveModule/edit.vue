@@ -706,9 +706,9 @@ export default {
             });
             this.isChange = false;
             console.log(res);
-            // setTimeout(()=>{
-            //   this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
-            // }, 500);
+            setTimeout(()=>{
+              this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
+            }, 500);
           }).catch(res=>{
             this.$message({
               message: res.msg || `操作失败，`,
