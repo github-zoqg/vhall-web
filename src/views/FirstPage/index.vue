@@ -202,7 +202,9 @@ export default {
       if(localStorage.getItem(`new_${newUserId}_${new Date().toLocaleDateString("en-US").replace(/\//g, '_')}`)){
         this.isOld = false
       }else{
-        this.isOld = true
+        if(localStorage.getItem('isOld') && localStorage.getItem('isOld') == 'true'){
+          this.isOld = true
+        }
       }
     } catch (error) {}
     let userInfo = sessionOrLocal.get('userInfo');
