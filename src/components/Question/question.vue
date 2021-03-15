@@ -233,7 +233,7 @@ export default {
     font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   }
   #qs-preview-box-content /deep/.q-des{
-    margin: 20px 75px 0;
+    margin: 20px 75px 0 !important;
     color: #666;
     font-weight: 400;
     font-size: 14px;

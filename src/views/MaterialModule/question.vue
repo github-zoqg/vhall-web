@@ -285,7 +285,7 @@ export default {
       // padding: 0 32px 24px 32px;
       border-radius: 4px;
       .question_main{
-        max-height: 700px;
+        max-height: 550px;
         position: relative;
       }
       .close-btn{

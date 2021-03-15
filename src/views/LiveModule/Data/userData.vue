@@ -259,13 +259,17 @@ export default {
     },
     // 获取直播场次
     getLiveSwitchInfo() {
+      this.switchList = [{
+        label: `全部`,
+        value: 0
+      }]
       this.$fetch('getWebinarSwitchList', {webinar_id: this.$route.params.str}).then(res => {
-        this.switchList = res.data.switch_list.map((item, index) => {
-          return {
-            label: `第${index + 1}场`,
-            value: item.id
-          }
-        });
+        res.data.switch_list.map((item, index) => {
+          this.switchList.push({
+             label: `第${index + 1}场`,
+             value: item.id
+          })
+        })
       })
     },
     getTableList(params) {
@@ -289,7 +293,7 @@ export default {
       this.getBaseUserInfo(obj);
     },
     getBaseUserInfo(params) {
-      this.$fetch('getUserBaseinfo', params).then(res => {
+      this.$fetch('getUserBaseinfo', this.$params(params)).then(res => {
         this.tableList = res.data.list;
         // this.tableList.map(item => {
         //   item.userName = `${item.nick_name == null ? '' : item.nick_name}${item.w_name == null ? '' : item.w_name}`;
@@ -334,11 +338,17 @@ export default {
       this.activeName = tab.name;
       // tab切换时搜索的值和分页的值都重置
       this.isSwitch = tab.name == '2' ? false : true;
+      let queryDocument = document.querySelectorAll('.el-picker-panel__shortcut');
+      if (queryDocument.length > 0) {
+        queryDocument[0].style.color = '#fb3a32';
+        queryDocument[1].style.color = '#666'
+        queryDocument[2].style.color = '#666'
+      }
       this.initPage();
       this.type = '1';
       this.title = '';
       this.checkedValue = false;
-      this.switchId = '';
+      this.switchId = '0';
       this.getTableList('search');
     }
   }

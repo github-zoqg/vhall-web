@@ -412,7 +412,7 @@ export default {
       this.$fetch('getChatListInfo', obj).then(res => {
         this.tableList = res.data.list;
         this.tableList.map(item => {
-          item.name = item.role_name == 1 ? '主持人' : item.role_name == 2 ? '观众' : item.role_name == 3 ? '助理' : '助理';
+          item.name = item.role_name == 1 ? '主持人' : item.role_name == 2 ? '观众' : item.role_name == 3 ? '助理' : '嘉宾';
           if (item.data.barrage_txt) {
             if((/\[|\]/g).test(item.data.barrage_txt)) {
               item.data.barrage_txt = this.emojiToText(item.data.barrage_txt) || '';
@@ -1052,14 +1052,14 @@ export default {
 }
 .search-export{
   float: right;
-  /deep/.el-button{
-    background: transparent;
-    &:hover{
-      background: #fb3a32;
-      span{
-        color: #fff;
-      }
-    }
-  }
+  // /deep/.el-button{
+  //   background: transparent;
+  //   &:hover{
+  //     background: #fb3a32;
+  //     span{
+  //       color: #fff;
+  //     }
+  //   }
+  // }
 }
 </style>

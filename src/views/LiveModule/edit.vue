@@ -669,7 +669,7 @@ export default {
         webinar_id: this.webinarId || '',
         record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
         subject: this.formData.title, // 标题
-        introduction: this.formData.content || '<p></p>', // 简介
+        introduction: this.unescapeHTML(this.formData.content.replace("&lt;p&gt;","")) || '<p></p>', // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
         webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
@@ -733,6 +733,10 @@ export default {
           return false;
         }
       });
+    },
+    unescapeHTML(title) {
+      title = '' + title;
+      return title.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/p&gt;/g, "p>").replace(/&apos;/g, "'").replace(/&quot;/g, '"')
     },
      // 预览
     previewVideo() {
