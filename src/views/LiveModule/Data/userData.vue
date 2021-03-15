@@ -334,6 +334,10 @@ export default {
       this.activeName = tab.name;
       // tab切换时搜索的值和分页的值都重置
       this.isSwitch = tab.name == '2' ? false : true;
+      let queryDocument = document.querySelectorAll('.el-picker-panel__shortcut');
+      queryDocument[0].style.color = '#fb3a32';
+      queryDocument[1].style.color = '#666'
+      queryDocument[2].style.color = '#666'
       this.initPage();
       this.type = '1';
       this.title = '';
