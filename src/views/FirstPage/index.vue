@@ -189,20 +189,22 @@ export default {
       return !(this.childPremission && Number(this.childPremission.permission_data) === 0) ? 5 : 6;
     }
   },
+  beforeCreate() {
+     if(location.search.includes('form') && getQueryString('form') == 1 ){
+       localStorage.setItem('isOld', true)
+     }else{
+        localStorage.setItem('isOld', false)
+     }
+  },
   created() {
-    if(location.search.includes('form') && getQueryString('form') == 1 ){
-      localStorage.setItem('isOld', true)
-      try {
-        let newUserId = JSON.parse(sessionStorage.getItem('userInfo')).user_id
-        if(localStorage.getItem(`new_${newUserId}_${new Date().toLocaleDateString("en-US").replace(/\//g, '_')}`)){
-          this.isOld = false
-        }else{
-          this.isOld = true
-        }
-      } catch (error) {}
-    }else{
-      localStorage.setItem('isOld', false)
-    }
+    try {
+      let newUserId = JSON.parse(sessionStorage.getItem('userInfo')).user_id
+      if(localStorage.getItem(`new_${newUserId}_${new Date().toLocaleDateString("en-US").replace(/\//g, '_')}`)){
+        this.isOld = false
+      }else{
+        this.isOld = true
+      }
+    } catch (error) {}
     let userInfo = sessionOrLocal.get('userInfo');
     if (userInfo) {
       this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
