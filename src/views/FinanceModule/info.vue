@@ -107,6 +107,12 @@
          <div class="grid-item">
           <div class="grid-content">
             <p>累计直播（个）</p>
+            <el-tooltip effect="dark" placement="right" v-tooltipMove>
+              <div slot="content">
+                筛选条件内创建的活动总数
+              </div>
+             <i class="iconfont-v3 saasicon_help_m"></i>
+            </el-tooltip>
             <h1 class="custom-font-barlow">{{ trendData.webinar_num || 0 }}</h1>
           </div>
         </div>
@@ -123,7 +129,7 @@
             <p>累计活动（个）</p>
             <el-tooltip effect="dark" placement="right" v-tooltipMove>
               <div slot="content">
-                筛选条件内的活动总数，包含直播+点播活动
+                筛选条件内创建的活动总数，包含直播+点播活动
               </div>
              <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
