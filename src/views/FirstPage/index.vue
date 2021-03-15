@@ -154,7 +154,7 @@
             <p class="prompt-con-text prompt-con-text-one">【新版本上线】</p>
             <p class="prompt-con-text prompt-con-text-two">感谢您对微吼直播的支持！当前正在使用新版后台，请创建活动开始体验吧！</p>
             <p class="prompt-con-text prompt-con-text-two">对于旧版已创建的H5播放器活动，微吼团队后续会统一迁移至此后台。Flash活动将会为您保留在旧版本后台，方便进行管理。</p>
-            <p class="prompt-con-text prompt-con-text-two">如果您需要对接API，详情请点击<a href="https://saas-doc.vhall.com/docs/show/947">《文档中心》</a></p>
+            <p class="prompt-con-text prompt-con-text-two">如果您需要对接API，详情请点击<a href="https://saas-doc.vhall.com/document/document/index">《文档中心》</a></p>
             <p class="prompt-con-text prompt-con-text-two">如有问题请联系您的专属售后或拨打400-888-9970转2咨询。</p>
             <a class="prompt-con-text-four" href="javascript:;" @click="iKonw">我知道了</a>
         </div>
