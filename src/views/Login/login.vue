@@ -453,7 +453,12 @@ export default {
           if(permissions) {
             // 设置全部权限
             sessionOrLocal.set('SAAS_VS_PES', permissions, 'localStorage');
-            this.$router.push({path: '/'});
+            let isOld = localStorage.getItem('isOld')
+            if(isOld && isOld == 'true'){
+              this.$router.push({path: '/', query:{'form': 1}});
+            }else{
+              this.$router.push({path: '/'});
+            }
           } else {
             this.$message({
               message: vRes.msg || `用户权限获取失败`,

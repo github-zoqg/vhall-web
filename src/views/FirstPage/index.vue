@@ -147,12 +147,25 @@
         <p>联系我们</p>
       </div>
     </div>
+    <template v-if="isOld">
+      <div class="prompt">
+        <div class="prompt-wrap">
+            <i class="prompt-con-img saasclose iconfont-v3" @click="iKonw"></i>
+            <p class="prompt-con-text prompt-con-text-one">【新版本上线】</p>
+            <p class="prompt-con-text prompt-con-text-two">感谢您对微吼直播的支持！当前正在使用新版后台，请创建活动开始体验吧！</p>
+            <p class="prompt-con-text prompt-con-text-two">对于旧版已创建的H5播放器活动，微吼团队后续会统一迁移至此后台。Flash活动将会为您保留在旧版本后台，方便进行管理。</p>
+            <p class="prompt-con-text prompt-con-text-two">如果您需要对接API，详情请点击<a href="https://saas-doc.vhall.com/docs/show/947">《文档中心》</a></p>
+            <p class="prompt-con-text prompt-con-text-two">如有问题请联系您的专属售后或拨打400-888-9970转2咨询。</p>
+            <a class="prompt-con-text-four" href="javascript:;" @click="iKonw">我知道了</a>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 <script>
 import LineEcharts from '@/components/Echarts/lineEcharts.vue';
 import DataUsage from '@/components/DataUsage/index.vue';
-import { sessionOrLocal } from '@/utils/utils';
+import { sessionOrLocal,getQueryString } from '@/utils/utils';
 import CountTo from 'vue-count-to';
 export default {
   data() {
@@ -161,7 +174,8 @@ export default {
       mainKeyData: {},
       versionType: 1,
       lineDataList: [],
-      childPremission: {}
+      childPremission: {},
+      isOld: false
     };
   },
   components: {
@@ -176,6 +190,19 @@ export default {
     }
   },
   created() {
+    if(location.search.includes('form') && getQueryString('form') == 1 ){
+      localStorage.setItem('isOld', true)
+      try {
+        let newUserId = JSON.parse(sessionStorage.getItem('userInfo')).user_id
+        if(localStorage.getItem(`new_${newUserId}_${new Date().toLocaleDateString("en-US").replace(/\//g, '_')}`)){
+          this.isOld = false
+        }else{
+          this.isOld = true
+        }
+      } catch (error) {}
+    }else{
+      localStorage.setItem('isOld', false)
+    }
     let userInfo = sessionOrLocal.get('userInfo');
     if (userInfo) {
       this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
@@ -201,6 +228,11 @@ export default {
     document.getElementById('app').style.minWidth="1366px"
   },
   methods: {
+    iKonw(){
+      this.isOld = false
+      let newUserId = JSON.parse(sessionStorage.getItem('userInfo')).user_id
+      localStorage.setItem(`new_${newUserId}_${new Date().toLocaleDateString("en-US").replace(/\//g, '_')}`, true)
+    },
     getChildPermission() {
       this.$fetch('getChildPermission').then(res => {
         console.log('getChildPermission', res)
@@ -531,4 +563,72 @@ export default {
       }
     }
   }
+
+    .prompt{
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 9991;
+    }
+    .prompt .prompt-wrap{
+        position: relative;
+        left: 50%;
+        top: 50%;
+        transform: translate(-256px, -198px);
+        width: 512px;
+        height: 396px;
+        background: #FFFFFF;
+        box-shadow: 0px 12px 42px 0px rgba(51, 51, 51, 0.24), 0px 8px 32px 0px rgba(34, 34, 34, 0.24);
+        border-radius: 8px;
+        padding: 32px;
+    }
+    .prompt .prompt-wrap .prompt-con-img{
+      position: absolute;
+      right: 30px;
+      top: 30px;
+      font-size: 24px;
+      color: #666;
+    }
+    .prompt .prompt-wrap .prompt-con-close{
+        position: absolute;
+        right: 32px;
+        top: 32px;
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+    .prompt .prompt-wrap .prompt-con-text{
+        font-weight: 400;
+        color: #1A1A1A;
+        line-height: 26px;
+        font-size: 14px;
+    }
+    .prompt .prompt-wrap .prompt-con-text-one{
+        color: #222222;
+        font-size: 22px;
+        line-height: 26px;
+        text-align: center;
+    }
+    .prompt .prompt-wrap .prompt-con-text-one,.prompt-con-text-two{
+        margin-bottom: 16px;
+    }
+    .prompt .prompt-wrap .prompt-con-text-three{
+        margin-bottom: 40px;
+    }
+    .prompt .prompt-wrap .prompt-con-text-four{
+        width: 180px;
+        height: 40px;
+        background: #FB3A32;
+        border-radius: 20px;
+        line-height: 40px;
+        margin: 40px auto;
+        font-size: 14px;
+        display: block;
+        text-align: center;
+        color: #FFFFFF;
+        text-decoration: none
+    }
 </style>
