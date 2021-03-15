@@ -1052,14 +1052,14 @@ export default {
 }
 .search-export{
   float: right;
-  /deep/.el-button{
-    background: transparent;
-    &:hover{
-      background: #fb3a32;
-      span{
-        color: #fff;
-      }
-    }
-  }
+  // /deep/.el-button{
+  //   background: transparent;
+  //   &:hover{
+  //     background: #fb3a32;
+  //     span{
+  //       color: #fff;
+  //     }
+  //   }
+  // }
 }
 </style>
