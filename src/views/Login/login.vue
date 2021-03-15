@@ -211,7 +211,7 @@
   </div>
 </template>
 <script>
-import {sessionOrLocal} from "@/utils/utils";
+import {sessionOrLocal, getQueryString} from "@/utils/utils";
 import Cookies from 'js-cookie'
 import footerSection from '../../components/Footer/index';
 import Env from "@/api/env";
@@ -453,7 +453,12 @@ export default {
           if(permissions) {
             // 设置全部权限
             sessionOrLocal.set('SAAS_VS_PES', permissions, 'localStorage');
-            this.$router.push({path: '/'});
+            let isOld = localStorage.getItem('isOld')
+            if(getQueryString('form') && getQueryString('form') == 1 ){
+              this.$router.push({path: '/', query:{'form': 1}});
+            }else{
+              this.$router.push({path: '/'});
+            }
           } else {
             this.$message({
               message: vRes.msg || `用户权限获取失败`,
