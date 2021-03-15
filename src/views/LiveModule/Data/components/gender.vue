@@ -21,7 +21,7 @@ export default {
   methods: {
     initDataLimit() {
       this.genderList.map(item => {
-        item.name = item.item_subject || '未选择'
+        item.name = item.item_subject ? item.item_subject.substr(0, 8) : '未选择'
         item.value = item.num || 0
       })
       this.initTerBroCharts(this.genderList);
@@ -33,7 +33,7 @@ export default {
       let option = {
         tooltip: {
           trigger: 'item',
-          formatter: '{b}</br> 填写人数 {c}',
+          formatter: '{b}</br> 选择人数 {c}',
         },
         legend: {
           orient: 'vertical',

@@ -10,7 +10,7 @@
           <table border="0">
             <tr>
               <th>省份</th>
-              <th>填写人数</th>
+              <th>选择人数</th>
               <th>占比</th>
             </tr>
             <tr v-for="(item, index) in areaDataList" :key="index">
@@ -46,7 +46,7 @@ export default {
   methods: {
     initDataLimit() {
       this.areaDataList.map(item => {
-        item.name = item.item_subject
+        item.name = item.item_subject || '未选择'
         item.value = item.num
       })
       this.total = this.areaDataList.reduce((tem, item, index) =>{return tem + Number(item.value)}, 0);
@@ -67,7 +67,7 @@ export default {
             // } else {
             //   num = ((parseInt(value) / data.total) * 100).toFixed(2);
             // }
-            let res = params.name + '<br/>填写人数' + '  ' + parseInt(params.value || 0);
+            let res = params.name + '<br/>选择人数' + '  ' + parseInt(params.value || 0);
             return res;
           },
         },

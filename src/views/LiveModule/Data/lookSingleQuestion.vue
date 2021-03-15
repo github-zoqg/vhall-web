@@ -5,24 +5,24 @@
         <h1>
           {{ $route.query.subject }}
         </h1>
-        <p>填写人数: <span>{{ total }}人</span><b>|</b><span class="export" @click="exportSingleQuerstion">导出数据</span></p>
+        <p>填写总人数: <span>{{ total }}人</span><b>|</b><span class="export" @click="exportSingleQuerstion">导出数据</span></p>
         <p>提示：客观题支持报表分析展示（包含：性别、地域、单选题、多选题）</p>
       </div>
     <div class="question-item">
       <div v-for="item in questionList" :key="item.ques_id">
         <div class="question-gender" v-if="item.ques_title == '性别'">
-          <p>{{ item.ques_title }}(单选题)</p>
+          <p><span>{{ item.ques_title }}</span>(单选题)</p>
           <gender-echarts :genderList="item.list"></gender-echarts>
         </div>
         <div class="question-city" v-else-if="item.ques_title == '地域'">
-          <p>{{item.ques_title}}统计(城市题目)</p>
+          <p><span>{{ item.ques_title }}</span>统计(城市题目)</p>
           <div class="map-charts">
             <map-echarts :areaDataList="item.list"></map-echarts>
           </div>
         </div>
         <div class="question-subject" v-else>
-          <p>{{ item.ques_title }}（{{ item.item_type == 2 ? '多选题' : '单选题'}}）</p>
-          <line-echarts :otherList="item.list"></line-echarts>
+          <p> <span>{{ item.ques_title }}</span>（{{ item.item_type == 2 ? '多选题' : '单选题'}}）</p>
+          <line-echarts :otherList="item.list" :total="total"></line-echarts>
         </div>
       </div>
     </div>
@@ -253,9 +253,19 @@ export default {
     height: 40px;
     line-height: 40px;
     color: #1A1A1A;
-    padding-left: 100px;
+    padding-left: 50px;
     font-size: 16px;
     font-weight: 500;
+    span{
+      display: inline-block;
+      // height: 40px;
+      // line-height: 40px;
+      max-width: 500px;
+      vertical-align: middle;
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
+    }
   }
   .terEchart,
   .barEchart {

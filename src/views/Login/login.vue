@@ -297,6 +297,12 @@ export default {
       registerRules: {
         phone: [
           { validator: validatePhone, trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入短信验证码', trigger: 'blur' }
         ]
       },
       loginRules: {
@@ -485,6 +491,7 @@ export default {
             this.errorMsgShow = res.msg || '登录失败！';
           }
           sessionOrLocal.set('token', '', 'localStorage');
+          this.mobileKey = '';
           this.callCaptcha();
       })
     },
@@ -515,23 +522,31 @@ export default {
       }
     },
     registerAccount() {
-      this.registerForm.captcha = this.mobileKey;
-      this.registerForm.source = this.$route.query.source || 1;
-      this.$fetch('register', this.registerForm).then(res => {
-        this.$message({
-          message:  `注册成功`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.mobileKey = '';
-        setTimeout(() => {
-          this.$router.push({path:'/login'})
-        }, 1000)
-      }).catch(res => {
-        console.log(res);
-        this.registerText = res.msg || '注册失败';
+      this.$refs.registerForm.validate((valid) => {
+        if (valid) {
+          this.registerForm.captcha = this.mobileKey;
+          this.registerForm.source = this.$route.query.source || 1;
+          this.$fetch('register', this.registerForm).then(res => {
+            this.$message({
+              message:  `注册成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.mobileKey = '';
+            setTimeout(() => {
+              this.$router.push({path:'/login'})
+            }, 1000)
+          }).catch(res => {
+            console.log(res);
+            this.callCaptcha();
+            this.mobileKey = '';
+            this.registerText = res.msg || '注册失败';
+          });
+        } else {
+          return false;
+        }
       });
     },
     /**
@@ -544,6 +559,8 @@ export default {
           this.countDown();
         }, 1000);
       } else {
+        this.mobileKey = '';
+        this.callCaptcha();
         this.time = 60;
       }
     },
