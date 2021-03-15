@@ -257,7 +257,10 @@ export function getQueryString(name) {
 }
 // 判断是否登录成功
 export function checkAuth(to, from, next, that) {
-
+  let isOld = false
+  if(location.search && getQueryString('form') == 1){
+    isOld = true
+  }
   if(to.path.indexOf('/keylogin-host') !== -1 ||
     to.path.indexOf('/keylogin') !== -1 || to.path.indexOf('/embedclient') !== -1 ||
     from.path.indexOf('/keylogin') !== -1 ||
@@ -403,7 +406,7 @@ export function checkAuth(to, from, next, that) {
       sessionStorage.clear()
       localStorage.clear()
       if(e.code == 11006){
-        next({path: '/login'});
+        next({path: '/login', query:{'form': isOld == 1 ? 1 : 0}});
       }
       sessionOrLocal.removeItem('SAAS_VS_PES');
     });
@@ -436,7 +439,7 @@ export function checkAuth(to, from, next, that) {
       NProgress.done();
       return;
     }
-    next({path: '/login'});
+    next({path: '/login', query:{'form': isOld == 1 ? 1 : 0}});
     NProgress.done();
   }
 }
