@@ -150,7 +150,8 @@
     <template v-if="isOld">
       <div class="prompt">
         <div class="prompt-wrap">
-            <i class="prompt-con-img saasclose iconfont-v3" @click="iKonw"></i>
+            <i class="prompt-con-img i-close saasclose iconfont-v3" @click="iKonw"></i>
+            <img class="prompt-con-img" src="//cnstatic01.e.vhall.com/static/images/watch/notice_img.png" alt="">
             <p class="prompt-con-text prompt-con-text-one">【新版本上线】</p>
             <p class="prompt-con-text prompt-con-text-two">感谢您对微吼直播的支持！当前正在使用新版后台，请创建活动开始体验吧！</p>
             <p class="prompt-con-text prompt-con-text-two">对于旧版已创建的H5播放器活动，微吼团队后续会统一迁移至此后台。Flash活动将会为您保留在旧版本后台，方便进行管理。</p>
@@ -592,20 +593,29 @@ export default {
         position: relative;
         left: 50%;
         top: 50%;
-        transform: translate(-256px, -198px);
+        transform: translate(-256px, -273px);
         width: 512px;
-        height: 396px;
+        height: 546px;
         background: #FFFFFF;
         box-shadow: 0px 12px 42px 0px rgba(51, 51, 51, 0.24), 0px 8px 32px 0px rgba(34, 34, 34, 0.24);
         border-radius: 8px;
         padding: 32px;
     }
     .prompt .prompt-wrap .prompt-con-img{
+        width: 100px;
+        height: 100px;
+        display: block;
+        margin: 8px auto 32px;
+    }
+    .prompt .prompt-wrap  .i-close{
+      width: 20px;
+      height: 20px;
       position: absolute;
       right: 30px;
       top: 30px;
       font-size: 24px;
       color: #666;
+      cursor: pointer;
     }
     .prompt .prompt-wrap .prompt-con-close{
         position: absolute;
