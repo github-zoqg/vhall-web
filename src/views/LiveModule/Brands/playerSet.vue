@@ -360,7 +360,7 @@ export default {
         imageUrl: '',
       },
       videoParam: {
-        paas_record_id: process.env.NODE_ENV === 'development' ? '27d23478' : '4b39a1a'
+        paas_record_id: process.env.VUE_APP_NODE_ENV === 'production' ? '4b39a1a' : '27d23478'
       },
       marqueeOption: {
         enable: Boolean(this.scrolling_open),
