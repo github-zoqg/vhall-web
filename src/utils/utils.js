@@ -427,6 +427,7 @@ export function checkAuth(to, from, next, that) {
       NProgress.done();
     }).catch(e=>{
       console.log(e);
+      next({path: '/login'});
       NProgress.done();
     });
   } else {
