@@ -4,7 +4,7 @@
       <!-- <div slot="content">
         章节功能支持文档格式：PPT、PPTX，其他格式不支持
       </div> -->
-      <div class="title_text">课件重制功能将PPT文档和视频内容合并生成MP4文件，<span @click="introduceDetail">了解一下</span></div>
+      <div class="title_text">课件重制功能将文档和视频内容合并生成MP4文件，<span @click="introduceDetail">了解一下</span></div>
     </pageTitle>
     <div class="vodreset-from clearFix">
       <el-form :model="vodresetForm" label-width="83px">
@@ -82,7 +82,7 @@
             :src="showType == 1 ? pattern_third : showType == 2 ? pattern_mini : pattern_doc"
             class="preview-img"
           >
-          <div class="custom-img-box">
+          <div v-show="showType == 1" class="custom-img-box">
             <img class="custom-img" v-if="domain_url" :src="domain_url">
           </div>
         </div>
@@ -300,6 +300,13 @@
     background: transparent!important;
     border: none;
     box-shadow: none;
+    @media (max-width: 1440px) {
+      margin-top: 9vh!important;
+    }
+    @media (max-width: 1366px) {
+      margin-top: 2vh!important;
+      margin-bottom: 0;
+    }
     .el-dialog__headerbtn {
       top: 24px;
       right: 0;

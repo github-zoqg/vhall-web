@@ -1016,6 +1016,13 @@ export default {
       background: transparent!important;
       border: none;
       box-shadow: none;
+      @media (max-width: 1440px) {
+        margin-top: 9vh!important;
+      }
+      @media (max-width: 1366px) {
+        margin-top: 2vh!important;
+        margin-bottom: 0;
+      }
       .el-dialog__headerbtn {
         top: 24px;
         right: 0;

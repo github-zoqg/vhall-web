@@ -32,7 +32,7 @@
     border-radius: 8px;
   }
   .content {
-    padding: 223px 0 0 455px;
+    padding: 185px 0 0 455px;
     .title {
       width: 95px;
       height: 24px;
