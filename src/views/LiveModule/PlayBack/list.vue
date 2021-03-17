@@ -45,7 +45,7 @@
             width="55">
           </el-table-column>
           <el-table-column
-            :width="isDemand === true ? 430 : 420"
+            :width="isDemand === true ? 375 : 365"
             label="内容标题">
             <template slot-scope="scope">
               {{ scope.row.date }}
@@ -63,6 +63,7 @@
                   <p class="name">{{ scope.row.name }}</p>
                   <p class="create-time">{{ scope.row.created_at }}</p>
                   <span v-if="scope.row.doc_status && WEBINAR_PES['ui.record_chapter']" class="tag">章节</span>
+                  <span v-if="scope.row.layout != 0" class="tag">重制</span>
                 </div>
               </div>
             </template>
@@ -89,6 +90,12 @@
           </el-table-column>
 
           <el-table-column
+            label="布局"
+            show-overflow-tooltip>
+            <span class="playpackSource" slot-scope="scope">{{scope.row.layout | layoutFilter}}</span>
+          </el-table-column>
+
+          <el-table-column
             v-if="!isDemand"
             label="暂存至"
             show-overflow-tooltip>
@@ -104,12 +111,12 @@
             <template slot-scope="scope">
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
-              <el-button :disabled="!!scope.row.transcoding" v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">{{ !!scope.row.transcoding ? '转码中' : '下载' }}</el-button>
-              <el-button v-if="WEBINAR_PES['ui.record_chapter']" type="text" @click="toChapter(scope.row)">章节</el-button>
+              <el-button v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
+              <el-button v-if="WEBINAR_PES['ui.record_chapter'] &&  !scope.row.layout" type="text" @click="toChapter(scope.row)">章节</el-button>
               <el-dropdown v-if="!isDemand" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
-                  <el-dropdown-item :command="{command: 'vodreset', data: scope.row}">回放重制</el-dropdown-item>
+                  <el-dropdown-item v-if="!scope.row.layout" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
                   <el-dropdown-item v-if="WEBINAR_PES['publish_record']" :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'delete', data: scope.row}">删除</el-dropdown-item>
@@ -293,6 +300,15 @@ export default {
       }
     },
     reTranscode(data) {
+      if (data.transcode_status == 2 && data.layout != 0) {
+        this.$message({
+          message: `到当前视频未演示文档导致课件重制功能无法正常使用，请使用其他视频`,
+          showClose: true,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        })
+        return false
+      }
       this.$fetch('recordReTranscode', {
         paas_record_id: data.paas_record_id,
         webinar_id: this.webinar_id
@@ -436,25 +452,27 @@ export default {
     },
     // 下载回放
     downPlayBack(data) {
-      console.log(data);
-      this.$fetch('playBackDownUrlGet', {
-        record_id: data.id
-      }).then(res => {
-        console.log(res)
-        if (res.data.has_download_url == 0) {
-          data.transcoding = true;
-          this.transcodingArr.push(data);
-          this.$message({
-            message: `正在转码，请稍侯...`,
-            showClose: true,
-            // duration: 0,
-            type: 'success',
-            customClass: 'zdy-info-box'
-          });
-          return false;
-        }
-        window.open(res.data.download_url);
-      })
+      const fetchCb = () => {
+        this.$fetch('playBackDownUrlGet', {
+          record_id: data.id
+        }).then(res => {
+          console.log(res)
+          if (res.data.has_download_url == 0) {
+            data.transcoding = true;
+            this.transcodingArr.push(data);
+            this.$message({
+              message: `正在转码，请稍侯...`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            return false;
+          }
+          window.open(res.data.download_url);
+        })
+      }
+      this.checkTransStatus(data.id, fetchCb)
     },
     deletePlayBack(ids){
       this.$confirm('删除回放会导致目前已生成回放的数据丢失，请谨慎操作，确定要删除这段回放么？', '提示', {
@@ -521,8 +539,16 @@ export default {
     settingHandler(){
       this.$router.push({path: `/live/planFunction/${this.webinar_id}`});
     },
-    toVodreset() {
-      this.$router.push({path: `/live/vodreset/${this.webinar_id}`});
+    toVodreset(data) {
+      const routerPush = () => {
+        this.$router.push({
+          path: `/live/vodreset/${this.webinar_id}`,
+          query: {
+            paas_record_id: data.paas_record_id
+          }
+        });
+      }
+      this.checkTransStatus(data.id, routerPush)
     },
     toCreate() {
       this.$router.push({path: `/videoTailoring/${this.webinar_id}`});
@@ -546,9 +572,33 @@ export default {
       })
     },
     toTailoring(recordId, recordName){
-      this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
-      // const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
-      // window.open(routeData.href, '_blank');
+      const routerPush = () => {
+        this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
+      }
+      this.checkTransStatus(recordId, routerPush)
+    },
+    checkTransStatus(recordId, cb) {
+      this.$fetch('recordInfo', {
+        record_id: recordId
+      }).then(res => {
+        if (res.data.transcode_status == 0 || res.data.transcode_status == 3) {
+          this.$message({
+            message:  '视频转码中，请稍后再试',
+            showClose: true, // 是否展示关闭按钮
+            type: 'warning', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        } else if (res.data.transcode_status == 2){
+          this.$message({
+            message:  '视频转码失败',
+            showClose: true, // 是否展示关闭按钮
+            type: 'error', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        } else {
+          cb && cb()
+        }
+      })
     },
     async toChapter(row){
       const recordId = row.id
@@ -615,18 +665,32 @@ export default {
     },
     // 发布
     toCreateDemand(recordData) {
-      this.$router.push({
-        path: `/live/vodEdit`,
-        query: {
-          record_id: recordData.id,
-          paas_record_id: recordData.paas_record_id,
-          name: recordData.name,
-          webinar_id: this.webinar_id
-        }
-      });
+      const routerPush = () => {
+        this.$router.push({
+          path: `/live/vodEdit`,
+          query: {
+            record_id: recordData.id,
+            paas_record_id: recordData.paas_record_id,
+            name: recordData.name,
+            webinar_id: this.webinar_id
+          }
+        })
+      }
+      this.checkTransStatus(recordData.id, routerPush)
     }
   },
   filters: {
+    layoutFilter: function(layout) {
+      if(layout == 0) {
+        return '-';
+      } else if (layout == 1) {
+        return '三分屏';
+      } else if (layout == 2) {
+        return '纯文档';
+      } else if (layout == 3) {
+        return '画中画';
+      }
+    },
     secondsFormmat(val){
       val = Number(val);
       if(isNaN(val)) return val;
@@ -746,8 +810,8 @@ export default {
     .imageBox{
       position: relative;
       float: left;
-      width: 160px;
-      height: 90px;
+      width: 140px;
+      height: 79px;
       border-radius: 4px;
       background-color: #1a1a1a;
       .imageWrap{
@@ -809,7 +873,7 @@ export default {
     .info{
       margin-left: 12px;
       font-size: 14px;
-      width: 222px;
+      width: 187px;
       color: #1A1A1A;
       float: left;
       .name{
@@ -819,7 +883,7 @@ export default {
         text-overflow: ellipsis;
         display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
         -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
-        -webkit-line-clamp: 2; /** 显示的行数 **/
+        -webkit-line-clamp: 1; /** 显示的行数 **/
         overflow: hidden;  /** 隐藏超出的内容 **/
       }
       .create-time{

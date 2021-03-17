@@ -1,9 +1,6 @@
 <template>
   <div class="vodresetBox">
     <pageTitle pageTitle="课件重制">
-      <!-- <div slot="content">
-        章节功能支持文档格式：PPT、PPTX，其他格式不支持
-      </div> -->
       <div class="title_text">课件重制功能将文档和视频内容合并生成MP4文件，<span @click="introduceDetail">了解一下</span></div>
     </pageTitle>
     <div class="vodreset-from clearFix">
@@ -11,36 +8,36 @@
         <el-form-item label="布局" class="pattern-item">
           <div class="data-show">
             <div class="data-show-item">
-              <p :class="showType === 1 ? 'active' : ''" @click="changeType(1)">
+              <p :class="layout === 1 ? 'active' : ''" @click="changeType(1)">
                 <img :src="pattern_third" alt="">
-                <label  class="img-tangle" v-if="showType === 1"><img src="../../../common/images/icon-choose.png" alt=""></label>
+                <label  class="img-tangle" v-if="layout === 1"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
               <aside>三分屏</aside>
             </div>
             <div class="data-show-item">
-              <p :class="showType === 2 ? 'active' : ''" @click="changeType(2)">
+              <p :class="layout === 3 ? 'active' : ''" @click="changeType(3)">
                 <img :src="pattern_mini" alt="">
-                <label  class="img-tangle" v-if="showType === 2"><img src="../../../common/images/icon-choose.png" alt=""></label>
+                <label  class="img-tangle" v-if="layout === 3"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
               <aside>画中画</aside>
             </div>
             <div class="data-show-item">
-              <p :class="showType === 3 ? 'active' : ''" @click="changeType(3)">
+              <p :class="layout === 2 ? 'active' : ''" @click="changeType(2)">
                 <img :src="pattern_doc" alt="">
-                <label  class="img-tangle" v-if="showType === 3"><img src="../../../common/images/icon-choose.png" alt=""></label>
+                <label  class="img-tangle" v-if="layout === 2"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
               <aside>纯文档</aside>
             </div>
           </div>
         </el-form-item>
-        <el-form-item v-show="showType === 1" label="图片" class="picture-item">
+        <el-form-item v-show="layout === 1" label="图片" class="picture-item">
           <div class="img-box">
             <upload
               class="imgUpload"
-              v-model="vodresetForm.img"
+              v-model="vodresetForm.img_url"
               :domain_url="domain_url"
               :saveData="{
-                  path: '/common/static-imgs',
+                  path: pathUrl,
                   type: 'image',
               }"
               :on-success="uploadSuccess"
@@ -49,7 +46,7 @@
               :on-preview="uploadPreview"
               @handleFileChange="handleFileChange"
               :before-upload="beforeUploadHnadler"
-              @delete="vodresetForm.img = '', domain_url = ''">
+              @delete="vodresetForm.img_url = '', domain_url = ''">
               <div slot="tip">
                 <p>建议尺寸：320*540px</p>
                 <p>小于2M(支持jpg、png)</p>
@@ -57,19 +54,19 @@
             </upload>
           </div>
         </el-form-item>
-        <el-form-item v-show="showType === 2" label="位置" class="picture-item">
+        <el-form-item v-show="layout === 3" label="位置" class="picture-item">
           <el-radio-group class="ratio-radio" v-model="vodresetForm.position">
             <el-radio :label="1">左上角</el-radio>
-            <el-radio :label="2">右上角</el-radio>
-            <el-radio :label="3">左下角</el-radio>
+            <el-radio :label="3">右上角</el-radio>
+            <el-radio :label="2">左下角</el-radio>
             <el-radio :label="4">右下角</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="分辨率" class="ratio-item">
-          <el-radio-group class="ratio-radio" v-model="vodresetForm.ratio">
-            <el-radio :label="3">高清</el-radio>
-            <el-radio :label="6">超清</el-radio>
-            <el-radio :label="9">蓝光</el-radio>
+          <el-radio-group class="ratio-radio" v-model="vodresetForm.quality">
+            <el-radio :label="1">高清</el-radio>
+            <el-radio :label="2">超清</el-radio>
+            <el-radio :label="3">蓝光</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
@@ -79,10 +76,10 @@
       <div class="preview-box">
         <div class="preview-img-box">
           <img
-            :src="showType == 1 ? pattern_third : showType == 2 ? pattern_mini : pattern_doc"
+            :src="layout == 1 ? pattern_third : layout == 3 ? pattern_mini : pattern_doc"
             class="preview-img"
           >
-          <div v-show="showType == 1" class="custom-img-box">
+          <div v-show="layout == 1" class="custom-img-box">
             <img class="custom-img" v-if="domain_url" :src="domain_url">
           </div>
         </div>
@@ -127,41 +124,67 @@
         pattern_mini,
         pattern_doc,
         tutorialVisible: false,
-        showType: 1,
+        layout: 1,
         vodresetForm: {
-          img: '',
-          ratio: 6,
-          position: 2
+          img_url: '',
+          quality: 2,
+          position: 3
         },
         domain_url: ''
       }
     },
-    created() {
-
-    },
     methods: {
+      pathUrl: function() {
+        return `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
+      },
       handleSave() {
+        let otherParams = {}
 
+        this.layout == 1 && (otherParams = { img_url: this.vodresetForm.img_url, quality: this.vodresetForm.quality })
+        this.layout == 2 && (otherParams = { quality: this.vodresetForm.quality })
+        this.layout == 3 && (otherParams = { position: this.vodresetForm.position, quality: this.vodresetForm.quality })
+
+        this.$fetch('recordRemark', {
+          paas_record_id: this.$route.query.paas_record_id,
+          layout: this.layout,
+          ...otherParams
+        }).then(res => {
+          if (res.code == 200) {
+            this.$message({
+              message: `课件重制成功`,
+              showClose: true,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            })
+            this.$router.push({
+              path: `/live/playback/${this.$route.params.str}`,
+            })
+          }
+        }).catch(err => {
+          this.$message({
+            message: `保存失败`,
+            showClose: true,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          })
+        })
       },
       changeType(index) {
-        this.showType = index;
+        this.layout = index;
       },
       introduceDetail() {
         this.tutorialVisible = true;
       },
       uploadSuccess(res, file) {
-        console.log(res, file);
         if(res.data) {
           let domain_url = res.data.domain_url || ''
           let file_url = res.data.file_url || '';
-          this.vodresetForm.img = file_url;
+          this.vodresetForm.img_url = file_url;
           this.domain_url = domain_url;
         }
       },
       beforeUploadHnadler(file){
-        console.log(file);
-        const typeList = ['png', 'jpeg', 'gif', 'bmp'];
-        console.log(file.type.toLowerCase())
+        const typeList = ['png', 'jpeg'];
         let typeArr = file.type.toLowerCase().split('/');
         const isType = typeList.includes(typeArr[typeArr.length - 1]);
         const isLt2M = file.size / 1024 / 1024 < 2;
