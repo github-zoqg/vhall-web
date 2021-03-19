@@ -585,9 +585,6 @@ export default {
   /deep/.el-upload--picture-card{
     width:100%;
   }
-  /deep/.el-upload--picture-card .box img {
-    width: auto
-  }
   // /deep/.el-upload--picture-card{
   //   font-size: 36px;
   //   i.saasicon_shangchuan{

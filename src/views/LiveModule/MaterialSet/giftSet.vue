@@ -946,9 +946,6 @@ export default {
   /deep/.el-upload--picture-card{
     width:100%;
   }
-  /deep/.el-upload--picture-card .box img {
-    width: auto
-  }
   /deep/.el-form-item {
     .el-input__inner {
       padding: 0 10px;
