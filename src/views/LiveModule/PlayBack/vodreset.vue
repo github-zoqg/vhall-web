@@ -130,13 +130,11 @@
           quality: 2,
           position: 3
         },
-        domain_url: ''
+        domain_url: '',
+        pathUrl: `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`
       }
     },
     methods: {
-      pathUrl: function() {
-        return `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
-      },
       handleSave() {
         let otherParams = {}
 
@@ -313,9 +311,6 @@
       /deep/ .el-radio__input.is-checked+.el-radio__label {
         color: #666;
       }
-    }
-    .save-btn {
-      margin-left: 41px;
     }
   }
   /deep/ .el-dialog__wrapper .dialog-tutorial-wrap {

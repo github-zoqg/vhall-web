@@ -42,7 +42,7 @@
           <el-table-column
             v-if="!isDemand"
             type="selection"
-            width="55">
+            :width="isBidScreen ? 55 : 52">
           </el-table-column>
           <el-table-column
             :width="isDemand === true ? 375 : 365"
@@ -85,12 +85,14 @@
 
           <el-table-column
             label="时长"
+            :width="isBidScreen ? '' : 91"
             show-overflow-tooltip>
             <span class="playpackSource" slot-scope="scope">{{scope.row.duration}}</span>
           </el-table-column>
 
           <el-table-column
             label="布局"
+            :width="isBidScreen ? '' : 78"
             show-overflow-tooltip>
             <span class="playpackSource" slot-scope="scope">{{scope.row.layout | layoutFilter}}</span>
           </el-table-column>
@@ -98,12 +100,13 @@
           <el-table-column
             v-if="!isDemand"
             label="暂存至"
+            :width="isBidScreen ? '' : 108"
             show-overflow-tooltip>
             <span class="playpackSource" slot-scope="scope">{{scope.row.save_time}}</span>
           </el-table-column>
 
           <el-table-column
-            width="190"
+            :width="isBidScreen ? 190 : 176"
             label="操作"
             show-overflow-tooltip
             align="left"
@@ -116,7 +119,7 @@
               <el-dropdown v-if="!isDemand" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
-                  <el-dropdown-item v-if="!scope.row.layout" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
+                  <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
                   <el-dropdown-item v-if="WEBINAR_PES['publish_record']" :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'delete', data: scope.row}">删除</el-dropdown-item>
@@ -215,7 +218,9 @@ export default {
         { label: '打点录制', value: '3' }
       ],
       // 权限配置
-      WEBINAR_PES: {}
+      WEBINAR_PES: {},
+      isBidScreen: false,
+      versionExpired: false, // 用户套餐是否过期
       // WEBINAR_PES: sessionOrLocal.get('WEBINAR_PES', 'localStorage') && JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')) || {},
     };
   },
@@ -241,10 +246,11 @@ export default {
     this.getLiveDetail();
     EventBus.$on('record_download', this.handleDownload)
     this.getPermission(this.$route.params.str)
+    this.calcScreenWidth()
+    this.getVersion()
   },
   mounted(){
-
-
+    window.addEventListener('resize', this.calcScreenWidth)
   },
   beforeDestroy(){
     if (!this.WEBINAR_PES['forbid_delrecord'] || !this.WEBINAR_PES['publish_record']) {
@@ -255,8 +261,25 @@ export default {
       this.chatSDK = null
     }
     EventBus.$off('record_download', this.handleDownload)
+    window.removeEventListener('resize', this.calcScreenWidth)
   },
   methods: {
+    getVersion() {
+      const userId = JSON.parse(sessionOrLocal.get("userId"));
+      this.$fetch('getVersionInfo', { user_id: userId}).then(res => {
+        this.versionExpired = res.data.expired == 1;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    calcScreenWidth() {
+      const clientWidth = document.body.clientWidth
+      if (clientWidth < 1920) {
+        this.isBidScreen = false
+      } else {
+        this.isBidScreen = true
+      }
+    },
     handleTipMsgVisible() {
       if (!this.WEBINAR_PES['forbid_delrecord']) {
         this.tipMsg = this.$message({
@@ -540,6 +563,10 @@ export default {
       this.$router.push({path: `/live/planFunction/${this.webinar_id}`});
     },
     toVodreset(data) {
+      if (this.versionExpired) {
+        this.$alert('尊敬的用户，您的账号已到期。为了保证正常使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询')
+        return false
+      }
       const routerPush = () => {
         this.$router.push({
           path: `/live/vodreset/${this.webinar_id}`,
