@@ -564,7 +564,14 @@ export default {
     },
     toVodreset(data) {
       if (this.versionExpired) {
-        this.$alert('尊敬的用户，您的账号已到期。为了保证正常使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询')
+        this.$confirm('尊敬的用户，您的账号已到期。为了保证正常使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询', '提示', {
+          confirmButtonText: '我知道了',
+          // cancelButtonText: '暂不关闭',
+          showCancelButton: false,
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {}).catch(() => {});
         return false
       }
       const routerPush = () => {
