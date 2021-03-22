@@ -323,7 +323,7 @@ export default {
     reTranscode(data) {
       if (data.transcode_status == 2 && data.layout != 0) {
         this.$message({
-          message: `到当前视频未演示文档导致课件重制功能无法正常使用，请使用其他视频`,
+          message: `检测到当前视频未演示文档导致课件重制功能无法正常使用，请使用其他视频`,
           showClose: true,
           type: 'error',
           customClass: 'zdy-info-box'
