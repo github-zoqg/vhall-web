@@ -615,7 +615,7 @@ export default {
       }).then(res => {
         if (res.data.transcode_status == 0 || res.data.transcode_status == 3) {
           this.$message({
-            message:  '视频转码中，请稍后再试',
+            message:  '视频生成中，请在成功后使用',
             showClose: true, // 是否展示关闭按钮
             type: 'warning', //  提示类型
             customClass: 'zdy-info-box' // 样式处理

@@ -41,7 +41,6 @@
       color: #ffffff;
       line-height: 24px;
       font-size: 16px;
-      font-family: HiraginoSansGB-W6, HiraginoSansGB;
       text-align: center;
     }
     .valueItem {
@@ -57,7 +56,6 @@
         width: 230px;
         padding-top: 10px;
         font-size: 14px;
-        font-family: PingFangSC-Regular, PingFang SC;
         font-weight: 500;
         color: #000000;
         line-height: 20px;

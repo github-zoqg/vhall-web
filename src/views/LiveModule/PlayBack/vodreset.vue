@@ -131,7 +131,7 @@
           position: 3
         },
         domain_url: '',
-        pathUrl: `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`
+        pathUrl: `/interacts/vodreset-imgs${this.$moment().format('YYYYMM')}`
       }
     },
     methods: {
@@ -259,11 +259,11 @@
           box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
         }
         .custom-img-box {
-          width: 56px;
-          height: 56px;
+          width: 94px;
+          height: 146px;
           position: absolute;
-          bottom: 100px;
-          right: 33px;
+          bottom: 15px;
+          right: 12px;
         }
         .custom-img {
           width: 100%;
