@@ -621,7 +621,7 @@ export function CrumbSet(metaName, that) {
       isClick: true,
     },
     {
-      title: '回放重制',
+      title: '课件重制',
       path: `/live/vodreset/${that.$route.params.str}`,
       isClick: false,
       redirect: 'noRedirect'

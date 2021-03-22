@@ -576,7 +576,7 @@ export default {
         this.$router.push({
           path: `/live/vodreset/${this.webinar_id}`,
           query: {
-            paas_record_id: data.paas_record_id
+            record_id: data.record_id
           }
         });
       }

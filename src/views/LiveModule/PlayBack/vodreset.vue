@@ -143,7 +143,7 @@
         this.layout == 3 && (otherParams = { position: this.vodresetForm.position, quality: this.vodresetForm.quality })
 
         this.$fetch('recordRemark', {
-          paas_record_id: this.$route.query.paas_record_id,
+          record_id: this.$route.query.record_id,
           layout: this.layout,
           ...otherParams
         }).then(res => {
