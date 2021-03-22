@@ -152,10 +152,11 @@
         <div class="prompt-wrap">
             <i class="prompt-con-img i-close saasclose iconfont-v3" @click="iKonw"></i>
             <img class="prompt-con-img" src="//cnstatic01.e.vhall.com/static/images/watch/notice_img.png" alt="">
-            <p class="prompt-con-text prompt-con-text-one">【新版本上线】</p>
+            <p class="prompt-con-text prompt-con-text-one">【新版本上线了】</p>
+            <p class="prompt-con-text prompt-con-text-three">尊敬的用户：</p>
             <p class="prompt-con-text prompt-con-text-two">感谢您对微吼直播的支持！当前正在使用新版后台，请创建活动开始体验吧！</p>
+            <p class="prompt-con-text prompt-con-text-two">如果您是通过API、SDK方式对接的微吼平台，为保证使用体验请返回旧版控制台创建直播，或更新新版API、SDK，详情请点击<a href="https://saas-doc.vhall.com/document/document/index">《文档中心》</a></p>
             <p class="prompt-con-text prompt-con-text-two">对于旧版已创建的H5播放器活动，微吼团队后续会统一迁移至此后台。Flash活动将会为您保留在旧版本后台，方便进行管理。</p>
-            <p class="prompt-con-text prompt-con-text-two">如果您需要对接API，详情请点击<a href="https://saas-doc.vhall.com/document/document/index">《文档中心》</a></p>
             <p class="prompt-con-text prompt-con-text-two">如有问题请联系您的专属售后或拨打400-888-9970转2咨询。</p>
             <a class="prompt-con-text-four" href="javascript:;" @click="iKonw">我知道了</a>
         </div>
@@ -593,9 +594,9 @@ export default {
         position: relative;
         left: 50%;
         top: 50%;
-        transform: translate(-256px, -273px);
+        transform: translate(-256px, -290px);
         width: 512px;
-        height: 546px;
+        height: 580px;
         background: #FFFFFF;
         box-shadow: 0px 12px 42px 0px rgba(51, 51, 51, 0.24), 0px 8px 32px 0px rgba(34, 34, 34, 0.24);
         border-radius: 8px;
@@ -641,7 +642,10 @@ export default {
         margin-bottom: 16px;
     }
     .prompt .prompt-wrap .prompt-con-text-three{
-        margin-bottom: 40px;
+        margin-bottom: 2px;
+    }
+    .prompt .prompt-wrap .prompt-con-text-two{
+      text-indent: 24px;
     }
     .prompt .prompt-wrap .prompt-con-text-four{
         width: 180px;
@@ -649,7 +653,7 @@ export default {
         background: #FB3A32;
         border-radius: 20px;
         line-height: 40px;
-        margin: 40px auto;
+        margin: 20px auto 0;
         font-size: 14px;
         display: block;
         text-align: center;
