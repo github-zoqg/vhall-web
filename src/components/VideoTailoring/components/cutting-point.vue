@@ -61,29 +61,19 @@ export default {
 .vh-video-tailoring__cutting-point {
   .vh-video-tailoring__point {
     position: absolute;
-    // top: 7px;
-    // width: 7px;
-    // height: 16px;
-    // background-image: url('../image/cut-point@2x.png');
-    // background-size: 7px 16px;
-    // margin-left: 10px;
-    top: -8px;
-    float: left;
-    width: 0;
-    height: 0;
-    border-width: 7px;
-    border-style: solid;
-    border-color: #80818b transparent transparent transparent;
-    color: black;
+    width: 14px;
+    height: 16px;
+    background-image: url('../image/delete_pointer.png');
+    background-size: cover;
+    top: -18px;
     &:hover {
       cursor: pointer;
-      border-color: #1e89e4 transparent transparent transparent;
+      background-image: url('../image/delete_pointer_hover.png');
     }
   }
   &.vh-on {
     .vh-video-tailoring__point {
-      border-color: #1e89e4 transparent transparent transparent;
-      // background-image: url('../image/cut-point-hover@2x.png');
+      background-image: url('../image/delete_pointer_hover.png');
     }
   }
 }
