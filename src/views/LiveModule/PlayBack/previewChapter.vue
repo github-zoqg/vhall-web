@@ -383,7 +383,10 @@ export default {
           background-image: url(./images/volume_hover.png);
         }
         &.mute {
-          background-image: url(./images/volume_hover.png);
+          background-image: url(./images/volume_zero.png);
+          &:hover {
+            background-image: url(./images/volume_zero_hover.png);
+          }
         }
       }
       .vhallPlayer-verticalSlider-popup {
