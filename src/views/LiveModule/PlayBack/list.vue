@@ -108,7 +108,6 @@
           <el-table-column
             :width="isBidScreen ? 190 : 176"
             label="操作"
-            show-overflow-tooltip
             align="left"
           >
             <template slot-scope="scope">
@@ -290,8 +289,7 @@ export default {
             ${this.WEBINAR_PES['publish_record'] ? "" : "<a href='http://webim.qiao.baidu.com/im/index?siteid=113762&ucid=2052738' target='_blank' class='msgBlue'>开通点播服务</a>"}
           `,
           showClose: true,
-          duration: 0,
-          offset: 74
+          duration: 0
         });
       }
     },

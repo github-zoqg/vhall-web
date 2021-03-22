@@ -382,6 +382,9 @@ export default {
         &:hover {
           background-image: url(./images/volume_hover.png);
         }
+        &.mute {
+          background-image: url(./images/volume_hover.png);
+        }
       }
       .vhallPlayer-verticalSlider-popup {
         padding-bottom: 4px;

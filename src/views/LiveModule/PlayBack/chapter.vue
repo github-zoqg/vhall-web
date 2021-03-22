@@ -1017,7 +1017,7 @@ export default {
       border: none;
       box-shadow: none;
       @media (max-width: 1440px) {
-        margin-top: 9vh!important;
+        margin-top: 8vh!important;
       }
       @media (max-width: 1366px) {
         margin-top: 2vh!important;
@@ -1396,12 +1396,12 @@ export default {
       transition: all 0.3s;
       cursor: pointer;
       display: none;
-      background-color: #cccccc;
+      background-color: #666;
       &:hover {
-        background-color: #cccccc;
+        background-color: #666;
       }
       &:active {
-        background-color: #cccccc;
+        background-color: #666;
       }
     }
     &:hover {

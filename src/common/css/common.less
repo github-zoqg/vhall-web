@@ -1355,12 +1355,21 @@ button.el-button.el-button--white-primary {
 }
 
 /*dialog 屏幕自适应*/
-/deep/ .el-dialog__wrapper .el-dialog {
+.el-dialog__wrapper .el-dialog {
   @media (max-width: 1440px) {
     margin-top: 12vh!important;
   }
   @media (max-width: 1366px) {
     margin-top: 10vh!important;
     margin-bottom: 0;
+  }
+}
+
+.el-radio__inner {
+  width: 16px;
+  height: 16px;
+  &:after {
+    width: 8px;
+    height: 8px;
   }
 }
