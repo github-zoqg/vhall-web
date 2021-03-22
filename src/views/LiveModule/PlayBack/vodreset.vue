@@ -131,7 +131,7 @@
           position: 3
         },
         domain_url: '',
-        pathUrl: `/interacts/vodreset-imgs${this.$moment().format('YYYYMM')}`
+        pathUrl: `interacts/vodreset-imgs/${this.$moment().format('YYYYMM')}`
       }
     },
     methods: {
