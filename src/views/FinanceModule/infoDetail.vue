@@ -65,14 +65,14 @@
             <el-table-column
               show-overflow-tooltip
               label="启用日期">
-              <template>
+              <template slot-scope="scope">
                <span>{{ scope.row.start_time || '- -' }}</span>
               </template>
             </el-table-column>
             <el-table-column
               show-overflow-tooltip
               label="失效日期">
-              <template>
+              <template slot-scope="scope">
                <span>{{ scope.row.end_time || '- -' }}</span>
               </template>
             </el-table-column>

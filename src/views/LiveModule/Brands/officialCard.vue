@@ -108,7 +108,7 @@
                     <img :src="domain_url" alt=""  v-if="domain_url" />
                     <img src="../../../common/images/sys/default_code.jpeg" v-if="!domain_url"/>
                   </div>
-                  <p class="gzh_txt">扫码关注公众号</p>
+                  <p class="gzh_txt">长按识别二维码</p>
                 </div>
             </div>
               <!-- 非默认图，有文字
