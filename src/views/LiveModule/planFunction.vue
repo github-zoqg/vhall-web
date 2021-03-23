@@ -245,8 +245,6 @@ export default {
           closeShow: '开启后，回放/点播观看端显示文档章节',
           value: Number(dataVo['ui.watch_record_chapter']) || 0
         })
-      } else {
-        // this.liveKeyList = [];
       }
     },
     planErrorRender(err) {
