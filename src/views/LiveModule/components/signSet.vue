@@ -112,6 +112,13 @@ export default {
       }
     };
   },
+  watch: {
+    '$parent.type'() {
+      if (this.brandType) {
+        this.initComp();
+      }
+    }
+  },
   methods: {
     handleUploadSuccess(res, file){
       console.log(res, file);

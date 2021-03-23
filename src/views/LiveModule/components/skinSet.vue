@@ -107,7 +107,7 @@ export default {
       }
     }
   },
-   watch: {
+  watch: {
     '$parent.type'() {
       if (this.brandType) {
         this.initComp();
