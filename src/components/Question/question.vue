@@ -240,6 +240,11 @@ export default {
     line-height: 20px;
     font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   }
+   #qs-preview-box-content /deep/.q-list{
+    padding: 0 56px !important;
+    color: #1A1A1A;
+    font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  }
   .async__ctx {
     /deep/.el-checkbox__input.is-focus .el-checkbox__inner {
       border-color: #FB3A32;
