@@ -30,7 +30,8 @@
                 <span class="ctx-span">元</span>
               </div>-->
               <VhallInput v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border" ref="payForm_fee" @input="formatInputs($event, 'payForm', 'fee')">
-                <template slot="append">元</template>
+                <i slot="suffix">元</i>
+                <!-- <template slot="append">元</template> -->
               </VhallInput>
             </el-form-item>
             <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
@@ -98,7 +99,7 @@
           <el-form :model="fCodePayForm" ref="fCodePayForm" :rules="fCodePayFormRules"  label-width="82px">
             <el-form-item label="付费金额" prop="fee">
               <VhallInput v-model.trim="fCodePayForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border" @input="formatInputs($event, 'fCodePayForm', 'fee')">
-                <template slot="append">元</template>
+                <i slot="suffix">元</i>
               </VhallInput>
             </el-form-item>
             <el-form-item label="生成邀请码" prop="nums">
@@ -703,6 +704,13 @@ export default {
 .viewer-rules-content {
   margin-top: 32px;
   /*height: 353px;*/
+  /deep/.el-form-item {
+    i{
+      font-style: normal;
+      padding: 0 10px;
+      color: #666;
+    }
+  }
   /deep/.el-form-item__label {
     font-size: 14px;
     font-family: @fontRegular;
