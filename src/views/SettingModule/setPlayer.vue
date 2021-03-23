@@ -360,7 +360,7 @@ export default {
         imageUrl: '',
       },
       videoParam: {
-        paas_record_id: '27d23478'
+        paas_record_id: process.env.VUE_APP_NODE_ENV === 'production' ? '4b39a1a' : '27d23478'
       },
       marqueeOption: {
         enable: Boolean(this.scrolling_open),
@@ -686,10 +686,10 @@ export default {
       this.showVideo = true;
       this.initSDK().then(() => {
         this.initSlider();
-          this.totalTime = this.$Vhallplayer.getDuration(() => {
-            console.log('获取总时间失败');
-          });
-          this.listen();
+        this.totalTime = this.$Vhallplayer.getDuration(() => {
+          console.log('获取总时间失败');
+        });
+        this.listen();
         // 初试完播放器获取其它设置
         this.getBaseOtherList()
 
