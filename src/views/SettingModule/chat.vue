@@ -64,7 +64,7 @@
                   >
                   <i
                     class="el-icon-search el-input__icon"
-                    slot="suffix"
+                    slot="prefix"
                     @click="searchKeyWord">
                   </i>
                 </el-input>
@@ -76,6 +76,7 @@
               tooltip-effect="dark"
               style="width: 100%"
               class="table-td56"
+              height="328px"
               max-height="328px"
               :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
               @selection-change="checkMoreRow"
@@ -197,7 +198,7 @@ import NullPage from '../PlatformModule/Error/nullPage.vue';
 import {sessionOrLocal} from "@/utils/utils";
 import env from "@/api/env";
 export default {
-  name: "chat.vue",
+  name: "chatMgr",
   components: {
     PageTitle,
     FileUpload,
@@ -775,11 +776,11 @@ export default {
       .el-input__icon{
         cursor: pointer;
       }
-      /deep/ .el-input__suffix {
+      /deep/ .el-input__prefix {
         cursor: pointer;
         /deep/ .el-input__icon {
-          width: auto;
-          margin-right: 5px;
+          // width: auto;
+          // margin-right: 5px;
           line-height: 36px;
         }
       }
@@ -791,7 +792,7 @@ export default {
       color: #666666;
       height: 36px;
       line-height: 36px;
-      padding-right: 50px;
+      padding-right: 30px;
     }
   }
 }

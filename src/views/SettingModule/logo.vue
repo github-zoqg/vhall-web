@@ -49,7 +49,7 @@ import NullPage from '../PlatformModule/Error/nullPage.vue';
 import {sessionOrLocal} from "@/utils/utils";
 import env from "@/api/env";
 export default {
-  name: "logo.vue",
+  name: "logoMgr",
   components: {
     PageTitle,
     Upload,

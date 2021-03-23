@@ -173,6 +173,7 @@
           </div>
         </div>
         <div class="look-img" :style="`backgroundImage: url(${img})`"  id="shopInvent" v-else>
+          <div class="look-color-shadow"></div>
           <div class="look-color">
             <div class="look-header">
               <div class="look-avator">
@@ -650,8 +651,9 @@ export default {
             color:#1A1A1A;
             font-weight: 600;
             line-height: 37px;
-            word-wrap: break-all;
-            word-wrap:break-word;
+            word-wrap: break-word;
+            white-space: normal;
+            word-break: break-all;
           }
           p{
             font-size: 14px;
@@ -660,7 +662,10 @@ export default {
             line-height: 20px;
             padding: 2px 0 5px 0;
             overflow: hidden;
-            text-emphasis: wrap;
+            // text-emphasis: wrap;
+            word-wrap: break-word;
+            white-space: normal;
+            word-break: break-all;
             // min-height: 45px;
           }
           .show-time{
@@ -784,8 +789,9 @@ export default {
         line-height: 18px;
         font-weight: 400;
         min-height: 50px;
-        word-wrap: break-all;
-        word-wrap:break-word;
+        word-wrap: break-word;
+        white-space: normal;
+        word-break: break-all;
       }
       .watch-footer{
           position: absolute;
@@ -843,7 +849,16 @@ export default {
       background-size: 100% 100%;
       background-repeat: no-repeat;
       position: relative;
+      .look-color-shadow {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          background: rgba(0,0,0,.2);
+      }
       .look-color{
+        position: relative;
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.1);
@@ -887,8 +902,9 @@ export default {
           font-size: 26px;
           font-weight: 600;
           line-height: 40px;
-          word-wrap: break-all;
-          word-wrap:break-word;
+          word-wrap: break-word;
+          white-space: normal;
+          word-break: break-all;
         }
         p{
           font-size: 14px;
@@ -896,8 +912,9 @@ export default {
           line-height: 20px;
           color:#fff;
           padding: 5px 15px;
-          word-wrap: break-all;
-          word-wrap:break-word;
+          word-wrap: break-word;
+          white-space: normal;
+          word-break: break-all;
         }
       }
       .look-time{

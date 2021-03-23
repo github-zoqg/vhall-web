@@ -42,6 +42,14 @@ export function CrumbLiveList(key) {
       redirect: 'noRedirect'
     }
    ],
+   setting: [
+    {
+      title: '设置中心',
+      path: '/setting',
+      isClick: false,
+      redirect: 'noRedirect'
+    }
+   ],
    finance: [
     {
       title: '财务中心',
@@ -905,21 +913,12 @@ export function CrumbSet(metaName, that) {
   /** 设置中心 **/
   else if (metaName === 'settingInfo') {//设置中心
     return [
-      {
-        title: '设置中心',
-        path: '/setting/info',
-        isClick: false,
-        redirect: 'noRedirect'
-      }
+      ...CrumbLiveList('setting')
     ]
   }
   else if (metaName === 'chatMgr') {//设置中心-聊天严禁词
     return [
-      {
-        title: '设置中心',
-        path: '/setting/info',
-        isClick: true,
-      },
+      ...CrumbLiveList('setting'),
       {
         title: '聊天严禁词',
         path: '/setting/chat',
@@ -928,16 +927,12 @@ export function CrumbSet(metaName, that) {
       }
     ]
   }
-  else if (metaName === 'devList') {//设置中心-开发设置
+  else if (metaName === 'devMgr') {//设置中心-开发设置
     return [
-      {
-        title: '设置中心',
-        path: '/setting/info',
-        isClick: true,
-      },
+      ...CrumbLiveList('setting'),
       {
         title: '开发设置',
-        path: '/dev/list',
+        path: '/setting/dev',
         isClick: false,
         redirect: 'noRedirect'
       }
@@ -945,14 +940,10 @@ export function CrumbSet(metaName, that) {
   }
   else if (metaName === 'devCallback') {//设置中心-开发设置-回调设置
     return [
-      {
-        title: '设置中心',
-        path: '/setting/info',
-        isClick: true,
-      },
+      ...CrumbLiveList('setting'),
       {
         title: '开发设置',
-        path: '/dev/list',
+        path: '/setting/dev',
         isClick: true
       },
       {
@@ -965,14 +956,10 @@ export function CrumbSet(metaName, that) {
   }
   else if (metaName === 'devModify') {//设置中心-开发设置-应用详情
     return [
-      {
-        title: '设置中心',
-        path: '/setting/info',
-        isClick: true,
-      },
+      ...CrumbLiveList('setting'),
       {
         title: '开发设置',
-        path: '/dev/list',
+        path: '/setting/dev',
         isClick: true
       },
       {
@@ -983,21 +970,50 @@ export function CrumbSet(metaName, that) {
       }
     ]
   }
-  else if (metaName === 'logoSetting') {//设置中心-控制台标识
+  else if (metaName === 'logoMgr') {//设置中心-控制台标识
     return [
-      {
-        title: '设置中心',
-        path: '/setting/info',
-        isClick: true,
-      },
+      ...CrumbLiveList('setting'),
       {
         title: '控制台标识',
         path: '/setting/logo',
-        isClick: true
+        isClick: false,
+        redirect: 'noRedirect'
       },
     ]
   }
-
+  else if (metaName === 'functionMgr') {//设置中心-功能配置
+    return [
+      ...CrumbLiveList('setting'),
+      {
+        title: '功能配置',
+        path: '/setting/functionMgr',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ]
+  }
+  else if (metaName === 'brandMgr') {//设置中心-品牌设置
+    return [
+      ...CrumbLiveList('setting'),
+      {
+        title: '品牌设置',
+        path: '/setting/brandMgr',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ]
+  }
+  else if (metaName === 'playerMgr') {//设置中心-播放器设置
+    return [
+      ...CrumbLiveList('setting'),
+      {
+        title: '播放器设置',
+        path: '/setting/playerMgr',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ]
+  }
   /** 财务中心 **/
   else if (metaName === 'financeInfo') {//财务中心-财务总览
     return [

@@ -58,7 +58,7 @@
             <i slot="prefix" class="el-icon-search el-input__icon" @click="changeAdverment" style="cursor: pointer; line-height: 36px;"></i>
           </VhallInput>
           </div>
-        <el-scrollbar v-loadMore="moreLoadData" v-show="total">
+        <el-scrollbar v-loadMore="moreLoadData" v-show="total" style="height:328px">
           <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
               <span class="spanImg"> <img :src="`${item.img_url}`" alt=""></span>
@@ -592,15 +592,15 @@ export default {
      }
      .ad-list{
        display: flex;
-       padding: 0 32px;
+       margin: 0 32px;
       //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
-       height: 310px;
+       height: 320px;
       //  overflow: auto;
        .ad-item{
           width: 165px;
-          margin-bottom: 12px;
+          margin-bottom: 11px;
           background: #F7F7F7;
           position: relative;
           margin-right: 15px;
@@ -649,7 +649,7 @@ export default {
          }
         }
          p{
-           padding: 10px 0 0 5px;
+           padding: 5px 0 0 5px;
            color:#1A1A1A;
            font-size: 14px;
            line-height: 20px;

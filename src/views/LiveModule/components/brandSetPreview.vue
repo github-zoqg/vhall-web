@@ -133,6 +133,7 @@
 <script>
 export default {
   name: "brandSetPreview.vue",
+  props: ['brandType'],
   data() {
     return {
       switchType: 'pc',
@@ -176,9 +177,11 @@ export default {
       });
     },
     getSignInfo() {
-      this.$fetch('getInterWebinarTag', {
-        webinar_id: this.$route.params.str
-      }).then(res => {
+      let params = {
+        webinar_id: this.brandType == 1 ? this.$route.params.str : '',
+        type: this.brandType
+      }
+      this.$fetch('getInterWebinarTag', this.$params(params)).then(res => {
         console.log(res);
         if (res && res.code === 200) {
           this.signSetVo = res.data;
@@ -192,9 +195,12 @@ export default {
       });
     },
     getInterWebinarSkin() {
-      this.$fetch('getInterWebinarSkin', {
-        webinar_id: this.$route.params.str
-      }).then(res => {
+      let params = {
+        webinar_id: this.brandType == 1 ? this.$route.params.str : '',
+        type: this.brandType
+      }
+      this.$fetch('getInterWebinarSkin', this.$params(params)).then(res => {
+        console.log('11111111111预览页面')
         if (res && res.code === 200) {
           this.skinSetVo.status = res.data.status
           if (this.skinSetVo.status > 0)  {
@@ -232,8 +238,15 @@ export default {
       this.getInterWebinarSkin();
     }
   },
-  created() {
-   this.initPage();
+  // created() {
+  //  this.initPage();
+  // },
+  watch: {
+    brandType() {
+      if (this.brandType) {
+        this.initPage();
+      }
+    }
   }
 };
 </script>
@@ -247,6 +260,7 @@ export default {
   border-radius: 4px;
   border-top: 0;
   position: relative;
+  transition:background-color ease-in-out .5s;
 }
 .zdy--switch {
   margin-bottom: 16px;

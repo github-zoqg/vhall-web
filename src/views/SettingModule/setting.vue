@@ -1,130 +1,380 @@
 <template>
-  <div>
-    <pageTitle pageTitle='设置中心'></pageTitle>
-    <div>
-      <el-row type="flex" class="row-bg" :gutter="24">
-        <el-col :span="8"  v-for="(item, ins) in operas" :key='ins'>
-          <div class="subjectInner"  @click="blockHandler(item)">
-            <i :class="`icon png_${item.icon}`"></i>
-            <div class="desc">
-              <p class="mainText">{{item.title}}</p>
-              <p class="subText">{{item.subText}}</p>
-            </div>
-          </div>
-        </el-col>
-      </el-row>
+  <div v-if="!auth_show">
+    <null-page text="开发接口为高级功能，联系您的客户经理获取权限后方可使用" nullType="noAuth">
+      <el-button type="primary" round @click="openChat">联系客服</el-button>
+      <el-button type="white-primary" round @click="openDoc">查看文档</el-button>
+    </null-page>
+  </div>
+  <div v-else  class="dev-show-layout" v-loading="fetching" element-loading-text="获取数据中">
+    <pageTitle pageTitle="开发设置">
+      <div class="title_text">低门槛云开发，自由定制您的直播平台，具体对接方案请查看<a href="https://saas-doc.vhall.com/document/document/index">《文档中心》</a></div>
+      <!-- <span class="dev-show-tips">
+        使用说明：当添加多个包时，使用<a href="https://www.vhall.com/index.php?r=doc/index/index#verify/access-token_%E8%8E%B7%E5%8F%96SDK%E7%9B%B4%E6%92%AD%E6%93%8D%E4%BD%9Ctoken" target="_blank">获取SDK直播操作token</a>的API时需要传app_key参数以确保双方加密数据一致
+      </span> -->
+    </pageTitle>
+    <!-- 未创建 -->
+    <div class="all-no-data"  v-if="totalNum === 0">
+      <null-page text="暂未创建应用" nullType="no-create" :height="0">
+        <el-button type="primary" round v-preventReClick @click="createApp">创建应用</el-button>
+      </null-page>
+    </div>
+    <!-- 有数据 -->
+    <div v-else>
+      <p class="top">
+        <el-button type="primary" size="medium" round v-preventReClick @click="createApp" :readonly="!(available_num > 0)">创建应用</el-button>
+        <el-button size="medium" round @click="toCallbackPage" class="bg--trans">回调设置</el-button>
+      </p>
+      <div class="dev-show-list">
+        <table-list
+          ref="tableList"
+          :isCheckout=false
+          :manageTableData="tableList"
+          :tabelColumnLabel="tableColumn"
+          :tableRowBtnFun="tableRowBtnFun"
+          :isHandle="isHandle"
+          :totalNum="totalNum"
+          max-height="auto"
+          width=144
+          scene="development"
+          @onHandleBtnClick="onHandleBtnClick"
+          @getTableList="getTableList"
+        >
+        </table-list>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
-import { sessionOrLocal } from '@/utils/utils';
+import NullPage from '../PlatformModule/Error/nullPage.vue';
+import {sessionOrLocal} from "@/utils/utils";
+import env from "@/api/env";
 export default {
-  name: "setting.vue",
+  name: 'devMgr',
   components: {
-    PageTitle,
+    NullPage,
+    PageTitle
   },
-  data() {
-    return {
-      operas: [
-        { icon: 'saasicon_xiaoxiyanjinci', title: '聊天严禁词', subText: '设置聊天过滤词', path: `/setting/chat/1`},
-        // { icon: 'saasicon_kaifashezhi', title: '开发设置', subText: '设置API接口信息' , path: '/dev/list'},
-        { icon: 'saasicon_kongzhitaibiaoshi', title: '控制台标识', subText: '设置控制台的品牌标识' , path: '/setting/logo/1'}
-      ]
+  data(){
+    return{
+      auth_show: false,
+      sCheckout: false,
+      totalNum: 0,
+      isHandle: true,
+      tableList: [],
+      msg: null,
+      limit: 10,
+      pageNumber: 1,
+      pos: 0,
+      tableColumn: [
+        {
+          label: '应用名称',
+          key: 'app_name',
+        },
+        {
+          label: 'AppKey',
+          key: 'app_key',
+        },
+        {
+          label: '创建时间',
+          key: 'created_at',
+          width: 200
+        },
+        {
+          label: '更新时间',
+          key: 'updated_at',
+          width: 200
+        },
+        {
+          label: '状态',
+          key: 'statusStr',
+          width: 100
+        }
+      ],
+      tableRowBtnFun: [
+        {
+          name: '查看',
+          methodName: 'viewApp'
+        },
+        {
+          name: '停用',
+          methodName: 'stopApp'
+        },
+        {
+          name: '启用',
+          methodName: 'restartApp'
+        },
+        {
+          name: '删除',
+          methodName: 'deleteApp'
+        }
+      ],
+      available_num: 0,
+      fetching: false
     };
   },
-  created() {
-    let parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
-    // let isDeveloper = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['is_developer'];
-    if (parentId == 0) {
-      let obj = {icon: 'saasicon_kaifashezhi', title: '开发设置', subText: '设置API接口信息' , path: '/dev/list'}
-      this.operas.splice(1, 0, obj)
-    }
+  created(){
+    this.initPage();
+  },
+  mounted(){
+
   },
   methods: {
-    blockHandler(item) {
-      console.log('块点击：' + JSON.stringify(item));
+    getSysConfig() {
+      let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+      if(permissions) {
+        let perVo = JSON.parse(permissions);
+        console.log(perVo, '权限-用户');
+        if (perVo.is_developer > 0) {
+          // 开启
+          this.auth_show = true;
+          this.search();
+        } else {
+          this.auth_show = false;
+        }
+      }
+    },
+    openChat() {
+      window.open(`${env.staticLinkVo.kf}`, '_blank');
+    },
+    // 查看文档-开发设置
+    openDoc() {
+      window.open('https://saas-doc.vhall.com/docs/show/947', '_blank');
+    },
+    initPage() {
+      // 取得当前系统配置项
+      this.getSysConfig();
+    },
+    toCallbackPage() {
       this.$router.push({
-        path: item.path
+        path: `/dev/callback`
+      })
+    },
+    createApp(){
+      if(!(this.available_num > 0)) {
+        this.$confirm(`如需创建更多应用，请咨询您的客户经理或拨打客服电话：400-888-9970`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {
+        }).catch(() => {});
+        return;
+      }
+      /**
+       * 1、创建数量有限制，超过默认创建数量后置灰（默认5个）
+       * 2、点击后弹窗提示：如需创建更多应用，请咨询您的客户经理或拨打客服电话：400-888-9970
+       */
+      this.$fetch('createApp', {}).then(res => {
+        console.log('getAppList', res);
+        this.$confirm(`添加成功，请手动添加包名签名信息`, '提示', {
+          confirmButtonText: '我知道了',
+          cancelButtonText: '',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel-hide'
+        }).then(() => {
+          this.search();
+        }).catch(() => {});
+      }).catch(res =>{
+        this.$message({
+          message:  res.msg || '创建失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      });
+    },
+    // 表格操作列回调函数， val表示每行
+    onHandleBtnClick(val) {
+      let methodsCombin = this.$options.methods;
+      methodsCombin[val.type](this, val);
+    },
+    search() {
+      this.pos = 0;
+      this.pageNumber = 1;
+      this.getTableList();
+    },
+    getTableList(row) {
+      if (row) {
+        this.pos = row.pos;
+        this.pageNumber = row.pageNum;
+      }
+      this.fetching = true;
+      this.$fetch('getAppList', {
+        pos: this.pos,
+        limit: this.limit
+      }).then(res => {
+        console.log('getAppList', res);
+        let list = res.data.list || [];
+        list.map(item => {
+          item.statusStr = ['已停用', '已启用'][item.status];
+        });
+        this.tableList = list || [];
+        this.totalNum = res.data.total || 0;
+        this.available_num = res.data.available_num;
+      }).catch(res =>{
+        console.log(res);
+        this.tableList = [];
+        this.totalNum = 0;
+        this.available_num = 0;
+      }).finally(()=>{
+        this.fetching = false;
+      });
+    },
+    viewApp(that, { rows }){
+      that.$router.push({path: `/dev/${rows.id}`});
+    },
+    stopApp(that, { rows }) {
+      that.$confirm('是否确认停用APP？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(()=>{
+        that.appEditStatus(rows, 0);
+      });
+    },
+    restartApp(that, { rows }) {
+      that.$confirm('是否确认启用APP？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(()=>{
+        that.appEditStatus(rows, 1);
+      });
+    },
+    deleteApp(that, { rows }) {
+      that.$confirm('是否确认删除APP？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(()=>{
+        that.appEditStatus(rows, 2);
+      });
+    },
+    appEditStatus(rows, status) {
+      this.$fetch('appEditStatus', {
+        id: rows.id,
+        status: status
+      }).then(res =>{
+        this.$message({
+          message:  `${['停用','启用','删除'][status]}成功` ,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        // 刷新数据
+        this.search();
+      }).catch( res =>{
+        this.$message({
+          message:  res.msg ||  `${['停用','启用','删除'][status]}失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     }
   }
 };
 </script>
+
 <style lang="less" scoped>
-.el-row {
-  margin-bottom: 20px;
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-.el-col {
-  .subjectInner {
-    display: flex;
-    height: 110px;
-    background: #fff;
-    align-items: center;
-    margin-bottom: 24px;
-    box-sizing: border-box;
-    background-clip: content-box;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-radius: 4px;
-    transition: all 0.15s ease-in;
-    &:hover{
-      box-shadow: 0 6px 12px 0 rgba(251, 58, 50, 0.16);
-      border: 1px solid #FB3A32;
+  .top{
+    margin-bottom: 20px;
+    /deep/.bg--trans {
+      background: transparent;
+      &:hover {
+        color: #fff;
+        background: #FB3A32;
+        border: 1px solid #FB3A32;
+      }
+      &:active {
+        color: #ffffff;
+        background: #E2332C;
+        border: 1px solid #E2332C;
+      }
     }
   }
-  .icon{
-    width: 44px;
-    height: 44px;
-    // background: #FB3A32;
-    margin-right: 15px;
-    border-radius: 50%;
-    margin-left: 35px;
-    &.png_saasicon_kaifashezhi {
-      background-image: url("../../common/images/sys/saasicon_kaifashezhi@2x.png");
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-      border-radius: 0;
+  .tips{
+    font-size: 14px;
+
+    margin-left: 10px;
+    a{
+      text-decoration: underline;
     }
-    &.png_saasicon_kongzhitaibiaoshi {
-      background-image: url("../../common/images/sys/saasicon_kongzhitaibiaoshi@2x.png");
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-      border-radius: 0;
-    }
-    &.png_saasicon_xiaoxiyanjinci {
-      background-image: url("../../common/images/sys/saasicon_xiaoxiyanjinci@2x.png");
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
-      border-radius: 0;
-    }
-    // border: 1px solid #ccc;
   }
-  /deep/.svg-icon{
-    text-align: center;
-    font-size: 50px;
-    vertical-align: top;
+  .dev-show-layout{
+    /deep/.el-button[readonly] {
+      background: #F09D99;
+      border: 1px solid #F09D99;
+      cursor: not-allowed;
+      color: #FFFFFF;
+      &:hover, &:active {
+        background: #F09D99;
+        border: 1px solid #F09D99;
+        cursor: not-allowed;
+        color: #FFFFFF;
+      }
+      /* 白色禁用
+       background: transparent;
+       border: 1px solid #CCCCCC;
+       cursor: not-allowed;
+       color: #666666;
+       &:hover, &:active {
+         background: transparent;
+         border: 1px solid #CCCCCC;
+         cursor: not-allowed;
+         color: #666666;
+       }*/
+    }
+    .title_text{
+      color: #999;
+      font-size: 14px;
+      a{
+        color: #3562FA;
+        cursor: pointer;
+      }
+    }
   }
-  .desc{
-    .mainText{
-      margin-bottom: 2px;
-      font-size: 18px;
-      font-family: @fontRegular;
-      font-weight: 400;
-      color: #1A1A1A;
+  .all-no-data {
+    padding-top: 30px;
+    margin-top: 164px;
+    /deep/.createActive {
+      padding-bottom: 30px;
+    }
+  }
+  .dev-show-list {
+    .layout--right--main();
+    .padding-table-list();
+    .min-height();
+    /deep/.el-table .cell {
       line-height: 25px;
     }
-    .subText{
+    /deep/button.el-button.el-button--mini{
       font-size: 14px;
-      font-family: @fontRegular;
+    }
+  }
+  .dev-show-tips {
+    font-size: 14px;
+    font-weight: 400;
+    color:#999999;
+    line-height: 20px;
+    a {
+      color: #3562FA;
+      font-size: 14px;
       font-weight: 400;
-      color: #666666;
       line-height: 20px;
     }
   }
-}
 </style>
