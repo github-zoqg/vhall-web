@@ -716,7 +716,7 @@ export default {
     height: 40px;
   }
   /deep/.el-form-item {
-    margin-bottom: 32px;
+    margin-bottom: 24px;
   }
   /deep/.el-form-item.switch__height {
     margin-bottom: 16px;

@@ -2,7 +2,7 @@
   <div :class=" typeChange ? 'data-finance' : 'data-usage'">
     <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.concurrency">
       <el-col :span="buttonList.includes('extend') ? (typeChange ? 8 : 6) : (typeChange ? 15 : 9)">
-        <div class="top-item">
+        <div class="top-item first-version">
           <p>当前版本</p>
           <h2>{{ userInfo.edition }}</h2>
           <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.edition_valid_time || '' }}<span v-if="isOutTime">(已过期)</span></p>
@@ -283,7 +283,10 @@ export default {
       font-size: 14px;
       cursor: pointer;
     }
-    &:first-child{
+    // &:first-child{
+    //   padding-left: 24px;
+    // }
+    .first-version{
       padding-left: 24px;
     }
   }

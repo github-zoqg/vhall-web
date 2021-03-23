@@ -87,7 +87,7 @@
                   <el-form-item v-for="(item, index) in givePrizeList" :key="index" :label="item.field" :ref="`${item.field_key}`">
                     <VhallInput v-model="givePrizeForm[item.field_key]" type="text" maxlength="200" :placeholder="item.placeholder"></VhallInput>
                     <div class="isDelete">
-                      <i class="el-icon-delete" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
+                      <i class="iconfont-v3 saasicon-trash" @click="deleteGivePrize(index)" v-if="!Boolean(item.is_system)"></i>
                       <p class="switch__box">
                         <el-switch
                           v-if="index > 0"
@@ -600,7 +600,7 @@ export default {
         i{
           font-size: 16px;
           vertical-align: top;
-          margin-top: 7px;
+          line-height: 32px;
           cursor: pointer;
         }
       }

@@ -267,6 +267,7 @@ export default {
   min-height: 612px;
   height: auto;
   background: #FFFFFF;
+  border-radius: 4px;
 }
 /deep/.el-tabs__header {
   margin: 0 0;

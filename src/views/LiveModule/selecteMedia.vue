@@ -18,7 +18,7 @@
       </VhallInput>
       <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
     </div>
-    <div v-if="total || isSearch">
+    <div v-if="total || isSearch" style="min-height: 300px;">
       <el-table
         ref="docList"
         :data="docList"

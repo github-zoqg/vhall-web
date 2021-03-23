@@ -1187,7 +1187,7 @@ export default {
     }
   }
   /deep/.el-dialog__body {
-    padding: 16px 16px 0 16px;
+    padding: 4px 4px 0 4px;
   }
   /deep/.el-loading-mask {
     border-radius: 4px;

@@ -52,6 +52,11 @@ export default {
       required: false,
       default: 360
     },
+    isImage: {
+      type: Boolean,
+      required: false,
+      default: true
+    },
     saveType: {
       type: String,
       required: false,
@@ -81,7 +86,7 @@ export default {
       vm: null,
       setting: {
         selector: `#${this.tinymceId}`,
-        plugins: 'fullscreen image wordcount paste',
+        plugins: `fullscreen wordcount paste ${this.isImage ? 'image' : ''}`,
         // 字体Icon 库。  等瑞芳提供完整时 进行替换
         icons_url: '//cnstatic01.e.vhall.com/saas/common_libs/editor/icons.js',
         icons: 'vhall',

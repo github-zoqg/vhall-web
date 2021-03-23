@@ -81,7 +81,7 @@
                   <!-- {{scope.row}} -->
                   <p v-if="scope.row.transcode_status_text">
                     <!-- 列表 -->
-                    <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : 'failer'">{{ scope.row.transcode_status_text }}</span>
+                    <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : scope.row.transcode_status == 0 ? 'wating' : 'failer'">{{ scope.row.transcode_status_text }}</span>
                   </p>
                 </div>
               </template>
@@ -655,6 +655,9 @@ export default {
       color: #ff733c;
       padding-right: 3px;
     }
+  }
+  /deep/.el-progress-bar__inner {
+   background-color: #14BA6A;
   }
   .statusTag{
     font-size: 14px;

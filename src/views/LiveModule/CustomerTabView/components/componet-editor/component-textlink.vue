@@ -86,6 +86,7 @@ export default {
       word-break: break-all;
       a{
         color: #3562fa;
+        font-size: 14px;
       }
     }
   }

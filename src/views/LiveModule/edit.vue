@@ -1167,6 +1167,9 @@ export default {
   html{
     background: #F7F7F7;
   }
+  .el-tooltip__popper {
+    max-width: 372px;
+  }
   .editor-wrap{
     .tox-statusbar{
       display: none;

@@ -257,6 +257,7 @@ export default {
           /deep/.el-input__inner {
             border: none;
             height: 38px;
+            padding: 0 0 0 12px;
           }
           span{
             display: inline-block;

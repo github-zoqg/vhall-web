@@ -620,7 +620,7 @@ export default {
   .first-downTime{
     padding: 0 3px;
     text-align: right;
-    width: 70px;
+    width: 50px;
   }
 }
 .subColor, .subDuration{
