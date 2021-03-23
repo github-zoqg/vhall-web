@@ -259,11 +259,11 @@
           box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
         }
         .custom-img-box {
-          width: 94px;
+          width: 93px;
           height: 146px;
           position: absolute;
           bottom: 15px;
-          right: 12px;
+          right: 9px;
         }
         .custom-img {
           width: 100%;

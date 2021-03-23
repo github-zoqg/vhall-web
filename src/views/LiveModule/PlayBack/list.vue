@@ -54,7 +54,7 @@
                   <div class="imageWrap" v-if="scope.row.transcode_status != 1">
 
                     <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">转码失败</p>
-                    <p v-else class="statusDesc">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
+                    <p v-else class="statusDesc disabled">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
                   </div>
                   <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
                   <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
@@ -114,7 +114,7 @@
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
               <el-button v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
-              <el-button v-if="WEBINAR_PES['ui.record_chapter'] &&  !scope.row.layout" type="text" @click="toChapter(scope.row)">章节</el-button>
+              <el-button v-if="WEBINAR_PES['ui.record_chapter']" type="text" @click="toChapter(scope.row)">章节</el-button>
               <el-dropdown v-if="!isDemand" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
@@ -869,6 +869,9 @@ export default {
           background: #FB3A32;
           border-radius: 15px;
           cursor: pointer;
+          &.disabled {
+            cursor: default;
+          }
         }
       }
       .defaultSign{
