@@ -631,6 +631,9 @@ export default {
     //     background-color: #F0F1FE!important;
     //   }
     // }
+    .yidun_slider__icon {
+      background-image: url(./images/icon-slide.png)!important;
+    }
     .yidun_control {
       .yidun_slider {
         .yidun_slider__icon {

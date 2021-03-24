@@ -1403,6 +1403,9 @@
             //   }
             // }
             .yidun_control {
+              .yidun_slider__icon {
+                background-image: url(./images/icon-slide.png)!important;
+              }
               .yidun_slider {
                 .yidun_slider__icon {
                   background-image: url(./images/icon-succeed.png);
