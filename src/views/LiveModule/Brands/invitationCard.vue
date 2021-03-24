@@ -681,7 +681,7 @@ export default {
           // width: 180px;
           position: absolute;
           display: flex;
-          bottom: 80px;
+          bottom: 24px;
           left: 30px;
           padding: 20px 20px 0 20px;
           justify-content: center;
