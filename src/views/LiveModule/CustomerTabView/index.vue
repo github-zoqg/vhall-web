@@ -323,7 +323,7 @@ export default {
   }
   .qr-previewbox{
     text-align: center;
-    margin-bottom: 15px;
+    // margin-bottom: 15px;
     img{
       width: 160px;
       height: 160px;

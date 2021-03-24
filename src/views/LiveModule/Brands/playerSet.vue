@@ -1,7 +1,7 @@
 <template>
   <div class="prize-card">
     <pageTitle pageTitle="播放器设置">
-      <div class="title_text">
+      <div class="title_text"  v-if="reservationDisable">
         <p class="switch__box">
           <el-switch
             v-model="playerOpen"
@@ -304,6 +304,7 @@ export default {
     this.$Vhallplayer = null;
     return {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
+      perssionWebInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
       activeName: 'first',
       isShowSpeed: false,
       playerOpen: true,
@@ -447,6 +448,13 @@ export default {
         return "开启后，将使用当前活动播放器设置";
       }
     },
+    reservationDisable() {
+      if (this.perssionWebInfo['player_config'] > 0) {
+        return true
+      } else {
+        return false
+      }
+    }
   },
   filters: {
     secondToDate (val) {

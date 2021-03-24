@@ -1,7 +1,7 @@
 <template>
   <div>
     <pageTitle pageTitle="品牌设置">
-      <div class="title_text">
+      <div class="title_text" v-if="reservationDisable">
         <p class="switch__box">
           <el-switch
             v-model="brandOpen"
@@ -47,6 +47,7 @@ export default {
       type: 0,
       brandOpen: true,
       perssionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
+      perssionWebInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
     };
   },
@@ -56,6 +57,13 @@ export default {
         return '已开启，使用当前活动品牌设置';
       }else{
         return "开启后，将使用当前活动品牌设置";
+      }
+    },
+    reservationDisable() {
+      if (this.perssionWebInfo['ui.brand_setting'] > 0 || this.perssionWebInfo['webinar_skins'] > 0) {
+        return true
+      } else {
+        return false
       }
     }
   },
