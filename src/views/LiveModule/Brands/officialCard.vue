@@ -705,6 +705,7 @@ export default {
         color: #1a1a1a;
         line-height: 20px;
         text-align: center;
+        padding-top: 4px;
         // margin-top: 9px;
       }
     }

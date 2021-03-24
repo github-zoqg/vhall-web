@@ -730,7 +730,6 @@ export default {
         this.$message({
           message: this.scrolling_open ? "跑马灯开启成功" : '跑马灯关闭成功',
           showClose: true,
-          // duration: 0,
           type: 'success',
           customClass: 'zdy-info-box'
         });
@@ -738,7 +737,6 @@ export default {
         this.$message({
           message:res.msg || "保存跑马灯失败",
           showClose: true,
-          // duration: 0,
           type: 'error',
           customClass: 'zdy-info-box'
         });
@@ -817,7 +815,7 @@ export default {
     //文案提示问题
     messageInfo() {
       this.vm = this.$message({
-        showClose: false,
+        showClose: true,
         duration: 2000,
         message: '设置成功',
         type: 'success',

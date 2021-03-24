@@ -607,6 +607,11 @@ export default {
   /deep/ thead tr th:nth-child(2) .cell{
     padding-left: 10px;
   }
+  /deep/.el-table__row:hover{
+   .el-button{
+      color: #FB3A32;
+    }
+  }
 }
 // /deep/.el-input__inner{
 //     padding: 0 12px;
