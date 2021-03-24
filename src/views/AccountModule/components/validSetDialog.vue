@@ -2,7 +2,6 @@
   <VhallDialog
     :title="title"
     :visible.sync="visible"
-    :lock-scroll=false
     class="valid-set-dialog"
     width="400px">
     <div class="content">

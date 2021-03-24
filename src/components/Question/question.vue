@@ -11,7 +11,6 @@
       title="提示"
       :visible.sync="dialogTongVisible"
       :close-on-click-modal="false"
-      :lock-scroll=false
       class="zdy-async-dialog"
       width="400px"
     >
@@ -225,7 +224,7 @@ export default {
     z-index: 3000;
   }
   #qs-preview-box-content /deep/.q-title{
-    padding: 0 75px;
+    padding: 0 75px !important;
     color: #1A1A1A;
     font-weight: 500;
     font-size: 22px;

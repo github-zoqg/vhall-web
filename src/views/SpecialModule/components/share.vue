@@ -5,7 +5,6 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       customClass="share-dialog"
-      :lock-scroll='false'
       width="570px">
       <div class="content">
         <div class="share-div">

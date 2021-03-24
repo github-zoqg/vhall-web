@@ -439,7 +439,7 @@ export default {
         &__active{
           color: #FB3A32;
           span{
-            border-bottom: 2px solid #FB3A32;
+            // border-bottom: 2px solid #FB3A32;
           }
         }
       }

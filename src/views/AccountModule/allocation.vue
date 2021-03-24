@@ -143,7 +143,7 @@
       </div>
     </div>
     <!-- 批量分配-弹出框 -->
-    <VhallDialog title="批量分配" :visible.sync="multiAllocShow" :lock-scroll='false' class="dialog__group" width="380px" v-if="multiAllocShow" @close="closeAllocDialog">
+    <VhallDialog title="批量分配" :visible.sync="multiAllocShow" class="dialog__group" width="380px" v-if="multiAllocShow" @close="closeAllocDialog">
       <el-form :model="multiAllocForm" ref="multiAllocForm" :rules="multiAllocFormRules" label-width="80px">
         <!--  <el-form-item label="分配数量" prop="count">
           <el-input v-model.trim="multiAllocForm.count" maxlength="5" auto-complete="off" placeholder="请输入分配数量" class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">

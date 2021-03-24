@@ -102,9 +102,8 @@
         </el-form-item>
         <el-form-item label="手机号码" class="no-execute">
           <VhallInput v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative"
-                    :maxlength="30" disabled>
+                    :maxlength="30" disabled  v-if="sonDialog.type !== 'add'">
             <el-button
-              v-show="sonDialog.type !== 'add'"
               class="no-border"
               type="text"
               size="mini"
@@ -112,10 +111,12 @@
               @click="resetPhoneOrEmail('phone', isReset.phone)"
             >{{ isReset.phone ? '取消重置' : '重置' }}</el-button>
           </VhallInput>
+          <VhallInput v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative" :maxlength="30" disabled  v-else>
+          </VhallInput>
         </el-form-item>
         <el-form-item label="邮箱地址" class="no-execute">
           <VhallInput v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative"
-                    :maxlength="30" disabled>
+                    :maxlength="30" disabled v-if="sonDialog.type !== 'add'">
             <el-button
               v-show="sonDialog.type !== 'add'"
               class="no-border"
@@ -124,6 +125,8 @@
               slot="append"
               @click="resetPhoneOrEmail('email', isReset.email)"
             >{{ isReset.email ? '取消重置' : '重置' }}</el-button>
+          </VhallInput>
+           <VhallInput v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative" :maxlength="30" disabled v-else>
           </VhallInput>
         </el-form-item>
       </el-form>

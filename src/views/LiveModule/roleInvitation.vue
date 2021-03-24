@@ -154,9 +154,9 @@
       </div>
     </div>
     <!-- 编辑口令弹出框 -->
-    <VhallDialog title="编辑" :visible.sync="visible"
-                 :lock-scroll=false
-                 width="280px">
+    <VhallDialog title="编辑"
+      :visible.sync="visible"
+      width="280px">
       <div class="content">
         <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules" label-width="0">
           <el-form-item label="" prop="password">

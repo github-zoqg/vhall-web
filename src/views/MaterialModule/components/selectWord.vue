@@ -1,6 +1,6 @@
 <template>
   <!-- 文档资料库 -->
-  <VhallDialog title="文档列表" :lock-scroll='false' :before-close="handleClose" :visible.sync="dialogVisible" :close-on-click-modal="false" width="800px">
+  <VhallDialog title="文档列表" :before-close="handleClose" :visible.sync="dialogVisible" :close-on-click-modal="false" width="800px">
     <div class="word-list">
       <div v-if="isSearch || total">
       <VhallInput

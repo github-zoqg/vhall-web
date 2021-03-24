@@ -4,7 +4,6 @@
       :title="advInfo.adv_id ? '编辑广告' : '创建广告'"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
-      :lock-scroll=false
       custom-class="advinfo-dialog"
       width="468px">
       <el-form label-width="80px" :model="advertisement" ref="advertisementForm" :rules="rules">
@@ -86,7 +85,6 @@
       title="提示"
       :visible.sync="dialogTongVisible"
       :close-on-click-modal="false"
-      :lock-scroll=false
       class="zdy-async-dialog"
       width="400px"
     >

@@ -37,7 +37,7 @@
         </el-form>
       </div>
       <!-- 聊天严禁词弹出框 -->
-      <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false  @close="handleClose">
+      <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow"  @close="handleClose">
         <div class="chat-dialog-content">
           <!-- 全部无结果 -->
           <div class="all-no-data" v-if="total === 0  && pageInfo.keyword === ''">
@@ -115,7 +115,7 @@
         </div>
       </VhallDialog>
       <!-- 添加严禁词 -->
-      <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body :lock-scroll=false>
+      <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body >
         <div :class="`chat-add-dialog-content ${addForm.executeType}`">
           <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
             <el-form-item label="严禁词" prop="name">
@@ -145,7 +145,7 @@
         </div>
       </VhallDialog>
       <!-- 批量上传 -->
-      <VhallDialog class="addForbidWord" width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false @close="closeImportChat">
+      <VhallDialog class="addForbidWord" width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body  @close="closeImportChat">
         <div class="upload-dialog-content">
           <file-upload
             ref="chatUpload"
