@@ -708,9 +708,33 @@ export default {
     i{
       font-style: normal;
       padding: 0 10px;
-      color: #666;
+      color: #1a1a1a;
+      font-size: 14px;
+      font-family: @fontRegular;
     }
   }
+   /deep/.el-input-group__append {
+      width: 52px!important;
+      height: 38px;
+      background: #F7F7F7;
+      border-radius: 0 4px 4px 0;
+      position: absolute;
+      right: 1px;
+      top: 1px;
+      line-height: 38px;
+      text-align: center;
+      padding: 0 0;
+      margin: 0 0;
+      font-size: 14px;
+      font-family: @fontRegular;
+      font-weight: 400;
+      color: #666666;
+      border: 0;
+      span{
+        font-size: 14px;
+        color: #666666;
+      }
+    }
   /deep/.el-form-item__label {
     font-size: 14px;
     font-family: @fontRegular;
@@ -845,19 +869,6 @@ export default {
       margin: 0 8px;
     }
   }
-  .down-btn {
-    /* width: 118px;
-    height: 40px;
-    border-radius: 20px;
-    border: 1px solid #FB3A32;
-    font-size: 14px;
-    font-family: @fontRegular;
-    font-weight: 400;
-    color: #FB3A32;
-    line-height: 20px;
-    text-align: center;
-    padding: 0 0; */
-  }
 }
 .viewer-rules-ctx--2 {
   .tab__white {
@@ -931,7 +942,7 @@ export default {
       background: transparent;
     }
   }
-  &.btn-two {
+  // &.btn-two {
     /deep/.el-input-group__append {
       width: 52px!important;
       height: 38px;
@@ -950,7 +961,7 @@ export default {
       color: #666666;
       border: 0;
     }
-  }
+  // }
 }
 /deep/.saasicon_help_m {
   color: #999999;

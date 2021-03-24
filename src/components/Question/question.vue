@@ -234,15 +234,10 @@ export default {
   }
   #qs-preview-box-content /deep/.q-des{
     margin: 20px 75px 0 !important;
-    color: #666;
+    color: #1A1A1A;
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-  }
-   #qs-preview-box-content /deep/.q-list{
-    padding: 0 56px !important;
-    color: #1A1A1A;
     font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   }
   .async__ctx {

@@ -533,6 +533,24 @@ export default {
   .role-card-head, .el-form, .role-qx-title {
     padding-right: 32px;
   }
+  /deep/.el-input-group__append {
+    width: 52px!important;
+    height: 38px;
+    background: #F7F7F7;
+    border-radius: 0 4px 4px 0;
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    line-height: 38px;
+    text-align: center;
+    padding: 0 0;
+    margin: 0 0;
+    font-size: 14px;
+    font-family: @fontRegular;
+    font-weight: 400;
+    color: #666666;
+    border: 0;
+  }
 }
 .title--label {
   font-size: 24px;
@@ -572,7 +590,7 @@ export default {
   }
   /deep/.input-no-right-border {
     .el-input__inner {
-      border-right: 0;
+      border-radius: 0 4px 4px 0;
     }
   }
   /deep/.btn-relative {
@@ -584,30 +602,30 @@ export default {
     }
     /deep/.el-input-group__append {
       position: absolute;
-      right: 10px;
+      right: 0px;
       top: 10px;
       width: 20px!important;
     }
-    &.btn-two {
-      /deep/.el-input-group__append {
-        width: 52px!important;
-        height: 38px;
-        background: #F7F7F7;
-        border-radius: 0 4px 4px 0;
-        position: absolute;
-        right: 1px;
-        top: 1px;
-        line-height: 38px;
-        text-align: center;
-        padding: 0 0;
-        margin: 0 0;
-        font-size: 14px;
-        font-family: @fontRegular;
-        font-weight: 400;
-        color: #666666;
-        border: 0;
-      }
-    }
+    // &.btn-two {
+    //   /deep/.el-input-group__append {
+    //     width: 52px!important;
+    //     height: 38px;
+    //     background: #F7F7F7;
+    //     border-radius: 0 4px 4px 0;
+    //     position: absolute;
+    //     right: 1px;
+    //     top: 1px;
+    //     line-height: 38px;
+    //     text-align: center;
+    //     padding: 0 0;
+    //     margin: 0 0;
+    //     font-size: 14px;
+    //     font-family: @fontRegular;
+    //     font-weight: 400;
+    //     color: #666666;
+    //     border: 0;
+    //   }
+    // }
   }
   /*/deep/.el-input-group__append, /deep/.el-input-group__prepend {
     width: 52px;
