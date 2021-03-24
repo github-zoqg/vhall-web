@@ -71,7 +71,7 @@
                   auto-complete="off"
                   v-model.trim="dynamicForm.code">
                   <template slot="append">
-                    <span @click="getDyCode" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
+                    <span @click="time == 60 && getDyCode" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
                   </template>
                 </el-input>
               </div>
@@ -91,7 +91,7 @@
                 :maxlength="30"
                 v-model.trim="dynamicForm.email">
                 <template slot="append">
-                    <span @click="getDyCode" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
+                    <span @click="time == 60 && getDyCode" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
                   </template>
               </el-input>
             </el-form-item>

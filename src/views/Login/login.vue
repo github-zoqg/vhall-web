@@ -119,7 +119,7 @@
                 auto-complete="off"
                 v-model.trim="dynamicForm.dynamic_code">
                 <template slot="append">
-                  <span @click="getDyCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
+                  <span @click="time == 60 && getDyCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
                 </template>
               </el-input>
             </div>
@@ -171,7 +171,7 @@
                   auto-complete="off"
                   v-model="registerForm.code">
                   <template slot="append">
-                    <span @click="getRegisterCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
+                    <span @click="time == 60 && getRegisterCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
                   </template>
                 </VhallInput>
               </div>

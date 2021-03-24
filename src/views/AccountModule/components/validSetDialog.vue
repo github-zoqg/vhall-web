@@ -22,7 +22,7 @@
         <el-form-item label="动态密码" key="code" prop="code" v-if="showVo.step === 1">
           <div class="inputCode">
             <el-input v-model.trim="form.code" auto-complete="off" style="width: 141px" :maxlength="6"></el-input>
-            <span @click="getDyCode()" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+            <span @click="time == 60 && getDyCode()" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
           </div>
           <p class="codeTitle" v-if="sendText">{{sendText}}</p>
         </el-form-item>
@@ -53,7 +53,7 @@
         <el-form-item label="动态密码" key="new_code" prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
           <div class="inputCode">
             <el-input v-model.trim="form.new_code" auto-complete="off" style="width: 141px" :maxlength="6"></el-input>
-            <span @click="getDyCode1()" :class="showCaptcha1 ? 'isLoginActive' : ''">{{ time1 == 60 ? '获取验证码' : `${time1}秒后发送` }}</span>
+            <span @click="time1 == 60 && getDyCode1()" :class="showCaptcha1 ? 'isLoginActive' : ''">{{ time1 == 60 ? '获取验证码' : `${time1}秒后发送` }}</span>
           </div>
           <p class="codeTitle" v-if="sendText1">{{sendText1}}</p>
         </el-form-item>
