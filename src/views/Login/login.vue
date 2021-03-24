@@ -862,16 +862,16 @@ export default {
             font-size: 14px;
           }
         }
-        .yidun_slider {
-          .yidun_slider__icon {
-            background-image: url(./images/icon-slide1.png);
+        /deep/.yidun_slider {
+          /deep/.yidun_slider__icon {
+            background-image: url(./images/icon-slide1.png) !important;
             background-size: 28px 20px;
             background-position: center;
           }
           &:hover {
             // background-color: #FB3A32;
             .yidun_slider__icon {
-              background-image: url(./images/icon-slide.png);
+              background-image: url(./images/icon-slide.png) !important;
             }
           }
         }
@@ -893,7 +893,7 @@ export default {
       //   }
       // }
       .yidun_slider__icon {
-        background-image: url(./images/icon-slide.png)!important;
+        background-image: url(./images/icon-succeed.png)!important;
       }
       .yidun_control {
         // border-color: #3562FA!important;
