@@ -7,6 +7,7 @@
       </el-form-item>
       <el-form-item label="专题封面">
         <upload
+          class="upload__avatar"
           v-model="formData.imageUrl"
           :domain_url="formData.domain_url"
           :saveData="{
@@ -571,6 +572,16 @@ export default {
     }
     .el-button.is-round{
       padding: 10px 23px;
+    }
+  }
+  /* 图片上传 */
+  .upload__avatar {
+    /deep/.el-upload--picture-card {
+      height: 180px;
+      border: 1px solid #CCCCCC;
+    }
+    /deep/.box > div {
+      height: 180px;
     }
   }
  /* .editBox {

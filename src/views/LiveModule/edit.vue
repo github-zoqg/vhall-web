@@ -105,6 +105,7 @@
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}封面`">
         <upload
+          class="upload__avatar"
           v-model="formData.imageUrl"
           :domain_url="formData.domain_url"
           :saveData="{
@@ -848,6 +849,16 @@ export default {
   }
   /deep/.el-upload--picture-card{
     border-radius: 4px;
+  }
+   /* 图片上传 */
+  .upload__avatar {
+    /deep/.el-upload--picture-card {
+      height: 180px;
+      border: 1px solid #CCCCCC;
+    }
+    /deep/.box > div {
+      height: 180px;
+    }
   }
   .line{
     text-align: center;

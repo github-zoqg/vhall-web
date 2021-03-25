@@ -23,6 +23,8 @@
               :on-error="uploadError"
               :on-preview="uploadPreview"
               :before-upload="beforeUploadHnadler"
+              :widthImg="248"
+              :heightImg="140"
               @delete="deleteImg"
               >
              <div slot="tip">

@@ -9,7 +9,7 @@
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">
-          <img :src="domain_url || domainUrl" class="avatar" alt="" @click.stop.prevent="!isFullCover&&fullCover()"/>
+          <div :style="`width:${widthImg}px;height:${heightImg}px`" class="img-logo"><img :src="domain_url || domainUrl" class="avatar" alt="" @click.stop.prevent="!isFullCover&&fullCover()"/></div>
           <div class="mask" @click="isProduct && refresh($event)" v-if="isFullCover">
             <span v-if="!!$props.coverPic" @click.stop.prevent="coverPage">
               <i class="el-icon-collection"></i>
@@ -131,6 +131,14 @@ export default {
     bottom: {
       type: Number,
       default: 15
+    },
+    heightImg: {
+      type: Number,
+      default: 180
+    },
+    widthImg: {
+      type: Number,
+      default: 320
     },
     'on-success': {
       type: Function,
@@ -263,6 +271,9 @@ export default {
         height: 40px;
       }
     }
+    .img-logo{
+      margin: 0 auto;
+    }
     img{
       height: 100%;
       object-fit: scale-down;
@@ -270,10 +281,13 @@ export default {
       margin: 0px auto;
     }
   }
+  // .avatar-uploader{
+  //   height: 180px;
+  // }
   .mask{
     position: absolute;
     left: 0;
-    top: -7px;
+    top: 0;
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.7);
