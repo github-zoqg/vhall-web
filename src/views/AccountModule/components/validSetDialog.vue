@@ -13,7 +13,7 @@
         <el-form-item label="手机号" key="phone" prop="phone" v-if="showVo.executeType !== 'email' && showVo.step === 1">
           <el-input v-model.trim="form.phone" auto-complete="off" placeholder="请输入手机号" disabled :maxlength="30"/>
         </el-form-item>
-        <el-form-item label="图形码" v-show="showVo.step === 1 && showVo.executeType !== 'email'">
+        <el-form-item label="图形码" v-show="showVo.step === 1 && showVo.executeType !== 'email'" id="captcha-box">
           <div id="setCaptcha" class="captcha">
             <el-input  v-model.trim="form.imgCode"> </el-input>
           </div>
@@ -44,7 +44,7 @@
         <el-form-item label="手机号" key="new_phone"  prop="new_phone" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入手机号" :maxlength="30"/>
         </el-form-item>
-        <el-form-item label="图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
+        <el-form-item label="图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)" id="captcha-box">
           <div id="setCaptcha1" class="captcha">
             <el-input  v-model.trim="form.imgCode1"> </el-input>
           </div>
@@ -858,5 +858,51 @@ export default {
   //   font-weight: normal;
   //   color: #ff0000;
   // }
+}
+#captcha-box{
+  .captcha {
+    // 云盾样式重置
+    /deep/.yidun_tips {
+        color: #999999;
+        line-height: 38px!important;
+        .yidun_tips__text {
+          vertical-align: initial;
+        }
+      }
+      /deep/.yidun_slider {
+        .yidun_slider__icon {
+          background-image: url(./images/icon-slide1.png) !important;
+          background-size: 28px 20px;
+          background-position: center;
+          margin-top: -5px;
+        }
+        &:hover {
+          .yidun_slider__icon {
+            background-image: url(./images/icon-slide.png) !important;
+          }
+        }
+      }
+      /deep/ .yidun--success {
+        .yidun_control {
+          .yidun_slider__icon {
+            background-image: url(./images/icon-succeed.png)!important;
+          }
+          .yidun_slider {
+            .yidun_slider__icon {
+              background-image: url(./images/icon-succeed.png);
+              background-size: 28px 20px;
+              background-position: center;
+            }
+            &:hover {
+              .yidun_slider__icon {
+                background-image: url(./images/icon-succeed.png);
+                background-size: 28px 20px;
+                background-position: center;
+              }
+            }
+          }
+        }
+      }
+  }
 }
 </style>
