@@ -954,7 +954,7 @@ export default {
   width: calc(100% - 224px);
   .padding-table-list2();
   background: #FFFFFF;
-  min-height: 676px;
+  min-height: 640px;
   .data-list {
     min-height: auto;
     /deep/ .el-table__empty-block {
@@ -973,9 +973,10 @@ export default {
   border-radius: 4px;
   margin-left: 24px;
   padding: 24px 24px;
-  max-height: 778px;
+  padding-right: 10px;
+  max-height: 640px;
   ul {
-    max-height: 646px;
+    max-height: 520px;
     overflow-y: auto;
     position: relative;
     left: 6px;
@@ -989,7 +990,8 @@ export default {
       border-radius: 3px;
       transition: all 0.3s;
       cursor: pointer;
-      display: none;
+      // display: none;
+      // margin-left: 6px;
       background-color: #cccccc;
       &:hover {
         background-color: #cccccc;
@@ -1090,7 +1092,8 @@ export default {
   cursor: pointer;
 }
 .group_button__add {
-  text-align: center;
+  text-align: left;
+  margin-left: 6px;
   color: @font_color_h1;
   cursor: pointer;
   margin-bottom: 12px;

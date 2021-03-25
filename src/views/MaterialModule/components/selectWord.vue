@@ -86,7 +86,7 @@
       </div>
       <null-page :nullType="'nullData'" v-else :height=60></null-page>
       <div class="btn-center" v-if="isSearch || total">
-        <span class="select-option">当前选中 <strong>{{dialogMulti.length}}</strong> 个文档</span>
+        <span class="select-option">当前选中 <b>{{dialogMulti.length}}</b> 个文档</span>
         <el-button  v-preventReClick type="primary" round size="medium" @click="saveCheckHandle" :disabled="!(dialogMulti && dialogMulti.length > 0)">确定</el-button>
         <el-button  round size="medium" @click="cancelCheckHandle">取消</el-button>
       </div>
@@ -477,7 +477,7 @@ export default {
   float: left;
   line-height: 20px;
   margin-top: 8px;
-  /deep/strong {
+  b{
     color: #FB3A32;
   }
 }

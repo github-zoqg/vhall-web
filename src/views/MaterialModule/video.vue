@@ -736,10 +736,10 @@ export default {
     }
     /deep/ .el-dialog__body{
       width: 642px;
-      height: 375px;
-      border-top: 4px solid #1a1a1a;
-      border-bottom: 4px solid #1a1a1a;
-      background: #1a1a1a;
+      height: 361px;
+      border-top: 4px solid #000;
+      border-bottom: 4px solid #000;
+      background: #000;
       border-radius: 4px;
       padding: 0 4px;
     }
