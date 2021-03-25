@@ -32,28 +32,17 @@
       <div class="show-question" @click="isShowQuestion = false">
         <div class="show-main" @click.stop="isShowQuestion=true">
           <span class="close-btn"><i class="el-icon-close" @click.stop="isShowQuestion=false"></i></span>
-          <el-scrollbar>
+          <vhscroll>
             <div class="question_main">
               <pre-question  :questionId="questionId"></pre-question>
+              <div class="submit-footer">
+                <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
+              </div>
             </div>
-          </el-scrollbar>
-          <!-- <pre-question  :questionId="questionId"></pre-question> -->
-          <div class="submit-footer">
-            <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
-          </div>
+          </vhscroll>
         </div>
       </div>
     </template>
-    <!-- <template v-if="isShowQuestion">
-      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center
-      :close-on-click-modal=false
-      :close-on-press-escape=false>
-        <pre-question   :questionId="questionId"></pre-question>
-        <div class="submit-footer">
-          <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
-        </div>
-      </el-dialog>
-    </template> -->
     <base-question ref="dataBase" @getTableList="getTableList"></base-question>
     <begin-play :webinarId="$route.params.str"></begin-play>
   </div>
@@ -329,19 +318,21 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, .3);
+    background: rgba(0, 0, 0, .5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     .show-main{
-      position: absolute;
-      top: 48%;
-      left: 50%;
+      height: 90%;
+      border-radius: 4px;
       background: #fff;
-      transform: translate(-50%, -50%);
-      width: 760px;
-      padding-bottom: 24px;
-      // padding: 24px 32px;
+      position: relative;
+      z-index: 101;
       .question_main{
-        max-height: 550px;
+        // max-height: 550px;
         position: relative;
+        width: 760px;
+        padding-bottom: 24px;
       }
       .close-btn{
         z-index: 100;
