@@ -793,11 +793,11 @@ export default {
     border-radius: unset;
     padding: 0 0;
     &:hover {
-      border-bottom-color: #FB3A32;
+      border-bottom-color: #666;
     }
     &:active {
       color: #1A1A1A;
-      border-color: #FB3A32;
+      border-color: #666;
     }
   }
   input::-webkit-input-placeholder {
