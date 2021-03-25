@@ -382,12 +382,14 @@ export default {
     }
     /deep/.el-range-input{
       background: transparent;
+      width: 43%;
     }
     /deep/.el-date-editor .el-range__icon{
       line-height: 29px;
     }
     /deep/.el-date-editor .el-range__close-icon {
       line-height: 28px;
+      width: 20px;
     }
     /deep/.el-input__icon{
       line-height: 36px;

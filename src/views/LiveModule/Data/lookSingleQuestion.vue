@@ -10,18 +10,18 @@
       </div>
     <div class="question-item">
       <div v-for="item in questionList" :key="item.ques_id">
-        <div class="question-gender" v-if="item.ques_title == '性别'">
-          <p><span>{{ item.ques_title }}</span>(单选题)</p>
+        <div class="question-gender" v-if="item.ques_type == '1' && item.ques_style == 'sex'">
+          <p><span>性别</span>(单选题)</p>
           <gender-echarts :genderList="item.list"></gender-echarts>
         </div>
-        <div class="question-city" v-else-if="item.ques_title == '地域'">
-          <p><span>{{ item.ques_title }}</span>统计(城市题目)</p>
+        <div class="question-city" v-else-if="item.ques_type == '3'">
+          <p><span>地域</span>统计(城市题目)</p>
           <div class="map-charts">
             <map-echarts :areaDataList="item.list"></map-echarts>
           </div>
         </div>
         <div class="question-subject" v-else>
-          <p> <span>{{ item.ques_title }}</span>（{{ item.item_type == 2 ? '多选题' : '单选题'}}）</p>
+          <p> <span>{{ item.ques_title }}</span>（{{ item.ques_type == 2 ? '多选题' : '单选题'}}）</p>
           <line-echarts :otherList="item.list" :total="total"></line-echarts>
         </div>
       </div>
@@ -39,123 +39,16 @@ export default {
       title: '问卷标题',
       total: 0,
       questionList: [],
-      genderList: [
-        {
-          name: '女',
-          value: '40',
-        },
-        {
-          name: '男',
-          value: '30',
-        },
-      ],
+      genderList: [],
       areaDataList: {
-        total: 1050,
-        max_number: 400,
-        list: [
-          {
-            name: '新疆',
-            value: '100',
-          },
-          {
-            name: '西藏',
-            value: '200',
-          },
-          {
-            name: '内蒙古',
-            value: '300',
-          },
-          {
-            name: '甘肃',
-            value: '400',
-          },
-          {
-            name: '云南',
-            value: '50',
-          },
-        ],
+        total: 0,
+        max_number: 0,
+        list: [],
       },
       barDataList: [],
       data: {
-        total: 3,
-        list: [
-          {
-            itemTypeChinese: "单选",
-            ques_id: 557831,
-            title: "性别",
-            item_type: 1,
-            list: [
-              {
-                ques_id: 557831,
-                item_id: 821385,
-                item_subject: "男",
-                num: 1
-              },{
-                ques_id: 557831,
-                item_id: 821386,
-                item_subject: "女",
-                num: 1
-              }
-            ]
-          },
-          {
-            itemTypeChinese: "城市",
-            ques_id: 557832,
-            title: "地域",
-            item_type: 0,
-            list: [
-              {
-                ques_id: 557831,
-                item_id: 821385,
-                item_subject: "北京",
-                num: 1
-              },{
-                ques_id: 557831,
-                item_id: 821386,
-                item_subject: "石家庄",
-                num: 1
-              }
-            ]
-          },
-          {
-            itemTypeChinese: "单选",
-            ques_id: 557833,
-            title: "什么最大",
-            item_type: 1,
-            list: [
-              {
-                ques_id: 557831,
-                item_id: 821385,
-                item_subject: "其他",
-                num: 1
-              },{
-                ques_id: 557831,
-                item_id: 821386,
-                item_subject: "吃饭",
-                num: 1
-              }
-            ]
-          },
-          {
-            itemTypeChinese: "多选",
-            ques_id: 557834,
-            title: "我的爱好",
-            item_type: 2,
-            list: [
-              {
-                ques_id: 557831,
-                item_id: 821385,
-                item_subject: "睡觉",
-                num: 2
-              },{
-                ques_id: 557831,
-                item_id: 821386,
-                item_subject: "吃饭",
-                num: 5
-              }
-            ]
-          }
-        ]
+        total: 0,
+        list: []
       }
     };
   },
