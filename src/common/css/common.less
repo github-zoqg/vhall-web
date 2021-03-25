@@ -307,8 +307,8 @@
     background: @background_black;
 
     &.is-active, &:hover {
-      border-left-color: @border--red;
-      -moz-border-left-colors: @border--red;
+      // border-left-color: @border--red;
+      // -moz-border-left-colors: @border--red;
 
       i {
         color: @theme--normal;
@@ -378,7 +378,19 @@
     padding-left: 61px !important;
     border-left: 4px solid transparent;
 
-    &.is-active, &:hover {
+    &:hover {
+      // border-left-color: @border--red;
+      // -moz-border-left-colors: @border--red;
+
+      span {
+        font-size: @font_size_16;
+        font-family: @fontRegular;
+        font-weight: 400;
+        color: @theme--normal;
+        line-height: 22px;
+      }
+    }
+    &.is-active {
       border-left-color: @border--red;
       -moz-border-left-colors: @border--red;
 
