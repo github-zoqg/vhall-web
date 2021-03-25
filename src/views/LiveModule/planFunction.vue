@@ -60,20 +60,20 @@
           <span :class="switchType === 'pc' ? 'active' : ''" @click.prevent.stop="changeSwitch('pc')">PC预览</span>
         </div>
         <!--PC预览,begin-->
-        <div :class="['plan-func-pc', {'zj': !chapterCompute}]" :style="{opacity: switchType === 'pc' ? 1 : 0}">
+        <div :class="['plan-func-pc', {'zj': !chapterCompute}]" v-show="switchType === 'pc'">
           <span class="share-span" v-if="shareCompute"></span>
           <div class="icon-spans">
            <span class="reward-span" v-if="rewardCompute"></span><span class="gift-span" v-if="giftCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
         </div>
         <!--手机预览,begin-->
-        <div :class="['plan-func-app', {'visible': !chapterCompute}]" :style="{opacity: switchType === 'app' ? 1 : 0}">
+        <div :class="['plan-func-app', {'visible': !chapterCompute}]" v-show="switchType === 'app'">
           <span class="chat-span">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
           <div class="icon-spans">
             <span class="gift-span" v-if="giftCompute"></span><span  class="reward-span" v-if="rewardCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
         </div>
-        <div :class="['plan-func-app', 'zj', {'visible': chapterCompute}]" :style="{opacity: switchType === 'app' ? 1 : 0}">
+        <div :class="['plan-func-app', 'zj', {'visible': chapterCompute}]" v-show="switchType === 'app'">
           <span class="chat-span">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
           <div class="icon-spans">
             <span class="gift-span" v-if="giftCompute"></span><span  class="reward-span" v-if="rewardCompute"></span><span class="like-span" v-if="likeCompute"></span>
