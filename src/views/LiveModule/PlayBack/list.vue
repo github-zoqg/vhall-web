@@ -53,7 +53,7 @@
                 <div class="imageBox">
                   <div class="imageWrap" v-if="scope.row.transcode_status != 1">
 
-                    <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">转码失败</p>
+                    <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">生成失败</p>
                     <p v-else class="statusDesc disabled">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
                   </div>
                   <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
@@ -317,7 +317,7 @@ export default {
         this.showDialog = true;
         this.videoParamId = data.id;
       } else {
-        this.$message.warning('只有转码成功才能查看');
+        this.$message.warning('只有生成成功才能查看');
       }
     },
     reTranscode(data) {
@@ -493,7 +493,7 @@ export default {
             data.transcoding = true;
             this.transcodingArr.push(data);
             this.$message({
-              message: `正在转码，请稍侯...`,
+              message: `正在生成，请稍侯...`,
               showClose: true,
               // duration: 0,
               type: 'success',
@@ -633,7 +633,7 @@ export default {
           });
         } else if (res.data.transcode_status == 2){
           this.$message({
-            message:  '视频转码失败',
+            message:  '视频生成失败',
             showClose: true, // 是否展示关闭按钮
             type: 'error', //  提示类型
             customClass: 'zdy-info-box' // 样式处理
@@ -657,14 +657,14 @@ export default {
       }).then(res => {
         if (res.data.transcode_status == 0 || res.data.transcode_status == 3) {
           this.$message({
-            message:  '视频转码中，请稍后再试',
+            message:  '视频生成中，请稍后再试',
             showClose: true, // 是否展示关闭按钮
             type: 'warning', //  提示类型
             customClass: 'zdy-info-box' // 样式处理
           });
         } else if (res.data.transcode_status == 2){
           this.$message({
-            message:  '视频转码失败',
+            message:  '视频生成失败',
             showClose: true, // 是否展示关闭按钮
             type: 'error', //  提示类型
             customClass: 'zdy-info-box' // 样式处理
