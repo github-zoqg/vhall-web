@@ -312,7 +312,7 @@ const apis = {
   exportSign: ['/v3/interacts/sign/export-sign-list', 'POST'], //导出-签到列表
   exportDetailSign: ['/v3/interacts/sign/export-user-sign-list', 'POST'], //导出-签到明细列表
   exportSurvey: ['/v3/vss/survey/export-webinar-published-survey-usage', 'GET'], //导出问卷数据
-  exportSurveyDetial: ['/v3/vss/survey/export-get-webinar-survey-usage-detail', 'POST'], //导出问卷单个数据
+  exportSurveyDetial: ['/v3/vss/survey/export-get-webinar-survey-usage-detail', 'GET'], //导出问卷单个数据
   exportLottery: ['/v3/vss/lottery/export-prize-data-info-list', 'GET'], //导出-抽奖
   exportDetailLottery: ['/v3/vss/lottery/export-lottery-user-detail', 'GET'], //导出-抽奖-详情
   exportRedpacket: ['/v3/interacts/redpacket/export-redpacket-send-recorder', 'GET'], //导出活动群红包发送记录
