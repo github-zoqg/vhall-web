@@ -38,6 +38,8 @@
         :on-success="productLoadSuccess"
         :before-upload="beforeUploadHandler"
         :restPic="true"
+        :widthImg="524"
+        :heightImg="138"
         @delete="deleteBanner"
       >
         <div slot="tip">
