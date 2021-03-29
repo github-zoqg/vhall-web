@@ -40,14 +40,14 @@
       <div class="show-question" @click="isShowQuestion=false">
         <div class="show-main" @click.stop="isShowQuestion=true">
           <span class="close-btn"><i class="el-icon-close" @click.stop="isShowQuestion=false"></i></span>
-          <el-scrollbar>
+          <vhscroll>
             <div class="question_main">
               <pre-question  :questionId="questionId"></pre-question>
+              <div class="submit-footer">
+                <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
+              </div>
             </div>
-          </el-scrollbar>
-          <div class="submit-footer">
-            <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
-          </div>
+          </vhscroll>
         </div>
       </div>
     </template>
@@ -273,20 +273,31 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, .3);
+    background: rgba(0, 0, 0, .5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     .show-main{
-      position: absolute;
-      top: 48%;
-      left: 50%;
-      background: #fff;
-      transform: translate(-50%, -50%);
-      width: 760px;
-      padding-bottom: 24px;
-      // padding: 0 32px 24px 32px;
+      // position: absolute;
+      // top: 48%;
+      // left: 50%;
+      // background: #fff;
+      // transform: translate(-50%, -50%);
+      // width: 760px;
+      // padding-bottom: 24px;
+      // // padding: 0 32px 24px 32px;
+      // border-radius: 4px;
+      // overflow-y: auto;
+      height: 90%;
       border-radius: 4px;
+      background: #fff;
+      position: relative;
+      z-index: 101;
       .question_main{
-        max-height: 550px;
+        // max-height: 550px;
         position: relative;
+        width: 760px;
+        padding-bottom: 24px;
       }
       .close-btn{
         z-index: 100;

@@ -1336,7 +1336,7 @@
       .el-button {
         padding: 9px 55px;
       }
-      /deep/ .verifyCodeBox {
+      .verifyCodeBox {
         .el-input__inner {
           padding-right: 98px;
         }
@@ -1365,16 +1365,16 @@
         //     .yidun_slide_indicator {
         //       border-radius: 4px!important;
         //     }
-            .yidun_tips {
+           /deep/.yidun_tips {
               color: #999999;
               line-height: 38px!important;
               .yidun_tips__text {
                 vertical-align: initial;
               }
             }
-            .yidun_slider {
+            /deep/.yidun_slider {
               .yidun_slider__icon {
-                background-image: url(./images/icon-slide1.png);
+                background-image: url(./images/icon-slide1.png) !important;
                 background-size: 28px 20px;
                 background-position: center;
                 margin-top: -5px;
@@ -1382,7 +1382,7 @@
               &:hover {
                 // background-color: #FB3A32;
                 .yidun_slider__icon {
-                  background-image: url(./images/icon-slide.png);
+                  background-image: url(./images/icon-slide.png) !important;
                 }
               }
             }
@@ -1404,6 +1404,9 @@
             //   }
             // }
             .yidun_control {
+              .yidun_slider__icon {
+                background-image: url(./images/icon-succeed.png)!important;
+              }
               .yidun_slider {
                 .yidun_slider__icon {
                   background-image: url(./images/icon-succeed.png);
@@ -1431,6 +1434,15 @@
         //     background-color: #E2E2E2;
         //   }
         // }
+        .yidun.yidun--light{
+          .yidun_feedback{
+            background-position: 0px -240px;
+            height: 30px;
+          }
+          .yidun_refresh{
+            background-position: 0px -339px;
+          }
+        }
       }
     }
     .entryForm .blue {

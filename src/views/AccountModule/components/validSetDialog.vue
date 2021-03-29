@@ -2,7 +2,6 @@
   <VhallDialog
     :title="title"
     :visible.sync="visible"
-    :lock-scroll=false
     class="valid-set-dialog"
     width="400px">
     <div class="content">
@@ -14,7 +13,7 @@
         <el-form-item label="手机号" key="phone" prop="phone" v-if="showVo.executeType !== 'email' && showVo.step === 1">
           <el-input v-model.trim="form.phone" auto-complete="off" placeholder="请输入手机号" disabled :maxlength="30"/>
         </el-form-item>
-        <el-form-item label="图形码" v-show="showVo.step === 1 && showVo.executeType !== 'email'">
+        <el-form-item label="图形码" v-show="showVo.step === 1 && showVo.executeType !== 'email'" id="captcha-box">
           <div id="setCaptcha" class="captcha">
             <el-input  v-model.trim="form.imgCode"> </el-input>
           </div>
@@ -23,7 +22,7 @@
         <el-form-item label="动态密码" key="code" prop="code" v-if="showVo.step === 1">
           <div class="inputCode">
             <el-input v-model.trim="form.code" auto-complete="off" style="width: 141px" :maxlength="6"></el-input>
-            <span @click="getDyCode()" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+            <span @click="time == 60 && getDyCode()" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
           </div>
           <p class="codeTitle" v-if="sendText">{{sendText}}</p>
         </el-form-item>
@@ -45,7 +44,7 @@
         <el-form-item label="手机号" key="new_phone"  prop="new_phone" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入手机号" :maxlength="30"/>
         </el-form-item>
-        <el-form-item label="图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
+        <el-form-item label="图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)" id="captcha-box">
           <div id="setCaptcha1" class="captcha">
             <el-input  v-model.trim="form.imgCode1"> </el-input>
           </div>
@@ -54,7 +53,7 @@
         <el-form-item label="动态密码" key="new_code" prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
           <div class="inputCode">
             <el-input v-model.trim="form.new_code" auto-complete="off" style="width: 141px" :maxlength="6"></el-input>
-            <span @click="getDyCode1()" :class="showCaptcha1 ? 'isLoginActive' : ''">{{ time1 == 60 ? '获取验证码' : `${time1}秒后发送` }}</span>
+            <span @click="time1 == 60 && getDyCode1()" :class="showCaptcha1 ? 'isLoginActive' : ''">{{ time1 == 60 ? '获取验证码' : `${time1}秒后发送` }}</span>
           </div>
           <p class="codeTitle" v-if="sendText1">{{sendText1}}</p>
         </el-form-item>
@@ -859,5 +858,60 @@ export default {
   //   font-weight: normal;
   //   color: #ff0000;
   // }
+}
+#captcha-box{
+  .captcha {
+    // 云盾样式重置
+    /deep/.yidun_tips {
+        color: #999999;
+        line-height: 38px!important;
+        .yidun_tips__text {
+          vertical-align: initial;
+        }
+      }
+      /deep/.yidun_slider {
+        .yidun_slider__icon {
+          background-image: url(./images/icon-slide1.png) !important;
+          background-size: 28px 20px;
+          background-position: center;
+          margin-top: -5px;
+        }
+        &:hover {
+          .yidun_slider__icon {
+            background-image: url(./images/icon-slide.png) !important;
+          }
+        }
+      }
+      /deep/ .yidun--success {
+        .yidun_control {
+          .yidun_slider__icon {
+            background-image: url(./images/icon-succeed.png)!important;
+          }
+          .yidun_slider {
+            .yidun_slider__icon {
+              background-image: url(./images/icon-succeed.png);
+              background-size: 28px 20px;
+              background-position: center;
+            }
+            &:hover {
+              .yidun_slider__icon {
+                background-image: url(./images/icon-succeed.png);
+                background-size: 28px 20px;
+                background-position: center;
+              }
+            }
+          }
+        }
+      }
+    .yidun.yidun--light{
+      .yidun_feedback{
+        background-position: 0px -240px;
+        height: 30px;
+      }
+      .yidun_refresh{
+        background-position: 0px -339px;
+      }
+    }
+  }
 }
 </style>

@@ -30,7 +30,8 @@
                 <span class="ctx-span">元</span>
               </div>-->
               <VhallInput v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border" ref="payForm_fee" @input="formatInputs($event, 'payForm', 'fee')">
-                <template slot="append">元</template>
+                <i slot="suffix">元</i>
+                <!-- <template slot="append">元</template> -->
               </VhallInput>
             </el-form-item>
             <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
@@ -98,7 +99,7 @@
           <el-form :model="fCodePayForm" ref="fCodePayForm" :rules="fCodePayFormRules"  label-width="82px">
             <el-form-item label="付费金额" prop="fee">
               <VhallInput v-model.trim="fCodePayForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border" @input="formatInputs($event, 'fCodePayForm', 'fee')">
-                <template slot="append">元</template>
+                <i slot="suffix">元</i>
               </VhallInput>
             </el-form-item>
             <el-form-item label="生成邀请码" prop="nums">
@@ -703,6 +704,37 @@ export default {
 .viewer-rules-content {
   margin-top: 32px;
   /*height: 353px;*/
+  /deep/.el-form-item {
+    i{
+      font-style: normal;
+      padding: 0 10px;
+      color: #1a1a1a;
+      font-size: 14px;
+      font-family: @fontRegular;
+    }
+  }
+   /deep/.el-input-group__append {
+      width: 52px!important;
+      height: 38px;
+      background: #F7F7F7;
+      border-radius: 0 4px 4px 0;
+      position: absolute;
+      right: 1px;
+      top: 1px;
+      line-height: 38px;
+      text-align: center;
+      padding: 0 0;
+      margin: 0 0;
+      font-size: 14px;
+      font-family: @fontRegular;
+      font-weight: 400;
+      color: #666666;
+      border: 0;
+      span{
+        font-size: 14px;
+        color: #666666;
+      }
+    }
   /deep/.el-form-item__label {
     font-size: 14px;
     font-family: @fontRegular;
@@ -716,7 +748,7 @@ export default {
     height: 40px;
   }
   /deep/.el-form-item {
-    margin-bottom: 32px;
+    margin-bottom: 24px;
   }
   /deep/.el-form-item.switch__height {
     margin-bottom: 16px;
@@ -837,19 +869,6 @@ export default {
       margin: 0 8px;
     }
   }
-  .down-btn {
-    /* width: 118px;
-    height: 40px;
-    border-radius: 20px;
-    border: 1px solid #FB3A32;
-    font-size: 14px;
-    font-family: @fontRegular;
-    font-weight: 400;
-    color: #FB3A32;
-    line-height: 20px;
-    text-align: center;
-    padding: 0 0; */
-  }
 }
 .viewer-rules-ctx--2 {
   .tab__white {
@@ -923,7 +942,7 @@ export default {
       background: transparent;
     }
   }
-  &.btn-two {
+  // &.btn-two {
     /deep/.el-input-group__append {
       width: 52px!important;
       height: 38px;
@@ -942,7 +961,7 @@ export default {
       color: #666666;
       border: 0;
     }
-  }
+  // }
 }
 /deep/.saasicon_help_m {
   color: #999999;

@@ -83,7 +83,7 @@
       </null-page>
     </div>
     <!-- 添加分组/ 重命名分组 -->
-    <VhallDialog :title="groupDialog.title" v-if="groupDialog.visible" :visible.sync="groupDialog.visible" :lock-scroll='false' width="420px">
+    <VhallDialog :title="groupDialog.title" v-if="groupDialog.visible" :visible.sync="groupDialog.visible" width="420px">
       <el-form :model="groupForm" ref="groupForm" :rules="groupFormRules" @submit.native.prevent>
         <el-form-item prop="subject">
           <VhallInput v-model.trim="groupForm.subject" auto-complete="off" placeholder="请输入分组名称" :maxlength="15"
@@ -96,7 +96,7 @@
       </div>
     </VhallDialog>
     <!-- 添加观众/ 观众修改 -->
-    <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" :lock-scroll='false' width="484px">
+    <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" width="484px">
       <el-form :model="viewerForm" ref="viewerForm" :rules="viewerFormRules" :label-width="viewerDialog.formLabelWidth">
         <el-form-item label="姓名" prop="name">
           <VhallInput v-model="viewerForm.name" v-clearEmoij auto-complete="off" placeholder="请输入姓名（最多50个字符）" :maxlength="50"/>
@@ -123,7 +123,7 @@
       </div>
     </VhallDialog>
     <!-- 导入观众excel -->
-    <VhallDialog title="导入观众" :lock-scroll='false' :visible.sync="importFileShow" width="400px" @close="closeImportViewer">
+    <VhallDialog title="导入观众"  :visible.sync="importFileShow" width="400px" @close="closeImportViewer">
       <div class="upload-dialog-content">
         <file-upload
           ref="viewerUpload"
@@ -954,7 +954,7 @@ export default {
   width: calc(100% - 224px);
   .padding-table-list2();
   background: #FFFFFF;
-  min-height: 676px;
+  min-height: 640px;
   .data-list {
     min-height: auto;
     /deep/ .el-table__empty-block {
@@ -973,9 +973,10 @@ export default {
   border-radius: 4px;
   margin-left: 24px;
   padding: 24px 24px;
-  max-height: 778px;
+  padding-right: 10px;
+  max-height: 640px;
   ul {
-    max-height: 646px;
+    max-height: 520px;
     overflow-y: auto;
     position: relative;
     left: 6px;
@@ -989,7 +990,8 @@ export default {
       border-radius: 3px;
       transition: all 0.3s;
       cursor: pointer;
-      display: none;
+      // display: none;
+      // margin-left: 6px;
       background-color: #cccccc;
       &:hover {
         background-color: #cccccc;
@@ -1090,7 +1092,8 @@ export default {
   cursor: pointer;
 }
 .group_button__add {
-  text-align: center;
+  text-align: left;
+  margin-left: 6px;
   color: @font_color_h1;
   cursor: pointer;
   margin-bottom: 12px;

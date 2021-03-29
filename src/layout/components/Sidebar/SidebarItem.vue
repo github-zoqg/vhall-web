@@ -62,15 +62,21 @@ export default {
  computed: {
    newChild: function() {
     let children = this.item.children;
-    console.log(children);
+    // console.log('children', children);
     let userInfo = sessionOrLocal.get('userInfo');
+    let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+    let perVo = permissions ? JSON.parse(permissions) : {};
+    children = children.filter(items => {
+      return items.meta.name !== 'brandMgr' || ( items.meta.name === 'brandMgr' && !(perVo['ui.brand_setting'] == 0 && perVo['webinar_skins'] == 0))
+    })
     if (userInfo) {
       let vo = JSON.parse(userInfo);
       if(vo.parent_id > 0) {
-        return children.filter(item => item.meta.name !== 'sonMgr');
+        // 是子账号情况下，若路由不是子账号管理 或者 不是开发设置，展示
+        return children.filter(item => !(item.meta.name === 'sonMgr' || item.meta.name === 'devMgr'))
       } else {
-        let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
-        let perVo = permissions ? JSON.parse(permissions) : {};
+        // let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+        // let perVo = permissions ? JSON.parse(permissions) : {};
         // TODO 模拟 perVo['child_num_limit'] = 0;
         if (perVo && Number(perVo['child_num_limit']) !== 1) {
           // 父账号，但是没有子账号管理
@@ -78,10 +84,11 @@ export default {
             if(item.meta.auth_key) {
               // 配置了该项，表示按照此权限处理；未配置该项，正常处理
                console.log('4')
-              return item.meta.name !== 'sonMgr' && item.meta.auth_key && perVo && perVo[item.meta.auth_key] > 0
+              return  !(item.meta.name === 'sonMgr') && item.meta.auth_key && perVo && perVo[item.meta.auth_key] > 0
             } else {
-               console.log('3')
-              return item.meta.name !== 'sonMgr';
+              console.log('3')
+
+              return  !(item.meta.name === 'sonMgr');
             }
           });
         } else {

@@ -22,56 +22,72 @@ const router = [
   {
     path: '/setting',
     component: Layout,
-    redirect: '/setting/info',
-    meta: { auth: true, title: '设置中心', name: 'settingMgr'},
+    redirect: '/setting/chat',
+    meta: { auth: true, title: '设置中心', name: 'settingMgr', icon: 'saasicon_Settings'},
     children: [
+      // {
+      //   path: 'info',
+      //   component: () => import('@/views/SettingModule/setting.vue'),
+      //   meta: { auth: true, title: '开发设置', name: 'settingInfo', activeMenu: '/setting/info' }
+      // }, // 开发设置 - 总览页隐藏
       {
-        path: 'info',
-        component: () => import('@/views/SettingModule/setting.vue'),
-        meta: { auth: true, title: '设置中心', name: 'settingInfo' ,icon: 'saasicon_Settings' }
-      },
-      {
-        path: 'chat/:str(\\d+)',
+        path: 'chat',
         component: () => import('@/views/SettingModule/chat'),
         name: 'chat',
-        meta:{ auth: true, title: '聊天严禁词', name: 'chatMgr', activeMenu: '/setting/info'},
-        hidden: true
+        meta:{ auth: true, title: '聊天严禁词', name: 'chatMgr', activeMenu: '/setting/chat'},
       },
-      // {
-      //   path: '/dev/:str(\\d+)',
-      //   component: () => import('@/views/SettingModule/dev'),
-      //   name: 'dev',
-      //   meta:{ title: '开发设置', icon: '' , activeMenu: '/setting/info'},
-      //   hidden: true
-      // },
+      {
+        path: '/setting/dev',
+        component: () => import('@/views/SettingModule/setting'),
+        name: 'dev',
+        meta:{ title: '开发设置', icon: '' ,name: 'devMgr', activeMenu: '/setting/dev'},
+      },
+      {
+        path: 'logo',
+        component: () => import('@/views/SettingModule/logo'),
+        name: 'logo',
+        meta:{ auth: true, title: '控制台标识', name: 'logoMgr', activeMenu: '/setting/logo'},
+      },
+      {
+        path: 'function',
+        component: () => import('@/views/SettingModule/setFunction'),
+        name: 'function',
+        meta:{ auth: true, title: '功能配置', name: 'functionMgr', activeMenu: '/setting/function'},
+      },
+      {
+        path: 'brand',
+        component: () => import('@/views/SettingModule/setBrand'),
+        name: 'brand',
+        meta:{ auth: true, title: '品牌设置', name: 'brandMgr', activeMenu: '/setting/brand'},
+      },
+      {
+        path: 'player',
+        component: () => import('@/views/SettingModule/setPlayer'),
+        name: 'player',
+        meta:{ auth: true, title: '播放器设置', name: 'playerMgr', activeMenu: '/setting/player', auth_key: 'player_config'},
+      },
       {
         path: '/dev/add',
         component: () => import('@/views/SettingModule/Development/appInfo'),
-        meta:{ auth: true, title: '新增应用', name: 'devAdd', activeMenu: '/setting/info', action: 'add'},
+        meta:{ auth: true, title: '新增应用', name: 'devAdd', activeMenu: '/setting/dev', action: 'add'},
         hidden: true
       },
       {
         path: '/dev/:appId(\\d+)',
         component: () => import('@/views/SettingModule/Development/appInfo'),
-        meta:{ auth: true, title: '应用详情', name: 'devModify', activeMenu: '/setting/info', action: 'detail'},
-        hidden: true
-      },
-      {
-        path: '/dev/list',
-        component: () => import('@/views/SettingModule/Development/list'),
-        meta:{ auth: true, title: '开发设置', name: 'devList', activeMenu: '/setting/info'},
+        meta:{ auth: true, title: '应用详情', name: 'devModify', activeMenu: '/setting/dev', action: 'detail'},
         hidden: true
       },
       {
         path: '/dev/callback',
         component: () => import('@/views/SettingModule/Development/callback'),
-        meta:{ auth: true, title: '回调设置', name: 'devCallback', activeMenu: '/setting/info'},
+        meta:{ auth: true, title: '回调设置', name: 'devCallback', activeMenu: '/setting/dev'},
         hidden: true
       },
       {
         path: 'logo/:str(\\d+)',
         component: () => import('@/views/SettingModule/logo'),
-        meta:{ auth: true, title: '控制台标识', name: 'logoSetting',activeMenu: '/setting/info'},
+        meta:{ auth: true, title: '控制台标识', name: 'logoSetting',activeMenu: '/setting/logo'},
         hidden: true
       }
     ]

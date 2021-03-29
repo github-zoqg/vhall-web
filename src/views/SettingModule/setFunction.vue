@@ -1,19 +1,6 @@
 <template>
   <div class="page-padding">
-    <pageTitle pageTitle="功能配置">
-      <div class="title_text">
-        <p class="switch__box">
-          <el-switch
-            v-model="functionOpen"
-            active-color="#FB3A32"
-            inactive-color="#CECECE"
-            @change="closefunctionOpen"
-            :active-text="reservationDesc">
-          </el-switch>
-          <span @click="toSettingDetail">查看账号下功能配置</span>
-        </p>
-      </div>
-    </pageTitle>
+    <pageTitle pageTitle="功能配置"></pageTitle>
     <!-- 内容区域  -->
     <div class="plan-func-main">
       <div class="plan-func-form">
@@ -51,7 +38,6 @@
             </li>
           </ul>
         </div>
-        <div class="hide-white" v-if="!functionOpen"></div>
       </div>
       <div class="plan-func-preview">
         <!-- 模拟开关 -->
@@ -60,20 +46,20 @@
           <span :class="switchType === 'pc' ? 'active' : ''" @click.prevent.stop="changeSwitch('pc')">PC预览</span>
         </div>
         <!--PC预览,begin-->
-        <div :class="['plan-func-pc', {'zj': !chapterCompute}]" :style="{opacity: switchType === 'pc' ? 1 : 0}">
+        <div :class="['plan-func-pc', {'zj': !chapterCompute}]" v-show="switchType === 'pc'">
           <span class="share-span" v-if="shareCompute"></span>
           <div class="icon-spans">
            <span class="reward-span" v-if="rewardCompute"></span><span class="gift-span" v-if="giftCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
         </div>
         <!--手机预览,begin-->
-        <div :class="['plan-func-app', {'visible': !chapterCompute}]" :style="{opacity: switchType === 'app' ? 1 : 0}">
+        <div :class="['plan-func-app', {'visible': !chapterCompute}]" v-show="switchType === 'app'">
           <span class="chat-span">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
           <div class="icon-spans">
             <span class="gift-span" v-if="giftCompute"></span><span  class="reward-span" v-if="rewardCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
         </div>
-        <div :class="['plan-func-app', 'zj', {'visible': chapterCompute}]" :style="{opacity: switchType === 'app' ? 1 : 0}">
+        <div :class="['plan-func-app', 'zj', {'visible': chapterCompute}]" v-show="switchType === 'app'">
           <span class="chat-span">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
           <div class="icon-spans">
             <span class="gift-span" v-if="giftCompute"></span><span  class="reward-span" v-if="rewardCompute"></span><span class="like-span" v-if="likeCompute"></span>
@@ -81,26 +67,21 @@
         </div>
       </div>
     </div>
-    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
 import {sessionOrLocal} from "@/utils/utils";
-import beginPlay from '@/components/beginBtn';
 export default {
-  name: "planFunction",
+  name: "functionMgr",
   components: {
     PageTitle,
-    beginPlay
   },
   data() {
     return {
       switchType: 'app',
       query: {},
-      functionOpen: true,
-      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       keyList: [],
       liveKeyList: []
     };
@@ -129,14 +110,7 @@ export default {
     chapterCompute: function() {
       let voArr =  this.liveKeyList.filter(item => item.type === 'ui.watch_record_chapter')[0];
       return !(voArr && voArr.value > 0);
-    },
-    reservationDesc(){
-      if(this.functionOpen){
-        return '已开启，使用当前活动功能配置设置';
-      }else{
-        return "开启后，将使用当前活动功能配置设置";
-      }
-    },
+    }
   },
   methods: {
     showLiveKey(key) {
@@ -145,17 +119,6 @@ export default {
       console.log(live, liveKey)
       return live[0] || liveKey[0]
     },
-    // 获取配置项
-    getPermission() {
-      let userId = JSON.parse(sessionOrLocal.get("userId"));
-      this.$fetch('planFunctionGet', {webinar_id: this.$route.params.str, webinar_user_id: userId, scene_id: 1}).then(res => {
-        if(res.code == 200) {
-          let permissions = JSON.parse(res.data.permissions)
-          this.functionOpen = permissions['is_function_cofig'] > 0 ? true : false
-          this.planFunctionGet();
-        }
-      }).catch(e => {});
-    },
     // 预览切换
     changeSwitch(type) {
       this.switchType = type;
@@ -163,7 +126,6 @@ export default {
     changeStatus(callback, item) {
       item.value = Number(!callback)
       let params = {
-        webinar_id: this.$route.params.str,
         permission_key: item.type,
         status: Number(callback)
       };
@@ -194,8 +156,8 @@ export default {
     },
     planSuccessRender (data) {
       let dataVo = JSON.parse(data);
-      console.log(dataVo, '功能配置');
-      let permissions = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+      // console.log(dataVo, '功能配置');
+      let permissions = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'));
       // let perVo = permissions ? JSON.parse(permissions) : {};
       // if(perVo['ui.record_chapter'] === '' || perVo['ui.record_chapter'] === '') {
       //   perVo['ui.record_chapter'] = 1;
@@ -259,12 +221,11 @@ export default {
     },
     // 获取可配置选项
     planFunctionGet() {
-      let params = {
-        webinar_id: this.functionOpen ? this.$route.params.str : '',
-        webinar_user_id: this.functionOpen ? sessionOrLocal.get('userId') : '',
+      this.$fetch('planFunctionGet', {
+        // webinar_user_id: sessionOrLocal.get('userId'),
+        type: 2,
         scene_id: 2
-      }
-      this.$fetch('planFunctionGet', this.$params(params)).then(res=>{
+      }).then(res=>{
         console.log(res);
         // 数据渲染
         if (res.data) {
@@ -274,45 +235,10 @@ export default {
         console.log(res);
         this.planErrorRender(res);
       });
-    },
-    closefunctionOpen() {
-      let params = {
-        webinar_id: this.$route.params.str,
-        permission_key: 'is_function_cofig',
-        status: Number(this.functionOpen)
-      };
-      console.log('当前参数传递：', params);
-      this.$fetch('planFunctionEdit', params).then(res => {
-       if (!this.functionOpen){
-          this.functionOpen = false;
-          this.planFunctionGet();
-          this.$message({
-            message:"正在使用账号下功能配置",
-            showClose: true,
-            type: 'warning',
-            customClass: 'zdy-info-box'
-          });
-        } else {
-          this.functionOpen = true;
-          this.planFunctionGet();
-        }
-      }).catch(res => {
-        this.$message({
-          message: res.msg || `操作失败`,
-          showClose: true,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-      });
-    },
-    toSettingDetail() {
-      const { href } = this.$router.resolve({path:'/setting/function'});
-      window.open(href, '_blank');
-    },
+    }
   },
   created() {
-    // this.functionOpen = this.perssionInfo.is_function_cofig > 0 ? true : false
-    this.getPermission();
+    this.planFunctionGet();
   }
 };
 </script>
@@ -322,21 +248,6 @@ export default {
 @import '../../common/css/base.less';
 .page-padding {
   padding: 0 0;
-  /deep/.el-switch__label {
-    color: #999;
-    &.is-active{
-      color: #999;
-    }
-  }
-  .title_text{
-    color: #999;
-    font-size: 14px;
-    span{
-      color: #3562FA;
-      cursor: pointer;
-      vertical-align: middle;
-    }
-  }
 }
 .plan-func-main {
   display: flex;
@@ -349,16 +260,6 @@ export default {
 .plan-func-form {
   width: 500px;
   margin-right: 64px;
-  position: relative;
-}
-.hide-white{
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top:0;
-  left:0;
-  background: rgba(255, 255, 255, 0.5);
-  z-index: 9;
 }
 .h1__title {
   margin-bottom: 32px;
@@ -404,10 +305,6 @@ export default {
   background-position: center;
   background-size: cover;
   position: relative;
-  -webkit-transition: opacity 0.15s ease-in-out;
-  -moz-transition: opacity 0.15s ease-in-out;
-  -o-transition: opacity 0.15s ease-in-out;
-  transition: opacity 0.15s ease-in-out;
   &.zj {
     background-image: url('../../common/images/plan-function/pc-zj.png');
   }
@@ -458,10 +355,10 @@ export default {
   position: absolute;
   left:0;
   top:54px;
-  -webkit-transition: opacity 0.15s ease-in-out;
-  -moz-transition: opacity 0.15s ease-in-out;
-  -o-transition: opacity 0.15s ease-in-out;
-  transition: opacity 0.15s ease-in-out;
+  -webkit-transition: opacity 0.5s ease-in-out;
+  -moz-transition: opacity 0.5s ease-in-out;
+  -o-transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
   &.visible {
     opacity:0;
     filter: alpha(opacity=0);

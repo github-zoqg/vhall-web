@@ -81,7 +81,7 @@
                   <!-- {{scope.row}} -->
                   <p v-if="scope.row.transcode_status_text">
                     <!-- 列表 -->
-                    <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : 'failer'">{{ scope.row.transcode_status_text }}</span>
+                    <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : scope.row.transcode_status == 0 ? 'wating' : 'failer'">{{ scope.row.transcode_status_text }}</span>
                   </p>
                 </div>
               </template>
@@ -607,6 +607,11 @@ export default {
   /deep/ thead tr th:nth-child(2) .cell{
     padding-left: 10px;
   }
+  /deep/.el-table__row:hover{
+   .el-button{
+      color: #FB3A32;
+    }
+  }
 }
 // /deep/.el-input__inner{
 //     padding: 0 12px;
@@ -655,6 +660,9 @@ export default {
       color: #ff733c;
       padding-right: 3px;
     }
+  }
+  /deep/.el-progress-bar__inner {
+   background-color: #14BA6A;
   }
   .statusTag{
     font-size: 14px;
@@ -728,10 +736,10 @@ export default {
     }
     /deep/ .el-dialog__body{
       width: 642px;
-      height: 375px;
-      border-top: 4px solid #1a1a1a;
-      border-bottom: 4px solid #1a1a1a;
-      background: #1a1a1a;
+      height: 361px;
+      border-top: 4px solid #000;
+      border-bottom: 4px solid #000;
+      background: #000;
       border-radius: 4px;
       padding: 0 4px;
     }

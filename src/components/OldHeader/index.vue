@@ -30,11 +30,11 @@
                   <span>{{show_name}}</span>
                 </div>
                 <el-dropdown-menu slot="dropdown" class="user-dropdown">
-                  <el-dropdown-item divided @click.native="toLive">我的直播</el-dropdown-item>
-                  <el-dropdown-item divided @click.native="toFinance">账户中心</el-dropdown-item>
-                  <el-dropdown-item divided @click.native="toMyHome">我的主页</el-dropdown-item>
-                  <el-dropdown-item divided @click.native="toAccount">账户设置</el-dropdown-item>
-                  <el-dropdown-item divided @click.native="loginOut">退出</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="toLive"><i class="iconfont-v3 saasicon_lives1"></i> 我的直播</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="toFinance"><i class="iconfont-v3 saasicon_account1"></i> 账户中心</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="toMyHome"><i class="iconfont-v3 saasicon_home1"></i> 我的主页</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="toAccount"><i class="iconfont-v3 saasicon_Settings1"></i> 账户设置</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="loginOut"><i class="iconfont-v3 saasicon_exit"></i> 退出</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
@@ -348,6 +348,8 @@ header.commen-header {
     font-weight: 400;
     color: rgba(0, 0, 0, 0.65);
     border-radius: 0 0 4px 4px;
+    text-align: left;
+    padding: 0 16px;
   }
   li:first-child {
     border-radius: 4px 4px 0 0;
@@ -364,10 +366,13 @@ header.commen-header {
   .hover-icon {
     margin-right: 12px;
   }
-
+  .iconfont-v3{
+    font-size: 16px;
+    vertical-align: bottom;
+  }
   .el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover {
-    background-color: #ffebeb;
-    color: #FB3A32;
+    background-color: #f7f7f7;
+    color: #1a1a1a;
   }
 }
 </style>

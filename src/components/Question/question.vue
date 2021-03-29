@@ -11,7 +11,6 @@
       title="提示"
       :visible.sync="dialogTongVisible"
       :close-on-click-modal="false"
-      :lock-scroll=false
       class="zdy-async-dialog"
       width="400px"
     >
@@ -223,22 +222,6 @@ export default {
 <style lang="less">
   .qs-preview-box-content .cef-q-wrap{
     z-index: 3000;
-  }
-  #qs-preview-box-content /deep/.q-title{
-    padding: 0 75px;
-    color: #1A1A1A;
-    font-weight: 500;
-    font-size: 22px;
-    line-height: 33px;
-    font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
-  }
-  #qs-preview-box-content /deep/.q-des{
-    margin: 20px 75px 0 !important;
-    color: #666;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 20px;
-    font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   }
   .async__ctx {
     /deep/.el-checkbox__input.is-focus .el-checkbox__inner {

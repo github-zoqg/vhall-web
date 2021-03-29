@@ -119,7 +119,7 @@
                 auto-complete="off"
                 v-model.trim="dynamicForm.dynamic_code">
                 <template slot="append">
-                  <span @click="getDyCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
+                  <span @click="time == 60 && getDyCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
                 </template>
               </el-input>
             </div>
@@ -171,7 +171,7 @@
                   auto-complete="off"
                   v-model="registerForm.code">
                   <template slot="append">
-                    <span @click="getRegisterCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
+                    <span @click="time == 60 && getRegisterCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
                   </template>
                 </VhallInput>
               </div>
@@ -793,11 +793,11 @@ export default {
     border-radius: unset;
     padding: 0 0;
     &:hover {
-      border-bottom-color: #FB3A32;
+      border-bottom-color: #666;
     }
     &:active {
       color: #1A1A1A;
-      border-color: #FB3A32;
+      border-color: #666;
     }
   }
   input::-webkit-input-placeholder {
@@ -848,74 +848,60 @@ export default {
       cursor: pointer;
     }
   }
-  &#captcha-box {
+}
+#captcha-box {
+  .captcha {
     // 云盾样式重置
-    /deep/ .yidun {
+   /deep/.yidun_tips {
+      color: #999999;
+      line-height: 38px!important;
+      .yidun_tips__text {
+        vertical-align: initial;
+      }
+    }
+    /deep/.yidun_slider {
+      .yidun_slider__icon {
+        background-image: url(./images/icon-slide1.png) !important;
+        background-size: 28px 20px;
+        background-position: center;
+        margin-top: -5px;
+      }
+      &:hover {
+        .yidun_slider__icon {
+          background-image: url(./images/icon-slide.png) !important;
+        }
+      }
+    }
+    /deep/ .yidun--success {
       .yidun_control {
-        border: 1px solid #e2e2e2;
-        background-color: #ffffff;
-        .yidun_tips {
-          height: 38px;
-          line-height: 38px!important;
-          .yidun_tips__text {
-            color: #888888;
-            font-size: 14px;
-          }
+        .yidun_slider__icon {
+          background-image: url(./images/icon-succeed.png)!important;
         }
         .yidun_slider {
           .yidun_slider__icon {
-            background-image: url(./images/icon-slide1.png);
+            background-image: url(./images/icon-succeed.png);
             background-size: 28px 20px;
             background-position: center;
           }
           &:hover {
-            // background-color: #FB3A32;
-            .yidun_slider__icon {
-              background-image: url(./images/icon-slide.png);
-            }
-          }
-        }
-        // &.yidun_control--moving {
-        //   background-color: #E2E2E2;
-        //   border-color: #FB3A32;
-        //   .yidun_slide_indicator {
-        //     border-color: #FB3A32;
-        //     background-color: #E2E2E2;
-        //   }
-        // }
-      }
-    }
-    /deep/ .yidun--success {
-      // .yidun_control--moving {
-      //   background-color: #F0F1FE!important;
-      //   .yidun_slide_indicator {
-      //     background-color: #F0F1FE!important;
-      //   }
-      // }
-      .yidun_control {
-        // border-color: #3562FA!important;
-        .yidun_slider {
-          .yidun_slider__icon {
-            background-image: url(./images/icon-succeed.png);
-          }
-          &:hover {
-            // background-color: #FB3A32;
             .yidun_slider__icon {
               background-image: url(./images/icon-succeed.png);
+              background-size: 28px 20px;
+              background-position: center;
             }
           }
         }
       }
     }
-    // .yidun.yidun--light.yidun--success.yidun--jigsaw {
-    //   .yidun_control .yidun_slider {
-    //     background-color: #3562FA;
-    //   }
-    //   .yidun_slide_indicator {
-    //     border-color: #3562FA;
-    //     background-color: #E2E2E2;
-    //   }
-    // }
+    .yidun.yidun--light{
+      .yidun_feedback{
+        background-position: 0px -240px;
+        height: 30px;
+      }
+      .yidun_refresh{
+        background-position: 0px -339px;
+      }
+    }
   }
 }
 .form-items {

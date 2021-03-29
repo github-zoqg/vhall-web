@@ -13,7 +13,10 @@ Vue.use(vuescroll, {
     // The global config
     bar: {
       background: 'rgba(0,0,0,0.3)'
-    }
+    },
+    /* scrollPanel: {
+      initialScrollY: '100%'
+    } */
   },
   name: 'vhscroll' // customize component name, default -> vueScroll
 });

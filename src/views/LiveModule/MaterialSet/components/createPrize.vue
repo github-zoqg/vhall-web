@@ -6,7 +6,6 @@
       v-if="dialogVisible"
       :close-on-click-modal=false
       :close-on-press-escape=false
-      :lock-scroll=false
       width="468px">
       <el-form :model="prizeForm" :rules="rules" ref="prizeForm" label-width="80px" onsubmit="return false;">
         <el-form-item label="图片上传" required>
@@ -40,7 +39,6 @@
       :visible.sync="dialogPrizeVisible"
       :close-on-click-modal="false"
       :before-close="handleClose"
-      :lock-scroll=false
       style="overflow: hidden;"
       custom-class="choose-gift"
       width="588px">
@@ -82,7 +80,6 @@
       title="提示"
       :visible.sync="dialogTongVisible"
       :close-on-click-modal="false"
-      :lock-scroll=false
       class="zdy-async-dialog"
       width="400px"
     >

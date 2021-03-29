@@ -67,7 +67,6 @@
       width="460px"
       :visible.sync="roleDialogVisible"
       :title="roleForm.executeType === 'edit' ? '编辑角色' : '创建角色'"
-      :lock-scroll=false
       class="role-dialog"
       append-to-body>
       <el-form :model="roleForm" ref="roleForm" :rules="roleFormRules" label-width="80px">

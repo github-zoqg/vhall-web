@@ -37,7 +37,7 @@
         </el-form>
       </div>
       <!-- 聊天严禁词弹出框 -->
-      <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false  @close="handleClose">
+      <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow"  @close="handleClose">
         <div class="chat-dialog-content">
           <!-- 全部无结果 -->
           <div class="all-no-data" v-if="total === 0  && pageInfo.keyword === ''">
@@ -64,7 +64,7 @@
                   >
                   <i
                     class="el-icon-search el-input__icon"
-                    slot="suffix"
+                    slot="prefix"
                     @click="searchKeyWord">
                   </i>
                 </el-input>
@@ -76,6 +76,7 @@
               tooltip-effect="dark"
               style="width: 100%"
               class="table-td56"
+              height="328px"
               max-height="328px"
               :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
               @selection-change="checkMoreRow"
@@ -114,7 +115,7 @@
         </div>
       </VhallDialog>
       <!-- 添加严禁词 -->
-      <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body :lock-scroll=false>
+      <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body >
         <div :class="`chat-add-dialog-content ${addForm.executeType}`">
           <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
             <el-form-item label="严禁词" prop="name">
@@ -144,7 +145,7 @@
         </div>
       </VhallDialog>
       <!-- 批量上传 -->
-      <VhallDialog class="addForbidWord" width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false @close="closeImportChat">
+      <VhallDialog class="addForbidWord" width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body  @close="closeImportChat">
         <div class="upload-dialog-content">
           <file-upload
             ref="chatUpload"
@@ -197,7 +198,7 @@ import NullPage from '../PlatformModule/Error/nullPage.vue';
 import {sessionOrLocal} from "@/utils/utils";
 import env from "@/api/env";
 export default {
-  name: "chat.vue",
+  name: "chatMgr",
   components: {
     PageTitle,
     FileUpload,
@@ -775,11 +776,11 @@ export default {
       .el-input__icon{
         cursor: pointer;
       }
-      /deep/ .el-input__suffix {
+      /deep/ .el-input__prefix {
         cursor: pointer;
         /deep/ .el-input__icon {
-          width: auto;
-          margin-right: 5px;
+          // width: auto;
+          // margin-right: 5px;
           line-height: 36px;
         }
       }
@@ -791,7 +792,7 @@ export default {
       color: #666666;
       height: 36px;
       line-height: 36px;
-      padding-right: 50px;
+      padding-right: 30px;
     }
   }
 }

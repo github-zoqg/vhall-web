@@ -92,7 +92,7 @@
       <!--<el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
         <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>-->
-      <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false' height="458px" :modalClick=true>
+      <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" height="458px" :modalClick=true>
         <div class="loadingWrap"  element-loading-background="rgba(255,255,255)" v-loading="!docLoadComplete"  v-show="!docLoadComplete"></div>
         <div style="position: relative;height: 396px;" v-show="isDot && docLoadComplete">
           <!-- 动态文档区域-->
@@ -115,7 +115,6 @@
     <VhallDialog
       title="提示"
       :visible.sync="asyncDialog.visible"
-      :lock-scroll=false
       class="zdy-async-dialog"
       width="400px"
     >
@@ -1187,7 +1186,7 @@ export default {
     }
   }
   /deep/.el-dialog__body {
-    padding: 16px 16px 0 16px;
+    padding: 4px 4px 0 4px;
   }
   /deep/.el-loading-mask {
     border-radius: 4px;

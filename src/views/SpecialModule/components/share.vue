@@ -5,7 +5,6 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       customClass="share-dialog"
-      :lock-scroll='false'
       width="570px">
       <div class="content">
         <div class="share-div">
@@ -201,6 +200,7 @@ export default {
        /deep/.el-input__inner {
         border: none;
         height: 38px;
+        padding: 0 0 0 12px;
       }
       span{
         display: inline-block;

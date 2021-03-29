@@ -1,19 +1,6 @@
 <template>
   <div class="prize-card">
-    <pageTitle pageTitle="播放器设置">
-      <div class="title_text"  v-if="reservationDisable">
-        <p class="switch__box">
-          <el-switch
-            v-model="playerOpen"
-            active-color="#FB3A32"
-            inactive-color="#CECECE"
-            @change="closePlayerOpen"
-            :active-text="reservationDesc">
-          </el-switch>
-          <span @click="toSettingDetail">查看账号下播放器设置</span>
-        </p>
-      </div>
-    </pageTitle>
+    <pageTitle pageTitle="播放器设置"></pageTitle>
     <div class="player-set" style="min-height:741px;">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="防录屏跑马灯" name="first">
@@ -95,7 +82,7 @@
                 </el-form-item>
               </el-form>
             </div>
-            <div class="give-white" v-show="!(scrolling_open && playerOpen)" :class="playerOpen ? 'webinarTop' : 'userTop'"></div>
+            <div class="give-white" v-show="!scrolling_open"></div>
           </div>
         </el-tab-pane>
         <el-tab-pane label="水印设置" name="second">
@@ -123,6 +110,8 @@
                       path: 'interacts/watermark-imgs',
                       type: 'image',
                     }"
+                    :heightImg="130"
+                    :widthImg="231"
                     :on-success="uploadAdvSuccess"
                     :on-progress="uploadProcess"
                     :on-error="uploadError"
@@ -152,7 +141,7 @@
                 </el-form-item>
               </el-form>
             </div>
-            <div class="give-white" v-show="!(watermark_open && playerOpen)" :class="playerOpen ? 'webinarTop' : 'userTop'"></div>
+            <div class="give-white" v-show="!watermark_open"></div>
           </div>
         </el-tab-pane>
         <el-tab-pane label="其它" name="third">
@@ -197,7 +186,6 @@
             </el-form-item>
           </el-form>
           </div>
-          <div class="give-white" v-show="!playerOpen" :class="playerOpen ? '' : 'userTop'"></div>
         </div>
         </el-tab-pane>
       </el-tabs>
@@ -273,7 +261,6 @@
           </p>
       </div>
     </div>
-    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 
@@ -282,11 +269,10 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import ColorSet from '@/components/ColorSelect';
 import { sessionOrLocal, debounce } from '@/utils/utils';
-import beginPlay from '@/components/beginBtn';
 import { secondToDateZH } from '@/utils/general';
-import controle from './js/control';
+import controle from '../LiveModule/Brands/js/control';
 export default {
-  name: 'playerSet',
+  name: 'playerMgr',
   mixins: [controle],
   data() {
     const intervalValidate = (rule, value, callback) => {
@@ -303,11 +289,8 @@ export default {
     };
     this.$Vhallplayer = null;
     return {
-      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
-      perssionWebInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
       activeName: 'first',
       isShowSpeed: false,
-      playerOpen: true,
       sliderVal: 0, // seek
       hoverLeft: 10,
       hoveVideo:false,
@@ -352,6 +335,7 @@ export default {
         color: '#FFFFFF', // 六位
         text_type: 2,
         size: 20,
+        type: 2,
         speed: 6000,
         text: '版权所有，盗版必究',
         position: 1,
@@ -363,13 +347,15 @@ export default {
       formWatermark: {
         img_position: 2,
         img_url: '',
-        img_alpha: 100
+        img_alpha: 100,
+        type: 2
       },
       domain_url: '',
       formOther: {
         progress: true,
         bulletChat: false,
         doubleSpeed: false,
+        type: 2,
       },
       prizeForm: {
         name: '',
@@ -403,7 +389,6 @@ export default {
     PageTitle,
     upload,
     ColorSet,
-    beginPlay
   },
   computed: {
     horseLampText(){
@@ -440,20 +425,6 @@ export default {
       }else{
         return "开启后，观看回放时播放器画面显示倍速功能";
       }
-    },
-    reservationDesc(){
-      if(this.playerOpen){
-        return '已开启，使用当前活动播放器设置';
-      }else{
-        return "开启后，将使用当前活动播放器设置";
-      }
-    },
-    reservationDisable() {
-      if (this.perssionWebInfo['player_config'] > 0) {
-        return true
-      } else {
-        return false
-      }
     }
   },
   filters: {
@@ -463,9 +434,12 @@ export default {
   },
   created() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
-    this.getPermission()
     this.getFontList();
     this.getVideoAppid();
+    this.getBasescrollingList();
+    this.getBaseWaterList();
+    // 获取其他信息
+    this.getBaseOtherList();
   },
   mounted () {
   },
@@ -476,19 +450,6 @@ export default {
     }
   },
   methods: {
-    // 获取配置项
-    getPermission() {
-      this.$fetch('planFunctionGet', {webinar_id: this.$route.params.str, webinar_user_id: this.userId, scene_id: 1}).then(res => {
-        if(res.code == 200) {
-          let permissions = JSON.parse(res.data.permissions)
-          this.playerOpen = permissions['is_player_cofig'] > 0 ? true : false
-          this.getBasescrollingList();
-          this.getBaseWaterList();
-          // 获取其他信息
-          this.getBaseOtherList();
-        }
-      }).catch(e => {});
-    },
     blurChange() {
       if (!this.formHorse.interval || this.formHorse.interval < 0) {
         this.formHorse.interval = 20;
@@ -497,38 +458,6 @@ export default {
     },
     choseSpeed() {
       this.isShowSpeed = true;
-    },
-    closePlayerOpen() {
-      let params = {
-        webinar_id: this.$route.params.str,
-        permission_key: 'is_player_cofig',
-        status: Number(this.playerOpen)
-      };
-      console.log('当前参数传递：', params);
-      this.$fetch('planFunctionEdit', params).then(res => {
-        this.getBasescrollingList();
-        this.getBaseWaterList();
-        this.getBaseOtherList();
-        if (!this.playerOpen){
-          this.$message({
-            message:"正在使用账号下品牌设置",
-            showClose: true,
-            type: 'warning',
-            customClass: 'zdy-info-box'
-          });
-        }
-      }).catch(res => {
-        this.$message({
-          message: res.msg || `操作失败`,
-          showClose: true,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-      });
-    },
-    toSettingDetail() {
-      const { href } = this.$router.resolve({path:'/setting/player'});
-      window.open(href, '_blank');
     },
     choseOtherSpeed(item) {
       this.isShowSpeed = false;
@@ -554,7 +483,6 @@ export default {
     pageStyleHandle(color) {
       this.formHorse.color = color;
       this.editHorseInfo();
-      console.log(color, '??????????????????')
     },
     getFontList() {
       let num = 10;
@@ -582,52 +510,8 @@ export default {
       }
     },
     // 关闭或保存其他信息
-    otherOtherInfo(value) {
+    otherOtherInfo() {
       this.preOthersOptions();
-      // 1--弹幕  2--进度条  3--倍速
-      // switch (value) {
-      //   case 1 :
-      //     if (this.formOther.bulletChat) {
-      //       let content = "弹幕已开启";
-      //       var opt = {
-      //             position: 0,     // 位置   int  0上    1中  2下  3全屏
-      //             alpha: 1,      // 透明度 int  0~1
-      //             fontsize: 15,    // 字体大小 int
-      //             color: "#000000"  // 颜色   string
-      //           }
-      //       vp.setBarrageInfo(opt ,failure=>{
-      //         console.log('failure',failure);
-      //       } )
-      //       vp.openBarrage()
-      //       setTimeout (()=>{
-      //         vp.addBarrage(content , failure=>{
-      //           console.log('failure',failure);
-      //         })
-      //       },2000)
-
-      //     } else {
-      //       vp.closeBarrage()
-      //     }
-      //     break;
-      //   case 2 :
-      //     // eslint-disable-next-line no-case-declarations
-      //     let progressContainer =  document.querySelector('.vhallPlayer-progress-container')
-      //      this.formOther.progress ? progressContainer.style.display = 'block' : progressContainer.style.display = 'none'
-      //     break;
-      //   case 3 :
-      //     // eslint-disable-next-line no-case-declarations
-      //     let list = this.$Vhallplayer.getUsableSpeed()
-      //     console.log(list, '?????????')
-      //     if (this.formOther.doubleSpeed) {
-      //       this.$Vhallplayer.setPlaySpeed(list[0])
-
-      //        document.querySelector('.vhallPlayer-speed-component').style.display = "block"
-      //     }else {
-      //       document.querySelector('.vhallPlayer-speed-component').style.display = "none"
-      //     }
-      //     break;
-      // }
-      // this.initNodePlay()
     },
     getMarqueeOptionInfo() {
       let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
@@ -640,7 +524,7 @@ export default {
         alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
         size:this.formHorse.size,      // 文字大小
         color: this.formHorse.color || '#FFFFFF',   //  文字颜色
-        interval: this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
+        interval:this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: this.formHorse.speed || 6000, // 跑马灯移动速度  3000快     6000中   10000慢
         // displayType: this.formHorse.scroll_type == 1 ? 0 : 1,
         position:this.formHorse.position
@@ -648,11 +532,7 @@ export default {
     },
     // 获取跑马灯基本信息
     getBasescrollingList() {
-      let params = {
-        type: this.playerOpen ? 1 : 2,
-        webinar_id: this.playerOpen ? this.$route.params.str : ''
-      }
-      this.$fetch('getScrolling', this.$params(params)).then(res => {
+      this.$fetch('getScrolling', {type: 2}).then(res => {
         if (res.code == 200) {
           this.formHorse = {...res.data};
           this.$nextTick(() => {
@@ -664,11 +544,7 @@ export default {
     },
      // 获取水印基本信息
     getBaseWaterList() {
-      let params = {
-        type: this.playerOpen ? 1 : 2,
-        webinar_id: this.playerOpen ? this.$route.params.str : ''
-      }
-       this.$fetch('getWatermark', this.$params(params)).then(res => {
+       this.$fetch('getWatermark', {type: 2}).then(res => {
         if (res.code == 200) {
           this.formWatermark = {...res.data};
           this.formWatermark.img_alpha = Number(res.data.img_alpha);
@@ -679,25 +555,11 @@ export default {
     },
     // 获取其他基本信息
     getBaseOtherList() {
-      let params = {
-        type: this.playerOpen ? 1 : 2,
-        webinar_id: this.playerOpen ? this.$route.params.str : ''
-      }
-       this.$fetch('getOtherOptions', this.$params(params)).then(res => {
+       this.$fetch('getOtherOptions', {type: 2}).then(res => {
         if (res.code == 200) {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
           this.formOther.progress = Boolean(res.data.progress_bar);
           this.formOther.doubleSpeed = Boolean(res.data.speed);
-          // let progressContainers =  document.querySelector('.vhallPlayer-progress-container')
-          // this.formOther.progress ? progressContainers.style.display = 'block' : progressContainers.style.display = 'none'
-          // this.$nextTick(()=>{
-          //   if (this.formOther.doubleSpeed) {
-          //     // this.$Vhallplayer.setPlaySpeed(list[0])
-          //       document.querySelector('.vhallPlayer-speed-component').style.display = "block"
-          //     }else {
-          //       document.querySelector('.vhallPlayer-speed-component').style.display = "none"
-          //     }
-          // })
         }
       }).catch(res => {
         this.$message({
@@ -721,15 +583,15 @@ export default {
         });
         return false
       }
-      this.formHorse.webinar_id = this.$route.params.str
       this.formHorse.interval = this.formHorse.interval || 10;
       this.formHorse.text = this.formHorse.text || '版权所有，盗版必究';
       this.formHorse.scrolling_open = Number(this.scrolling_open);
-      this.formHorse.type = 1;
+      this.formHorse.type = 2;
       this.$fetch('setScrolling',this.$params(this.formHorse)).then(res => {
         this.$message({
           message: this.scrolling_open ? "跑马灯开启成功" : '跑马灯关闭成功',
           showClose: true,
+          // duration: 0,
           type: 'success',
           customClass: 'zdy-info-box'
         });
@@ -737,6 +599,7 @@ export default {
         this.$message({
           message:res.msg || "保存跑马灯失败",
           showClose: true,
+          // duration: 0,
           type: 'error',
           customClass: 'zdy-info-box'
         });
@@ -754,10 +617,9 @@ export default {
         });
         return;
       }
-      this.formWatermark.webinar_id = this.$route.params.str;
       this.formWatermark.img_url = this.$parseURL(this.domain_url).path;
       this.formWatermark.watermark_open = Number(this.watermark_open);
-       this.formWatermark.type = 1;
+      this.formWatermark.type = 2;
       this.$fetch('setWatermark', this.$params(this.formWatermark)).then(res => {
         this.$message({
           message: this.watermark_open ? "水印开启成功" : "水印关闭成功",
@@ -783,8 +645,7 @@ export default {
         barrage_button: Number(this.formOther.bulletChat),
         progress_bar: Number(this.formOther.progress),
         speed: Number(this.formOther.doubleSpeed),
-        type: 1,
-        webinar_id: this.$route.params.str
+        type: 2
       }
       console.log('params',params);
        this.$fetch('setOtherOption', {...params}).then((res) => {
@@ -815,7 +676,7 @@ export default {
     //文案提示问题
     messageInfo() {
       this.vm = this.$message({
-        showClose: true,
+        showClose: false,
         duration: 2000,
         message: '设置成功',
         type: 'success',
@@ -827,10 +688,10 @@ export default {
       this.showVideo = true;
       this.initSDK().then(() => {
         this.initSlider();
-          this.totalTime = this.$Vhallplayer.getDuration(() => {
-            console.log('获取总时间失败');
-          });
-          this.listen();
+        this.totalTime = this.$Vhallplayer.getDuration(() => {
+          console.log('获取总时间失败');
+        });
+        this.listen();
         // 初试完播放器获取其它设置
         this.getBaseOtherList()
 
@@ -860,23 +721,6 @@ export default {
       return text;
     },
     initSDK() {
-      // 判断水印的位置
-      // let postion = 'tl';
-      // let watermarkOptionPosition = ['10%','10%']
-      // switch (this.formWatermark.img_position) {
-      //   case 2:
-      //     watermarkOptionPosition = ['75%','5%']
-      //     break;
-      //   case 1:
-      //     watermarkOptionPosition = ['5%','5%']
-      //     break;
-      //   case 4:
-      //     watermarkOptionPosition = ['75%','70%']
-      //     break;
-      //   case 3:
-      //     watermarkOptionPosition = ['5%','70%']
-      //     break;
-      // }
       const incomingData = {
         appId: this.appId, // 应用ID，必填
         accountId: this.userId || 1, // 第三方用户ID，必填
@@ -921,11 +765,6 @@ export default {
               // 加载中
               resolve();
             });
-
-            // document.querySelector('.vhallPlayer-container').classList.remove("hide");
-            // document.querySelector('.vhallPlayer-container').style.display = 'block';
-            // document.querySelector('.vhallPlayer-container').classList.remove('hide')
-            // console.log(document.querySelector('.vhallPlayer-container').classList, '?????????????')
           },
           (e) => {
             console.log('播放器创建实例失败', e, e.message);
@@ -945,11 +784,6 @@ export default {
         })
 
      }
-    // if(document.querySelector('#videoDom')){
-    //     await vp.destroy();
-    //     document.querySelector('#videoDom').innerHTML = ''
-    //     await this.initPlayer()
-    //   }
     },
     destroy() {
       vp.destroy();
@@ -1061,24 +895,12 @@ export default {
     },
     handleClick(tab) {
       this.activeName = tab.name;
-      // if (tab.name === 'first') {
-      //   this.getBasescrollingList();
-      // } else if(tab.name === 'second') {
-      //   this.getBaseWaterList();
-      // } else {
-      //   this.checkEnter = true
-      //   this.getBaseOtherList();
-      //   this.otherOtherInfo(1)
-      // }
     },
   },
 };
 </script>
 
 <style lang="less" scoped>
-/deep/.div__sketch{
-  right: 0;
-}
 #videoDom {
   width: 100%;
   height: 100%;
@@ -1108,15 +930,6 @@ export default {
 }
 .prize-card {
   height: 100%;
-  .title_text{
-    color: #999;
-    font-size: 14px;
-    span{
-      color: #3562FA;
-      cursor: pointer;
-      vertical-align: middle;
-    }
-  }
  .player-set{
    background: #fff;
    position: relative;
@@ -1216,16 +1029,10 @@ export default {
       position: absolute;
       width: 100%;
       height: 100%;
-      // top:80px;
+      top:80px;
       left:0;
       background: rgba(255, 255, 255, 0.5);
       z-index: 9;
-    }
-    .webinarTop{
-      top: 80px;
-    }
-    .userTop {
-      top: 20px;
     }
   }
   .show-purple{
@@ -1235,7 +1042,7 @@ export default {
     margin-left: 20px;
     border-radius: 5px;
     position: absolute;
-    top: 8px;
+    top: 20px;
     left: 53%;
     img{
       width: 400px;
@@ -1473,4 +1280,5 @@ export default {
   }
 }
 </style>
+
 

@@ -38,6 +38,7 @@
       </div>
       <div class="editor-box" style="margin-bottom: 24px">
         <vEditor
+          :isImage="false"
           v-model="info.inContent"
           height="270"
         ></vEditor>
@@ -56,6 +57,7 @@
       </div>
       <div class="editor-box">
         <vEditor
+          :isImage="false"
           v-model="info.rewardContent"
           height="270"
         ></vEditor>

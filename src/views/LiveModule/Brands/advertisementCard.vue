@@ -72,6 +72,7 @@ export default {
        {
           label: '图片',
           key: 'img_url',
+          width: 200
         },
         {
           label: '标题',
@@ -84,6 +85,7 @@ export default {
         {
           label: '创建时间',
           key: 'created_at',
+          width: 180
         }
       ],
       tableRowBtnFun:[
@@ -214,7 +216,7 @@ export default {
   }
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .advert-card-list {
   .layout--right--main();
   .padding-table-list();

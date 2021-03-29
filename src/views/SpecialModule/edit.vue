@@ -664,6 +664,9 @@ export default {
           font-size: 20px;
           margin: 0 5px;
           cursor: pointer;
+          &:hover{
+            color: #FB3A32;
+          }
         }
       }
     }

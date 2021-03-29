@@ -18,7 +18,7 @@
       </VhallInput>
       <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
     </div>
-    <div v-if="total || isSearch">
+    <div v-if="total || isSearch" style="min-height: 300px;">
       <el-table
         ref="docList"
         :data="docList"
@@ -440,10 +440,10 @@ export default {
     }
     /deep/ .el-dialog__body{
       width: 642px;
-      height: 375px;
-      border-top: 4px solid #1a1a1a;
-      border-bottom: 4px solid #1a1a1a;
-      background: #1a1a1a;
+      height: 361px;
+      border-top: 4px solid #000;
+      border-bottom: 4px solid #000;
+      background: #000;
       border-radius: 4px;
       padding: 0 4px;
     }

@@ -54,7 +54,7 @@
                 v-model.trim="dynamicForm.phone">
               </el-input>
             </el-form-item>
-            <el-form-item>
+            <el-form-item id="captcha-box">
               <div id="loginCaptcha" class="captcha">
                 <el-input
                   auto-complete="off"
@@ -71,7 +71,7 @@
                   auto-complete="off"
                   v-model.trim="dynamicForm.code">
                   <template slot="append">
-                    <span @click="getDyCode" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
+                    <span @click="time == 60 && dynamicForm.phone && getDyCode()" :class="mobileKey && time === 60 && dynamicForm.phone ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
                   </template>
                 </el-input>
               </div>
@@ -91,7 +91,7 @@
                 :maxlength="30"
                 v-model.trim="dynamicForm.email">
                 <template slot="append">
-                    <span @click="getDyCode" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
+                    <span @click="time == 60 && getDyCode()" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
                   </template>
               </el-input>
             </el-form-item>
@@ -595,16 +595,16 @@ export default {
   /deep/.el-input-group__append {
     border: 0;
     position: absolute;
-    bottom: 4px;
-    right: 0;
+    bottom: 1px;
+    right: 1px;
     cursor: pointer;
     span {
       border: 0;
       position: absolute;
-      bottom: -1px;
-      right: 3px;
-      width: 103px;
-      padding: 8px 0;
+      bottom: 0;
+      right: 0;
+      // width: 103px;
+      padding: 8px 12px;
       line-height: 18px;
       text-align: center;
       background: #E8E8E8;
@@ -613,6 +613,7 @@ export default {
       font-weight: 400;
       color: #222222;
       cursor: pointer;
+      vertical-align: bottom;
       &.isLoginActive{
         background: #FB3A32;
         color: #FFFFFF;
@@ -679,6 +680,52 @@ export default {
     strong {
       color: #FC5659;
     }
+  }
+}
+#captcha-box{
+  .captcha {
+    // 云盾样式重置
+    /deep/.yidun_tips {
+        color: #999999;
+        line-height: 38px!important;
+        .yidun_tips__text {
+          vertical-align: initial;
+        }
+      }
+      /deep/.yidun_slider {
+        .yidun_slider__icon {
+          background-image: url(./images/icon-slide1.png) !important;
+          background-size: 28px 20px;
+          background-position: center;
+          margin-top: -5px;
+        }
+        &:hover {
+          .yidun_slider__icon {
+            background-image: url(./images/icon-slide.png) !important;
+          }
+        }
+      }
+      /deep/ .yidun--success {
+        .yidun_control {
+          .yidun_slider__icon {
+            background-image: url(./images/icon-succeed.png)!important;
+          }
+          .yidun_slider {
+            .yidun_slider__icon {
+              background-image: url(./images/icon-succeed.png);
+              background-size: 28px 20px;
+              background-position: center;
+            }
+            &:hover {
+              .yidun_slider__icon {
+                background-image: url(./images/icon-succeed.png);
+                background-size: 28px 20px;
+                background-position: center;
+              }
+            }
+          }
+        }
+      }
   }
 }
 </style>

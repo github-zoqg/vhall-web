@@ -439,7 +439,7 @@ export default {
         &__active{
           color: #FB3A32;
           span{
-            border-bottom: 2px solid #FB3A32;
+            // border-bottom: 2px solid #FB3A32;
           }
         }
       }
@@ -508,7 +508,7 @@ export default {
     height: 305px;
     width: 310px;
     margin: 0 auto;
-    padding: 15px 0;
+    padding: 15px 0 25px 0;
     margin: 0 auto;
   }
 

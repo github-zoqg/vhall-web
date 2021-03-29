@@ -416,9 +416,16 @@ export default {
           if (item.data.barrage_txt) {
             if((/\[|\]/g).test(item.data.barrage_txt)) {
               item.data.barrage_txt = this.emojiToText(item.data.barrage_txt) || '';
+            } else {
+              item.data.barrage_txt = item.data.barrage_txt || '';
             }
           } else {
-            item.data.barrage_txt = this.emojiToText(item.data.text_content) || '';
+            if ((/\[|\]/g).test(item.data.text_content)) {
+              item.data.barrage_txt = this.emojiToText(item.data.text_content)
+            } else {
+              item.data.barrage_txt = item.data.text_content || '';
+            }
+            // item.data.barrage_txt = this.emojiToText(item.data.text_content) || '';
           }
 
           if (item.data.image_urls && item.data.image_urls.length != 0) {

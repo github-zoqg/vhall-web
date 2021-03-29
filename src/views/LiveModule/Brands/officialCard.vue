@@ -108,6 +108,7 @@
                     <img :src="domain_url" alt=""  v-if="domain_url" />
                     <img src="../../../common/images/sys/default_code.jpeg" v-if="!domain_url"/>
                   </div>
+                  <p class="gzh_txt">长按识别二维码</p>
                 </div>
             </div>
               <!-- 非默认图，有文字
@@ -701,10 +702,11 @@ export default {
       .gzh_txt {
         font-size: 14px;
         font-weight: 400;
-        color: #FFFFFF;
+        color: #1a1a1a;
         line-height: 20px;
         text-align: center;
-        margin-top: 9px;
+        padding-top: 4px;
+        // margin-top: 9px;
       }
     }
   }

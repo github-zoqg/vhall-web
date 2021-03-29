@@ -522,6 +522,11 @@ body {
     padding: 15px 0;
   }
 }
+/deep/.el-table__row:hover{
+  .el-button{
+     color: #FB3A32;
+   }
+ }
 /*表格最后一根线压右侧直播按钮-重置*/
 /deep/.el-table::before {
   height: 0;
@@ -1159,7 +1164,7 @@ button.el-button.el-button--white-primary {
   /deep/.el-icon-warning {
     color: #FA9A32;
   }
-  &.el-message--error {
+  /deep/&.el-message--error {
     background-color: #FFEBEB;
     border: 0;
     border-radius: 4px;
@@ -1172,7 +1177,7 @@ button.el-button.el-button--white-primary {
       font-size: 16px;
     }
   }
-  &.el-message--success {
+  /deep/&.el-message--success {
     background-color: #E8F8F0;
     border: 0;
     border-radius: 4px;
@@ -1180,12 +1185,12 @@ button.el-button.el-button--white-primary {
       color: #14BA6A;
     }
     /deep/.el-message__closeBtn {
-      color: #14BA6A;
+      color: #14BA6A !important;
       right: 19px;
       font-size: 16px;
     }
   }
-  &.el-message--info {
+  /deep/&.el-message--info {
     background-color: #EBEFFF;
     border: 0;
     border-radius: 4px;
@@ -1198,7 +1203,7 @@ button.el-button.el-button--white-primary {
       font-size: 16px;
     }
   }
-  &.el-message--warning {
+  /deep/&.el-message--warning {
     background-color: #FFF5EB;
     border: 0;
     border-radius: 4px;
@@ -1317,8 +1322,8 @@ button.el-button.el-button--white-primary {
       background-color: #3562FA;
     }
     .yidun_slide_indicator {
-      border-color: #3562FA;
-      background-color:#F0F1FE;
+      border-color: #3562FA !important;
+      background-color:#F0F1FE !important;
     }
   }
 }

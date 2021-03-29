@@ -279,7 +279,7 @@ export default {
           customClass: 'zdy-info-box'
         });
         setTimeout(()=>{
-          this.$router.push({path: "/dev/list"});
+          this.$router.push({path: "/setting/dev"});
         }, 500);
       }).catch(res =>{
         this.$message({

@@ -40,7 +40,7 @@
       </table-list>
       <noData :nullType="'search'" v-if="!total"></noData>
     </div>
-    <create-prize ref="createPrize" @getTableList="getTableList" :prizeInfo="prizeInfo" :liveTotal="total"></create-prize>
+    <create-prize ref="createPrize" @getTableList="getTableList" :prizeInfo="prizeInfo" :liveTotal="total" @touchmove.prevent></create-prize>
   </div>
 </template>
 
@@ -237,6 +237,9 @@ export default {
     // 从资料库中选择
     prizeMeterial() {
       this.$refs.createPrize.dialogPrizeVisible = true;
+      // document.documentElement.style.overflow = "hidden";
+      // document.documentElement.style.position = "fixed";
+      // document.body.scroll = "no";
     }
   },
 };

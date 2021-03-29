@@ -47,7 +47,7 @@
            <el-form-item label="动态密码">
             <div class="inputCode">
               <VhallInput v-model.trim="code" style="width: 150px"></VhallInput>
-              <span @click="mobileKey && getBangCode()" :class="mobileKey ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+              <span @click="mobileKey && time == 60 && getBangCode()" :class="mobileKey ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
             </div>
             <p class="codeTitle" v-if="phone">已向绑定手机号{{ phone | filterPhone }}发送验证码</p>
           </el-form-item>
@@ -87,7 +87,7 @@
         <el-form-item label="动态密码" prop="code">
           <div class="inputCode">
             <VhallInput v-model.trim="withdrawForm.code" v-clearEmoij style="width: 150px"></VhallInput>
-            <span @click="getCode()" :class="(mobileKey && isTrue) ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+            <span @click="time == 60 && getCode()" :class="(mobileKey && isTrue) ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
           </div>
           <p class="codeTitle" v-if="phone">已向绑定手机号{{ phone }}发送验证码</p>
         </el-form-item>
@@ -369,6 +369,8 @@ export default {
         }, 1000);
       } else {
         this.time = 60;
+        this.mobileKey = '';
+        this.callCaptcha()
       }
     },
     changeBinding() {
@@ -623,13 +625,10 @@ export default {
     }
   }
   /deep/ .yidun--success {
-    // .yidun_control--moving {
-    //   background-color: #F0F1FE!important;
-    //   .yidun_slide_indicator {
-    //     background-color: #F0F1FE!important;
-    //   }
-    // }
     .yidun_control {
+      .yidun_slider__icon {
+        background-image: url(./images/icon-succeed.png)!important;
+      }
       .yidun_slider {
         .yidun_slider__icon {
           background-image: url(./images/icon-succeed.png);
@@ -645,6 +644,15 @@ export default {
           }
         }
       }
+    }
+  }
+  .yidun.yidun--light{
+    .yidun_feedback{
+      background-position: 0px -240px;
+      height: 30px;
+    }
+    .yidun_refresh{
+      background-position: 0px -339px;
     }
   }
 }
