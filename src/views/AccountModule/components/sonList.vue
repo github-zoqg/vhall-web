@@ -58,7 +58,7 @@
       <null-page class="search-no-data" :height="0" v-if="sonDao && sonDao.total === 0"></null-page>
     </div>
     <!-- 添加/ 观众子账号 -->
-    <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false' style="overflow: hidden;" :before-close='handleClose'
+    <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" style="overflow: hidden;" :before-close='handleClose'
                  width="460px">
       <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth">
         <el-form-item label="批量创建" prop="is_batch" v-if="sonDialog.type === 'add'" class="switch--item">
