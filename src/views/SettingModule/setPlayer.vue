@@ -110,6 +110,8 @@
                       path: 'interacts/watermark-imgs',
                       type: 'image',
                     }"
+                    :heightImg="130"
+                    :widthImg="231"
                     :on-success="uploadAdvSuccess"
                     :on-progress="uploadProcess"
                     :on-error="uploadError"

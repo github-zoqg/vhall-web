@@ -245,7 +245,7 @@ export default {
     }
     /deep/ .el-upload--picture-card, /deep/ .el-upload-dragger{
       width: 100%;
-      height: 100%;
+      height: 180px;
       border: 0;
       background: #F7F7F7;
     }
