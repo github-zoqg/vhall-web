@@ -6,7 +6,7 @@
     <template v-if="units.length == 0">
       <div class="drag-here"> 请拖拽组件至此处</div>
     </template>
-    <vhscroll>
+    <vhscroll @handle-resize="handleResize" ref="cusResize">
     <template v-if="units.length">
       <draggable
         :list="units"
@@ -71,7 +71,16 @@ export default {
   },
 
   methods: {
+    handleResize(vertical, horizontal, nativeEvent) {
+      // console.log('size变化', vertical, horizontal, nativeEvent)
+      this.$refs["cusResize"].scrollTo(
+        {
+          y: nativeEvent.height
+        }
+      );
+    },
     doEditor(index) {
+      console.log('sssssssss', this)
       this.editorIndex = index
       EventBus.$emit(eventsType.EDITOR_COMPONENT_INFO, index)
     },
