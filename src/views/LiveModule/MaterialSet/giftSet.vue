@@ -116,6 +116,8 @@
                path: 'interacts/gift-imgs',
                type: 'image',
             }"
+            :widthImg="231"
+            :heightImg="130"
             :on-success="handleuploadSuccess"
             :on-progress="uploadProcess"
             :on-error="uploadError"
@@ -945,6 +947,7 @@ export default {
   }
   /deep/.el-upload--picture-card{
     width:100%;
+    height: 130px;
   }
   /deep/.el-form-item {
     .el-input__inner {

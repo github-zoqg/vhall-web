@@ -18,6 +18,8 @@
             :on-error="uploadError"
             :on-preview="uploadPreview"
             @delete="deleteImg"
+            :widthImg="231"
+            :heightImg="130"
             :before-upload="beforeUploadHandler">
             <div slot="tip">
               <p>建议尺寸：240*240px，小于2M</p>

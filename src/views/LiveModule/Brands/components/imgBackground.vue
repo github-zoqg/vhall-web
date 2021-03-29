@@ -24,7 +24,8 @@
             @delete="daleteImg()"
             @fullCover="choseBackground(-1)"
             :isFullCover="false"
-            :bottom="4"
+            :widthImg="138"
+            :heightImg="138"
             @handleFileChange="handleFileChange"
             :before-upload="beforeUploadHnadler">
             <div slot="tip">

@@ -38,6 +38,8 @@
         :on-success="productLoadSuccess"
         :before-upload="beforeUploadHandler"
         :restPic="true"
+        :widthImg="524"
+        :heightImg="138"
         @delete="deleteBanner"
       >
         <div slot="tip">
@@ -856,6 +858,11 @@ export default {
   /deep/ .el-checkbox__inner {
     background-color: rgba(255, 255, 255, 0)
   }
+  &.viewItemHover{
+    /deep/.el-input__suffix{
+      right: -25px;
+    }
+  }
   &.privacyItem {
     .radioInput {
       margin-bottom: 10px;
@@ -1001,6 +1008,9 @@ export default {
       height: 20px;
       line-height: 20px;
       float: right;
+      i:hover{
+        color: #1a1a1a;
+      }
     }
     .swtich{
       vertical-align: text-top;
@@ -1080,7 +1090,7 @@ export default {
 }
 .ghost {
   opacity: 0.5;
-  background: #c8ebfb;
+  background: #FFF2F2;
 }
 .list-group {
   min-height: 20px;

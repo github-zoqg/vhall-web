@@ -30,6 +30,8 @@
                      path: pathUrl,
                      type: 'image',
                   }"
+                  :widthImg="231"
+                  :heightImg="130"
                   :on-success="pcUploadAdvSuccess"
                   :on-progress="pcUploadProcess"
                   :on-error="pcUploadError"
@@ -54,6 +56,8 @@
                      path: pathUrl,
                      type: 'image',
                   }"
+                  :widthImg="231"
+                  :heightImg="130"
                   :on-success="uploadAdvSuccess"
                   :on-progress="uploadProcess"
                   :on-error="uploadError"
@@ -737,6 +741,9 @@ export default {
   .img-box{
     width: 100%;
     height: 140px;
+    /deep/.el-upload--picture-card{
+      height: 130px;
+    }
   }
   /deep/.length152{
     margin-top: 0px!important;

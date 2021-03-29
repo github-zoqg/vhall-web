@@ -9,7 +9,7 @@
     :on-success='handleuploadSuccess'>
       <div class="box">
         <div v-if="value">
-          <img :src="domain_url || domainUrl" class="avatar" alt="" @click.stop.prevent="!isFullCover&&fullCover()"/>
+          <div :style="`width:${widthImg}px;height:${heightImg}px`" class="img-logo"><img :src="domain_url || domainUrl" class="avatar" alt="" @click.stop.prevent="!isFullCover&&fullCover()"/></div>
           <div class="mask" @click="isProduct && refresh($event)" v-if="isFullCover">
             <span v-if="!!$props.coverPic" @click.stop.prevent="coverPage">
               <i class="el-icon-collection"></i>
@@ -27,8 +27,8 @@
               删除
             </span>
           </div>
-          <div class="bottom-mask" v-else :style="`bottom: ${bottom}px;`">
-            <span @click="refresh($event)">更换</span>
+          <div class="bottom-mask" v-else>
+            <span @click="refresh($event)">重置</span>
             <span @click.stop.prevent="deletes">删除</span>
           </div>
         </div>
@@ -128,9 +128,13 @@ export default {
       type: Boolean,
       default: true
     },
-    bottom: {
+    heightImg: {
       type: Number,
-      default: 15
+      default: 180
+    },
+    widthImg: {
+      type: Number,
+      default: 320
     },
     'on-success': {
       type: Function,
@@ -236,7 +240,7 @@ export default {
       display: table;
       >div{
         width: 100%;
-        height: 140px;
+        height: 100%;
         position: relative;
         // padding-top: 30px;
         display: table-cell;
@@ -263,6 +267,9 @@ export default {
         height: 40px;
       }
     }
+    .img-logo{
+      margin: 0 auto;
+    }
     img{
       height: 100%;
       object-fit: scale-down;
@@ -270,10 +277,13 @@ export default {
       margin: 0px auto;
     }
   }
+  // .avatar-uploader{
+  //   height: 180px;
+  // }
   .mask{
     position: absolute;
     left: 0;
-    top: -7px;
+    top: 0;
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.7);
@@ -301,6 +311,7 @@ export default {
     display: none;
     border-radius: 2px 2px 0 0;
     padding: 0 5px;
+    bottom: 0;
     span{
       font-size: 14px;
       display: inline-block;

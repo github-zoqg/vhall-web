@@ -22,6 +22,8 @@
               :on-error="uploadError"
               :on-preview="uploadPreview"
               :before-upload="beforeUploadHnadler"
+              :widthImg="231"
+              :heightImg="130"
               @delete="deleteImg"
               >
              <div slot="tip">
@@ -536,6 +538,7 @@ export default {
   }
   /deep/.el-upload--picture-card{
     font-size: 36px;
+    // height: 130px;
     i.saasicon_shangchuan{
       font-size: 36px;
     }
