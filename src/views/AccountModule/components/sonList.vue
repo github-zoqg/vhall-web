@@ -746,7 +746,6 @@ export default {
     font-size: 14px;
     font-weight: 400;
     color: #999999;
-    border-right: 0;
     cursor: not-allowed;
   }
   .el-input-group__append {
