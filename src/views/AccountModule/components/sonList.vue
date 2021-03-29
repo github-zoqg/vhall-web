@@ -661,18 +661,18 @@ export default {
 </script>
 <style lang="less" scoped>
 // 初始化查询子账号列表信息
-.all-no-data {
+/deep/.all-no-data {
   /* 基于外边框已经有距离： padding: 24px 24px 40px 24px; */
   padding-top: 30px;
   margin-top: 110px;
-  /deep/.createActive {
+  .createActive {
     padding-bottom: 30px;
   }
 }
-.all-yes-data {
+/deep/.all-yes-data {
   padding: 24px 24px 40px 24px;
-  /deep/.data-list {
-    /deep/.el-table {
+  .data-list {
+    .el-table {
       margin-bottom: 40px;
       .cell{
         line-height: 25px;
@@ -680,19 +680,19 @@ export default {
     }
   }
 }
-.search-no-data {
+/deep/.search-no-data {
   padding-top: 148px;
-  /deep/.search {
+  .search {
     padding-bottom: 0;
   }
 }
-.list--search {
+/deep/.list--search {
   margin-bottom: 20px;
   .el-select {
     width: 100px;
     float: right;
     margin-right: 20px;
-    /deep/ .el-input__inner {
+    .el-input__inner {
       user-select: none;
       border-radius: 50px;
       font-size: 14px;
@@ -700,24 +700,23 @@ export default {
       height: 36px;
       line-height: 36px;
     }
-    /deep/.el-select__caret.el-input__icon.el-icon-arrow-up{
+    .el-select__caret.el-input__icon.el-icon-arrow-up{
       line-height: 36px;
     }
   }
-
   .el-input {
     width: 220px;
     float: right;
-    /deep/ .el-input__icon {
+    .el-input__icon {
       line-height: 36px;
     }
-    /deep/ .el-input__inner {
+    .el-input__inner {
       border-radius: 20px;
       height: 36px;
       padding-right: 30px !important;
     }
 
-    /deep/ .el-input__prefix {
+    .el-input__prefix {
       cursor: pointer;
     }
   }
@@ -726,22 +725,22 @@ export default {
   margin-bottom: 14px;
 }
 /deep/.el-form-item.account--nums {
-  /deep/.el-input {
+  .el-input {
     width: 210px;
     margin-right: 12px;
   }
-  /deep/span {
+  span {
     font-size: 14px;
     font-weight: 400;
     color: #1A1A1A;
     line-height: 20px;
   }
-  /deep/strong {
+  strong {
     color: #FB3A32;
   }
 }
 /deep/.no-execute {
-  /deep/.el-input.is-disabled .el-input__inner {
+  .el-input.is-disabled .el-input__inner {
     background-color: #F7F7F7;
     border-color: #cccccc;
     font-size: 14px;
@@ -750,7 +749,7 @@ export default {
     border-right: 0;
     cursor: not-allowed;
   }
-  /deep/.el-input-group__append {
+  .el-input-group__append {
     background-color: #F7F7F7;
     border-color: #cccccc;
     font-size: 14px;
@@ -759,7 +758,7 @@ export default {
     border-left: 0;
     cursor: not-allowed;
   }
-  /deep/span {
+  span {
     font-size: 14px;
     font-weight: 400;
     color: #666666;
