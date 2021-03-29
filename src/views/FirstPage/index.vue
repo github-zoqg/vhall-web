@@ -18,7 +18,7 @@
           </router-link>
         </el-col>
         <el-col :xl="{span: colVal}">
-          <router-link :to="{path:'/setting/info'}"  class="center-item">
+          <router-link :to="{path:'/setting/chat'}"  class="center-item">
           <p class="icon"><i class="iconfont-v3 saasset"></i></p>
             <!-- <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p> -->
             <h3>设置中心</h3>
