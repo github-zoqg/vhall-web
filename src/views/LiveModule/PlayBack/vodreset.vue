@@ -9,21 +9,21 @@
           <div class="data-show">
             <div class="data-show-item">
               <p :class="layout === 1 ? 'active' : ''" @click="changeType(1)">
-                <img :src="pattern_third" alt="">
+                <img :src="layout1" alt="">
                 <label  class="img-tangle" v-if="layout === 1"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
               <aside>三分屏</aside>
             </div>
             <div class="data-show-item">
               <p :class="layout === 3 ? 'active' : ''" @click="changeType(3)">
-                <img :src="pattern_mini" alt="">
+                <img :src="layout3pos3" alt="">
                 <label  class="img-tangle" v-if="layout === 3"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
               <aside>画中画</aside>
             </div>
             <div class="data-show-item">
               <p :class="layout === 2 ? 'active' : ''" @click="changeType(2)">
-                <img :src="pattern_doc" alt="">
+                <img :src="layout2" alt="">
                 <label  class="img-tangle" v-if="layout === 2"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
               <aside>纯文档</aside>
@@ -76,7 +76,7 @@
       <div class="preview-box">
         <div class="preview-img-box">
           <img
-            :src="layout == 1 ? pattern_third : layout == 3 ? pattern_mini : pattern_doc"
+            :src="preview_src"
             class="preview-img"
           >
           <div v-show="layout == 1" class="custom-img-box">
@@ -110,7 +110,10 @@
   import PageTitle from '@/components/PageTitle';
   import upload from '@/components/Upload/main';
   import pattern_third from './images/pattern_third.png'
-  import pattern_mini from './images/pattern_mini.png'
+  import pattern_mini_left_top from './images/pattern_mini_left_top.png'
+  import pattern_mini_left_bottom from './images/pattern_mini_left_bottom.png'
+  import pattern_mini_right_top from './images/pattern_mini_right_top.png'
+  import pattern_mini_right_bottom from './images/pattern_mini_right_bottom.png'
   import pattern_doc from './images/pattern_doc.png'
   export default {
     components: {
@@ -120,9 +123,12 @@
     },
     data() {
       return {
-        pattern_third,
-        pattern_mini,
-        pattern_doc,
+        layout1: pattern_third,
+        layout3pos1: pattern_mini_left_top,
+        layout3pos2: pattern_mini_left_bottom,
+        layout3pos3: pattern_mini_right_top,
+        layout3pos4: pattern_mini_right_bottom,
+        layout2: pattern_doc,
         tutorialVisible: false,
         layout: 1,
         vodresetForm: {
@@ -132,6 +138,11 @@
         },
         domain_url: '',
         pathUrl: `interacts/vodreset-imgs/${this.$moment().format('YYYYMM')}`
+      }
+    },
+    computed: {
+      preview_src() {
+        return this[`layout${ this.layout }${ this.layout == 3 ? `pos${this.vodresetForm.position}` : '' }`]
       }
     },
     methods: {

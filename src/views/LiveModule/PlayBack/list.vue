@@ -91,8 +91,9 @@
           </el-table-column>
 
           <el-table-column
+            v-if="!isDemand"
             label="布局"
-            :width="isBidScreen ? '' : 78"
+            :width="isBidScreen ? '' : 76"
             show-overflow-tooltip>
             <span class="playpackSource" slot-scope="scope">{{scope.row.layout | layoutFilter}}</span>
           </el-table-column>
@@ -100,7 +101,7 @@
           <el-table-column
             v-if="!isDemand"
             label="暂存至"
-            :width="isBidScreen ? '' : 108"
+            :width="isBidScreen ? '' : 110"
             show-overflow-tooltip>
             <span class="playpackSource" slot-scope="scope">{{scope.row.save_time}}</span>
           </el-table-column>
@@ -273,6 +274,7 @@ export default {
     },
     calcScreenWidth() {
       const clientWidth = document.body.clientWidth
+      if (this.isDemand) return;
       if (clientWidth < 1920) {
         this.isBidScreen = false
       } else {
