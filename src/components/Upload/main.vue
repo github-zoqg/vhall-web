@@ -27,7 +27,7 @@
               删除
             </span>
           </div>
-          <div class="bottom-mask" v-else :style="`bottom: ${bottom}px;`">
+          <div class="bottom-mask" v-else>
             <span @click="refresh($event)">重置</span>
             <span @click.stop.prevent="deletes">删除</span>
           </div>
@@ -127,10 +127,6 @@ export default {
     isFullCover: {
       type: Boolean,
       default: true
-    },
-    bottom: {
-      type: Number,
-      default: 15
     },
     heightImg: {
       type: Number,
@@ -315,6 +311,7 @@ export default {
     display: none;
     border-radius: 2px 2px 0 0;
     padding: 0 5px;
+    bottom: 0;
     span{
       font-size: 14px;
       display: inline-block;

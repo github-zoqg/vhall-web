@@ -38,8 +38,9 @@
                           :on-preview="uploadPreview"
                           @delete="deleteImg"
                           @fullCover="changeType(0)"
+                          :widthImg="86"
+                          :heightImg="88"
                           :isFullCover="false"
-                          :bottom="15"
                           :before-upload="beforeUploadHandler">
                         </upload>
                         <label  class="img-tangle" v-show="isChecked == 0"><img src="../../../common/images/icon-choose.png" alt=""></label>
@@ -778,6 +779,9 @@ export default {
           border: 0;
           height: 86px;
         }
+      }
+      /deep/.el-upload--picture-card{
+        // height: 88px;
       }
     }
   }

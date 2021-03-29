@@ -1038,7 +1038,7 @@ export default {
     border-radius: 4px;
     box-sizing: border-box;
     width: 100%;
-    height: 148px;
+    height: 180px;
     display: table;
     position: relative;
     .abRight{

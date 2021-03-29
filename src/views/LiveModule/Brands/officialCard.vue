@@ -34,6 +34,8 @@
                   :on-progress="uploadProcess"
                   :on-error="uploadError"
                   :on-preview="uploadPreview"
+                  :widthImg="130"
+                  :heightImg="130"
                   @handleFileChange="handleFileChange"
                   :before-upload="beforeUploadHnadler"
                   @delete="form.img = '', domain_url = ''">
@@ -711,6 +713,9 @@ export default {
   .img-box{
     width: 100%;
     height: 140px;
+    /deep/.el-upload--picture-card{
+      height: 130px;
+    }
     // .picInco{
     //   height: 40px;
     // }

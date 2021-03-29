@@ -99,6 +99,8 @@
             :on-progress="uploadProcess"
             :on-error="uploadError"
             :on-preview="uploadPreview"
+            :widthImg="231"
+            :heightImg="130"
             @delete="editParams.img = ''"
             :before-upload="beforeUploadHandler">
             <div slot="tip">

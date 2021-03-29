@@ -13,6 +13,8 @@
              path: 'users/face-imgs',
              type: 'image',
           }"
+          :widthImg="180"
+          :heightImg="180"
           :on-success="handleUploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"

@@ -20,6 +20,8 @@
                 :on-error="uploadError"
                 :on-preview="uploadPreview"
                 :isProduct="true"
+                :widthImg="148"
+                :heightImg="148"
                 @resetImage="resetPic(item)"
                 :coverPic="!item.cover"
                 @delete="formDelete(item)"
@@ -515,8 +517,11 @@ export default {
         height: 150px;
         border: 4px;
         position: relative;
-        margin-right: 10px;
+        margin-right: 15px;
         cursor: pointer;
+        &:last-child{
+          margin-right: 0;
+        }
         .cover-item{
           z-index: 100;
           position: absolute;
