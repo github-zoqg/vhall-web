@@ -93,7 +93,7 @@
           <el-table-column
             v-if="!isDemand"
             label="布局"
-            :width="isBidScreen ? '' : 76"
+            :width="isBidScreen ? '' : 78"
             show-overflow-tooltip>
             <span class="playpackSource" slot-scope="scope">{{scope.row.layout | layoutFilter}}</span>
           </el-table-column>
@@ -101,7 +101,8 @@
           <el-table-column
             v-if="!isDemand"
             label="暂存至"
-            :width="isBidScreen ? '' : 110"
+            :width="isBidScreen ? '' : 108"
+            class-name="deltime"
             show-overflow-tooltip>
             <span class="playpackSource" slot-scope="scope">{{scope.row.save_time}}</span>
           </el-table-column>
@@ -219,7 +220,7 @@ export default {
       ],
       // 权限配置
       WEBINAR_PES: {},
-      isBidScreen: false,
+      isBidScreen: true,
       versionExpired: false, // 用户套餐是否过期
       // WEBINAR_PES: sessionOrLocal.get('WEBINAR_PES', 'localStorage') && JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')) || {},
     };
@@ -246,7 +247,6 @@ export default {
     this.getLiveDetail();
     EventBus.$on('record_download', this.handleDownload)
     this.getPermission(this.$route.params.str)
-    this.calcScreenWidth()
     this.getVersion()
   },
   mounted(){
@@ -354,6 +354,7 @@ export default {
       this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
         this.liveDetailInfo = res.data;
         this.isDemand = this.liveDetailInfo.is_demand == 1;
+        this.calcScreenWidth()
         if (this.isDemand) {
           this.recordType = '上传'
           this.typeOptions = [
@@ -800,6 +801,9 @@ export default {
   .tableBox{
     padding: 24px 24px;
     background: #fff;
+    /deep/ .deltime .cell{
+      padding-left: 22px;
+    }
     /deep/ .el-table__empty-block {
       display: none;
     }
