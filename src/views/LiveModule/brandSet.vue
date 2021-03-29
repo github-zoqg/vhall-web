@@ -115,6 +115,7 @@ export default {
             customClass: 'zdy-info-box'
           });
         }
+        this.$refs[`${this.tabType}Comp`].initComp();
         console.log(this.type, '????品牌设置黑社会')
       }).catch(res => {
         this.$message({
