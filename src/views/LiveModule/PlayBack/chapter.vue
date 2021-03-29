@@ -1016,6 +1016,13 @@ export default {
       background: transparent!important;
       border: none;
       box-shadow: none;
+      @media (max-width: 1440px) {
+        margin-top: 8vh!important;
+      }
+      @media (max-width: 1366px) {
+        margin-top: 2vh!important;
+        margin-bottom: 0;
+      }
       .el-dialog__headerbtn {
         top: 24px;
         right: 0;
@@ -1389,12 +1396,12 @@ export default {
       transition: all 0.3s;
       cursor: pointer;
       display: none;
-      background-color: #cccccc;
+      background-color: #666;
       &:hover {
-        background-color: #cccccc;
+        background-color: #666;
       }
       &:active {
-        background-color: #cccccc;
+        background-color: #666;
       }
     }
     &:hover {
@@ -1462,10 +1469,10 @@ export default {
         background-color: #FB3A32;
         border-color: #FB3A32;
       }
-      /deep/ .el-tooltip .el-button--text span {
+      .el-tooltip .el-button--text span {
         color: #fb3a32;
       }
-      /deep/ .el-input {
+      .el-input {
         .el-input__inner {
           border-color: #999;
           color: #999;
@@ -1473,6 +1480,12 @@ export default {
       }
       .cell {
         color: #999;
+      }
+    }
+    /deep/ .el-input {
+      .el-input__inner:focus {
+        border-color: #999!important;
+        color: #ccc!important;
       }
     }
     /deep/ .el-table td, /deep/ .el-table th.is-leaf {
@@ -1496,7 +1509,7 @@ export default {
       color: #999;
     }
     /deep/ .el-tooltip .el-button--text span:hover {
-      color: #3562fa;
+      color: #FB3A32;
     }
     /deep/ .el-button.el-button--text.is-disabled {
       &:hover {

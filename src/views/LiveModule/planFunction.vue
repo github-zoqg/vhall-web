@@ -46,20 +46,20 @@
           <span :class="switchType === 'pc' ? 'active' : ''" @click.prevent.stop="changeSwitch('pc')">PC预览</span>
         </div>
         <!--PC预览,begin-->
-        <div :class="['plan-func-pc', {'zj': !chapterCompute}]" v-show="switchType === 'pc'">
+        <div :class="['plan-func-pc', {'zj': !chapterCompute}]" :style="{opacity: switchType === 'pc' ? 1 : 0}">
           <span class="share-span" v-if="shareCompute"></span>
           <div class="icon-spans">
            <span class="reward-span" v-if="rewardCompute"></span><span class="gift-span" v-if="giftCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
         </div>
         <!--手机预览,begin-->
-        <div :class="['plan-func-app', {'visible': !chapterCompute}]" v-show="switchType === 'app'">
+        <div :class="['plan-func-app', {'visible': !chapterCompute}]" :style="{opacity: switchType === 'app' ? 1 : 0}">
           <span class="chat-span">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
           <div class="icon-spans">
             <span class="gift-span" v-if="giftCompute"></span><span  class="reward-span" v-if="rewardCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
         </div>
-        <div :class="['plan-func-app', 'zj', {'visible': chapterCompute}]" v-show="switchType === 'app'">
+        <div :class="['plan-func-app', 'zj', {'visible': chapterCompute}]" :style="{opacity: switchType === 'app' ? 1 : 0}">
           <span class="chat-span">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
           <div class="icon-spans">
             <span class="gift-span" v-if="giftCompute"></span><span  class="reward-span" v-if="rewardCompute"></span><span class="like-span" v-if="likeCompute"></span>
@@ -312,6 +312,10 @@ export default {
   background-position: center;
   background-size: cover;
   position: relative;
+  -webkit-transition: opacity 0.15s ease-in-out;
+  -moz-transition: opacity 0.15s ease-in-out;
+  -o-transition: opacity 0.15s ease-in-out;
+  transition: opacity 0.15s ease-in-out;
   &.zj {
     background-image: url('../../common/images/plan-function/pc-zj.png');
   }
@@ -362,10 +366,10 @@ export default {
   position: absolute;
   left:0;
   top:54px;
-  -webkit-transition: opacity 0.5s ease-in-out;
-  -moz-transition: opacity 0.5s ease-in-out;
-  -o-transition: opacity 0.5s ease-in-out;
-  transition: opacity 0.5s ease-in-out;
+  -webkit-transition: opacity 0.15s ease-in-out;
+  -moz-transition: opacity 0.15s ease-in-out;
+  -o-transition: opacity 0.15s ease-in-out;
+  transition: opacity 0.15s ease-in-out;
   &.visible {
     opacity:0;
     filter: alpha(opacity=0);

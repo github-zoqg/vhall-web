@@ -403,7 +403,12 @@ export default {
     // 添加一个题目选项
     addOption(data, other){
       if ((data.nodes[0].children && data.nodes[0].children.length >= 20) || data.nodes.length >= 20) {
-        this.$alert('最多可添加20个选项')
+        this.$message({
+          message: `最多可添加20个选项`,
+          showClose: true,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       let itemType = other ? 1: 0;
@@ -897,7 +902,7 @@ export default {
       width: calc(100% - 14px);
       padding-left: 6px;
       .el-input__inner {
-        padding-right: 74px;
+        padding-right: 74px!important;
       }
     }
   }
@@ -916,7 +921,7 @@ export default {
         .radioInput {
           width: calc(100% - 24px);
           .el-input__inner {
-            padding-right: 74px;
+            padding-right: 74px!important;
           }
         }
         .radioGender .el-input__inner{
@@ -1091,13 +1096,13 @@ export default {
     border-color: transparent !important;
     &:focus{
       background: #F7F7F7;
-      /deep/ & + .el-input__suffix .el-input__count{
+      & + .el-input__suffix .el-input__count{
         visibility: visible;
       }
     }
     &:hover{
       background: #F7F7F7;
-      /deep/ & + .el-input__suffix .el-input__count{
+      & + .el-input__suffix .el-input__count{
         visibility: visible;
       }
     }

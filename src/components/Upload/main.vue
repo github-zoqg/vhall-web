@@ -19,7 +19,7 @@
             <span @click="refresh($event)">
               <i class="el-icon-refresh-left"></i>
               <br/>
-              重置
+              更换
             </span>
              <span @click.stop.prevent="deletes">
               <i class="iconfont-v3 saasicon_shanchu"></i>
@@ -28,7 +28,7 @@
             </span>
           </div>
           <div class="bottom-mask" v-else :style="`bottom: ${bottom}px;`">
-            <span @click="refresh($event)">重置</span>
+            <span @click="refresh($event)">更换</span>
             <span @click.stop.prevent="deletes">删除</span>
           </div>
         </div>

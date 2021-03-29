@@ -1014,7 +1014,7 @@
       }
       header{
         width: 100%;
-        max-height: 450px;
+        max-height: 240px;
         overflow: hidden;
         display: flex;
         justify-content: center;
@@ -1159,9 +1159,6 @@
         .el-radio{
           display: block;
         }
-        .el-radio:last-child{
-          margin-right: 30px;
-        }
       }
       .noFull {
         width: calc(100% - 30px);
@@ -1241,7 +1238,7 @@
         height: 40px;
         color: #1a1a1a;
         &[maxlength='60'] {
-          padding-right: 60px;
+          padding-right: 60px!important;
         }
       }
       // 输入框hover状态边框颜色
@@ -1277,10 +1274,11 @@
       /deep/ .el-radio-group .el-radio, .el-checkbox-group .el-checkbox {
         display: flex;
         align-items: flex-start;
-        line-height: 40px;
+        // line-height: 40px;
         color: #1a1a1a;
-        /deep/ .el-checkbox__input, .el-radio__input {
-          padding-top: 3px;
+        white-space: normal;
+        .el-checkbox__input,.el-radio__input {
+          padding-top: 2px;
           &.is-checked+.el-radio__label, &.is-checked+.el-checkbox__label{
             color: #FB3A32;
           }
@@ -1292,17 +1290,20 @@
             width: 16px;
             height: 16px;
             &:after{
-              width: 8px;
-              height: 8px;
+              width: 6px;
+              height: 6px;
             }
           }
         }
-        /deep/ .el-checkbox__label,.el-radio__label {
+        .el-checkbox__label,.el-radio__label {
           white-space: normal;
           padding-left: 10px;
           line-height: 20px;
           font-size: 14px;
         }
+      }
+      /deep/ .el-checkbox__input,.el-radio__input {
+        padding-top: 3px;
       }
       .el-radio-group, .el-checkbox-group {
         padding-left: 0px;

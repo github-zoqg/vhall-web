@@ -247,6 +247,7 @@ export default {
   border-radius: 4px;
   border-top: 0;
   position: relative;
+  transition:background-color ease-in-out .5s;
 }
 .zdy--switch {
   margin-bottom: 16px;

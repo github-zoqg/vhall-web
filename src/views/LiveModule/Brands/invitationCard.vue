@@ -173,6 +173,7 @@
           </div>
         </div>
         <div class="look-img" :style="`backgroundImage: url(${img})`"  id="shopInvent" v-else>
+          <div class="look-color-shadow"></div>
           <div class="look-color">
             <div class="look-header">
               <div class="look-avator">
@@ -843,7 +844,16 @@ export default {
       background-size: 100% 100%;
       background-repeat: no-repeat;
       position: relative;
+      .look-color-shadow {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          background: rgba(0,0,0,.2);
+      }
       .look-color{
+        position: relative;
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.1);

@@ -616,7 +616,7 @@ export default {
 .wapper {
   width: 100%;
   height: 100%;
-  min-height: 600px;
+  min-height: 800px;
   background-color: #fff;
   position: relative;
   font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif!important;
