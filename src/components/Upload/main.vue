@@ -244,7 +244,7 @@ export default {
       display: table;
       >div{
         width: 100%;
-        height: 140px;
+        height: 100%;
         position: relative;
         // padding-top: 30px;
         display: table-cell;

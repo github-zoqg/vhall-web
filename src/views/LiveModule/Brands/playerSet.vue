@@ -110,6 +110,8 @@
                       path: 'interacts/watermark-imgs',
                       type: 'image',
                     }"
+                    :heightImg="130"
+                    :widthImg="231"
                     :on-success="uploadAdvSuccess"
                     :on-progress="uploadProcess"
                     :on-error="uploadError"
@@ -1369,6 +1371,11 @@ export default {
     position: absolute;
     top: -41px;
     left: 0;
+  }
+}
+.giftUpload{
+  /deep/.el-upload--picture-card {
+    height: 130px;
   }
 }
 </style>

@@ -28,6 +28,8 @@
               :on-progress="uploadProcess"
               :on-error="uploadError"
               :on-preview="uploadPreview"
+              :heightImg="130"
+              :widthImg="231"
               :before-upload="beforeUploadHandler"
               @delete="resetLogoUrl">
               <div slot="tip">
