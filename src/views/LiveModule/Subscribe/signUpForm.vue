@@ -1014,7 +1014,7 @@
       }
       header{
         width: 100%;
-        max-height: 200px;
+        max-height: 240px;
         overflow: hidden;
         display: flex;
         justify-content: center;
