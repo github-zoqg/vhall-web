@@ -646,5 +646,14 @@ export default {
       }
     }
   }
+  .yidun.yidun--light{
+    .yidun_feedback{
+      background-position: 0px -240px;
+      height: 30px;
+    }
+    .yidun_refresh{
+      background-position: 0px -339px;
+    }
+  }
 }
 </style>
