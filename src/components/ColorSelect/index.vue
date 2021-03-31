@@ -3,10 +3,14 @@
     <div class="theme--box">
       <i v-for="item in themeKeys" :key="'themes__' + item" :class="'themes__' + item + ' ' + ('#'+item.toUpperCase() === colors.toUpperCase() ? 'active' : '')" @click.prevent.stop="setColorsValue('#' + item)"></i>
       <div class="theme--select-main">
-        <i  class="themes__select" v-if="openSelect" @click.prevent.stop="openSelectPanel" key="themes__ul"></i>
+        <i  class="themes__select" v-if="openSelect" @click.prevent.stop="openSelectPanel" key="themes__ul" :style="`background:${colors}`"></i>
         <div class="div__sketch" v-show="selectPanelShow">
           <sketch-picker :value="colors" :preset-colors="presetColors"  @input="updateValue"
           ></sketch-picker>
+          <div class="footer_sure">
+            <span @click="cancleColor">取消</span>
+            <span @click="submitColor">确定</span>
+          </div>
         </div>
       </div>
     </div>
@@ -56,6 +60,7 @@ export default {
         '#FFFFFF'
       ],
       colors: '',
+      resetColor: '',
       /*colors: {
         hex: '#194d33',
         hsl: { h: 150, s: 0.5, l: 0.2, a: 1 },
@@ -75,11 +80,19 @@ export default {
       console.log(this.colors, '当前样式2');
       this.$emit('color', this.colors);
       // 值设置成功，关闭浮层
-      this.selectPanelShow = false;
+      // this.selectPanelShow = false;
     },
     setColorsValue(tab) {
       this.colors = tab;
       console.log(this.colors, '当前样式1');
+    },
+    cancleColor() {
+      this.selectPanelShow = false;
+      this.colors = this.resetColor;
+      this.$emit('color', this.colors);
+    },
+    submitColor() {
+      this.selectPanelShow = false;
       this.$emit('color', this.colors);
     },
     initColor(color) {
@@ -88,6 +101,7 @@ export default {
   },
   created() {
     this.colors = this.colorDefault || '';
+    this.resetColor = this.colorDefault || '';
   }
 };
 </script>
@@ -163,6 +177,7 @@ export default {
     right: 0;
     bottom: 0;
     position: absolute;
+    border: 1px solid #fff;
   }
 }
 .div__sketch {
@@ -170,6 +185,23 @@ export default {
   bottom: 0;
   margin-bottom: 40px;
   z-index: 99;
+  .footer_sure{
+    position: absolute;
+    bottom: -2px;
+    right: 8px;
+    span{
+      padding: 2px 8px;
+      border: 1px solid #ccc;
+      font-size: 12px;
+      margin-left: 6px;
+      border-radius: 10px;
+      cursor: pointer;
+      &{
+        -webkit-transform: scale(0.875);
+        transform:scale(0.875);
+      }
+    }
+  }
 }
 /deep/.vc-sketch {
   background: #FFFFFF;
@@ -177,6 +209,7 @@ export default {
   border-radius: 4px;
   border: 1px solid #CCCCCC;
   padding: 6px 6px;
+  padding-bottom: 28px;
   box-sizing: border-box;
 }
 /deep/.vc-sketch-saturation-wrap {

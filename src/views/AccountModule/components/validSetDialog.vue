@@ -22,7 +22,8 @@
         <el-form-item label="动态密码" key="code" prop="code" v-if="showVo.step === 1">
           <div class="inputCode">
             <el-input v-model.trim="form.code" auto-complete="off" style="width: 141px" :maxlength="6"></el-input>
-            <span @click="time == 60 && getDyCode()" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+            <span v-if="showVo.executeType === 'email' && form.email" @click="time == 60 && getDyCode()" class="isLoginActive">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+            <span @click="time == 60 && getDyCode()" :class="showCaptcha ? 'isLoginActive' : ''" v-else>{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
           </div>
           <p class="codeTitle" v-if="sendText">{{sendText}}</p>
         </el-form-item>
@@ -53,7 +54,8 @@
         <el-form-item label="动态密码" key="new_code" prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
           <div class="inputCode">
             <el-input v-model.trim="form.new_code" auto-complete="off" style="width: 141px" :maxlength="6"></el-input>
-            <span @click="time1 == 60 && getDyCode1()" :class="showCaptcha1 ? 'isLoginActive' : ''">{{ time1 == 60 ? '获取验证码' : `${time1}秒后发送` }}</span>
+            <span @click="time1 == 60 && getDyCode1()" :class="showCaptcha1 && isValidaCode ? 'isLoginActive' : ''" v-if="showVo.executeType === 'phone'">{{ time1 == 60 ? '获取验证码' : `${time1}秒后发送` }}</span>
+            <span @click="time1 == 60 && getDyCode1()" :class="isValidaEmail ? 'isLoginActive' : ''" v-if="showVo.executeType === 'email'">{{ time1 == 60 ? '获取验证码' : `${time1}秒后发送` }}</span>
           </div>
           <p class="codeTitle" v-if="sendText1">{{sendText1}}</p>
         </el-form-item>
@@ -129,6 +131,32 @@ export default {
         // this.isReset = false;
       }
     };
+    let validatePhone = (rule, value, callback) => {
+      this.isValidaCode = false;
+      if (value === '') {
+        callback(new Error('请输入手机号'));
+      } else {
+        if (!(/^1[0-9]{10}$/.test(value))) {
+          callback(new Error('请输入正确的手机号'));
+        } else {
+          this.isValidaCode = true;
+          callback();
+        }
+      }
+    };
+    let validateEmail = (rule, value, callback) => {
+      this.isValidaEmail = false;
+      if (value === '') {
+        callback(new Error('请输入邮箱'));
+      } else {
+        if (!(/^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/.test(value))) {
+          callback(new Error('请输入正确的邮箱格式'));
+        } else {
+          this.isValidaEmail = true;
+          callback();
+        }
+      }
+    };
     return {
       pwdTitle: "为了保证您的账号安全，修改密码请先验证绑定的手机号，验证成功后进行下一步操作",
       phoneTitle: '为了保证您的账号安全，修改手机号前请先验证已绑定的手机号',
@@ -139,6 +167,8 @@ export default {
         is_null: true // true表示未设置过
       },
       visible: false,
+      isValidaCode: false,
+      isValidaEmail: false,
       validate: {
         type: 1, // 发送类型： 1手机；2邮箱
         data: null,// 根据type值不同 分别传手机号、邮箱
@@ -175,10 +205,10 @@ export default {
           {required: true, message: '请输入动态密码', trigger: 'blur'}
         ],
         new_phone: [
-          {required: true, min: 6, max: 30, pattern: /^1[0-9]{10}$/, message: '请输入手机号', trigger: 'blur'}
+          {required: true, min: 6, max: 30, validator: validatePhone, trigger: 'blur'}
         ],
         new_email: [
-          {required: true, min: 1, max: 30, pattern: /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/, message: '请输入正确的邮箱格式', trigger: 'blur'}
+          {required: true, min: 1, max: 30, validator: validateEmail, trigger: 'blur'}
         ],
         new_code: [
           {required: true, message: '请输入动态密码', trigger: 'blur'}
@@ -709,6 +739,8 @@ export default {
         this.form.imgCode1 = '';
         this.showCaptcha = false;
         this.showCaptcha1 = false;
+        this.isValidaEmail = false;
+        this.isValidaCode = false;
         if(this.downTimer) {
           window.clearTimeout(this.downTimer);
           this.isDisabledClick = false;
@@ -848,10 +880,11 @@ export default {
     background: #F2F2F2;
     color:#666666;
     vertical-align: top;
-    cursor: pointer;
+    cursor: not-allowed;
     &.isLoginActive{
       background: #fc5659;
       color: #fff;
+      cursor: pointer;
     }
   }
   // i {

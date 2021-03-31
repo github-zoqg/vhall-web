@@ -555,10 +555,11 @@ export default {
     background: #F2F2F2;
     color:#666666;
     vertical-align: top;
-    cursor: pointer;
+    cursor: not-allowed;
     &.isLoginActive{
       background: #fc5659;
       color: #fff;
+      cursor: pointer;
     }
   }
   // i {
