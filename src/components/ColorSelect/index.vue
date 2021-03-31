@@ -84,6 +84,7 @@ export default {
     },
     setColorsValue(tab) {
       this.colors = tab;
+      this.$emit('color', this.colors);
       console.log(this.colors, '当前样式1');
     },
     cancleColor() {
