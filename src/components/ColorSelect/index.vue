@@ -187,14 +187,14 @@ export default {
   z-index: 99;
   .footer_sure{
     position: absolute;
-    bottom: -2px;
-    right: 8px;
+    bottom: 0;
+    right: 6px;
     span{
       display: inline-block;
       // padding: 2px 8px;
       border: 1px solid #ccc;
       font-size: 12px;
-      margin-left: 6px;
+      margin-left: 4px;
       border-radius: 4px;
       width: 40px;
       height: 27px;
