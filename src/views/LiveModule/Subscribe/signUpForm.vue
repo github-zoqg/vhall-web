@@ -1163,10 +1163,6 @@
       .noFull {
         width: calc(100% - 30px);
       }
-      /deep/ .el-button.is-disabled, .el-button.is-disabled:focus, .el-button.is-disabled:hover {
-        background-color: inherit;
-        border: none;
-      }
     }
     .provicy-item {
       margin-bottom: 24px!important;
