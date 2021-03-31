@@ -190,11 +190,16 @@ export default {
     bottom: -2px;
     right: 8px;
     span{
-      padding: 2px 8px;
+      display: inline-block;
+      // padding: 2px 8px;
       border: 1px solid #ccc;
       font-size: 12px;
       margin-left: 6px;
-      border-radius: 10px;
+      border-radius: 4px;
+      width: 40px;
+      height: 27px;
+      text-align: center;
+      line-height: 27px;
       cursor: pointer;
       &{
         -webkit-transform: scale(0.875);

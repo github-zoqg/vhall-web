@@ -20,7 +20,7 @@
             </div>
           </header>
           <section class="watchContainer"
-                   :style="{background: `url(${skinSetVo.bg_url}) 0% 0% / cover no-repeat`}">
+                   :style="{backgroundImage: `url(${skinSetVo.bg_url})`}">
             <div class="area">
               <div class="topInfo">
                 <p class="">
@@ -295,6 +295,8 @@ export default {
 }
 .watchContainer{
   clear: both;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 .area {
   margin: 0 24px;

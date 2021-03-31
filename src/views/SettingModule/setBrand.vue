@@ -55,8 +55,12 @@ export default {
 <style lang="less" scoped>
 @import '../../common/css/common.less';
 .brand--set {
-  .layout--right--main();
+  // .layout--right--main();
   .min-height();
+  width: 100%;
+  height: auto;
+  background: #FFFFFF;
+  border-radius: 4px;
   /deep/.el-radio__inner{
     width: 16px;
     height: 16px;
