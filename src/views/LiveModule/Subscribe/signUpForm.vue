@@ -38,7 +38,7 @@
                   :key="question.id"
                   :prop="question.id + ''"
                   v-show="question.type != 6"
-                  :label="question.subject === '隐私声明' ? '' : `${quesIndex < 9 ? `0${ quesIndex + 1 }` : quesIndex + 1}.${question.subject} ${questionType(question)}`"
+                  :label="question.subject === '隐私声明' ? '' : `${quesIndex < 9 ? `0${ quesIndex + 1 }` : quesIndex + 1}.${question.subject}`"
                 >
                   <!-- 输入框 -->
                   <template
@@ -537,7 +537,7 @@
         } else if (item.type == 3){
            title = '(多选题)'
         }
-        return title
+        return `${item.subject} ${title}`
       },
       validCode(rule, value, callback) {
         if (this.isVerifyCodeErr) {
@@ -938,6 +938,9 @@
           this.isPhoneValidate = phoneItem.options && JSON.parse(phoneItem.options).open_verify == 1
           // 默认填写手机号
           !this.isPreview && res.data.phone && (this.verifyForm.phone = res.data.phone)
+          list.forEach(item => {
+            item.subject = this.questionType(item)
+          })
           this.list = list;
           // 地域 options 格式化处理
           this.list.some(item => {
@@ -951,6 +954,7 @@
               return true;
             }
           })
+          // this.list.map(item =>)
           // 隐私声明格式处理
           const lastQuestion = this.list[this.list.length - 1];
           console.log(lastQuestion)
