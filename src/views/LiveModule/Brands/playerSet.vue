@@ -1,7 +1,7 @@
 <template>
   <div class="prize-card">
     <pageTitle pageTitle="播放器设置">
-      <div class="title_text"  v-if="reservationDisable">
+      <div class="title_text">
         <p class="switch__box">
           <el-switch
             v-model="playerOpen"
@@ -452,9 +452,9 @@ export default {
     },
     reservationDisable() {
       if (this.perssionWebInfo['player_config'] > 0) {
-        return true
-      } else {
         return false
+      } else {
+        return true
       }
     }
   },
@@ -529,6 +529,16 @@ export default {
       });
     },
     toSettingDetail() {
+      if (this.reservationDisable) {
+        this.$alert('尊敬的用户，您的账号无此权限。如需使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询', '提示', {
+          confirmButtonText: '我知道了',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          center: true,
+          callback: action => {}
+        });
+        return;
+      }
       const { href } = this.$router.resolve({path:'/setting/player'});
       window.open(href, '_blank');
     },
