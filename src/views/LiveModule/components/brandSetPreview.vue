@@ -156,6 +156,7 @@ export default {
       this.$nextTick(() => {
         this.signSetVo = vo;
         this.domain_url = domain_url;
+        // this.getInterWebinarSkin();
         console.log(this.signSetVo, '4444444444444444')
       });
     },
@@ -173,6 +174,7 @@ export default {
             bg_url: '' // 背景图
           };
         }
+        // this.getSignInfo();
         console.log(this.skinSetVo, '11111111111111')
       });
     },
@@ -238,9 +240,9 @@ export default {
       this.getInterWebinarSkin();
     }
   },
-  // created() {
-  //  this.initPage();
-  // },
+  created() {
+   this.initPage();
+  },
   watch: {
     brandType() {
       if (this.brandType) {
