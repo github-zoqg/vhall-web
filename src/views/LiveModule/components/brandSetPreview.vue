@@ -238,9 +238,9 @@ export default {
       this.getInterWebinarSkin();
     }
   },
-  // created() {
-  //  this.initPage();
-  // },
+  created() {
+   this.initPage();
+  },
   watch: {
     brandType() {
       if (this.brandType) {
