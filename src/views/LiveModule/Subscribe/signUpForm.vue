@@ -38,7 +38,7 @@
                   :key="question.id"
                   :prop="question.id + ''"
                   v-show="question.type != 6"
-                  :label="question.subject === '隐私声明' ? '' : `${quesIndex < 9 ? `0${ quesIndex + 1 }` : quesIndex + 1}.${question.subject}`"
+                  :label="question.subject === '隐私声明' ? '' : `${quesIndex < 9 ? `0${ quesIndex + 1 }` : quesIndex + 1}.${question.subject} ${questionType(question)}`"
                 >
                   <!-- 输入框 -->
                   <template
@@ -523,6 +523,21 @@
       },
       handleUnfold(val) {
         this.overflowStatus = val
+      },
+      questionType(item) {
+        let title = '';
+        if (item.type == 1 && item.subject != '公司') {
+          title = '(问答题)'
+        }
+        if (item.type == 4 && item.subject != '职务') {
+          title = '(下拉题)'
+        }
+        if (item.type == 2) {
+          title = '(单选题)'
+        } else if (item.type == 3){
+           title = '(多选题)'
+        }
+        return title
       },
       validCode(rule, value, callback) {
         if (this.isVerifyCodeErr) {
@@ -1021,6 +1036,7 @@
         align-items: center;
         img{
           width: 100%;
+          object-fit: scale-down;
         }
       }
       .pageTitle{
@@ -1475,12 +1491,14 @@
   .el-select-dropdown__list .el-select-dropdown__item {
     max-width: 608px!important;
     width: 100%;
-    line-height: 26px !important;
+    line-height: 30px !important;
     height: initial !important;
     span{
       white-space: normal;
       word-wrap: break-word;
       word-break: break-all;
+      display: inline-block;
+      line-height: 20px;
     }
   }
 </style>
