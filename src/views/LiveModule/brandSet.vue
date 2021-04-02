@@ -102,7 +102,7 @@ export default {
           let permissions = JSON.parse(res.data.permissions)
           this.brandOpen = Boolean(permissions['is_brand_cofig'] == 1)
           this.type = this.brandOpen ? 1 : 2;
-          this.$refs[`signSetComp`].initComp();
+          this.$refs[`${this.tabType}Comp`].initComp();
         }
       }).catch(e => {});
     },
@@ -126,7 +126,6 @@ export default {
           });
         }
         this.$refs[`${this.tabType}Comp`].initComp();
-        console.log(this.type, '????品牌设置黑社会')
       }).catch(res => {
         this.$message({
           message: res.msg || `操作失败`,

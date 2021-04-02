@@ -200,7 +200,6 @@ export default {
         type: this.brandType
       }
       this.$fetch('getInterWebinarSkin', this.$params(params)).then(res => {
-        console.log('11111111111预览页面')
         if (res && res.code === 200) {
           this.skinSetVo.status = res.data.status
           if (this.skinSetVo.status > 0)  {
