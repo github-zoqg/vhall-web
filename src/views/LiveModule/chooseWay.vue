@@ -1,7 +1,7 @@
 <template>
   <div :class="['chooseWay', {'no-login': executeType !== 'ctrl'}]">
     <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl'" scene="chooseWay" :isWhiteBg="executeType !== 'ctrl'"></OldHeader>
-    <pageTitle pageTitle="选择发起方式" v-if="executeType === 'ctrl'"></pageTitle>
+    <pageTitle :pageTitle="arr[1] == 1 ? '选择发起方式' : '选择进入方式'" v-if="executeType === 'ctrl'"></pageTitle>
     <div class="choose__way__main">
       <div class="choose__way__ctx">
         <h1 class="choose-method" v-if="executeType !== 'ctrl'" >选择发起方式</h1>
@@ -31,7 +31,7 @@
           </div> -->
         </div>
         <div class="choose-btn">
-          <el-button type="primary" round @click="goLive" class="length152" v-preventReClick>发起直播</el-button>
+          <el-button type="primary" round @click="goLive" class="length152" v-preventReClick>{{ arr[1] == 1 ? '发起直播' : '进入直播'}}</el-button>
           <iframe src="" class="hide" frameborder="0" scrolling="no" id="start_live"></iframe>
         </div>
         <div :class="['v-download', {'css': executeType === 'ctrl'} ]" v-if="chooseType === 'client' && downloadUrl">
