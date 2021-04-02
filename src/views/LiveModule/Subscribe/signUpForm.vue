@@ -1282,7 +1282,7 @@
             border-color: #FB3A32!important;
             background: #FB3A32!important;
           }
-          .el-radio__inner, .el-checkbox__inner{
+          .el-radio__inner{
             width: 16px;
             height: 16px;
             &:after{
@@ -1298,7 +1298,15 @@
           font-size: 14px;
         }
       }
-      /deep/ .el-checkbox__input,.el-radio__input {
+      /deep/ .el-checkbox__inner{
+        width: 16px;
+        height: 16px;
+        &:after{
+          top: 2px;
+          left: 5px;
+        }
+      }
+      /deep/ .el-radio__input {
         padding-top: 3px;
       }
       .el-radio-group, .el-checkbox-group {
