@@ -126,7 +126,8 @@ export default {
     },
     sureMaterialPrize() {
       if (this.sureChecked) {
-        this.materialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
+        this.copeQuestion(this.questionDataInfo.id);
+        // this.materialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
         this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
       } else {
         this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
@@ -137,13 +138,17 @@ export default {
       document.querySelector('#settingBox').innerHTML = '';
       this.$service.renderPageEdit('#settingBox', id || '');
     },
+    copeQuestion(id) {
+      this.$fetch('copyQuestion', {survey_id: id}).then(res => {
+        this.$message(`${res.code == 200 ? '复制成功' : '复制失败'}`);
+      })
+    },
     materialQuestion(id, title, description) {
       this.$fetch('createQuestion', {survey_id: id, title: title, description: description}).then(res => {
         if (this.type == 1) {
           this.$message({
             message: `新建成功`,
             showClose: true,
-            // duration: 0,
             type: 'success',
             customClass: 'zdy-info-box'
           });
@@ -184,12 +189,12 @@ export default {
           customClass: 'zdy-info-box'
         });
         this.dialogTongVisible = false;
-          this.$router.push({
-            path: `/live/question/${this.$route.query.webinarId}`,
-            query: {
-              roomId: this.$route.query.roomId
-            }
-          });
+        this.$router.push({
+          path: `/live/question/${this.$route.query.webinarId}`,
+          query: {
+            roomId: this.$route.query.roomId
+          }
+        });
       })
     },
     liveMaterialEditQuestion(id, title, description) {

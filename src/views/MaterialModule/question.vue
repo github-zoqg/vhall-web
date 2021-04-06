@@ -136,10 +136,7 @@ export default {
     // 复制
     cope(that, {rows}) {
       that.$fetch('copyQuestion', {survey_id: rows.question_id}).then(res => {
-        that.$message({
-          type: res.code == 200 ? 'success' : 'error',
-          message: res.msg,
-        });
+        that.$message(`${res.code == 200 ? '复制成功' : '复制失败'}`);
         that.getTableList();
       })
     },
