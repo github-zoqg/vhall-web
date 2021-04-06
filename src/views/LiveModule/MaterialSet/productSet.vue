@@ -59,14 +59,9 @@ export default {
       ],
       tabelColumn: [
         {
-          label: '商品ID',
-          key: 'goods_id',
-          width: 100
-        },
-        {
           label: '图片',
           key: 'img',
-          width: 150
+          width: 120
         },
         {
           label: '商品名称',
@@ -75,17 +70,17 @@ export default {
         {
           label: '单价',
           key: 'price',
-          width: 150
+          width: 120
         },
         {
           label: '优惠价',
           key: 'discount_price',
-          width: 150
+          width: 120
         },
         {
           label: '上下架',
           key: 'watch',
-          width: 100
+          width: 80
         }
       ],
       tableRowBtnFun: [
