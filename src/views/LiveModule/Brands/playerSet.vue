@@ -501,6 +501,17 @@ export default {
       this.isShowSpeed = true;
     },
     closePlayerOpen() {
+      if (this.reservationDisable && !this.playerOpen) {
+        this.playerOpen = true;
+        this.$alert('尊敬的用户，您的账号无此权限。如需使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询', '提示', {
+          confirmButtonText: '我知道了',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          center: true,
+          callback: action => {}
+        });
+        return;
+      }
       let params = {
         webinar_id: this.$route.params.str,
         permission_key: 'is_player_cofig',
@@ -665,7 +676,7 @@ export default {
         webinar_id: this.playerOpen ? this.$route.params.str : ''
       }
       this.$fetch('getScrolling', this.$params(params)).then(res => {
-        if (res.code == 200 && res.data) {
+        if (res.code == 200 && Number(res.data)) {
           this.formHorse = {...res.data};
           this.scrolling_open = Boolean(res.data.scrolling_open);
         }
@@ -681,7 +692,7 @@ export default {
         webinar_id: this.playerOpen ? this.$route.params.str : ''
       }
        this.$fetch('getWatermark', this.$params(params)).then(res => {
-        if (res.code == 200 && res.data) {
+        if (res.code == 200 && Number(res.data)) {
           this.formWatermark = {...res.data};
           this.formWatermark.img_alpha = Number(res.data.img_alpha);
           this.domain_url = res.data.img_url;
@@ -696,7 +707,7 @@ export default {
         webinar_id: this.playerOpen ? this.$route.params.str : ''
       }
        this.$fetch('getOtherOptions', this.$params(params)).then(res => {
-        if (res.code == 200 && res.data) {
+        if (res.code == 200 && Number(res.data)) {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
           this.formOther.progress = Boolean(res.data.progress_bar);
           this.formOther.doubleSpeed = Boolean(res.data.speed);
