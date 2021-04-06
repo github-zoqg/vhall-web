@@ -127,8 +127,6 @@ export default {
     sureMaterialPrize() {
       if (this.sureChecked) {
         this.copeQuestion(this.questionDataInfo.id);
-        // this.materialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
-        this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
       } else {
         this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
       }
@@ -140,16 +138,22 @@ export default {
     },
     copeQuestion(id) {
       this.$fetch('copyQuestion', {survey_id: id}).then(res => {
-        this.$message(`${res.code == 200 ? '复制成功' : '复制失败'}`);
+        this.$message({
+          message: res.code == 200 ? '同步成功' : '同步失败',
+          showClose: true,
+          type: res.code == 200 ? 'success' : 'error',
+          customClass: 'zdy-info-box'
+        });
       })
+      this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
     },
     materialQuestion(id, title, description) {
       this.$fetch('createQuestion', {survey_id: id, title: title, description: description}).then(res => {
         if (this.type == 1) {
           this.$message({
-            message: `新建成功`,
+            message: res.code == 200 ? '新建成功' : '新建失败',
             showClose: true,
-            type: 'success',
+            type: res.code == 200 ? 'success' : 'error',
             customClass: 'zdy-info-box'
           });
           this.$router.push({
@@ -161,10 +165,9 @@ export default {
     materialEditQuestion(id, title, description) {
       this.$fetch('editQuestion', {survey_id: id, title: title, description: description}).then(res => {
         this.$message({
-          message: `编辑成功`,
+          message: res.code == 200 ? '编辑成功' : '编辑失败',
           showClose: true,
-          // duration: 0,
-          type: 'success',
+          type: res.code == 200 ? 'success' : 'error',
           customClass: 'zdy-info-box'
         });
         this.$router.push({
@@ -182,10 +185,9 @@ export default {
       }
       this.$fetch('createLiveQuestion', params).then(res => {
         this.$message({
-          message: `新建成功`,
+          message: res.code == 200 ? '新建成功' : '新建失败',
           showClose: true,
-          // duration: 0,
-          type: 'success',
+          type: res.code == 200 ? 'success' : 'error',
           customClass: 'zdy-info-box'
         });
         this.dialogTongVisible = false;
@@ -207,10 +209,9 @@ export default {
       }
       this.$fetch('editLiveQuestion', params).then(res => {
         this.$message({
-          message: `编辑成功`,
+          message: res.code == 200 ? '编辑成功' : '编辑失败',
           showClose: true,
-          // duration: 0,
-          type: 'success',
+          type: res.code == 200 ? 'success' : 'error',
           customClass: 'zdy-info-box'
         });
          this.$router.push({
