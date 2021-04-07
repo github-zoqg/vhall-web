@@ -214,8 +214,9 @@
   </div>
 </template>
 <script>
-import { getStyle } from "@/utils/utils"
+import tableCellTooltip from './mixins/tableCellTooltip'
 export default {
+  mixins: [tableCellTooltip],
   data() {
     return {
       pageInfo: {
@@ -224,8 +225,7 @@ export default {
         limit: 10,
       },
       isUpdate: 0,
-      oldVal: [],
-      isTextOverflow: false
+      oldVal: []
     };
   },
   props: {
@@ -273,29 +273,6 @@ export default {
     // console.log('manageTableData', this.manageTableData);
   },
   methods: {
-    // 单元格鼠标移入事件
-    handleCellMouseEnter(row, column, cell, event) {
-      // 判断是否text-overflow, 如果是就显示tooltip
-      const cellChild = event.target.querySelector('.cell .custom-tooltip-content');
-      if (!cellChild) {
-        return;
-      }
-      // use range width instead of scrollWidth to determine whether the text is overflowing
-      // to address a potential FireFox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1074543#c3
-      const range = document.createRange();
-      range.setStart(cellChild, 0);
-      range.setEnd(cellChild, cellChild.childNodes.length);
-      const rangeWidth = range.getBoundingClientRect().width;
-      const padding = (parseInt(getStyle(cellChild, 'paddingLeft'), 10) || 0) +
-        (parseInt(getStyle(cellChild, 'paddingRight'), 10) || 0);
-      if ((rangeWidth + padding > cellChild.offsetWidth || cellChild.scrollWidth > cellChild.offsetWidth)) {
-        this.isTextOverflow = true
-        console.log('handleCellMouseEnter isoverflow')
-      }
-    },
-    handleCellMouseLeave() {
-      this.isTextOverflow = false
-    },
     // 开关状态切换的回调
     switchChange(option) {
       this.$emit('switchChange', option);
