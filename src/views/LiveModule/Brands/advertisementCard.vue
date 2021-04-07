@@ -81,6 +81,7 @@ export default {
         {
           label: '链接',
           key: 'url',
+          customTooltip: true
         },
         {
           label: '创建时间',

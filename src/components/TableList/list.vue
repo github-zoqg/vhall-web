@@ -8,6 +8,8 @@
       :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
       :row-class-name="tableRowClassName"
       :row-style="tableRowStyle"
+      @cell-mouse-enter="handleCellMouseEnter"
+      @cell-mouse-leave="handleCellMouseLeave"
     >
       <div slot="empty" style="height:0"></div>
       <el-table-column
@@ -24,7 +26,7 @@
           :key="index"
           :width="item.width"
           :label="item.label"
-          show-overflow-tooltip
+          :show-overflow-tooltip="!item.customTooltip"
         >
           <template slot-scope="scope">
             <span>{{ scope.row[item.isEdit] }}</span>
@@ -125,6 +127,9 @@
               <i class="iconfont-v3 saasshipinwenjian" v-else></i>
               {{ scope.row[item.key]  || '- -'}}
             </div>
+            <el-tooltip v-else-if="item.customTooltip" placement="top" :disabled="!isTextOverflow" :content="scope.row[item.key] == '' ? '- -' : scope.row[item.key]">
+              <p class="custom-tooltip-content">{{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}</p>
+            </el-tooltip>
             <p v-else :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'" >
               <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}
             </p>
@@ -209,6 +214,7 @@
   </div>
 </template>
 <script>
+import { getStyle } from "@/utils/utils"
 export default {
   data() {
     return {
@@ -218,7 +224,8 @@ export default {
         limit: 10,
       },
       isUpdate: 0,
-      oldVal: []
+      oldVal: [],
+      isTextOverflow: false
     };
   },
   props: {
@@ -266,6 +273,29 @@ export default {
     // console.log('manageTableData', this.manageTableData);
   },
   methods: {
+    // 单元格鼠标移入事件
+    handleCellMouseEnter(row, column, cell, event) {
+      // 判断是否text-overflow, 如果是就显示tooltip
+      const cellChild = event.target.querySelector('.cell .custom-tooltip-content');
+      if (!cellChild) {
+        return;
+      }
+      // use range width instead of scrollWidth to determine whether the text is overflowing
+      // to address a potential FireFox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1074543#c3
+      const range = document.createRange();
+      range.setStart(cellChild, 0);
+      range.setEnd(cellChild, cellChild.childNodes.length);
+      const rangeWidth = range.getBoundingClientRect().width;
+      const padding = (parseInt(getStyle(cellChild, 'paddingLeft'), 10) || 0) +
+        (parseInt(getStyle(cellChild, 'paddingRight'), 10) || 0);
+      if ((rangeWidth + padding > cellChild.offsetWidth || cellChild.scrollWidth > cellChild.offsetWidth)) {
+        this.isTextOverflow = true
+        console.log('handleCellMouseEnter isoverflow')
+      }
+    },
+    handleCellMouseLeave() {
+      this.isTextOverflow = false
+    },
     // 开关状态切换的回调
     switchChange(option) {
       this.$emit('switchChange', option);
@@ -582,5 +612,11 @@ export default {
   background-color: #f7f7f7;
   border-color: #B3B3B3;
   cursor: not-allowed;
+}
+/deep/ .custom-tooltip-content {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
