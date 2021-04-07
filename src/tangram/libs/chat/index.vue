@@ -548,6 +548,9 @@ export default {
               if (item.data.text_content) {
                 item.data.text_content = textToEmojiText(item.data.text_content);
               }
+              if(item.context.at_list){
+                item.context.atList = item.context.at_list
+              }
               if (item.context.atList && item.context.atList.length && item.data.text_content) {
                 item.context.atList.forEach((a) => {
                   item.data.text_content = item.data.text_content.replace(`***${a.nick_name}`, `@${a.nick_name}`);
