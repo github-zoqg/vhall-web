@@ -92,7 +92,7 @@
             </el-table-column>
             <el-table-column
               width="130"
-              v-if="activeIndex==1"
+              v-if="activeIndex==1 && totalNum"
               fixed="right"
               label="操作">
               <template slot-scope="scope">

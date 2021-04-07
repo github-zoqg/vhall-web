@@ -32,7 +32,88 @@
           </div>
         </div>
         <!-- 列表 -->
-        <table-list
+        <div class="viewer_list" v-if="viewerDao.total || query.keyword">
+          <el-table
+              :data="viewerDao.list"
+              style="width: 100%"
+              @selection-change="handleSelectionChange"
+              :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+            >
+              <el-table-column
+                type="selection"
+                width="52"
+                align="left"
+              />
+              <el-table-column
+                prop="name"
+                label="姓名"
+                min-width="200"
+                >
+              </el-table-column>
+              <el-table-column
+                label="行业"
+                min-width="200"
+                >
+                <template slot-scope="scope">
+                  <span>{{ scope.row.industry || '- -' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="邮箱"
+                width="150">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.email || '- -' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="phone"
+                label="手机号"
+                width="120">
+              </el-table-column>
+              <el-table-column
+                label="工号"
+                width="120">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.job_number || '- -' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="其他"
+                width="180">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.other || '- -' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                width="100"
+                v-if="viewerDao.total"
+                fixed="right"
+                label="操作">
+                <template slot-scope="scope">
+                  <el-button
+                    type="text"
+                    @click="viewerDialogShow(scope.row)"
+                    >修改</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="delViewer(scope.row)"
+                    >删除</el-button
+                  >
+                </template>
+              </el-table-column>
+              <div slot="empty"><NullPage :nullType="'search'" v-if="!viewerDao.total" :text="'暂无数据'" :height="20"></NullPage></div>
+          </el-table>
+          <SPagination
+              :total="viewerDao.total"
+              v-if="viewerDao.total > 10"
+              :currentPage="pageInfo.pageNum"
+              @current-change="currentChangeHandler"
+              align="center"
+            >
+          </SPagination>
+        </div>
+        <!-- <table-list
           ref="viewerTable"
           :manageTableData="viewerDao.list"
           :tabelColumnLabel="tableColumn"
@@ -46,9 +127,9 @@
           @getTableList="viewerList"
           @changeTableCheckbox="handleSelectionChange"
         >
-        </table-list>
+        </table-list> -->
         <!-- 无消息内容 -->
-        <null-page nullType="other" v-if="!(viewerDao && viewerDao.total > 0)"></null-page>
+        <null-page nullType="other" v-else></null-page>
       </div>
       <div  class="group__container">
         <p class="group__title">全部分组</p>
@@ -237,6 +318,11 @@ export default {
           methodName: 'delViewer'
         }
       ],
+      pageInfo: {
+        pageNum: 1,
+        pos: 0,
+        limit: 10
+      },
       query: {
         keyword: '',
         group_id: null,
@@ -367,9 +453,15 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
+     // 页码改变按钮事件
+    currentChangeHandler(current) {
+      this.pageInfo.pageNum = current;
+      this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit);
+      this.queryList();
+    },
     // 复选
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
+    handleSelectionChange(item) {
+      this.multipleSelection = item;
     },
     // 展示分组修改
     addGroupDialogShow(item) {
@@ -495,24 +587,31 @@ export default {
       });
     },
     queryList() {
-      this.query.pos = 0;
-      this.query.pageNumber = 0;
-      this.query.limit = 10;
-      // 表格切换到第一页
-      try {
-        this.$refs.viewerTable.pageInfo.pageNum = 1;
-        this.$refs.viewerTable.pageInfo.pos = 0;
-      } catch (e) {
-        console.log(e);
+      if (this.keyword) {
+        this.query.pos = 0
+        this.pageInfo.pageNum = 1;
+      } else {
+        this.query.pos = this.pageInfo.pos;
       }
+      this.query.limit = 10
+      // this.query.pos = 0;
+      // this.query.pageNumber = 0;
+      // this.query.limit = 10;
+      // 表格切换到第一页
+      // try {
+      //   this.$refs.viewerTable.pageInfo.pageNum = 1;
+      //   this.$refs.viewerTable.pageInfo.pos = 0;
+      // } catch (e) {
+      //   console.log(e);
+      // }
       this.viewerList();
     },
     // 白名单根据分组获取观众列表
-    viewerList(row) {
-      if (row) {
-        this.query.pos = row.pos;
-        this.query.pageNumber = row.pageNum;
-      }
+    viewerList() {
+      // if (row) {
+      //   this.query.pos = row.pos;
+      //   this.query.pageNumber = row.pageNum;
+      // }
       this.$fetch('viewerList', this.$params(this.query)).then(res => {
         res && res.code === 200 && res.data && res.data.total > 0 ? this.viewerDao = res.data : this.viewerDao = {
           total: 0,
@@ -548,7 +647,7 @@ export default {
     viewerDialogAdd() {
       // 判断是否有分组
       if(this.query.group_id) {
-        this.viewerDialogShow(this, {rows: null});
+        this.viewerDialogShow();
       } else {
         this.$message({
           message:  `请选择分组`,
@@ -560,37 +659,37 @@ export default {
       }
     },
     // 展示观众修改
-    viewerDialogShow(that, { rows }) {
+    viewerDialogShow(rows) {
       let item = rows;
       try{
-        if (that.$refs.viewerForm) {
-          that.$refs.viewerForm.resetFields();
+        if (this.$refs.viewerForm) {
+          this.$refs.viewerForm.resetFields();
         }
       }catch (e){
         console.log(e);
       }
       if(item) { // 观众信息修改
-        that.viewerDialog.type = 'edit';
-        that.viewerDialog.title = '观众信息修改';
-        that.viewerDialog.row = item;
-        that.$set(that.viewerForm, 'name', item.name);
-        that.$set(that.viewerForm, 'industry', item.industry);
-        that.$set(that.viewerForm, 'phone', item.phone);
-        that.$set(that.viewerForm, 'job_number', item.job_number);
-        that.$set(that.viewerForm, 'email', item.email);
-        that.$set(that.viewerForm, 'other', item.other);
-        that.viewerDialog.visible = true;
+        this.viewerDialog.type = 'edit';
+        this.viewerDialog.title = '观众信息修改';
+        this.viewerDialog.row = item;
+        this.$set(this.viewerForm, 'name', item.name);
+        this.$set(this.viewerForm, 'industry', item.industry);
+        this.$set(this.viewerForm, 'phone', item.phone);
+        this.$set(this.viewerForm, 'job_number', item.job_number);
+        this.$set(this.viewerForm, 'email', item.email);
+        this.$set(this.viewerForm, 'other', item.other);
+        this.viewerDialog.visible = true;
       } else { // 添加观众
-        that.viewerDialog.type = 'add';
-        that.viewerDialog.title = '添加观众';
-        that.viewerDialog.row = null;
-        that.$set(that.viewerForm, 'name', '');
-        that.$set(that.viewerForm, 'industry', '');
-        that.$set(that.viewerForm, 'phone', '');
-        that.$set(that.viewerForm, 'job_number', '');
-        that.$set(that.viewerForm, 'email', '');
-        that.$set(that.viewerForm, 'other', '');
-        that.viewerDialog.visible = true;
+        this.viewerDialog.type = 'add';
+        this.viewerDialog.title = '添加观众';
+        this.viewerDialog.row = null;
+        this.$set(this.viewerForm, 'name', '');
+        this.$set(this.viewerForm, 'industry', '');
+        this.$set(this.viewerForm, 'phone', '');
+        this.$set(this.viewerForm, 'job_number', '');
+        this.$set(this.viewerForm, 'email', '');
+        this.$set(this.viewerForm, 'other', '');
+        this.viewerDialog.visible = true;
       }
     },
     // 白名单添加观众至分组 or 白名单观众信息修改
@@ -623,15 +722,15 @@ export default {
         }
       });
     },
-    delViewer(that, { rows }) {
-      that.$confirm('确定从当前组里删除该观众？', '删除观众', {
+    delViewer(rows) {
+      this.$confirm('确定从当前组里删除该观众？', '删除观众', {
         confirmButtonText: '删除',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        that.sendViewerDel([rows.id]);
+        this.sendViewerDel([rows.id]);
       }).catch(() => {
       });
     },
@@ -647,7 +746,9 @@ export default {
             type: 'success',
             customClass: 'zdy-info-box'
           });
-          this.$refs.viewerTable.clearSelect();
+          // this.$refs.viewerTable.clearSelect();
+          this.pageInfo.pageNum = 1;
+          this.pageInfo.pos = 0;
           this.queryList();
         } else {
           this.$message({
@@ -700,6 +801,7 @@ export default {
     changeViewerList(item, index) {
       this.activeGroupIndex = index;
       this.query.group_id = item.id;
+      this.query.keyword = '';
       this.queryList();
     },
     // 文件上传成功
@@ -955,11 +1057,35 @@ export default {
   .padding-table-list2();
   background: #FFFFFF;
   min-height: 640px;
-  .data-list {
-    min-height: auto;
-    /deep/ .el-table__empty-block {
-      display: none;
+  .viewer_list{
+    // min-height: 520px;
+    width: 100%;
+  }
+  .pageBox{
+    margin-top: 30px;
+  }
+  /deep/.el-table__empty-block {
+    min-height: 450px;
+  }
+  /deep/.el-table__fixed-right{
+    height: 100% !important;
+    &::before{
+      background-color: #Fff;
+      height: 0;
     }
+  }
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+    width: 6px; // 横向滚动条
+    height: 6px; // 纵向滚动条
+  }
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: #dedede;
+    border-radius: 5px;
+  }
+  /deep/ .el-table__body::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    background: rgba(255,255,255,1);
   }
 }
 .row__container {

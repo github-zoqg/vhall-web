@@ -125,7 +125,7 @@
               <i class="iconfont-v3 saasshipinwenjian" v-else></i>
               {{ scope.row[item.key]  || '- -'}}
             </div>
-            <p v-else :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'" >
+            <p v-else class="text">
               <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}
             </p>
           </template>
@@ -434,9 +434,9 @@ export default {
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .grayText{
-      color: #666;
-    }
+    // .grayText{
+    //   color: #666;
+    // }
    .icon_tag {
     width: 8px;
     height: 8px;
