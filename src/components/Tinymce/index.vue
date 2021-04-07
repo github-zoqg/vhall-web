@@ -100,7 +100,7 @@ export default {
         height: this.height || 300,
         menubar: false, // 隐藏菜单
         convert_urls: false, // 关闭url自动识别转换
-        content_style: 'p {color:#1a1a1a; margin: 0px; border:0px ; font-size: 14px; padding: 0px; word-break: break-all;}', // 关闭默认p标签间距
+        content_style: 'div{font-size: 14px;} p{color:#1a1a1a; margin: 0px; border:0px ; font-size: 14px; padding: 0px; word-break: break-all;}', // 关闭默认p标签间距
         fontsize_formats: '12px 14px 16px 18px 24px 36px 48px 56px 72px',
         // paste_data_images: false, // 允许粘贴图像
         images_file_types: 'jpeg,jpg,png,gif,bmp',
