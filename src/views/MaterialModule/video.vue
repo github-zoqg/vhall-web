@@ -31,6 +31,8 @@
     </div>
     <div class="video-list" v-if="total || isSearch">
        <el-table
+            @cell-mouse-enter="handleCellMouseEnter"
+            @cell-mouse-leave="handleCellMouseLeave"
             :data="tableData"
             @selection-change="changeTableCheckbox"
             :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
@@ -42,13 +44,15 @@
             />
             <el-table-column
               label="音视频名称"
-              show-overflow-tooltip>
+            >
               <template slot-scope="scope">
-              <div class="videoName">
-                <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'"></i>
-                <i class="iconfont-v3 saasshipinwenjian" v-else></i>
-                {{ scope.row.video_name  || '- -'}}
-              </div>
+                <el-tooltip placement="top" :disabled="!isTextOverflow" :content="scope.row.video_name == '' ? '- -' : scope.row.video_name">
+                  <div class="videoName custom-tooltip-content">
+                    <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'"></i>
+                    <i class="iconfont-v3 saasshipinwenjian" v-else></i>
+                    {{ scope.row.video_name  || '- -'}}
+                  </div>
+                </el-tooltip>
               </template>
             </el-table-column>
             <el-table-column
@@ -163,8 +167,10 @@ import { sessionOrLocal } from '@/utils/utils';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import EventBus from "@/utils/Events";
 import { formateSeconds } from '@/utils/general';
+import tableCellTooltip from '@/components/TableList/mixins/tableCellTooltip'
 export default {
   name: 'video.vue',
+  mixins: [tableCellTooltip],
   data() {
     return {
       total: 0,

@@ -86,6 +86,7 @@ export default {
         {
           label: '活动标题',
           key: 'subject',
+          customTooltip: true
         },
         {
           label: '观看人数',

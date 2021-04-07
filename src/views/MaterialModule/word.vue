@@ -178,7 +178,8 @@ export default {
         {
           label: '文档名称',
           key: 'file_name',
-          width: 'auto'
+          width: 'auto',
+          customTooltip: true
         },
         {
           label: '上传时间',

@@ -20,6 +20,8 @@
         </div>
         <div class="interact-detail" v-show="activeIndex==1">
           <el-table
+            @cell-mouse-enter="handleCellMouseEnter"
+            @cell-mouse-leave="handleCellMouseLeave"
             :data="tableList"
             :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
            >
@@ -32,9 +34,14 @@
             </el-table-column>
             <el-table-column
               prop="create_time"
-              show-overflow-tooltip
+
               label="交易时间"
-              >
+            >
+              <template slot-scope="scope">
+                <el-tooltip placement="top" :disabled="!isTextOverflow" :content="scope.row.create_time == '' ? '- -' : scope.row.create_time">
+                  <p class="custom-tooltip-content">{{ scope.row.create_time == '' ? '- -' : scope.row.create_time }}</p>
+                </el-tooltip>
+              </template>
             </el-table-column>
             <el-table-column
               prop="type"
@@ -63,17 +70,19 @@
               </template>
             </el-table-column>
             <el-table-column
-              show-overflow-tooltip
               label="启用日期">
               <template slot-scope="scope">
-               <span>{{ scope.row.start_time || '- -' }}</span>
+                <el-tooltip placement="top" :disabled="!isTextOverflow" :content="scope.row.start_time == '' ? '- -' : scope.row.start_time">
+                  <p class="custom-tooltip-content">{{ scope.row.start_time == '' ? '- -' : scope.row.start_time }}</p>
+                </el-tooltip>
               </template>
             </el-table-column>
             <el-table-column
-              show-overflow-tooltip
               label="失效日期">
               <template slot-scope="scope">
-               <span>{{ scope.row.end_time || '- -' }}</span>
+                <el-tooltip placement="top" :disabled="!isTextOverflow" :content="scope.row.end_time == '' ? '- -' : scope.row.end_time">
+                  <p class="custom-tooltip-content">{{ scope.row.end_time == '' ? '- -' : scope.row.end_time }}</p>
+                </el-tooltip>
               </template>
             </el-table-column>
             <el-table-column
@@ -125,8 +134,10 @@
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import tableCellTooltip from '@/components/TableList/mixins/tableCellTooltip'
 export default {
   name: "income",
+  mixins: [tableCellTooltip],
   data() {
     return {
       activeIndex: '1',
@@ -352,7 +363,8 @@ export default {
         {
           label: '购买内容',
           key: 'content',
-          width: 95
+          width: 95,
+          customTooltip: true
         },
         {
           label: '订单状态',

@@ -214,7 +214,8 @@ export default {
         {
           label: '昵称',
           key: 'nick_name',
-          width: 'auto'
+          width: 'auto',
+          customTooltip: true
         },
         {
           label: '手机号码',

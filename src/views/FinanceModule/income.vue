@@ -170,6 +170,7 @@ export default {
         {
           label: '标题',
           key: 'name',
+          customTooltip: true
         },
         {
           label: '总收益（元）',
@@ -201,6 +202,7 @@ export default {
         {
           label: '标题',
           key: 'name',
+          customTooltip: true
         },
         {
           label: '发红包用户',

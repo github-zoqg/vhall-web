@@ -72,7 +72,7 @@ export default {
        {
           label: '图片',
           key: 'img_url',
-          width: 200
+          width: 162
         },
         {
           label: '标题',
@@ -86,7 +86,7 @@ export default {
         {
           label: '创建时间',
           key: 'created_at',
-          width: 180
+          width: 170
         }
       ],
       tableRowBtnFun:[
@@ -279,5 +279,8 @@ export default {
       margin: 0;
     }
   }
+}
+/deep/ .el-table .cell {
+  padding-left: 10px;
 }
 </style>
