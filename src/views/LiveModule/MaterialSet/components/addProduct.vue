@@ -134,9 +134,7 @@ export default {
     };
     // 商品优惠价
     const priceCountValidate = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error('请输入商品优惠价'));
-      } else {
+      if (value) {
         if (value <= 0 || value > 99999999.99) {
           callback && callback('价格必须大于0且小于99999999.99');
         } else {
@@ -146,6 +144,8 @@ export default {
             callback();
           }
         }
+      } else {
+        callback();
       }
     }
     return {
@@ -178,7 +178,7 @@ export default {
           { required: true, validator: priceValidate, trigger: 'blur' }
         ],
         discount_price: [
-          { required: true, validator: priceCountValidate, trigger: 'blur' }
+          { required: false, validator: priceCountValidate, trigger: 'blur' }
         ],
         url: [
           { required: true, validator: linkValidate, trigger: 'blur'},
