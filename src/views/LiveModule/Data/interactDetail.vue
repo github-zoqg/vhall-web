@@ -426,6 +426,7 @@ export default {
           } else {
             item.chatImg = ''
           }
+          item.data.barrage_txt = item.data.barrage_txt.replace(/\*\*\*/g, "@")
           item.imgOrText = item.data.barrage_txt + item.chatImg
         })
         this.totalNum = res.data.total;
