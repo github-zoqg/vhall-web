@@ -676,7 +676,7 @@ export default {
         webinar_id: this.playerOpen ? this.$route.params.str : ''
       }
       this.$fetch('getScrolling', this.$params(params)).then(res => {
-        if (res.code == 200 && Number(res.data)) {
+        if (res.code == 200) {
           this.formHorse = {...res.data};
           this.scrolling_open = Boolean(res.data.scrolling_open);
         }
@@ -692,7 +692,7 @@ export default {
         webinar_id: this.playerOpen ? this.$route.params.str : ''
       }
        this.$fetch('getWatermark', this.$params(params)).then(res => {
-        if (res.code == 200 && Number(res.data)) {
+        if (res.code == 200) {
           this.formWatermark = {...res.data};
           this.formWatermark.img_alpha = Number(res.data.img_alpha);
           this.domain_url = res.data.img_url;
@@ -707,7 +707,7 @@ export default {
         webinar_id: this.playerOpen ? this.$route.params.str : ''
       }
        this.$fetch('getOtherOptions', this.$params(params)).then(res => {
-        if (res.code == 200 && Number(res.data)) {
+        if (res.code == 200) {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
           this.formOther.progress = Boolean(res.data.progress_bar);
           this.formOther.doubleSpeed = Boolean(res.data.speed);

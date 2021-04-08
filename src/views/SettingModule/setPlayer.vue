@@ -533,7 +533,7 @@ export default {
     // 获取跑马灯基本信息
     getBasescrollingList() {
       this.$fetch('getScrolling', {type: 2}).then(res => {
-        if (res.code == 200 && Number(res.data)) {
+        if (res.code == 200) {
           this.formHorse = {...res.data};
           this.scrolling_open = Boolean(res.data.scrolling_open);
         }
@@ -545,7 +545,7 @@ export default {
      // 获取水印基本信息
     getBaseWaterList() {
        this.$fetch('getWatermark', {type: 2}).then(res => {
-        if (res.code == 200 && Number(res.data)) {
+        if (res.code == 200) {
           this.formWatermark = {...res.data};
           this.formWatermark.img_alpha = Number(res.data.img_alpha);
           this.domain_url = res.data.img_url;
@@ -556,7 +556,7 @@ export default {
     // 获取其他基本信息
     getBaseOtherList() {
        this.$fetch('getOtherOptions', {type: 2}).then(res => {
-        if (res.code == 200 && Number(res.data)) {
+        if (res.code == 200) {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
           this.formOther.progress = Boolean(res.data.progress_bar);
           this.formOther.doubleSpeed = Boolean(res.data.speed);
