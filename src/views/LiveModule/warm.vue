@@ -142,8 +142,10 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        this.warmFlag = false;
-        this.openCloseWarm(1);
+        if (!this.warmForm.record_id) {
+          this.warmForm.warmFlag = false;
+          this.openCloseWarm(1);
+        }
         next();
       }).catch(() => {
       });
