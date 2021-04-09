@@ -4,7 +4,7 @@
     <pageTitle :pageTitle="arr[1] == 1 ? '选择发起方式' : '选择进入方式'" v-if="executeType === 'ctrl'"></pageTitle>
     <div class="choose__way__main">
       <div class="choose__way__ctx">
-        <h1 class="choose-method" v-if="executeType !== 'ctrl'" >选择发起方式</h1>
+        <h1 class="choose-method" v-if="executeType !== 'ctrl'" >{{ arr[1] == 1 ? '选择发起方式' : '选择进入方式'}}</h1>
         <div class="select-way">
           <div class="choose-p choose-a-way " :class="chooseType === 'browser' ? 'active' : 'choose-a-way'" @click.prevent.stop="changeChoose('browser')">
             <div class="choose-img"><img src="../../common/images/live/app.png" alt=""></div>
