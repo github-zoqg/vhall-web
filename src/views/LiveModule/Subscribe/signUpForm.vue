@@ -1,7 +1,7 @@
 <template>
   <div :class="['signFormBox']" @click.self="closePreview">
     <div :class="['signWrap']">
-      <vhscroll>
+      <vhscroll @handle-scroll="handleAutoCloseSelect">
         <div class="entryFormBox">
           <header>
             <img v-if="!baseInfo.cover" src="../signUp/images/formHeader.png" alt="">
@@ -128,7 +128,7 @@
                   <template
                     v-if="question.type === 4"
                   >
-                    <el-select v-model="form[question.id]" placeholder="请选择">
+                    <el-select ref="autoCloseRefFlag" v-model="form[question.id]" placeholder="请选择">
                       <el-option
                         v-for="option in question.items"
                         :key="option.id"
@@ -144,7 +144,7 @@
                     <el-row :gutter="20">
                       <el-col :span="question.colNum">
                         <VhallInput v-show="false" v-model="form[question.id]" autocomplete="off" ></VhallInput>
-                        <el-select v-model="province" @change="regionalChange('province')" placeholder="请选择省份">
+                        <el-select ref="autoCloseRefFlag" v-model="province" @change="regionalChange('province')" placeholder="请选择省份">
                           <el-option
                             v-for="opt in provinces"
                             :key="opt.value"
@@ -154,7 +154,7 @@
                         </el-select>
                       </el-col>
                       <el-col v-if="question.options.show_city == 1" :span="question.colNum">
-                        <el-select v-model="city" @change="regionalChange('city')" placeholder="请选择市">
+                        <el-select ref="autoCloseRefFlag" v-model="city" @change="regionalChange('city')" placeholder="请选择市">
                           <el-option
                             v-for="opt in cityList"
                             :key="opt.value"
@@ -164,7 +164,7 @@
                         </el-select>
                       </el-col>
                       <el-col v-if="question.options.show_country == 1" :span="question.colNum">
-                        <el-select v-model="county" @change="regionalChange('county')" placeholder="请选择区/县">
+                        <el-select ref="autoCloseRefFlag" v-model="county" @change="regionalChange('county')" placeholder="请选择区/县">
                           <el-option
                             v-for="opt in countyList"
                             :key="opt.value"
@@ -512,6 +512,11 @@
       // new DevicePixelRatio('#signFormBox');
     },
     methods: {
+      handleAutoCloseSelect() {
+        this.$refs.autoCloseRefFlag.forEach(item => {
+          item.blur()
+        })
+      },
       // 获取当前活动类型
       getWebinarType() {
         this.$fetch('watchInit', {
