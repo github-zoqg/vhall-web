@@ -535,11 +535,11 @@ export default {
       this.$fetch('getScrolling', {type: 2}).then(res => {
         if (res.code == 200) {
           this.formHorse = {...res.data};
-          this.$nextTick(() => {
-            this.$refs.pageThemeColors.initColor(res.data.color);
-          })
           this.scrolling_open = Boolean(res.data.scrolling_open);
         }
+        this.$nextTick(() => {
+          this.$refs.pageThemeColors.initColor(this.formHorse.color);
+        })
       })
     },
      // 获取水印基本信息

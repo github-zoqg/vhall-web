@@ -501,6 +501,17 @@ export default {
       this.isShowSpeed = true;
     },
     closePlayerOpen() {
+      if (this.reservationDisable && !this.playerOpen) {
+        this.playerOpen = true;
+        this.$alert('尊敬的用户，您的账号无此权限。如需使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询', '提示', {
+          confirmButtonText: '我知道了',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          center: true,
+          callback: action => {}
+        });
+        return;
+      }
       let params = {
         webinar_id: this.$route.params.str,
         permission_key: 'is_player_cofig',
@@ -667,11 +678,11 @@ export default {
       this.$fetch('getScrolling', this.$params(params)).then(res => {
         if (res.code == 200) {
           this.formHorse = {...res.data};
-          this.$nextTick(() => {
-            this.$refs.pageThemeColors.initColor(res.data.color);
-          })
           this.scrolling_open = Boolean(res.data.scrolling_open);
         }
+        this.$nextTick(() => {
+          this.$refs.pageThemeColors.initColor(this.formHorse.color);
+        })
       })
     },
      // 获取水印基本信息

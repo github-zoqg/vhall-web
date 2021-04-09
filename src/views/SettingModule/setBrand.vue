@@ -47,7 +47,7 @@ export default {
     }
   },
   mounted() {
-    this.$refs[`signSetComp`].initComp();
+    this.$refs[`${this.tabType}Comp`].initComp();
   }
 };
 </script>

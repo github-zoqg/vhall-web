@@ -102,11 +102,22 @@ export default {
           let permissions = JSON.parse(res.data.permissions)
           this.brandOpen = Boolean(permissions['is_brand_cofig'] == 1)
           this.type = this.brandOpen ? 1 : 2;
-          this.$refs[`signSetComp`].initComp();
+          this.$refs[`${this.tabType}Comp`].initComp();
         }
       }).catch(e => {});
     },
     closeBrandOpen() {
+      if (this.reservationDisable && !this.brandOpen) {
+        this.brandOpen = true;
+        this.$alert('尊敬的用户，您的账号无此权限。如需使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询', '提示', {
+          confirmButtonText: '我知道了',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          center: true,
+          callback: action => {}
+        });
+        return;
+      }
       let params = {
         webinar_id: this.$route.params.str,
         permission_key: 'is_brand_cofig',
@@ -126,7 +137,6 @@ export default {
           });
         }
         this.$refs[`${this.tabType}Comp`].initComp();
-        console.log(this.type, '????品牌设置黑社会')
       }).catch(res => {
         this.$message({
           message: res.msg || `操作失败`,
