@@ -680,6 +680,7 @@ export default {
   width: 50%;
   height: 100%;
   background-color: #fff;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
