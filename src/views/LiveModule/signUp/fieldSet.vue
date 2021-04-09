@@ -860,7 +860,7 @@ export default {
   }
   &.viewItemHover{
     /deep/.el-input__suffix{
-      right: -25px;
+      right: 5px;
     }
   }
   &.privacyItem {
@@ -932,7 +932,7 @@ export default {
           }
         }
         .radioGender .el-input__inner{
-          cursor: default;
+          cursor: not-allowed;
           color: #1a1a1a;
         }
         .other-input {
@@ -1048,6 +1048,7 @@ export default {
   /deep/ .el-input__inner {
     height: 40px;
     padding: 0 10px;
+    padding-right: 70px !important;
   }
   /deep/ .el-input.is-disabled .el-input__inner {
     background-color: #FFFFFF;

@@ -119,7 +119,7 @@
                 auto-complete="off"
                 v-model.trim="dynamicForm.dynamic_code">
                 <template slot="append">
-                  <span @click="time == 60 && getDyCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
+                  <span @click="time == 60 && getDyCode()" :class="showCaptcha && isValidaLoginPhone ? 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
                 </template>
               </el-input>
             </div>
@@ -171,7 +171,7 @@
                   auto-complete="off"
                   v-model="registerForm.code">
                   <template slot="append">
-                    <span @click="time == 60 && getRegisterCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
+                    <span @click="time == 60 && getRegisterCode()" :class="showCaptcha && isValidaregisterPhone ? 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
                   </template>
                 </VhallInput>
               </div>
@@ -224,13 +224,16 @@ export default {
   data() {
     var validatePhone = (rule, value, callback) => {
       // this.registerText = '';
+      this.isValidaregisterPhone = false;
       if (value === '') {
         callback(new Error('请输入手机号'));
       } else {
         if (!(/^1[0-9]{10}$/.test(value))) {
           callback(new Error('请输入正确的手机号'));
+        } else {
+          this.isValidaregisterPhone = true;
+          callback();
         }
-        callback();
       }
     };
     var validAccout = (rule, value, callback) => {
@@ -251,6 +254,7 @@ export default {
     };
     var validateLoginPhone = (rule, value, callback) => {
       this.errorMsgShow = '';
+      this.isValidaLoginPhone = false;
       if (value === '') {
         callback(new Error('请输入手机号'));
       } else {
@@ -261,6 +265,7 @@ export default {
             if (!res.data.account_exist) {
               callback(new Error('该手机号未注册，请先注册'));
             } else {
+              this.isValidaLoginPhone = true;
               callback();
             }
           }).catch(res => {
@@ -325,6 +330,8 @@ export default {
       mobileKey: '', // 云盾值
       captcha: null, // 云盾本身
       errorMsgShow: '',
+      isValidaLoginPhone: false,
+      isValidaregisterPhone: false,
       time: 60,
       isActive: 1,
       isOpenOther: true
@@ -336,6 +343,8 @@ export default {
       this.registerText = '';
       this.errorText = '';
       this.errorMsgShow = '';
+      this.isValidaregisterPhone = false;
+      this.isValidaLoginPhone = false;
     }
   },
   mounted() {
@@ -501,8 +510,10 @@ export default {
          this.$fetch('loginCheck', {account: this.registerForm.phone}).then(res => {
           if (res.data.account_exist) {
             this.registerText = '该手机号已注册';
+             this.isValidaregisterPhone = false;
           } else {
             this.registerText = '';
+             this.isValidaregisterPhone = true;
           }
         }).catch(res => {
           this.registerText = res.msg || '注册失败';
@@ -1064,30 +1075,29 @@ export default {
     position: absolute;
     bottom: 3px;
     right: 0;
-    cursor: pointer;
     span {
       border: 0;
       position: absolute;
       bottom: 3px;
       right: 0;
       width: 103px;
-      background: #E8E8E8;
+      background: #F2F2F2;
       border-radius: 2px;
       font-size: 13px;
       font-weight: 400;
       color: #222222;
-      cursor: pointer;
       padding: 8px 0;
-      cursor: pointer;
       line-height: 18px;
       text-align: center;
+      cursor: not-allowed;
       &.isLoginActive{
         background: #FB3A32;
         border-radius: 2px;
         color: #FFFFFF;
+        cursor: pointer;
       }
       &.isSend {
-        background: #E8E8E8;
+        background: #F2F2F2;
         color: #222222;
       }
     }

@@ -71,7 +71,7 @@
                   auto-complete="off"
                   v-model.trim="dynamicForm.code">
                   <template slot="append">
-                    <span @click="time == 60 && dynamicForm.phone && getDyCode()" :class="mobileKey && time === 60 && dynamicForm.phone ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
+                    <span @click="time == 60 && dynamicForm.phone && getDyCode()" :class="mobileKey && isFindCode ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
                   </template>
                 </el-input>
               </div>
@@ -91,7 +91,7 @@
                 :maxlength="30"
                 v-model.trim="dynamicForm.email">
                 <template slot="append">
-                    <span @click="time == 60 && getDyCode()" :class="mobileKey && time === 60 ? 'isLoginActive' : time < 60 ? 'isSend' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
+                    <span @click="time == 60 && getDyCode()" :class="isFindCode ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}s 后重新发送` }}</span>
                   </template>
               </el-input>
             </el-form-item>
@@ -160,23 +160,30 @@ export default {
   },
   data() {
     let validatePhone = (rule, value, callback) => {
+      this.isFindCode = false;
       if (value === '') {
         callback(new Error('请输入手机号'));
       } else {
         if (!(/^1[0-9]{10}$/.test(value))) {
           callback(new Error('请输入正确的手机号'));
+        } else {
+          this.isFindCode = true;
+          callback();
         }
-        callback();
       }
     };
     let validateEmail = (rule, value, callback) => {
       if (value === '') {
+        this.isFindCode = false;
         callback(new Error('请输入邮箱'));
       } else {
         if (!(/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(value))) {
+          this.isFindCode = false;
           callback(new Error('请输入正确的邮箱'));
+        } else {
+          this.isFindCode = true;
+          callback();
         }
-        callback();
       }
     };
     let validateCheckPass = (rule, value, callback) => {
@@ -194,6 +201,7 @@ export default {
       time: 60,
       isType: 'phone',
       codeKey: 0,
+      isFindCode: false,
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey: '', // 云盾值
       captcha: null, // 云盾本身
@@ -226,6 +234,8 @@ export default {
     findPassword(type, index) {
       this.isType = type;
       this.findStep = 2;
+      this.isFindCode = false;
+      this.mobileKey = '';
       if (type === 'phone') {
         this.callCaptcha();
       }
@@ -612,11 +622,12 @@ export default {
       font-size: 12px;
       font-weight: 400;
       color: #222222;
-      cursor: pointer;
       vertical-align: bottom;
+      cursor: not-allowed;
       &.isLoginActive{
         background: #FB3A32;
         color: #FFFFFF;
+        cursor: pointer;
         &:hover {
           color: #fff;
           background: #FC615B;

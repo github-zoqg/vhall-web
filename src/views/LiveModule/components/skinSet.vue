@@ -127,6 +127,9 @@ export default {
       this.skinSetForm.pageStyle = color;
       this.previewShow();
     },
+    closeColor() {
+      // this.$refs.pageThemeColors.selectPanelShow = false;
+    },
     previewShow() {
       let showRow = Object.assign(this.skinSetForm, {
         status: this.skinType,

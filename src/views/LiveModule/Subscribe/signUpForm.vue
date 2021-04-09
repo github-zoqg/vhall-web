@@ -524,6 +524,21 @@
       handleUnfold(val) {
         this.overflowStatus = val
       },
+      questionType(item) {
+        let title = '';
+        if (item.type == 1 && item.subject != '公司') {
+          title = '(问答题)'
+        }
+        if (item.type == 4 && item.subject != '职务') {
+          title = '(下拉题)'
+        }
+        if (item.type == 2) {
+          title = '(单选题)'
+        } else if (item.type == 3){
+           title = '(多选题)'
+        }
+        return `${item.subject} ${title}`
+      },
       validCode(rule, value, callback) {
         if (this.isVerifyCodeErr) {
           return callback ? callback(new Error('请输入正确的验证码')) : false
@@ -923,6 +938,9 @@
           this.isPhoneValidate = phoneItem.options && JSON.parse(phoneItem.options).open_verify == 1
           // 默认填写手机号
           !this.isPreview && res.data.phone && (this.verifyForm.phone = res.data.phone)
+          list.forEach(item => {
+            item.subject = this.questionType(item)
+          })
           this.list = list;
           // 地域 options 格式化处理
           this.list.some(item => {
@@ -936,6 +954,7 @@
               return true;
             }
           })
+          // this.list.map(item =>)
           // 隐私声明格式处理
           const lastQuestion = this.list[this.list.length - 1];
           console.log(lastQuestion)
@@ -1021,6 +1040,7 @@
         align-items: center;
         img{
           width: 100%;
+          object-fit: scale-down;
         }
       }
       .pageTitle{
@@ -1471,12 +1491,14 @@
   .el-select-dropdown__list .el-select-dropdown__item {
     max-width: 608px!important;
     width: 100%;
-    line-height: 26px !important;
+    line-height: 30px !important;
     height: initial !important;
     span{
       white-space: normal;
       word-wrap: break-word;
       word-break: break-all;
+      display: inline-block;
+      line-height: 20px;
     }
   }
 </style>

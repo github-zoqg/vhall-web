@@ -20,7 +20,7 @@
             </div>
           </header>
           <section class="watchContainer"
-                   :style="{background: `url(${skinSetVo.bg_url}) 0% 0% / cover no-repeat`}">
+                   :style="{backgroundImage: `url(${skinSetVo.bg_url})`}">
             <div class="area">
               <div class="topInfo">
                 <p class="">
@@ -156,6 +156,7 @@ export default {
       this.$nextTick(() => {
         this.signSetVo = vo;
         this.domain_url = domain_url;
+        // this.getInterWebinarSkin();
         console.log(this.signSetVo, '4444444444444444')
       });
     },
@@ -173,6 +174,7 @@ export default {
             bg_url: '' // 背景图
           };
         }
+        // this.getSignInfo();
         console.log(this.skinSetVo, '11111111111111')
       });
     },
@@ -295,6 +297,8 @@ export default {
 }
 .watchContainer{
   clear: both;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 .area {
   margin: 0 24px;
