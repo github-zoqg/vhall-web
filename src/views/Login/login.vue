@@ -680,19 +680,13 @@ export default {
   width: 50%;
   height: 100%;
   background-color: #fff;
-  position: relative
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-box {
   width: 340px;
-  position: absolute;
-  left: 50%;
-  top: 51%;
-  margin-left: -170px;
-  transform: translateY(-50%);
-  &.register {
-    top: 48%;
-  }
 }
 
 .login-box h3 {
