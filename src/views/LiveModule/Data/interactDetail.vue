@@ -413,26 +413,20 @@ export default {
         this.tableList = res.data.list;
         this.tableList.map(item => {
           item.name = item.role_name == 1 ? '主持人' : item.role_name == 2 ? '观众' : item.role_name == 3 ? '助理' : '嘉宾';
-          if (item.data.barrage_txt) {
-            if((/\[|\]/g).test(item.data.barrage_txt)) {
-              item.data.barrage_txt = this.emojiToText(item.data.barrage_txt) || '';
-            } else {
-              item.data.barrage_txt = item.data.barrage_txt || '';
-            }
-          } else {
-            if ((/\[|\]/g).test(item.data.text_content)) {
-              item.data.barrage_txt = this.emojiToText(item.data.text_content)
-            } else {
-              item.data.barrage_txt = item.data.text_content || '';
-            }
-            // item.data.barrage_txt = this.emojiToText(item.data.text_content) || '';
+          if(item.data.barrage_txt && (/\[|\]/g).test(item.data.barrage_txt)) {
+            item.data.barrage_txt = this.emojiToText(item.data.barrage_txt) || '';
           }
-
+          if (item.data.text_content && (/\[|\]/g).test(item.data.text_content)) {
+            item.data.barrage_txt = this.emojiToText(item.data.text_content)
+          } else {
+            item.data.barrage_txt = item.data.text_content || '';
+          }
           if (item.data.image_urls && item.data.image_urls.length != 0) {
             item.chatImg = this.chartsImgs(item.data.image_urls);
           } else {
             item.chatImg = ''
           }
+          item.data.barrage_txt = item.data.barrage_txt.replace(/\*\*\*/g, "@")
           item.imgOrText = item.data.barrage_txt + item.chatImg
         })
         this.totalNum = res.data.total;
@@ -685,6 +679,11 @@ export default {
         // })
         let tableList = res.data.list;
         tableList.map((item, index) => {
+          if(item.content && (/\[|\]/g).test(item.content)) {
+            item.content = this.emojiToText(item.content) || '';
+          } else {
+            item.content = item.content || '';
+          }
           item.statusText = item.status == 1 ? '不处理' : item.status == 2 ? '语音回复' : item.status == 3 ? '文字回复' : '未处理';
           item.name = '问';
           item.imgOrText = `${item.nick_name} | 观众 <br /> ${item.content}`;
