@@ -1471,12 +1471,15 @@
   .el-select-dropdown__list .el-select-dropdown__item {
     max-width: 608px!important;
     width: 100%;
-    line-height: 26px !important;
+    line-height: 30px !important;
     height: initial !important;
     span{
       white-space: normal;
       word-wrap: break-word;
       word-break: break-all;
+      line-height: 20px;
+      display: inline-block;
+      padding-top: 4px;
     }
   }
 </style>
