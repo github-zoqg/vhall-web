@@ -137,8 +137,10 @@ export default {
     cope(that, {rows}) {
       that.$fetch('copyQuestion', {survey_id: rows.question_id}).then(res => {
         that.$message({
+          message: res.code == 200 ? '复制成功' : '复制失败',
+          showClose: true,
           type: res.code == 200 ? 'success' : 'error',
-          message: res.msg,
+          customClass: 'zdy-info-box'
         });
         that.getTableList();
       })
@@ -171,7 +173,6 @@ export default {
             this.$message({
               message: `删除成功`,
               showClose: true,
-              // duration: 0,
               type: 'success',
               customClass: 'zdy-info-box'
             });
@@ -179,7 +180,6 @@ export default {
             this.$message({
               message: res.msg || '删除失败',
               showClose: true,
-              // duration: 0,
               type: 'error',
               customClass: 'zdy-info-box'
             });
@@ -188,7 +188,6 @@ export default {
           this.$message({
             message:  `已取消删除`,
             showClose: true,
-            // duration: 0,
             type: 'info',
             customClass: 'zdy-info-box'
           });

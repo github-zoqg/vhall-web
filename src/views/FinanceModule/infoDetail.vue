@@ -18,66 +18,82 @@
           >
           </search-area>
         </div>
-        <div class="interact-detail" v-show="activeIndex==1">
+        <div class="interact-detail">
           <el-table
             :data="tableList"
+            style="width: 100%"
             :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
            >
             <el-table-column
-              prop="order_id"
+              :prop="activeIndex==1 ? 'order_id' : 'id'"
               label="订单编号"
-              show-overflow-tooltip
               width="145"
               >
             </el-table-column>
             <el-table-column
               prop="create_time"
-              show-overflow-tooltip
               label="交易时间"
+              width="180"
               >
             </el-table-column>
             <el-table-column
               prop="type"
-              show-overflow-tooltip
               label="订单类型"
-              width="120">
+              width="150">
             </el-table-column>
             <el-table-column
               prop="amount"
-              show-overflow-tooltip
+              v-if="activeIndex==1"
               label="交易金额"
-              width="95">
+              width="120">
             </el-table-column>
             <el-table-column
               prop="content"
-              show-overflow-tooltip
               label="购买内容"
-              width="95">
+              width="120">
             </el-table-column>
             <el-table-column
               label="订单状态"
-              show-overflow-tooltip
-              width="95">
+              v-if="activeIndex==1"
+              width="120">
               <template slot-scope="scope">
-              <span class="buyStatus"><i :class="scope.row.status == '1' ? 'active-success': scope.row.status == '-1' ? 'active-error' : 'active-waiting'"></i>{{scope.row.statusText}}</span>
+                <span class="buyStatus" ><i :class="scope.row.status == 1 ? 'active-success': scope.row.status == -1 ? 'active-error' : 'active-waiting'"></i>{{scope.row.statusText}}</span>
+              </template>
+            </el-table-column>
+             <el-table-column
+             v-if="activeIndex==2"
+              label="订单状态"
+              width="120">
+              <template slot-scope="scope">
+                <span class="buyStatus" ><i :class="scope.row.status == 1 ? 'active-success': scope.row.status == -1 ? 'active-error' : 'active-waiting'"></i>{{scope.row.statusText}}</span>
               </template>
             </el-table-column>
             <el-table-column
-              show-overflow-tooltip
-              label="启用日期">
+              v-if="activeIndex==2"
+              label="来源"
+              width="120">
+              <template slot-scope="scope">
+                <span>{{scope.row.source | filterSource}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="启用日期"
+              width="180">
               <template slot-scope="scope">
                <span>{{ scope.row.start_time || '- -' }}</span>
               </template>
             </el-table-column>
             <el-table-column
-              show-overflow-tooltip
-              label="失效日期">
+              label="失效日期"
+              width="180">
               <template slot-scope="scope">
                <span>{{ scope.row.end_time || '- -' }}</span>
               </template>
             </el-table-column>
             <el-table-column
               width="130"
+              v-if="activeIndex==1 && totalNum"
+              fixed="right"
               label="操作">
               <template slot-scope="scope">
                 <el-button
@@ -93,7 +109,7 @@
                 >
               </template>
             </el-table-column>
-            <div slot="empty"><noData :nullType="'nullData'" v-if="!totalNum && activeIndex==1" :text="'暂无数据'"></noData></div>
+            <div slot="empty"><noData :nullType="'nullData'" v-if="!totalNum" :text="'暂无数据'"></noData></div>
           </el-table>
           <SPagination
             :total="totalNum"
@@ -104,7 +120,7 @@
           >
           </SPagination>
         </div>
-        <table-list
+        <!-- <table-list
           v-show="activeIndex==2"
           ref="tableDetail"
           :manageTableData="tableList"
@@ -114,8 +130,8 @@
           :totalNum="totalNum"
           @getTableList="getDetailList"
           >
-        </table-list>
-        <noData :nullType="'nullData'" v-if="!totalNum&&activeIndex==2" :text="'暂无数据'" :height="100"></noData>
+        </table-list> -->
+        <!-- <noData :nullType="'nullData'" v-if="!totalNum&&activeIndex==2" :text="'暂无数据'" :height="100"></noData> -->
       </el-tabs>
     </div>
   </div>
@@ -394,7 +410,7 @@ export default {
         // 购买明细
         this.searchDetail = this.searchList;
       }
-    }
+    },
   },
   methods: {
     getRoleList() {
@@ -420,25 +436,27 @@ export default {
     },
     handleClick(tab) {
       this.activeIndex = tab.name;
-      this.$refs.tableDetail.pageInfo.pos = 0;
-      this.$refs.tableDetail.pageInfo.pageNum = 1;
+      this.pageInfo.pos = 0;
+      this.pageInfo.pageNum = 1;
+      // this.$refs.tableDetail.pageInfo.pos = 0;
+      // this.$refs.tableDetail.pageInfo.pageNum = 1;
       this.$refs.searchDetail.searchParams = {};
       this.getDetailList();
     },
     getDetailList(params) {
-      let pageInfo = {};
-      if (this.activeIndex == 1) {
-        pageInfo = this.pageInfo;
-      } else {
-        pageInfo = this.$refs.tableDetail.pageInfo;
-      }
+      // let pageInfo = {};
+      // if (this.activeIndex == 1) {
+      //   pageInfo = this.pageInfo;
+      // } else {
+      //   pageInfo = this.$refs.tableDetail.pageInfo;
+      // }
       let formParams = this.$refs.searchDetail.searchParams; //获取搜索参数
       let paramsObj = {
         user_id: this.userId,
       };
       if (params === 'search') {
-        pageInfo.pos= 0;
-        pageInfo.pageNum = 1;
+        this.pageInfo.pos= 0;
+        this.pageInfo.pageNum = 1;
       }
       for (let i in formParams) {
         if (i === 'searchTime' && formParams.searchTime) {
@@ -449,22 +467,25 @@ export default {
         }
       }
       paramsObj.type = formParams.orderType || '';
-      let obj = Object.assign({}, pageInfo, paramsObj);
+      let obj = Object.assign({}, this.pageInfo, paramsObj);
       this.params = paramsObj;
-      let url = this.activeIndex == '1' ? "buyDetail" : "orderDetail";
+      let url = this.activeIndex == 1 ? "buyDetail" : "orderDetail";
       this.$fetch(url, this.$params(obj)).then(res =>{
         this.totalNum = res.data.total;
         let tableList = res.data.list;
-        tableList.map(item=> {
-          if (this.activeIndex == '1') {
-            item.statusText = item.status== 1 ? '成功' : item.status== -1 ? '失败' : '待支付';
-            item.type = this.culesType(item.type);
-          } else {
-            item.statusText = item.status== 1 ? '生效中' : item.status== -1 ? '已失效' : '待生效';
-          }
-          item.source = this.buyMethods(item.source);
-        });
+        if (res.data.total > 0) {
+          tableList.map(item=> {
+            if (this.activeIndex == 1) {
+              item.statusText = item.status== 1 ? '成功' : item.status== -1 ? '失败' : '待支付';
+              item.type = this.culesType(item.type);
+            } else {
+              item.statusText = item.status== 1 ? '生效中' : item.status== -1 ? '已失效' : '待生效';
+              // item.source = this.buyMethods(item.source);
+            }
+          });
+        }
         this.tableList = tableList;
+        console.log(this.tableList, '????kaitongmingxi开通明细')
         if (this.tableList.length == 0) {
           //兼容有无数据来修改element样式
           document.querySelector('.el-table').style.position = 'inherit'
@@ -597,9 +618,29 @@ export default {
     }
     /deep/.el-table .cell{
       width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      // overflow: hidden;
+      // text-overflow: ellipsis;
+      // white-space: nowrap;
+    }
+    /deep/.el-table__fixed-right{
+      height: 100% !important;
+      &::before{
+        background-color: #Fff;
+        height: 0;
+      }
+    }
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+      width: 6px; // 横向滚动条
+      height: 6px; // 纵向滚动条
+    }
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+      background-color: #dedede;
+      border-radius: 5px;
+    }
+    /deep/ .el-table__body::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+      border-radius: 5px;
+      background: rgba(255,255,255,1);
     }
     /deep/.el-select{
       width: 140px!important;

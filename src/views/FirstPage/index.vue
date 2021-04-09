@@ -260,7 +260,7 @@ export default {
     },
     // 联系我们
     contactUs() {
-      window.open(`http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738`, "_blank");
+      window.open(`https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038`, "_blank");
     },
     getLiveList() {
       // 初始化设置日期为最近一周

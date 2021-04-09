@@ -1497,8 +1497,9 @@
       white-space: normal;
       word-wrap: break-word;
       word-break: break-all;
-      display: inline-block;
       line-height: 20px;
+      display: inline-block;
+      padding-top: 4px;
     }
   }
 </style>
