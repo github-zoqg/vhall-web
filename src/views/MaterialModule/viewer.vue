@@ -502,6 +502,7 @@ export default {
         // 默认第一个展示
         if (this.groupList.length > 0) {
           this.query.group_id = this.groupList[0].id;
+          this.activeGroupIndex = 0;
           this.queryList();
         } else {
           // 若无分组，默认清空列表
