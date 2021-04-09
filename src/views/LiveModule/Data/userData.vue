@@ -113,14 +113,17 @@ export default {
         {
           label: '手机号',
           key: 'phone',
+          customTooltip: true
         },
         {
           label: '邮箱',
           key: 'email',
+          customTooltip: true
         },
         {
           label: '进入时间',
           key: 'join_time',
+          customTooltip: true
         },
         {
           label: '观看时长（分）',

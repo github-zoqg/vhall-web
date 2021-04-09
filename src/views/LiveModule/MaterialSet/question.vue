@@ -69,6 +69,7 @@ export default {
         {
           label: '问卷名称',
           key: 'title',
+          customTooltip: true
         },
         {
           label: '更新时间',

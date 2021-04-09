@@ -8,6 +8,8 @@
       :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
       :row-class-name="tableRowClassName"
       :row-style="tableRowStyle"
+      @cell-mouse-enter="handleCellMouseEnter"
+      @cell-mouse-leave="handleCellMouseLeave"
     >
       <div slot="empty" style="height:0"></div>
       <el-table-column
@@ -24,7 +26,7 @@
           :key="index"
           :width="item.width"
           :label="item.label"
-          show-overflow-tooltip
+          :show-overflow-tooltip="!item.customTooltip"
         >
           <template slot-scope="scope">
             <span>{{ scope.row[item.isEdit] }}</span>
@@ -125,7 +127,10 @@
               <i class="iconfont-v3 saasshipinwenjian" v-else></i>
               {{ scope.row[item.key]  || '- -'}}
             </div>
-            <p v-else class="text">
+            <el-tooltip v-else-if="item.customTooltip" placement="top" :disabled="!isTextOverflow" :content="scope.row[item.key] == '' ? '- -' : scope.row[item.key]">
+              <p class="custom-tooltip-content">{{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}</p>
+            </el-tooltip>
+            <p v-else :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'" >
               <icon v-if="scene === 'word' && item.key === 'file_name'" class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}
             </p>
           </template>
@@ -209,7 +214,9 @@
   </div>
 </template>
 <script>
+import tableCellTooltip from './mixins/tableCellTooltip'
 export default {
+  mixins: [tableCellTooltip],
   data() {
     return {
       pageInfo: {
@@ -582,5 +589,11 @@ export default {
   background-color: #f7f7f7;
   border-color: #B3B3B3;
   cursor: not-allowed;
+}
+/deep/ .custom-tooltip-content {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

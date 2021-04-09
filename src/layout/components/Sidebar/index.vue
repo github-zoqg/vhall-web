@@ -188,14 +188,13 @@ export default {
 }
 .sidebar-logo-container {
   position: relative;
-  width: 224px;
+  width: 100%!important;
   height: 64px;
   background: #FB3A32;
   text-align: center;
   overflow: hidden;
-  transition: width 0.3s;
   & .sidebar-logo-link {
-    width: 224px;
+    width: 100%;
     height: 64px;
     text-align: center;
     & .sidebar-logo {
