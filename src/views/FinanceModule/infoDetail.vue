@@ -37,14 +37,6 @@
               label="交易时间"
               width="180"
               >
-
-              label="交易时间"
-            >
-              <template slot-scope="scope">
-                <el-tooltip placement="top" :disabled="!isTextOverflow" :content="scope.row.create_time == '' ? '- -' : scope.row.create_time">
-                  <p class="custom-tooltip-content">{{ scope.row.create_time == '' ? '- -' : scope.row.create_time }}</p>
-                </el-tooltip>
-              </template>
             </el-table-column>
             <el-table-column
               prop="type"
