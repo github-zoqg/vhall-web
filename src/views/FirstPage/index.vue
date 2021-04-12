@@ -272,7 +272,7 @@ export default {
       // parent_id > 0 子账号
       let params = {
         // account_id: this.userId,
-        // child_user_id: parentId == 0 ? '' : this.userId,
+        // user_id: parentId == 0 ? '' : this.userId,
         type: 1,
         start_time: this.$moment(start).format('YYYY-MM-DD'),
         end_time: this.$moment(end).format('YYYY-MM-DD')

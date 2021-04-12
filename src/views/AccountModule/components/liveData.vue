@@ -110,7 +110,7 @@ export default {
       }
       let params = {
         // account_id: this.$route.params.str, // b端账号id
-        child_user_id: this.$route.params.str,
+        user_id: this.$route.params.str,
         type: 1, // 1：仅父账号  2：父账号+子账号 注：若是查具体某个子账号的，也传递1
         pos: this.query.pos,
         limit: this.query.limit,
@@ -138,7 +138,7 @@ export default {
     downloadHandle() {
       let params = {
         // account_id: this.$route.params.str, // 子账号内容，传递子账号数据
-        child_user_id: this.$route.params.str,
+        user_id: this.$route.params.str,
         subject: this.query.title,
         // pos: 0,
         // limit: 999999, // TODO 跟凯南约定，固定写死，下载99万数据
