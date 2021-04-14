@@ -336,7 +336,10 @@ export default {
       // 情况所有选中效果
       this.ids = [];
       this.isCheckAll = false;
-      this.$refs.chatTable.clearSelection();
+      try{
+        this.$refs.chatTable.clearSelection();
+      }catch(e) {
+      }
 
       this.pageInfo.pageNum = 1;
       this.getAllKeyWordList();
