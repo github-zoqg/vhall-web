@@ -29,7 +29,7 @@
         <p>支付超时</p>
         <span @click="repurchase">重新购买</span>
       </div>
-      <div class="pay-method" v-if="time != '0:0'">
+      <div class="pay-method" v-if="time != '00分00秒'">
           <p>支付方式</p>
           <div class="pay-list">
             <div class="pay-item" @click="changeColor('1')" :class="isChecked == '1' ? 'isActive' : ''">
@@ -75,7 +75,7 @@
       </div>
     </div>
     <div class="down-time" v-if="!timeOut">
-      <p><i class="el-icon-warning-outline"></i> 请在<span>{{ time }}</span>内完成支付</p>
+      <p><i class="iconfont-v3 saasicon-time"></i> 请在<span>{{ time }}</span>内完成支付</p>
     </div>
   </div>
 </template>
@@ -90,7 +90,7 @@ export default {
       dialogweiXinVisible: false,
       payCode: '',
       diffSetTime: null,
-      time:'0:0',
+      time:'00分00秒',
       method: 'ALIPAY',
       payInfo: {},
       arrearInfo: {} //欠费订单
@@ -138,10 +138,11 @@ export default {
 
         let limit2 = limit1 % (3600 * 1000);
         let minute = Math.floor(limit2 / (60 * 1000));
-
+        minute = minute > 9 ? minute : `0${minute}`
         let limit3 = limit2 % (60 * 1000);
         let second = Math.floor(limit3 / 1000);
-        this.time = `${minute}:${second}`;
+        second = second > 9 ? second : `0${second}`
+        this.time = `${minute}分${second}秒`;
         if (diff) {
           let diffSetTime = window.setTimeout(() => {
             this.downTime(targetStart, targetEnd);
@@ -149,6 +150,7 @@ export default {
           }, 1000);
         } else {
           this.timeOut = true;
+          this.time = '00分00秒';
           return this.time;
         }
       }
@@ -238,25 +240,28 @@ export default {
     .down-time{
       position: fixed;
       width: 100%;
-      top: 20px;
+      top: 6px;
       left: 0px;
       z-index: 100;
       p{
-        height: 39px;
-        line-height: 39px;
+        height: 52px;
+        line-height: 52px;
         width: 400px;
         text-align: center;
-        background: #fc5659;
+        background: #fb3a32;
         color:#fff;
         font-size: 14px;
         margin: auto;
+        border-radius: 4px;
         i{
           font-size: 20px;
           vertical-align: middle;
+          color: #fff;
         }
         span{
-          font-size: 16px;
-
+          display: inline-block;
+          font-size: 14px;
+          width: 63px;
         }
       }
     }
