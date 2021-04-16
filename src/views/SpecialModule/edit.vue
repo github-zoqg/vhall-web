@@ -105,7 +105,7 @@
                 <div class="vh-sort-tables__tbody-id">
                   {{ index + 1 }}
                 </div>
-                <div class="vh-sort-tables__tbody-title">
+                <div class="vh-sort-tables__tbody-title" @click="goWebinarSpecial(item.webinar_id, item.webinar_state)">
                   {{ item.subject }}
                 </div>
                 <div class="vh-sort-tables__tbody-status">
@@ -499,6 +499,12 @@ export default {
           });
         });
     },
+    // 跳转活动页面
+    goWebinarSpecial(id, state) {
+      let path = state === 4 ? '/live/vodEdit/' : '/live/edit/';
+      const { href } = this.$router.resolve({path: `${path}${id}`, query: {type: 2 }});
+      window.open(href, '_blank');
+    },
     dragStart(e) {
       console.log('vhall saas Event 拖动开始::', e)
     },
@@ -662,6 +668,7 @@ export default {
         text-overflow: ellipsis;
         overflow: hidden;
         word-break: break-all;
+        cursor: pointer;
       }
       &-status{
         width: 88px;
