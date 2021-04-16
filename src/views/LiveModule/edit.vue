@@ -165,17 +165,16 @@
       </el-form-item> -->
       <p class="switch__box" v-if="webniarType=='live'">
         <el-switch
-          style="display: block"
           v-model="formData.docSwtich"
           active-color="#FB3A32"
           inactive-color="#CECECE"
           inactive-text="文档翻页"
-          :active-text="docSwtichDesc">
+          :active-text="docSwtichDesc"
+          >
         </el-switch>
       </p>
       <p class="switch__box" v-if="webniarType=='live'">
         <el-switch
-          style="display: block"
           v-model="formData.reservation"
           active-color="#FB3A32"
           inactive-color="#CECECE"
@@ -185,7 +184,6 @@
       </p>
       <p class="switch__box" v-if="webniarType=='live'">
         <el-switch
-          style="display: block"
           v-model="formData.online"
           active-color="#FB3A32"
           inactive-color="#CECECE"
@@ -195,7 +193,6 @@
       </p>
       <p class="switch__box">
         <el-switch
-          style="display: block"
           v-model="formData.hot"
           active-color="#FB3A32"
           inactive-color="#CECECE"
@@ -205,7 +202,6 @@
       </p>
       <p class="switch__box">
         <el-switch
-          style="display: block"
           v-model="formData.home"
           active-color="#FB3A32"
           inactive-color="#CECECE"
@@ -215,7 +211,6 @@
         </p>
       <p class="switch__box" v-if="webniarType=='live' && !versionType">
          <el-switch
-          style="display: block"
           v-model="formData.capacity"
           active-color="#FB3A32"
           inactive-color="#CECECE"
@@ -226,7 +221,6 @@
       </p>
       <p class="switch__box">
         <el-switch
-          style="display: block"
           v-model="formData.limitCapacitySwtich"
           active-color="#FB3A32"
           inactive-color="#CECECE"
@@ -234,7 +228,7 @@
           :active-text="limitCapacityDesc"
           >
         </el-switch>
-        <VhallInput :placeholder="placeholder" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')"></VhallInput>
+        <VhallInput :placeholder="placeholder" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')" style="display: block"></VhallInput>
       </p>
       <el-form-item class="btnGroup">
         <el-button type="primary" class="common-button length152" :disabled="!formData.title" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
