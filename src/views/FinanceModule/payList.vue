@@ -255,8 +255,7 @@ export default {
         border-radius: 4px;
         i{
           font-size: 20px;
-          vertical-align: middle;
-          color: #fff;
+          vertical-align: bottom;
         }
         span{
           display: inline-block;
