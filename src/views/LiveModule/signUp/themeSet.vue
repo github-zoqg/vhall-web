@@ -70,8 +70,8 @@ export default {
     save() {
       const options = {
         theme_color: this.colorIndex,
-        tab_form_title: this.title1,
-        tab_verify_title: this.title2,
+        tab_form_title: this.title1 || '用户报名',
+        tab_verify_title: this.title2 || '验证',
       };
       const that = this;
       this.$emit('setBaseInfo', options, () => { that.dialogVisible = false; });
