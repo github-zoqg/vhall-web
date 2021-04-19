@@ -319,12 +319,14 @@ export default {
           this.placeholder = '请输入聊天内容';
           this.tabelColumn= this.chatColumn;
           this.tableRowBtnFun = this.chatBtnFun;
+          this.searchTime = '';
           this.chatInfo();
           break;
         case '问答':
           this.isCheckout = true;
           this.tabelColumn= this.questColumn;
           this.tableRowBtnFun = this.anwerBtnFun;
+          this.searchTime = '';
           this.getRecordList();
           break;
         case '抽奖':
@@ -863,7 +865,7 @@ export default {
     },
     // 问答
     exportRecordInfo() {
-      this.$fetch('exportRecodrder', this.params).then(res => {
+      this.$fetch('exportRecodrder', this.$params(this.params)).then(res => {
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
