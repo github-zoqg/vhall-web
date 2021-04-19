@@ -800,7 +800,7 @@
             !answer.default && (answer.default = []);
             answer.default.push({
               "id": item.id,
-              "content": this.form[item.id],
+              "content": this.form[item.id] || '',
               "default_type": item.default_type
             })
           } else if (item.type === 1) {
@@ -811,22 +811,25 @@
             !answer.text && (answer.text = []);
             answer.text.push({
               "id": item.id,
-              "content": this.form[item.id],
+              "content": this.form[item.id] || '',
               "options": options
             })
           } else if (item.type === 2) {
             // 单选
             !answer.radio && (answer.radio = []);
             const element = item.items.find(elem => elem.id === this.form[item.id]);
-            let content = element.type !== 1
-              ? {
-                id: element.id,
-                content: element.subject
-              }
-              : {
-                id: element.id,
-                content: this.form[`${item.id}${element.id}`] ? this.form[`${item.id}${element.id}`] : '其他'
-              }
+            let content = ''
+            if (element) {
+              content = element.type !== 1
+                ? {
+                  id: element.id,
+                  content: element.subject
+                }
+                : {
+                  id: element.id,
+                  content: this.form[`${item.id}${element.id}`] ? this.form[`${item.id}${element.id}`] : '其他'
+                }
+            }
             answer.radio.push({
               "id": item.id,
               "content": content
@@ -837,16 +840,18 @@
             let content = [];
             this.form[item.id].forEach((checkOpt, index) => {
               const element = item.items.find(elem => elem.id === checkOpt);
-              const obj = element.type !== 1
-                ? {
-                  id: element.id,
-                  content: element.subject
-                }
-                : {
-                  id: element.id,
-                  content: this.form[`${item.id}${element.id}`] ? this.form[`${item.id}${element.id}`] : '其他'
-                }
-              content.push(obj)
+              if (element) {
+                const obj = element.type !== 1
+                  ? {
+                    id: element.id,
+                    content: element.subject
+                  }
+                  : {
+                    id: element.id,
+                    content: this.form[`${item.id}${element.id}`] ? this.form[`${item.id}${element.id}`] : '其他'
+                  }
+                content.push(obj)
+              }
             })
             answer.checkbox.push({
               "id": item.id,
@@ -856,7 +861,7 @@
             // 下拉
             !answer.select && (answer.select = []);
             const element = item.items.find(elem => elem.subject === this.form[item.id]);
-            answer.select.push({
+            element && answer.select.push({
               "id": item.id,
               "content": {
                 "id": element.id,
@@ -867,9 +872,9 @@
           } else if (item.type === 5) {
             // 地域
             !answer.address && (answer.address = []);
-            const provinec = this.provinces.find(ele => ele.value == this.province)
-            const city = this.cityList.find(ele => ele.value == this.city)
-            const county = this.countyList.find(ele => ele.value == this.form[item.id])
+            const provinec = this.provinces.find(ele => ele.value == this.province) || { label: '', value: '' }
+            const city = this.cityList.find(ele => ele.value == this.city) || { label: '', value: '' }
+            const county = this.countyList.find(ele => ele.value == this.form[item.id]) || { label: '', value: '' }
             answer.address.push({
               "id": item.id,
               "content": `${provinec.label}${city.label}${county.label}`,
