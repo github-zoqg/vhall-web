@@ -79,7 +79,7 @@
                   <el-tooltip v-tooltipMove class="item" effect="dark" content="详情" placement="top">
                     <i class="iconfont-v3 saasicon_xiangqing" @click.prevent.stop="toDetail(item.webinar_id)"></i>
                   </el-tooltip>
-                  <el-tooltip v-tooltipMove class="item" effect="dark" content="复制" placement="top">
+                  <el-tooltip v-tooltipMove class="item" effect="dark" content="复制" placement="top" v-if="item.webinar_state!=4">
                     <i class="iconfont-v3 saasicon_copy1" @click.prevent.stop="toCopy(item.webinar_id)"></i>
                   </el-tooltip>
                   <span @click.prevent.stop>
