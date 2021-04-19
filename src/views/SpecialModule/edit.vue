@@ -669,6 +669,10 @@ export default {
         overflow: hidden;
         word-break: break-all;
         cursor: pointer;
+        color: #3562FA;
+        &:hover{
+          color: #FB3A32;
+        }
       }
       &-status{
         width: 88px;
