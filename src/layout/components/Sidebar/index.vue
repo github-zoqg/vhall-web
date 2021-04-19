@@ -82,7 +82,13 @@ export default {
     isShow(route) {
       if (this.childPremission && Number(this.childPremission.permission_data) === 0) {
         // 子账号有设置权限
-        return !(route && route.meta && route.meta.name === 'dataMgr');
+        return !(route && route.meta && route.meta.name === 'dataMgr').filter(item => {
+          if (this.vsQuanxian[item.meta.auth_key] > 0) {
+            return true
+          } else {
+            return false
+          }
+        });
       } else {
         // TODO 左侧导航菜单
         if (route.meta && route.meta.auth_key && this.vsQuanxian) {
@@ -130,15 +136,15 @@ export default {
   },
   async created() {
     let userInfo = sessionOrLocal.get('userInfo');
+    let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+    if (vsPersonStr) {
+      this.vsQuanxian = JSON.parse(vsPersonStr);
+    }
     if (userInfo) {
       if(JSON.parse(userInfo).parent_id > 0) {
         // 获取子账号权限，更新
         await this.getChildPermission();
       }
-    }
-    let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
-    if (vsPersonStr) {
-      this.vsQuanxian = JSON.parse(vsPersonStr);
     }
   },
   mounted() {

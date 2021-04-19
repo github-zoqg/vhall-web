@@ -79,6 +79,9 @@
                   <el-tooltip v-tooltipMove class="item" effect="dark" content="详情" placement="top">
                     <i class="iconfont-v3 saasicon_xiangqing" @click.prevent.stop="toDetail(item.webinar_id)"></i>
                   </el-tooltip>
+                  <el-tooltip v-tooltipMove class="item" effect="dark" content="复制" placement="top">
+                    <i class="iconfont-v3 saasicon_copy1" @click.prevent.stop="toCopy(item.webinar_id)"></i>
+                  </el-tooltip>
                   <span @click.prevent.stop>
                     <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)" @command="commandMethod">
                       <i class="iconfont-v3 saasicon_more2"></i>
@@ -86,7 +89,7 @@
                         <el-dropdown-item command='/live/reportsData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">数据报告</el-dropdown-item>
                         <el-dropdown-item command='/live/interactionData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">互动统计</el-dropdown-item>
                         <el-dropdown-item command='/live/userData' v-if="!(childPremission && Number(childPremission.permission_data) === 0)">用户统计</el-dropdown-item>
-                        <el-dropdown-item command='/live/edit' v-if="item.webinar_state!=4">复制</el-dropdown-item>
+                        <!-- <el-dropdown-item command='/live/edit' v-if="item.webinar_state!=4">复制</el-dropdown-item> -->
                         <el-dropdown-item command='删除'>删除</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
@@ -208,17 +211,6 @@ export default {
             customClass: 'zdy-info-box'
           });
         });
-      } else if (command === '/live/edit') {
-        this.$confirm('支持复制活动下设置的功能，不支持复制回放视频、统计的数据', '复制活动', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          customClass: 'zdy-message-box',
-          lockScroll: false,
-          cancelButtonClass: 'zdy-confirm-cancel'
-        }).then(() => {
-          const { href } = this.$router.resolve({path: command, query: {id: this.webinarInfo.webinar_id, type: 3 }});
-          window.open(href, '_blank');
-        }).catch(() => {});
       } else {
         // 新标签页打开
         // this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id, status: this.webinarInfo.webinar_state }});
@@ -400,6 +392,18 @@ export default {
     toRoom(id){
       const { href } = this.$router.resolve({path: `/lives/room/${id}`});
       window.open(href);
+    },
+    toCopy(id) {
+      this.$confirm('支持复制活动下设置的功能，不支持复制回放视频、统计的数据', '复制活动', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(() => {
+        const { href } = this.$router.resolve({path: '/live/edit', query: {id: id, type: 3 }});
+        window.open(href, '_blank');
+      }).catch(() => {});
     }
   },
 };
@@ -636,8 +640,8 @@ export default {
           }
           i{
             cursor: pointer;
-            &:nth-child(2){
-              margin: 0 20px;
+            &:not(:nth-child(4)) {
+              margin-right: 20px;
             }
           }
           /deep/.iconfont-v3{
@@ -645,6 +649,9 @@ export default {
           }
           .el-dropdown{
             float: right;
+            i{
+              margin-right: 0;
+            }
             &.active{
               z-index: 2;
               // color: #fff;

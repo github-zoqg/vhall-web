@@ -138,7 +138,8 @@
       <div class="data-document">
         <h2>文档中心<a href="https://saas-doc.vhall.com/document/document/index" target="_blank">更多</a></h2>
         <p><a href="https://saas-doc.vhall.com/docs/show/947" target="_blank">API文档</a></p>
-        <p><a href="https://www.vhall.com/saas/doc/260.html" target="_blank">JSSDK文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1176" target="_blank">JSSDK文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1311" target="_blank">点播SDK文档</a></p>
         <p><a href="https://saas-doc.vhall.com/docs/show/1175" target="_blank">IOS SDK文档</a></p>
         <p><a href="https://saas-doc.vhall.com/docs/show/1203" target="_blank">Andriod SDK文档</a></p>
       </div>

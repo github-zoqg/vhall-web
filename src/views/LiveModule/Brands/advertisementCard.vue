@@ -72,7 +72,7 @@ export default {
        {
           label: '图片',
           key: 'img_url',
-          width: 162
+          width: 170
         },
         {
           label: '标题',

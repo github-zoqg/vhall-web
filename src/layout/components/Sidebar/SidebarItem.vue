@@ -73,7 +73,13 @@ export default {
       let vo = JSON.parse(userInfo);
       if(vo.parent_id > 0) {
         // 是子账号情况下，若路由不是子账号管理 或者 不是开发设置，展示
-        return children.filter(item => !(item.meta.name === 'sonMgr' || item.meta.name === 'devMgr'))
+        return children.filter(item => !(item.meta.name === 'sonMgr' || item.meta.name === 'devMgr')).filter(item => {
+          if (item.meta.auth_key) {
+            return item.meta.auth_key && perVo && perVo[item.meta.auth_key] > 0
+          } else {
+            return item
+          }
+        })
       } else {
         // let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
         // let perVo = permissions ? JSON.parse(permissions) : {};
