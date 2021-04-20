@@ -457,12 +457,13 @@ export default {
     },
     // 题目 title 改变
     subjectChange(question) {
-      this.questionEdit({
+      const params = {
         question_id: question.question_id,
         subject: question.label,
-        options: JSON.stringify(question.options),
         is_must: question.required ? 1 : 0
-      });
+      }
+      question.options !== '' && (params.options = JSON.stringify(question.options))
+      this.questionEdit(params);
     },
     // 下拉题目选项 subject 改变
     selectOptChange(question, node, isSelect, isPrivacy) {

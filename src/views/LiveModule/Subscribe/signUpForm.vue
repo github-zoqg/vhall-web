@@ -477,6 +477,7 @@
         form: {},
         answer: {},
         baseInfo: {
+          cover: 1,
           "open_link": 0,
           "theme_color": "red",
           "tab_verify_title": "验证",
