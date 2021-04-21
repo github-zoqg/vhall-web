@@ -238,7 +238,7 @@ export default {
     toShare(id) {
       this.$refs.share.dialogVisible = true;
       // this.dialogShareVisible = true;
-      this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${id}`;
+      this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail/${id}`;
       this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
     },
     // 预览页面
