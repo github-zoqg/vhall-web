@@ -432,33 +432,29 @@ export default {
     },
     // 本地下载
     loadDownInvition() {
-      let image = new Image();
+      // let image = new Image();
       let canvas1 = document.createElement('canvas');
       let _canvas = document.getElementById('shopInvent');
-      let that = this;
-      image.onload = function() {
-        canvas1.style.width = '330px';
-        canvas1.style.height = '622px';
-        let context = canvas1.getContext('2d');
-        context.drawImage(image, 0, 0, 330, 622);
-        // context.scale(2,2);
-        html2canvas(_canvas, {
-          useCORS: true,
-          tainttest: true,
-          backgroundColor: null
-        }).then(canvas => {
-          let dataUrl = canvas.toDataURL('image/png', 1.0);
-          image.src = that.dataUrl;
-          that.fileDownLoad(dataUrl)
-        })
-      }
-      image.src = this.img;
-      // let w = parseInt(window.getComputedStyle(_canvas).width);
-      // let h = parseInt(window.getComputedStyle(_canvas).height);
-      // canvas1.width = w * 2;
-      // canvas1.height = h * 2;
-      // canvas1.style.width = w + 'px';
-      // canvas1.style.height = h + 'px';
+      // let w = parseInt(window.getComputedStyle(_canvas).width)
+      // let h = parseInt(window.getComputedStyle(_canvas).height)
+      let w = 330
+      let h = 622
+      canvas1.width = w * 2;
+      canvas1.height = h * 2;
+      canvas1.style.width = w + 'px';
+      canvas1.style.height = h + 'px';
+      let context = canvas1.getContext('2d');
+      context.scale(2,2);
+      // context.drawImage(canvas1, 0, 0, w, h);
+      html2canvas(_canvas, {
+        useCORS: true,
+        tainttest: true,
+        backgroundColor: null
+      }).then(canvas => {
+        let dataUrl = canvas.toDataURL('image/png', 1.0);
+        // image.src = dataUrl;
+        this.fileDownLoad(dataUrl)
+      })
     }
   }
 };
