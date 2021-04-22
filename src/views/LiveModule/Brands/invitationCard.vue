@@ -447,10 +447,9 @@ export default {
         useCORS: true,
         backgroundColor: null
       }).then(canvas => {
-        let dataUrl = canvas.toDataURL('image/jpeg', 1.0);
+        let dataUrl = canvas.toDataURL('image/png', 1.0);
         image.src = this.dataUrl;
         this.fileDownLoad(dataUrl)
-        // this.dataURIToBlob(imgName, dataUrl);
       })
     }
   }
@@ -779,6 +778,8 @@ export default {
       height: 258px;
       position: relative;
       border-radius: 0 0 3px 3px;
+      text-align: center;
+      letter-spacing: 2px;
       h1{
         padding:0;
         font-size: 28px;
@@ -856,12 +857,12 @@ export default {
       background-repeat: no-repeat;
       position: relative;
       .look-color-shadow {
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          top: 0;
-          left: 0;
-          background: rgba(0,0,0,.2);
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: rgba(0,0,0,.2);
       }
       .look-color{
         position: relative;
@@ -896,16 +897,16 @@ export default {
         }
       }
       .look-text{
-        width: 282px;
+        width: 100%;
         text-align: center;
         border: 4px solid #fff;
         border-radius: 4px;
         // margin: auto;
         margin-top: 10px;
-        // padding: 20px 0;
         padding: 5px 0;
+        letter-spacing: 2px;
         h1{
-          padding: 0;
+          padding: 0 15px;
           font-size: 26px;
           font-weight: 600;
           line-height: 40px;
