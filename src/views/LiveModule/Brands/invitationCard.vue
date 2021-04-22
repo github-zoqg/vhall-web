@@ -148,26 +148,28 @@
           </div>
         </div>
         <div class="watch-img" v-else-if="showType===2"  id="shopInvent" :style="`backgroundImage: url(${img})`">
-          <div class="watch-bg">
-            <div class="watch-color">
-              <div class="watch-header">
-              <div class="watch-avator">
-                <img :src="avatar" alt="">
+          <div class="watch-container">
+            <div class="watch-bg">
+              <div class="watch-color">
+                <div class="watch-header">
+                  <div class="watch-avator">
+                    <img :src="avatar" alt="">
+                  </div>
+                  <p style="color:#fff;">{{formInvitation.company || '微吼直播'}}</p>
+                  <p style="color:#fff;">邀请你一起看直播</p>
+                </div>
               </div>
-              <p style="color:#fff;">{{formInvitation.company || '微吼直播'}}</p>
-              <p style="color:#fff;">邀请你一起看直播</p>
             </div>
-            </div>
-          </div>
-          <div class="watch-text">
-            <h1>{{ formInvitation.title }}</h1>
-            <p>{{ formInvitation.desciption }}</p>
-            <div class="watch-footer">
-              <div class="watch-code"><img :src="qrcode" alt=""></div>
-              <div class="watch-action">
-                <!-- <p>扫码观看视频</p> -->
-                <h1 :title="formInvitation.webinar_date">{{ formInvitation.webinar_date }}</h1>
-                <h1 :title="formInvitation.location">{{ formInvitation.location }}</h1>
+            <div class="watch-text">
+              <h1>{{ formInvitation.title }}</h1>
+              <p>{{ formInvitation.desciption }}</p>
+              <div class="watch-footer">
+                <div class="watch-code"><img :src="qrcode" alt=""></div>
+                <div class="watch-action">
+                  <!-- <p>扫码观看视频</p> -->
+                  <h1 :title="formInvitation.webinar_date">{{ formInvitation.webinar_date }}</h1>
+                  <h1 :title="formInvitation.location">{{ formInvitation.location }}</h1>
+                </div>
               </div>
             </div>
           </div>
@@ -728,6 +730,10 @@ export default {
       background-repeat: no-repeat;
       border-radius: 4px;
       z-index: 0;
+      .watch-container{
+        width: 100%;
+        height: 100%;
+      }
       .watch-bg{
         height: 360px;
         // background-image: url('../../../common/images/v35-webinar.png');
@@ -863,9 +869,10 @@ export default {
         height: 100%;
         background-color: rgba(0, 0, 0, 0.1);
         border-radius: 4px;
+        padding: 20px 24px;
       }
       .look-header{
-        padding: 20px 24px;
+        padding-bottom: 20px;
         text-align: center;
         .look-avator{
           width: 36px;
@@ -893,7 +900,7 @@ export default {
         text-align: center;
         border: 4px solid #fff;
         border-radius: 4px;
-        margin: auto;
+        // margin: auto;
         margin-top: 10px;
         // padding: 20px 0;
         padding: 5px 0;
@@ -919,7 +926,7 @@ export default {
       }
       .look-time{
         margin-top: 30px;
-        padding-left: 24px;
+        // padding-left: 24px;
         p{
           padding:0;
           line-height: 25px;
