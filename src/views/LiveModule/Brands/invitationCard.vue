@@ -435,22 +435,32 @@ export default {
       let image = new Image();
       let canvas1 = document.createElement('canvas');
       let _canvas = document.getElementById('shopInvent');
-      let w = parseInt(window.getComputedStyle(_canvas).width);
-      let h = parseInt(window.getComputedStyle(_canvas).height);
-      canvas1.width = w * 2;
-      canvas1.height = h * 2;
-      canvas1.style.width = w + 'px';
-      canvas1.style.height = h + 'px';
-      let context = canvas1.getContext('2d');
-      context.scale(2,2);
-      html2canvas(_canvas, {
-        useCORS: true,
-        backgroundColor: null
-      }).then(canvas => {
-        let dataUrl = canvas.toDataURL('image/png', 1.0);
-        image.src = this.dataUrl;
-        this.fileDownLoad(dataUrl)
-      })
+      let that = this;
+      image.onload = function() {
+        canvas1.style.width = '330px';
+        canvas1.style.height = '622px';
+        let context = canvas1.getContext('2d');
+        context.drawImage(image, 0, 0, 330, 622);
+        // context.scale(2,2);
+        html2canvas(_canvas, {
+          useCORS: true,
+          tainttest: true,
+          height: 622,
+          width: 330,
+          backgroundColor: null
+        }).then(canvas => {
+          let dataUrl = canvas.toDataURL('image/png', 1.0);
+          image.src = that.dataUrl;
+          that.fileDownLoad(dataUrl)
+        })
+      }
+      image.src = this.img;
+      // let w = parseInt(window.getComputedStyle(_canvas).width);
+      // let h = parseInt(window.getComputedStyle(_canvas).height);
+      // canvas1.width = w * 2;
+      // canvas1.height = h * 2;
+      // canvas1.style.width = w + 'px';
+      // canvas1.style.height = h + 'px';
     }
   }
 };
@@ -824,6 +834,7 @@ export default {
             flex-direction: column;
             justify-content: space-around;
             vertical-align: middle;
+            text-align: left;
             h1{
               padding:0;
               font-size: 14px;
