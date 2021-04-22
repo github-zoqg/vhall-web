@@ -219,6 +219,7 @@
 <script>
 import addBackground from './components/imgBackground';
 import {sessionOrLocal} from "@/utils/utils";
+import { isBrower } from '@/utils/getBrowserType';
 import Env from "@/api/env";
 import html2canvas from 'html2canvas';
 import beginPlay from '@/components/beginBtn';
@@ -432,27 +433,31 @@ export default {
     },
     // 本地下载
     loadDownInvition() {
-      // let image = new Image();
-      let canvas1 = document.createElement('canvas');
+      console.log(isBrower())
+      // const image = new Image();
+      // let canvas1 = document.createElement('canvas');
       let _canvas = document.getElementById('shopInvent');
       // let w = parseInt(window.getComputedStyle(_canvas).width)
       // let h = parseInt(window.getComputedStyle(_canvas).height)
-      let w = 330
-      let h = 622
-      canvas1.width = w * 2;
-      canvas1.height = h * 2;
-      canvas1.style.width = w + 'px';
-      canvas1.style.height = h + 'px';
-      let context = canvas1.getContext('2d');
-      context.scale(2,2);
-      // context.drawImage(canvas1, 0, 0, w, h);
+      // canvas1.width = w * 2;
+      // canvas1.height = h * 2;
+      // canvas1.style.width = w * 2  + 'px';
+      // canvas1.style.height = h * 2 + 'px';
+      // let context = canvas1.getContext('2d');
+      // context.scale(2,2);
+      // context.drawImage(image, 0, 0);
       html2canvas(_canvas, {
         useCORS: true,
-        tainttest: true,
+        allowTaint: true,
+        scale: 1,
+        scrollY: 0,
+        scrollX: isBrower() === 'safari' ? 110 : isBrower() === 'firefox' ? -10 : 0,
+        width: _canvas.offsetWidth,
+        height: _canvas.offsetHeight,
         backgroundColor: null
       }).then(canvas => {
         let dataUrl = canvas.toDataURL('image/png', 1.0);
-        // image.src = dataUrl;
+        // this.canvasImg = dataUrl;
         this.fileDownLoad(dataUrl)
       })
     }
