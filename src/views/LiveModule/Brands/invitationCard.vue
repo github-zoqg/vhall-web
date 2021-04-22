@@ -445,8 +445,6 @@ export default {
         html2canvas(_canvas, {
           useCORS: true,
           tainttest: true,
-          height: 622,
-          width: 330,
           backgroundColor: null
         }).then(canvas => {
           let dataUrl = canvas.toDataURL('image/png', 1.0);
