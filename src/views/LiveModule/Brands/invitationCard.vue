@@ -452,7 +452,7 @@ export default {
         allowTaint: true,
         scale: 1,
         scrollY: 0,
-        scrollX: browerType === 'safari' ? 115 : 10,
+        scrollX: browerType === 'safari' ? 115 : 0,
         width: 330,
         height: 622,
         backgroundColor: null
