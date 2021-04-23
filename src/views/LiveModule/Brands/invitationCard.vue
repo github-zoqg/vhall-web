@@ -434,6 +434,7 @@ export default {
     // 本地下载
     loadDownInvition() {
       console.log(isBrower())
+      let browerType = isBrower();
       // const image = new Image();
       // let canvas1 = document.createElement('canvas');
       let _canvas = document.getElementById('shopInvent');
@@ -451,7 +452,7 @@ export default {
         allowTaint: true,
         scale: 1,
         scrollY: 0,
-        scrollX: isBrower() === 'safari' ? 110 : isBrower() === 'firefox' ? -10 : 0,
+        scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 10 : 0,
         width: _canvas.offsetWidth,
         height: _canvas.offsetHeight,
         backgroundColor: null
@@ -861,7 +862,7 @@ export default {
       color:#fff;
       height: 622px;
       border-radius: 4px;
-      border: 1px solid #E2E2E2;
+      // border: 1px solid #E2E2E2;
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: 100% 100%;
       background-repeat: no-repeat;
