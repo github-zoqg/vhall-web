@@ -452,9 +452,9 @@ export default {
         allowTaint: true,
         scale: 1,
         scrollY: 0,
-        scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 10 : 0,
-        width: _canvas.offsetWidth,
-        height: _canvas.offsetHeight,
+        scrollX: browerType === 'safari' ? 115 : 10,
+        width: 330,
+        height: 622,
         backgroundColor: null
       }).then(canvas => {
         let dataUrl = canvas.toDataURL('image/png', 1.0);
