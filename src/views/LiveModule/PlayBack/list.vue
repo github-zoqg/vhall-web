@@ -282,18 +282,36 @@ export default {
       }
     },
     handleTipMsgVisible() {
+      let that = this;
       if (!this.WEBINAR_PES['forbid_delrecord']) {
         this.tipMsg = this.$message({
           dangerouslyUseHTMLString: true,
           message: `
             ${this.WEBINAR_PES['forbid_delrecord'] ? '' : '<span class="msgGray">非默认回放暂存15天</span>'}
             ${!this.WEBINAR_PES['forbid_delrecord'] && !this.WEBINAR_PES['publish_record'] ? '，' : ''}
-            ${this.WEBINAR_PES['publish_record'] ? "" : "<a href='http://webim.qiao.baidu.com/im/index?siteid=113762&ucid=2052738' target='_blank' class='msgBlue'>开通点播服务</a>"}
+            ${this.WEBINAR_PES['publish_record'] ? "" : "<span class='msgBlue' id='msgBlue'>开通点播服务</span>"}
           `,
           showClose: true,
           duration: 0
         });
+        let open = document.querySelector('#msgBlue');
+        const userId = JSON.parse(sessionOrLocal.get("userId"));
+        open.addEventListener('click', function(e){
+          let url = 'https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038'
+          that.$vhall_paas_port({
+            k: 100017,
+            data: {business_uid: userId, user_id: userId, s: '', refer: 2, report_extra: {}, ref_url: '', req_url: ''}
+          })
+          window.open(url, "_blank");
+        });
       }
+    },
+    goReportData() {
+      const userId = JSON.parse(sessionOrLocal.get("userId"));
+      this.$vhall_paas_port({
+        k: 100017,
+        data: {business_uid: userId, user_id: userId, s: '', refer: 2, report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     getPermission(id) {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -1016,5 +1034,6 @@ export default {
   }
   .msgBlue{
     color: #3562FA;
+    cursor: pointer;
   }
 </style>

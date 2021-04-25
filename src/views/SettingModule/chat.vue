@@ -307,6 +307,11 @@ export default {
       }
     },
     openChat() {
+      const userId = JSON.parse(sessionOrLocal.get("userId"));
+      this.$vhall_paas_port({
+        k: 100017,
+        data: {business_uid: userId, user_id: userId, s: '', refer: 3, report_extra: {}, ref_url: '', req_url: ''}
+      })
       window.open(`${env.staticLinkVo.kf}`, '_blank');
     },
     deleteFile() {

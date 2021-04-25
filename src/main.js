@@ -6,7 +6,7 @@ import router from './router';
 // import VueTinymce from '@packy-tang/vue-tinymce/src/main';
 
 import vuescroll from 'vuescroll';
-
+import SaasPort from '@vhall/paas-report-data'
 // You can set global config here.
 Vue.use(vuescroll, {
   ops: {
@@ -111,6 +111,12 @@ Vue.use(VueI18n);
 Vue.use(loadMore)
 Vue.use(tooltipMove)
 Vue.use(clearEmoij)
+Vue.use(SaasPort, {
+  app_id: process.env.VUE_APP_NODE_ENV === 'production' ? '15df4d3f' : 'fd8d3653',
+  pf:8,
+  noConsole: false,
+  isProduction: false
+})
 const i18n = new VueI18n({
   locale: ['en', 'cn'].includes(getParams('lang')) ? getParams('lang') : 'cn', // 语言标识
   messages: {

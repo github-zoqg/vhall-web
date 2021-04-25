@@ -83,7 +83,7 @@
           <pwd-input type="password" v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次" :maxlength="30"></pwd-input>
         </el-form-item>
         <el-form-item label="" class="link__to" v-if="showVo.step === 1">
-          <a :href="openLink" target="_blank">{{showVo.executeType === 'email' ? '邮箱不可用？' : '手机不可用？'}}</a>
+          <a :href="openLink" target="_blank" @click="reportData">{{showVo.executeType === 'email' ? '邮箱不可用？' : '手机不可用？'}}</a>
         </el-form-item>
       </el-form>
     </div>
@@ -103,6 +103,7 @@
 <script>
 import env from "@/api/env";
 import PwdInput from './pwdInput.vue';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: "validSetDialog.vue",
   components: {
@@ -297,6 +298,21 @@ export default {
         title: title,
         scene_id: scene_id
       };
+    },
+    reportData() {
+      let refer = '';
+      const userId = JSON.parse(sessionOrLocal.get("userId"));
+      if (this.title == '修改密码') {
+        refer = 6;
+      } else if (this.title == '修改密保手机') {
+        refer = 7;
+      } else if (this.title == '修改关联邮箱') {
+        refer = 8;
+      }
+      this.$vhall_paas_port({
+        k: 100017,
+        data: {business_uid: this.userId, user_id: this.userId, s: '', refer: refer, report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     // 场景适用： 设置密码、修改密码、修改手机号-第一步、修改邮箱-第一步
     getDyCode() {

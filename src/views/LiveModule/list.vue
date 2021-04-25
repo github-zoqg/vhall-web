@@ -382,7 +382,7 @@ export default {
           }
         });
       } else {
-        index === '1' ? this.$router.push({path:'/live/edit'}) : this.$router.push({path:'/live/vodEdit'});
+        index === '1' ? this.$router.push({path:'/live/edit', query: {refer: 3}}) : this.$router.push({path:'/live/vodEdit', query: {refer: 3}});
       }
     },
     toDetail(id, state) {
