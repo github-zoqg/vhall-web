@@ -75,6 +75,11 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
       headers['gray-id'] = window.sessionStorage.getItem('userId')
     }
   }
+  // 若选择发起传入了
+  if(window.location.href.indexOf('/chooseWay') !== -1) {
+    // pc观看等
+    headers.platform = header.platform || sessionOrLocal.get('platform', 'localStorage') || 17;
+  }
   // interact_token && (headers['interact-token'] = interact_token)
   if(window.location.hash.indexOf('/live/watch/') !== -1) {
     // pc观看等
