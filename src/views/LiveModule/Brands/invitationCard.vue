@@ -358,7 +358,7 @@ export default {
     let token = sessionOrLocal.get('token', 'localStorage');
     this.showCode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?token=${token}`;
     this.getInviteCardInfo();
-    // this.initImage();
+    this.initImage();
   },
   components: {
     addBackground,
@@ -509,7 +509,6 @@ export default {
       let browerType = isBrower()
       const _canvas = document.getElementById('shopInvent')
       const imgList = document.querySelectorAll('img.hsrc')
-      console.log(imgList,'>>>>>>>>')
       let count = 0
       const _this = this
       imgList.forEach(img => {
@@ -517,12 +516,13 @@ export default {
         imaObj.setAttribute('crossorigin', 'anonymous')
         imaObj.onload = function() {
           count ++
+          img.src = imaObj.getBase64Image()
           if (imgList.length == count) {
             html2canvas(_canvas, {
               useCORS: true,
               allowTaint: true,
-              scale: 1,
-              width: 330,
+              scale: 2,
+              width: 332,
               height: 622,
               scrollY: 0,
               // scrollX: 0,
@@ -534,7 +534,8 @@ export default {
             })
           }
         }
-        imaObj.src = count == 1 ? _this.img || _this.formInvitation.img : _this.qrcode
+        imaObj.src = img.getAttribute('src')
+        // imaObj.src = count == 1 ? _this.img || _this.formInvitation.img : _this.qrcode
       })
     },
     loadDownInvition() {
@@ -822,7 +823,7 @@ export default {
     .watch-img{
       width: 330px;
       background: #FFFFFF;
-      height: 620px;
+      height: 622px;
       position: relative;
       border: 1px solid #E6E6E6;
       // box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
@@ -837,7 +838,7 @@ export default {
         height: 100%;
       }
       .watch-bg{
-        height: 360px;
+        height: 362px;
         // background-image: url('../../../common/images/v35-webinar.png');
         // background-size: 100% 100%;
         // background-repeat: no-repeat;
@@ -972,7 +973,6 @@ export default {
         position: relative;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.1);
         border-radius: 4px;
         padding: 20px 24px;
       }
