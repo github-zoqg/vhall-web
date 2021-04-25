@@ -234,7 +234,8 @@ export default {
       if (!rows.status) {
         that.$alert('商品已上架，如需编辑请先做下架处理', '提示', {
           confirmButtonText: '我知道了',
-          customClass: 'zdy-message-box'
+          customClass: 'zdy-message-box',
+          lockScroll: false,
         });
         return;
       }

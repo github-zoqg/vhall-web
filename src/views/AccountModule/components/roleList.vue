@@ -204,11 +204,10 @@ export default {
       console.log(val);
       this.ids = val.map(item => {
         if (item.child_count > 0) {
-          that.$alert('当前角色已关联子账号，请先解绑关系后再进行删除', '提示', {
+          this.$alert('当前角色已关联子账号，请先解绑关系后再进行删除', '提示', {
             confirmButtonText: '我知道了',
-            customClass: 'zdy-alert-box',
-            center: true,
-            lockScroll: false
+            lockScroll: false,
+            customClass: 'zdy-alert-box'
           }).then(()=>{
           }).catch(()=>{});
         } else {
@@ -239,9 +238,8 @@ export default {
       if (rows.child_count > 0) {
         that.$alert('当前角色已关联子账号，请先解绑关系后再进行删除', '提示', {
           confirmButtonText: '我知道了',
+          lockScroll: false,
           customClass: 'zdy-alert-box',
-          center: true,
-          lockScroll: false
         }).then(()=>{
         }).catch(()=>{});
       } else {

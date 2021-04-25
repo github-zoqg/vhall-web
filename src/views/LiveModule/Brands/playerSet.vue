@@ -507,7 +507,6 @@ export default {
           confirmButtonText: '我知道了',
           customClass: 'zdy-message-box',
           lockScroll: false,
-          center: true,
           callback: action => {}
         });
         return;
@@ -545,7 +544,6 @@ export default {
           confirmButtonText: '我知道了',
           customClass: 'zdy-message-box',
           lockScroll: false,
-          center: true,
           callback: action => {}
         });
         return;

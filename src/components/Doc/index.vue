@@ -993,8 +993,8 @@ export default {
       this.$alert('文档加载失败，请尝试刷新浏览器', '', {
         title: '提示',
         confirmButtonText: '立即刷新',
-        center: true,
         showClose: false,
+        lockScroll: false,
         // eslint-disable-next-line no-unused-vars
         callback: action => {
           window.location.reload();

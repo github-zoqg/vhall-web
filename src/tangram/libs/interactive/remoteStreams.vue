@@ -362,7 +362,7 @@ export default {
             this.$alert('您已进入直播房间，马上开始互动吧', '', {
               title: '提示',
               confirmButtonText: '立即开始',
-              center: true,
+              lockScroll: false,
               callback: action => {
                 this.lockStreamPlay = false;
                 const list = document.getElementsByTagName('video');
