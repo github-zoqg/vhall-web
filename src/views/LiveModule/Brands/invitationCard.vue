@@ -506,7 +506,7 @@ export default {
         this.loadDownInvition()
         return
       }
-
+      let browerType = isBrower()
       const _canvas = document.getElementById('shopInvent')
       const imgList = document.querySelectorAll('img.hsrc')
       console.log(imgList,'>>>>>>>>')
@@ -517,7 +517,6 @@ export default {
         imaObj.setAttribute('crossorigin', 'anonymous')
         imaObj.onload = function() {
           count ++
-          console.log(img,'>>>>>>>>')
           if (imgList.length == count) {
             html2canvas(_canvas, {
               useCORS: true,
@@ -526,8 +525,8 @@ export default {
               width: 330,
               height: 622,
               scrollY: 0,
-              scrollX: 0,
-              // scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 10 : 0,
+              // scrollX: 0,
+              scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 12: 0,
               backgroundColor: null
             }).then(canvas => {
               _this.downloadImg = canvas.toDataURL('image/png', 1.0);
