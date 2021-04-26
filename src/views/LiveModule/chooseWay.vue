@@ -100,6 +100,8 @@ export default {
             // 进入直播前检测，若是直接发起
             this.$fetch('checkLive', this.$params({
               webinar_id: this.arr[0]
+            }, {
+              platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
             })).then((res) => {
               if(res && res.code === 200) {
                /*  this.$router.push({
@@ -162,6 +164,8 @@ export default {
     userLogoGet() {
       this.$fetch('userLogoGet', {
         home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
+      }, {
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
       }).then(res => {
         console.log(res);
       }).catch(err=>{
@@ -171,6 +175,8 @@ export default {
     getSignInfo () {
       return this.$fetch('watchInterGetWebinarTag', {
         webinar_id: this.$route.params.id
+      }, {
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
       }).then(res => {
         if (res.data) {
           this.signInfo = res.data
