@@ -13,7 +13,7 @@
         <el-button size="medium"  round @click="createLiveAction('2')" v-if="vodPerssion == 1" class="transparent-btn" v-preventReClick>创建点播</el-button>
         <!--  v-if="vodPerssion == 1"  -->
         <div class="searchBox search-tag-box">
-          <el-select v-model="liveStatus" placeholder="全部" @change="searchHandler">
+          <el-select v-model="liveStatus" placeholder="全部" @change="liveHandler">
             <el-option
               v-for="item in statusOptions"
               :key="item.value+item.label"
@@ -21,7 +21,7 @@
               :value="item.value">
             </el-option>
           </el-select>
-          <el-select v-model="orderBy" placeholder="请选择" @change="searchHandler">
+          <el-select v-model="orderBy" placeholder="请选择" @change="orderHandler">
             <el-option
               v-for="item in orderOptions"
               :key="item.value+item.label"
@@ -131,6 +131,7 @@ export default {
       pageSize: 12,
       pageNum: 1,
       pagePos: 0,
+      userId: '',
       isAnginOpen: false,
       webinarInfo: {},
       totalElement: 0,
@@ -162,16 +163,39 @@ export default {
   },
   created() {
     // 创建点播是否可用(全局)
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.vodPerssion = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['ui.upload_video_as_demand'];
     this.getLiveList();
   },
   methods: {
     toLiveDetail(webinar_id) {
+      this.$vhall_paas_port({
+        k: 100046,
+        data: {business_uid: this.userId, user_id: '', webinar_id: webinar_id, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       const routeData = this.$router.resolve({path: `/live/detail/${webinar_id}`});
       window.open(routeData.href, '_blank');
     },
     nullFunc() {
       return false;
+    },
+    liveHandler() {
+      this.searchHandler()
+      if (this.liveStatus) {
+        let livesType = [100050, 100049, 100051, 100052, 100053]
+        this.$vhall_paas_port({
+          k: livesType[this.liveStatus - 1],
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+
+    },
+    orderHandler() {
+      this.searchHandler()
+      this.$vhall_paas_port({
+        k:  this.orderBy == 1 ? 100047 : 100048,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     searchHandler() {
       this.pageNum = 1;
@@ -212,8 +236,13 @@ export default {
           });
         });
       } else {
+        let num = command === '数据报告' ? 100042 : command === '互动统计' ? 100043 : 100044
         // 新标签页打开
         // this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id, status: this.webinarInfo.webinar_state }});
+        this.$vhall_paas_port({
+          k: num,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarInfo.webinar_id, s: '', refer: 1, report_extra: {}, ref_url: '', req_url: ''}
+        })
         const { href } = this.$router.resolve({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id, status: this.webinarInfo.webinar_state }});
         window.open(href, '_blank');
       }
@@ -261,6 +290,10 @@ export default {
     },
     deleteLive() {
       this.$fetch('liveDel', {webinar_ids: this.webinarInfo.webinar_id}).then(res => {
+        this.$vhall_paas_port({
+          k: 100045,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarInfo.webinar_id, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `删除成功`,
           showClose: true,
@@ -280,8 +313,7 @@ export default {
       });
     },
     getAppersInfo(item) {
-      let userId = JSON.parse(sessionOrLocal.get('userId'));
-      this.$fetch('getVersionInfo', { user_id: userId}).then(res => {
+      this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
         if (res.data.arrears.total_fee < 0) {
           this.$confirm(`尊敬的微吼会员，您的${res.data.type == 1 ? '流量' : '并发套餐'}已用尽，请充值`, '提示', {
             confirmButtonText: '去充值',
@@ -325,10 +357,18 @@ export default {
       // }
     },
     goPlayback(item) {
+      this.$vhall_paas_port({
+        k: 100039,
+        data: {business_uid: this.userId, user_id: '', webinar_id: item.webinar_id, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       const { href } = this.$router.resolve({path: item.webinar_state == 4 ? `/live/recordplayback/${item.webinar_id}` : `/live/playback/${item.webinar_id}`});
       window.open(href, '_blank');
     },
     goIsLive(item) {
+      this.$vhall_paas_port({
+        k: 100038,
+        data: {business_uid: this.userId, user_id: '', webinar_id: item.webinar_id, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       if (item.webinar_type != 1) {
         const { href } = this.$router.resolve({path: `/live/chooseWay/${item.webinar_id}/1?type=ctrl`});
         window.open(href, '_blank');
@@ -386,6 +426,10 @@ export default {
       }
     },
     toDetail(id, state) {
+      this.$vhall_paas_port({
+        k: 100040,
+        data: {business_uid: this.userId, user_id: '', webinar_id: id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       const { href } = this.$router.resolve({path: `/live/detail/${id}`});
       window.open(href, '_blank');
     },
@@ -401,6 +445,10 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
+        this.$vhall_paas_port({
+          k: 100041,
+          data: {business_uid: this.userId, user_id: '', webinar_id: id, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         const { href } = this.$router.resolve({path: '/live/edit', query: {id: id, type: 3 }});
         window.open(href, '_blank');
       }).catch(() => {});

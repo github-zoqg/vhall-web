@@ -91,6 +91,7 @@ import PageTitle from '@/components/PageTitle';
 import Upload from '@/components/Upload/main';
 import beginPlay from '@/components/beginBtn';
 import selectMedias from './selecteMedia';
+import {sessionOrLocal} from "@/utils/utils";
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 export default {
   components: {
@@ -117,6 +118,7 @@ export default {
       videoSize: '200',
       videoType: 'MP4',
       warmId: '',
+      userId: '',
       selectMedia: {},
       showDialog: false,
       warmForm: {
@@ -128,6 +130,7 @@ export default {
     };
   },
   created() {
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getWarmVideoInfo();
   },
   beforeRouteLeave (to, from, next) {
@@ -171,6 +174,10 @@ export default {
       }
       this.$fetch('warmOpen', params).then(res=>{
         if(res.code == 200 && index != 1){
+          this.$vhall_paas_port({
+            k: this.warmForm.warmFlag ? 100133 : 100134,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: this.warmForm.warmFlag ? '开启暖场视频成功' : '关闭暖场视频成功',
             showClose: true,
@@ -299,6 +306,12 @@ export default {
         record_id: this.warmForm.record_id
       }
       this.$fetch('warnEdit', this.$params(params)).then(res => {
+        if (this.warmForm.imageUrl) {
+          this.$vhall_paas_port({
+            k: 100135,
+            data: {business_uid: this.userId, user_id: this.$route.params.str, webinar_id: '', refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
         this.$message({
           message: `保存暖场视频成功`,
           showClose: true,

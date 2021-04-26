@@ -28,7 +28,7 @@
                 :inactive-value="1"
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                @change="changeStatus($event, item)">
+                @change="changeStatus($event, item, 1)">
               </el-switch>
               <span class="leve3_title title--999">{{!!item.value ? item.openShow : item.closeShow }}</span>
             </li>
@@ -45,7 +45,7 @@
                   :inactive-value="0"
                   active-color="#FB3A32"
                   inactive-color="#CECECE"
-                  @change="changeStatus($event, item)">
+                  @change="changeStatus($event, item, 2)">
                 </el-switch>
                 <span class="leve3_title title--999">{{!!item.value ? item.openShow : item.closeShow }}</span>
             </li>
@@ -99,6 +99,7 @@ export default {
     return {
       switchType: 'app',
       query: {},
+      userId: '',
       functionOpen: true,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       keyList: [],
@@ -160,7 +161,7 @@ export default {
     changeSwitch(type) {
       this.switchType = type;
     },
-    changeStatus(callback, item) {
+    changeStatus(callback, item, type) {
       item.value = Number(!callback)
       let params = {
         webinar_id: this.$route.params.str,
@@ -169,7 +170,17 @@ export default {
       };
       console.log('当前参数传递：', params);
       this.$fetch('planFunctionEdit', params).then(res => {
-        console.log(res);
+        if (type === 1) {
+          this.$vhall_paas_port({
+            k: Number(callback) === 1 ? item.num + 1 : item.num,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        } else {
+          this.$vhall_paas_port({
+            k: Number(callback) === 1 ? item.num : item.num + 1,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
         let str = `${!callback ? '开启' : '关闭'}`
         if (item.type === 'ui.watch_record_no_chatting' || item.type === 'ui.watch_record_chapter') {
           str = `${!callback ? '关闭' : '开启' } `
@@ -204,6 +215,7 @@ export default {
         {
           type: 'ui.hide_reward',
           key_name: '打赏功能',
+          num: 100085,
           openShow: '开启后，观看页显示打赏功能',
           closeShow: '已开启，观看页显示打赏功能',
           value: Number(dataVo['ui.hide_reward']) || 0
@@ -211,6 +223,7 @@ export default {
         {
           type: 'ui.watch_hide_like',
           key_name: '点赞功能',
+          num: 100087,
           openShow: '开启后，观看页显示点赞功能',
           closeShow: '已开启，观看页显示点赞功能',
           value: Number(dataVo['ui.watch_hide_like']) || 0
@@ -218,6 +231,7 @@ export default {
         {
           type: 'ui.hide_gifts',
           key_name: '礼物功能',
+          num: 100089,
           openShow: '开启后，观看页显示礼物功能',
           closeShow: '已开启，观看页显示礼物功能',
           value: Number(dataVo['ui.hide_gifts']) || 0
@@ -225,6 +239,7 @@ export default {
         {
           type: 'ui.watch_hide_share',
           key_name: '分享功能',
+          num: 100091,
           openShow: '开启后，观看页显示分享功能（包含微信内分享）',
           closeShow: '已开启，观看页显示分享功能（包含微信内分享）',
           value: Number(dataVo['ui.watch_hide_share']) || 0
@@ -233,6 +248,7 @@ export default {
       this.liveKeyList = [{
         type: 'ui.watch_record_no_chatting',
         key_name: '回放禁言',
+        num: 100093,
         openShow: '已开启，回放/点播不支持聊天',
         closeShow: '开启后，回放/点播不支持聊天',
         value: Number(dataVo['ui.watch_record_no_chatting']) || 0
@@ -241,6 +257,7 @@ export default {
         this.liveKeyList.push({
           type: 'ui.watch_record_chapter',
           key_name: '回放章节',
+          num: 100095,
           openShow: '已开启，回放/点播观看端显示文档章节',
           closeShow: '开启后，回放/点播观看端显示文档章节',
           value: Number(dataVo['ui.watch_record_chapter']) || 0
@@ -261,7 +278,7 @@ export default {
     planFunctionGet() {
       let params = {
         webinar_id: this.functionOpen ? this.$route.params.str : '',
-        webinar_user_id: this.functionOpen ? sessionOrLocal.get('userId') : '',
+        webinar_user_id: this.functionOpen ? this.userId : '',
         scene_id: 2
       }
       this.$fetch('planFunctionGet', this.$params(params)).then(res=>{
@@ -283,6 +300,10 @@ export default {
       };
       console.log('当前参数传递：', params);
       this.$fetch('planFunctionEdit', params).then(res => {
+        this.$vhall_paas_port({
+          k: this.functionOpen ? 100082 : 100083,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
        if (!this.functionOpen){
           this.functionOpen = false;
           this.planFunctionGet();
@@ -306,12 +327,17 @@ export default {
       });
     },
     toSettingDetail() {
+      this.$vhall_paas_port({
+        k: 100084,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       const { href } = this.$router.resolve({path:'/setting/function'});
       window.open(href, '_blank');
     },
   },
   created() {
     // this.functionOpen = this.perssionInfo.is_function_cofig > 0 ? true : false
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getPermission();
   }
 };

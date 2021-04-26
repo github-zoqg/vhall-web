@@ -2,6 +2,7 @@ let filedJson = {
   radio: {
     "label": "单选题",
     "required": true,
+    "reporType": 100160,
     "bottomBtn": ["addBtn", "addOther", "delete", "move", "requireSwtich"],
     "type": "radio",
     value: '',
@@ -23,6 +24,7 @@ let filedJson = {
     "required": true,
     "bottomBtn": ["addBtn", "addOther", "delete", "move", "requireSwtich"],
     "type": "checkBox",
+    "reporType": 100166,
     value: "",
     "nodes": [
       {
@@ -42,6 +44,7 @@ let filedJson = {
     "required": true,
     "bottomBtn": ["addBtn", "delete", "move", "requireSwtich"],
     "type": "select",
+    "reporType": 100176,
     value: '',
     "nodes": [
       {
@@ -71,6 +74,7 @@ let filedJson = {
   input: {
     "label": "问答题",
     "required": true,
+    "reporType": 100172,
     "bottomBtn": ["delete", "move", "requireSwtich"],
     "type": "input",
     value:'',
@@ -102,7 +106,7 @@ let filedJson = {
     ]
   },
   privacy: {
-
+    "reporType": 100181,
   }
 };
 export function getfiledJson({name, type}){
@@ -157,6 +161,7 @@ export function getfiledJson({name, type}){
 
         json = Object.assign(json, {
           label: '性别',
+          "reporType": 100140,
           "required": true,
           "bottomBtn": ["delete", "move", "requireSwtich"],
           reqType: 0,
@@ -173,6 +178,7 @@ export function getfiledJson({name, type}){
           label: '邮箱',
           "required": true,
           reqType: 0,
+          "reporType": 100144,
           default_type: 3,
           subject: '邮箱',
           disabledEdit: true
@@ -186,6 +192,7 @@ export function getfiledJson({name, type}){
         json = Object.assign(json, {
           label: '公司',
           "required": true,
+          "reporType": 100152,
           "bottomBtn": ["delete", "move", "requireSwtich"],
           options: {
             type: 7,
@@ -224,6 +231,7 @@ export function getfiledJson({name, type}){
             };
           }),
           reqType: 5,
+          "reporType": 100148,
           default_type: '',
           options: {
             show_country: 1,
@@ -242,6 +250,7 @@ export function getfiledJson({name, type}){
         json = Object.assign(json, {
           label: '职务',
           "required": true,
+          "reporType": 100156,
           // "bottomBtn": [,"delete", "move", "requireSwtich"],
           "nodes": ["首席执行官/总经理", "首席信息官/IT经理", "市场总监/经理", "销售总监/经理", "销售总监/经理", "工程技术人员", "其他"].map(item=>{
             return {
@@ -291,6 +300,7 @@ export function getfiledJson({name, type}){
           "required": true,
           "bottomBtn": ["delete", "requireSwtich"],
           privacy: true,
+          "reporType": 100181,
           "nodes": [
             {
               "key": "content",

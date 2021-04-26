@@ -27,7 +27,7 @@
             </template>
           </el-input>
         </div>
-        <p>提示：在微信公众号管理平台，自定义菜单添加链接，用户点击菜单可快速观看直播，详细信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1243')"> 微信嵌入</a></p>
+        <p>提示：在微信公众号管理平台，自定义菜单添加链接，用户点击菜单可快速观看直播，详细信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1243', 1)"> 微信嵌入</a></p>
       </div>
     </div>
     <div class="network">
@@ -53,7 +53,7 @@
             </template>
           </el-input>
         </div>
-        <p>提示：<span v-if="isInteract == 3">互动连麦功能必须要求浏览器地址为https协议进入！</span>当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1238')"> 网页嵌入指南</a></p>
+        <p>提示：<span v-if="isInteract == 3">互动连麦功能必须要求浏览器地址为https协议进入！</span>当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1238', 2)"> 网页嵌入指南</a></p>
       </div>
     </div>
     <div class="thirdMethod">
@@ -91,11 +91,20 @@ export default {
     this.isInteract = this.$route.query.type;
   },
   methods: {
-    goForm(url) {
+    goForm(url, index) {
+      let userId = sessionOrLocal.get('userId')
+      this.$vhall_paas_port({
+        k: index === 1 ? 100189 : 100190,
+        data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       window.open(url, "_blank");
     },
     goEmbedForm() {
-      // https://t.e.vhall.com/auth/check-token?after_login=webinar/marketing/index&token=aca55f6b78b2e246a1a38ff143531099
+      let userId = sessionOrLocal.get('userId')
+      this.$vhall_paas_port({
+        k: 100191,
+        data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       let url = `${process.env.VUE_APP_E_COMPANY_URL}/auth/check-token?after_login=webinar/marketing/index&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`;
       window.open(url, "_blank");
     },
