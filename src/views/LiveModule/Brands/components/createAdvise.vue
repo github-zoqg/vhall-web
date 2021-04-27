@@ -254,6 +254,10 @@ export default {
             // 直播-新建广告
             if (this.advInfo.adv_id) {
               this.createAdvAndsync(0);
+              this.$vhall_paas_port({
+                k: 100281,
+                data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
             } else {
               this.dialogTongVisible = true;
             }
@@ -270,10 +274,30 @@ export default {
         // 同步资料库
           // this.advertisement.is_sync = 1;
           this.createAdvAndsync(1);
+          this.$vhall_paas_port({
+            k: 100280,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: 100286,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: 100282,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
       } else {
         // 不同步资料库
         // this.advertisement.is_sync = 0;
         this.createAdvAndsync(0);
+        this.$vhall_paas_port({
+          k: 100287,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        this.$vhall_paas_port({
+          k: 100280,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       }
     },
     createAdv() {
@@ -401,6 +425,10 @@ export default {
       }
       this.$fetch('advSaveToWebinar', params).then(res => {
         if (res.code == 200) {
+          this.$vhall_paas_port({
+            k: 100283,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: `选择广告成功`,
             showClose: true,

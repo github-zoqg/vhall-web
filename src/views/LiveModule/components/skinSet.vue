@@ -245,6 +245,16 @@ export default {
     skinSetSave() {
       this.$refs.skinSetForm.validate((valid) => {
         if(valid) {
+          this.$vhall_paas_port({
+            k: this.skinType == 1 ? 100208 : 100207,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+          if (this.skinSetForm.bg_url) {
+            this.$vhall_paas_port({
+              k: 100209,
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
           if (this.skinType !== 1) {
             let params = {
               webinar_id: this.$route.params.str || '',

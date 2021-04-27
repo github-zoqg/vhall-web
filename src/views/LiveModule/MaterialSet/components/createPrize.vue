@@ -213,12 +213,20 @@ export default {
     // 同步资料库的保存
     sureMaterialPrize() {
       if (this.sureChecked) {
+        this.$vhall_paas_port({
+          k: 100330,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.materiaPrize();
         this.liveSurePrize();
         this.dialogTongVisible = false;
       } else {
         // 不保存资料库
         this.liveSurePrize();
+        this.$vhall_paas_port({
+          k: 100331,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.dialogTongVisible = false;
       }
     },
@@ -229,6 +237,10 @@ export default {
       this.$fetch('createPrize', this.$params(this.prizeForm)).then(res => {
         if (res.code == 200) {
           this.dialogVisible = false;
+          this.$vhall_paas_port({
+            k: this.title === '编辑' ? 100325 : 100324,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: `资料中心奖品${this.title === '编辑' ? '修改' : '新建'}成功`,
             showClose: true,
@@ -256,6 +268,10 @@ export default {
       this.$fetch('createPrize', this.$params(this.prizeForm)).then(res => {
         if (res.code == 200) {
           this.dialogVisible = false;
+          this.$vhall_paas_port({
+            k: this.title === '编辑' ? 100325 : 100324,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: `直播下奖品${this.title === '编辑' ? '修改' : '新建'}成功`,
             showClose: true,
@@ -292,6 +308,10 @@ export default {
         prize_id: this.checkedList.join(',')
       }
       this.$fetch('saveLotteryPrize', params).then(res => {
+        this.$vhall_paas_port({
+          k: 100326,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `选择成功`,
           showClose: true,
