@@ -394,18 +394,18 @@ export default {
         // 同步到资料库
         this.asyncWord(this.asyncDialog.rows);
         this.$vhall_paas_port({
-          k: 9100300,
+          k: 100300,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
         this.$vhall_paas_port({
-          k: 9100304,
+          k: 100304,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
       } else {
         this.asyncDialog.visible = false;
         // 未勾选同步，不同步数据
         this.$vhall_paas_port({
-          k: 9100305,
+          k: 100305,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
         this.initPage();
@@ -454,6 +454,12 @@ export default {
     },
     beforeUploadHandler(file){
       console.log(file);
+      if (!this.$route.params.str) {
+        this.$vhall_paas_port({
+          k: 100511,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       const typeList = ['doc','docx','xls','xlsx','ppt','pptx','pdf','jpeg','jpg','png','bmp'];
       let fileNameArr = file.name.split('.');
       let lastFileKey = fileNameArr[fileNameArr.length - 1];
@@ -655,8 +661,8 @@ export default {
       await that.$nextTick(() => {})
       that.docEvents(rows);
       that.$vhall_paas_port({
-        k: 9100306,
-        data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        k: that.$route.params.str ? 100306 : 100514,
+        data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
     },
     // 动态演示
@@ -671,8 +677,8 @@ export default {
       await that.$nextTick(() => {})
       that.docDotEvents(rows);
       that.$vhall_paas_port({
-        k: 9100307,
-        data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        k: that.$route.params.str ? 100307 : 100515,
+        data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
     },
     // 删除
@@ -703,9 +709,15 @@ export default {
         webinar_id: this.$route.params.str
       };
       this.$fetch('delWordList', this.$params(params)).then(res=>{
+        let k = 0
+        if (this.$route.params.str) {
+          k = index == 1 ? 100303 : 100202
+        } else {
+          k = index == 1 ? 100513 : 100512
+        }
         this.$vhall_paas_port({
-          k: index == 1 ? 100303 : 100202,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          k: k,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
         this.$message({
           message:  `删除成功`,
@@ -753,8 +765,8 @@ export default {
       }
       if (this.formParams.keyword) {
         this.$vhall_paas_port({
-          k: 9100308,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          k: this.$route.params.str ? 100308 : 100516,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
       }
       this.getTableWordList();

@@ -274,6 +274,7 @@ export default {
         text: '请选择模板文件'
       },
       percent: 0,
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       isCheckout: true,
       isHandle: true,
       tableColumn: [
@@ -700,6 +701,10 @@ export default {
           console.log('新增 or 修改观众信息：' + JSON.stringify(this.viewerForm));
           let params = Object.assign(this.viewerDialog.type === 'add' ? {group_id: this.query.group_id} : {id: this.viewerDialog.row.id, group_id: this.query.group_id }, this.viewerForm);
           this.$fetch(this.viewerDialog.type === 'add' ? 'viewerAdd' : 'viewerEdit', this.$params(params)).then(res => {
+            this.$vhall_paas_port({
+              k: this.viewerDialog.type === 'add' ? 100541 : 1005543,
+              data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message:  `${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作成功`,
               showClose: true,

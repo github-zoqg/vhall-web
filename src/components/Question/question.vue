@@ -150,6 +150,10 @@ export default {
     materialQuestion(id, title, description) {
       this.$fetch('createQuestion', {survey_id: id, title: title, description: description}).then(res => {
         if (this.type == 1) {
+          this.$vhall_paas_port({
+            k: 100526,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: res.code == 200 ? '新建成功' : '新建失败',
             showClose: true,
@@ -164,6 +168,10 @@ export default {
     },
     materialEditQuestion(id, title, description) {
       this.$fetch('editQuestion', {survey_id: id, title: title, description: description}).then(res => {
+        this.$vhall_paas_port({
+          k: 100527,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: res.code == 200 ? '编辑成功' : '编辑失败',
           showClose: true,

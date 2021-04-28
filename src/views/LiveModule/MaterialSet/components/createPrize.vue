@@ -238,8 +238,8 @@ export default {
         if (res.code == 200) {
           this.dialogVisible = false;
           this.$vhall_paas_port({
-            k: this.title === '编辑' ? 100325 : 100324,
-            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            k: this.title === '编辑' ? 100535 : 100534,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
           })
           this.$message({
             message: `资料中心奖品${this.title === '编辑' ? '修改' : '新建'}成功`,
