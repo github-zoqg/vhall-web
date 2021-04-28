@@ -615,6 +615,12 @@ export default {
               scene_id: this.getScenedTitle().scene_id
             };
             this.$fetch('codeCheck', params).then(res => {
+              if (this.title === '修改密码') {
+                this.$vhall_paas_port({
+                  k: 100785,
+                  data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+                })
+              }
               if (res.data.check_result > 0) {
                 this.codeKey = res.data.key || '';
                 // 验证码第一步，继续下一步
@@ -649,6 +655,18 @@ export default {
               key: this.codeKey
             };
             this.$fetch('resetPassword', this.$params(params)).then(res => {
+              if (this.title === '修改密保手机') {
+                this.$vhall_paas_port({
+                  k: 100786,
+                  data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+                })
+              }
+              if (this.title === '修改关联邮箱') {
+                this.$vhall_paas_port({
+                  k: 100787,
+                  data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+                })
+              }
               this.$message({
                 message: '操作成功',
                 showClose: true,

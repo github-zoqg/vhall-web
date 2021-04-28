@@ -275,15 +275,7 @@ export default {
           // this.advertisement.is_sync = 1;
           this.createAdvAndsync(1);
           this.$vhall_paas_port({
-            k: 100280,
-            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-          })
-          this.$vhall_paas_port({
             k: 100286,
-            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-          })
-          this.$vhall_paas_port({
-            k: 100282,
             data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
           })
       } else {
@@ -293,10 +285,6 @@ export default {
         this.$vhall_paas_port({
           k: 100287,
           data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$vhall_paas_port({
-          k: 100280,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
       }
     },
@@ -324,6 +312,23 @@ export default {
       params.img_url = this.$parseURL(params.img_url).path;
       this.$fetch(url, params).then(res => {
         if (res && res.code === 200) {
+          if (this.$route.params.str) {
+            this.$vhall_paas_port({
+              k: this.advertisement.adv_id ? 100281 : 100280,
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+            if (type === 1 && !this.advertisement.adv_id) {
+              this.$vhall_paas_port({
+                k: 100551,
+                data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+          } else {
+            this.$vhall_paas_port({
+              k: this.advertisement.adv_id ? 100552 : 100551,
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
           this.dialogVisible = false;
           this.dialogTongVisible = false;
           this.advertisement = {};

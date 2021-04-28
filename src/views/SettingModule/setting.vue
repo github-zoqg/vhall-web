@@ -7,7 +7,7 @@
   </div>
   <div v-else  class="dev-show-layout" v-loading="fetching" element-loading-text="获取数据中">
     <pageTitle pageTitle="开发设置">
-      <div class="title_text">低门槛云开发，自由定制您的直播平台，具体对接方案请查看<a href="https://saas-doc.vhall.com/document/document/index">《文档中心》</a></div>
+      <div class="title_text">低门槛云开发，自由定制您的直播平台，具体对接方案请查看<span @click="document">《文档中心》</span></div>
       <!-- <span class="dev-show-tips">
         使用说明：当添加多个包时，使用<a href="https://www.vhall.com/index.php?r=doc/index/index#verify/access-token_%E8%8E%B7%E5%8F%96SDK%E7%9B%B4%E6%92%AD%E6%93%8D%E4%BD%9Ctoken" target="_blank">获取SDK直播操作token</a>的API时需要传app_key参数以确保双方加密数据一致
       </span> -->
@@ -115,6 +115,7 @@ export default {
     };
   },
   created(){
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.initPage();
   },
   mounted(){
@@ -136,10 +137,9 @@ export default {
       }
     },
     openChat() {
-      const userId = JSON.parse(sessionOrLocal.get("userId"));
       this.$vhall_paas_port({
         k: 100017,
-        data: {business_uid: userId, user_id: userId, s: '', refer: 4, report_extra: {}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', s: '',webinar_id: '', refer: 4, report_extra: {}, ref_url: '', req_url: ''}
       })
       window.open(`${env.staticLinkVo.kf}`, '_blank');
     },
@@ -147,13 +147,23 @@ export default {
     openDoc() {
       window.open('https://saas-doc.vhall.com/docs/show/947', '_blank');
     },
+    document() {
+      this.$vhall_paas_port({
+        k: 100590,
+        data: {business_uid: this.userId, user_id: '', s: '',webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      window.open('https://saas-doc.vhall.com/document/document/index', '_blank');
+    },
     initPage() {
       // 取得当前系统配置项
       this.getSysConfig();
     },
     toCallbackPage() {
       this.$router.push({
-        path: `/dev/callback`
+        path: `/dev/callback`,
+        query: {
+          userId: this.userId
+        }
       })
     },
     createApp(){
@@ -181,6 +191,10 @@ export default {
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel-hide'
         }).then(() => {
+          this.$vhall_paas_port({
+            k: 100591,
+            data: {business_uid: this.userId, user_id: '', s: '',webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.search();
         }).catch(() => {});
       }).catch(res =>{
@@ -231,6 +245,10 @@ export default {
       });
     },
     viewApp(that, { rows }){
+      that.$vhall_paas_port({
+        k: 100595,
+        data: {business_uid: that.userId, user_id: '', s: '',webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       that.$router.push({path: `/dev/${rows.id}`});
     },
     stopApp(that, { rows }) {
@@ -271,6 +289,10 @@ export default {
         id: rows.id,
         status: status
       }).then(res =>{
+        this.$vhall_paas_port({
+          k: [100592, 100593, 100594][status],
+          data: {business_uid: this.userId, user_id: '', s: '',webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message:  `${['停用','启用','删除'][status]}成功` ,
           showClose: true,
@@ -346,7 +368,7 @@ export default {
     .title_text{
       color: #999;
       font-size: 14px;
-      a{
+      span{
         color: #3562FA;
         cursor: pointer;
       }

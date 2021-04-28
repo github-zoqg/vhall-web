@@ -60,6 +60,10 @@ export default {
     copy(){
       const input = document.getElementById('linkBox');
       input.select();
+      this.$vhall_paas_port({
+        k: 100800,
+        data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       document.execCommand('copy');
       this.$message({
         message:  `复制成功`,

@@ -10,7 +10,7 @@
         ref="incomeDetils"
         :searchAreaLayout="searchDetail"
         @onExportData="exportAccount()"
-        @onSearchFun="getIncomeDetailList('search')"
+        @onSearchFun="getSearchList('search')"
       >
       </search-area>
       <table-list
@@ -127,6 +127,16 @@ export default {
         });
       });
     },
+    getSearchList() {
+      let formParams = this.$refs.incomeDetils.searchParams;
+      if (formParams.pay_type) {
+        this.$vhall_paas_port({
+          k: formParams.pay_type == 13 ? 100765 : formParams.pay_type == 2 ? 100766 : formParams.pay_type == 5 ? 100767 : 100764,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.getIncomeDetailList('search')
+    },
     getIncomeDetailList(params) {
       let pageInfo = this.$refs.tableIncome.pageInfo; //获取分页信息
       let formParams = this.$refs.incomeDetils.searchParams; //获取搜索参数
@@ -167,6 +177,10 @@ export default {
     // 导出收益详情
     exportAccount() {
       this.$fetch('exportIncomeDetail', this.$params(this.params)).then(res => {
+        this.$vhall_paas_port({
+          k:100768,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `收益详情导出申请成功，请去下载中心下载`,
           showClose: true,

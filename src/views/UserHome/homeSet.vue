@@ -134,6 +134,15 @@ export default {
         show_subject: 1, // 专题展示：0不展示 1展示
         title: ''
       },
+      reHomeSetInfo: {
+        homepage_avatar: '',
+        content: '',
+        img_url: '', // 背景图片
+        show_share: 1, // 分享
+        show_webinar_list: 1, // 直播列表展示：0不展示 1展示
+        show_subject: 1, // 专题展示：0不展示 1展示
+        title: ''
+      },
       homeSetInfoFormRules: {
         title: [
           { required: true, message: '主页标题不能为空', trigger: 'blur' },
@@ -285,6 +294,7 @@ export default {
           }
           this.$fetch(this.homeSetInfoForm.id ? 'homeInfoEdit' : 'homeInfoCreate', params).then(res => {
             console.log(res);
+            this.setReportData()
             this.$message({
               message:  `保存基本设置成功`,
               showClose: true,
@@ -310,6 +320,38 @@ export default {
         }
       });
     },
+    setReportData() {
+      if (this.domain_url !== this.reHomeSetInfo.homepage_avatar) {
+        this.$vhall_paas_port({
+          k: 100791,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      if (this.domain_bg_url !== this.reHomeSetInfo.img_url) {
+        this.$vhall_paas_port({
+          k: 100792,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      if (this.homeSetInfoForm.show_share !== this.reHomeSetInfo.show_share) {
+        this.$vhall_paas_port({
+          k: this.homeSetInfoForm.show_share ? 100793 : 100794,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      if (this.homeSetInfoForm.show_webinar_list !== this.reHomeSetInfo.show_webinar_list) {
+        this.$vhall_paas_port({
+          k: this.homeSetInfoForm.show_webinar_list ? 100795 : 100796,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      if (this.homeSetInfoForm.show_subject !== this.reHomeSetInfo.show_subject) {
+        this.$vhall_paas_port({
+          k: this.homeSetInfoForm.show_subject ? 100797 : 100798,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+    },
     returnHandle() {
       this.$refs['homeSetInfoForm'].resetFields();
       this.isEditUnit = false;
@@ -332,7 +374,7 @@ export default {
             show_webinar_list: 1, // 直播列表展示：0不展示 1展示
             show_subject: 1 // 专题展示：0不展示 1展示
           };
-          this.beforeData = Object.assign({},this.homeSetInfoForm);
+          this.reHomeSetInfo = Object.assign({},this.homeSetInfoForm);
           this.domain_url = homepage_info.homepage_avatar || '';
           this.domain_bg_url = homepage_info.img_url || '';
           console.log(this.domain_url, this.domain_bg_url, '主页头像、主页背景');
@@ -346,6 +388,7 @@ export default {
   },
   created() {
     let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
     if (vsPersonStr) {
       this.vsQuanxian = JSON.parse(vsPersonStr);
     }

@@ -117,8 +117,8 @@ export default {
     searchAdvTableList() {
       if (this.paramsObj.keyword) {
         this.$vhall_paas_port({
-          k: 100288,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          k: this.$route.params.str ? 100288 : 100555,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
       }
       this.getAdvTableList('search')
@@ -166,9 +166,15 @@ export default {
           webinar_id: this.$route.params.str
         })).then(res => {
           if (res && res.code === 200) {
+            let k = 0
+            if (this.$route.params.str) {
+              k = index == 1 ? 100285 : 100284
+            } else {
+              k = index == 1 ? 100554 : 100553
+            }
             this.$vhall_paas_port({
-              k: index == 1 ? 100285 : 100284,
-              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              k: k,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
             this.$message({
               message: `删除成功`,

@@ -529,6 +529,10 @@ export default {
             params.group_id = this.groupDialog.row.id;
           }
           this.$fetch(this.groupDialog.type === 'add' ? 'postGroupAdd' : 'postGroupEdit', this.$params(params)).then(res => {
+            this.$vhall_paas_port({
+              k: this.groupDialog.type === 'add' ? 100546 : 1005547,
+              data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message:  `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作成功`,
               showClose: true,
@@ -566,6 +570,10 @@ export default {
           group_ids: item.id
         };
         this.$fetch('postGroupDel', this.$params(params)).then(res => {
+          this.$vhall_paas_port({
+            k: 1005548,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message:  `删除分组-操作成功`,
             showClose: true,
@@ -589,9 +597,13 @@ export default {
       });
     },
     queryList() {
-      if (this.keyword) {
+      if (this.query.keyword) {
         this.query.pos = 0
         this.pageInfo.pageNum = 1;
+        this.$vhall_paas_port({
+          k: 1005549,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       } else {
         this.query.pos = this.pageInfo.pos;
       }
@@ -629,6 +641,10 @@ export default {
     },
     // 打开导入观众弹出框
     importViewerOpen() {
+      this.$vhall_paas_port({
+        k: 1005542,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       // 判断是否有分组
       if(this.query.group_id) {
         this.importFileShow = true;
@@ -736,15 +752,19 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        this.sendViewerDel([rows.id]);
+        this.sendViewerDel([rows.id], 2);
       }).catch(() => {
       });
     },
-    sendViewerDel(ids) {
+    sendViewerDel(ids, index) {
       this.$fetch('viewerDel', {
         audience_ids: ids.join(',')
       }).then(res => {
         if(res && res.code === 200) {
+          this.$vhall_paas_port({
+            k: index === 1 ? 100545 : 1005544,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message:  `删除观众-操作成功`,
             showClose: true,
@@ -790,7 +810,7 @@ export default {
             return item.id;
           });
           console.log(`批量删除-观众ID集合为${ids.join(',')}`);
-          this.sendViewerDel(ids);
+          this.sendViewerDel(ids, 1);
         }).catch(() => {
         });
       } else {

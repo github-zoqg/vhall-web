@@ -12,7 +12,7 @@
           value-format="yyyy-MM-dd"
           type="daterange"
           unlink-panels
-          @change="getDataList"
+          @change="getTimeList"
           range-separator="至"
           prefix-icon="iconfont-v3 saasicon_date"
           start-placeholder="开始日期"
@@ -20,7 +20,7 @@
           :picker-options="pickerOptions"
           style="width: 240px;margin-right:16px"
         />
-        <el-select filterable v-model="versionType" v-if="parentId == 0 && childNum == 1" @change="getDataList"  style="width: 160px;vertical-align: top;">
+        <el-select filterable v-model="versionType" v-if="parentId == 0 && childNum == 1" @change="getVersionList"  style="width: 160px;vertical-align: top;">
           <el-option
             v-for="(opt, optIndex) in versionOptions"
             :key="optIndex"
@@ -100,9 +100,11 @@ export default {
     PageTitle
   },
   data() {
+    let _this = this;
     return {
       isActive: true,
       active: 1,
+      timeType: 0,
       loading: true,
       params: {}, //导出的时候用来记录参数
       searchAreaLayout: [
@@ -153,6 +155,7 @@ export default {
               const end = '';
               const start = '';
               picker.$emit('pick', [start, end]);
+              _this.timeType = 0;
             }
           },
           {
@@ -168,6 +171,7 @@ export default {
               end.setTime(end.getTime() - 3600 * 1000 * 24);
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
               picker.$emit('pick', [start, end]);
+              _this.timeType = 1;
             }
           }, {
             text: '近30日',
@@ -182,6 +186,7 @@ export default {
               end.setTime(end.getTime() - 3600 * 1000 * 24);
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
               picker.$emit('pick', [start, end]);
+              _this.timeType = 2;
             }
           }],
         // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
@@ -199,16 +204,31 @@ export default {
   },
   created() {
     this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.childNum = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['child_num_limit'];
   },
   mounted() {
-    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getDataList();
   },
   methods: {
     dealDisabledData(time) {
       // return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
       return time.getTime() > Date.now() - 8.64e7 //设置选择今天之前的日期（不能选择当天）
+    },
+    getTimeList() {
+      let timeArr = [100563, 100564, 100565]
+      this.$vhall_paas_port({
+        k: timeArr[this.timeType],
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.getDataList()
+    },
+    getVersionList() {
+      this.$vhall_paas_port({
+        k: this.versionType == 1 ? 100569 : 100570,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.getDataList()
     },
     getDataList() {
       let params = {
@@ -254,6 +274,10 @@ export default {
     // 导出
     exportCenterData() {
       this.$fetch('exportCenterInfo', this.$params(this.params)).then(res => {
+        this.$vhall_paas_port({
+          k: 100566,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `账号维度下数据报告导出成功，请去下载中心下载`,
           showClose: true,

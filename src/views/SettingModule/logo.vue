@@ -96,10 +96,9 @@ export default {
       }
     },
     openChat() {
-      const userId = JSON.parse(sessionOrLocal.get("userId"));
       this.$vhall_paas_port({
         k: 100017,
-        data: {business_uid: userId, user_id: userId, s: '', refer: 5, report_extra: {}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '',webinar_id: '', s: '', refer: 5, report_extra: {}, ref_url: '', req_url: ''}
       })
       window.open(`${env.staticLinkVo.kf}`, '_blank');
     },
@@ -161,6 +160,10 @@ export default {
     },
     saveConsoleLogo(type) {
       if(type === 'default') {
+        this.$vhall_paas_port({
+          k: 100619,
+          data: {business_uid: this.userId, user_id: '',webinar_id: '', s: '', refer: 5, report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.saveSend({
           logo: '',
           logo_jump_url: ''
@@ -193,6 +196,18 @@ export default {
           } catch (e) {
             console.log(e);
           }
+        } else {
+          this.$vhall_paas_port({
+            k: 100617,
+            data: {business_uid: this.userId, user_id: '',webinar_id: '', s: '', refer: 5, report_extra: {}, ref_url: '', req_url: ''}
+          })
+          if (this.logoForm.logo_jump_url) {
+            this.$vhall_paas_port({
+              k: 100618,
+              data: {business_uid: this.userId, user_id: '',webinar_id: '', s: '', refer: 5, report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
+
         }
         this.getAccountInfo();
       }).catch(res => {
@@ -227,6 +242,7 @@ export default {
     }
   },
   created() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getSysConfig();
   }
 };

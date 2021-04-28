@@ -309,6 +309,10 @@ export default {
     },
     // 跳转消息详情页
     toSonDetail(that, {rows}) {
+      that.$vhall_paas_port({
+        k: 100814,
+        data: {business_uid: that.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       that.$router.push({
         path: `/sonDetail/${rows.child_id}`,
       });
@@ -316,6 +320,10 @@ export default {
     // 跳转到用量分配
     toAllocationPage() {
       // 1表示并发
+      this.$vhall_paas_port({
+        k: 100816,
+        data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({
         path: `/allocation`,
       });
@@ -342,7 +350,7 @@ export default {
           rows: {
             child_id: this.ids.join(',')
           }
-        });
+        }, 1);
       }
     },
     downloadHandle() {
@@ -353,6 +361,10 @@ export default {
         limit: 999999, // TODO 跟大龙确定，传值大于0，后台下载依然是所有符合条件的全部数据
       };
       this.$fetch('sonChildExport', params).then(res => {
+        this.$vhall_paas_port({
+          k: 100809,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
          this.$message({
           message: '下载申请成功，请去下载中心下载该项！',
           showClose: true,
@@ -389,7 +401,7 @@ export default {
       });
     },
     // 删除单条消息数据
-    sonDel(that, {rows}) {
+    sonDel(that, {rows}, index) {
       that.$confirm('正在直播或有未提现收益的账号不会被删除，确定删除？', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
@@ -400,6 +412,10 @@ export default {
         that.$fetch('sonDel', {
           child_ids: rows.child_id
         }).then(res => {
+          that.$vhall_paas_port({
+            k: index === 1 ? 100813 : 100812,
+            data: {business_uid: that.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           that.$message({
             message: '删除成功',
             showClose: true,
@@ -488,6 +504,15 @@ export default {
             return;
           }
           let params = null;
+          this.$vhall_paas_port({
+            k: this.sonDialog.type === 'add' ? 100804 : 100811,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+
+          this.$vhall_paas_port({
+            k: this.sonForm.is_batch ? 100807 : 100808,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           if (this.sonDialog.type === 'add') {
             params = this.$params({
               is_batch: this.sonForm.is_batch,
@@ -634,6 +659,12 @@ export default {
       this.initQuerySonList();
     },
     initQuerySonList() {
+      if (this.query.keyword) {
+        this.$vhall_paas_port({
+          k: 100810,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.query.pos = 0;
       this.query.pageNumber = 1;
       this.query.limit = 10;
