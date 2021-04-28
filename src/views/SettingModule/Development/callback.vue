@@ -2,7 +2,7 @@
   <div class="page-callback">
     <div class="title-callback">
       <pageTitle pageTitle="回调设置"></pageTitle>
-      <a href="https://www.vhall.com/saas/doc/20.html" target="_blank">回调设置说明</a>
+      <a href="https://saas-doc.vhall.com/docs/show/975" target="_blank">回调设置说明</a>
     </div>
     <div class="layout-callback">
       <el-form :model="form" ref="form" :rules="formRules" label-width="91px">

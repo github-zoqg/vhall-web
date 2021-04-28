@@ -243,7 +243,7 @@ export function getfiledJson({name, type}){
           label: '职务',
           "required": true,
           // "bottomBtn": [,"delete", "move", "requireSwtich"],
-          "nodes": ["首席执行官/总经理", "首席信息官/IT经理", "市场总监/经理", "销售总监/经理", "销售总监/经理", "工程技术人员", "其他"].map(item=>{
+          "nodes": ["首席执行官/总经理", "首席信息官/IT经理", "市场总监/经理", "销售总监/经理", "技术总监/经理", "工程技术人员", "其他"].map(item=>{
             return {
               props: {
                 placeholder: "选项",
@@ -254,7 +254,7 @@ export function getfiledJson({name, type}){
             };
           }),
           options: {
-            item_list: ["首席执行官/总经理", "首席信息官/IT经理", "市场总监/经理", "销售总监/经理", "销售总监/经理", "工程技术人员", "其他"],
+            item_list: ["首席执行官/总经理", "首席信息官/IT经理", "市场总监/经理", "销售总监/经理", "技术总监/经理", "工程技术人员", "其他"],
             question_subject: '职务',
             immutable: true
           }

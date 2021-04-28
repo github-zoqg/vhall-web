@@ -70,7 +70,7 @@ export default {
   created(){
     this.executeType = this.$route.query.type;
     if (this.executeType === 'ctrl') {
-      // 清除live_tokend等数据
+      // 控制台，清除live_tokend等数据
       sessionOrLocal.removeItem('live_token', 'localStorage')
     }
     // 动态获取 下载客户端地址 + 启动PC客户端应用程序地址命令
@@ -83,6 +83,8 @@ export default {
     getDownloadUrl() {
       this.$fetch('getPCDownloadUrl', {
         source: 'assistant'
+      }, {
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
       }).then(res => {
         this.downloadUrl = res.data.download_link
       })
@@ -98,6 +100,8 @@ export default {
             // 进入直播前检测，若是直接发起
             this.$fetch('checkLive', this.$params({
               webinar_id: this.arr[0]
+            }, {
+              platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
             })).then((res) => {
               if(res && res.code === 200) {
                /*  this.$router.push({
@@ -139,7 +143,9 @@ export default {
       if(location.search.includes('liveT') && params.live_token != '' && getQueryString('liveT')){
         params.live_token = getQueryString('liveT')
       }
-      this.$fetch('getJoinUrl', this.$params(params)).then((res) => {
+      this.$fetch('getJoinUrl', this.$params(params), {
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
+      }).then((res) => {
         if(res && res.code === 200) {
           // this.watchUrl = res.data.page_url;
           this.scheme = res.data.client_protocol;
@@ -158,6 +164,8 @@ export default {
     userLogoGet() {
       this.$fetch('userLogoGet', {
         home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
+      }, {
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
       }).then(res => {
         console.log(res);
       }).catch(err=>{
@@ -167,6 +175,8 @@ export default {
     getSignInfo () {
       return this.$fetch('watchInterGetWebinarTag', {
         webinar_id: this.$route.params.id
+      }, {
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
       }).then(res => {
         if (res.data) {
           this.signInfo = res.data
