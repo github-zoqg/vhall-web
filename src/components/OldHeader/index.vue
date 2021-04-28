@@ -157,6 +157,8 @@ export default {
     getSignInfo (id) {
       return this.$fetch('watchInterGetWebinarTag', {
         webinar_id: id
+      }, {
+        platform: this.$route.query.type === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
       }).then(res => {
         if (res.data) {
           // this.signInfo = res.data
