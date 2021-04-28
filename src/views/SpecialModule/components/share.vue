@@ -82,7 +82,7 @@ export default {
       }
     },
     doCopy () {
-      let url = this.shareVo.url || this.url;
+      let url = this.shareVo.pcUrl || this.url;
       this.$copyText(url).then(e => {
         this.$message({
           message: `复制成功`,
