@@ -321,6 +321,12 @@ export default {
       this.$refs.roleForm.validate((valid) => {
         if (valid) {
           this.$fetch(this.roleForm.executeType === 'add' ? 'sonRoleAdd' : 'sonRoleEdit', this.roleForm).then(res =>{
+            if (this.roleForm.executeType === 'add') {
+              this.$vhall_paas_port({
+                k: 100823,
+                data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
             this.$message({
               message:  `操作成功`,
               showClose: true,
