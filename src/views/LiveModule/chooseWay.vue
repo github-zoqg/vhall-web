@@ -100,9 +100,9 @@ export default {
             // 进入直播前检测，若是直接发起
             this.$fetch('checkLive', this.$params({
               webinar_id: this.arr[0]
-            }, {
+            }), {
               platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
-            })).then((res) => {
+            }).then((res) => {
               if(res && res.code === 200) {
                /*  this.$router.push({
                   path: this.watchUrl
