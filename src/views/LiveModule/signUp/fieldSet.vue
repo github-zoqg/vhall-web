@@ -395,6 +395,7 @@ export default {
     // 保存表单
     sureQuestionnaire() {
       let userId = this.$parent.userId;
+      console.log(this.renderQuestion)
       this.renderQuestion.filter(item => item.name !== 'name').map(item => {
         this.$vhall_paas_port({
           k: item.reporType,

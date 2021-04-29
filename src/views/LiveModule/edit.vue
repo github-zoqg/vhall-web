@@ -699,7 +699,7 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box'
             });
-            this.reportData();
+            this.$route.query.record_id ? this.reVodEditReportData() : this.reportData();
             this.isChange = false;
             console.log(res);
             setTimeout(()=>{
@@ -793,6 +793,13 @@ export default {
       this.$vhall_paas_port({
         k: this.formData.limitCapacitySwtich ? 100035 : 100036,
         data: {business_uid: userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+    },
+    reVodEditReportData() {
+      let userId = JSON.parse(sessionOrLocal.get('userId'));
+      this.$vhall_paas_port({
+        k: 100414,
+        data: {business_uid: userId, user_id: '', webinar_id: '', s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
       })
     },
     unescapeHTML(title) {

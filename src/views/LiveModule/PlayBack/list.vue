@@ -16,7 +16,7 @@
         <el-button size="medium" class="transparent-btn" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','), 1)">批量删除</el-button>
         <VhallInput
           clearable
-          @keyup.enter.native="getList"
+          @keyup.enter.native="getSearchList"
           placeholder="请输入内容标题"
           autocomplete="off"
           v-clearEmoij
@@ -26,7 +26,7 @@
           <i
             class="el-icon-search el-input__icon"
             slot="prefix"
-            @click="getList">
+            @click="getSearchList">
           </i>
         </VhallInput>
       </div>
@@ -432,7 +432,7 @@ export default {
         })
         this.toTailoring(param.data.id, param.data.name);
       } else if (param.command == 'publish') {
-          this.$vhall_paas_port({
+        this.$vhall_paas_port({
           k: 100413,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
         })
@@ -447,6 +447,15 @@ export default {
     },
     currentChangeHandler(num){
       this.pageNum = num;
+      this.getList();
+    },
+    getSearchList() {
+      if (this.keyWords) {
+        this.$vhall_paas_port({
+          k: 100418,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getList();
     },
     getList(){
