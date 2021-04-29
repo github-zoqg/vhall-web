@@ -132,8 +132,14 @@
                   {{ item.pv | formatNum }}
                 </div>
                 <div class="vh-sort-tables__tbody-editor">
-                  <i class="iconfont-v3 saasicon-trash" @click="deleteSpecial(item.webinar_id)"></i>
-                  <i class="iconfont-v3 saasicon_move"></i>
+                  <el-tooltip class="item" effect="dark" content="删除" placement="top" v-tooltipMove>
+                    <i class="iconfont-v3 saasicon-trash" @click.prevent.stop="deleteSpecial(item.webinar_id)"></i>
+                  </el-tooltip>
+                   <el-tooltip class="item" effect="dark" content="移动" placement="top" v-tooltipMove>
+                    <i class="iconfont-v3 saasicon_move"></i>
+                  </el-tooltip>
+                  <!-- <i class="iconfont-v3 saasicon-trash" @click="deleteSpecial(item.webinar_id)"></i>
+                  <i class="iconfont-v3 saasicon_move"></i> -->
                 </div>
               </div>
             </draggable>
