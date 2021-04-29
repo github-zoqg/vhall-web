@@ -44,15 +44,16 @@
             </div>
           </div>
           <el-dialog
-            title="订单支付中..."
+            title="支付"
             :visible.sync="dialogBuyVisible"
             :close-on-click-modal=false
             :close-on-press-escape=false
             width="340px"
           >
           <div class="isPay">
+            <h3>订单支付中...</h3>
             <div class="reBtn">
-              <span class="first-span" @click="dialogBuyVisible=false">选择其他支付方式</span>
+              <span class="first-span" @click="dialogBuyVisible=false">其他支付方式</span>
               <span class="second-span" @click="finishPay">完成支付</span>
             </div>
           </div>
@@ -398,8 +399,14 @@ export default {
       }
     }
     .isPay{
-      padding-bottom: 30px;
+      padding-bottom: 24px;
       p{
+        text-align: center;
+      }
+      h3{
+        padding-bottom: 24px;
+        font-size: 16px;
+        color: #1A1A1A;
         text-align: center;
       }
       .reBtn{
@@ -407,12 +414,12 @@ export default {
         span{
           display: inline-block;
           width: 120px;
-          height: 30px;
-          line-height: 30px;
-          font-size: 12px;
+          height: 36px;
+          line-height: 36px;
+          font-size: 14px;
           text-align: center;
           color: #fff;
-          border-radius: 2px;
+          border-radius: 20px;
           cursor: pointer;
         }
         .first-span {
@@ -420,8 +427,8 @@ export default {
           border: 1px solid #d2d2d2;
         }
         .second-span {
-          background: #fc5659;
-          border: 1px solid #fc5659;
+          background: #fb3a32;
+          border: 1px solid #fb3a32;
           color: #fff;
           margin-left: 10px;
         }

@@ -14,7 +14,7 @@
             <li><i @click="shareWX"></i><p>微信</p></li>
           </ul>
           <div class="inputCode">
-            <el-input  v-model="link" class="input-with-select" id="linkBox"></el-input>
+            <el-input  v-model="pcLink" class="input-with-select" id="linkBox"></el-input>
             <span @click="copy">复制</span>
           </div>
         </div>
@@ -52,7 +52,8 @@ export default {
     return {
       dialogVisible: false,
       wxDialogVisible: false,
-      link: `${process.env.VUE_APP_WEB_URL}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}`,
+      pcLink: `${process.env.VUE_APP_WEB_URL}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}`,
+      link: `${process.env.VUE_APP_WAP_WATCH}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}`,
       wxUrl: `${Env.staticLinkVo.aliQr}`
     };
   },

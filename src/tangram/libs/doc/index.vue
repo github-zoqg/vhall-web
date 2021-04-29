@@ -969,7 +969,7 @@ export default {
       this.$alert('文档加载失败，请尝试刷新浏览器', '', {
         title: '提示',
         confirmButtonText: '立即刷新',
-        center: true,
+        lockScroll: false,
         showClose: false,
         callback: action => {
           window.location.reload();

@@ -23,7 +23,7 @@
           </div>
           <el-button round size="medium" class="transparent-btn" slot="reference" :disabled="!invitation">扫码查看</el-button>
         </el-popover>
-        <el-button size="medium" round class="transparent-btn" :disabled="!invitation" @click="loadDownInvition">本地下载</el-button>
+        <el-button size="medium" round class="transparent-btn" :disabled="!invitation" @click="getCanvasImg">本地下载</el-button>
       </div>
     </div>
     <div class="invitation-from">
@@ -37,17 +37,17 @@
           </el-form-item>
           <el-form-item label="展示方式">
             <div class="data-show">
-              <p :class="showType === 1 ? 'isActiveColor' : ''" @click="invitation && changeType(1)">
+              <p :class="formInvitation.show_type === 1 ? 'isActiveColor' : ''" @click="invitation && changeType(1)">
                 <img src="../../../common/images/invite-card/tmpl1.png" alt="">
-                <label  class="img-tangle" v-if="showType === 1"><img src="../../../common/images/icon-choose.png" alt=""></label>
+                <label  class="img-tangle" v-if="formInvitation.show_type === 1"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
-               <p :class="showType === 2 ? 'isActiveColor' : ''" @click="invitation && changeType(2)">
+               <p :class="formInvitation.show_type === 2 ? 'isActiveColor' : ''" @click="invitation && changeType(2)">
                 <img src="../../../common/images/invite-card/tmpl2.png" alt="">
-               <label  class="img-tangle" v-if="showType === 2"><img src="../../../common/images/icon-choose.png" alt=""></label>
+               <label  class="img-tangle" v-if="formInvitation.show_type === 2"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
-               <p :class="showType === 3 ? 'isActiveColor' : ''" @click="invitation && changeType(3)">
+               <p :class="formInvitation.show_type === 3 ? 'isActiveColor' : ''" @click="invitation && changeType(3)">
                 <img src="../../../common/images/invite-card/tmpl3.png" alt="">
-                <label  class="img-tangle" v-if="showType === 3"><img src="../../../common/images/icon-choose.png" alt=""></label>
+                <label  class="img-tangle" v-if="formInvitation.show_type === 3"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </p>
             </div>
           </el-form-item>
@@ -117,8 +117,27 @@
       <div class="invitation-show">
         <!-- <img :src="img" alt="" class="img_invite" v-show="false">
         <img :src="avatar" alt="" class="img_invite" v-show="false"> -->
+        <template>
+          <div class="invitation-hidden">
+            <img
+              :src="img"
+              style="display:none"
+              alt
+              class="hsrc vh-invitation__show-img"
+            />
+            <img
+              :src="qrcode"
+              style="display:none"
+              alt
+              class="hsrc"
+            />
+             <div class="invitation__down-warp">
+              <img :src="downloadImg" alt />
+            </div>
+          </div>
+        </template>
         <!-- <p>移动端预览</p> -->
-        <div class="show-img" :style="`backgroundImage: url(${img})`" v-if="showType==1" id="shopInvent">
+        <div class="show-img" :style="`backgroundImage: url(${img})`" v-if="formInvitation.show_type==1" id="shopInvent">
           <div class="show-container">
             <div class="show-header">
               <div class="show-avator">
@@ -147,27 +166,29 @@
             </div>
           </div>
         </div>
-        <div class="watch-img" v-else-if="showType===2"  id="shopInvent" :style="`backgroundImage: url(${img})`">
-          <div class="watch-bg">
-            <div class="watch-color">
-              <div class="watch-header">
-              <div class="watch-avator">
-                <img :src="avatar" alt="">
+        <div class="watch-img" v-else-if="formInvitation.show_type===2"  id="shopInvent" :style="`backgroundImage: url(${img})`">
+          <div class="watch-container">
+            <div class="watch-bg">
+              <div class="watch-color">
+                <div class="watch-header">
+                  <div class="watch-avator">
+                    <img :src="avatar" alt="">
+                  </div>
+                  <p style="color:#fff;">{{formInvitation.company || '微吼直播'}}</p>
+                  <p style="color:#fff;">邀请你一起看直播</p>
+                </div>
               </div>
-              <p style="color:#fff;">{{formInvitation.company || '微吼直播'}}</p>
-              <p style="color:#fff;">邀请你一起看直播</p>
             </div>
-            </div>
-          </div>
-          <div class="watch-text">
-            <h1>{{ formInvitation.title }}</h1>
-            <p>{{ formInvitation.desciption }}</p>
-            <div class="watch-footer">
-              <div class="watch-code"><img :src="qrcode" alt=""></div>
-              <div class="watch-action">
-                <!-- <p>扫码观看视频</p> -->
-                <h1 :title="formInvitation.webinar_date">{{ formInvitation.webinar_date }}</h1>
-                <h1 :title="formInvitation.location">{{ formInvitation.location }}</h1>
+            <div class="watch-text">
+              <h1>{{ formInvitation.title }}</h1>
+              <p>{{ formInvitation.desciption }}</p>
+              <div class="watch-footer">
+                <div class="watch-code"><img :src="qrcode" alt=""></div>
+                <div class="watch-action">
+                  <!-- <p>扫码观看视频</p> -->
+                  <h1 :title="formInvitation.webinar_date">{{ formInvitation.webinar_date }}</h1>
+                  <h1 :title="formInvitation.location">{{ formInvitation.location }}</h1>
+                </div>
               </div>
             </div>
           </div>
@@ -217,9 +238,11 @@
 <script>
 import addBackground from './components/imgBackground';
 import {sessionOrLocal} from "@/utils/utils";
+import { isBrower } from '@/utils/getBrowserType';
 import Env from "@/api/env";
 import html2canvas from 'html2canvas';
 import beginPlay from '@/components/beginBtn';
+import { isEqual } from 'lodash'
 export default {
   data() {
     const locationValidate = (rule, value, callback) => {
@@ -259,16 +282,22 @@ export default {
     };
     return {
       invitation: true,
+      isInit: false,
+      isSave: true,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       qrcode: '',
       showCode: '',
-      showType: 1,
       avatar: '',
       img: '',
       imgType: 0,
       isShowMethod: '1',
-      information: {},
+      information: {
+        show_type: 1,
+        img_type: 0,
+        is_show_watermark: false,
+      },
       imgUrl: '',
+      downloadImg: '',
       formInvitation: {
         show_type: 1,
         img_type: 0,
@@ -304,12 +333,32 @@ export default {
       },
     };
   },
+  watch: {
+    formInvitation: {
+      deep: true,
+      immediate: true,
+      handler(newVal) {
+        if (this.isInit) {
+          this.isInit = false
+          return false
+        }
+        if (!isEqual(this.information, newVal)) {
+          this.isSave = false
+        }
+
+        this.information = {
+          ...newVal
+        }
+      }
+    }
+  },
   created(){
     this.webinarId = this.$route.params.str;
     this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar || require('../../../common/images/avatar.png');
     let token = sessionOrLocal.get('token', 'localStorage');
     this.showCode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?token=${token}`;
     this.getInviteCardInfo();
+    this.initImage();
   },
   components: {
     addBackground,
@@ -317,7 +366,21 @@ export default {
   },
   methods: {
     changeType(index) {
-      this.showType = index;
+      this.formInvitation.show_type = index;
+    },
+    initImage() {
+      this.$nextTick(() => {
+        Image.prototype.getBase64Image = function() {
+          const img = this
+          let canvas = document.createElement('canvas')
+          canvas.width = img.width
+          canvas.height = img.height
+          let ctx = canvas.getContext('2d')
+          ctx.drawImage(img, 0, 0, img.width, img.height)
+          let dataURL = canvas.toDataURL('image/png')
+          return dataURL
+        }
+      })
     },
     changeOpen() {
       this.isInviteCard();
@@ -350,7 +413,15 @@ export default {
         webinar_id: this.webinarId
       };
       this.$fetch('getCardDetailInfo', params).then(res => {
-        this.formInvitation = res.data.invite_card;
+        this.isInit = true
+        this.formInvitation = {
+          ...res.data.invite_card,
+          is_show_watermark: Boolean(res.data.invite_card.is_show_watermark)
+        };
+        this.information = {
+          ...res.data.invite_card,
+          is_show_watermark: Boolean(res.data.invite_card.is_show_watermark)
+        }
         this.qrcode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}?invite=${res.data.invite}`;
         this.img = this.formInvitation.img || this.fileList[0];
         if (!this.formInvitation.img_type) {
@@ -359,9 +430,11 @@ export default {
           this.img = this.fileList[this.formInvitation.img_type - 1];
         }
         this.imgUrl = this.formInvitation.img || '';
-        this.showType = this.formInvitation.show_type;
         this.invitation = Boolean(res.data.status);
-        this.formInvitation.is_show_watermark = Boolean(this.formInvitation.is_show_watermark);
+        // this.formInvitation.is_show_watermark = Boolean(this.formInvitation.is_show_watermark);
+        // if (this.invitation) {
+        //   this.getCanvasImg()
+        // }
       });
     },
     changeImg() {
@@ -386,12 +459,12 @@ export default {
         webinar_id: this.webinarId,
       };
       this.formInvitation.is_show_watermark = Number(this.formInvitation.is_show_watermark);
-      this.formInvitation.show_type = this.showType;
       this.formInvitation.img = this.formInvitation.img_type ?  '' : this.img;
       let obj = Object.assign({}, ids, this.formInvitation);
       this.$fetch('editCardStatus', this.$params(obj)).then(res => {
        if (res.code == 200) {
-         this.$message({
+         this.isSave = true;
+        this.$message({
           message: `保存数据成功`,
           showClose: true,
           // duration: 0,
@@ -428,28 +501,45 @@ export default {
         a.click()
       }
     },
-    // 本地下载
-    loadDownInvition() {
-      let image = new Image();
-      let canvas1 = document.createElement('canvas');
-      let _canvas = document.getElementById('shopInvent');
-      let w = parseInt(window.getComputedStyle(_canvas).width);
-      let h = parseInt(window.getComputedStyle(_canvas).height);
-      canvas1.width = w * 2;
-      canvas1.height = h * 2;
-      canvas1.style.width = w + 'px';
-      canvas1.style.height = h + 'px';
-      let context = canvas1.getContext('2d');
-      context.scale(2,2);
-      html2canvas(_canvas, {
-        useCORS: true,
-        backgroundColor: null
-      }).then(canvas => {
-        let dataUrl = canvas.toDataURL('image/jpeg', 1.0);
-        image.src = this.dataUrl;
-        this.fileDownLoad(dataUrl)
-        // this.dataURIToBlob(imgName, dataUrl);
+    getCanvasImg() {
+      if (!this.isSave) {
+        this.loadDownInvition()
+        return
+      }
+      let browerType = isBrower()
+      const _canvas = document.getElementById('shopInvent')
+      const imgList = document.querySelectorAll('img.hsrc')
+      let count = 0
+      const _this = this
+      imgList.forEach(img => {
+        const imaObj = new Image()
+        imaObj.setAttribute('crossorigin', 'anonymous')
+        imaObj.onload = function() {
+          count ++
+          img.src = imaObj.getBase64Image()
+          if (imgList.length == count) {
+            html2canvas(_canvas, {
+              useCORS: true,
+              allowTaint: true,
+              scale: 2,
+              width: 332,
+              height: 622,
+              scrollY: 0,
+              // scrollX: 0,
+              scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 12: 0,
+              backgroundColor: null
+            }).then(canvas => {
+              _this.downloadImg = canvas.toDataURL('image/png', 1.0);
+              _this.loadDownInvition()
+            })
+          }
+        }
+        imaObj.src = img.getAttribute('src')
+        // imaObj.src = count == 1 ? _this.img || _this.formInvitation.img : _this.qrcode
       })
+    },
+    loadDownInvition() {
+     this.fileDownLoad(this.downloadImg)
     }
   }
 };
@@ -593,12 +683,27 @@ export default {
   .invitation-show{
     padding-top: 20px;
     padding-right: 200px;
+    position: relative;
     p {
       font-size: 14px;
       font-family: @fontRegular;
       font-weight: 400;
       color: #1a1a1a;
       padding-bottom: 16px;
+    }
+    .invitation-hidden{
+      width: 330px;
+      height: 622px;
+      background-color: #fff;
+      overflow: hidden;
+      position: absolute;
+      top:0;
+      left: 0;
+      z-index: -10;
+      .invitation__down-warp{
+        width: 100%;
+        height: 100%;
+      }
     }
     .show-img {
       width: 330px;
@@ -718,7 +823,7 @@ export default {
     .watch-img{
       width: 330px;
       background: #FFFFFF;
-      height: 620px;
+      height: 622px;
       position: relative;
       border: 1px solid #E6E6E6;
       // box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
@@ -728,8 +833,12 @@ export default {
       background-repeat: no-repeat;
       border-radius: 4px;
       z-index: 0;
+      .watch-container{
+        width: 100%;
+        height: 100%;
+      }
       .watch-bg{
-        height: 360px;
+        height: 362px;
         // background-image: url('../../../common/images/v35-webinar.png');
         // background-size: 100% 100%;
         // background-repeat: no-repeat;
@@ -773,6 +882,8 @@ export default {
       height: 258px;
       position: relative;
       border-radius: 0 0 3px 3px;
+      text-align: center;
+      letter-spacing: 2px;
       h1{
         padding:0;
         font-size: 28px;
@@ -817,6 +928,7 @@ export default {
             flex-direction: column;
             justify-content: space-around;
             vertical-align: middle;
+            text-align: left;
             h1{
               padding:0;
               font-size: 14px;
@@ -844,28 +956,28 @@ export default {
       color:#fff;
       height: 622px;
       border-radius: 4px;
-      border: 1px solid #E2E2E2;
+      // border: 1px solid #E2E2E2;
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: 100% 100%;
       background-repeat: no-repeat;
       position: relative;
       .look-color-shadow {
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          top: 0;
-          left: 0;
-          background: rgba(0,0,0,.2);
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: rgba(0,0,0,.2);
       }
       .look-color{
         position: relative;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.1);
         border-radius: 4px;
+        padding: 20px 24px;
       }
       .look-header{
-        padding: 20px 24px;
+        padding-bottom: 20px;
         text-align: center;
         .look-avator{
           width: 36px;
@@ -889,16 +1001,16 @@ export default {
         }
       }
       .look-text{
-        width: 282px;
+        width: 100%;
         text-align: center;
         border: 4px solid #fff;
         border-radius: 4px;
-        margin: auto;
+        // margin: auto;
         margin-top: 10px;
-        // padding: 20px 0;
         padding: 5px 0;
+        letter-spacing: 2px;
         h1{
-          padding: 0;
+          padding: 0 15px;
           font-size: 26px;
           font-weight: 600;
           line-height: 40px;
@@ -919,7 +1031,7 @@ export default {
       }
       .look-time{
         margin-top: 30px;
-        padding-left: 24px;
+        // padding-left: 24px;
         p{
           padding:0;
           line-height: 25px;
