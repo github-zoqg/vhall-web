@@ -399,7 +399,7 @@ export default {
             data.id = this.subject_id
           }
 
-          this.$fetch(url, this.$params(data)).then(res=>{
+          this.$fetch(url, data).then(res=>{
             if(res.code == 200) {
               this.subject_id = res.data.subject_id;
               this.$message({
