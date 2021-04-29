@@ -34,6 +34,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import NullPage from '../Error/nullPage.vue';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: 'msgList.vue',
   components: {
@@ -47,6 +48,7 @@ export default {
         list: []
       },
       isHandle: false, // 是否有操作项
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       msgTableColumn: [
         {
           label: '标题',
@@ -90,30 +92,37 @@ export default {
     },
     // 删除单条消息数据
     msgDel(that, { rows }) {
-      that.$confirm('是否要删除选中的消息？', '提示', {
+      that.confirmDelete(rows.msg_id, 2)
+    },
+    confirmDelete(ids, index) {
+      this.$confirm('是否要删除选中的消息？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        that.$fetch('msgDel', {
-          msg_id: rows.msg_id
+        this.$fetch('msgDel', {
+          msg_id: ids
         }).then(res => {
           if(res && res.code === 200) {
-            that.$message.success(`删除成功`);
-            that.ids = [];
-            that.$refs.msgTable.clearSelect();
-            that.getMsgList();
+            this.$vhall_paas_port({
+              k: index === 1 ? 100835 : 100834,
+              data: {business_uid: this.userId, userId: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+            this.$message.success(`删除成功`);
+            this.ids = [];
+            this.$refs.msgTable.clearSelect();
+            this.getMsgList();
           }else {
-            that.$message({
+            this.$message({
               type: 'error',
               message: res.msg || '删除失败'
             });
           }
         }).catch(e => {
           console.log(e);
-          that.$message({
+          this.$message({
             type: 'error',
             message:  '删除失败'
           });
@@ -123,6 +132,10 @@ export default {
     },
     // 跳转消息详情页
     toMsgDetail(that, { rows }) {
+      that.$vhall_paas_port({
+        k: 100833,
+        data: {business_uid: that.userId, userId: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       that.$router.push({
         path: `/other/msgDetail/${rows.msg_id}`,
       });
@@ -182,6 +195,10 @@ export default {
             msg_id: this.ids.join(',')
           }).then(res => {
             if(res && res.code === 200) {
+              this.$vhall_paas_port({
+                k: 100836,
+                data: {business_uid: this.userId, userId: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
               this.$message({
                 message: `操作成功`,
                 showClose: true,
@@ -229,11 +246,12 @@ export default {
           customClass: 'zdy-info-box'
         });
       } else {
-        this.msgDel(this, {
-          rows: {
-            msg_id: this.ids.join(',')
-          }
-        });
+        this.confirmDelete(this.ids.join(','), 1)
+        // this.msgDel(this, {
+        //   rows: {
+        //     msg_id: this.ids.join(',')
+        //   }
+        // });
       }
     }
   },

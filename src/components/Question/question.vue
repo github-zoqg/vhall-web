@@ -127,7 +127,15 @@ export default {
     sureMaterialPrize() {
       if (this.sureChecked) {
         this.copeQuestion(this.questionDataInfo.id);
+        this.$vhall_paas_port({
+          k: 100339,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.query.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       } else {
+        this.$vhall_paas_port({
+          k: 100340,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.query.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
       }
     },
@@ -192,6 +200,10 @@ export default {
         description: description,
       }
       this.$fetch('createLiveQuestion', params).then(res => {
+        this.$vhall_paas_port({
+          k: 100333,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.query.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: res.code == 200 ? '新建成功' : '新建失败',
           showClose: true,
@@ -216,6 +228,10 @@ export default {
         description: description,
       }
       this.$fetch('editLiveQuestion', params).then(res => {
+        this.$vhall_paas_port({
+          k: 100334,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.query.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: res.code == 200 ? '编辑成功' : '编辑失败',
           showClose: true,

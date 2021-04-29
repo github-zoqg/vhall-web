@@ -147,10 +147,14 @@ export default {
     returnOldVersion() {
       this.$vhall_paas_port({
         k: 100001,
-        data: {business_uid: this.userInfo.user_id, user_id: this.userInfo.user_id, s: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
     },
     toAccountPage() {
+      this.$vhall_paas_port({
+        k: 100831,
+        data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({path: '/acc/info'});
     },
     getUnreadNum() {
@@ -171,6 +175,10 @@ export default {
     },
     logout() {
       this.$fetch('loginOut', {}).then(res =>{
+        this.$vhall_paas_port({
+          k: 100832,
+          data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         sessionOrLocal.clear();
         sessionOrLocal.clear('localStorage');
         // 清除cookies

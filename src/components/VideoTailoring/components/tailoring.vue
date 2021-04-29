@@ -287,6 +287,7 @@ import videoDuration from './video-duration'; // 剪裁区域的视频进度条
 import controlEventPoint from './control-event-point'; // 控制条中事件点的显示
 import effectiveZone from './effective-zone'; // 控制条中有效区的显示
 import { formatTime, descend } from '../js/format';
+import { sessionOrLocal } from '@/utils/utils';
 // import { match } from 'minimatch'
 export default {
   props: {
@@ -358,7 +359,8 @@ export default {
       delCutPoint: false, // 删除裁剪点弹窗显示隐藏
       formatEventTime: '', // 事件点弹窗中显示的格式化后的时间
       isFullScreen: false, // 当前是否是全屏
-      isUserInput: false // 是否是用户触发的视频进度条的 input 事件
+      isUserInput: false, // 是否是用户触发的视频进度条的 input 事件
+      userId: JSON.parse(sessionOrLocal.get("userId"))
     };
   },
   beforeDestroy () {
@@ -853,6 +855,10 @@ export default {
       if (!this.vodReady) {
         return false;
       }
+      this.$vhall_paas_port({
+        k: 100405,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$emit('saveVideoClick');
     },
     /**

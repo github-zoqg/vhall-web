@@ -186,6 +186,11 @@ export default {
         permission_content: 1, // 内容管理开关 1开 0关闭
         permission_data: 1 // 数据管理 1开 0关闭
       },
+      reRoleForm: {
+        permission_webinar: 1, // 直播管理开关 1开 0关闭
+        permission_content: 1, // 内容管理开关 1开 0关闭
+        permission_data: 1 // 数据管理 1开 0关闭
+      },
       roleFormRules: {
         role_name: [
           { required: true, message: '请输入角色名称', trigger: 'blur' }
@@ -227,12 +232,50 @@ export default {
           customClass: 'zdy-info-box'
         });
       } else {
-        this.roleDel(this, {
-          rows: {
-            id: this.ids.join(',')
-          }
-        });
+        this.deleteData(this.ids.join(','), 1)
       }
+    },
+    deleteData(ids, index) {
+      this.$confirm('确定删除当前角色？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {
+           this.$fetch('sonRoleDel', {
+            ids: ids
+          }).then(res => {
+            this.$vhall_paas_port({
+              k: index == 1 ? 100829 : 100828,
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+            this.$message({
+              message:  `删除成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.ids = [];
+            try {
+              this.$refs.roleTab.clearSelect();
+            } catch(e) {
+              console.log(e);
+            }
+            this.initComp();
+          }).catch(res => {
+            console.log(res);
+            this.$message({
+              message: res.msg || '删除失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+          });
+        }).catch(() => {
+        });
     },
     // 删除单条消息数据
     roleDel(that, { rows }) {
@@ -245,42 +288,7 @@ export default {
         }).then(()=>{
         }).catch(()=>{});
       } else {
-        that.$confirm('确定删除当前角色？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          customClass: 'zdy-message-box',
-          lockScroll: false,
-          cancelButtonClass: 'zdy-confirm-cancel'
-        }).then(() => {
-          that.$fetch('sonRoleDel', {
-            ids: rows.id
-          }).then(res => {
-            that.$message({
-              message:  `删除成功`,
-              showClose: true,
-              // duration: 0,
-              type: 'success',
-              customClass: 'zdy-info-box'
-            });
-            that.ids = [];
-            try {
-              that.$refs.roleTab.clearSelect();
-            } catch(e) {
-              console.log(e);
-            }
-            that.initComp();
-          }).catch(res => {
-            console.log(res);
-            that.$message({
-              message: res.msg || '删除失败',
-              showClose: true,
-              // duration: 0,
-              type: 'error',
-              customClass: 'zdy-info-box'
-            });
-          });
-        }).catch(() => {
-        });
+        that.deleteData(rows.id, 2)
       }
     },
     // 编辑子账号
@@ -292,6 +300,8 @@ export default {
       }).then(res =>{
         if (res.data) {
           that.roleForm = Object.assign(that.roleForm, res.data);
+          that.reRoleForm.permission_content = res.data.permission_content
+          that.reRoleForm.permission_data = res.data.permission_data
         }
       }).catch( res =>{
         console.log(res);
@@ -321,12 +331,7 @@ export default {
       this.$refs.roleForm.validate((valid) => {
         if (valid) {
           this.$fetch(this.roleForm.executeType === 'add' ? 'sonRoleAdd' : 'sonRoleEdit', this.roleForm).then(res =>{
-            if (this.roleForm.executeType === 'add') {
-              this.$vhall_paas_port({
-                k: 100823,
-                data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-              })
-            }
+            this.setReportData();
             this.$message({
               message:  `操作成功`,
               showClose: true,
@@ -348,6 +353,35 @@ export default {
           });
         }
       });
+    },
+    setReportData() {
+      if (this.roleForm.executeType === 'add') {
+        this.$vhall_paas_port({
+          k: 100823,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        this.$vhall_paas_port({
+          k: this.roleForm.permission_content ? 100825 : 100824,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        this.$vhall_paas_port({
+          k: this.roleForm.permission_data ? 100827 : 100826,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      } else {
+        if (this.roleForm.permission_content !== this.reRoleForm.permission_content) {
+          this.$vhall_paas_port({
+            k: this.roleForm.permission_content ? 100825 : 100824,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+        if (this.roleForm.permission_data !== this.reRoleForm.permission_data) {
+          this.$vhall_paas_port({
+            k: this.roleForm.permission_data ? 100827 : 100826,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+      }
     },
     // 获取列表数据
     getRoleList(row) {
@@ -382,6 +416,12 @@ export default {
       this.query.pos = 0;
       this.query.pageNumber = 1;
       this.query.limit = 10;
+      if (this.role_name) {
+        this.$vhall_paas_port({
+          k: 100830,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       // 表格切换到第一页
       try {
         this.$refs.roleTab.pageInfo.pageNum = 1;

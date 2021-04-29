@@ -13,7 +13,7 @@
         <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
         <el-button v-if="WEBINAR_PES.btn_record"  class="transparent-btn" size="medium" plain round @click="toRecord">录制</el-button>
         <el-button size="medium"  class="transparent-btn" round @click="settingHandler">回放设置</el-button>
-        <el-button size="medium" class="transparent-btn" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
+        <el-button size="medium" class="transparent-btn" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','), 1)">批量删除</el-button>
         <VhallInput
           clearable
           @keyup.enter.native="getList"
@@ -192,6 +192,7 @@ export default {
       showDialog: false,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       videoParamId: '',
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       tableData: [],
       defaultImg: require('../../../common/images/v35-webinar.png'),
       keyWords: '',
@@ -265,8 +266,7 @@ export default {
   },
   methods: {
     getVersion() {
-      const userId = JSON.parse(sessionOrLocal.get("userId"));
-      this.$fetch('getVersionInfo', { user_id: userId}).then(res => {
+      this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
         this.versionExpired = res.data.expired == 1;
       }).catch(e=>{
         console.log(e);
@@ -295,28 +295,25 @@ export default {
           duration: 0
         });
         let open = document.querySelector('#msgBlue');
-        const userId = JSON.parse(sessionOrLocal.get("userId"));
         open.addEventListener('click', function(e){
           let url = 'https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038'
           that.$vhall_paas_port({
             k: 100017,
-            data: {business_uid: userId, user_id: userId, s: '', refer: 2, report_extra: {}, ref_url: '', req_url: ''}
+            data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str, s: '', refer: 2, report_extra: {}, ref_url: '', req_url: ''}
           })
           window.open(url, "_blank");
         });
       }
     },
     goReportData() {
-      const userId = JSON.parse(sessionOrLocal.get("userId"));
       this.$vhall_paas_port({
         k: 100017,
-        data: {business_uid: userId, user_id: userId, s: '', refer: 2, report_extra: {}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: 2, report_extra: {}, ref_url: '', req_url: ''}
       })
     },
     getPermission(id) {
-      let userId = JSON.parse(sessionOrLocal.get('userId'));
       // 活动权限
-      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: userId, scene_id: 1}).then(res => {
+      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: this.userId, scene_id: 1}).then(res => {
         if(res.code == 200) {
           if(res.data.permissions) {
             sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
@@ -427,12 +424,24 @@ export default {
     },
     handleCommand(param){
       if(param.command == 'delete'){
-        this.deletePlayBack(param.data.id);
+        this.deletePlayBack(param.data.id, 2);
       }else if(param.command == 'tailoring'){
+        this.$vhall_paas_port({
+          k: 100411,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.toTailoring(param.data.id, param.data.name);
       } else if (param.command == 'publish') {
+          this.$vhall_paas_port({
+          k: 100413,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.toCreateDemand(param.data);
       } else if (param.command == 'vodreset') {
+        this.$vhall_paas_port({
+          k: 100415,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.toVodreset(param.data)
       }
     },
@@ -443,7 +452,7 @@ export default {
     getList(){
       let param = {
         webinar_id: this.webinar_id,
-        user_id: window.sessionStorage.getItem('userId'),
+        user_id: this.userId,
         pos: this.pos,
         limit: this.pageSize,
         source: this.recordType,
@@ -510,6 +519,10 @@ export default {
           record_id: data.id
         }).then(res => {
           console.log(res)
+          this.$vhall_paas_port({
+            k: 100409,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           if (res.data.has_download_url == 0) {
             data.transcoding = true;
             this.transcodingArr.push(data);
@@ -527,7 +540,7 @@ export default {
       }
       this.checkTransStatus(data.id, fetchCb)
     },
-    deletePlayBack(ids){
+    deletePlayBack(ids, index){
       this.$confirm('删除回放会导致目前已生成回放的数据丢失，请谨慎操作，确定要删除这段回放么？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -537,6 +550,10 @@ export default {
       }).then(() => {
         this.loading = true;
         this.$fetch('playBackDelete', { record_ids: ids}).then(res=>{
+          this.$vhall_paas_port({
+            k: index === 1 ? 100416 : 100417,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: `已删除`,
             showClose: true,
@@ -568,6 +585,10 @@ export default {
         });
       this.editLoading =true;
       this.$fetch('playBackEdit', { record_id: this.editRecord.id, name: this.titleEdit}).then(res=>{
+        this.$vhall_paas_port({
+          k: 100408,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `修改成功`,
           showClose: true,
@@ -590,6 +611,10 @@ export default {
       });
     },
     settingHandler(){
+      this.$vhall_paas_port({
+        k: 100407,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({path: `/live/planFunction/${this.webinar_id}`});
     },
     toVodreset(data) {
@@ -665,6 +690,10 @@ export default {
       })
     },
     async toChapter(row){
+      this.$vhall_paas_port({
+        k: 100410,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       const recordId = row.id
       const chapterType = this.isDemand ? 'recordchapter' : 'chapter'
       // 如果回放转码完成，并且支持章节功能或者是点播活动，直接跳转
