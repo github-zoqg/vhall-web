@@ -304,7 +304,10 @@ export default {
         this.isActive = false;
         this.lineDataList = this.allDataList.trend.record;
       }
-
+      this.$vhall_paas_port({
+        k: title === '直播' ? 100567 : 100568,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
   },
 };

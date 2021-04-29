@@ -122,6 +122,10 @@ export default {
         text: () => text
       });
       clipboard.on('success', () => {
+        this.$vhall_paas_port({
+          k: 100815,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message:  '复制成功',
           showClose: true, // 是否展示关闭按钮

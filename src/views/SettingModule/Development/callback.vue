@@ -12,12 +12,12 @@
         <el-form-item label="回调地址" prop="callback_url">
           <VhallInput v-model.trim="form.callback_url" v-clearEmoij auto-complete="off" placeholder="请输入Https或http开头的完整url" :maxlength="255" show-word-limit></VhallInput>
         </el-form-item>
-        <el-form-item label="消息格式" prop="callback_type" required>
+        <!-- <el-form-item label="消息格式" prop="callback_type" required>
           <el-radio-group v-model="form.callback_type">
             <el-radio :label="1">application/x-www-form-urlencoded</el-radio>
             <el-radio :label="2">application/json</el-radio>
           </el-radio-group>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div class="div__func div__view" v-if="keyList.length > 0">
         <ul class="switch__list">
@@ -91,14 +91,14 @@ export default {
         }
         this.isAdd = !(res.data && res.data.id);
         let keyList = [
-          {
-            type: 'key_2',
-            key_name: '失败重启',
-            openShow: '开启后，系统需在5秒内响应SUCCESS(不区分大小写)',
-            closeShow: '已开启，系统需在5秒内响应SUCCESS(不区分大小写)',
-            value: Number(eventsList.includes('2') ? 1 : 0) || 0,
-            k: eventsList.includes('2') ? 100599 : 100600
-          },
+          // {
+          //   type: 'key_2',
+          //   key_name: '失败重启',
+          //   openShow: '开启后，系统需在5秒内响应SUCCESS(不区分大小写)',
+          //   closeShow: '已开启，系统需在5秒内响应SUCCESS(不区分大小写)',
+          //   value: Number(eventsList.includes('2') ? 1 : 0) || 0,
+          //   k: eventsList.includes('2') ? 100599 : 100600
+          // },
           {
             type: 'key_1',
             key_name: '活动状态',
