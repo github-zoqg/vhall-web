@@ -692,7 +692,7 @@ export default {
                 data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
               })
             }
-            let deleNum = (this.tableData.length - addFlag) - this.reTableData.length
+            let deleNum = this.reTableData.length - (this.tableData.length - addFlag)
             if (deleNum) {
               this.$vhall_paas_port({
                 k: 100424,
