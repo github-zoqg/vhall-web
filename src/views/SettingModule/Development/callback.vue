@@ -30,12 +30,12 @@
               active-color="#FB3A32"
               inactive-color="#CECECE">
             </el-switch>
-            <span class="leve3_title title--999">{{!!fail_try_request ? '已开启，直播开始或结束时进行通知' : '开启后，系统需在5秒内响应SUCCESS（不区分大小写）'}}</span>
+            <span class="leve3_title title--999">{{!!form.fail_try_request ? '已开启，直播开始或结束时进行通知' : '开启后，系统需在5秒内响应SUCCESS（不区分大小写）'}}</span>
             &nbsp;
             <el-tooltip effect="dark" placement="right" v-tooltipMove>
               <div slot="content">
                 <span>1.默认关闭</span> <br/> 
-                <p style="width:400px">2.开启后需要在5s内响应SUCCESS（不区分大小写），则视为投递成功，否则按下列规则重试：重试队列，重试16次，间隔时间为：1秒、5秒、10秒、30秒、1-10分钟、20分钟、30分钟、1小时、2小时</p>
+                <p style="width:400px">2.开启后需要在5s内响应SUCCESS（不区分大小写），则视为投递成功，否则按下列规则重试：重试队列，重试16次，间隔时间为：10秒、30秒、1-10分钟、20分钟、30分钟、1小时、2小时</p>
               </div>
               <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
