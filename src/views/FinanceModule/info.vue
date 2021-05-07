@@ -441,11 +441,14 @@ export default {
     },
     initPayMessage() {
       let that = this;
+      let flow = JSON.parse(sessionOrLocal.get("arrears")).flow
+      let extendFee = JSON.parse(sessionOrLocal.get("arrears")).extend_fee
+      let total = flow < 0 ? `${ flow } G` : `${ extendFee } 方`
       this.vm = this.$message({
         showClose: true,
         duration: 0,
         dangerouslyUseHTMLString: true,
-        message: '<p style="color:#1A1A1A">您有流量欠费' + that.status + '元未支付  <span id="openList" style="color:#FA9A32;cursor: pointer;padding-left:10px">立即支付</span></p>',
+        message: '<p style="color:#1A1A1A">您有流量欠费' + that.status + '元未支付(' + total + ')<span id="openList" style="color:#FA9A32;cursor: pointer;padding-left:10px">请立即支付</span></p>',
         type: 'warning'
       });
       let open = document.querySelector('#openList');
