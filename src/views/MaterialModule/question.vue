@@ -108,6 +108,12 @@ export default {
       e.stopPropagation()
     },
     searchTableList() {
+      if (this.keyword) {
+        this.$vhall_paas_port({
+          k: 100532,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList('search')
     },
     getTableList(params) {
@@ -131,12 +137,20 @@ export default {
     preview(that, {rows}) {
       console.log('预览', rows);
       that.isShowQuestion = true;
+      that.$vhall_paas_port({
+        k: 100531,
+        data: {business_uid: that.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       // document.querySelector('.section__main').style.minHeight = 640 + 'px'
       that.questionId = rows.question_id;
     },
     // 复制
     cope(that, {rows}) {
       that.$fetch('copyQuestion', {survey_id: rows.question_id}).then(res => {
+        that.$vhall_paas_port({
+          k: 100528,
+          data: {business_uid: that.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         that.$message({
           message: res.code == 200 ? '复制成功' : '复制失败',
           showClose: true,
@@ -159,9 +173,9 @@ export default {
     },
     // 删除
     del(that, {rows}) {
-      that.deleteConfirm(rows.question_id);
+      that.deleteConfirm(rows.question_id, 2);
     },
-    deleteConfirm(id) {
+    deleteConfirm(id, index) {
       this.$confirm('删除后，此问卷将无法使用，确认删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -170,6 +184,10 @@ export default {
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.$fetch('deleteQuestion', {survey_ids: id}).then(res => {
+            this.$vhall_paas_port({
+              k: index == 1 ? 100530 : 100529,
+              data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.getTableList('search');
             this.$message({
               message: `删除成功`,
@@ -196,7 +214,7 @@ export default {
     },
     deleteAll(id) {
       id = this.selectChecked.join(',');
-      this.deleteConfirm(id);
+      this.deleteConfirm(id, 1);
     },
     // 选中
     changeTableCheckbox(val) {

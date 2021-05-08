@@ -19,10 +19,10 @@
                     </el-switch>
                   </p>
                 </el-form-item>
-                <!-- <el-form-item label="显示方式">
+                <el-form-item label="显示方式">
                   <el-radio v-model="formHorse.scroll_type" :label="1" :disabled="!scrolling_open" @change="editHorseInfo">滚动</el-radio>
                   <el-radio v-model="formHorse.scroll_type" :label="2" :disabled="!scrolling_open" @change="editHorseInfo">闪烁</el-radio>
-                </el-form-item> -->
+                </el-form-item>
                 <el-form-item label="文本类型">
                   <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open" @change="editHorseInfo">固定文本</el-radio>
                   <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open" @change="editHorseInfo">固定文本+观看者ID和昵称</el-radio>
@@ -54,7 +54,7 @@
                   <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="formHorse.color"></color-set>
                 </el-form-item>
                 <el-form-item label="不透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px" @change="editHorseInfo"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
-                <el-form-item label="移动速度">
+                <el-form-item label="移动速度" v-if="formHorse.scroll_type == 1">
                   <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open" @change="editHorseInfo">慢</el-radio>
                   <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open" @change="editHorseInfo">中</el-radio>
                   <el-radio v-model="formHorse.speed" :label="3000" :disabled="!scrolling_open" @change="editHorseInfo">快</el-radio>
@@ -66,7 +66,7 @@
                   <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open" @change="editHorseInfo">下</el-radio>
                 </el-form-item>
                 <!-- v-if="formHorse.scroll_type == 1" -->
-                <el-form-item label="间隔时间" prop="interval">
+                <el-form-item label="间隔时间" prop="interval" v-if="formHorse.scroll_type == 1">
                   <el-input
                     v-model="formHorse.interval"
                     :disabled="!scrolling_open"
@@ -155,7 +155,7 @@
                   active-color="#ff4949"
                   inactive-color="#ccc"
                   :active-text="bulletChatText"
-                  @change="otherOtherInfo(1)"
+                  @change="otherOtherInfo(formOther.bulletChat, 1)"
                 >
                 </el-switch>
               </p>
@@ -167,7 +167,7 @@
                   active-color="#ff4949"
                   inactive-color="#ccc"
                   :active-text="progressText"
-                  @change="otherOtherInfo(2)"
+                  @change="otherOtherInfo(formOther.progress, 2)"
                 >
                 </el-switch>
               </p>
@@ -179,7 +179,7 @@
                   active-color="#ff4949"
                   inactive-color="#ccc"
                   :active-text="doubleSpeedText"
-                  @change="otherOtherInfo(3)"
+                  @change="otherOtherInfo(formOther.doubleSpeed, 3)"
                 >
                 </el-switch>
               </p>
@@ -340,7 +340,7 @@ export default {
         text: '版权所有，盗版必究',
         position: 1,
         alpha: 100,
-        // scroll_type: 1,
+        scroll_type: 1,
         interval: 20
       },
       fontList: [],
@@ -372,7 +372,7 @@ export default {
         color: '#FFFFFF',   //  文字颜色
         interval: 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: 6000, // 跑马灯移动速度  3000快     6000中   10000慢
-        // displayType: 0,
+        displayType: 0,
         position: 1
       },
       rules: {
@@ -494,6 +494,10 @@ export default {
     // 关闭跑马灯
     closeHorseInfo() {
       if (!this.scrolling_open) {
+        this.$vhall_paas_port({
+          k: 100645,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.preFormHorse();
       }
       this.editHorseInfo();
@@ -506,11 +510,20 @@ export default {
     // 关闭水印
     openWaterMarkInfo() {
       if (!this.watermark_open) {
+         this.$vhall_paas_port({
+          k: 100674,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.preWatermark();
       }
     },
     // 关闭或保存其他信息
-    otherOtherInfo() {
+    otherOtherInfo(value, index) {
+      let otherArr = [100680, 100682, 100684, 100686]
+      this.$vhall_paas_port({
+        k: value ? otherArr[index - 1] : otherArr[index - 1] + 1,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.preOthersOptions();
     },
     getMarqueeOptionInfo() {
@@ -524,9 +537,9 @@ export default {
         alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
         size:this.formHorse.size,      // 文字大小
         color: this.formHorse.color || '#FFFFFF',   //  文字颜色
-        interval:this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
+        interval:this.formHorse.scroll_type == 1 ? this.formHorse.interval : 1, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: this.formHorse.speed || 6000, // 跑马灯移动速度  3000快     6000中   10000慢
-        // displayType: this.formHorse.scroll_type == 1 ? 0 : 1,
+        displayType: this.formHorse.scroll_type == 1 ? 0 : 1,
         position:this.formHorse.position
       }
     },
@@ -588,6 +601,7 @@ export default {
       this.formHorse.scrolling_open = Number(this.scrolling_open);
       this.formHorse.type = 2;
       this.$fetch('setScrolling',this.$params(this.formHorse)).then(res => {
+        this.setHorseReportData()
         this.$message({
           message: this.scrolling_open ? "跑马灯开启成功" : '跑马灯关闭成功',
           showClose: true,
@@ -605,6 +619,45 @@ export default {
         });
       });
     },
+    // 设置跑马埋点数据
+    setHorseReportData() {
+      let loactionArr = [100653, 100654, 100655, 100656]
+      let fontArr = [100657, 100658, 100659, 100660, 100661, 100662, 100663, 100664, 100665, 100666, 100667, 100668, 100669, 100670]
+      if (this.scrolling_open) {
+         this.$vhall_paas_port({
+          k: 100644,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.$vhall_paas_port({
+        k: this.formHorse.scroll_type == 1 ? 100647 : 100646,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: this.formHorse.text_type == 1 ? 100648 : 100649,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: this.formHorse.speed == 3000 ? 100650 : this.formHorse.speed == 6000 ? 1000651 : 100652,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: loactionArr[this.formHorse.position - 1],
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: fontArr[(this.formHorse.size - 10) / 2],
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: 100671,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {alpha:this.formHorse.alpha}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: 100672,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {interval:this.formHorse.interval}, ref_url: '', req_url: ''}
+      })
+    },
     // 保存水印
     preWatermark() {
       if (!this.domain_url && this.watermark_open) {
@@ -621,6 +674,7 @@ export default {
       this.formWatermark.watermark_open = Number(this.watermark_open);
       this.formWatermark.type = 2;
       this.$fetch('setWatermark', this.$params(this.formWatermark)).then(res => {
+        this.setWaterReportData()
         this.$message({
           message: this.watermark_open ? "水印开启成功" : "水印关闭成功",
           showClose: true,
@@ -638,6 +692,23 @@ export default {
           customClass: 'zdy-info-box'
         });
       });
+    },
+    setWaterReportData() {
+      let loactionArr = [100675, 100676, 100677, 100678]
+      if (this.watermark_open) {
+        this.$vhall_paas_port({
+          k: 100673,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.$vhall_paas_port({
+        k: loactionArr[this.formWatermark.img_position - 1],
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: 100679,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {img_alpha: this.formWatermark.img_alpha}, ref_url: '', req_url: ''}
+      })
     },
     // 保存播放器其他设置
     preOthersOptions () {

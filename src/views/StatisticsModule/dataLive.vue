@@ -12,7 +12,7 @@
           value-format="yyyy-MM-dd"
           type="daterange"
           unlink-panels
-          @change="searchTableList"
+          @change="searchTimeList"
           range-separator="至"
           start-placeholder="开始日期"
           prefix-icon="iconfont-v3 saasicon_date"
@@ -60,6 +60,7 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: "dataLive",
   components: {
@@ -67,6 +68,7 @@ export default {
     noData
   },
   data() {
+    let _this = this;
     return {
       isCheckout: false,
       active: 3,
@@ -74,6 +76,7 @@ export default {
       totalNum: 0,
       dateValue: '',
       title: '',
+      timeType: 2,
       params: {}, //导出的时候用来记录参数
       loading: true,
       tableList: [],
@@ -109,16 +112,19 @@ export default {
           name: '数据报告',
           methodName: 'dataReport',
           path: '/reportsData',
+          index: 0
         },
         {
           name: '互动统计',
           methodName: 'dataReport',
           path: '/interactionData',
+          index: 1
         },
         {
           name: '用户统计',
           methodName: 'dataReport',
           path: '/userData',
+          index: 2
         }
       ],
       pickerOptions: {
@@ -134,6 +140,7 @@ export default {
               const end = '';
               const start = '';
               picker.$emit('pick', [start, end]);
+              _this.timeType = 0;
             }
           },
           {
@@ -149,6 +156,7 @@ export default {
               end.setTime(end.getTime());
               start.setTime(start.getTime());
               picker.$emit('pick', [start, end]);
+              _this.timeType = 1;
             }
           },
           {
@@ -164,6 +172,7 @@ export default {
               end.setTime(end.getTime() - 3600 * 1000 * 24);
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
               picker.$emit('pick', [start, end]);
+              _this.timeType = 2;
             }
           }, {
             text: '近30日',
@@ -178,6 +187,7 @@ export default {
               end.setTime(end.getTime() - 3600 * 1000 * 24);
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
               picker.$emit('pick', [start, end]);
+              _this.timeType = 3;
             }
           }],
         // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
@@ -188,6 +198,7 @@ export default {
     };
   },
   created() {
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.initPage()
   },
   mounted() {
@@ -210,7 +221,21 @@ export default {
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       this.dateValue = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
     },
+    searchTimeList() {
+      let timeArr = [100571, 100572, 100573, 100574]
+      this.$vhall_paas_port({
+        k: timeArr[this.timeType],
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.getTableList('search');
+    },
     searchTableList() {
+      if (this.title) {
+        this.$vhall_paas_port({
+          k: 100576,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList('search');
     },
     getTableList(params) {
@@ -252,6 +277,10 @@ export default {
     // 导出
     exportCenterData() {
       this.$fetch('exportWebinar', this.$params(this.params)).then(res => {
+        this.$vhall_paas_port({
+          k: 100575,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `活动数据导出成功，请去下载中心下载`,
           showClose: true,
@@ -272,6 +301,11 @@ export default {
     },
     dataReport(that, val) {
       let id = val.rows.webinar_id;
+      let arrVal = [100577, 100578, 100579]
+      that.$vhall_paas_port({
+        k: arrVal[val.index],
+        data: {business_uid: that.userId, user_id: '', webinar_id: id, refer: 3, s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       const routeData = that.$router.resolve({
         path: `/live${val.path}/${id}`,
         query: {

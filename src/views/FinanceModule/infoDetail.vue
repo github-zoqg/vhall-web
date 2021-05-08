@@ -14,7 +14,7 @@
             ref="searchDetail"
             :searchAreaLayout="searchDetail"
             @onExportData="exportAccount()"
-            @onSearchFun="getDetailList('search')"
+            @onSearchFun="getSearchList('search')"
           >
           </search-area>
         </div>
@@ -169,7 +169,7 @@ export default {
       options: [
         {
           label: '全部',
-          value: ''
+          value: '',
         },
         {
           label: '流量包',
@@ -432,7 +432,8 @@ export default {
         res.data.list.map(item => {
           arrList.push({
             label: item.role_name,
-            value: item.id
+            value: item.id,
+            k: item.id
           })
         })
       })
@@ -455,6 +456,63 @@ export default {
       // this.$refs.tableDetail.pageInfo.pageNum = 1;
       this.$refs.searchDetail.searchParams = {};
       this.getDetailList();
+    },
+    getSearchList() {
+      let formParams = this.$refs.searchDetail.searchParams;
+      for (let i in formParams) {
+        if (i === 'searchTime' && formParams.searchTime) {
+          this.$vhall_paas_port({
+            k: this.activeIndex == 1 ? 100708 : 100724,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+        if (i === 'orderType') {
+          let k = 100709;
+          let typeOrder = [100709, 100710, 100711, 100712, 100713, 100714, 100716, 100716]
+          let typeDetail = [100725, 100730, 100731, 100732, 100733, 100734, 100735, 100736, 100737, 100726, 100727, 100728, 100729]
+          if (this.activeIndex == 1) {
+            k = formParams.orderType ? typeOrder[formParams.orderType - 6] : 100709
+          } else {
+            if (typeof(formParams.orderType) == 'number') {
+              if (formParams.orderType > 8) {
+                k = `1100${formParams.orderType}`
+              } else {
+                k = typeDetail[formParams.orderType]
+              }
+
+            } else {
+              let type = formParams.orderType;
+              k = type === 'flow' ? 100726 : type === 'concurrency' ? 100727 : type === 'extend_people' ? 100728 : 100729
+            }
+          }
+          this.$vhall_paas_port({
+            k: k,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+        if (i === 'status') {
+          let k = this.activeIndex == 1 ? 100717 : 100738;
+          if (formParams.status === 1) {
+            k = this.activeIndex == 1 ? 100720 : 100740
+          } else if (formParams.status === -1) {
+            k = this.activeIndex == 1 ? 100718 : 100741
+          } else if (formParams.status === 0) {
+             k = this.activeIndex == 1 ? 100719 : 100739
+          }
+          this.$vhall_paas_port({
+            k: k,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+        if (i === 'source' && this.activeIndex == 2) {
+          let sourceArr = [100744, 100745, 100746, 100747, 100748]
+          this.$vhall_paas_port({
+            k: formParams.source ? sourceArr[formParams.source - 5] : 100743,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+      }
+      this.getDetailList('search')
     },
     getDetailList(params) {
       // let pageInfo = {};
@@ -555,6 +613,10 @@ export default {
     },
     deleteList(id) {
       this.$fetch('deleteDetail', {id: id}).then(res =>{
+        this.$vhall_paas_port({
+          k: 100721,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {orderId: id}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: '删除成功',
           showClose: true,
@@ -575,6 +637,10 @@ export default {
       });
     },
     pay(rows)  {
+      this.$vhall_paas_port({
+        k: 100722,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {orderId: rows.order_id}, ref_url: '', req_url: ''}
+      })
       this.$router.push({
         path: '/finance/payOrder',
         query: {
@@ -587,6 +653,10 @@ export default {
     exportAccount() {
       let url = this.activeIndex == '1' ? 'exporOrder' : 'exportAdmin';
       this.$fetch(url, this.$params(this.params)).then(res => {
+        this.$vhall_paas_port({
+          k: this.activeIndex == '1' ? 100707 : 100723,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `${this.activeIndex == 1 ? '购买' : '开通'}账单明细导出申请成功，请去下载中心下载`,
           showClose: true,

@@ -699,6 +699,7 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box'
             });
+            this.$route.query.record_id ? this.reVodEditReportData() : this.reportData();
             this.isChange = false;
             console.log(res);
             setTimeout(()=>{
@@ -728,6 +729,78 @@ export default {
           return false;
         }
       });
+    },
+    reportData() {
+      let userId = JSON.parse(sessionOrLocal.get('userId'));
+      let arrType = [100022, 100020, 100021]
+      if (this.title === '创建') {
+        let refer = this.$route.query.refer || 2
+        if (this.webniarTypeToZH === '点播') {
+          this.$vhall_paas_port({
+            k: 100019,
+            data: {business_uid: userId, user_id: '', webinar_id: '', refer: refer, s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+        if (this.webniarTypeToZH === '直播') {
+          this.$vhall_paas_port({
+            k: 100018,
+            data: {business_uid: userId, user_id: '', webinar_id: '', refer: refer, s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: arrType[this.liveMode - 1],
+            data: {business_uid: userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+      }
+      if (this.webniarTypeToZH === '直播') {
+        // 文档
+        this.$vhall_paas_port({
+          k: this.formData.docSwtich ? 100023 : 100024,
+          data: {business_uid: userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        // 预约
+        this.$vhall_paas_port({
+          k: this.formData.reservation ? 100025 : 100026,
+          data: {business_uid: userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        // 在线人数
+        this.$vhall_paas_port({
+          k: this.formData.online ? 100027 : 100028,
+          data: {business_uid: userId, user_id: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        // 并发扩容
+        this.$vhall_paas_port({
+          k: this.formData.capacity ? 100033 : 100034,
+          data: {business_uid: userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      // 封面图
+      this.$vhall_paas_port({
+        k: 100037,
+        data: {business_uid: userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      // 热度
+      this.$vhall_paas_port({
+        k: this.formData.hot ? 100029 : 100030,
+        data: {business_uid: userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      // 关联主页
+      this.$vhall_paas_port({
+        k: this.formData.home ? 100032 : 100031,
+        data: {business_uid: userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      // 最高并发
+      this.$vhall_paas_port({
+        k: this.formData.limitCapacitySwtich ? 100035 : 100036,
+        data: {business_uid: userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+    },
+    reVodEditReportData() {
+      let userId = JSON.parse(sessionOrLocal.get('userId'));
+      this.$vhall_paas_port({
+        k: 100414,
+        data: {business_uid: userId, user_id: '', webinar_id: '', s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     unescapeHTML(title) {
       title = '' + title;

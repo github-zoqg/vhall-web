@@ -6,7 +6,7 @@
     >
       <div slot="content">所有设置对电脑端和移动浏览器同时生效</div>
       <div class="vh-customer-menu-btns">
-        <a href="https://saas-doc.vhall.com/docs/show/1235" target="_blank" class="link__left">使用帮助</a>
+        <span @click="workHelp" class="link__left">使用帮助</span>
         <el-button type="primary" style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab">保存</el-button>
       </div>
     </page-title>
@@ -91,6 +91,7 @@ export default {
       customMenus: [],
       qrCode: '',
       link:  '',
+      userId: '',
       showWatch: false
     }
   },
@@ -105,6 +106,7 @@ export default {
   created() {
     this.qrCode = `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`
     this.link = `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`
+    this.userId = sessionOrLocal.get('userId')
     this.getInitMenus()
   },
 
@@ -180,6 +182,7 @@ export default {
         request_data: JSON.stringify(params)
       }).then(res =>{
         if(res.code === 200) {
+          this.setReportData(saveMenus)
           this.$message({
             message: `保存成功`,
             showClose: true,
@@ -202,7 +205,41 @@ export default {
         console.log(res);
       });
     },
-
+    setReportData(saveMenus) {
+      saveMenus.filter(item => item.type === 3).map(item => {
+        if (item.welcome_content) {
+          this.$vhall_paas_port({
+            k: 100224,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+      })
+      let saveArr = [100216, 100217, 100218, 100219, 100220, 100221, 100222, 100223]
+      saveMenus.filter(item => item.type == 1).map(item => {
+        if (item.status == 4) {
+          this.$vhall_paas_port({
+            k: 100225,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {uuid: item.uuid}, ref_url: '', req_url: ''}
+          })
+        }
+        if (item.components.length > 0) {
+          item.components.map(items => {
+            this.$vhall_paas_port({
+              k: saveArr[items.component_id - 1],
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          })
+        }
+      })
+    },
+    workHelp() {
+      let url = 'https://saas-doc.vhall.com/docs/show/1235';
+      this.$vhall_paas_port({
+        k: 100226,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      window.open(url, '_blank');
+    },
     validationMenus () {
 
       console.log(this.customMenus)
@@ -315,11 +352,12 @@ export default {
     right: 10px;
     top: 0;
   }
-  a.link__left {
+  .link__left {
     font-size: 14px;
     font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
     font-weight: 400;
     color: #3562FA;
+    cursor: pointer;
   }
   .qr-previewbox{
     text-align: center;

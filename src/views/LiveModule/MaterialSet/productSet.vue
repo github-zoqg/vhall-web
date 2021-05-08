@@ -52,6 +52,7 @@ export default {
       isSearch: false, //是否是搜索
       checkedGoodsId: [],
       total: 1,
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       searchAreaLayout: [
         {
           key: 'questionName'
@@ -100,6 +101,10 @@ export default {
   },
   methods: {
     onSwitchChange(option) {
+      this.$vhall_paas_port({
+        k: option.watch ? 100395 : 100396,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       if(option.watch) {
         if (this.saleTotal >= 100) {
           option.watch = false;
@@ -163,6 +168,12 @@ export default {
       methodsCombin[val.type](this, val);
     },
     searchTableList() {
+      if (this.keyword) {
+        this.$vhall_paas_port({
+          k: 100397,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList('search');
     },
     getTableList(params) {
@@ -222,6 +233,10 @@ export default {
         webinar_id: that.$route.params.str,
         goods_id: rows.goods_id
       }).then(res => {
+        this.$vhall_paas_port({
+          k: 100392,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         that.$message.success("复制成功！");
         that.getTableList();
       }).catch(err => {
@@ -246,7 +261,7 @@ export default {
         }
       });
     },
-    delConfirm(id) {
+    delConfirm(id, index) {
       this.$confirm('确定要删除该商品吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -256,6 +271,10 @@ export default {
       }).then(() => {
         this.$fetch('goodsBatchDel', {webinar_id: this.$route.params.str, goods_ids: id}).then(res => {
           if (res.code == 200) {
+            this.$vhall_paas_port({
+              k: index === 1 ? 100394 : 100393,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: `删除成功`,
               showClose: true,
@@ -287,7 +306,7 @@ export default {
     },
     // 删除
     del(that, {rows}) {
-      that.delConfirm(rows.goods_id);
+      that.delConfirm(rows.goods_id, 2);
     },
     // 选中
     changeTableCheckbox(val) {
@@ -306,7 +325,7 @@ export default {
         });
       } else {
         id = this.checkedGoodsId.join(',');
-        this.delConfirm(id);
+        this.delConfirm(id, 1);
       }
     },
     // 获取在线商品列表

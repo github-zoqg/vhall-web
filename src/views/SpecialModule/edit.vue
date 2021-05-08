@@ -167,6 +167,7 @@ import upload from '@/components/Upload/main';
 import VEditor from '@/components/Tinymce';
 import Env from "@/api/env";
 import ChoseActives from './components/choseLiveList'
+import {sessionOrLocal} from "@/utils/utils";
 
 export default {
   components: {
@@ -206,6 +207,7 @@ export default {
       subject_id: '',
       subjectInfo: {
       },
+      userId:JSON.parse(sessionOrLocal.get("userId")),
       loading: false,
       webinarIds: [],
       rules: {
@@ -398,9 +400,17 @@ export default {
           if(url == 'subjectEdit') {
             data.id = this.subject_id
           }
-
           this.$fetch(url, data).then(res=>{
+            if (!this.$route.query.id) {
+              let refer = this.$route.query.refer || 2
+              this.$vhall_paas_port({
+                k: 100489,
+                data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: refer, s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+
             if(res.code == 200) {
+              this.setReportData(webinar_ids.length)
               this.subject_id = res.data.subject_id;
               this.$message({
                 message: this.$route.query.id ? '编辑成功' : `创建成功`,
@@ -442,6 +452,30 @@ export default {
           return false;
         }
       });
+    },
+    setReportData(len) {
+      if (this.formData.imageUrl) {
+        this.$vhall_paas_port({
+          k: 100498,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.$vhall_paas_port({
+        k: this.formData.reservation ? 100499 : 100500,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: this.formData.hot ? 100501 : 100502,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: this.formData.home ? 100503 : 100504,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: 100505,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {vip:len}, ref_url: '', req_url: ''}
+      })
     },
     // 判断是否填写数据
     isContent() {
@@ -495,6 +529,10 @@ export default {
               this.formData.selectedActives.splice(index, 1);
             }
           })
+          this.$vhall_paas_port({
+            k: 100507,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
         }).catch(() => {
           this.$message({
             message:  `已取消删除`,
@@ -507,6 +545,10 @@ export default {
     },
     // 跳转活动页面
     goWebinarSpecial(id, state) {
+      this.$vhall_paas_port({
+        k: 100508,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       let path = state === 4 ? '/live/vodEdit/' : '/live/edit/';
       const { href } = this.$router.resolve({path: `${path}${id}`, query: {type: 2 }});
       window.open(href, '_blank');
@@ -515,6 +557,10 @@ export default {
       console.log('vhall saas Event 拖动开始::', e)
     },
     dragEnd(e) {
+      this.$vhall_paas_port({
+        k: 100506,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       console.log('vhall saas Event 拖动结束::', e)
     },
     sortChange(e) {

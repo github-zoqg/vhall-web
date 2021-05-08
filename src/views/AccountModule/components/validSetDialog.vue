@@ -83,7 +83,7 @@
           <pwd-input type="password" v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次" :maxlength="30"></pwd-input>
         </el-form-item>
         <el-form-item label="" class="link__to" v-if="showVo.step === 1">
-          <a :href="openLink" target="_blank">{{showVo.executeType === 'email' ? '邮箱不可用？' : '手机不可用？'}}</a>
+          <a :href="openLink" target="_blank" @click="reportData">{{showVo.executeType === 'email' ? '邮箱不可用？' : '手机不可用？'}}</a>
         </el-form-item>
       </el-form>
     </div>
@@ -103,6 +103,7 @@
 <script>
 import env from "@/api/env";
 import PwdInput from './pwdInput.vue';
+import { sessionOrLocal } from '@/utils/utils';
 export default {
   name: "validSetDialog.vue",
   components: {
@@ -297,6 +298,21 @@ export default {
         title: title,
         scene_id: scene_id
       };
+    },
+    reportData() {
+      let refer = '';
+      const userId = JSON.parse(sessionOrLocal.get("userId"));
+      if (this.title == '修改密码') {
+        refer = 6;
+      } else if (this.title == '修改密保手机') {
+        refer = 7;
+      } else if (this.title == '修改关联邮箱') {
+        refer = 8;
+      }
+      this.$vhall_paas_port({
+        k: 100017,
+        data: {business_uid: this.userId, user_id: this.userId, s: '', refer: refer, report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     // 场景适用： 设置密码、修改密码、修改手机号-第一步、修改邮箱-第一步
     getDyCode() {
@@ -599,6 +615,12 @@ export default {
               scene_id: this.getScenedTitle().scene_id
             };
             this.$fetch('codeCheck', params).then(res => {
+              if (this.title === '修改密码') {
+                this.$vhall_paas_port({
+                  k: 100785,
+                  data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+                })
+              }
               if (res.data.check_result > 0) {
                 this.codeKey = res.data.key || '';
                 // 验证码第一步，继续下一步
@@ -633,6 +655,18 @@ export default {
               key: this.codeKey
             };
             this.$fetch('resetPassword', this.$params(params)).then(res => {
+              if (this.title === '修改密保手机') {
+                this.$vhall_paas_port({
+                  k: 100786,
+                  data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+                })
+              }
+              if (this.title === '修改关联邮箱') {
+                this.$vhall_paas_port({
+                  k: 100787,
+                  data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+                })
+              }
               this.$message({
                 message: '操作成功',
                 showClose: true,

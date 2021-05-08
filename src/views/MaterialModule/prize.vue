@@ -48,6 +48,7 @@
 import PageTitle from '@/components/PageTitle';
 import createPrize from '../LiveModule/MaterialSet/components/createPrize';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "prize",
   props: {
@@ -67,6 +68,7 @@ export default {
       total: 0,
       isSearch: false,
       keyword: '',
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       prizeInfo: {},
       isDelete: false,
       searchAreaLayout: [
@@ -113,6 +115,12 @@ export default {
       methodsCombin[val.type](this, val);
     },
     searchTableList() {
+      if (this.keyword) {
+        this.$vhall_paas_port({
+          k: this.$route.params.str ? 100332 : 100539,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList('search');
     },
     getTableList(params) {
@@ -152,6 +160,10 @@ export default {
         room_id: that.roomId
       }
       that.$fetch('copyPrize', that.$params(params)).then(res => {
+        that.$vhall_paas_port({
+          k: that.$route.params.str ? 100327 : 100536,
+          data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         that.$message.success('复制成功');
         that.getTableList();
       })
@@ -163,9 +175,9 @@ export default {
     },
     // 删除
     del(that, {rows}) {
-      that.deleteConfirm(rows.prize_id);
+      that.deleteConfirm(rows.prize_id, 2);
     },
-    deleteConfirm(id) {
+    deleteConfirm(id, index) {
       this.$confirm('删除后，此奖品将无法使用，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -181,6 +193,16 @@ export default {
         this.$fetch('delPrize', this.$params(params)).then(res=>{
           if (res.code == 200) {
             this.getTableList('search');
+            let k = 0;
+            if (this.$route.params.str) {
+              k = index === 1 ? 100329 : 100328
+            } else {
+              k = index === 1 ? 100538 : 100537
+            }
+            this.$vhall_paas_port({
+              k: k,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: `删除成功`,
               showClose: true,
@@ -210,7 +232,7 @@ export default {
     },
     allDelete(id) {
       id = this.prizeChecked.join(',')
-      this.deleteConfirm(id);
+      this.deleteConfirm(id, 1);
     },
     // 选中
     changeTableCheckbox(val) {

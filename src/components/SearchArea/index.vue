@@ -11,6 +11,7 @@
           type="daterange"
           prefix-icon="iconfont-v3 saasicon_date"
           @change="changeDate"
+          :unlink-panels="true"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"

@@ -64,8 +64,7 @@ const router = [
       {
         path: 'vodEdit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '创建点播', name: 'vodCreate', webniarType: 'vod', activeMenu: '/live/list'},
-        hidden: true
+        meta: { auth: true, title: '创建点播', name: 'vodCreate', webniarType: 'vod', activeMenu: '/live/vodEdit'},
       },
       {
         path: 'detail/:str(\\d+)',

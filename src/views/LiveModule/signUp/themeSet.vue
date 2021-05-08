@@ -74,6 +74,11 @@ export default {
         tab_verify_title: this.title2 || '验证',
       };
       const that = this;
+      let userId = this.$parent.userId
+      this.$vhall_paas_port({
+        k: 100183,
+        data: {business_uid: userId, user_id: '', webinar_id: this.$parent.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$emit('setBaseInfo', options, () => { that.dialogVisible = false; });
     },
     copy() {

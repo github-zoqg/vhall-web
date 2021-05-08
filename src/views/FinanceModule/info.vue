@@ -32,7 +32,7 @@
           prefix-icon="iconfont-v3 saasicon_date"
           style="width: 240px"
         />
-          <el-select filterable v-model="lineType" style="width: 160px;marginLeft:15px" @change="getLineList" v-if="type">
+          <el-select filterable v-model="lineType" style="width: 160px;marginLeft:15px" @change="getSearchLineList" v-if="type">
             <el-option
               v-for="(opt, optIndex) in versionList"
               :key="optIndex"
@@ -83,7 +83,7 @@
         <VhallInput v-model="subject"  placeholder="请输入活动名称" class="search-tag" style="width: 220px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" v-clearEmoij clearable>
           <i slot="prefix" class="el-icon-search el-input__icon" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
         </VhallInput>
-          <el-select filterable v-model="accountType" style="width: 160px;marginLeft:15px" @change="getSearchList" v-if="type">
+          <el-select filterable v-model="accountType" style="width: 160px;marginLeft:15px" @change="getTypeList" v-if="type">
             <el-option
               v-for="(opt, optIndex) in versionList"
               :key="optIndex"
@@ -336,6 +336,13 @@ export default {
         console.log(e);
       });
     },
+    getSearchLineList() {
+      this.$vhall_paas_port({
+        k: this.lineType == 1 ? 100697 : 100698,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.getLineList()
+    },
     // 用量统计数据
     getLineList() {
       let paramsObj = {
@@ -366,11 +373,28 @@ export default {
         console.log(e);
       });
     },
+    getTypeList() {
+      this.$vhall_paas_port({
+        k: this.accountType == 1 ? 100700 : 100701,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.getAccountList('search')
+    },
     getSearchList() {
+      if (this.subject) {
+        this.$vhall_paas_port({
+          k: 100699,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getAccountList('search')
     },
     // 订单明细
     goAccountDetail() {
+      this.$vhall_paas_port({
+        k: 100695,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({
         path: '/finance/infoDetail'
       });
@@ -458,6 +482,10 @@ export default {
     exportCenterData() {
       let url = this.versionType == '1' ? 'exportFlow' : 'exportOnline';
       this.$fetch(url, this.lineParams).then(res => {
+        this.$vhall_paas_port({
+          k: 100696,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `${this.versionType ? '流量' : '并发'}用量统计导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -480,6 +508,10 @@ export default {
     exportAccount() {
       let url = this.versionType == '1' ? 'exportFlowDetail' : 'exportOnlineDetail';
       this.$fetch(url, this.dataParams).then(res => {
+        this.$vhall_paas_port({
+          k: 100702,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
        this.$message({
         message: `${this.versionType ? '流量' : '并发'}消费账单导出申请成功，请去下载中心下载`,
         showClose: true,

@@ -242,6 +242,7 @@ export default {
         }
         if(this.type == 'add') {
           this.activeIndex = null
+          console.log(this.$insertIndex, this.menus.length, '??????1232138893749735')
           if(this.$insertIndex > 0 && this.$insertIndex < this.menus.length) {
             this.menus.splice(this.$insertIndex, 0, {
               name: this.addCustomForm.name,
@@ -268,6 +269,11 @@ export default {
               show: false,
               status: 3, // 1显示, 2隐藏, 3直播隐藏, 4预告结束显示
               components: []
+            })
+            let insertArr = [100210, 100211, 100212, 100213, 100214, 100215]
+            this.$vhall_paas_port({
+              k: insertArr[this.$insertIndex - 5],
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
           }
           setTimeout(() => {

@@ -107,11 +107,20 @@ export default {
     noData,
     beginPlay
   },
+  created() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
+  },
   mounted() {
     this.getAdvTableList();
   },
   methods: {
     searchAdvTableList() {
+      if (this.paramsObj.keyword) {
+        this.$vhall_paas_port({
+          k: this.$route.params.str ? 100288 : 100555,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getAdvTableList('search')
     },
     getAdvTableList(param) {
@@ -142,9 +151,9 @@ export default {
       that.$refs.adviseSonChild.dialogVisible = true;
     },
     delete(that, { rows }) {
-      that.deleteConfirm(rows.adv_id);
+      that.deleteConfirm(rows.adv_id, 2);
     },
-    deleteConfirm(id) {
+    deleteConfirm(id, index) {
       this.$confirm('是否删除当前广告？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -157,6 +166,16 @@ export default {
           webinar_id: this.$route.params.str
         })).then(res => {
           if (res && res.code === 200) {
+            let k = 0
+            if (this.$route.params.str) {
+              k = index == 1 ? 100285 : 100284
+            } else {
+              k = index == 1 ? 100554 : 100553
+            }
+            this.$vhall_paas_port({
+              k: k,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: `删除成功`,
               showClose: true,
@@ -190,7 +209,7 @@ export default {
     },
     allDelete(id) {
       id = this.adv_ids.join(',');
-      this.deleteConfirm(id);
+      this.deleteConfirm(id, 1);
     },
     changeTableCheckbox(val) {
       console.log(val);

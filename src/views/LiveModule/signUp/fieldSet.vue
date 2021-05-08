@@ -273,7 +273,7 @@
                 <i
                   class="iconfont-v3 saasicon-trash"
                   v-if="item.bottomBtn.includes('delete')"
-                  @click="deleteQuestion(questionArr, index)"
+                  @click="deleteQuestion(questionArr, index, item)"
                 ></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="移动" placement="top" v-tooltipMove>
@@ -394,6 +394,38 @@ export default {
     },
     // 保存表单
     sureQuestionnaire() {
+      let userId = this.$parent.userId;
+      console.log(this.renderQuestion)
+      this.renderQuestion.filter(item => item.name !== 'name').map(item => {
+        this.$vhall_paas_port({
+          k: item.reporType,
+          data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        this.$vhall_paas_port({
+          k: item.required ? item.reporType + 1 : item.reporType + 2,
+          data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        if (item.reqType === 4) {
+          this.$vhall_paas_port({
+            k: item.reporType + 4,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {num: item.nodes.length}, ref_url: '', req_url: ''}
+          })
+        } else if (item.reqType === 2 || item.reqType === 3) {
+          let other = 0;
+          let total = item.nodes[0].children.length;
+          if (total > 0) {
+            other = item.nodes[0].children.filter(items => items.other).length
+          }
+          this.$vhall_paas_port({
+            k: item.reporType + 4,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '',  s: '', report_extra: {num: total - other}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.reporType + 5,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {num: other}, ref_url: '', req_url: ''}
+          })
+        }
+      })
       this.$message({
         message: `保存成功`,
         showClose: true,
@@ -531,7 +563,8 @@ export default {
       this.optionEdit(options);
     },
     // 删除一个题目
-    deleteQuestion(arr, index) {
+    deleteQuestion(arr, index, item) {
+      console.log(arr, index, item)
       this.$confirm('删除后已收集信息会被清空，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -542,6 +575,11 @@ export default {
         this.$fetch('regQDelete', {
           question_id: arr[index].question_id
         }).then(res => {
+          let userId = this.$parent.userId;
+          this.$vhall_paas_port({
+            k: item.reporType + 3,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           arr.splice(index, 1);
           console.log(res);
         }).catch(err => {
@@ -759,6 +797,7 @@ export default {
     // 短信验证开关
     async phoneSwitchChange(question) {
       let isConfirm = true;
+      let userId = this.$parent.userId;
       if (!question.phoneValide) {
         await this.$confirm('关闭短信验证将会导致无法验证用户手机号码，同时用户将无法接收预约短信，确认是否关闭？', '提示', {
           confirmButtonText: '仍然关闭',
@@ -767,10 +806,20 @@ export default {
           customClass: 'zdy-message-box',
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
-        }).then(() => {}).catch(() => {
+        }).then(() => {
+          this.$vhall_paas_port({
+            k: 100139,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }).catch(() => {
           isConfirm = false;
           question.phoneValide = true;
         });
+      } else {
+        this.$vhall_paas_port({
+          k: 100080,
+          data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       }
       if (!isConfirm) return false;
       const options = {

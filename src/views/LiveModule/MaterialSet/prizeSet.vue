@@ -154,6 +154,7 @@ import beginPlay from '@/components/beginBtn';
 import prize0 from './images/prize0.gif'
 import prize1 from './images/prize1.gif'
 import prize2 from './images/prize2.gif'
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'prizeSet',
   data() {
@@ -163,7 +164,9 @@ export default {
       activeName: 'first',
       formData: {
         title:'',
-        description:''
+        description:'',
+        reDescription: '',
+        reTitle: ''
       },
       previewSrc: null,
       givePrizeForm: {
@@ -277,6 +280,7 @@ export default {
     }
   },
   created() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"))
     this.backgroundImg = this.prizeUrl[0]
   },
   async mounted() {
@@ -308,6 +312,8 @@ export default {
         if (res.code == 200 && res.data) {
           this.formData.description = res.data.description;
           this.formData.title = res.data.title;
+          this.formData.reDescription = res.data.description;
+          this.formData.reTitle = res.data.title;
           this.localLottery = res.data
           if (parseInt(res.data.img_order) > 0) {
             this.isChecked = parseInt(res.data.img_order);
@@ -331,10 +337,14 @@ export default {
     // 抽奖页保存按钮
     lotterySave () {
       let imgUrl = '';
+      let k = 100309;
+      let arrImg = [100309, 100110, 100311]
       if (parseInt(this.isChecked) > 0) {
         imgUrl = this.prizeUrl[this.isChecked - 1];
+        k = arrImg[this.isChecked - 1]
       } else {
         imgUrl = this.previewSrc;
+        k = 100312
       }
       let params = {
           webinar_id: this.$route.params.str,
@@ -344,6 +354,22 @@ export default {
           description: this.formData.description
       }
       this.$fetch('savePrizeInfo', params).then(res => {
+        this.$vhall_paas_port({
+          k: k,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        if (this.formData.title !== this.formData.reTitle) {
+          this.$vhall_paas_port({
+            k: 100313,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+        if (this.formData.description !== this.formData.reDescription) {
+          this.$vhall_paas_port({
+            k: 100314,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
         this.$message({
           message: `保存成功`,
           showClose: true,
@@ -360,6 +386,43 @@ export default {
           customClass: 'zdy-info-box'
         });
       })
+    },
+    setPrizePortData() {
+      let prizeArr = ['', 100315, 100316, 100317]
+      if (this.givePrizeList.length !== this.lotteryPageMessage.length) {
+        let len = this.givePrizeList.length - 3
+        console.log(len, '长度经典设计风格和')
+        this.$vhall_paas_port({
+          k: 100322,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        this.$vhall_paas_port({
+          k: 100323,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {length: len}, ref_url: '', req_url: ''}
+        })
+      }
+      this.givePrizeList.forEach(ele=>{
+        if (this.givePrizeForm[ele.placeholder] !== this.lotteryPageMessage[ele.placeholder]) {
+          this.$vhall_paas_port({
+            k: prizeArr[ele.rank],
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+        if (ele.field === '手机号') {
+          this.$vhall_paas_port({
+            k: ele.is_required ? 100318 : 100319,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+        if (ele.field === '地址') {
+          this.$vhall_paas_port({
+            k: ele.is_required ? 100320 : 100321,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+
+      })
+      // if (this.givePrizeForm.this.lotteryPageMessage)
     },
     changeImg() {
       this.$fetch('uploadImage').then(res => {
@@ -428,6 +491,7 @@ export default {
       })
       console.warn(this.givePrizeList);
       this.$fetch('saveDrawPrizeInfo', {webinar_id: this.$route.params.str,data:JSON.stringify(this.givePrizeList)}).then(res => {
+        this.setPrizePortData()
         this.$message({
           message: `保存成功`,
           showClose: true,

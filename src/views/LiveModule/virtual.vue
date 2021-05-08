@@ -158,6 +158,7 @@ export default {
     },
     // 虚拟人数设置保存
     virtualSetSave() {
+      let userId = JSON.parse(sessionOrLocal.get('userId'));
       this.$refs.virtualForm.validate((valid) => {
         if(valid) {
           let params = {
@@ -166,6 +167,10 @@ export default {
             online: this.virtualForm.online
           };
           this.$fetch('virtualSetSave', params).then(res => {
+            this.$vhall_paas_port({
+              k: 100136,
+              data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message:  `设置成功`,
               showClose: true,
