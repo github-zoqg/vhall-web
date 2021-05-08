@@ -29,6 +29,7 @@
         :unique-opened="true"
         active-text-color="#FB3A32"
         :collapse-transition="false"
+        @select="selectMenu"
         mode="vertical"
         class="el-menu-reset"
       >
@@ -122,6 +123,74 @@ export default {
     },
     changeImg() {
       console.log(111111111111);
+    },
+    selectMenu(index, indexPath) {
+      switch (index) {
+        case '/material/word':
+          this.setReport(100510)
+          break;
+        case '/material/video':
+          this.setReport(100517)
+          break;
+        case '/material/question':
+          this.setReport(100525)
+          break;
+        case '/material/prize':
+          this.setReport(100533)
+          break;
+        case '/material/viewer':
+          this.setReport(100540)
+          break;
+        case '/material/advertCard':
+          this.setReport(100550)
+          break;
+        case '/material/gift':
+          this.setReport(100556)
+          break;
+        case '/data/info':
+          this.setReport(100562)
+          break;
+        case '/data/live':
+          this.setReport(100577)
+          break;
+        case '/setting/function':
+          this.setReport(100620)
+          break;
+        case '/setting/dev':
+          this.setReport(100589)
+          break;
+        case '/setting/logo':
+          this.setReport(100615)
+          break;
+        case '/setting/chat':
+          this.setReport(100580)
+          break;
+        case '/setting/brand':
+          this.setReport(100633)
+          break;
+        case '/finance/info':
+          this.setReport(100688)
+          break;
+        case '/finance/income':
+          this.setReport(100749)
+          break;
+        case '/acc/info':
+          this.setReport(100777)
+          break;
+        case '/acc/myHome':
+          this.setReport(100790)
+          break;
+        case '/acc/son':
+          this.setReport(100805)
+          break;
+      }
+    },
+    setReport(k) {
+      let userId = sessionOrLocal.get('userId');
+      this.$vhall_paas_port({
+        k: k,
+        data: {business_uid: userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     pageResize(){
       this.$nextTick(()=>{
