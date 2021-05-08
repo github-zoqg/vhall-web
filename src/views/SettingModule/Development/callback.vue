@@ -234,8 +234,8 @@ export default {
             callback_url: this.form.callback_url,
             callback_event: numKeys.join(',')
           }
-          this.setReportData(this.keyList)
           this.$fetch(this.isAdd ? 'addCallbackInfo' : 'editCallbackInfo', params).then(res => {
+            this.setReportData(this.keyList)
             this.$message({
               message:  `设置成功`,
               showClose: true,
