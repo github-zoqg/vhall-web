@@ -707,7 +707,7 @@ export default {
       })
       this.$vhall_paas_port({
         k: 100679,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {img_alpha: this.formWatermark.img_alpha}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {alpha: this.formWatermark.img_alpha}, ref_url: '', req_url: ''}
       })
     },
     // 保存播放器其他设置

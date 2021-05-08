@@ -391,7 +391,6 @@ export default {
       let prizeArr = ['', 100315, 100316, 100317]
       if (this.givePrizeList.length !== this.lotteryPageMessage.length) {
         let len = this.givePrizeList.length - 3
-        console.log(len, '长度经典设计风格和')
         this.$vhall_paas_port({
           k: 100322,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}

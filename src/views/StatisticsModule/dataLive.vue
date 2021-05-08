@@ -112,19 +112,19 @@ export default {
           name: '数据报告',
           methodName: 'dataReport',
           path: '/reportsData',
-          index: 0
+          index: 100042
         },
         {
           name: '互动统计',
           methodName: 'dataReport',
           path: '/interactionData',
-          index: 1
+          index: 100043
         },
         {
           name: '用户统计',
           methodName: 'dataReport',
           path: '/userData',
-          index: 2
+          index: 100044
         }
       ],
       pickerOptions: {
@@ -301,9 +301,8 @@ export default {
     },
     dataReport(that, val) {
       let id = val.rows.webinar_id;
-      let arrVal = [100577, 100578, 100579]
       that.$vhall_paas_port({
-        k: arrVal[val.index],
+        k: val.index,
         data: {business_uid: that.userId, user_id: '', webinar_id: id, refer: 3, s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       const routeData = that.$router.resolve({
