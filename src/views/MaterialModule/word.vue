@@ -711,7 +711,7 @@ export default {
       this.$fetch('delWordList', this.$params(params)).then(res=>{
         let k = 0
         if (this.$route.params.str) {
-          k = index == 1 ? 100303 : 100202
+          k = index == 1 ? 100303 : 100302
         } else {
           k = index == 1 ? 100513 : 100512
         }

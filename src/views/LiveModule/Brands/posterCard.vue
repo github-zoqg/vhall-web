@@ -218,7 +218,7 @@ export default {
       };
       this.$fetch('setPosterInfo', params).then(res => {
         this.$vhall_paas_port({
-          k: status == 1 ? 100294 : 100283,
+          k: status == 1 ? 100294 : 100293,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
         this.$message({
@@ -302,7 +302,7 @@ export default {
               data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
             this.$vhall_paas_port({
-              k: this.form.img ? 100297 : 100298,
+              k: this.form.url ? 100297 : 100298,
               data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
             this.$message({

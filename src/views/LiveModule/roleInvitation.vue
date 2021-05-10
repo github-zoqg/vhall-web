@@ -512,7 +512,7 @@ export default {
       });
       clipboard.on('success', () => {
         this.$vhall_paas_port({
-          k: index == 1 ? 100110 : index == 2 ? 100112 : 100132,
+          k: index == 1 ? 100110 : index == 3 ? 100112 : 100132,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
         this.$message({

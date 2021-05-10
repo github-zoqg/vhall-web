@@ -519,7 +519,7 @@ export default {
       console.log('当前参数传递：', params);
       this.$fetch('planFunctionEdit', params).then(res => {
         this.$vhall_paas_port({
-          k: this.playerOpen ? 100228 : 100227,
+          k: this.playerOpen ? 100227 : 100228,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
         this.getBasescrollingList();
@@ -618,7 +618,7 @@ export default {
     otherOtherInfo(value, index) {
       let otherArr = [100266, 100268, 100270, 100272]
       this.$vhall_paas_port({
-        k: value ? otherArr[index - 1] + 1 : otherArr[index - 1],
+        k: value ? otherArr[index - 1]: otherArr[index - 1] + 1,
         data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.preOthersOptions();
@@ -757,7 +757,7 @@ export default {
         data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({
-        k: this.formHorse.speed == 3000 ? 100236 : this.formHorse.speed == 6000 ? 1000237 : 100238,
+        k: this.formHorse.speed == 3000 ? 100238 : this.formHorse.speed == 6000 ? 1000237 : 100236,
         data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({
@@ -814,13 +814,11 @@ export default {
       });
     },
     setWaterReportData() {
-      let loactionArr = [100261, 100262, 100263, 100264]
-      if (this.watermark_open) {
+      let loactionArr = [100261, 100262, 100264, 100263]
         this.$vhall_paas_port({
-          k: 100259,
+          k: this.watermark_open ? 100259 : 100260,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
-      }
       this.$vhall_paas_port({
         k: loactionArr[this.formWatermark.img_position - 1],
         data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}

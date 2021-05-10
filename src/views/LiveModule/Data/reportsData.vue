@@ -196,6 +196,7 @@ export default {
               })
               picker.$el.firstChild.firstChild.children[3].style.color = '#FB3A32'
               const end = new Date();
+              const start = new Date();
               end.setTime(end.getTime() - 3600 * 1000 * 24);
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
               picker.$emit('pick', [start, end]);

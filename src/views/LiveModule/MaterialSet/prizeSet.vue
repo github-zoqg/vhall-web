@@ -338,7 +338,7 @@ export default {
     lotterySave () {
       let imgUrl = '';
       let k = 100309;
-      let arrImg = [100309, 100110, 100311]
+      let arrImg = [100309, 100310, 100311]
       if (parseInt(this.isChecked) > 0) {
         imgUrl = this.prizeUrl[this.isChecked - 1];
         k = arrImg[this.isChecked - 1]
@@ -400,8 +400,8 @@ export default {
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {length: len}, ref_url: '', req_url: ''}
         })
       }
-      this.givePrizeList.forEach(ele=>{
-        if (this.givePrizeForm[ele.placeholder] !== this.lotteryPageMessage[ele.placeholder]) {
+      this.givePrizeList.forEach((ele, index)=>{
+        if (ele.placeholder !== this.lotteryPageMessage[index].placeholder) {
           this.$vhall_paas_port({
             k: prizeArr[ele.rank],
             data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}

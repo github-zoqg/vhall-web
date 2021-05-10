@@ -233,9 +233,9 @@ export default {
         webinar_id: that.$route.params.str,
         goods_id: rows.goods_id
       }).then(res => {
-        this.$vhall_paas_port({
+        that.$vhall_paas_port({
           k: 100392,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
         that.$message.success("复制成功！");
         that.getTableList();

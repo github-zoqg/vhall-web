@@ -401,10 +401,12 @@ export default {
           k: item.reporType,
           data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
-        this.$vhall_paas_port({
-          k: item.required ? item.reporType + 1 : item.reporType + 2,
-          data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
+        if (item.reqType !== 6) {
+          this.$vhall_paas_port({
+            k: item.required ? item.reporType + 1 : item.reporType + 2,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
         if (item.reqType === 4) {
           this.$vhall_paas_port({
             k: item.reporType + 4,

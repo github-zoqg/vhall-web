@@ -171,7 +171,7 @@
               data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
             })
             this.$vhall_paas_port({
-              k: arrQuality[vodresetForm.quality - 1],
+              k: arrQuality[this.vodresetForm.quality - 1],
               data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
             })
             this.$message({

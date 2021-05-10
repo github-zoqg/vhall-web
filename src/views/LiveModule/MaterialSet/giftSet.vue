@@ -427,6 +427,12 @@ export default {
       })
     },
     searchGifts() {
+      if (this.searchName) {
+         this.$vhall_paas_port({
+          k: 100404,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList(true)
     },
     selectHandle(row) {

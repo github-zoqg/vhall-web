@@ -214,7 +214,7 @@ export default {
           })
         }
       })
-      let saveArr = [100216, 100217, 100218, 100219, 100220, 100221, 100222, 100223]
+      let saveArr = [100216, 100217, 100218, 100219, 100220, 100081, 100221, 100222, 100223]
       saveMenus.filter(item => item.type == 1).map(item => {
         if (item.status == 4) {
           this.$vhall_paas_port({

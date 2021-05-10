@@ -638,7 +638,7 @@ export default {
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({
-        k: this.formHorse.speed == 3000 ? 100650 : this.formHorse.speed == 6000 ? 1000651 : 100652,
+        k: this.formHorse.speed == 3000 ? 100652 : this.formHorse.speed == 6000 ? 1000651 : 100650,
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({
@@ -694,13 +694,11 @@ export default {
       });
     },
     setWaterReportData() {
-      let loactionArr = [100675, 100676, 100677, 100678]
-      if (this.watermark_open) {
+      let loactionArr = [100675, 100676, 100678, 100677]
         this.$vhall_paas_port({
-          k: 100673,
+          k: this.watermark_open ? 100673 : 100764,
           data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
-      }
       this.$vhall_paas_port({
         k: loactionArr[this.formWatermark.img_position - 1],
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
