@@ -236,7 +236,7 @@ export default {
           });
         });
       } else {
-        let num = command === '数据报告' ? 100042 : command === '互动统计' ? 100043 : 100044
+        let num = command === '/live/reportsData' ? 100042 : command === '/live/interactionData' ? 100043 : 100044
         // 新标签页打开
         // this.$router.push({path: `${command}/${this.webinarInfo.webinar_id}`, query: {roomId: this.webinarInfo.vss_room_id, status: this.webinarInfo.webinar_state }});
         this.$vhall_paas_port({

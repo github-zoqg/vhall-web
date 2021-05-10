@@ -786,7 +786,7 @@ export default {
       })
       // 关联主页
       this.$vhall_paas_port({
-        k: this.formData.home ? 100032 : 100031,
+        k: this.formData.home ? 100031 : 100032,
         data: {business_uid: userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       // 最高并发
