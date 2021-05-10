@@ -94,6 +94,7 @@
             <draggable
               :list="formData.selectedActives"
               chosenClass="vh-sort-tables__tbody-selected"
+              @update="updateDrag"
               @dragstart="dragStart"
               @dragend="dragEnd"
             >
@@ -556,11 +557,13 @@ export default {
     dragStart(e) {
       console.log('vhall saas Event 拖动开始::', e)
     },
-    dragEnd(e) {
+    updateDrag(e) {
       this.$vhall_paas_port({
         k: 100506,
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
+    },
+    dragEnd(e) {
       console.log('vhall saas Event 拖动结束::', e)
     },
     sortChange(e) {

@@ -245,7 +245,7 @@ export default {
     searchTime() {
       if (this.type == 1) {
         let timeArr = [100475, 100476, 100477]
-        let vitimeArr = [100483, 100484, 100455]
+        let vitimeArr = [100483, 100484, 100485]
         this.$vhall_paas_port({
           k: this.activeName == 1 ? timeArr[this.timeType] : vitimeArr[this.timeType],
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
