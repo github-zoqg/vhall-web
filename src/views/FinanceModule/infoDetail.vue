@@ -475,7 +475,7 @@ export default {
           } else {
             if (typeof(formParams.orderType) == 'number') {
               if (formParams.orderType > 8) {
-                k = `100900`
+                k = 100400
               } else {
                 k = typeDetail[formParams.orderType]
               }
