@@ -579,7 +579,7 @@ export default {
           that.$fetch('deleteRecodrder', obj).then(res => {
             that.$vhall_paas_port({
               k: 100462,
-              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
             that.$message.success('删除成功');
             that.getRecordList();
