@@ -611,6 +611,10 @@ export default {
     // 关闭水印
     openWaterMarkInfo() {
       if (!this.watermark_open) {
+         this.$vhall_paas_port({
+          k: 100260,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.preWatermark();
       }
     },
@@ -815,10 +819,12 @@ export default {
     },
     setWaterReportData() {
       let loactionArr = [100261, 100262, 100264, 100263]
+      if (this.watermark_open) {
         this.$vhall_paas_port({
-          k: this.watermark_open ? 100259 : 100260,
+          k: 100259,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
+      }
       this.$vhall_paas_port({
         k: loactionArr[this.formWatermark.img_position - 1],
         data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}

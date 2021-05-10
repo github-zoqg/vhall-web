@@ -695,10 +695,13 @@ export default {
     },
     setWaterReportData() {
       let loactionArr = [100675, 100676, 100678, 100677]
+      if (this.watermark_open) {
         this.$vhall_paas_port({
-          k: this.watermark_open ? 100673 : 100764,
+          k: 100673,
           data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
+      }
+
       this.$vhall_paas_port({
         k: loactionArr[this.formWatermark.img_position - 1],
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
