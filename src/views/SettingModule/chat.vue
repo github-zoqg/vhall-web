@@ -315,7 +315,7 @@ export default {
     },
     downLoad() {
       this.$vhall_paas_port({
-        k: 100688,
+        k: 100588,
         data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
       })
     },

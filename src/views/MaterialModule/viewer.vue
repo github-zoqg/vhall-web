@@ -530,7 +530,7 @@ export default {
           }
           this.$fetch(this.groupDialog.type === 'add' ? 'postGroupAdd' : 'postGroupEdit', this.$params(params)).then(res => {
             this.$vhall_paas_port({
-              k: this.groupDialog.type === 'add' ? 100546 : 1005547,
+              k: this.groupDialog.type === 'add' ? 100546 : 100547,
               data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
             this.$message({
@@ -571,7 +571,7 @@ export default {
         };
         this.$fetch('postGroupDel', this.$params(params)).then(res => {
           this.$vhall_paas_port({
-            k: 1005548,
+            k: 100548,
             data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
           })
           this.$message({
@@ -598,10 +598,10 @@ export default {
     },
     queryList() {
       if (this.query.keyword) {
-        this.query.pos = 0
+        this.query.pos = 0;
         this.pageInfo.pageNum = 1;
         this.$vhall_paas_port({
-          k: 1005549,
+          k: 100549,
           data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
       } else {
@@ -642,7 +642,7 @@ export default {
     // 打开导入观众弹出框
     importViewerOpen() {
       this.$vhall_paas_port({
-        k: 1005542,
+        k: 100542,
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       // 判断是否有分组
@@ -718,7 +718,7 @@ export default {
           let params = Object.assign(this.viewerDialog.type === 'add' ? {group_id: this.query.group_id} : {id: this.viewerDialog.row.id, group_id: this.query.group_id }, this.viewerForm);
           this.$fetch(this.viewerDialog.type === 'add' ? 'viewerAdd' : 'viewerEdit', this.$params(params)).then(res => {
             this.$vhall_paas_port({
-              k: this.viewerDialog.type === 'add' ? 100541 : 1005543,
+              k: this.viewerDialog.type === 'add' ? 100541 : 100543,
               data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
             this.$message({
@@ -762,7 +762,7 @@ export default {
       }).then(res => {
         if(res && res.code === 200) {
           this.$vhall_paas_port({
-            k: index === 1 ? 100545 : 1005544,
+            k: index === 1 ? 100545 : 100544,
             data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
           })
           this.$message({

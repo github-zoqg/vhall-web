@@ -105,7 +105,7 @@ export default {
             openShow: '开启后，直播开始或结束时进行通知',
             closeShow: '已开启，直播开始或结束时进行通知',
             value: Number(eventsList.includes('1') ? 1 : 0) || 0,
-            k: eventsList.includes('1') ? 100601 : 100602
+            k: 100601
           },
           {
             type: 'key_4',
@@ -113,7 +113,7 @@ export default {
             openShow: '开启后，直播结束并生成回放成功进行通知',
             closeShow: '已开启，直播结束并生成回放成功进行通知',
             value: Number(eventsList.includes('4') ? 1 : 0) || 0,
-            k: eventsList.includes('4') ? 100603 : 100604
+            k:100603
           },
           {
             type: 'key_8',
@@ -121,7 +121,7 @@ export default {
             openShow: '开启后，裁剪视频成功后进行通知',
             closeShow: '已开启，裁剪视频成功后进行通知',
             value: Number(eventsList.includes('8') ? 1 : 0) || 0,
-            k: eventsList.includes('8') ? 100605 : 100606
+            k: 100605
           },
           {
             type: 'key_5',
@@ -129,7 +129,7 @@ export default {
             openShow: '开启后，回放转码成功后支持获取不同分辨率',
             closeShow: '已开启，回放转码成功后支持获取不同分辨率',
             value: Number(eventsList.includes('5') ? 1 : 0) || 0,
-            k: eventsList.includes('5') ? 100607 : 100608
+            k: 100607
           },
           {
             type: 'key_6',
@@ -137,7 +137,7 @@ export default {
             openShow: '开启后，回放下载成功进行通知',
             closeShow: '已开启，回放下载成功进行通知',
             value: Number(eventsList.includes('6') ? 1 : 0) || 0,
-            k: eventsList.includes('6') ? 100609 : 100610
+            k: 100609
           },
           {
             type: 'key_3',
@@ -145,7 +145,7 @@ export default {
             openShow: '开启后，JSSDK上传视频并转码成功进行通知',
             closeShow: '已开启，JSSDK上传视频并转码成功进行通知',
             value: Number(eventsList.includes('3') ? 1 : 0) || 0,
-            k: eventsList.includes('3') ? 100611 : 100612
+            k: 100611
           },
           {
             type: 'key_7',
@@ -153,7 +153,7 @@ export default {
             openShow: '开启后，文档上传并转码成功进行通知',
             closeShow: '已开启，文档上传并转码成功进行通知',
             value: Number(eventsList.includes('7') ? 1 : 0) || 0,
-            k: eventsList.includes('7') ? 100613 : 100614
+            k: 100613
           }
         ];
         this.keyList = keyList;
@@ -262,13 +262,13 @@ export default {
         k: 100596,
         data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-      this.$vhall_paas_port({
-        k: this.form.callback_type == 1 ? 100597 : 100598,
-        data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
+      // this.$vhall_paas_port({
+      //   k: this.form.callback_type == 1 ? 100597 : 100598,
+      //   data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      // })
       list.map(item => {
         this.$vhall_paas_port({
-          k: item.k,
+          k: item.value == 1 ? item.k : item.k + 1,
           data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
         })
       })

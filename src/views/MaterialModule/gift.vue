@@ -11,7 +11,7 @@
       <el-button type="primary" size="medium" round class="head-btn set-upload" @click="addGift">创建礼物</el-button>
       <el-button round size="medium" :class="['transparent-btn',{'no-data': selectIds.length <= 0}]"
                  :disabled="selectIds.length <= 0"
-                 @click="handleDelete()">批量删除</el-button>
+                 @click="handleDelete('', 1)">批量删除</el-button>
       <VhallInput
         @keyup.enter.native="searchGifts"
         clearable
@@ -67,7 +67,7 @@
         <el-table-column label="操作" align="left" width="120">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
             <el-button v-preventReClick class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
-            <el-button v-preventReClick class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button v-preventReClick class="btns" type="text" @click="handleDelete(scope.row, 2)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -508,12 +508,11 @@ export default {
       this.$refs.uploadimg.domainUrl = ''
     },
     // 删除礼品
-    handleDelete (data) {
+    handleDelete (data, index) {
       if (data.gift_id) {
         this.selectIds = []
         this.selectIds.push(data.gift_id)
       }
-      let index = data ? 2 : 1
       this.$confirm('观众端礼物显示将受到影响, 确认删除?', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',

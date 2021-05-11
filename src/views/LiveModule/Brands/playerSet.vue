@@ -150,7 +150,7 @@
                   <span class="isNum">{{formWatermark.img_alpha}}%</span>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary length152" v-preventReClick class="common-save" :disabled="!watermark_open" @click="preWatermark">保存</el-button>
+                  <el-button type="primary length152" v-preventReClick class="common-save" :disabled="!watermark_open" @click="preWatermark(1)">保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -615,7 +615,7 @@ export default {
           k: 100260,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
-        this.preWatermark();
+        this.preWatermark(0);
       }
     },
     // 关闭或保存其他信息
@@ -782,7 +782,7 @@ export default {
       })
     },
     // 保存水印
-    preWatermark() {
+    preWatermark(index) {
       if (!this.domain_url && this.watermark_open) {
         this.$message({
           message: `水印图片不能为空`,
@@ -798,7 +798,7 @@ export default {
       this.formWatermark.watermark_open = Number(this.watermark_open);
        this.formWatermark.type = 1;
       this.$fetch('setWatermark', this.$params(this.formWatermark)).then(res => {
-        this.setWaterReportData()
+        index === 1 && this.setWaterReportData()
         this.$message({
           message: this.watermark_open ? "水印开启成功" : "水印关闭成功",
           showClose: true,
