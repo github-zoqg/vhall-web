@@ -505,7 +505,7 @@ export default {
           }
           let params = null;
           this.$vhall_paas_port({
-            k: this.sonDialog.type === 'add' ? 100804 : 100811,
+            k: this.sonDialog.type === 'add' ? 100806 : 100811,
             data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
           })
 

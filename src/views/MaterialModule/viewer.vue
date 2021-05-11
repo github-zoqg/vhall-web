@@ -641,10 +641,6 @@ export default {
     },
     // 打开导入观众弹出框
     importViewerOpen() {
-      this.$vhall_paas_port({
-        k: 100542,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
       // 判断是否有分组
       if(this.query.group_id) {
         this.importFileShow = true;
@@ -943,6 +939,10 @@ export default {
         group_id: this.query.group_id,
         request_type: 1 // 保存
       }).then(resV => {
+        this.$vhall_paas_port({
+          k: 100542,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         /* this.$message({
           message:resV.msg || '导入观众信息成功',
           showClose: true,
