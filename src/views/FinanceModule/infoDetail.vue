@@ -459,6 +459,7 @@ export default {
     },
     getSearchList() {
       let formParams = this.$refs.searchDetail.searchParams;
+      console.log(formParams, '?????????')
       for (let i in formParams) {
         if (i === 'searchTime' && formParams.searchTime) {
           this.$vhall_paas_port({
@@ -468,21 +469,21 @@ export default {
         }
         if (i === 'orderType') {
           let k = 100709;
-          let typeOrder = [100709, 100710, 100711, 100712, 100713, 100714, 100716, 100716]
-          let typeDetail = [100725, 100730, 100731, 100732, 100733, 100734, 100735, 100736, 100737, 100726, 100727, 100728, 100729]
+          let typeOrder = [100710, 100711, '', 100712, 100713, 100714, 100715, 100716, 100466, 100467]
+          let typeDetail = [100730, 100731, 100732, 100733, 100734, 100735, 100736, 100737, 100726, 100727, 100728, 100729]
           if (this.activeIndex == 1) {
-            k = formParams.orderType ? typeOrder[formParams.orderType - 6] : 100709
+            k = formParams.orderType ? typeOrder[formParams.orderType - 7] : 100709
           } else {
             if (typeof(formParams.orderType) == 'number') {
               if (formParams.orderType > 8) {
-                k = 100400
+                k = 104000
               } else {
                 k = typeDetail[formParams.orderType]
               }
 
             } else {
               let type = formParams.orderType;
-              k = type === 'flow' ? 100726 : type === 'concurrency' ? 100727 : type === 'extend_people' ? 100728 : 100729
+              k = type === 'flow' ? 100726 : type === 'concurrency' ? 100727 : type === 'extend_people' ? 100728 :  type === 'extend_day' ? 100729 : 100725
             }
           }
           this.$vhall_paas_port({
@@ -505,14 +506,14 @@ export default {
           })
         }
         if (i === 'source' && this.activeIndex == 2) {
-          let sourceArr = [100744, 100745, 100746, 100747, 100748]
+          let sourceArr = [100743, 100744, 100745, 100746, 100747, 100748]
           this.$vhall_paas_port({
-            k: formParams.source ? sourceArr[formParams.source - 5] : 100743,
+            k: formParams.source ? sourceArr[formParams.source - 5] : 100742,
             data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
           })
         }
       }
-      this.getDetailList('search')
+      // this.getDetailList('search')
     },
     getDetailList(params) {
       // let pageInfo = {};
@@ -637,10 +638,6 @@ export default {
       });
     },
     pay(rows)  {
-      this.$vhall_paas_port({
-        k: 100722,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {orderId: rows.order_id}, ref_url: '', req_url: ''}
-      })
       this.$router.push({
         path: '/finance/payOrder',
         query: {
