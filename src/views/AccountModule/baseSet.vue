@@ -70,8 +70,8 @@ export default {
           { required: true, message: '账号昵称不能为空', trigger: 'blur' },
           { max: 30, message: '最多可输入30个字符', trigger: 'blur' },
           { min: 1, message: '请输入账号昵称', trigger: 'blur' }
-        ]
-        ,company: [
+        ],
+        company: [
           { max: 100, message: '最多可输入100个字符', trigger: 'blur' },
         ],
         position: [
@@ -142,7 +142,7 @@ export default {
         let accountInfo = JSON.parse(account_info);
         this.baseSetForm = accountInfo;
         this.domain_url = accountInfo.avatar;
-        this.reBaseForm = accountInfo;
+        this.reBaseForm = JSON.parse(account_info);
         console.log(this.domain_url, this.baseSetForm.avatar, '其它头像地址');
       }
     },
@@ -166,7 +166,7 @@ export default {
                 data: {business_uid: userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
               })
             }
-            if (this.domain_url != this.reBaseForm.avatar) {
+            if (this.domain_url != this.reBaseForm.avatar || (this.reBaseForm.avatar && this.baseSetForm.avatar == '')) {
               this.$vhall_paas_port({
                 k: 100782,
                 data: {business_uid: userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
@@ -211,6 +211,7 @@ export default {
         scene_id: 2
       }).then(res =>{
         if(res.data) {
+          this.reBaseForm = res.data;
           sessionOrLocal.set('userInfo', JSON.stringify(res.data));
           sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
           this.$EventBus.$emit('saas_vs_account_change', res.data);

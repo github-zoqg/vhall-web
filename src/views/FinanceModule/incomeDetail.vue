@@ -129,12 +129,10 @@ export default {
     },
     getSearchList() {
       let formParams = this.$refs.incomeDetils.searchParams;
-      if (formParams.pay_type) {
-        this.$vhall_paas_port({
-          k: formParams.pay_type == 13 ? 100765 : formParams.pay_type == 2 ? 100766 : formParams.pay_type == 5 ? 100767 : 100764,
-          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-      }
+      this.$vhall_paas_port({
+        k: formParams.pay_type == 13 ? 100765 : formParams.pay_type == 2 ? 100766 : formParams.pay_type == 5 ? 100767 : 100764,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.getIncomeDetailList('search')
     },
     getIncomeDetailList(params) {
