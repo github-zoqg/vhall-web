@@ -160,7 +160,7 @@
           ...otherParams
         }).then(res => {
           if (res.code == 200) {
-            let arrType = [100428, 100429, 100430]
+            let arrType = [100428, 100430, 100429]
             let arrQuality = [100431, 100432, 100433]
             this.$vhall_paas_port({
               k: 100427,
