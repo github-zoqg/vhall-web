@@ -272,7 +272,7 @@ export default {
             })
             let insertArr = [100210, 100211, 100212, 100213, 100214, 100215]
             this.$vhall_paas_port({
-              k: insertArr[this.$insertIndex - 5],
+              k: insertArr[this.$insertIndex - 5] || 100210,
               data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
           }
