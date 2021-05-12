@@ -5,14 +5,14 @@
       <a href="https://saas-doc.vhall.com/docs/show/975" target="_blank">回调设置说明</a>
     </div>
     <div class="layout-callback">
-      <el-form :model="form" ref="form" :rules="formRules" label-width="91px">
+      <el-form :model="form" ref="form" :rules="formRules" label-width="102px">
         <el-form-item label="签名Key" prop="secret_key">
           <VhallInput v-model.trim="form.secret_key" v-clearEmoij auto-complete="off" placeholder="请输入签名规则" :maxlength="32" show-word-limit></VhallInput>
         </el-form-item>
         <el-form-item label="回调地址" prop="callback_url">
           <VhallInput v-model.trim="form.callback_url" v-clearEmoij auto-complete="off" placeholder="请输入Https或http开头的完整url" :maxlength="255" show-word-limit></VhallInput>
         </el-form-item>
-        <el-form-item label="消息格式" prop="msg_type" class="radio-btn" label-width="103px">
+        <el-form-item label="消息格式" prop="msg_type" class="radio-btn" label-width="102px">
           <el-radio-group v-model="form.msg_type">
             <el-radio :label="1">application/x-www-form-urlencoded</el-radio>
             <el-radio :label="2">application/json</el-radio>
@@ -30,7 +30,7 @@
               active-color="#FB3A32"
               inactive-color="#CECECE">
             </el-switch>
-            <span class="leve3_title title--999">{{!!form.fail_try_request ? '已开启，直播开始或结束时进行通知' : '开启后，系统需在5秒内响应SUCCESS（不区分大小写）'}}</span>
+            <span class="leve3_title title--999">{{!!form.fail_try_request ? '已开启，系统需在5秒内响应SUCCESS（不区分大小写）' : '开启后，系统需在5秒内响应SUCCESS（不区分大小写）'}}</span>
             &nbsp;
             <el-tooltip effect="dark" placement="right" v-tooltipMove>
               <div slot="content">
@@ -295,21 +295,32 @@ export default {
       width: 640px;
     }
     /deep/.el-form-item {
-      margin-bottom: 32px;
-      &.callback-btn, &.radio-btn {
+      margin-bottom: 24px;
+      &.callback-btn {
         margin-bottom: 0;
+      }
+      &.radio-btn {
+        margin-bottom: 12px;
       }
     }
   }
   .layout--right--main();
   .padding48-40();
 }
-
+/deep/.el-radio__input.is-checked+.el-radio__label {
+  color: #1A1A1A;
+}
+/deep/.el-radio__label {
+  color: #666666;
+}
 .page-padding {
   padding: 0 0;
 }
 .h1__title {
   margin-bottom: 32px;
+}
+.div__view {
+  margin-bottom: 12px;
 }
 .div__func {
   min-height: 190px;
@@ -340,5 +351,9 @@ export default {
   display: inline-block;
   text-align: right;
   min-width: 91px;
+}
+
+.saasicon_help_m {
+  color: #999999;
 }
 </style>
