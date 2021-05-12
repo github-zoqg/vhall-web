@@ -164,6 +164,12 @@ const router = [
         hidden: true
       },
       {
+        path: 'shareSetting/:str(\\d+)',
+        component: () => import('@/views/LiveModule/Brands/shareSetting'),
+        meta:{ auth: true, title: '分享设置', name: 'shareSet', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'customTab/:str(\\d+)',
         component: CustomerTab,
         // component: () => import('@/views/LiveModule/customTab'),

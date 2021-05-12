@@ -436,6 +436,22 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
+  else if (metaName === 'shareSet') {// 开屏海报展示
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '活动详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '分享设置',
+        path: `/live/shareSetting/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
   else if (metaName === 'word') {// 文档
     return [
       ...CrumbLiveList('liveList'),

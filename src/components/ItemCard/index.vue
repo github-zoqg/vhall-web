@@ -29,8 +29,8 @@
     <section v-if="isBrand">
       <p class="subject">品牌</p>
       <div class="subjectOuter">
-        <template>
-          <div class="sunjectInner" v-for="item in brandList" :key="item.id" @click="blockHandler(item)" v-if="item.isShow">
+        <template v-for="item in brandList">
+          <div class="sunjectInner" :key="item.id" @click="blockHandler(item)" v-if="item.isShow">
           <!-- <icon class="icon" :icon-class="item.icon"></icon> -->
           <span><img :src="require(`../../common/images/icon/${item.icon}.png`)" alt=""></span>
           <div class="desc">
@@ -138,6 +138,7 @@ export default {
         { icon: 'icon_advertising@2x', id: 5, title: '广告', subText: '设置观看页广告位信息', path: `/live/advertCard/${this.$route.params.str}`,isShow: this.perssionInfo.ad_recommend==1},
         { icon: 'icon_public@2x', id: 6, title: '公众号', subText: '设置观看页展示的公众号', path: `/live/officeSet/${this.$route.params.str}`,isShow: this.perssionInfo.live_broadcast_window==1},
         { icon: 'icon_posters@2x', id: 7, title: '开屏海报', subText: '设置观看页的开屏海报', path: `/live/posterCard/${this.$route.params.str}`,isShow: this.perssionInfo.market_open_posters==1},
+        { icon: 'icon_posters@2x', id: 8, title: '分享设置', subText: '设置活动分享到微信中的效果', path: `/live/shareSetting/${this.$route.params.str}`,isShow: true},
       ],
       liveDataList: [
         { icon: 'icon_document@2x', id: 1, title: '文档', subText: '直播中使用文档演示', path: `/live/word/${this.$route.params.str}`,isShow: this.type != 4},
