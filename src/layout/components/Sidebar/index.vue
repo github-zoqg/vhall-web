@@ -168,6 +168,9 @@ export default {
         case '/setting/brand':
           this.setReport(100633)
           break;
+        case '/setting/player':
+          this.setReport(100490)
+          break;
         case '/finance/info':
           this.setReport(100688)
           break;
