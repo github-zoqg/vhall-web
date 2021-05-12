@@ -352,4 +352,8 @@ export default {
   text-align: right;
   min-width: 91px;
 }
+
+.saasicon_help_m {
+  color: #999999;
+}
 </style>
