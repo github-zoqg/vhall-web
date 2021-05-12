@@ -638,6 +638,10 @@ export default {
       });
     },
     pay(rows)  {
+      this.$vhall_paas_port({
+        k: 100722,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({
         path: '/finance/payOrder',
         query: {
