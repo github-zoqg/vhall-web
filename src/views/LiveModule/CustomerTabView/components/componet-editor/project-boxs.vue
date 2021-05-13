@@ -28,6 +28,7 @@
       >
         <i class="iconfont-v3 saasicon-choose-01" v-show="item.checked"></i>
         <div class="vh-chose-active-item__cover">
+          <!-- TODO 右侧专题选择区域 -->
           <img :src="item.cover" alt="">
           <div class="vh-chose-active-item__cover-status">
             <!-- <span class="liveTag"> -->
@@ -56,6 +57,8 @@
 </template>
 <script>
 import noData from '@/views/PlatformModule/Error/nullPage';
+import EventBus from '../../bus'
+import eventsType from '../../EventConts'
 export default {
   props: ['checkedList'],
   data() {
@@ -81,7 +84,13 @@ export default {
   },
 
   created() {
-
+    let _that = this
+    EventBus.$on(eventsType.EDITOR_COMPONENTP_PROJECT_ITEM_INFO, (del_id) => {
+      let newIds = _that.checkedList.filter(item=> {
+        return item != del_id
+      })
+      _that.syncCheckStatus(newIds)
+    })
   },
 
   mounted() {
@@ -137,12 +146,17 @@ export default {
     },
 
     // 同步 选中状态
-    syncCheckStatus() {
-      if (this.checkedList.length > 0) {
-      const checked = this.checkedList.map((item) => {
-        return item
-      })
-      this.activeList = this.activeList.map((item) => {
+    syncCheckStatus(ids) {
+
+      let checkIds = this.checkedList
+      if(ids && ids.length > 0) {
+        checkIds = ids
+      }
+      if (checkIds.length > 0) {
+        const checked = checkIds.map((item) => {
+          return item
+        })
+        this.activeList = this.activeList.map((item) => {
           if(checked.includes(item.id)) {
             return {
               ...item,
@@ -150,7 +164,8 @@ export default {
             }
           } else {
             return {
-              ...item
+              ...item,
+              checked: false
             }
           }
         })

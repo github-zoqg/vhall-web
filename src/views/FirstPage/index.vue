@@ -148,7 +148,8 @@
         <p>联系我们</p>
       </div>
     </div>
-    <template v-if="isOld">
+    <!-- 新版本上线了 -->
+    <template v-if="!openSys && isOld">
       <div class="prompt">
         <div class="prompt-wrap">
             <i class="prompt-con-img i-close saasclose iconfont-v3" @click="iKonw"></i>
@@ -160,6 +161,21 @@
             <p class="prompt-con-text prompt-con-text-two">对于旧版已创建的H5播放器活动，微吼团队后续会统一迁移至此后台。Flash活动将会为您保留在旧版本后台，方便进行管理。</p>
             <p class="prompt-con-text prompt-con-text-two">如有问题请联系您的专属售后或拨打400-888-9970转2咨询。</p>
             <a class="prompt-con-text-four" href="javascript:;" @click="iKonw">我知道了</a>
+        </div>
+      </div>
+    </template>
+    <!-- 用户迁移升级完成 - 此弹窗出现，新版本体验弹窗不展示 -->
+    <template v-if="openSys">
+      <div class="prompt">
+        <div class="prompt-wrap mini">
+            <i class="prompt-con-img i-close saasclose iconfont-v3" @click="closeOpenSys"></i>
+            <img class="prompt-con-img" src="//cnstatic01.e.vhall.com/static/images/watch/notice_img.png" alt="">
+            <p class="prompt-con-text prompt-con-text-one">【系统升级完成】</p>
+            <p class="prompt-con-text prompt-con-text-three">尊敬的用户：</p>
+            <p class="prompt-con-text prompt-con-text-two"> 感谢您对微吼直播的支持，系统升级已完成！在这里，你可以体验全新产品，满足多场景直播所需功能。</p>
+            <p class="prompt-con-text prompt-con-text-two"> 每一次的改动，都是为了让你用得更爽，马上来体验吧！</p>
+            <p class="prompt-con-text prompt-con-text-two"> 如有问题请联系您的专属售后或拨打400-888-9970转2咨询</p>
+            <a class="prompt-con-text-four" href="javascript:;" @click="closeOpenSys">我知道了</a>
         </div>
       </div>
     </template>
@@ -178,7 +194,8 @@ export default {
       versionType: 0,
       lineDataList: [],
       childPremission: {},
-      isOld: false
+      isOld: false,
+      openSys: sessionOrLocal.get('openSys') || false // 用户迁移完成弹窗状态
     };
   },
   components: {
@@ -200,6 +217,7 @@ export default {
      }
   },
   created() {
+    this.getUserMigrate()
     try {
       let newUserId = JSON.parse(sessionStorage.getItem('userInfo')).user_id
       if(localStorage.getItem(`new_${newUserId}_${new Date().toLocaleDateString("en-US").replace(/\//g, '_')}`)){
@@ -240,6 +258,10 @@ export default {
       let newUserId = JSON.parse(sessionStorage.getItem('userInfo')).user_id
       localStorage.setItem(`new_${newUserId}_${new Date().toLocaleDateString("en-US").replace(/\//g, '_')}`, true)
     },
+    closeOpenSys() {
+      this.openSys = false
+      sessionOrLocal.set('openSys', JSON.stringify(false))
+    },
     getChildPermission() {
       this.$fetch('getChildPermission').then(res => {
         console.log('getChildPermission', res)
@@ -257,6 +279,24 @@ export default {
         sessionOrLocal.set('arrears', JSON.stringify(res.data.arrears));
       }).catch(e=>{
         console.log(e);
+      });
+    },
+    getUserMigrate() {
+      this.$fetch('userMigrate', {}).then(res => {
+        if(res.code == 200 && res.data.end_time) {
+          // 若已经点过关闭，当前不展示
+          if(sessionOrLocal.get('openSys') && JSON.parse(sessionOrLocal.get('openSys')) == false) {
+            this.openSys = false
+          } else {
+            let nowTime = JSON.parse(sessionOrLocal.get('currentDate'));
+            this.openSys = this.$moment(nowTime).diff(this.$moment(res.data.end_time), 'day') <= 3
+          }
+        } else {
+          this.openSys = false
+        }
+      }).catch(e=>{
+        console.log(e);
+        this.openSys = false
       });
     },
     // 联系我们
@@ -602,6 +642,9 @@ export default {
         box-shadow: 0px 12px 42px 0px rgba(51, 51, 51, 0.24), 0px 8px 32px 0px rgba(34, 34, 34, 0.24);
         border-radius: 8px;
         padding: 32px;
+        &.mini {
+          height: 472px;
+        }
     }
     .prompt .prompt-wrap .prompt-con-img{
         width: 100px;

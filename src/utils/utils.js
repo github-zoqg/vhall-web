@@ -271,7 +271,7 @@ export function checkAuth(to, from, next, that) {
     to.path.indexOf('/register') !== -1 ||
     to.path.indexOf('/live/room') !== -1 ||
     to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'))
-    || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) ) {
+    || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) || to.path.indexOf('/upgrading') !== -1 || to.path.indexOf('/warning/') !== -1) {
     // 不验证直接进入
     next();
     NProgress.done();
@@ -414,6 +414,14 @@ export function checkAuth(to, from, next, that) {
     fetchData('getInfo', {scene_id: 2}).then(res => {
       // debugger;
       if(res.code === 200) {
+        if(res.data.is_new_regist == 2) {
+          sessionOrLocal.clear();
+          sessionOrLocal.clear('localStorage');
+          // 清除cookies
+          Cookies.remove('user_id');
+          next({path: '/upgrading'});
+          NProgress.done();
+        }
         sessionOrLocal.set('userInfo', JSON.stringify(res.data));
         sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
         sessionOrLocal.set('currentDate', JSON.stringify(res.data.current_date));

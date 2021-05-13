@@ -132,7 +132,11 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
       this.$router.push({
         path: '/error'
       });
-    } else if (res.code === 200) {
+    } else if (res.code === 511076 || res.code == 11076) {
+      this.$router.push({
+        path: '/upgrading'
+      });
+    } else if (res.code == 200) {
       return res;
     } else {
       errMap = Object.assign(errMap, extendsMsg)

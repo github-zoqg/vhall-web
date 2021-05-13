@@ -16,6 +16,8 @@
 <script>
 import liveChecked from './project-checked'
 import livesCheck from './project-boxs'
+import EventBus from '../../bus'
+import eventsType from '../../EventConts'
 export default {
   props: {
    // 1. 显示  2. 编辑
@@ -44,7 +46,16 @@ export default {
 
     }
   },
-
+  created() {
+    let _that = this
+    EventBus.$on(eventsType.EDITOR_COMPONENTP_PROJECT_ITEM_INFO, (del_id) => {
+      let newIds = _that.info.subjects.filter(item=> {
+        return item != del_id
+      })
+      _that.info.subjects = newIds
+      _that.$emit('updateInfo', _that.info)
+    })
+  },
   methods: {
     initLives() {
 
