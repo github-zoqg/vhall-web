@@ -1,6 +1,6 @@
 <template>
   <div v-if="!auth_show">
-    <null-page text="开发接口为高级功能，联系您的客户经理获取权限后方可使用" nullType="noAuth">
+    <null-page text="开发接口为高级功能，联系您的客户经理获取权限后方可使用" nullType="setting">
       <el-button type="primary" round @click="openChat">联系客服</el-button>
       <el-button type="white-primary" round @click="openDoc">查看文档</el-button>
     </null-page>

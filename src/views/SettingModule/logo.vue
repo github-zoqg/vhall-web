@@ -1,6 +1,6 @@
 <template>
   <div v-if="!auth_show">
-    <null-page text="控制台标志为高级功能，开通后您可以替换为您的品牌标志。<br/>联系您的客户经理获取权限后方可使用。" nullType="noAuth">
+    <null-page text="控制台标志为高级功能，开通后您可以替换为您的品牌标志。<br/>联系您的客户经理获取权限后方可使用。" nullType="setting">
       <el-button type="primary" round @click="openChat">联系客服</el-button>
     </null-page>
   </div>
