@@ -305,7 +305,12 @@ export default {
       //   });
       //   return;
       // }
-      this.initPayMessage();
+      if (this.vm) {
+        this.vm.close()
+        this.initPayMessage()
+      } else {
+        this.initPayMessage()
+      }
       let param = {
         create_time: this.$moment(file.lastModifiedDate).format('YYYY-MM-DD HH:mm:ss'),
         file_name: beforeName,  //后端要求名称带上后缀名  如xxx 改成 xxx.mp4
