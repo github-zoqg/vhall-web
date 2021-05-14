@@ -242,7 +242,6 @@ export default {
         }
         if(this.type == 'add') {
           this.activeIndex = null
-          console.log(this.$insertIndex, this.menus, '??????1232138893749735')
           if(this.$insertIndex > 0 && this.$insertIndex < this.menus.length) {
             this.menus.splice(this.$insertIndex, 0, {
               name: this.addCustomForm.name,
