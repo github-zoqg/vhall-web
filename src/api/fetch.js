@@ -136,6 +136,10 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
       this.$router.push({
         path: '/upgrading'
       });
+      return Promise.reject({
+        code: 511076,
+        msg: '00:00-07:00期间系统升级中，由此给您带来不便，敬请谅解！'
+      });
     } else if (res.code == 200) {
       return res;
     } else {
