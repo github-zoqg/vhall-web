@@ -1,25 +1,43 @@
 <template>
-    <div class="container network">
-      <img src="../../../common/images/sys/no-network.svg" alt=""/>
-      <p class="heading">00:00-07:00期间系统升级中，由此给您带来不便，敬请谅解！</p>
-      <p class="index-btn"><el-button type="primary" @click.prevent.stop="toReturn" round>去登录</el-button></p>
+  <div class="container sysUnder">
+    <div class="left-section sysUnder">
+      <div class="inner-content">
+        <h1  class="heading">系统正在升级中…</h1>
+        <!-- 具体文案 -->
+        <p class="subheading">00:00-07:00期间系统升级中，由此给您带来不便，敬请谅解！</p>
+      </div>
     </div>
+    <div class="right-section">
+      <img src="../../../common/images/sys/no-server.png" class="svgImg" alt=""/>
+    </div>
+  </div>
 </template>
 
 <script>
 export default {
-  name: "Upgrading.vue",
+  name: "Error.vue",
   beforeCreate() {
   },
   methods: {
     toReturn() {
-      window.location.href = `${window.location.protocol}${process.env.VUE_APP_ROOM_WATCH}/login`;
+      this.$router.push({
+        path: '/'
+      });
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
+.left-section.sysUnder {
+  width: 416px;
+  margin-right: 77px;
+}
+.left-section .inner-content {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
 .background {
   background: #ffffff;
 }
@@ -68,5 +86,34 @@ export default {
       text-align: center;
     }
   }
+}
+.left-section {
+  width: 40%;
+}
+.subheading {
+  height: 22px;
+  font-size: 16px;
+  font-family: @fontRegular;
+  font-weight: 400;
+  color: #1A1A1A;
+  line-height: 22px;
+}
+.headingNotice {
+  margin-top: 16px;
+  width: 266px;
+  font-size: 14px;
+  font-family: @fontRegular;
+  font-weight: 400;
+  color: #999999;
+  line-height: 22px;
+}
+.right-section {
+  width: 50%;
+}
+.svgImg {
+  position: absolute;
+  top: calc(25%);
+  max-width: 100%;
+  max-height: 100%;
 }
 </style>

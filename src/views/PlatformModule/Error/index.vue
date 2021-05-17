@@ -20,8 +20,8 @@
       </div>
     </div>
     <!-- 无服务 -->
-    <div class="container sysUnder" v-if="$route.params.str === 'sysUnder'">
-      <div class="left-section">
+    <div class="container sysUnder" v-else="$route.params.str === 'sysUnder'">
+      <div class="left-section sysUnder">
         <div class="inner-content">
           <h1  class="heading">系统正在升级中…</h1>
           <!-- 具体文案 -->
@@ -29,11 +29,11 @@
         </div>
       </div>
       <div class="right-section">
-        <img src="../../../common/images/sys/no-server.svg" class="svgImg" alt=""/>
+        <img src="../../../common/images/sys/no-server.png" class="svgImg" alt=""/>
       </div>
     </div>
     <!-- 系统升级 -->
-    <div class="container network">
+    <div class="container network" v-else>
       <img src="../../../common/images/sys/no-network.svg" alt=""/>
       <p class="heading">网络正在开小差……</p>
       <p class="index-btn"><el-button type="primary" @click.prevent.stop="toReturn" round>返回首页</el-button></p>
@@ -57,13 +57,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.left-section.sysUnder {
+  width: 416px;
+  margin-right: 77px;
+}
 .left-section .inner-content {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  &.sysUnder {
-    top: calc(50% + 100px);
-  }
 }
 .background {
   background: #ffffff;
