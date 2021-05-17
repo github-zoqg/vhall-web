@@ -249,6 +249,10 @@ export default {
     },
     // 提现
     withdraw() {
+      this.$vhall_paas_port({
+        k: this.type === 1 ? 100756 : 100752,
+        data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$refs['withdrawForm'].validate((valid) => {
           if (valid) {
             this.withdrawMoney();
@@ -267,10 +271,6 @@ export default {
       };
       this.$fetch('withdrawal', params).then(res => {
         if (res.code == 200) {
-          this.$vhall_paas_port({
-            k: this.type === 1 ? 100756 : 100752,
-            data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-          })
           this.$message({
             message: `提现成功`,
             showClose: true,
