@@ -148,9 +148,9 @@
         <p>联系我们</p>
       </div>
     </div>
-    <!-- 新版本上线了 v-if="!openSys && isOld" -->
+    <!-- 新版本上线了-->
     <template>
-      <div class="prompt">
+      <div class="prompt" v-if="!openSys && isOld" >
         <div class="prompt-wrap">
             <i class="prompt-con-img i-close saasclose iconfont-v3" @click="iKonw"></i>
             <img class="prompt-con-img" src="//cnstatic01.e.vhall.com/static/images/watch/notice_img.png" alt="">
@@ -164,9 +164,9 @@
         </div>
       </div>
     </template>
-    <!-- 用户迁移升级完成 - 此弹窗出现，新版本体验弹窗不展示 -->
-    <template v-if="openSys">
-      <div class="prompt">
+    <!-- 用户迁移升级完成 - 此弹窗出现，新版本体验弹窗不展示-->
+    <template>
+      <div class="prompt" v-if="openSys">
         <div class="prompt-wrap mini">
             <i class="prompt-con-img i-close saasclose iconfont-v3" @click="closeOpenSys"></i>
             <img class="prompt-con-img" src="//cnstatic01.e.vhall.com/static/images/watch/notice_img.png" alt="">
@@ -646,7 +646,7 @@ export default {
         border-radius: 8px;
         padding: 32px;
         &.mini {
-          height: 472px;
+          height: 440px;
         }
     }
     .prompt .prompt-wrap .prompt-con-img{
