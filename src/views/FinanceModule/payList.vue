@@ -200,30 +200,30 @@ export default {
     },
     // 点击完成支付
     finishPay() {
-      this.$router.push({
-        path: '/finance/infoDetail'
-      });
-      // let params = {
-      //   channel: this.method,
-      //   biz_order_no: `${this.method.toLowerCase()}_${this.payInfo.order_id}`,
-      //   total_fee: this.payInfo.amount,
-      //   pay_time: this.payInfo.create_time,
-      //   pay_status: 'SUCCESS'
-      // }
-      // this.$fetch('finishPayList', params).then(res => {
-      //   this.$router.push({
-      //     path: '/finance/infoDetail'
-      //   });
-      // }).catch(res => {
-      //   this.$message({
-      //     message: res.msg || "操作异常",
-      //     showClose: true,
-      //     // duration: 0,
-      //     type: 'error',
-      //     customClass: 'zdy-info-box'
-      //   });
-      //   console.log(res);
-      // })
+      // this.$router.push({
+      //   path: '/finance/infoDetail'
+      // });
+      let params = {
+        channel: this.method,
+        biz_order_no: `${this.method.toLowerCase()}_${this.payInfo.order_id}`,
+        total_fee: this.payInfo.amount,
+        pay_time: this.payInfo.create_time,
+        pay_status: 'SUCCESS'
+      }
+      this.$fetch('finishPayList', params).then(res => {
+        this.$router.push({
+          path: '/finance/infoDetail'
+        });
+      }).catch(res => {
+        this.$message({
+          message: res.msg || "操作异常",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
+      })
 
     }
   }
