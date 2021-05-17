@@ -442,7 +442,7 @@ export default {
     initPayMessage() {
       let that = this;
       let flow = JSON.parse(sessionOrLocal.get("arrears")).flow
-      let extendFee = JSON.parse(sessionOrLocal.get("arrears")).extend_fee
+      let extendFee = JSON.parse(sessionOrLocal.get("arrears")).extend
       let total = flow < 0 ? `${ flow } G` : `${ extendFee } 方`
       this.vm = this.$message({
         showClose: true,
