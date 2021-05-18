@@ -195,7 +195,7 @@ export default {
       lineDataList: [],
       childPremission: {},
       isOld: false,
-      openSys: sessionOrLocal.get('openSys') || false // 用户迁移完成弹窗状态
+      openSys: false
     };
   },
   components: {
@@ -215,6 +215,7 @@ export default {
      }else{
         localStorage.setItem('isOld', false)
      }
+    // sessionOrLocal.get('openSys') || false // 用户迁移完成弹窗状态
   },
   created() {
     this.getUserMigrate()
