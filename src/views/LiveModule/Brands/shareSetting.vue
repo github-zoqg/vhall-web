@@ -3,8 +3,8 @@
     <pageTitle pageTitle="分享设置"></pageTitle>
     <div class="share-container">
       <div class="share-left">
-        <el-form :model="formShareInfo" ref="ruleForm" label-width="80px">
-        <el-form-item label="分享标题">
+        <el-form :model="formShareInfo" ref="ruleForm" label-width="60px">
+        <el-form-item label="标题">
           <VhallInput
             v-model="formShareInfo.title"
             class="textType"
@@ -16,21 +16,21 @@
           ></VhallInput>
           <p class="tip">提示：为了您的内容获得有效传播，建议文字不超过14个字符</p>
         </el-form-item>
-        <el-form-item label="分享简介">
+        <el-form-item label="简介">
           <VhallInput
               v-model="formShareInfo.desciption"
               type="textarea"
               class="desc"
-              :maxlength="50"
+              :maxlength="45"
               placeholder="请输入分享简介"
               autocomplete="off"
               :autosize="{ minRows: 5 }"
               resize="none"
               show-word-limit
             ></VhallInput>
-            <p class="tip">提示：因手机型号不同，简介内容会显示不完整，建议不超过32个字符</p>
+            <p class="tip">提示：因手机型号不同简介会显示不完整，建议不超过32个字符</p>
         </el-form-item>
-        <el-form-item label="分享图标">
+        <el-form-item label="图片">
           <upload
             class="giftUpload"
             :heightImg="138"
@@ -51,17 +51,30 @@
           </upload>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary length152" round v-preventReClick @click="sureShareSetting">保存</el-button>
+          <el-button type="primary" round v-preventReClick @click="sureShareSetting">保存</el-button>
         </el-form-item>
       </el-form>
       </div>
-      <div class="share-right"></div>
+      <div class="share-right">
+        <div class="share-title">
+          <div class="share-img"><img :src="avatar" alt=""></div>
+          <div class="share-text">
+            <div class="top">{{ formShareInfo.title || '数字化转型时代企业如何做好 直播营销'}}</div>
+            <div class="bottom">
+              <p>{{ formShareInfo.desciption || '用更包容更普适的设计理念，构建数字仓储' }}</p>
+              <span><img :src="domain_url || img" alt=""></span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
+import {sessionOrLocal} from "@/utils/utils";
+import Env from "@/api/env";
 export default {
   name: 'shareSet',
   components: {
@@ -75,8 +88,12 @@ export default {
         img_url: '',
         desciption: ''
       },
-      domain_url: ''
+      domain_url: '',
+      avatar: JSON.parse(sessionOrLocal.get('userInfo')).user_extends.wechat_profile || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`,
+      img: require('../../../common/images/share/img.jpg')
     }
+  },
+  created() {
   },
   methods: {
     // 保存设置项
@@ -149,26 +166,116 @@ export default {
     width: 100%;
     .share-container{
       display: flex;
+      background: #fff;
+      border-radius: 4px;
+      padding: 48px 32px;
     }
     .share-left{
-      width: 45%;
+      width: 460px;
       .tip{
         color: #999;
+        line-height: 30px;
+        font-size: 14px;
+      }
+      /deep/.el-form-item{
+        margin-bottom: 32px;
+      }
+      /deep/.el-input__inner{
+        padding-left: 12px;
       }
       /deep/ .desc .el-textarea__inner{
         font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+        padding-left: 12px;
+        background: transparent;
+      }
+      /deep/.el-button{
+        margin-top: 8px;
+      }
+      /deep/.el-button.is-round{
+        padding: 9px 55px;
       }
     }
-    .share-right{
-      width: 420px;
-      height: 690px;
-      margin-top: -30px;
-      margin-left: 100px;
-      background-image: url('../../../common/images/poster/phone-poster@2x.png');
-      background-size: 100%;
-      background-position: center;
-      background-size: cover;
-      position: relative;
+    .share{
+      &-right{
+        width: 420px;
+        height: 690px;
+        margin-top: -30px;
+        margin-left: 30px;
+        background-image: url('../../../common/images/share/share.png');
+        background-size: 100%;
+        background-position: center;
+        background-size: cover;
+        position: relative;
+      }
+      &-title{
+        position: absolute;
+        top: 187px;
+        left: 68px;
+        display: flex;
+      }
+      &-img{
+        width: 30px;
+        height: 30px;
+        border-radius: 2px;
+        background: #999;
+        img{
+          width: 100%;
+          height: 100%;
+          border-radius: 2px;
+          object-fit: scale-down;
+        }
+      }
+      &-text{
+        width: 194px;
+        height: 90px;
+        background: #FEFFFE;
+        margin-left: 8px;
+        padding: 6px 10px;
+        .top{
+          width: 100%;
+          color: #1A1A1A;
+          font-size: 13px;
+          line-height: 18px;
+          margin-bottom: 6px;
+          overflow: hidden;
+          max-height: 36px;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          }
+        .bottom{
+          display: flex;
+          width: 100%;
+          justify-content: space-between;
+          p{
+            color: #747474;
+            font-size: 10px;
+            // transform: scale(0.9);
+            width: calc(100% - 42px);
+            margin-right: 6px;
+            padding: 0;
+            text-align: left;
+            line-height: 14px;
+            overflow: hidden;
+            height: 28px;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
+          span{
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            img{
+              width: 100%;
+              height: 100%;
+              object-fit: scale-down;
+            }
+          }
+        }
+      }
     }
   }
 </style>
