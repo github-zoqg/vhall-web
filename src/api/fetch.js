@@ -132,12 +132,12 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
       this.$router.push({
         path: '/error'
       });
-    } else if (res.code === 511076 || res.code == 11076) {
+    } else if (res.code === 510015 || res.code == 10015) {
       this.$router.push({
         path: '/upgrading'
       });
       return Promise.reject({
-        code: 511076,
+        code: 510015,
         msg: '00:00-07:00期间系统升级中，由此给您带来不便，敬请谅解！'
       });
     } else if (res.code == 200) {
