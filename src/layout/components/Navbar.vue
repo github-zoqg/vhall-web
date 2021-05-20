@@ -152,6 +152,7 @@ export default {
       });
     },
     logout() {
+      let out_url = sessionOrLocal.get('SAAS_V3_CTRL_OUT', 'localStorage');
       this.$fetch('loginOut', {}).then(res =>{
         sessionOrLocal.clear();
         sessionOrLocal.clear('localStorage');
@@ -159,9 +160,13 @@ export default {
         Cookies.remove('user_id');
         // 监听消息变化
         this.$EventBus.$emit('saas_vs_login_out', true);
-        this.$router.push({
-          path: '/login'
-        });
+        if(res.data && out_url) {
+          window.location.href = out_url
+        } else {
+          this.$router.push({
+            path: '/login'
+          });
+        }
       }).catch(res=>{
         this.$message({
           message: res.msg || `退出失败`,
@@ -171,13 +176,19 @@ export default {
           customClass: 'zdy-info-box'
         });
       }).finally(() => {
+        // 清除cookies
+        Cookies.remove('user_id');
         sessionOrLocal.clear();
         sessionOrLocal.clear('localStorage');
         // 监听消息变化
         this.$EventBus.$emit('saas_vs_login_out', true);
-        this.$router.push({
-          path: '/login'
-        });
+        if(res.data && out_url) {
+          window.location.href = out_url
+        } else {
+          this.$router.push({
+            path: '/login'
+          });
+        }
       });
     },
     updateAccount(account) {

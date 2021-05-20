@@ -2,6 +2,7 @@
 import fetchData from "@/api/fetch";
 import NProgress from "nprogress";
 import { message } from 'element-ui';
+import Cookies from 'js-cookie';
 
 export const sessionOrLocal = {
   set: (key, value, saveType = 'sessionStorage') => {
@@ -403,10 +404,17 @@ export function checkAuth(to, from, next, that) {
       }
     }).catch(e => {
       console.log(e);
+      let out_url = sessionOrLocal.get('SAAS_V3_CTRL_OUT', 'localStorage');
       sessionStorage.clear()
       localStorage.clear()
       if(e.code == 11006){
-        next({path: '/login', query:{'form': isOld == 1 ? 1 : 0}});
+        if(out_url) {
+          // 清除cookies
+          Cookies.remove('user_id');
+          window.location.href = out_url
+        } else {
+          next({path: '/login', query:{'form': isOld == 1 ? 1 : 0}});
+        }
       }
       sessionOrLocal.removeItem('SAAS_VS_PES');
     });
@@ -430,8 +438,17 @@ export function checkAuth(to, from, next, that) {
       NProgress.done();
     }).catch(e=>{
       console.log(e);
-      next({path: '/login'});
-      NProgress.done();
+      let out_url = sessionOrLocal.get('SAAS_V3_CTRL_OUT', 'localStorage');
+      if(out_url) {
+        // 清除cookies
+        Cookies.remove('user_id');
+        sessionOrLocal.clear();
+        sessionOrLocal.clear('localStorage');
+        window.location.href = out_url
+      } else {
+        next({path: '/login'});
+        NProgress.done();
+      }
     });
   } else {
     // 若无token，专题详情、个人主页亦是可以登录得
