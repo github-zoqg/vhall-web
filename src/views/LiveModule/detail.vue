@@ -103,6 +103,7 @@ export default {
   data(){
     return {
       msg: '',
+      userId: '',
       perssionInfo: {},
       isTrue: true,
       isShow: false,
@@ -138,6 +139,7 @@ export default {
     }
   },
   created(){
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getLiveDetail(this.$route.params.str);
     this.getPermission(this.$route.params.str);
   },
@@ -157,9 +159,8 @@ export default {
         }
     },
     getPermission(id) {
-      let userId = JSON.parse(sessionOrLocal.get('userId'));
       // 活动权限
-      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: userId, scene_id: 1}).then(res => {
+      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: this.userId, scene_id: 1}).then(res => {
       if(res.code == 200) {
         let arr = ['component_1','component_2','component_3','component_4','component_5','component_6','component_7','component_8','component_9'];
         if(res.data.permissions) {
@@ -226,6 +227,10 @@ export default {
     },
     // 下载二维码
     downErCode() {
+      this.$vhall_paas_port({
+        k: 100055,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       let image = new Image();
       // 解决跨域 Canvas 污染问题
       image.setAttribute("crossOrigin", "anonymous");
@@ -247,6 +252,10 @@ export default {
     // 复制
     doCopy () {
       this.$copyText(this.link).then(e => {
+        this.$vhall_paas_port({
+          k: 100056,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `复制成功`,
           showClose: true,
@@ -266,6 +275,10 @@ export default {
     },
     // 打开页面
     openLink() {
+      this.$vhall_paas_port({
+        k: 100057,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       window.open(this.link, '_blank');
     },
     //恢复预告
@@ -291,6 +304,10 @@ export default {
     },
     reSumeNotice() {
       this.$fetch('liveEdit', {webinar_id:this.$route.params.str, type: 2}).then(res=>{
+        this.$vhall_paas_port({
+          k: 100054,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `恢复预告成功`,
           showClose: true,
@@ -350,8 +367,8 @@ export default {
         console.log(item);
       }
     },
-    getAppersInfo(userId) {
-      this.$fetch('getVersionInfo', { user_id: userId}).then(res => {
+    getAppersInfo() {
+      this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
         if (res.data.arrears.total_fee < 0) {
           this.$confirm(`尊敬的微吼会员，您的${res.data.type == 1 ? '流量' : '并发套餐'}已用尽，请充值`, '提示', {
             confirmButtonText: '去充值',
@@ -381,8 +398,7 @@ export default {
     },
     toRoom(){
       // 跳转至发起页面
-      let userId = JSON.parse(sessionOrLocal.get('userId'));
-      this.getAppersInfo(userId);
+      this.getAppersInfo(this.userId);
       // let status = await
       // if (status) {
       //   this.$confirm('尊敬的微吼会员，您的流量已用尽，请充值', '提示', {

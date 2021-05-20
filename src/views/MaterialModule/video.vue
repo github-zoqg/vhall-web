@@ -233,6 +233,12 @@ export default {
   },
   methods: {
     searchTableList() {
+      if (this.keyword) {
+        this.$vhall_paas_port({
+          k: 100524,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList('search');
     },
     initPayMessage() {
@@ -260,6 +266,10 @@ export default {
       this.getList(formParams);
     },
     tirggerFile(event){
+      this.$vhall_paas_port({
+        k: 100518,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       const typeList = ['rmvb','mp4','avi','wmv','mkv','flv','mov','mp3','mav'];
       let file = event.target.files[0];
       let beforeName = event.target.files[0].name.toLowerCase();
@@ -467,6 +477,10 @@ export default {
       this.errorText = false;
       this.videoName = rows.name
       this.videoId = rows.id;
+      this.$vhall_paas_port({
+        k: 100522,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       // that.$prompt('', '编辑',{
       //     confirmButtonText: '确定',
       //     cancelButtonText: '取消',
@@ -497,6 +511,10 @@ export default {
        let name = `${this.videoName}${this.lowName}`
       this.$fetch('dataVideoupdate', {video_id: this.videoId, user_id: this.userId, filename: name}).then(res=>{
         if (res.code == 200) {
+          this.$vhall_paas_port({
+            k: 100521,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.editShowDialog = false;
           this.$message({
             message: `修改成功`,
@@ -510,7 +528,7 @@ export default {
       });
      }
     },
-    confirmDelete(id) {
+    confirmDelete(id, index) {
       this.$confirm('是否删除该文件？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -520,6 +538,10 @@ export default {
       }).then(() => {
         this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
           if (res.code == 200) {
+            this.$vhall_paas_port({
+              k: index == 1 ? 100520 : 100519,
+              data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.getTableList('search');
             this.$message({
               message: `删除成功`,
@@ -550,23 +572,27 @@ export default {
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
-          this.confirmDelete(rows.id);
+          this.confirmDelete(rows.id, 2);
         }).catch(() => {});
       } else {
-        this.confirmDelete(rows.id);
+        this.confirmDelete(rows.id, 2);
       }
 
     },
     // 批量删除
     allDelete() {
       let id = this.checkedList.join(',');
-      this.confirmDelete(id);
+      this.confirmDelete(id, 1);
     },
     preview(rows) {
       //  this.videoParam 进本信息
       if (rows.transcode_status == 1) {
         this.showDialog = true;
         this.videoParam = rows;
+        this.$vhall_paas_port({
+          k: 100523,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       } else {
         this.$message.warning('只有转码成功才能查看');
       }

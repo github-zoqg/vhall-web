@@ -15,7 +15,7 @@
         <div class="headBtnGroup">
           <el-button round size="medium" class="transparent-btn" @click="openDialog('theme')">设置</el-button>
           <el-button round size="medium"  class="transparent-btn" @click="openDialog('share')">分享</el-button>
-          <el-button type="primary" round size="medium" @click="rightComponent='signUpForm'">预览</el-button>
+          <el-button type="primary" round size="medium" @click="showSignUp">预览</el-button>
         </div>
       </pageTitle>
       <div id="settingBox" class="settingBox clearFix">
@@ -105,6 +105,7 @@ export default {
         cover: ''
       },
       radio: 3,
+      userId: '',
       rightComponent: 'fieldSet',
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       setOptions: {
@@ -162,6 +163,7 @@ export default {
     }
   },
   created(){
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getBaseInfo();
     this.getQuestionList();
   },
@@ -287,6 +289,10 @@ export default {
         webinar_id: this.webinar_id
       }).then(res => {
         if (res.code === 200) {
+          this.$vhall_paas_port({
+            k: value ? 100137 : 100138,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message:  `报名表单${ behaviour }成功`,
             showClose: true, // 是否展示关闭按钮
@@ -311,6 +317,13 @@ export default {
           });
         }
       });
+    },
+    showSignUp() {
+      this.rightComponent='signUpForm';
+      this.$vhall_paas_port({
+        k: 100188  ,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     // 更改表单基本信息的方法（通用）
     setBaseInfo(options, callback) {
@@ -545,6 +558,12 @@ export default {
     },
     // 打开 dialog 方法（通用）
     openDialog(ref){
+      if (ref === 'share') {
+        this.$vhall_paas_port({
+          k: 100182,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.$refs[ref].dialogVisible = true;
     }
   }

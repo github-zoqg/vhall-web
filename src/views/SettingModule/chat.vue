@@ -15,7 +15,7 @@
       </pageTitle>
       <div>
         <el-button type="primary" @click.prevent.stop="setKeyWordShow" class="length104" size="medium" round>设置</el-button>
-        <a :href="downloadHref" class="btn-a">
+        <a :href="downloadHref" class="btn-a" @click="downLoad">
           <el-button class="length104" size="medium" round v-if="downloadHref">
             下载模板
           </el-button>
@@ -59,13 +59,13 @@
                   placeholder="搜索严禁词"
                   v-model="pageInfo.keyword"
                   clearable
-                  @clear="searchKeyWord"
-                  @keyup.enter.native="searchKeyWord"
+                  @clear="searchWord"
+                  @keyup.enter.native="searchWord"
                   >
                   <i
                     class="el-icon-search el-input__icon"
                     slot="prefix"
-                    @click="searchKeyWord">
+                    @click="searchWord">
                   </i>
                 </el-input>
               </div>
@@ -104,7 +104,7 @@
                     v-preventReClick @click="keywordEdit(scope.row)">编辑</el-button>
                   <el-button
                   type="text"
-                  v-preventReClick  @click="keywordDel(scope.row)">删除</el-button>
+                  v-preventReClick  @click="keywordDel(scope.row, 2)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -307,7 +307,17 @@ export default {
       }
     },
     openChat() {
+      this.$vhall_paas_port({
+        k: 100017,
+        data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: 3, report_extra: {}, ref_url: '', req_url: ''}
+      })
       window.open(`${env.staticLinkVo.kf}`, '_blank');
+    },
+    downLoad() {
+      this.$vhall_paas_port({
+        k: 100588,
+        data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     deleteFile() {
       this.fileUrl = ''
@@ -375,6 +385,15 @@ export default {
       this.listPanelShow = true;
       this.pageInfo.keyword = '';
       this.searchKeyWord();
+    },
+    searchWord() {
+      if (this.pageInfo.keyword) {
+        this.$vhall_paas_port({
+          k: 100587,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.searchKeyWord()
     },
     searchKeyWord() {
       this.pageInfo.pos = 0;
@@ -455,6 +474,10 @@ export default {
                 customClass: 'zdy-info-box'
               });
             }
+            this.$vhall_paas_port({
+              k: this.addForm.executeType === 'add' ? 100582 : 100584,
+              data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.addShow = false;
             this.searchKeyWord(); // 刷新列表数据
           }).catch(res => {
@@ -471,7 +494,7 @@ export default {
       });
     },
     // 删除
-    keywordDel(rows) {
+    keywordDel(rows, index) {
       let that = this;
       that.$confirm('是否要删除选中的严禁词？', '提示', {
         cancelButtonText: '取消',
@@ -483,6 +506,10 @@ export default {
         that.$fetch('multiKeywordDel', {
           keyword_ids: rows.id
         }).then(res => {
+          that.$vhall_paas_port({
+            k: index === 1 ? 100586 : 100585,
+            data: {business_uid: that.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           that.$message({
             message:  `删除成功`,
             showClose: true,
@@ -529,7 +556,7 @@ export default {
         }); */
         this.keywordDel({
           id: this.ids.join(',')
-        });
+        }, 1);
       }
     },
     // 打开新增弹出框
@@ -630,6 +657,10 @@ export default {
       this.$fetch('uploadKeywordAdd', {
         file: this.fileUrl
       }).then(resV => {
+        this.$vhall_paas_port({
+          k: 100583,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.importResult = resV.data;
         this.multiUploadShow = false;
         this.isUploadEnd = false;
@@ -711,6 +742,7 @@ export default {
     }
   },
   created() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getSysConfig();
   }
 };

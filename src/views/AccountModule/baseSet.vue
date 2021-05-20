@@ -59,13 +59,19 @@ export default {
         company: '',
         position: ''
       },
+      reBaseForm: {
+        nick_name: '',
+        avatar: '',
+        company: '',
+        position: ''
+      },
       baseSetFormRules: {
         nick_name: [
           { required: true, message: '账号昵称不能为空', trigger: 'blur' },
           { max: 30, message: '最多可输入30个字符', trigger: 'blur' },
           { min: 1, message: '请输入账号昵称', trigger: 'blur' }
-        ]
-        ,company: [
+        ],
+        company: [
           { max: 100, message: '最多可输入100个字符', trigger: 'blur' },
         ],
         position: [
@@ -136,6 +142,7 @@ export default {
         let accountInfo = JSON.parse(account_info);
         this.baseSetForm = accountInfo;
         this.domain_url = accountInfo.avatar;
+        this.reBaseForm = JSON.parse(account_info);
         console.log(this.domain_url, this.baseSetForm.avatar, '其它头像地址');
       }
     },
@@ -149,9 +156,34 @@ export default {
             company: this.baseSetForm.company,
             position: this.baseSetForm.position
           };
+          let userId = this.$parent.userId;
           // 昵称、头像、公司、职位 可修改
           this.$fetch('userEdit', params).then(res => {
             console.log(res);
+            if (this.baseSetForm.nick_name != this.reBaseForm.nick_name) {
+              this.$vhall_paas_port({
+                k: 100781,
+                data: {business_uid: userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+            if (this.domain_url != this.reBaseForm.avatar || (this.reBaseForm.avatar && this.baseSetForm.avatar == '')) {
+              this.$vhall_paas_port({
+                k: 100782,
+                data: {business_uid: userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+            if (this.baseSetForm.company != this.reBaseForm.company) {
+              this.$vhall_paas_port({
+                k: 100783,
+                data: {business_uid: userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+            if (this.baseSetForm.position != this.reBaseForm.position) {
+              this.$vhall_paas_port({
+                k: 100784,
+                data: {business_uid: userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
             this.$message({
               message: '保存基本设置成功',
               showClose: true,
@@ -179,6 +211,7 @@ export default {
         scene_id: 2
       }).then(res =>{
         if(res.data) {
+          this.reBaseForm = res.data;
           sessionOrLocal.set('userInfo', JSON.stringify(res.data));
           sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
           this.$EventBus.$emit('saas_vs_account_change', res.data);

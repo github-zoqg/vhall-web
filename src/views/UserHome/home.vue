@@ -80,6 +80,10 @@ export default {
   methods: {
     // 打开 dialog 方法（通用）
     openDialog(ref){
+      this.$vhall_paas_port({
+        k: 100799,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$refs[ref].dialogVisible = true;
     },
     showSetHandle(type) {
@@ -87,6 +91,12 @@ export default {
       this.getHomePageInfo();
     },
     showBtnChange() {
+      if (this.open_hide) {
+        this.$vhall_paas_port({
+          k: 100804,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.open_hide = !this.open_hide;
     },
     getHomePageInfo() {
@@ -127,6 +137,7 @@ export default {
   },
   created() {
     this.static_img_url = `${defaultbg}`
+    this.userId = sessionOrLocal.get('userId');
     this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     this.getHomePageInfo();
   },

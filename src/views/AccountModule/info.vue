@@ -63,6 +63,7 @@ export default {
   data() {
     return {
       tabType: null,
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       userInfo: null,
       avatarImgUrl: ''
     };
@@ -71,6 +72,10 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
       let tabCount = this.tabType === 'validSet' ? 1 : this.tabType === 'accountSet' ? 2 : 0;
+      this.$vhall_paas_port({
+        k: tabCount === 1 ? 100779 : tabCount === 2 ? 100780 : 100778,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=${this.$route.query.tab}`;
       this.$router.push({path: `/acc/info`, query: {
         tab: tabCount

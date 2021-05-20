@@ -260,7 +260,10 @@ export default {
       docSDKReady: false,
       docsdk: {},
       pageInfo: {pageIndex: 0, total: 0},
+      isChangeTime: false,
+      isLinkDoc: false,
       tableData: [],
+      reTableData: [],
       selectedData: [],
       previewVisible: false,
       docToolStatus: {
@@ -439,6 +442,7 @@ export default {
           index: index + 1,
           userCreateTime: this.secondsFormmat(item.createTime),
           isChange: false,
+          isAdd: false,
           slideIndex: item.slideIndex + 1,
           stepIndex: item.stepIndex,
           sub: item.sub.map((subItem, subIndex) => ({
@@ -451,6 +455,7 @@ export default {
           }))
         }
       });
+      this.reTableData = JSON.parse(JSON.stringify(this.tableData))
       setTimeout(() => { this.isInit = false })
       this.docIds = [...new Set(ids)]
       this.getDocTitles();
@@ -473,6 +478,10 @@ export default {
       })
     },
     startTutorial() {
+      this.$vhall_paas_port({
+        k: 100421,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.tutorialVisible = true
     },
     handleInput(value) {
@@ -612,6 +621,10 @@ export default {
       document.getElementById('app').style.overflow = 'auto'
     },
     previewChapters() {
+      this.$vhall_paas_port({
+        k: 100426,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       window.scrollTo(0, 0);
       this.previewVisible = true;
       this.$refs.player.$PLAYER.pause();
@@ -620,7 +633,11 @@ export default {
     saveChapters() {
       debounce(() => {
         const createTimeArr = [];
+        let addFlag = 0;
         const doc_titles = this.tableData.map(item => {
+          if (item.isAdd) {
+            addFlag ++
+          }
           createTimeArr.push(item.isChange ? this.secondsReverse(item.userCreateTime) : item.createTime)
           return {
             document_id: item.docId,
@@ -659,6 +676,35 @@ export default {
           doc_titles: JSON.stringify(doc_titles)
         }).then(res => {
           if (res.code == 200) {
+            this.$vhall_paas_port({
+              k: 100420,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+            if (this.isLinkDoc) {
+              this.$vhall_paas_port({
+                k: 100422,
+                data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+            if (addFlag) {
+              this.$vhall_paas_port({
+                k: 100423,
+                data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+            let deleNum = this.reTableData.length - (this.tableData.length - addFlag)
+            if (deleNum) {
+              this.$vhall_paas_port({
+                k: 100424,
+                data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+            if (this.isChangeTime) {
+              this.$vhall_paas_port({
+                k: 100425,
+                data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
             this.$message({
               message:  '保存成功',
               showClose: true, // 是否展示关闭按钮
@@ -816,6 +862,7 @@ export default {
         createTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
         userCreateTime: this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime()),
         isChange: true,
+        isAdd: true,
         index: this.tableData.length + 1,
         stepIndex: 1,
         slideIndex: 1,
@@ -886,6 +933,7 @@ export default {
       // 时间为秒数，四舍五入取整数
       row.userCreateTime = this.secondsFormmat(this.$refs.player.$PLAYER.getCurrentTime());
       row.isChange = true
+      this.isChangeTime = true
       // row.createTime = this.$refs.player.$PLAYER.getCurrentTime();
     },
     // 添加子章节

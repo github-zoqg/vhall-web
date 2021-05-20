@@ -45,6 +45,7 @@ export default {
     return {
       tabType: null,
       type: 0,
+      userId: '',
       brandOpen: true,
       perssionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
       perssionWebInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
@@ -68,7 +69,7 @@ export default {
     }
   },
   created() {
-    // this.getPermission();
+    this.userId = JSON.parse(sessionOrLocal.get('userId'))
     if (this.perssionInfo['ui.brand_setting'] > 0) {
       this.tabType = 'signSet'
     } else {
@@ -90,6 +91,10 @@ export default {
         });
         return;
       }
+      this.$vhall_paas_port({
+        k: 100198,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       const { href } = this.$router.resolve({path:'/setting/brand'});
       window.open(href, '_blank');
     },
@@ -123,6 +128,10 @@ export default {
       };
       console.log('当前参数传递：', params);
       this.$fetch('planFunctionEdit', params).then(res => {
+        this.$vhall_paas_port({
+          k: this.brandOpen ? 100196 : 100197,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         if (this.brandOpen) {
           this.type = 1;
         } else {

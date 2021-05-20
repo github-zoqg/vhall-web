@@ -18,9 +18,9 @@
       <VhallInput placeholder="请输入活动标题" v-model="query.title"
                 clearable
                 v-clearEmoij
-                @keyup.enter.native="queryList"
+                @keyup.enter.native="searchList"
                 @clear="queryList">
-        <i class="el-icon-search el-input__icon" slot="prefix" @click="queryList"></i>
+        <i class="el-icon-search el-input__icon" slot="prefix" @click="searchList"></i>
       </VhallInput>
       <el-button size="medium" round @click="downloadHandle">导出数据</el-button>
     </div>
@@ -89,6 +89,15 @@ export default {
       // let currentTime = this.getNowMonthDay() + ` 23:59:59`
       // return time.getTime() > new Date(currentTime).getTime()
     },
+    searchList() {
+      if (this.query.title) {
+        this.$vhall_paas_port({
+          k: 100821,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.queryList()
+    },
     queryList() {
       this.query.pos = 0;
       this.query.pageNumber = 1;
@@ -149,6 +158,10 @@ export default {
         params.end_time = this.query.timeStr[1] || '';
       }
       this.$fetch(this.sonVo.vip_info.type > 0 ? 'exportFlowDetail' : 'exportOnlineDetail', this.$params(params)).then(res=>{
+        this.$vhall_paas_port({
+          k: 100822,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `下载申请成功，请去下载中心下载该项`,
           showClose: true,

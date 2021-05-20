@@ -137,7 +137,7 @@
                   <span class="isNum">{{formWatermark.img_alpha}}%</span>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary length152" v-preventReClick class="common-save" :disabled="!watermark_open" @click="preWatermark">保存</el-button>
+                  <el-button type="primary length152" v-preventReClick class="common-save" :disabled="!watermark_open" @click="preWatermark(1)">保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
@@ -155,7 +155,7 @@
                   active-color="#ff4949"
                   inactive-color="#ccc"
                   :active-text="bulletChatText"
-                  @change="otherOtherInfo(1)"
+                  @change="otherOtherInfo(formOther.bulletChat, 1)"
                 >
                 </el-switch>
               </p>
@@ -167,7 +167,7 @@
                   active-color="#ff4949"
                   inactive-color="#ccc"
                   :active-text="progressText"
-                  @change="otherOtherInfo(2)"
+                  @change="otherOtherInfo(formOther.progress, 2)"
                 >
                 </el-switch>
               </p>
@@ -179,7 +179,7 @@
                   active-color="#ff4949"
                   inactive-color="#ccc"
                   :active-text="doubleSpeedText"
-                  @change="otherOtherInfo(3)"
+                  @change="otherOtherInfo(formOther.doubleSpeed, 3)"
                 >
                 </el-switch>
               </p>
@@ -494,6 +494,10 @@ export default {
     // 关闭跑马灯
     closeHorseInfo() {
       if (!this.scrolling_open) {
+        this.$vhall_paas_port({
+          k: 100645,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.preFormHorse();
       }
       this.editHorseInfo();
@@ -506,11 +510,20 @@ export default {
     // 关闭水印
     openWaterMarkInfo() {
       if (!this.watermark_open) {
-        this.preWatermark();
+         this.$vhall_paas_port({
+          k: 100674,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        this.preWatermark(0);
       }
     },
     // 关闭或保存其他信息
-    otherOtherInfo() {
+    otherOtherInfo(value, index) {
+      let otherArr = [100680, 100682, 100684, 100686]
+      this.$vhall_paas_port({
+        k: value ? otherArr[index - 1] : otherArr[index - 1] + 1,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.preOthersOptions();
     },
     getMarqueeOptionInfo() {
@@ -588,6 +601,7 @@ export default {
       this.formHorse.scrolling_open = Number(this.scrolling_open);
       this.formHorse.type = 2;
       this.$fetch('setScrolling',this.$params(this.formHorse)).then(res => {
+        this.setHorseReportData()
         this.$message({
           message: this.scrolling_open ? "跑马灯开启成功" : '跑马灯关闭成功',
           showClose: true,
@@ -605,8 +619,47 @@ export default {
         });
       });
     },
+    // 设置跑马埋点数据
+    setHorseReportData() {
+      let loactionArr = [100653, 100654, 100655, 100656]
+      let fontArr = [100657, 100658, 100659, 100660, 100661, 100662, 100663, 100664, 100665, 100666, 100667, 100668, 100669, 100670]
+      if (this.scrolling_open) {
+         this.$vhall_paas_port({
+          k: 100644,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      // this.$vhall_paas_port({
+      //   k: this.formHorse.scroll_type == 1 ? 100647 : 100646,
+      //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      // })
+      this.$vhall_paas_port({
+        k: this.formHorse.text_type == 1 ? 100648 : 100649,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: this.formHorse.speed == 3000 ? 100652 : this.formHorse.speed == 6000 ? 1000651 : 100650,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: loactionArr[this.formHorse.position - 1],
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: fontArr[(this.formHorse.size - 10) / 2],
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: 100671,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {alpha:this.formHorse.alpha}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: 100672,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {interval:this.formHorse.interval}, ref_url: '', req_url: ''}
+      })
+    },
     // 保存水印
-    preWatermark() {
+    preWatermark(index) {
       if (!this.domain_url && this.watermark_open) {
         this.$message({
           message: `水印图片不能为空`,
@@ -621,6 +674,7 @@ export default {
       this.formWatermark.watermark_open = Number(this.watermark_open);
       this.formWatermark.type = 2;
       this.$fetch('setWatermark', this.$params(this.formWatermark)).then(res => {
+        index === 1 && this.setWaterReportData()
         this.$message({
           message: this.watermark_open ? "水印开启成功" : "水印关闭成功",
           showClose: true,
@@ -638,6 +692,24 @@ export default {
           customClass: 'zdy-info-box'
         });
       });
+    },
+    setWaterReportData() {
+      let loactionArr = [100675, 100676, 100678, 100677]
+      if (this.watermark_open) {
+        this.$vhall_paas_port({
+          k: 100673,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+
+      this.$vhall_paas_port({
+        k: loactionArr[this.formWatermark.img_position - 1],
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: 100679,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {alpha: this.formWatermark.img_alpha}, ref_url: '', req_url: ''}
+      })
     },
     // 保存播放器其他设置
     preOthersOptions () {

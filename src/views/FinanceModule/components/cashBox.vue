@@ -140,6 +140,7 @@ export default {
         money: '',
       },
       code: "",
+      isEditWeixin: false,
       phone: '',
       isTrue: false,
       nickName: '微吼直播',
@@ -344,6 +345,12 @@ export default {
       if (this.qrcode) {
         this.$fetch('getInfo', {scene_id: 2}).then(res => {
           if(res.code === 200) {
+            if (this.isEditWeixin) {
+              this.$vhall_paas_port({
+                k: 100753,
+                data: {business_uid: res.data.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
             sessionOrLocal.set('userInfo', JSON.stringify(res.data));
             sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
             window.location.reload();
@@ -355,6 +362,10 @@ export default {
       }
     },
     getNetWork() {
+       this.$vhall_paas_port({
+        k: 100754,
+        data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       let href = `https://e.vhall.com/home/vhallapi/exchangeagreement`;
       window.open(href, '_blank');
     },
@@ -389,6 +400,7 @@ export default {
       }
       this.$fetch('codeCheck', params).then(res => {
         if (res.code == 200) {
+          this.isEditWeixin = true;
           this.dialogChangeVisible = false;
           this.goBangWeixin();
           this.dialogVisible = true;

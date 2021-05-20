@@ -410,6 +410,10 @@ export default {
             url = 'goodsCreate';
           }
           this.$fetch(url, this.$params(obj)).then(res => {
+            this.$vhall_paas_port({
+              k: this.$route.query.goodId ? 100391 : 100390,
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: this.$route.query.goodId ? '修改成功' : '创建成功',
               showClose: true,

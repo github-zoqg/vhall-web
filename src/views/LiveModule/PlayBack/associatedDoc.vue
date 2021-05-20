@@ -283,6 +283,7 @@ export default {
             lockScroll: false,
             cancelButtonClass: 'zdy-confirm-cancel'
           }).then(() => {
+            this.$parent.isLinkDoc = true;
             this.$EventBus.$emit('demonstration', {
               documentIds: this.dialogMulti
             });

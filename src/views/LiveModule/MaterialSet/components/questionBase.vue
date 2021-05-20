@@ -197,6 +197,10 @@ export default {
         webinar_id: this.$route.params.str
       }
       this.$fetch('sharedLiveQuestion', params).then(res => {
+        this.$vhall_paas_port({
+          k: 100335,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `添加成功`,
           showClose: true,

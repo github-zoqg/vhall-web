@@ -366,6 +366,10 @@
         this.$fetch('userEdit', {
           is_dynamic: type === 'regular' ? 0 : 1
         }).then(res=>{
+           this.$vhall_paas_port({
+            k: type === 'regular' ? 100817 : 100818,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message:  '保存分配方式成功',
             showClose: true,

@@ -533,9 +533,25 @@ export default {
         }
       }
     },
+    getReportData() {
+      let userId = JSON.parse(sessionOrLocal.get('userId'));
+      let limitType = [100097, 100101, 100102, 100098, 100099, '', 100100]
+      this.$vhall_paas_port({
+        k: limitType[this.form.verify],
+        data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      if (this.form.is_preview) {
+        let previewType = [100103, 100104, 100105, 100106];
+        this.$vhall_paas_port({
+          k: previewType[this.form.preview_time / 5 - 1],
+          data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+    },
     sendViewerSetSave(params) {
       this.$fetch('viewerSetSave', this.$params(params)).then(res => {
         console.log(res);
+        this.getReportData();
         this.$message({
           message:  `设置成功`,
           showClose: true,

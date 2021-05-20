@@ -10,7 +10,7 @@ const router = [
       {
         path: 'word',
         component: () => import('@/views/MaterialModule/word'),
-        meta: { auth: true, title: '文档', name: 'wordMgr' }
+        meta: { auth: true, title: '文档', name: 'wordMgr'}
       },
       {
         path: 'video',
@@ -25,7 +25,7 @@ const router = [
       {
         path: 'addQuestion',
         component: () => import('@/views/MaterialModule/addQuestion'),
-        meta:{ auth: true, title: '创建问卷', name: 'addQuestionMgr', auth_key: 'ui.hide_survey' },
+        meta:{ auth: true, title: '创建问卷', name: 'addQuestionMgr', auth_key: 'ui.hide_survey'},
         hidden: true
       },
       {
@@ -46,7 +46,7 @@ const router = [
       {
         path: 'gift',
         component: () => import('@/views/MaterialModule/gift'),
-        meta: { auth: true, title: '礼物', name: 'giftMgr', auth_key: 'ui.show_gift' }
+        meta: { auth: true, title: '礼物', name: 'giftMgr', auth_key: 'ui.show_gift'}
       }
     ]
   }

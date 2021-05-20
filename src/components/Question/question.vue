@@ -116,6 +116,7 @@ export default {
           // 资料库问卷编辑
           this.materialEditQuestion(data.id, data.title, data.description);
         } {
+          this.questionDataInfo = data;
           this.liveMaterialEditQuestion(data.id, data.title, data.description);
         }
       });
@@ -127,7 +128,15 @@ export default {
     sureMaterialPrize() {
       if (this.sureChecked) {
         this.copeQuestion(this.questionDataInfo.id);
+        this.$vhall_paas_port({
+          k: 100339,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.query.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       } else {
+        this.$vhall_paas_port({
+          k: 100340,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.query.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
       }
     },
@@ -150,6 +159,10 @@ export default {
     materialQuestion(id, title, description) {
       this.$fetch('createQuestion', {survey_id: id, title: title, description: description}).then(res => {
         if (this.type == 1) {
+          this.$vhall_paas_port({
+            k: 100526,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: res.code == 200 ? '新建成功' : '新建失败',
             showClose: true,
@@ -164,6 +177,10 @@ export default {
     },
     materialEditQuestion(id, title, description) {
       this.$fetch('editQuestion', {survey_id: id, title: title, description: description}).then(res => {
+        this.$vhall_paas_port({
+          k: 100527,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: res.code == 200 ? '编辑成功' : '编辑失败',
           showClose: true,
@@ -184,12 +201,17 @@ export default {
         description: description,
       }
       this.$fetch('createLiveQuestion', params).then(res => {
+        this.$vhall_paas_port({
+          k: 100333,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.query.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: res.code == 200 ? '新建成功' : '新建失败',
           showClose: true,
           type: res.code == 200 ? 'success' : 'error',
           customClass: 'zdy-info-box'
         });
+        this.setReportData(id, title, description, this.questionDataInfo.detail)
         this.dialogTongVisible = false;
         this.$router.push({
           path: `/live/question/${this.$route.query.webinarId}`,
@@ -208,18 +230,213 @@ export default {
         description: description,
       }
       this.$fetch('editLiveQuestion', params).then(res => {
+        this.$vhall_paas_port({
+          k: 100334,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.query.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: res.code == 200 ? '编辑成功' : '编辑失败',
           showClose: true,
           type: res.code == 200 ? 'success' : 'error',
           customClass: 'zdy-info-box'
         });
+        this.setReportData(id, title, description, this.questionDataInfo.detail)
          this.$router.push({
             path: `/live/question/${this.$route.query.webinarId}`,
             query: {
               roomId: this.$route.query.roomId
             }
           });
+      })
+    },
+    setReportData(id, title, description, list) {
+      let userId = window.sessionStorage.getItem('userId')
+      if (title !== '问卷标题') {
+        this.$vhall_paas_port({
+          k: 100343,
+          data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+        })
+      }
+      if (description !== '问卷简介') {
+        this.$vhall_paas_port({
+          k: 100344,
+          data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+        })
+      }
+      list.map(item => {
+        if (item.style === 'name') {
+          this.$vhall_paas_port({
+            k: 100348,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.required === 'Y' ? 100349 : 100350,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+        }
+        if (item.style === 'sex'){
+          this.$vhall_paas_port({
+            k: 100351,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.required === 'Y' ? 100352 : 100353,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          let num = 0;
+          item.detail.list.forEach(items => {
+            if (items.isAdd) {
+              num ++;
+            }
+          })
+          if (num) {
+            this.$vhall_paas_port({
+              k: 100354,
+              data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id, other: num}, ref_url: '', req_url: ''}
+            })
+          }
+        }
+        if (item.style === 'email'){
+          this.$vhall_paas_port({
+            k: 100355,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.required === 'Y' ? 100356 : 100357,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+        }
+        if (item.style === 'area'){
+          this.$vhall_paas_port({
+            k: 100358,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.required === 'Y' ? 100359 : 100360,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+        }
+        if (item.style === 'birthday'){
+          this.$vhall_paas_port({
+            k: 100367,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.required === 'Y' ? 100368 : 100369,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+        }
+        if (item.style === 'company'){
+          this.$vhall_paas_port({
+            k: 100361,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.required === 'Y' ? 100362 : 100363,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+        }
+        if (item.style === 'position'){
+          this.$vhall_paas_port({
+            k: 100364,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.required === 'Y' ? 100365 : 100366,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+        }
+        if (item.style === 'industry'){
+          this.$vhall_paas_port({
+            k: 100370,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.required === 'Y' ? 100371 : 100372,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+        }
+        if (item.style === 'education'){
+          this.$vhall_paas_port({
+            k: 100373,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.required === 'Y' ? 100374 : 100375,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+        }
+        // 单选题
+        if (item.type === 'radio') {
+          this.$vhall_paas_port({
+            k: 100376,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.required === 'N' ? 100380 : 100379,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: 100377,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id, num: item.detail.list.length}, ref_url: '', req_url: ''}
+          })
+          let nums = 0;
+          item.detail.list.forEach(items => {
+            if (items.isAdd) {
+              nums ++;
+            }
+          })
+          if (nums > 0) {
+            this.$vhall_paas_port({
+              k: 100378,
+              data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id, other: nums}, ref_url: '', req_url: ''}
+            })
+          }
+
+        }
+        if (item.type === 'checkbox') {
+          this.$vhall_paas_port({
+            k: 100381,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.required === 'Y' ? 100384 : 100385,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: 100382,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id, num: item.detail.list.length}, ref_url: '', req_url: ''}
+          })
+          let len = 0;
+          item.detail.list.forEach(items => {
+            if (items.isAdd) {
+              len ++;
+            }
+          })
+          if (len > 0) {
+            this.$vhall_paas_port({
+              k: 100383,
+              data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id, other: len}, ref_url: '', req_url: ''}
+            })
+          }
+        }
+        // 问答
+        if (item.type === 'text' && item.style === 'text') {
+          this.$vhall_paas_port({
+            k: 100386,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.required === 'Y' ? 100387 : 100388,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+        }
+        if (item.type === 'remark') {
+          this.$vhall_paas_port({
+            k: 100389,
+            data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+          })
+        }
       })
     },
   }

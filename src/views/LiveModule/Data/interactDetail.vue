@@ -62,6 +62,7 @@
 import PageTitle from '@/components/PageTitle';
 import { textToEmoji } from '@/tangram/libs/chat/js/emoji';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   components: {
     PageTitle,
@@ -79,6 +80,7 @@ export default {
       webinarId: '',
       num:0,
       roomId: '',
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       searchTime: null,
       searchText: '',
       params: {},
@@ -453,7 +455,7 @@ export default {
       return arr;
     },
     //删除聊天（二次确认）
-    chatConfirmSure(id) {
+    chatConfirmSure(id, index) {
       this.$confirm('确定要删除该聊天记录吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -466,6 +468,10 @@ export default {
             room_id: this.roomId
           }
           this.$fetch('deleteChatList', obj).then(res => {
+            this.$vhall_paas_port({
+              k: index === 1 ? 100459 : 100460,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: `删除成功`,
               showClose: true,
@@ -487,7 +493,7 @@ export default {
     },
     // 聊天删除
     chatDetele(that, { rows }) {
-      that.chatConfirmSure(rows.msg_id);
+      that.chatConfirmSure(rows.msg_id, 2);
     },
     // 批量删除(问答和聊天)
     deleteAll(id) {
@@ -502,7 +508,7 @@ export default {
           });
         } else {
           id = this.seleteAllOptionList.join(',');
-          this.chatConfirmSure(id);
+          this.chatConfirmSure(id, 1);
         }
       } else {
           if (this.seleteAnwerList.length < 1 && this.seleteQuestionList.length < 1) {
@@ -533,6 +539,10 @@ export default {
             room_id: this.roomId
           }
           this.$fetch('deleteAllRecodrder', this.$params(obj)).then(res => {
+            this.$vhall_paas_port({
+              k: 100463,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: `删除成功`,
               showClose: true,
@@ -567,6 +577,10 @@ export default {
             room_id: that.roomId
           }
           that.$fetch('deleteRecodrder', obj).then(res => {
+            that.$vhall_paas_port({
+              k: 100462,
+              data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             that.$message.success('删除成功');
             that.getRecordList();
           });
@@ -827,6 +841,10 @@ export default {
     // 邀请详情导出
     exportInviteDetailInfo(id) {
        this.$fetch('exportDetailInvite', {webinar_id: this.webinarId, join_id: id }).then(res => {
+        this.$vhall_paas_port({
+          k: 100457,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -840,6 +858,10 @@ export default {
     // 邀请导出
     exportInviteInfo() {
       this.$fetch('exportInvite', {webinar_id: this.webinarId}).then(res => {
+        this.$vhall_paas_port({
+          k: 100456,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -853,6 +875,10 @@ export default {
     // 聊天
     exportChatInfo() {
       this.$fetch('exportChat', this.params).then(res => {
+        this.$vhall_paas_port({
+          k: 100458,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -866,6 +892,10 @@ export default {
     // 问答
     exportRecordInfo() {
       this.$fetch('exportRecodrder', this.$params(this.params)).then(res => {
+        this.$vhall_paas_port({
+          k: 100461,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -879,6 +909,10 @@ export default {
     // 签到
     exportSignInfo() {
       this.$fetch('exportSign', {room_id: this.roomId}).then(res => {
+        this.$vhall_paas_port({
+          k: 100465,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -891,6 +925,10 @@ export default {
     },
     exportDetailSignInfo(id) {
       this.$fetch('exportDetailSign',{room_id: this.roomId, sign_id: id}).then(res => {
+        this.$vhall_paas_port({
+          k: 100464,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -904,6 +942,10 @@ export default {
     // 问卷
     exportQuestionInfo() {
       this.$fetch('exportSurvey',{webinar_id: this.webinarId, room_id: this.roomId}).then(res => {
+        this.$vhall_paas_port({
+          k: 100469,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -917,6 +959,10 @@ export default {
     // 抽奖
     exportPrizeInfo() {
       this.$fetch('exportLottery', this.params).then(res => {
+        this.$vhall_paas_port({
+          k: 100471,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -930,6 +976,10 @@ export default {
     // 抽奖单个
     exportPrizeDetailInfo(item) {
       this.$fetch('exportDetailLottery',{webinar_id: this.webinarId, id: item.id}).then(res => {
+        this.$vhall_paas_port({
+          k: 100472,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -943,6 +993,10 @@ export default {
     // 发群红包
     exportRedpacketInfo() {
       this.$fetch('exportRedpacket',{webinar_id: this.webinarId}).then(res => {
+        this.$vhall_paas_port({
+          k: 100473,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -956,6 +1010,10 @@ export default {
      // 发群红包---导出明细
     exportRedpacketDetailInfo(uuid, type) {
       this.$fetch('exportDetailRedpacket',{webinar_id: this.webinarId, red_packet_uuid: uuid, type: type}).then(res => {
+        this.$vhall_paas_port({
+          k: 100474,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -969,6 +1027,10 @@ export default {
     // 问卷查看
     lookDetail(that, val) {
       let rows = val.rows;
+      that.$vhall_paas_port({
+        k: 100470,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       that.$router.push({path: `${val.path}/${that.webinarId}`, query: {surveyId: rows.survey_id,roomId:that.$route.query.roomId, subject: rows.subject, number: rows.filled_number}});
     }
   }

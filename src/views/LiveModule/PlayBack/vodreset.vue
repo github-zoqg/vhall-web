@@ -136,6 +136,7 @@
           quality: 2,
           position: 3
         },
+        userId: window.sessionStorage.getItem('userId'),
         domain_url: '',
         pathUrl: `interacts/vodreset-imgs/${this.$moment().format('YYYYMM')}`
       }
@@ -159,6 +160,20 @@
           ...otherParams
         }).then(res => {
           if (res.code == 200) {
+            let arrType = [100428, 100430, 100429]
+            let arrQuality = [100431, 100432, 100433]
+            this.$vhall_paas_port({
+              k: 100427,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+            this.$vhall_paas_port({
+              k: arrType[this.layout - 1],
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+            this.$vhall_paas_port({
+              k: arrQuality[this.vodresetForm.quality - 1],
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: `课件重制成功`,
               showClose: true,
@@ -182,6 +197,10 @@
         this.layout = index;
       },
       introduceDetail() {
+        this.$vhall_paas_port({
+          k: 100434,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.tutorialVisible = true;
       },
       uploadSuccess(res, file) {

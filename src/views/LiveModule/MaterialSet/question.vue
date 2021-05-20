@@ -54,6 +54,7 @@ import preQuestion from '@/components/Question/preQuestion';
 import baseQuestion from './components/questionBase';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import beginPlay from '@/components/beginBtn';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "question",
   data() {
@@ -62,6 +63,7 @@ export default {
       isSearch: false, //是否是搜索
       selectChecked: [],
       keyword: '',
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       loading: true,
       isShowQuestion: false,
       questionId: '',
@@ -105,6 +107,12 @@ export default {
       methodsCombin[val.type](this, val);
     },
     searchTableList() {
+      if (this.keyword) {
+        this.$vhall_paas_port({
+          k: 100342,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList('search')
     },
     getTableList(params) {
@@ -128,11 +136,19 @@ export default {
     // 预览
     preview(that, {rows}) {
       console.log('预览', rows);
+      that.$vhall_paas_port({
+        k: 100341,
+        data: {business_uid: that.userId, user_id: '', webinar_id: that.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       that.isShowQuestion = true;
       that.questionId = rows.question_id;
     },
     // 复制
     cope(that, {rows}) {
+      that.$vhall_paas_port({
+        k: 100336,
+        data: {business_uid: that.userId, user_id: '', webinar_id: that.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       let params = {
         survey_id: rows.question_id,
         webinar_id: that.$route.params.str,
@@ -190,9 +206,9 @@ export default {
     },
     // 删除
     del(that, {rows}) {
-      that.deleteConfirm(rows.question_id);
+      that.deleteConfirm(rows.question_id, 2);
     },
-    deleteConfirm(id) {
+    deleteConfirm(id, index) {
       this.$confirm('删除后，此问卷将无法使用，确认删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -201,6 +217,10 @@ export default {
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.$fetch('deleteLiveQuestion', {survey_ids: id, webinar_id: this.webinarId}).then(res => {
+            this.$vhall_paas_port({
+              k: index === 1 ? 100338 : 100337,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             if (res.code == 200) {
               this.$message({
                 message: `删除成功`,
@@ -241,7 +261,7 @@ export default {
           });
         } else {
           id = this.selectChecked.join(',');
-          this.deleteConfirm(id);
+          this.deleteConfirm(id, 1);
         }
     },
     // 选中

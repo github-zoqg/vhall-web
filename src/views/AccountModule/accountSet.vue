@@ -62,10 +62,18 @@ export default {
       }
     },
     bindWx() {
+      this.$vhall_paas_port({
+        k: 100789,
+        data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       sessionOrLocal.set('tag', 'bindWx', 'localStorage');
       window.open(`${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=pc&jump_url=${process.env.VUE_APP_WEB_URL}`, '_blank');
     },
     bindQQ() {
+      this.$vhall_paas_port({
+        k: 100788,
+        data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       sessionOrLocal.set('tag', 'bindQQ', 'localStorage');
       window.open(`${process.env.VUE_APP_BASE_URL}/v3/commons/auth/qq?jump_url=${process.env.VUE_APP_WEB_URL}`);
     },

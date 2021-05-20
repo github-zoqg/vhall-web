@@ -101,6 +101,7 @@ import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
+    let _this = this;
     return {
       titleType: 1,
       active: 2,
@@ -117,6 +118,8 @@ export default {
       areaDataList: {},
       highMax: 0,
       webianr_id: '',
+      timeType: 1,
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       deviceDataList: [],
       browerDataList: [],
       isActive: 1,
@@ -148,11 +151,13 @@ export default {
               const end = '';
               const start = '';
               picker.$emit('pick', [start, end]);
+              _this.timeType = 0;
             }
           },
           {
             text: '今日',
             onClick(picker) {
+              console.log(picker, '>>???????????????')
               let childrenArray = Array.from(picker.$el.firstChild.firstChild.children)
               childrenArray.forEach((item)=>{
                 item.style.color = '#666'
@@ -163,6 +168,7 @@ export default {
               end.setTime(end.getTime());
               start.setTime(start.getTime());
               picker.$emit('pick', [start, end]);
+              _this.timeType = 1;
             }
           },
           {
@@ -175,9 +181,11 @@ export default {
               picker.$el.firstChild.firstChild.children[2].style.color = '#FB3A32'
               const end = new Date();
               const start = new Date();
+
               end.setTime(end.getTime() - 3600 * 1000 * 24);
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
               picker.$emit('pick', [start, end]);
+              _this.timeType = 2;
             }
           }, {
             text: '近30日',
@@ -192,6 +200,7 @@ export default {
               end.setTime(end.getTime() - 3600 * 1000 * 24);
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
               picker.$emit('pick', [start, end]);
+              _this.timeType = 3;
             }
           }],
         // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
@@ -264,6 +273,13 @@ export default {
       })
     },
     getDataList(params) {
+      if (this.type == 1) {
+        let timeArr = [100435, 100436, 100437, 100438]
+        this.$vhall_paas_port({
+          k: timeArr[this.timeType],
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       let paramsObj = {
         webinar_id: this.$route.params.str,
         switch_id: this.switchId || 0,
@@ -329,6 +345,10 @@ export default {
     // 导出
     exportCenterData() {
       this.$fetch('exportWebinarInfo', this.params).then(res => {
+        this.$vhall_paas_port({
+          k: 100441,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `活动数据报告导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -353,6 +373,10 @@ export default {
       } else {
         this.dateValue = '';
       }
+      this.$vhall_paas_port({
+        k: this.type == 1 ? 100439 : 100440,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.getDataList()
     },
     changeTime(title) {

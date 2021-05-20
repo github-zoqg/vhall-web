@@ -164,6 +164,7 @@ export default {
       },
       importWordShow: false,
       env: Env,
+      userId: '',
       activeIns: null,
       isLoading: false,
       no_show: false,
@@ -385,12 +386,28 @@ export default {
       }
     },
     sureAsyncHandle() {
+      this.$vhall_paas_port({
+        k: 100299,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       if (this.asyncDialog.sureChecked) {
         // 同步到资料库
         this.asyncWord(this.asyncDialog.rows);
+        this.$vhall_paas_port({
+          k: 100300,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        this.$vhall_paas_port({
+          k: 100304,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       } else {
         this.asyncDialog.visible = false;
         // 未勾选同步，不同步数据
+        this.$vhall_paas_port({
+          k: 100305,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.initPage();
       }
     },
@@ -437,6 +454,12 @@ export default {
     },
     beforeUploadHandler(file){
       console.log(file);
+      if (!this.$route.params.str) {
+        this.$vhall_paas_port({
+          k: 100511,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       const typeList = ['doc','docx','xls','xlsx','ppt','pptx','pdf','jpeg','jpg','png','bmp'];
       let fileNameArr = file.name.split('.');
       let lastFileKey = fileNameArr[fileNameArr.length - 1];
@@ -526,7 +549,7 @@ export default {
           });
           this.deleteSend({
             id: ids.join(',')
-          })
+          }, 1)
         }).catch(() => {
         });
       } else {
@@ -642,6 +665,10 @@ export default {
       that.docLoadComplete = false;
       await that.$nextTick(() => {})
       that.docEvents(rows);
+      that.$vhall_paas_port({
+        k: that.$route.params.str ? 100306 : 100514,
+        data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     // 动态演示
     async preDocShow(that, { rows }) {
@@ -654,6 +681,10 @@ export default {
       that.docLoadComplete = false;
       await that.$nextTick(() => {})
       that.docDotEvents(rows);
+      that.$vhall_paas_port({
+        k: that.$route.params.str ? 100307 : 100515,
+        data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     // 删除
     deleteHandle(that, { rows }) {
@@ -665,7 +696,7 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        that.deleteSend(rows);
+        that.deleteSend(rows, 2);
       }).catch(() => {
         that.$message({
           message:  `已取消删除`,
@@ -676,13 +707,23 @@ export default {
         });
       });
     },
-    deleteSend(rows) {
+    deleteSend(rows, index) {
       let params = {
         ids: rows.id,
         tag: this.$route.params.str ? 1 : 2,
         webinar_id: this.$route.params.str
       };
       this.$fetch('delWordList', this.$params(params)).then(res=>{
+        let k = 0
+        if (this.$route.params.str) {
+          k = index == 1 ? 100303 : 100302
+        } else {
+          k = index == 1 ? 100513 : 100512
+        }
+        this.$vhall_paas_port({
+          k: k,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message:  `删除成功`,
           showClose: true,
@@ -726,6 +767,12 @@ export default {
         this.$refs.tableListWord.pageInfo.pos = 0;
       } catch (e) {
         console.log(e);
+      }
+      if (this.formParams.keyword) {
+        this.$vhall_paas_port({
+          k: this.$route.params.str ? 100308 : 100516,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       }
       this.getTableWordList();
     },
@@ -918,6 +965,7 @@ export default {
   },
   created() {
     // 如果存在活动Id，查询活动接口
+    this.userId = JSON.parse(sessionOrLocal.get("userId"))
     let id = this.$route.params.str;
     if(id) {
       this.getWebinarInfo();
