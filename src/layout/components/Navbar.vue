@@ -208,7 +208,7 @@ export default {
         sessionOrLocal.clear('localStorage');
         // 监听消息变化
         this.$EventBus.$emit('saas_vs_login_out', true);
-        if(res.data && out_url) {
+        if(out_url) {
           window.location.href = out_url
         } else {
           this.$router.push({
