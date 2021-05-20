@@ -90,7 +90,7 @@
                 </div>
               </div>
               <div class="gzh_pc">
-                <img class="gzh_bg_default" src="../../../common/images/official/pc_yl@2x.png" alt=""/>
+                <img class="gzh_bg_default" src="../../../common/images/official/pc@2x.png" alt=""/>
               </div>
             </div>
           </div>
@@ -478,9 +478,10 @@ export default {
       position: relative;
       img {
         width: 400px;
-        height: 274px;
+        height: 230px;
         display: block;
         margin: 24px auto 0;
+        border-radius: 4px;
       }
       .pc-poster-wrap{
         position: absolute;

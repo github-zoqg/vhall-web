@@ -108,11 +108,11 @@
               <!-- 开屏海报 -->
               <div class="hb_pc">
                 <!-- <img class="hb_bg_default hb_bg"  src="../../../common/images/official/poster.png" alt="" /> -->
-                <img class="hb_bg_default" src="../../../common/images/poster/pc_yl@2x.png" alt=""/>
+                <img class="hb_bg_default" src="../../../common/images/poster/pc-2.png" alt=""/>
                 <!-- 开启 并且有图-->
                 <div class="pc-poster-wrap">
                   <img class="hb_img v-poster-preview" :src="domain_url" alt="" v-if="status <= 0 && domain_url"/>
-                  <img class="hb_img v-poster-preview" src="../../../common/images/poster/pc_poster_default.png"  v-if="!domain_url" />
+                  <img class="hb_img v-poster-preview" src="../../../common/images/poster/pc-1.png"  v-if="!domain_url" />
                 </div>
                <!--  <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button> -->
                 <div :class="['poster-btn', {'five': alertType > 0}]"></div>
