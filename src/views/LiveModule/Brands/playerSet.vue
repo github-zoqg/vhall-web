@@ -32,10 +32,10 @@
                     </el-switch>
                   </p>
                 </el-form-item>
-                <el-form-item label="显示方式">
+                <!-- <el-form-item label="显示方式">
                   <el-radio v-model="formHorse.scroll_type" :label="1" :disabled="!scrolling_open" @change="editHorseInfo">滚动</el-radio>
                   <el-radio v-model="formHorse.scroll_type" :label="2" :disabled="!scrolling_open" @change="editHorseInfo">闪烁</el-radio>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="文本类型">
                   <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open" @change="editHorseInfo">固定文本</el-radio>
                   <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open" @change="editHorseInfo">固定文本+观看者ID和昵称</el-radio>
@@ -67,7 +67,7 @@
                   <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="formHorse.color"></color-set>
                 </el-form-item>
                 <el-form-item label="不透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px" @change="editHorseInfo"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
-                <el-form-item label="移动速度" v-if="formHorse.scroll_type == 1">
+                <el-form-item label="移动速度">
                   <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open" @change="editHorseInfo">慢</el-radio>
                   <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open" @change="editHorseInfo">中</el-radio>
                   <el-radio v-model="formHorse.speed" :label="3000" :disabled="!scrolling_open" @change="editHorseInfo">快</el-radio>
@@ -79,7 +79,7 @@
                   <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open" @change="editHorseInfo">下</el-radio>
                 </el-form-item>
                 <!-- v-if="formHorse.scroll_type == 1" -->
-                <el-form-item label="间隔时间" prop="interval" v-if="formHorse.scroll_type == 1">
+                <el-form-item label="间隔时间" prop="interval">
                   <el-input
                     v-model="formHorse.interval"
                     :disabled="!scrolling_open"
@@ -358,7 +358,7 @@ export default {
         text: '版权所有，盗版必究',
         position: 1,
         alpha: 100,
-        scroll_type: 1,
+        // scroll_type: 1,
         interval: 20
       },
       fontList: [],
@@ -388,7 +388,7 @@ export default {
         color: '#FFFFFF',   //  文字颜色
         interval: 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: 6000, // 跑马灯移动速度  3000快     6000中   10000慢
-        displayType: 0,
+        // displayType: 0,
         position: 1
       },
       rules: {
@@ -638,9 +638,9 @@ export default {
         alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
         size:this.formHorse.size,      // 文字大小
         color: this.formHorse.color || '#FFFFFF',   //  文字颜色
-        interval: this.formHorse.scroll_type == 1 ? this.formHorse.interval : 1, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
+        interval:this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: this.formHorse.speed || 6000, // 跑马灯移动速度  3000快     6000中   10000慢
-        displayType: this.formHorse.scroll_type == 1 ? 0 : 1,
+        // displayType: this.formHorse.scroll_type == 1 ? 0 : 1,
         position:this.formHorse.position
       }
     },
@@ -752,10 +752,10 @@ export default {
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
       }
-      this.$vhall_paas_port({
-        k: this.formHorse.scroll_type == 1 ? 100233 : 100232,
-        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
+      // this.$vhall_paas_port({
+      //   k: this.formHorse.scroll_type == 1 ? 100233 : 100232,
+      //   data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      // })
       this.$vhall_paas_port({
         k: this.formHorse.text_type == 1 ? 100234 : 100235,
         data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
