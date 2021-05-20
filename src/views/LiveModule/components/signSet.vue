@@ -243,8 +243,9 @@ export default {
         if(valid) {
           console.log(this.signSetForm, 'signSetForm');
           let params = Object.assign(this.signSetForm, {webinar_id: this.$route.params.str || '', type: this.brandType});
+          let signObj = {}
           this.$fetch('setInterWebinarTag', this.$params(params)).then(res => {
-            console.log(res);
+            this.setReportData(this.$params(params))
             this.$message({
               message:  `保存基本设置成功`,
               showClose: true,
@@ -266,6 +267,40 @@ export default {
           });
         }
       });
+    },
+    setReportData(params) {
+      let {keys,values} = Object;
+      let wData = {
+        'organizers_status': 100199,
+        'reserved_status': 100201,
+        'view_status': 100203
+      }
+      let UData = {
+        'organizers_status': 100634,
+        'reserved_status': 100636,
+        'view_status': 100638
+      }
+      let data = this.$route.params.str ? wData : UData
+      keys(params).map((item,value) => {
+        if (data[item]) {
+          this.$vhall_paas_port({
+            k: Number(values(params)[value]) === 1 ? data[item] + 1 : data[item],
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+      })
+      if (params.logo_url) {
+        this.$vhall_paas_port({
+          k: this.$route.params.str ? 100205 : 100640,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      if (params.skip_url) {
+        this.$vhall_paas_port({
+          k: this.$route.params.str ? 100206 : 100641,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str|| '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
     }
   }
 };

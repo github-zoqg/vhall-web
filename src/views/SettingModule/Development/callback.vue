@@ -34,7 +34,7 @@
             &nbsp;
             <el-tooltip effect="dark" placement="right" v-tooltipMove>
               <div slot="content">
-                <span>1.默认关闭</span> <br/> 
+                <span>1.默认关闭</span> <br/>
                 <p style="width:400px">2.开启后需要在5s内响应SUCCESS（不区分大小写），则视为投递成功，否则按下列规则重试：重试队列，重试16次，间隔时间为：10秒、30秒、1-10分钟、20分钟、30分钟、1小时、2小时</p>
               </div>
               <i class="iconfont-v3 saasicon_help_m"></i>
@@ -100,6 +100,7 @@ export default {
     }
   },
   created() {
+    this.userId = this.$route.query.userId;
     this.getCallbackInfo();
   },
   methods: {
@@ -115,6 +116,7 @@ export default {
             res.data.fail_try_request = 0
           }
           this.form = res.data;
+          this.form.callback_type = 1;
           eventsList = (res.data.callback_event || '').split(',');
         } else {
           this.form = {
@@ -124,54 +126,69 @@ export default {
         }
         this.isAdd = !(res.data && res.data.id);
         let keyList = [
+          // {
+          //   type: 'key_2',
+          //   key_name: '失败重启',
+          //   openShow: '开启后，系统需在5秒内响应SUCCESS(不区分大小写)',
+          //   closeShow: '已开启，系统需在5秒内响应SUCCESS(不区分大小写)',
+          //   value: Number(eventsList.includes('2') ? 1 : 0) || 0,
+          //   k: eventsList.includes('2') ? 100599 : 100600
+          // },
           {
             type: 'key_1',
             key_name: '活动状态',
             openShow: '开启后，直播开始或结束时进行通知',
             closeShow: '已开启，直播开始或结束时进行通知',
-            value: Number(eventsList.includes('1') ? 1 : 0) || 0
+            value: Number(eventsList.includes('1') ? 1 : 0) || 0,
+            k: 100601
           },
           {
             type: 'key_4',
             key_name: '生成回放',
             openShow: '开启后，直播结束并生成回放成功进行通知',
             closeShow: '已开启，直播结束并生成回放成功进行通知',
-            value: Number(eventsList.includes('4') ? 1 : 0) || 0
+            value: Number(eventsList.includes('4') ? 1 : 0) || 0,
+            k:100603
           },
           {
             type: 'key_8',
             key_name: '裁剪回放',
             openShow: '开启后，裁剪视频成功后进行通知',
             closeShow: '已开启，裁剪视频成功后进行通知',
-            value: Number(eventsList.includes('8') ? 1 : 0) || 0
+            value: Number(eventsList.includes('8') ? 1 : 0) || 0,
+            k: 100605
           },
           {
             type: 'key_5',
             key_name: '回放分辨率',
             openShow: '开启后，回放转码成功后支持获取不同分辨率',
             closeShow: '已开启，回放转码成功后支持获取不同分辨率',
-            value: Number(eventsList.includes('5') ? 1 : 0) || 0
+            value: Number(eventsList.includes('5') ? 1 : 0) || 0,
+            k: 100607
           },
           {
             type: 'key_6',
             key_name: '回放下载',
             openShow: '开启后，回放下载成功进行通知',
             closeShow: '已开启，回放下载成功进行通知',
-            value: Number(eventsList.includes('6') ? 1 : 0) || 0
+            value: Number(eventsList.includes('6') ? 1 : 0) || 0,
+            k: 100609
           },
           {
             type: 'key_3',
             key_name: '视频转码',
             openShow: '开启后，JSSDK上传视频并转码成功进行通知',
             closeShow: '已开启，JSSDK上传视频并转码成功进行通知',
-            value: Number(eventsList.includes('3') ? 1 : 0) || 0
+            value: Number(eventsList.includes('3') ? 1 : 0) || 0,
+            k: 100611
           },
           {
             type: 'key_7',
             key_name: '文档转码',
             openShow: '开启后，文档上传并转码成功进行通知',
             closeShow: '已开启，文档上传并转码成功进行通知',
-            value: Number(eventsList.includes('7') ? 1 : 0) || 0
+            value: Number(eventsList.includes('7') ? 1 : 0) || 0,
+            k: 100613
           }
         ];
         this.keyList = keyList;
@@ -182,6 +199,13 @@ export default {
           callback_url: null
         }
         this.keyList = [
+          {
+            type: 'key_2',
+            key_name: '失败重启',
+            openShow: '开启后，系统需在5秒内响应SUCCESS(不区分大小写)',
+            closeShow: '已开启，系统需在5秒内响应SUCCESS(不区分大小写)',
+            value: 0
+          },
           {
             type: 'key_1',
             key_name: '活动状态',
@@ -248,6 +272,7 @@ export default {
             msg_type: this.form.msg_type
           }
           this.$fetch(this.isAdd ? 'addCallbackInfo' : 'editCallbackInfo', params).then(res => {
+            this.setReportData(this.keyList)
             this.$message({
               message:  `设置成功`,
               showClose: true,
@@ -267,6 +292,22 @@ export default {
             });
           })
         }
+      })
+    },
+    setReportData(list) {
+      this.$vhall_paas_port({
+        k: 100596,
+        data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      // this.$vhall_paas_port({
+      //   k: this.form.callback_type == 1 ? 100597 : 100598,
+      //   data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      // })
+      list.map(item => {
+        this.$vhall_paas_port({
+          k: item.value == 1 ? item.k : item.k + 1,
+          data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       })
     }
   }
@@ -350,7 +391,7 @@ export default {
 .leve3_title {
   display: inline-block;
   text-align: right;
-  min-width: 91px;
+  min-width: 80px;
 }
 
 .saasicon_help_m {

@@ -8,7 +8,7 @@
         class="right-menu-item"
         v-if="!(userInfo && userInfo.is_new_regist > 0) && (userInfo && userInfo.user_extends.extends_remark !== 1) && !isMiniScreen"
       >
-        <a :href="oldUrl" class="set-font">返回旧版</a>
+        <a :href="oldUrl" class="set-font" @click="returnOldVersion">返回旧版</a>
       </div>
       <!-- 下载中心 -->
       <div v-if="!isMiniScreen" class="right-menu-item" @click.prevent.stop="toDownloadPage">
@@ -123,16 +123,38 @@ export default {
   // inject: [],
   methods: {
     toHelpPage() {
+      this.$vhall_paas_port({
+        k: 100003,
+        data: {business_uid: this.userInfo.user_id, user_id: this.userInfo.user_id, s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       window.open(Env.staticLinkVo.helpLinkUrl, '_blank');
     },
     toMsgPage() {
+      this.$vhall_paas_port({
+        k: 100004,
+        data: {business_uid: this.userInfo.user_id, user_id: this.userInfo.user_id, s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({path: '/other/msgList'});
     },
     toDownloadPage() {
       this.getDownNum();
+      this.$vhall_paas_port({
+        k: 100002,
+        data: {business_uid: this.userInfo.user_id, user_id: this.userInfo.user_id, s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({path: '/other/downloadList'});
     },
+    returnOldVersion() {
+      this.$vhall_paas_port({
+        k: 100001,
+        data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+    },
     toAccountPage() {
+      this.$vhall_paas_port({
+        k: 100831,
+        data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({path: '/acc/info'});
     },
     getUnreadNum() {
@@ -154,6 +176,10 @@ export default {
     logout() {
       let out_url = sessionOrLocal.get('SAAS_V3_CTRL_OUT', 'localStorage');
       this.$fetch('loginOut', {}).then(res =>{
+        this.$vhall_paas_port({
+          k: 100832,
+          data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         sessionOrLocal.clear();
         sessionOrLocal.clear('localStorage');
         // 清除cookies

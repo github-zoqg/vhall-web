@@ -254,6 +254,10 @@ export default {
             // 直播-新建广告
             if (this.advInfo.adv_id) {
               this.createAdvAndsync(0);
+              this.$vhall_paas_port({
+                k: 100281,
+                data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
             } else {
               this.dialogTongVisible = true;
             }
@@ -270,10 +274,18 @@ export default {
         // 同步资料库
           // this.advertisement.is_sync = 1;
           this.createAdvAndsync(1);
+          this.$vhall_paas_port({
+            k: 100286,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
       } else {
         // 不同步资料库
         // this.advertisement.is_sync = 0;
         this.createAdvAndsync(0);
+        this.$vhall_paas_port({
+          k: 100287,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       }
     },
     createAdv() {
@@ -300,6 +312,23 @@ export default {
       params.img_url = this.$parseURL(params.img_url).path;
       this.$fetch(url, params).then(res => {
         if (res && res.code === 200) {
+          if (this.$route.params.str) {
+            this.$vhall_paas_port({
+              k: this.advertisement.adv_id ? 100281 : 100280,
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+            if (type === 1 && !this.advertisement.adv_id) {
+              this.$vhall_paas_port({
+                k: 100551,
+                data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+          } else {
+            this.$vhall_paas_port({
+              k: this.advertisement.adv_id ? 100552 : 100551,
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
           this.dialogVisible = false;
           this.dialogTongVisible = false;
           this.advertisement = {};
@@ -401,6 +430,10 @@ export default {
       }
       this.$fetch('advSaveToWebinar', params).then(res => {
         if (res.code == 200) {
+          this.$vhall_paas_port({
+            k: 100283,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: `选择广告成功`,
             showClose: true,

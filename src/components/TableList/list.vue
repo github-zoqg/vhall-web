@@ -292,6 +292,7 @@ export default {
         rows: scope.row,
         path: item.path || '',
         type: item.methodName,
+        index: item.index
       };
       this.$emit('onHandleBtnClick', Object.assign({}, obj));
     },

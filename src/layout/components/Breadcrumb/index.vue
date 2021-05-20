@@ -58,6 +58,13 @@ export default {
       console.log('导航面包屑')
       console.log(this.$route);
       // only show routes with meta.title
+      let userId = JSON.parse(sessionOrLocal.get("userId"))
+      if (this.$route.meta.k) {
+        this.$vhall_paas_port({
+          k: this.$route.meta.k,
+          data: {business_uid: userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       let matched = this.$route.matched.filter(item => item.meta && item.meta.title);
       const first = matched[0];
       // if (!this.isDashboard(first)) {

@@ -68,6 +68,7 @@ import PageTitle from '@/components/PageTitle';
 import DateData from './components/dateData';
 import LiveData from './components/liveData';
 import Clipboard from 'clipboard';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'sonDetail.vue',
   components: {
@@ -78,6 +79,7 @@ export default {
   data() {
     return {
       tabType: 'dateData',
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       sonVo: {
         vip_info: {}
       }
@@ -92,6 +94,11 @@ export default {
   methods:{
     handleClick(tab, event) {
       console.log(tab, event);
+      this.$vhall_paas_port({
+        k: this.tabType === 'dateData' ? 100819 : 100820,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+
       this.$nextTick(() => {
         this.$refs[`${this.tabType}Comp`].initComp(this.sonVo);
       });
@@ -115,6 +122,10 @@ export default {
         text: () => text
       });
       clipboard.on('success', () => {
+        this.$vhall_paas_port({
+          k: 100815,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message:  '复制成功',
           showClose: true, // 是否展示关闭按钮

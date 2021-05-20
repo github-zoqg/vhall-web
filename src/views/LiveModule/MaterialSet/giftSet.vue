@@ -202,7 +202,7 @@
       <div class="control">
         <span>当前选中<span class="choosed-num"> {{addGiftsIds.length}} </span>件礼物</span>
         <div class="control-btn" style="text-align: right;">
-          <el-button @click="chooseGift" type="primary" round :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
+          <el-button @click="chooseGift()" type="primary" round :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
           <el-button @click="handleCloseChooseGift" round>取消</el-button>
         </div>
       </div>
@@ -240,6 +240,7 @@ export default {
     };
     return {
       webinar_id: this.$route.params.str,
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       room_id: this.$route.query.roomId,
       total: 0,
@@ -426,6 +427,12 @@ export default {
       })
     },
     searchGifts() {
+      if (this.searchName) {
+         this.$vhall_paas_port({
+          k: 100404,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList(true)
     },
     selectHandle(row) {
@@ -607,6 +614,10 @@ export default {
           room_id: this.room_id
         }).then((res) => {
           if (res.code == 200) {
+            this.$vhall_paas_port({
+              k: 100399,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: `编辑成功`,
               showClose: true,
@@ -654,6 +665,10 @@ export default {
           room_id: this.room_id
         }).then((res) => {
           if (res.code == 200) {
+            this.$vhall_paas_port({
+              k: 100398,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: `创建成功`,
               showClose: true,
@@ -789,7 +804,7 @@ export default {
       this.tableData = resData
       this.addedGiftsIds = this.addedGiftsIds.filter(curItem => curItem != this.deleteId)
 
-      this.chooseGift(1)
+      this.chooseGift(1, 2)
 
       this.total = this.tableData.length
       // 切换table显示的内容
@@ -846,7 +861,7 @@ export default {
           return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
         })
       }
-      this.chooseGift(1)
+      this.chooseGift(1, 1)
       this.selectIds = []
     },
     // 选择奖品添加
@@ -867,12 +882,17 @@ export default {
       }
       this.materiaTableData[index].isChecked = !this.materiaTableData[index].isChecked
     },
-    chooseGift(isDeleteChoose) {
+    chooseGift(isDeleteChoose, index) {
+      // index: 1：批量删除   2：删除  3：选择礼物
       this.resultAddGifts = [...(new Set([...this.addedGiftsIds, ...this.addGiftsIds]))]
       this.$fetch('setRelevance', {
         gift_ids: this.resultAddGifts.join(','),
         room_id: this.room_id
       }).then(res => {
+        this.$vhall_paas_port({
+          k: index === 1 ?  100403: index === 2 ? 100402 : 100401,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.handleCloseChooseGift()
         isDeleteChoose != 1 && this.getTableList()
       })

@@ -180,6 +180,10 @@ export default {
           }).catch(()=>{});
           return;
         }
+        this.$vhall_paas_port({
+          k: title === '升级' ? 100689 : 100692,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         if (title === '升级' && this.userInfo.left_months < 1) {
           this.$alert('当前套餐剩余有效时间不满一个月，不支持升级', '提示', {
             confirmButtonText: '知道了',
@@ -218,6 +222,10 @@ export default {
         }).catch(()=>{});
           return;
         }
+        this.$vhall_paas_port({
+          k: 100703,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.title = this.versionType;
         this.concurrentPrice = this.userInfo;
         this.$refs.levelVersion.dialogBuyVisible = true;

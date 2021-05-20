@@ -7,7 +7,7 @@
           ref="searchAccount"
           :searchAreaLayout="searchDetail"
           @onExportData="exportAccount()"
-          @onSearchFun="getDetailList('search')"
+          @onSearchFun="getSearchList()"
         >
       </search-area>
       <div>
@@ -143,6 +143,18 @@ export default {
     this.getDetailList();
   },
   methods: {
+    getSearchList() {
+      let formParams = this.$refs.searchAccount.searchParams;
+      this.$vhall_paas_port({
+        k: formParams.withdraw_status === 1 ? 100771 : formParams.withdraw_status === 2 ? 100772 : formParams.withdraw_status === 0 ? 100770 : 100769,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: formParams.withdraw_type === 1 ? 100775 : formParams.withdraw_type === 0 ? 100774 : 100773,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.getDetailList('search')
+    },
     getDetailList(params) {
       // let pageInfo = this.$refs.tableAccount.pageInfo; //获取分页信息
       let formParams = this.$refs.searchAccount.searchParams; //获取搜索参数
@@ -188,6 +200,10 @@ export default {
     },
     exportAccount() {
        this.$fetch('exportWithdraw', this.$params(this.params)).then(res => {
+        this.$vhall_paas_port({
+          k: 100776,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `账单明细导出申请成功，请去下载中心下载`,
           showClose: true,

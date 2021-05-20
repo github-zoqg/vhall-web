@@ -109,11 +109,21 @@ export default {
     // 切换选项卡
     handleClick(tab, event) {
       console.log(tab, event);
+      this.$vhall_paas_port({
+        k: this.tabType === 'live' ? 100801 : 100802,
+        data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.query.keyword = '';
       this.searchHandle();
     },
     // 查询
     searchHandle() {
+      if (this.query.keyword) {
+        this.$vhall_paas_port({
+          k: 100803,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.query.pos = 0;
       this.query.pageNumber = 1;
       this.getDataList();

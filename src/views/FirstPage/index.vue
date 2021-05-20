@@ -4,39 +4,47 @@
       <data-usage></data-usage>
       <el-row type="flex" class="row-center" :gutter="16" >
         <el-col :xl="{span: colVal}">
-          <router-link :to="{path:'/live/edit'}"  class="center-item">
+          <router-link :to="{path:'/live/edit',query: {refer:1}}"  class="center-item">
           <p class="icon"><i class="iconfont-v3 saasicon_chuangjianzhibo"></i></p>
             <!-- <p><icon icon-class="saasicon_chuangjianzhibo-copy"></icon></p> -->
             <h3>创建直播</h3>
           </router-link>
         </el-col>
         <el-col :xl="{span: colVal}">
-          <router-link :to="{path:'/material/word'}"  class="center-item">
-          <p class="icon"><i class="iconfont-v3 saasicon_shangchuanwendang"></i></p>
-            <!-- <p><icon icon-class="saasicon_shangchuanwendang-copy"></icon></p> -->
-            <h3>上传文档</h3>
-          </router-link>
+          <div @click="reportData(0)">
+            <router-link :to="{path:'/material/word'}"  class="center-item">
+            <p class="icon"><i class="iconfont-v3 saasicon_shangchuanwendang"></i></p>
+              <!-- <p><icon icon-class="saasicon_shangchuanwendang-copy"></icon></p> -->
+              <h3>上传文档</h3>
+            </router-link>
+          </div>
         </el-col>
         <el-col :xl="{span: colVal}">
-          <router-link :to="{path:'/setting/chat'}"  class="center-item">
-          <p class="icon"><i class="iconfont-v3 saasset"></i></p>
-            <!-- <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p> -->
-            <h3>设置中心</h3>
-          </router-link>
+          <div @click="reportData(1)">
+            <router-link :to="{path:'/setting/chat'}"  class="center-item">
+            <p class="icon"><i class="iconfont-v3 saasset"></i></p>
+              <!-- <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p> -->
+              <h3>设置中心</h3>
+            </router-link>
+          </div>
         </el-col>
         <el-col :xl="{span: colVal}" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
-          <router-link :to="{path:'/data/info'}"  class="center-item">
-          <p class="icon"><i class="iconfont-v3 saasicon_zhanghaoshuju"></i></p>
-            <!-- <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p> -->
-            <h3>数据中心</h3>
-          </router-link>
+          <div @click="reportData(2)">
+            <router-link :to="{path:'/data/info'}"  class="center-item">
+            <p class="icon"><i class="iconfont-v3 saasicon_zhanghaoshuju"></i></p>
+              <!-- <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p> -->
+              <h3>数据中心</h3>
+            </router-link>
+          </div>
         </el-col>
         <el-col :xl="{span: colVal}">
-          <router-link :to="{path:'/finance/info'}"  class="center-item">
-          <p class="icon"><i class="iconfont-v3 saasicon_caiwuzonglan"></i></p>
-            <!-- <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p> -->
-            <h3>财务中心</h3>
-          </router-link>
+          <div  @click="reportData(3)">
+            <router-link :to="{path:'/finance/info'}"  class="center-item" >
+            <p class="icon"><i class="iconfont-v3 saasicon_caiwuzonglan"></i></p>
+              <!-- <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p> -->
+              <h3>财务中心</h3>
+            </router-link>
+          </div>
         </el-col>
       </el-row>
       <div class="row-list" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
@@ -123,7 +131,7 @@
           <h1>微吼直播客户端</h1>
           <p>强大稳定的直播工具，支持插播视频、桌面共享等功能。</p>
         </div>
-        <a href="https://www.vhall.com/saas/client" class="download-btn" target="_blank">立即下载</a>
+        <a href="https://www.vhall.com/saas/client" class="download-btn" target="_blank" @click="download('pc')">立即下载</a>
       </div>
       <div class="app-download">
         <div class="app-web">
@@ -133,15 +141,15 @@
           <h1>微吼直播APP下载</h1>
           <p>把微吼装进口袋，随时随地发直播，让直播更便捷</p>
         </div>
-        <a href="http://e.vhall.com/app" class="download-btn" target="_blank">立即下载</a>
+        <a href="http://e.vhall.com/app" class="download-btn" target="_blank" @click="download('app')">立即下载</a>
       </div>
       <div class="data-document">
-        <h2>文档中心<a href="https://saas-doc.vhall.com/document/document/index" target="_blank">更多</a></h2>
-        <p><a href="https://saas-doc.vhall.com/docs/show/947" target="_blank">API文档</a></p>
-        <p><a href="https://saas-doc.vhall.com/docs/show/1176" target="_blank">JSSDK文档</a></p>
-        <p><a href="https://saas-doc.vhall.com/docs/show/1311" target="_blank">点播SDK文档</a></p>
-        <p><a href="https://saas-doc.vhall.com/docs/show/1175" target="_blank">IOS SDK文档</a></p>
-        <p><a href="https://saas-doc.vhall.com/docs/show/1203" target="_blank">Andriod SDK文档</a></p>
+        <h2>文档中心<a href="https://saas-doc.vhall.com/document/document/index" target="_blank" @click="documentCenter(0)">更多</a></h2>
+        <p><a href="https://saas-doc.vhall.com/docs/show/947" target="_blank" @click="documentCenter(1)">API文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1176" target="_blank" @click="documentCenter(2)">JSSDK文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1311" target="_blank" @click="documentCenter(3)">点播SDK文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1175" target="_blank" @click="documentCenter(4)">IOS SDK文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1203" target="_blank" @click="documentCenter(5)">Andriod SDK文档</a></p>
       </div>
       <div class="helpMsg" @click="contactUs">
         <i class="el-icon-chat-dot-round"></i>
@@ -259,8 +267,34 @@ export default {
         console.log(e);
       });
     },
+    download(type) {
+      this.$vhall_paas_port({
+        k: type === 'pc' ? 100005 : 100006,
+        data: {business_uid: this.userId, user_id: this.userId, s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+    },
+    // 文档中心
+    documentCenter(type) {
+      let arrType = [100007, 100008, 100009, 100010, 100011, 100012]
+      let refer = type > 0 ? '' : 1;
+      this.$vhall_paas_port({
+        k: arrType[type],
+        data: {business_uid: this.userId, user_id: this.userId, s: '', refer: refer, report_extra: {}, ref_url: '', req_url: ''}
+      })
+    },
+    reportData(type) {
+      let arrType = [100013, 100014, 100015, 100016]
+      this.$vhall_paas_port({
+        k: arrType[type],
+        data: {business_uid: this.userId, user_id: this.userId, s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+    },
     // 联系我们
     contactUs() {
+      this.$vhall_paas_port({
+        k: 100017,
+        data: {business_uid: this.userId, user_id: this.userId, s: '', refer: 1, report_extra: {}, ref_url: '', req_url: ''}
+      })
       window.open(`https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038`, "_blank");
     },
     getLiveList() {

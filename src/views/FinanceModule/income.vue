@@ -83,7 +83,7 @@
             ref="searchIncome"
             @onExportData="exportAccount()"
             :searchAreaLayout="searchAccount"
-            @onSearchFun="getIncomeList('search')"
+            @onSearchFun="getSearchList()"
           >
           </search-area>
         </div>
@@ -275,6 +275,20 @@ export default {
       this.$refs.tableIncome.pageInfo.pageNum = 1;
       this.$refs.tableIncome.pageInfo.pos = 0;
       this.getIncomeList();
+      this.$vhall_paas_port({
+        k: this.activeIndex == 1 ? 100757 : 100758,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+    },
+    getSearchList() {
+      let formParams = this.$refs.searchIncome.searchParams;
+      if (formParams.webinar_name) {
+        this.$vhall_paas_port({
+          k: this.activeIndex == 1 ? 100761 : 100762,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.getIncomeList('search');
     },
     getIncomeList(params) {
       let pageInfo = this.$refs.tableIncome.pageInfo; //获取分页信息
@@ -313,6 +327,10 @@ export default {
       });
     },
     cash(title) {
+      this.$vhall_paas_port({
+        k: title === '直播' ? 100751 : 100755,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
       if (this.incomeInfo.in_live_withdraw || this.incomeInfo.in_red_withdraw) {
         this.$alert('您有进行中的提现，无法再次提现', '提示', {
@@ -351,12 +369,23 @@ export default {
         that.$message.warning('flash活动，暂不支持查看！');
         return
       }
+      if (that.activeIndex == 1) {
+        that.$vhall_paas_port({
+          k: 100763,
+          data: {business_uid: that.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+
       that.$router.push({
         path: `/finance/incomeDetail/${rows.webinar_id}`
       });
     },
     // 提现明细
     accountDetail() {
+      this.$vhall_paas_port({
+        k: 100750,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({
         path: '/finance/accountDetail'
       });
@@ -365,6 +394,10 @@ export default {
     exportAccount() {
       let url = this.activeIndex == '1' ? 'exportLiveIncome' : 'exportRedPacket';
       this.$fetch(url, this.params).then(res => {
+        this.$vhall_paas_port({
+          k: this.activeIndex == 1 ? 100759 : 100760,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `${this.activeIndex == '1' ? '直播' : '红包'}收益明细导出申请成功，请去下载中心下载`,
           showClose: true,

@@ -113,6 +113,11 @@ export default {
       const input = document.getElementById('linkBox');
       input.select();
       document.execCommand('copy');
+      let userId = this.$parent.userId
+      this.$vhall_paas_port({
+        k: 100187,
+        data: {business_uid: userId, user_id: '', webinar_id: this.$parent.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$message({
         message: `复制成功`,
         showClose: true,
@@ -124,6 +129,11 @@ export default {
     // 独立表单开关事件
     switchExtraForm(value) {
       const val = value ? 1 : 0;
+      let userId = this.$parent.userId
+      this.$vhall_paas_port({
+        k: value ? 100185 : 100186,
+        data: {business_uid: userId, user_id: '', webinar_id: this.$parent.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$emit('setBaseInfo', { open_link: val } );
     },
     shareQQ() {

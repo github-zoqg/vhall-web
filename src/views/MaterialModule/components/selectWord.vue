@@ -287,6 +287,10 @@ export default {
           // 同步到资料库
           this.$fetch('asyncWordInfo', this.$params(params)).then(res=>{
             if(res && res.code === 200) {
+              this.$vhall_paas_port({
+                k: 100301,
+                data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
               this.$message({
                 message: '同步成功',
                 showClose: true,
