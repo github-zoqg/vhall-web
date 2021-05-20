@@ -148,7 +148,7 @@
         <p>联系我们</p>
       </div>
     </div>
-    <template v-if="isOld">
+    <!-- v-if="isOld" <template v-if="isOld">
       <div class="prompt">
         <div class="prompt-wrap">
             <i class="prompt-con-img i-close saasclose iconfont-v3" @click="iKonw"></i>
@@ -162,7 +162,7 @@
             <a class="prompt-con-text-four" href="javascript:;" @click="iKonw">我知道了</a>
         </div>
       </div>
-    </template>
+    </template> -->
   </div>
 </template>
 <script>

@@ -16,7 +16,7 @@
             <span>
               <i class="el-icon-refresh-left"></i>
               <br/>
-              重置
+              更换
             </span>
              <span @click.stop.prevent="deletes">
               <i class="iconfont-v3 saasicon_shanchu"></i>

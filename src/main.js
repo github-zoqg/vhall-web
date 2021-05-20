@@ -138,6 +138,10 @@ if(clientTokenVal) {
   sessionOrLocal.set('token', clientTokenVal , 'localStorage');
   sessionOrLocal.set('platform', clientToken('platform'), 'localStorage');
 }
+let outUrlVal = clientToken('out_url');
+if(outUrlVal) {
+  sessionOrLocal.set('SAAS_V3_CTRL_OUT', outUrlVal , 'localStorage');
+}
 window.vm = new Vue({
   router,
   i18n,

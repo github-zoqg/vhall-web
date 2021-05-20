@@ -66,9 +66,11 @@
                 </template>
               </el-table-column>
               <el-table-column
-                prop="phone"
                 label="手机号"
                 width="120">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.phone || '- -' }}</span>
+                </template>
               </el-table-column>
               <el-table-column
                 label="工号"
@@ -199,7 +201,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-preventReClick @click="viewerSend('viewerForm')" size="medium" round :disabled="!viewerForm.name || !viewerForm.phone">确定</el-button>
+        <el-button type="primary" v-preventReClick @click="viewerSend('viewerForm')" size="medium" round :disabled="!viewerForm.name || (!viewerForm.email && !viewerForm.phone && !viewerForm.job_number && !viewerForm.other)">确定</el-button>
         <el-button @click="viewerDialog.visible = false" size="medium" round>取消</el-button>
       </div>
     </VhallDialog>
@@ -234,12 +236,15 @@
             </div>
             <!-- 状态4:  检测成功 -->
             <div class="change-txt" v-if="uploadResult && uploadResult.status === 'success'">
-              <p class="p-right">上传成功，共检测到{{importResult && importResult.success}}条有效数据</p>
+              <p class="p-right">上传成功，共检测到{{importResult && importResult.success}}条有效数据，{{importResult && importResult.fail}}条无效数据</p>
             </div>
           </div>
           <!-- 状态1： 未上传 -->
           <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && !fileUrl">请使用模版上传文件</p>
         </file-upload>
+        <p  class="down-error" v-show="importResult && importResult.fail > 0">
+          <a href="javascript:void(0)" @click="downErrorHandle">下载查看无效数据</a>
+        </p>
         <p class="uploadtips">提示：单个文件不超过5000条数据，数据量较大时请拆分上传</p>
         <div class="dialog-right-btn dialog-footer">
           <el-button type="primary" v-preventReClick @click="reloadViewerList" size="medium" round :disabled="fileResult === 'error'">确定</el-button>
@@ -384,7 +389,7 @@ export default {
           {pattern: /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/, message: '请输入正确的邮箱', trigger: 'blur'},
         ],
         phone: [
-          {required: true, message: '请输入手机号码', trigger: 'blur'},
+          {required: false, message: '请输入手机号码', trigger: 'blur'},
           {pattern: /^1[0-9]{10}$/, message: '请输入正确的手机号码', trigger: 'blur'},
           {max: 11, message: '请输入正确的手机号码', trigger: 'blur'},
           {min: 1, message: '请输入正确的手机号码', trigger: 'blur'}
@@ -944,6 +949,18 @@ export default {
         });
       });
     },
+    // 下载无效数据
+    downErrorHandle() {
+      this.$EventBus.$emit('saas_vs_download_change');
+      this.$message({
+        message: `无效数据导出申请成功，请去下载中心下载`,
+        showClose: true,
+        // duration: 0,
+        type: 'success',
+        customClass: 'zdy-info-box'
+      });
+      // this.$router.push({path: '/other/downloadList'});
+    }
   },
   created() {
     this.audienceGet();
@@ -972,9 +989,18 @@ export default {
   //   font-size: 44px;
   // }
 
+  .down-error {
+    font-size: 14px;
+    font-weight: 400;
+    color: #3562FA;
+    text-align: right;
+    margin-top: 10px;
+    width: 100%;
+  }
   /deep/ .el-upload--picture-card {
     width: 100%;
-    height: 130px;
+    /*height: 130px;*/
+    height: 160px;
   }
   /deep/ .el-dialog__title {
     line-height: 24px;

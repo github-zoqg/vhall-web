@@ -216,12 +216,17 @@ export default {
         this.query.pageNumber = row.pageNum;
       }
       let params = {
-        start_time: this.timeStr[0] || '',
-        end_time: this.timeStr[1] || '',
         file_name: this.file_name || '',
         limit: this.query.limit,
         pos: this.query.pos,
       };
+      if(this.timeStr && this.timeStr[0] && this.timeStr[1]) {
+        params.start_time = this.timeStr[0] || '';
+        params.end_time = this.timeStr[1] || '';
+      } else {
+        params.start_time = ''
+        params.end_time = ''
+      }
       this.$fetch('downloadedList', this.$params(params)).then(res =>{
         let dao =  res && res.code === 200 && res.data ? res.data : {
           total: 0,
