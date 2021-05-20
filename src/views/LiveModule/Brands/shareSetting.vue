@@ -3,8 +3,8 @@
     <pageTitle pageTitle="分享设置"></pageTitle>
     <div class="share-container">
       <div class="share-left">
-        <el-form :model="formShareInfo" ref="ruleForm" label-width="60px">
-        <el-form-item label="标题">
+        <el-form :model="formShareInfo" ref="ruleShareForm" label-width="60px" :rules="ruleShareForm">
+        <el-form-item label="标题" prop="title">
           <VhallInput
             v-model="formShareInfo.title"
             class="textType"
@@ -16,9 +16,9 @@
           ></VhallInput>
           <p class="tip">提示：为了您的内容获得有效传播，建议文字不超过14个字符</p>
         </el-form-item>
-        <el-form-item label="简介">
+        <el-form-item label="简介" prop="introduction">
           <VhallInput
-              v-model="formShareInfo.desciption"
+              v-model="formShareInfo.introduction"
               type="textarea"
               class="desc"
               :maxlength="45"
@@ -30,7 +30,7 @@
             ></VhallInput>
             <p class="tip">提示：因手机型号不同简介会显示不完整，建议不超过32个字符</p>
         </el-form-item>
-        <el-form-item label="图片">
+        <el-form-item label="图片" prop="img_url">
           <upload
             class="giftUpload"
             :heightImg="138"
@@ -51,7 +51,7 @@
           </upload>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" round v-preventReClick @click="sureShareSetting">保存</el-button>
+          <el-button type="primary" round v-preventReClick @click="sureShareSetting('ruleShareForm')">保存</el-button>
         </el-form-item>
       </el-form>
       </div>
@@ -59,9 +59,9 @@
         <div class="share-title">
           <div class="share-img"><img :src="avatar" alt=""></div>
           <div class="share-text">
-            <div class="top">{{ formShareInfo.title || '数字化转型时代企业如何做好 直播营销'}}</div>
+            <div class="top">{{ formShareInfo.title}}</div>
             <div class="bottom">
-              <p>{{ formShareInfo.desciption || '用更包容更普适的设计理念，构建数字仓储' }}</p>
+              <p v-html="formShareInfo.introduction"></p>
               <span><img :src="domain_url || img" alt=""></span>
             </div>
           </div>
@@ -73,7 +73,6 @@
 <script>
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
-import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
 export default {
   name: 'shareSet',
@@ -86,19 +85,73 @@ export default {
       formShareInfo: {
         title: '',
         img_url: '',
-        desciption: ''
+        introduction: ''
+      },
+      ruleShareForm: {
+        title: [
+          { required: true, message: '请输入标题', trigger: 'blur' },
+        ],
+        img_url: [
+          { required: true, message: '请上传图片', trigger: 'blur' },
+        ],
+        introduction: [
+          { required: true, message: '请输入简介', trigger: 'blur' },
+        ],
       },
       domain_url: '',
-      avatar: JSON.parse(sessionOrLocal.get('userInfo')).user_extends.wechat_profile || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`,
+      avatar: `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`,
       img: require('../../../common/images/share/img.jpg')
     }
   },
   created() {
+    this.getShareInfo()
   },
   methods: {
+    getShareInfo() {
+      this.$fetch('getShareSettingInfo', { webinar_id: this.$route.params.str }).then(res => {
+        if (res.code === 200) {
+          this.formShareInfo = {
+            title: res.data.title,
+            img_url: res.data.img_url,
+            introduction: this.repalceHtml(res.data.introduction)
+          }
+          this.domain_url = res.data.img_url
+        }
+      }).catch(res => {});
+    },
     // 保存设置项
-    sureShareSetting() {
-      console.log('1111111111')
+    sureShareSetting(formName) {
+      this.formShareInfo.webinar_id = this.$route.params.str;
+      this.formShareInfo.img_url = this.$parseURL(this.formShareInfo.img_url).path
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$fetch('setShareSettingInfo', this.formShareInfo).then(res => {
+          if (res.code === 200) {
+            this.$message({
+              message: `保存成功`,
+              showClose: true,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+          }
+          }).catch(res => {
+            this.$message({
+              message: res.msg || `保存失败`,
+              showClose: true,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+          });
+        } else {
+          return false;
+        }
+      })
+
+    },
+    repalceHtml(str) {
+      let dd = str.replace(/<\/?.+?>/g,"");
+      let dds = dd.replace(/ /g,"");
+      return dds
     },
     deleteImg() {
       this.domain_url = '';
@@ -221,21 +274,20 @@ export default {
         img{
           width: 100%;
           height: 100%;
-          border-radius: 2px;
           object-fit: scale-down;
         }
       }
       &-text{
         width: 194px;
-        height: 90px;
+        // height: 90px;
         background: #FEFFFE;
         margin-left: 8px;
-        padding: 6px 10px;
+        padding: 6px 10px 8px 5px;
         .top{
           width: 100%;
           color: #1A1A1A;
           font-size: 13px;
-          line-height: 18px;
+          line-height: 20px;
           margin-bottom: 6px;
           overflow: hidden;
           max-height: 36px;
@@ -243,25 +295,26 @@ export default {
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
+          padding-left: 5px;
           }
         .bottom{
           display: flex;
           width: 100%;
           justify-content: space-between;
           p{
-            color: #747474;
-            font-size: 10px;
-            // transform: scale(0.9);
+            color: #666;
+            font-size: 12px;
+            transform: scale(0.9);
             width: calc(100% - 42px);
             margin-right: 6px;
             padding: 0;
             text-align: left;
-            line-height: 14px;
+            line-height: 16px;
             overflow: hidden;
-            height: 28px;
+            max-height: 42px;
             text-overflow: ellipsis;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
           }
           span{
