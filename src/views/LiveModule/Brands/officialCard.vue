@@ -136,6 +136,7 @@ export default {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       domain_url: '',
       imgShowUrl: '',
+      userId: '',
       status: null,
       alertType: null,
       switchType: 'app',
@@ -184,6 +185,7 @@ export default {
     beginPlay
   },
   mounted() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"))
     this.getData();
   },
   methods: {
@@ -195,6 +197,10 @@ export default {
         status: status, //是否展示公众号/是否展示开屏海报：0开启1关闭
       };
       this.$fetch('setPublicInfo', params).then(res => {
+        this.$vhall_paas_port({
+          k: status == 1 ? 100290 : 100289,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           showClose: true,
           message: status > 0 ? '关闭成功' : '开启成功',
@@ -268,6 +274,10 @@ export default {
       this.$refs.officialForm.validate((valid) => {
         if (valid) {
           this.$fetch('setPublicInfo', params).then(res => {
+            this.$vhall_paas_port({
+              k: type == 1 ? 100292 : 100291,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: '保存成功',
               showClose: true,

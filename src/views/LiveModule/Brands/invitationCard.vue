@@ -288,6 +288,7 @@ export default {
       qrcode: '',
       showCode: '',
       avatar: '',
+      userId: '',
       img: '',
       imgType: 0,
       isShowMethod: '1',
@@ -354,6 +355,7 @@ export default {
   },
   created(){
     this.webinarId = this.$route.params.str;
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar || require('../../../common/images/avatar.png');
     let token = sessionOrLocal.get('token', 'localStorage');
     this.showCode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?token=${token}`;
@@ -391,6 +393,10 @@ export default {
         status: Number(this.invitation)
       };
       this.$fetch('setCardStatus', params).then(res => {
+        this.$vhall_paas_port({
+          k: this.invitation ? 100274 : 100275,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: this.invitation ? '开启邀请卡成功' : '关闭邀请卡成功',
           showClose: true,
@@ -460,10 +466,15 @@ export default {
       };
       this.formInvitation.is_show_watermark = Number(this.formInvitation.is_show_watermark);
       this.formInvitation.img = this.formInvitation.img_type ?  '' : this.img;
+      let arrShowType = [100276, 100277, 100278]
       let obj = Object.assign({}, ids, this.formInvitation);
       this.$fetch('editCardStatus', this.$params(obj)).then(res => {
        if (res.code == 200) {
-         this.isSave = true;
+        this.isSave = true;
+        this.$vhall_paas_port({
+          k: arrShowType[this.formInvitation.show_type - 1],
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `保存数据成功`,
           showClose: true,
@@ -500,6 +511,10 @@ export default {
         a.setAttribute('download', 'chart-download')
         a.click()
       }
+      this.$vhall_paas_port({
+        k: 100279,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     getCanvasImg() {
       if (!this.isSave) {

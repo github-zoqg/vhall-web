@@ -61,6 +61,7 @@ export default {
   data() {
     return {
       tabType: 'sonList',
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       sonInfo: {
         vip_info: null
       }

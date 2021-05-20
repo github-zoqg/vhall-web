@@ -270,6 +270,17 @@ export default {
               components: []
             })
           }
+          if (this.menus.length) {
+            let menus = this.menus.filter(item => {
+              return ('components' in item)
+            })
+            let insertArr = [100210, 100211, 100212, 100213, 100214, 100215]
+            this.$vhall_paas_port({
+              k: insertArr[menus.length - 1] || 100210,
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
+
           setTimeout(() => {
             this.choseMenu(this.$insertIndex, this.menus[this.$insertIndex])
           }, 500)

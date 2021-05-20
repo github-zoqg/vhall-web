@@ -27,7 +27,7 @@
           value-format="yyyy-MM-dd"
           type="daterange"
           unlink-panels
-          @change="searchTableList"
+          @change="searchTime"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
@@ -90,6 +90,7 @@ import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
+    let _this = this;
     return {
       active: 2,
       totalNum: 0,
@@ -99,8 +100,10 @@ export default {
       type:'1',
       switchId: 0,
       dateValue: '',
+      timeType: 0,
       checkedValue: false,
       title: '',
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       liveDetailInfo: {},
       switchList: [],
       tableList: [],
@@ -168,6 +171,7 @@ export default {
               end.setTime(end.getTime());
               start.setTime(start.getTime());
               picker.$emit('pick', [start, end]);
+              _this.timeType = 0;
             }
           },
           {
@@ -183,6 +187,7 @@ export default {
               end.setTime(end.getTime() - 3600 * 1000 * 24);
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
               picker.$emit('pick', [start, end]);
+              _this.timeType = 1;
             }
           }, {
             text: '近30日',
@@ -197,6 +202,7 @@ export default {
               end.setTime(end.getTime() - 3600 * 1000 * 24);
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
               picker.$emit('pick', [start, end]);
+              _this.timeType = 2;
             }
           }],
         // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
@@ -236,7 +242,30 @@ export default {
       start.setTime(start.getTime());
       this.dateValue = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
     },
+    searchTime() {
+      if (this.type == 1) {
+        let timeArr = [100475, 100476, 100477]
+        let vitimeArr = [100483, 100484, 100485]
+        this.$vhall_paas_port({
+          k: this.activeName == 1 ? timeArr[this.timeType] : vitimeArr[this.timeType],
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.getTableList('search');
+    },
     searchTableList() {
+      if (this.checkedValue) {
+        this.$vhall_paas_port({
+          k: this.activeName == 1 ? 100480 : 100486,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      if (this.title) {
+        this.$vhall_paas_port({
+          k: this.activeName == 1 ? 100482 : 100488,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList('search');
     },
     //获取直播详情
@@ -247,6 +276,7 @@ export default {
           this.getLiveSwitchInfo();
         } else {
           this.isSwitch = false;
+          this.activeName = '2'
         }
         this.getTableList();
       }).catch(res=>{
@@ -307,6 +337,10 @@ export default {
     // 导出
     exportCenterData() {
       this.$fetch('exportUserinfo', this.params).then(res => {
+        this.$vhall_paas_port({
+          k: this.activeName == 1 ? 100481 : 100487,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `用户统计数据导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -335,6 +369,10 @@ export default {
       } else {
         this.dateValue = '';
       }
+      this.$vhall_paas_port({
+        k: this.type == 1 ? 100478 : 100479,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.getTableList('search');
     },
     handleClick(tab) {

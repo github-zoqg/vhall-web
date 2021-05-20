@@ -54,7 +54,7 @@
             </div>
           </div>
           <div>
-            <el-button type="primary" round v-preventReClick @click.prevent="copy(urlText1)" class="copy-text">邀请</el-button>
+            <el-button type="primary" round v-preventReClick @click.prevent="copy(urlText1, 1)" class="copy-text">邀请</el-button>
           </div>
         </div>
         <!-- 嘉宾 -->
@@ -102,7 +102,7 @@
             </div>
           </div>
           <div>
-            <el-button  type="primary" round v-preventReClick @click="copy(urlText2)" class="copy-text">邀请</el-button>
+            <el-button  type="primary" round v-preventReClick @click="copy(urlText2, 2)" class="copy-text">邀请</el-button>
           </div>
         </div>
         <!-- 助理 -->
@@ -148,7 +148,7 @@
             </div>
           </div>
           <div>
-            <el-button type="primary" round v-preventReClick @click.prevent="copy(urlText3)" class="copy-text">邀请</el-button>
+            <el-button type="primary" round v-preventReClick @click.prevent="copy(urlText3, 3)" class="copy-text">邀请</el-button>
           </div>
         </div>
       </div>
@@ -207,6 +207,7 @@ export default {
     return {
       roleSwitch: null,
       webinarVo: {},
+      userId: '',
       isInteract: 1,
       privilegeVo: {
         host_password: '',
@@ -272,6 +273,7 @@ export default {
     }
   },
   created() {
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.isInteract = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')).new_interact;
     // 根據活動ID獲取活動信息
     this.getWebinarInfo();
@@ -300,6 +302,10 @@ export default {
           webinar_id: this.$route.params.str,
           is_privilege: roleSwitch
         }).then(res => {
+          this.$vhall_paas_port({
+            k: res.data.is_privilege == 1 ? 100107 : 100108,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           if (Number(res.data.is_privilege) === 1) {
             this.$message({
               showClose: true,
@@ -345,6 +351,10 @@ export default {
             password: this.pwdForm.password
           }).then(res => {
             if(res.data) {
+              this.$vhall_paas_port({
+                k: this.pwdForm.type == 1 ? 100122 : this.pwdForm.type == 2 ? 100109 : 100111,
+                data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
               this.$message({
                 message:  '修改成功',
                 showClose: true,
@@ -395,7 +405,7 @@ export default {
       let {keys,values} = Object;
       let obj = {};
       keys(keysObj).filter(item => item !== 'white_board').forEach((keyItem, ins) => {
-        console.log(keyItem + ',' + ins);
+        console.log(keyItem + ',' + Number(values(keysObj)[ins].check));
         obj[keyItem] = Number(values(keysObj)[ins].check);
       });
       obj.webinar_id = this.$route.params.str;
@@ -403,6 +413,49 @@ export default {
       obj.webinar_type = this.privilegeVo.webinar_type; // 活动类型 1:音频 2:视频 3:互动
       // console.log(obj);
       this.$fetch('privilegePrem', obj).then(res => {
+        // 助理
+        if (keyName === 'assistant') {
+          let assObj = {
+            'comment_check': 100118,
+            'disable_msg': 100120,
+            'members_manager': 100117,
+            'personal_chat': 100115,
+            'share': 100121,
+            'sign_in': 100116,
+            'survey': 100114,
+            'webinar_award': 100113,
+            'webinar_notice': 100119
+          }
+          keys(keysObj).forEach((keyItem, ins) => {
+            if (Number(values(keysObj)[ins].check)) {
+              this.$vhall_paas_port({
+                k: assObj[keyItem],
+                data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+          });
+        } else {
+          // 嘉宾
+          let assObj = {
+            'comment_check': 100128,
+            'disable_msg': 100130,
+            'members_manager': 100127,
+            'personal_chat': 100125,
+            'share': 100131,
+            'sign_in': 100126,
+            'survey': 100124,
+            'webinar_award': 100123,
+            'webinar_notice': 100129
+          }
+          keys(keysObj).forEach((keyItem, ins) => {
+            if (Number(values(keysObj)[ins].check)) {
+              this.$vhall_paas_port({
+                k: assObj[keyItem],
+                data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+          });
+        }
         this.$message({
           message:  `保存成功`,
           showClose: true,
@@ -453,11 +506,15 @@ export default {
         this.privilegeVo = {};
       });
     },
-    copy(text) {
+    copy(text, index) {
       let clipboard = new Clipboard('.copy-text', {
         text: () => text
       });
       clipboard.on('success', () => {
+        this.$vhall_paas_port({
+          k: index == 1 ? 100110 : index == 3 ? 100112 : 100132,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message:  `复制成功`,
           showClose: true,
