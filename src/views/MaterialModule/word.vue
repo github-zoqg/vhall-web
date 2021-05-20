@@ -466,7 +466,12 @@ export default {
       if (isType && isLt2M) {
         this.totalNum = 1;
         this.no_show = false;
-        this.initPayMessage()
+        if (this.vm) {
+          this.vm.close()
+          this.initPayMessage()
+        } else {
+          this.initPayMessage()
+        }
         // 若是当前为 this.no_show
         this.tableList.unshift({
           created_at: this.$moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
