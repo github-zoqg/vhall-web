@@ -113,9 +113,9 @@ Vue.use(tooltipMove)
 Vue.use(clearEmoij)
 Vue.use(PaasPort, {
   app_id: process.env.VUE_APP_NODE_ENV === 'production' ? '15df4d3f' : 'fd8d3653',
-  pf:8,
+  pf: 8,
   noConsole: false,
-  isProduction: false
+  isProduction: process.env.VUE_APP_NODE_ENV === 'production' ? true : false
 })
 const i18n = new VueI18n({
   locale: ['en', 'cn'].includes(getParams('lang')) ? getParams('lang') : 'cn', // 语言标识
