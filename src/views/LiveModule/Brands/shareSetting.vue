@@ -46,7 +46,7 @@
           >
             <div slot="tip">
               <p>建议尺寸：150*150px，小于1M</p>
-              <p>支持jpg、gif、png、bmp</p>
+              <p>支持jpg、png</p>
             </div>
           </upload>
         </el-form-item>
@@ -87,6 +87,7 @@ export default {
         img_url: '',
         introduction: ''
       },
+      reImgUrl: '',
       ruleShareForm: {
         title: [
           { required: true, message: '请输入标题', trigger: 'blur' },
@@ -116,6 +117,7 @@ export default {
             introduction: this.repalceHtml(res.data.introduction)
           }
           this.domain_url = res.data.img_url
+          this.reImgUrl = res.data.img_url;
         }
       }).catch(res => {});
     },
@@ -127,6 +129,7 @@ export default {
         if (valid) {
           this.$fetch('setShareSettingInfo', this.formShareInfo).then(res => {
           if (res.code === 200) {
+            this.reImgUrl = this.domain_url;
             this.$message({
               message: `保存成功`,
               showClose: true,
@@ -155,7 +158,7 @@ export default {
       return desc
     },
     deleteImg() {
-      this.domain_url = '';
+      this.domain_url = this.reImgUrl;
       this.formShareInfo.img_url = '';
     },
     uploadAdvSuccess(res, file) {
@@ -169,7 +172,7 @@ export default {
     },
     beforeUploadHnadler(file){
       console.log(file);
-      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      const typeList = ['png', 'jpg'];
       console.log(file.type.toLowerCase())
       let typeArr = file.type.toLowerCase().split('/');
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
