@@ -1,0 +1,334 @@
+<template>
+  <div class="share-setting">
+    <pageTitle pageTitle="分享设置"></pageTitle>
+    <div class="share-container">
+      <div class="share-left">
+        <el-form :model="formShareInfo" ref="ruleShareForm" label-width="60px" :rules="ruleShareForm">
+        <el-form-item label="标题" prop="title">
+          <VhallInput
+            v-model="formShareInfo.title"
+            class="textType"
+            placeholder="请输入分享标题"
+            autocomplete="off"
+            :maxlength="30"
+            v-clearEmoij
+            show-word-limit
+          ></VhallInput>
+          <p class="tip">提示：为了您的内容获得有效传播，建议文字不超过14个字符</p>
+        </el-form-item>
+        <el-form-item label="简介" prop="introduction">
+          <VhallInput
+              v-model="formShareInfo.introduction"
+              type="textarea"
+              class="desc"
+              :maxlength="45"
+              placeholder="请输入分享简介"
+              autocomplete="off"
+              :autosize="{ minRows: 5 }"
+              resize="none"
+              show-word-limit
+            ></VhallInput>
+            <p class="tip">提示：因手机型号不同简介会显示不完整，建议不超过32个字符</p>
+        </el-form-item>
+        <el-form-item label="图片" prop="img_url">
+          <upload
+            class="giftUpload"
+            :heightImg="138"
+            :widthImg="138"
+            v-model="formShareInfo.img_url"
+            :domain_url="domain_url"
+            :on-success="uploadAdvSuccess"
+            :on-progress="uploadProcess"
+            :on-error="uploadError"
+            :on-preview="uploadPreview"
+            :before-upload="beforeUploadHnadler"
+            @delete="deleteImg"
+          >
+            <div slot="tip">
+              <p>建议尺寸：150*150px，小于1M</p>
+              <p>支持jpg、gif、png、bmp</p>
+            </div>
+          </upload>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" round v-preventReClick @click="sureShareSetting('ruleShareForm')">保存</el-button>
+        </el-form-item>
+      </el-form>
+      </div>
+      <div class="share-right">
+        <div class="share-title">
+          <div class="share-img"><img :src="avatar" alt=""></div>
+          <div class="share-text">
+            <div class="top">{{ formShareInfo.title}}</div>
+            <div class="bottom">
+              <p v-html="formShareInfo.introduction"></p>
+              <span><img :src="domain_url || img" alt=""></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import PageTitle from '@/components/PageTitle';
+import upload from '@/components/Upload/main';
+import Env from "@/api/env";
+export default {
+  name: 'shareSet',
+  components: {
+    PageTitle,
+    upload
+  },
+  data() {
+    return {
+      formShareInfo: {
+        title: '',
+        img_url: '',
+        introduction: ''
+      },
+      ruleShareForm: {
+        title: [
+          { required: true, message: '请输入标题', trigger: 'blur' },
+        ],
+        img_url: [
+          { required: true, message: '请上传图片', trigger: 'blur' },
+        ],
+        introduction: [
+          { required: true, message: '请输入简介', trigger: 'blur' },
+        ],
+      },
+      domain_url: '',
+      avatar: `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`,
+      img: require('../../../common/images/share/img.jpg')
+    }
+  },
+  created() {
+    this.getShareInfo()
+  },
+  methods: {
+    getShareInfo() {
+      this.$fetch('getShareSettingInfo', { webinar_id: this.$route.params.str }).then(res => {
+        if (res.code === 200) {
+          this.formShareInfo = {
+            title: res.data.title,
+            img_url: res.data.img_url,
+            introduction: this.repalceHtml(res.data.introduction)
+          }
+          this.domain_url = res.data.img_url
+        }
+      }).catch(res => {});
+    },
+    // 保存设置项
+    sureShareSetting(formName) {
+      this.formShareInfo.webinar_id = this.$route.params.str;
+      this.formShareInfo.img_url = this.$parseURL(this.formShareInfo.img_url).path
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$fetch('setShareSettingInfo', this.formShareInfo).then(res => {
+          if (res.code === 200) {
+            this.$message({
+              message: `保存成功`,
+              showClose: true,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+          }
+          }).catch(res => {
+            this.$message({
+              message: res.msg || `保存失败`,
+              showClose: true,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+          });
+        } else {
+          return false;
+        }
+      })
+
+    },
+    repalceHtml(str) {
+      let dd = str.replace(/<\/?.+?>/g,"");
+      let dds = dd.replace(/ /g,"");
+      return dds
+    },
+    deleteImg() {
+      this.domain_url = '';
+      this.formShareInfo.img_url = '';
+    },
+    uploadAdvSuccess(res, file) {
+      console.log(res, file);
+      if(res.data) {
+        let domain_url = res.data.domain_url || ''
+        let file_url = res.data.file_url || '';
+        this.formShareInfo.img_url = file_url;
+        this.domain_url = domain_url;
+      }
+    },
+    beforeUploadHnadler(file){
+      console.log(file);
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
+      const isLt2M = file.size / 1024 / 1024 < 1;
+      if (!isType) {
+        this.$message({
+          message: `分享图片只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
+      }
+      if (!isLt2M) {
+        this.$message({
+          message: `分享图片大小不能超过 1M`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
+      }
+      return isType && isLt2M;
+    },
+    uploadProcess(event, file, fileList){
+      console.log('uploadProcess', event, file, fileList);
+    },
+    uploadError(err, file, fileList){
+      console.log('uploadError', err, file, fileList);
+      this.$message({
+        message: `分享图片上传失败`,
+        showClose: true,
+        // duration: 0,
+        type: 'error',
+        customClass: 'zdy-info-box'
+      });
+    },
+    uploadPreview(file){
+      console.log('uploadPreview', file);
+    }
+  }
+}
+</script>
+<style lang="less" scoped>
+  .share-setting{
+    width: 100%;
+    .share-container{
+      display: flex;
+      background: #fff;
+      border-radius: 4px;
+      padding: 48px 32px;
+    }
+    .share-left{
+      width: 460px;
+      .tip{
+        color: #999;
+        line-height: 30px;
+        font-size: 14px;
+      }
+      /deep/.el-form-item{
+        margin-bottom: 32px;
+      }
+      /deep/.el-input__inner{
+        padding-left: 12px;
+      }
+      /deep/ .desc .el-textarea__inner{
+        font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+        padding-left: 12px;
+        background: transparent;
+      }
+      /deep/.el-button{
+        margin-top: 8px;
+      }
+      /deep/.el-button.is-round{
+        padding: 9px 55px;
+      }
+    }
+    .share{
+      &-right{
+        width: 420px;
+        height: 690px;
+        margin-top: -30px;
+        margin-left: 30px;
+        background-image: url('../../../common/images/share/share.png');
+        background-size: 100%;
+        background-position: center;
+        background-size: cover;
+        position: relative;
+      }
+      &-title{
+        position: absolute;
+        top: 187px;
+        left: 68px;
+        display: flex;
+      }
+      &-img{
+        width: 30px;
+        height: 30px;
+        border-radius: 2px;
+        background: #999;
+        img{
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
+        }
+      }
+      &-text{
+        width: 194px;
+        // height: 90px;
+        background: #FEFFFE;
+        margin-left: 8px;
+        padding: 6px 10px 8px 5px;
+        .top{
+          width: 100%;
+          color: #1A1A1A;
+          font-size: 13px;
+          line-height: 20px;
+          margin-bottom: 6px;
+          overflow: hidden;
+          max-height: 36px;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          padding-left: 5px;
+          }
+        .bottom{
+          display: flex;
+          width: 100%;
+          justify-content: space-between;
+          p{
+            color: #666;
+            font-size: 12px;
+            transform: scale(0.9);
+            width: calc(100% - 42px);
+            margin-right: 6px;
+            padding: 0;
+            text-align: left;
+            line-height: 16px;
+            overflow: hidden;
+            max-height: 42px;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+          }
+          span{
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            img{
+              width: 100%;
+              height: 100%;
+              object-fit: scale-down;
+            }
+          }
+        }
+      }
+    }
+  }
+</style>
