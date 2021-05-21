@@ -150,8 +150,9 @@ export default {
     },
     repalceHtml(str) {
       let dd = str.replace(/<\/?.+?>/g,"");
-      let dds = dd.replace(/ /g,"");
-      return dds
+      let desc = dd.replace(/ /g,"");
+      desc.length > 32 ? `${desc.trim().substring(0, 30)}...` : desc.trim()
+      return desc
     },
     deleteImg() {
       this.domain_url = '';
