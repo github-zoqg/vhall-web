@@ -321,6 +321,8 @@ export default {
             display: inline-block;
             width: 36px;
             height: 36px;
+            border: 1px solid #e6e6e6;
+            border-radius: 2px;
             img{
               width: 100%;
               height: 100%;
