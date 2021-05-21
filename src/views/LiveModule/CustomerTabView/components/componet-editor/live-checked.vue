@@ -241,7 +241,7 @@ export default {
   }
 }
 .vh-chose-active-item__del {
-  z-index: 28;
+  z-index: 8;
   position: absolute;
   width: 20px;
   height: 20px;

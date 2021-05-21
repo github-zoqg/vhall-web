@@ -84,11 +84,12 @@ export default {
   },
   created() {
     let _that = this
+    // 移除前事件
     EventBus.$on(eventsType.EDITOR_COMPONENT_ITEM_INFO, (del_id) => {
       let newIds = _that.checkedList.filter(item=> {
         return item != del_id
       })
-      _that.syncCheckStatus(newIds)
+      _that.syncCheckStatus(newIds, del_id)
     })
   },
   mounted() {
@@ -145,7 +146,7 @@ export default {
     },
 
     // 同步 选中状态
-    syncCheckStatus(ids) {
+    syncCheckStatus(ids, del_id) {
       let checkIds = this.checkedList
       if(ids && ids.length > 0) {
         checkIds = ids
@@ -156,9 +157,16 @@ export default {
         })
         this.activeList = this.activeList.map((item) => {
           if(checked.includes(item.webinar_id)) {
-            return {
-              ...item,
-              checked: true
+            if(del_id != item.webinar_id) {
+              return {
+                ...item,
+                checked: true
+              }
+            } else {
+              return {
+                ...item,
+                checked: false
+              }
             }
           } else {
             return {
@@ -167,6 +175,7 @@ export default {
             }
           }
         })
+      } else {
       }
     },
 

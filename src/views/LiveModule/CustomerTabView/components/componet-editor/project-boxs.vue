@@ -89,7 +89,7 @@ export default {
       let newIds = _that.checkedList.filter(item=> {
         return item != del_id
       })
-      _that.syncCheckStatus(newIds)
+      _that.syncCheckStatus(newIds, del_id)
     })
   },
 
@@ -146,7 +146,7 @@ export default {
     },
 
     // 同步 选中状态
-    syncCheckStatus(ids) {
+    syncCheckStatus(ids, del_id) {
 
       let checkIds = this.checkedList
       if(ids && ids.length > 0) {
@@ -158,9 +158,16 @@ export default {
         })
         this.activeList = this.activeList.map((item) => {
           if(checked.includes(item.id)) {
-            return {
-              ...item,
-              checked: true
+            if(del_id != item.id) {
+              return {
+                ...item,
+                checked: true
+              }
+            } else {
+              return {
+                ...item,
+                checked: false
+              }
             }
           } else {
             return {
