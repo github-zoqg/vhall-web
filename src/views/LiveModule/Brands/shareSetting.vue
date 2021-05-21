@@ -154,7 +154,7 @@ export default {
     repalceHtml(str) {
       let dd = str.replace(/<\/?.+?>/g,"");
       let desc = dd.replace(/ /g,"");
-      desc.length > 32 ? `${desc.trim().substring(0, 30)}...` : desc.trim()
+      desc.length > 45 ? `${desc.trim().substring(0, 45)}...` : desc.trim()
       return desc
     },
     deleteImg() {
