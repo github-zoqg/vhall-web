@@ -318,7 +318,7 @@ export default {
             text-align: left;
             line-height: 16px;
             overflow: hidden;
-            max-height: 42px;
+            max-height: 46px;
             text-overflow: ellipsis;
             display: -webkit-box;
             -webkit-line-clamp: 3;
@@ -330,6 +330,7 @@ export default {
             height: 36px;
             border: 1px solid #e6e6e6;
             border-radius: 2px;
+            margin-top: 3px;
             img{
               width: 100%;
               height: 100%;
