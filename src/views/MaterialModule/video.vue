@@ -12,7 +12,7 @@
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
-      <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)" accept=".mp4,.mp3,.rmvb,.avi,.mkv,.flv,.mov,.mav,.wmv"> </el-button>
+      <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="uploads" class="set-input" type="file" @change="tirggerFile($event)" accept=".mp4,.mp3,.rmvb,.avi,.mkv,.flv,.mov,.mav,.wmv"> </el-button>
       <el-button size="medium" round class="transparent-btn" @click="allDelete(null)" :disabled="!checkedList.length">批量删除</el-button>
       <VhallInput
         class="search-tag"
@@ -542,6 +542,7 @@ export default {
               k: index == 1 ? 100520 : 100519,
               data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
+            this.$refs.uploads.value = null
             this.getTableList('search');
             this.$message({
               message: `删除成功`,
