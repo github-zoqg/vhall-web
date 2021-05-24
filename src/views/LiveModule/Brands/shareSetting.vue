@@ -68,20 +68,25 @@
         </div>
       </div>
     </div>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
+import beginPlay from '@/components/beginBtn';
+import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
 export default {
   name: 'shareSet',
   components: {
     PageTitle,
-    upload
+    upload,
+    beginPlay
   },
   data() {
     return {
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       formShareInfo: {
         title: '',
         img_url: '',
