@@ -111,8 +111,10 @@ export default {
     getShareInfo() {
       this.$fetch('getShareSettingInfo', { webinar_id: this.$route.params.str }).then(res => {
         if (res.code === 200) {
+          let title = res.data.title
+          title = title.length - 30 > 0 ? title.substring(0, 30) : title;
           this.formShareInfo = {
-            title: res.data.title,
+            title: title,
             img_url: res.data.img_url,
             introduction: this.repalceHtml(res.data.introduction)
           }
@@ -152,9 +154,10 @@ export default {
 
     },
     repalceHtml(str) {
-      let dd = str.replace(/<\/?.+?>/g,"");
-      let desc = dd.replace(/ /g,"");
-      desc.length > 45 ? `${desc.trim().substring(0, 45)}...` : desc.trim()
+      let desc = null
+      desc = str.replace(/&nbsp;/g, '')
+      desc = desc.replace(/<[^<>&]+>/g, '').replace(/&(lt|gt|nbsp|amp|quot|middot);/ig, '')
+      desc = desc.length > 42 ? `${desc.trim().substring(0, 42)}...` : desc.trim()
       return desc
     },
     deleteImg() {
