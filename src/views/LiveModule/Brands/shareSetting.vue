@@ -105,7 +105,7 @@ export default {
         ],
       },
       domain_url: '',
-      avatar: `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`,
+      avatar: require('../../../common/images/share/avator.png'),
       img: require('../../../common/images/share/img.jpg')
     }
   },
@@ -339,7 +339,7 @@ export default {
             img{
               width: 100%;
               height: 100%;
-              object-fit: scale-down;
+              object-fit: cover;
             }
           }
         }
