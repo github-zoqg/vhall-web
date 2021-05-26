@@ -784,11 +784,11 @@ export default {
 /deep/.saasicon_help_m {
   color: #999999;
 }
-/deep/.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
-  background: #E6E6E6;
-  border: 1px solid #CCCCCC;
-  color: #666666;
-}
+// /deep/.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+//   background: #E6E6E6;
+//   border: 1px solid #CCCCCC;
+//   color: #FB3A32;
+// }
 
 /deep/button.el-button.el-button--mini.no-hover {
   padding: 0 12px!important;
