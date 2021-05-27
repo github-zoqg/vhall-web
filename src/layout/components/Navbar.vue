@@ -430,7 +430,7 @@ export default {
       .el-badge__content.is-fixed {
         height: 18px;
         background: #FB3A32;
-        top: 5px;
+        top: 10px;
         right: 10px;
         text-align: center;
         width: 32px;
