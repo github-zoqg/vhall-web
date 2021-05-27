@@ -430,12 +430,12 @@ export default {
       .el-badge__content.is-fixed {
         height: 18px;
         background: #FB3A32;
-        top: 10px;
+        top: 4px;
         right: 10px;
         text-align: center;
-        width: 32px;
+        width: 28px;
         border-radius: 9px;
-        line-height: 18px;
+        line-height: 16px;
         border: 1px solid #fb3a32;
       }
     }
@@ -444,16 +444,22 @@ export default {
         width: 18px;
         height: 18px;
         background: #FB3A32;
-        top: 10px;
+        top: 4px;
         right: 10px;
         text-align: center;
         line-height: 16px;
         padding: 0 0;
+        border: 1px solid #fb3a32;
       }
     }
   }
+  /deep/.el-badge__content.is-dot {
+    height: 10px;
+    width: 10px;
+  }
   /deep/.el-badge__content.is-fixed.is-dot {
-    top: 9px;
+    top: 8px;
+    right: 6px;
   }
 }
 .avatar-wrapper {
