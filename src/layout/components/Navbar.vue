@@ -427,7 +427,17 @@ export default {
       color: #666666;
     }
     &.more {
-
+      .el-badge__content.is-fixed {
+        height: 18px;
+        background: #FB3A32;
+        top: 5px;
+        right: 10px;
+        text-align: center;
+        width: 32px;
+        border-radius: 9px;
+        line-height: 18px;
+        border: 1px solid #fb3a32;
+      }
     }
     &.item {
       .el-badge__content.is-fixed {
