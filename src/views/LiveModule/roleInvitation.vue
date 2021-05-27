@@ -91,12 +91,12 @@
               <el-button size="mini" round @click="savePremHandle('guest')">保存权限</el-button>
             </div>
             <div class="role-qx-list" v-if="privilegeVo.permission_data.guest">
-              <el-checkbox  :value="true" disabled>文档白板</el-checkbox>
+              <!-- <el-checkbox  :value="true" disabled>文档白板</el-checkbox> -->
               <template v-for="(item, key, ins) in privilegeVo.permission_data.guest || {}">
                 <el-checkbox v-model="item.check"
                              :true-label="1"
                              :false-label="0"
-                             v-if="key !== 'white_board'"
+                            :disabled="key == 'white_board'"
                              :key="`guest_${key + ins}`">{{ item.label }}</el-checkbox>
               </template>
             </div>
@@ -137,13 +137,13 @@
               <el-button size="mini" round @click="savePremHandle('assistant')">保存权限</el-button>
             </div>
             <div class="role-qx-list" v-if="privilegeVo.permission_data.assistant">
-              <el-checkbox  :value="true" disabled>文档翻页</el-checkbox>
+              <!-- <el-checkbox  :value="true" disabled>文档翻页</el-checkbox> -->
               <template v-for="(item, key, ins) in privilegeVo.permission_data.assistant || {}">
                 <el-checkbox v-model="item.check"
                              :true-label="1"
                              :false-label="0"
-                             v-if="key !== 'white_board'"
-                             :key="`assistant_${key + ins}`">{{ item.label }}</el-checkbox>
+                             :disabled="key == 'white_board'"
+                             :key="`assistant_${key + ins}`">{{ key== 'white_board' ? '文档翻页' : item.label }}</el-checkbox>
               </template>
             </div>
           </div>
@@ -486,16 +486,16 @@ export default {
               res.data.guest_password = '';
               res.data.assistant_password = '';
             }
-            try {
-              delete res.data.permission_data.guest['white_board'];
-            }catch (e) {
-              console.log('guest',0);
-            }
-            try {
-              delete res.data.permission_data.assistant['white_board'];
-            }catch (e) {
-              console.log('assistant', 1);
-            }
+            // try {
+            //   delete res.data.permission_data.guest['white_board'];
+            // }catch (e) {
+            //   console.log('guest',0);
+            // }
+            // try {
+            //   delete res.data.permission_data.assistant['white_board'];
+            // }catch (e) {
+            //   console.log('assistant', 1);
+            // }
             this.roleSwitch = Number(res.data.is_privilege);
             this.privilegeVo = res.data;
           } else {
@@ -759,13 +759,13 @@ export default {
   background: #FFEBEB;
   border: 1px solid #FED8D6;
 }
-/deep/.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
-  background: #CCCCCC;
-  border: 1px solid #E6E6E6;
-  &::after {
-    border-color: #666666;
-  }
-}
+// /deep/.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+//   background: #CCCCCC;
+//   border: 1px solid #E6E6E6;
+//   &::after {
+//     border-color: #666666;
+//   }
+// }
 /deep/.el-checkbox__inner::after {
   border-color: #FB3A32;
   top: 2px;
@@ -791,11 +791,11 @@ export default {
 /deep/.saasicon_help_m {
   color: #999999;
 }
-/deep/.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
-  background: #E6E6E6;
-  border: 1px solid #CCCCCC;
-  color: #666666;
-}
+// /deep/.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+//   background: #E6E6E6;
+//   border: 1px solid #CCCCCC;
+//   color: #666666;
+// }
 /deep/button.el-button.el-button--mini.no-hover {
   padding: 0 12px!important;
   span {
