@@ -46,6 +46,7 @@
             v-show="rightComponent == 'fieldSet'"
             :questionArr.sync="questionArr"
             :signUpSwtich="signUpSwtich"
+            :regionalOptions="regionalOptions"
             @setBaseInfo="setBaseInfo"
           ></fieldSet>
           <!-- 表单预览组件 -->
@@ -103,6 +104,10 @@ export default {
         title: '',
         intro: '',
         cover: ''
+      },
+      regionalOptions: {
+        1: true,
+        2: true
       },
       radio: 3,
       userId: '',
@@ -433,6 +438,14 @@ export default {
           filedJson.value = []
         }
         this.questionArr.push(filedJson);
+        // 地域选项状态
+        if (filedJson.reqType === 5) {
+            // 地域
+            this.regionalOptions = {
+              1: !!Number(filedJson.options.show_city),
+              2: !!Number(filedJson.options.show_country)
+            }
+          }
         return false;
       }
 

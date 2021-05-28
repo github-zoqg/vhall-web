@@ -315,9 +315,19 @@ export default {
     },
     signUpSwtich: {
       type: Boolean
+    },
+    regionalOptions: {
+      type: Object,
     }
   },
   watch:{
+    regionalOptions: {
+      handler(newVal){
+        this.regionalLevel = { ...newVal }
+      },
+      deep: true,
+      immediate: true
+    },
     questionArr: {
       handler(newVal){
         this.renderQuestion = newVal;
