@@ -161,7 +161,7 @@ export default {
     repalceHtml(str) {
       let desc = null
       desc = str.replace(/&nbsp;/g, '')
-      desc = desc.replace(/<[^<>&]+>/g, '').replace(/&(lt|gt|nbsp|amp|quot|middot);/ig, '')
+      desc = desc.replace(/<[^<>&]+>/g, '').replace(/&(lt|gt|nbsp|amp|quot|middot);/ig, '').replace(/(\r\n)|(\n)/g, '')
       desc = desc.length > 42 ? `${desc.trim().substring(0, 42)}...` : desc.trim()
       return desc
     },
