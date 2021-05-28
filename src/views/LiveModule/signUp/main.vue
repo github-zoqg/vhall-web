@@ -443,7 +443,7 @@ export default {
             // 地域
             this.regionalOptions = {
               1: !!Number(filedJson.options.show_city),
-              2: !!Number(filedJson.options.show_country)
+              2: !!Number(filedJson.options.show_district)
             }
           }
         return false;
