@@ -63,6 +63,12 @@ const router = [
     hidden: true
   },
   {
+    path: '/upgrading', // 说明包含 404，500，405 ，sysUnder 系统维护中，network 网络异常
+    component: () => import('@/views/PlatformModule/Upgrading/index'),
+    meta: { auth: false, name: 'upgrading'},
+    hidden: true
+  },
+  {
     path: '/browser', // 浏览器
     component: () => import('@/views/PlatformModule/browser'),
     meta: { auth: false, name: 'common'},

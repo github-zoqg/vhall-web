@@ -417,6 +417,7 @@ const apis = {
   codeCheck: ['/v3/users/code/check', 'POST'], // check Jia.li
   bindInfo: ['/v3/users/user/bind-info', 'POST'], // 绑定邮箱、手机号接口 Jia.li
   unBindInfo: ['/v3/users/oauth/unbind', 'POST'],// 解除绑定
+  userMigrate: ['/v3/users/user-migrate/get-info', 'POST'],// 迁移用户-详情接口
 
   // 下载中心
   downloadedEdit: ['/v3/commons/downcenter/downloaded', 'POST'], // 下载中心-删除修改为已下载 √

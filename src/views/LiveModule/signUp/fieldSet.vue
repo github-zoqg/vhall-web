@@ -315,9 +315,19 @@ export default {
     },
     signUpSwtich: {
       type: Boolean
+    },
+    regionalOptions: {
+      type: Object,
     }
   },
   watch:{
+    regionalOptions: {
+      handler(newVal){
+        this.regionalLevel = { ...newVal }
+      },
+      deep: true,
+      immediate: true
+    },
     questionArr: {
       handler(newVal){
         this.renderQuestion = newVal;
@@ -376,7 +386,7 @@ export default {
         this.regionalLevel[1] = true;
       }
       question.options.show_city = this.regionalLevel[1] ? 1 : 0;
-      question.options.show_country = this.regionalLevel[2] ? 1 : 0;
+      question.options.show_district = this.regionalLevel[2] ? 1 : 0;
       this.subjectChange(question);
     },
     onMove({ relatedContext, draggedContext }) {

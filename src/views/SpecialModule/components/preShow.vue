@@ -34,7 +34,7 @@
           <el-tab-pane label="目录列表" name="second">
               <el-row :gutter="40" class="lives">
                   <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
-                    <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
+                    <a class="inner" :href="toPageHandle(item)" target="_blank">
                       <div class="top">
                         <span class="liveTag">{{item | liveTag }}</span>
                         <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
@@ -75,8 +75,7 @@ export default {
         pcUrl:`${process.env.VUE_APP_WEB_URL}/special/detail/?id=${this.$route.query.id}`
       },
       totalList: [], //总数
-      liveList: [],
-      processEnv: `${process.env.VUE_APP_WAP_WATCH}`
+      liveList: []
     };
   },
   components: {
@@ -111,6 +110,14 @@ export default {
     },
     toDetail(id) {
       this.$router.push({path: `/live/detail/${id}`});
+    },
+    toPageHandle(item) {
+      if(item.player == 1) {
+        let href = `${process.env.VUE_APP_OLD_WATCH}${item.webinar_id}`
+        return href;
+      } else {
+        return `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${item.webinar_id}`;
+      }
     },
     goWatchData(item) {
       let url =  `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${item.webinar_id}`;

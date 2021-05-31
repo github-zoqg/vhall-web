@@ -163,7 +163,7 @@
                           ></el-option>
                         </el-select>
                       </el-col>
-                      <el-col v-if="question.options.show_country == 1" :span="question.colNum">
+                      <el-col v-if="question.options.show_district == 1" :span="question.colNum">
                         <el-select ref="autoCloseRefFlag" v-model="county" @change="regionalChange('county')" placeholder="请选择区/县">
                           <el-option
                             v-for="opt in countyList"
@@ -940,7 +940,7 @@
             if (item.type == 5) {
               item.options = JSON.parse(item.options)
               item.colNum = 8
-              item.options.show_country == 0 && (item.colNum = 12)
+              item.options.show_district == 0 && (item.colNum = 12)
               item.options.show_city == 0 && (item.colNum = 24)
               this.colNum = item.colNum
               this.regionalId = item.id

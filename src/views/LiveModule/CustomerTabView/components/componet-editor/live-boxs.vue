@@ -28,6 +28,7 @@
       >
         <i class="iconfont-v3 saasicon-choose-01" v-show="item.checked"></i>
         <div class="vh-chose-active-item__cover">
+          <!-- TODO 右侧直播选择区域 -->
           <img :src="item.img_url" alt="">
           <div class="vh-chose-active-item__cover-status">
             <span class="liveTag">
@@ -56,6 +57,8 @@
 </template>
 <script>
 import noData from '@/views/PlatformModule/Error/nullPage';
+import EventBus from '../../bus'
+import eventsType from '../../EventConts'
 export default {
   props: ['checkedList'],
   data() {
@@ -79,11 +82,16 @@ export default {
       return this.loading || this.lock
     }
   },
-
   created() {
-
+    let _that = this
+    // 移除前事件
+    EventBus.$on(eventsType.EDITOR_COMPONENT_ITEM_INFO, (del_id) => {
+      let newIds = _that.checkedList.filter(item=> {
+        return item != del_id
+      })
+      _that.syncCheckStatus(newIds, del_id)
+    })
   },
-
   mounted() {
     this.getActiveList();
   },
@@ -138,23 +146,36 @@ export default {
     },
 
     // 同步 选中状态
-    syncCheckStatus() {
-      if (this.checkedList.length > 0) {
-      const checked = this.checkedList.map((item) => {
-        return item
-      })
-      this.activeList = this.activeList.map((item) => {
+    syncCheckStatus(ids, del_id) {
+      let checkIds = this.checkedList
+      if(ids && ids.length > 0) {
+        checkIds = ids
+      }
+      if (checkIds.length > 0) {
+        const checked = checkIds.map((item) => {
+          return item
+        })
+        this.activeList = this.activeList.map((item) => {
           if(checked.includes(item.webinar_id)) {
-            return {
-              ...item,
-              checked: true
+            if(del_id != item.webinar_id) {
+              return {
+                ...item,
+                checked: true
+              }
+            } else {
+              return {
+                ...item,
+                checked: false
+              }
             }
           } else {
             return {
-              ...item
+              ...item,
+              checked: false
             }
           }
         })
+      } else {
       }
     },
 

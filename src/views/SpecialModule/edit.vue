@@ -106,7 +106,7 @@
                 <div class="vh-sort-tables__tbody-id">
                   {{ index + 1 }}
                 </div>
-                <div class="vh-sort-tables__tbody-title" @click="goWebinarSpecial(item.webinar_id, item.webinar_state)">
+                <div class="vh-sort-tables__tbody-title" @click="goWebinarSpecial(item.webinar_id, item.webinar_state, item.player)">
                   {{ item.subject }}
                 </div>
                 <div class="vh-sort-tables__tbody-status">
@@ -168,7 +168,7 @@ import upload from '@/components/Upload/main';
 import VEditor from '@/components/Tinymce';
 import Env from "@/api/env";
 import ChoseActives from './components/choseLiveList'
-import {sessionOrLocal} from "@/utils/utils";
+import { sessionOrLocal } from "@/utils/utils";
 
 export default {
   components: {
@@ -545,14 +545,19 @@ export default {
         });
     },
     // 跳转活动页面
-    goWebinarSpecial(id, state) {
+    goWebinarSpecial(id, state, player) {
       this.$vhall_paas_port({
         k: 100508,
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-      let path = state === 4 ? '/live/vodEdit/' : '/live/edit/';
-      const { href } = this.$router.resolve({path: `${path}${id}`, query: {type: 2 }});
-      window.open(href, '_blank');
+      if(player == 1) {// flash
+        let href = `${process.env.VUE_APP_E_COMPANY_URL}/auth/check-token?after_login=mywebinar/edit?id=${id}&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`
+        window.open(href, '_blank');
+      } else {
+        let path = state === 4 ? '/live/vodEdit/' : '/live/edit/';
+        const { href } = this.$router.resolve({path: `${path}${id}`, query: {type: 2 }});
+        window.open(href, '_blank');
+      }
     },
     dragStart(e) {
       console.log('vhall saas Event 拖动开始::', e)

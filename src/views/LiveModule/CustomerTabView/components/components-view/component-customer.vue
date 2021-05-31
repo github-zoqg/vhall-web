@@ -222,11 +222,16 @@ export default {
         background: #fff;
         display: none;
       }
-
+      /deep/.vh-chose-active-item__del {
+        display: none;
+      }
       &.editor{
         background: #FFF5F5;
         border: 1px dashed #F09D99;
         i{
+          display: block;
+        }
+        /deep/.vh-chose-active-item__del {
           display: block;
         }
       }

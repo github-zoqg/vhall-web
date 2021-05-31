@@ -103,7 +103,8 @@
 <script>
 import env from "@/api/env";
 import PwdInput from './pwdInput.vue';
-import { sessionOrLocal } from '@/utils/utils';
+import { sessionOrLocal } from "@/utils/utils";
+import Cookies from 'js-cookie'
 export default {
   name: "validSetDialog.vue",
   components: {
@@ -655,6 +656,7 @@ export default {
                 type: 'error',
                 customClass: 'zdy-info-box'
               });
+              // 验证码错误，重置验证码
             });
           } else {
             // 第二步密码保存 => 存储密码  scene_id场景ID：1账户信息-修改密码  4忘记密码-邮箱方式找回 5忘记密码-短信方式找回 9设置密码（密码不存在情况）
@@ -677,6 +679,13 @@ export default {
               this.visible = false;
               this.showCaptcha = false;
               this.showCaptcha1 = false;
+              // 跳转登录页
+              sessionOrLocal.clear();
+              sessionOrLocal.clear('localStorage');
+              // 清除cookies
+              Cookies.remove('user_id');
+              // 监听消息变化
+              this.$router.push({path: '/login'});
             }).catch(res => {
               console.log(res);
               this.$message({
