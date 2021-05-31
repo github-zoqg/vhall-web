@@ -12,7 +12,7 @@
     <div class="all-yes-data" v-else>
       <!-- 搜索 -->
       <div class="list--search">
-        <el-button :disabled="isForbidCreate" size="medium" type="primary" round @click.prevent.stop="addSonShow(null)">创建</el-button>
+        <el-button size="medium" type="primary" :disabled="isForbidCreate" round @click.prevent.stop="addSonShow(null)">创建</el-button>
         <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
         <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="!(this.ids && this.ids.length > 0)">批量删除</el-button>
         <el-button size="medium" round @click="downloadHandle">导出</el-button>
@@ -60,8 +60,9 @@
     <!-- 添加/ 观众子账号 -->
     <VhallDialog class="sonAdd" :title="sonDialog.title" :visible.sync="sonDialog.visible" style="overflow: hidden;" :before-close='handleClose'
                  width="460px">
-      <el-scrollbar  :style="{height: sonForm.is_batch == 0 ? 'auto' : '374px'}">
-        <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth" :class="{'more': sonForm.is_batch != 0}">
+      <el-scrollbar  :style="{height: sonDialog.type === 'edit' || sonForm.is_batch == 0 ? 'auto' : '374px'}">
+        <!-- 创建子账号（开启-424；关闭374px） -->
+        <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth" :class="{'more': sonDialog.type === 'add' && sonForm.is_batch != 0, 'edit-mini': sonDialog.type === 'edit'}">
           <el-form-item label="批量创建" prop="is_batch" v-if="sonDialog.type === 'add'" class="switch--item">
             <div class="switch__box">
               <el-switch
@@ -818,6 +819,10 @@ export default {
     height: 374px;
     &.more {
       height: 424px;
+    }
+    &.edit-mini {
+      margin: 0 32px 54px 32px;
+      height: 320px;
     }
   }
   .el-select {
