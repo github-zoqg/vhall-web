@@ -98,6 +98,7 @@ export default {
       this.$service.$on(VHall_Questionnaire_Const.EVENT.CREATE, data => {
         // data  回答Id
         // naire_id  问卷Id
+        console.log(data, '???wenju问卷图片是？？？？？')
         if (this.type == 1) {
           // 资料库问卷创建
           this.materialQuestion(data.id, data.title, data.description);
@@ -112,6 +113,7 @@ export default {
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.UPDATE, data => {
+        this.questionDataInfo = data;
         if (this.type == 1) {
           // 资料库问卷编辑
           this.materialEditQuestion(data.id, data.title, data.description);
@@ -148,7 +150,14 @@ export default {
       this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
     },
     materialQuestion(id, title, description) {
-      this.$fetch('createQuestion', {survey_id: id, title: title, description: description}).then(res => {
+      let params = {
+        survey_id: id,
+        title: title,
+        description: description,
+        img_url: this.questionDataInfo.imgUrl,
+        playback_filling: this.questionDataInfo.playBack
+      }
+      this.$fetch('createQuestion', params).then(res => {
         if (this.type == 1) {
           this.$message({
             message: res.code == 200 ? '新建成功' : '新建失败',
@@ -163,7 +172,14 @@ export default {
       })
     },
     materialEditQuestion(id, title, description) {
-      this.$fetch('editQuestion', {survey_id: id, title: title, description: description}).then(res => {
+      let params = {
+        survey_id: id,
+        title: title,
+        description: description,
+        img_url: this.questionDataInfo.imgUrl,
+        playback_filling: this.questionDataInfo.playBack
+      }
+      this.$fetch('editQuestion', params).then(res => {
         this.$message({
           message: res.code == 200 ? '编辑成功' : '编辑失败',
           showClose: true,
@@ -182,6 +198,8 @@ export default {
         room_id: this.$route.query.roomId,
         title: title,
         description: description,
+        img_url: this.questionDataInfo.imgUrl,
+        playback_filling: this.questionDataInfo.playBack
       }
       this.$fetch('createLiveQuestion', params).then(res => {
         this.$message({
@@ -206,6 +224,8 @@ export default {
         room_id: this.$route.query.roomId,
         title: title,
         description: description,
+        img_url: this.questionDataInfo.imgUrl,
+        playback_filling: this.questionDataInfo.playBack
       }
       this.$fetch('editLiveQuestion', params).then(res => {
         this.$message({
