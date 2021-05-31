@@ -873,6 +873,7 @@ export default {
           accountId: result.data.accountId || '', // 第三方用户ID
           channelId: this.channel_id || '', // 频道id 必须 => 活动的
           token: result.data.paasAccessToken || '', // 必须， token，初始化接口获取
+          hide: true
         }
         window.VhallChat.createInstance(option, (event) => {
           this.$WebinarChat = event.message; // 聊天实例句柄

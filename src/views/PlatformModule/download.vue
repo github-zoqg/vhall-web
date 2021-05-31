@@ -382,6 +382,7 @@ export default {
           accountId: result.data.accountId || '', // 第三方用户ID
           channelId: result.data.channelId || '', // 频道id 必须
           token: result.data.paasAccessToken || '', // 必须， token，初始化接口获取
+          hide: true
         }
         window.VhallChat.createInstance(option, (event) => {
           this.$Chat = event.message; // 聊天实例句柄
