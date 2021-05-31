@@ -6,7 +6,7 @@
     <div class="right-menu">
       <div
         class="right-menu-item"
-        v-if="!(userInfo && userInfo.is_new_regist > 0) && (userInfo && userInfo.user_extends.extends_remark !== 1) && !isMiniScreen"
+        v-if="isShowOld && !isMiniScreen"
       >
         <a :href="oldUrl" class="set-font" @click="returnOldVersion">返回旧版</a>
       </div>
@@ -66,7 +66,7 @@
             <el-dropdown-item v-if="isMiniScreen" divided @click.native.prevent.stop="toHelpPage">
               <div
                 class="right-menu-item"
-                v-if="!(userInfo && userInfo.is_new_regist > 0) && (userInfo && userInfo.user_extends.extends_remark !== 1)"
+                v-if="isShowOld"
               >
                 <a :href="oldUrl" class="set-font">返回旧版</a>
               </div>
@@ -117,6 +117,13 @@ export default {
         }
       } else {
         return '';
+      }
+    },
+    isShowOld: function(){
+      if( (this.userInfo && (this.userInfo.is_new_regist == 0 || this.userInfo.is_new_regist == 4)) && (this.userInfo && this.userInfo.user_extends.extends_remark !== 1)){
+        return true
+      }else{
+        return false
       }
     }
   },
