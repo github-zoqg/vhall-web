@@ -76,7 +76,6 @@ export default {
   },
   watch: {
     checkedList : function(val) {
-      console.log('zzzzzzz')
       console.log('组件初始值', val)
       this.getActiveList()
     }
