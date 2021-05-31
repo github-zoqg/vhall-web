@@ -1,42 +1,14 @@
 <template>
-  <div>
-    <!-- 404 -->
-    <div class="container 404" v-if="$route.params.str !== 'sysUnder' && $route.params.str !== 'network'">
-      <div class="left-section">
-        <div class="inner-content">
-          <h1  class="heading">{{$route.params.str}}</h1>
-          <!-- 具体文案 -->
-          <p class="subheading">页面已失联，攻城狮正在赶来的路上…</p>
-          <p class="headingNotice">
-            无法访问本页的原因：<br/>
-            服务器过热导致网站可能出现故障！<br/>
-            所访问的页面不存在或者已被管理员删除！<br/>
-          </p>
-          <p class="index-btn"><el-button type="primary" @click.prevent.stop="toReturn" round>返回首页</el-button></p>
-        </div>
-      </div>
-      <div class="right-section">
-        <img src="../../../common/images/sys/404.svg" class="svgImg" alt=""/>
+  <div class="container sysUnder">
+    <div class="left-section sysUnder">
+      <div class="inner-content">
+        <h1  class="heading">系统正在升级中…</h1>
+        <!-- 具体文案 -->
+        <p class="subheading">00:00-07:00期间系统升级中，由此给您带来不便，敬请谅解！</p>
       </div>
     </div>
-    <!-- 无服务 -->
-    <div class="container sysUnder" v-else="$route.params.str === 'sysUnder'">
-      <div class="left-section sysUnder">
-        <div class="inner-content">
-          <h1  class="heading">系统正在升级中…</h1>
-          <!-- 具体文案 -->
-          <p class="subheading">亲爱的用户，系统正在升级中，给您带来不便，深表歉意。</p>
-        </div>
-      </div>
-      <div class="right-section">
-        <img src="../../../common/images/sys/no-server.png" class="svgImg" alt=""/>
-      </div>
-    </div>
-    <!-- 系统升级 -->
-    <div class="container network" v-else>
-      <img src="../../../common/images/sys/no-network.svg" alt=""/>
-      <p class="heading">网络正在开小差……</p>
-      <p class="index-btn"><el-button type="primary" @click.prevent.stop="toReturn" round>返回首页</el-button></p>
+    <div class="right-section">
+      <img src="../../../common/images/sys/no-server.png" class="svgImg" alt=""/>
     </div>
   </div>
 </template>

@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="vh-chose-active-item__title ellsips">
-        {{ item.title }}
+        {{ item.title }} cccccc
       </div>
       <div class="vh-chose-active-item__info">
         {{ item.created_at  | unitTime}}

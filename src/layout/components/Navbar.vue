@@ -272,6 +272,7 @@ export default {
           accountId: result.data.accountId || '', // 第三方用户ID
           channelId: result.data.channelId || '', // 频道id 必须
           token: result.data.paasAccessToken || '', // 必须， token，初始化接口获取
+          hide: true
         }
         window.VhallChat.createInstance(option, (event) => {
           this.$Chat = event.message; // 聊天实例句柄
@@ -464,23 +465,39 @@ export default {
       color: #666666;
     }
     &.more {
-
+      .el-badge__content.is-fixed {
+        height: 18px;
+        background: #FB3A32;
+        top: 4px;
+        right: 10px;
+        text-align: center;
+        width: 28px;
+        border-radius: 9px;
+        line-height: 16px;
+        border: 1px solid #fb3a32;
+      }
     }
     &.item {
       .el-badge__content.is-fixed {
         width: 18px;
         height: 18px;
         background: #FB3A32;
-        top: 10px;
+        top: 4px;
         right: 10px;
         text-align: center;
         line-height: 16px;
         padding: 0 0;
+        border: 1px solid #fb3a32;
       }
     }
   }
+  /deep/.el-badge__content.is-dot {
+    height: 10px;
+    width: 10px;
+  }
   /deep/.el-badge__content.is-fixed.is-dot {
-    top: 9px;
+    top: 8px;
+    right: 6px;
   }
 }
 .avatar-wrapper {

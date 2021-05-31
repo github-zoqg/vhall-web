@@ -29,7 +29,9 @@
       :key="item.id"
     >
       <div class="vh-chose-active-item__cover">
+        <!-- TODO 选择专题后，反显已选择面板（至少有一个已选中的，后续选择都在此面板） -->
         <img :src="item.cover" alt="">
+        <span class="vh-chose-active-item__del" @click.stop="delProjectItem(item.id, item.type)"><img src="../images/icon-trash-line-01.png" alt=""></span>
         <div class="vh-chose-active-item__cover-status">
           <!-- <span class="liveTag"> -->
             <!-- <label class="live-status" v-if="item.webinar_state == 1">
@@ -54,6 +56,8 @@
 </div>
 </template>
 <script>
+import EventBus from '../../bus'
+import eventsType from '../../EventConts'
 export default {
   props: ['checkedList'],
   data() {
@@ -67,7 +71,7 @@ export default {
   },
   watch: {
     checkedList : function(val) {
-      console.log('组件初始值', val)
+      console.log('专题组件初始值', val)
       this.getActiveList()
     }
   },
@@ -97,6 +101,21 @@ export default {
         }
       })
     },
+    delProjectItem(project_id, type) {
+      if(type == 2) {// 双语flash专题
+        this.$confirm(`当前专题为Flash专题，保存后将会为您删除，此专题为您保存在旧平台`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {
+          EventBus.$emit(eventsType.EDITOR_COMPONENTP_PROJECT_ITEM_INFO, project_id)
+        }).catch(() => {});
+      } else {
+        EventBus.$emit(eventsType.EDITOR_COMPONENTP_PROJECT_ITEM_INFO, project_id)
+      }
+    }
   },
 
 }
@@ -211,5 +230,16 @@ export default {
     }
   }
 }
-
+.vh-chose-active-item__del {
+  z-index: 8;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  right: 1px;
+  top: 3px;
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
 </style>
