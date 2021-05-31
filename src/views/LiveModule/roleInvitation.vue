@@ -404,8 +404,9 @@ export default {
       let keysObj = this.privilegeVo.permission_data[keyName];
       let {keys,values} = Object;
       let obj = {};
-      keys(keysObj).filter(item => item !== 'white_board').forEach((keyItem, ins) => {
-        console.log(keyItem + ',' + Number(values(keysObj)[ins].check));
+      // .filter(item => item !== 'white_board')
+      keys(keysObj).forEach((keyItem, ins) => {
+        console.log(keyItem + 'vvv,' + Number(values(keysObj)[ins].check));
         obj[keyItem] = Number(values(keysObj)[ins].check);
       });
       obj.webinar_id = this.$route.params.str;
