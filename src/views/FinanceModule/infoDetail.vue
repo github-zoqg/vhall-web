@@ -23,6 +23,7 @@
             @cell-mouse-enter="handleCellMouseEnter"
             @cell-mouse-leave="handleCellMouseLeave"
             :data="tableList"
+            v-if="isDetail"
             style="width: 100%"
             :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
            >
@@ -159,6 +160,7 @@ export default {
     return {
       activeIndex: '1',
       totalNum: 0,
+      isDetail: false,
       isHandle: true,
       params: {},
       pageInfo: {
@@ -452,6 +454,7 @@ export default {
       this.activeIndex = tab.name;
       this.pageInfo.pos = 0;
       this.pageInfo.pageNum = 1;
+      this.isDetail = false;
       // this.$refs.tableDetail.pageInfo.pos = 0;
       // this.$refs.tableDetail.pageInfo.pageNum = 1;
       this.$refs.searchDetail.searchParams = {};
@@ -557,6 +560,7 @@ export default {
           });
         }
         this.tableList = tableList;
+        this.isDetail = true;
         console.log(this.tableList, '????kaitongmingxi开通明细')
         if (this.tableList.length == 0) {
           //兼容有无数据来修改element样式
