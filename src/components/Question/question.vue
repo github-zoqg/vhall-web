@@ -99,6 +99,7 @@ export default {
         // data  回答Id
         // naire_id  问卷Id
         console.log(data, '???wenju问卷图片是？？？？？')
+        this.questionDataInfo = data;
         if (this.type == 1) {
           // 资料库问卷创建
           this.materialQuestion(data.id, data.title, data.description);
@@ -107,7 +108,6 @@ export default {
             return;
           }
           this.dialogTongVisible = true;
-          this.questionDataInfo = data;
           // this.sureMaterialPrize(data.id, data.title, data.description);
         }
       });
@@ -150,12 +150,13 @@ export default {
       this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
     },
     materialQuestion(id, title, description) {
+      let extension = JSON.parse(this.questionDataInfo.extension)
       let params = {
         survey_id: id,
         title: title,
         description: description,
         img_url: this.questionDataInfo.imgUrl,
-        playback_filling: this.questionDataInfo.playBack
+        playback_filling: extension.playback_filling
       }
       this.$fetch('createQuestion', params).then(res => {
         if (this.type == 1) {
@@ -172,12 +173,13 @@ export default {
       })
     },
     materialEditQuestion(id, title, description) {
+      let extension = JSON.parse(this.questionDataInfo.extension)
       let params = {
         survey_id: id,
         title: title,
         description: description,
         img_url: this.questionDataInfo.imgUrl,
-        playback_filling: this.questionDataInfo.playBack
+        playback_filling: extension.playback_filling
       }
       this.$fetch('editQuestion', params).then(res => {
         this.$message({
@@ -192,6 +194,7 @@ export default {
       })
     },
     liveMaterialQuestion(id, title, description) {
+      let extension = JSON.parse(this.questionDataInfo.extension)
       let params = {
         survey_id: id,
         webinar_id: this.$route.query.webinarId,
@@ -199,7 +202,7 @@ export default {
         title: title,
         description: description,
         img_url: this.questionDataInfo.imgUrl,
-        playback_filling: this.questionDataInfo.playBack
+        playback_filling: extension.playback_filling
       }
       this.$fetch('createLiveQuestion', params).then(res => {
         this.$message({
@@ -218,6 +221,7 @@ export default {
       })
     },
     liveMaterialEditQuestion(id, title, description) {
+      let extension = JSON.parse(this.questionDataInfo.extension)
       let params = {
         survey_id: id,
         webinar_id: this.$route.query.webinarId,
@@ -225,7 +229,7 @@ export default {
         title: title,
         description: description,
         img_url: this.questionDataInfo.imgUrl,
-        playback_filling: this.questionDataInfo.playBack
+        playback_filling: extension.playback_filling
       }
       this.$fetch('editLiveQuestion', params).then(res => {
         this.$message({
