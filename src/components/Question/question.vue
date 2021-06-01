@@ -98,7 +98,6 @@ export default {
       this.$service.$on(VHall_Questionnaire_Const.EVENT.CREATE, data => {
         // data  回答Id
         // naire_id  问卷Id
-        console.log(data, '???wenju问卷图片是？？？？？')
         this.questionDataInfo = data;
         if (this.type == 1) {
           // 资料库问卷创建
