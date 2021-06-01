@@ -232,7 +232,7 @@ export default {
           type: res.code == 200 ? 'success' : 'error',
           customClass: 'zdy-info-box'
         });
-        this.setReportData(id, title, description, this.questionDataInfo.detail)
+        this.setReportData()
         this.dialogTongVisible = false;
         this.$router.push({
           path: `/live/question/${this.$route.query.webinarId}`,
@@ -273,7 +273,9 @@ export default {
           });
       })
     },
-    setReportData(id, title, description, list) {
+    setReportData() {
+      const { id, title, description, detail, imgUrl } = this.questionDataInfo
+      const playback_filling = JSON.parse(this.questionDataInfo.extension).playback_filling
       let userId = window.sessionStorage.getItem('userId')
       if (title !== '问卷标题') {
         this.$vhall_paas_port({
@@ -287,7 +289,17 @@ export default {
           data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
         })
       }
-      list.map(item => {
+      if (imgUrl) {
+        this.$vhall_paas_port({
+          k: 100345,
+          data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+        })
+      }
+      this.$vhall_paas_port({
+        k: playback_filling == 1 ? 100346 : 100347,
+        data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+      })
+      detail.map(item => {
         if (item.style === 'name') {
           this.$vhall_paas_port({
             k: 100348,
@@ -462,7 +474,7 @@ export default {
           })
         }
       })
-    },
+    }
   }
 }
 </script>
