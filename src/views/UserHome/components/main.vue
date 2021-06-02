@@ -188,7 +188,7 @@ export default {
         title: this.query.keyword,
         is_private: 0, // 展示所有公开的
         order_type: 1, // 排序规则 1 按照创建时间排序 2 按照最后直播时间排序
-        need_flash: 1
+        // need_flash: 1  个人主页不能展示双语专题
       };
       this.loading = true;
       this.$fetch('subjectList', this.$params(params), {
