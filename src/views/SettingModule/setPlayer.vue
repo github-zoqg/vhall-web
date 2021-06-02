@@ -19,10 +19,10 @@
                     </el-switch>
                   </p>
                 </el-form-item>
-                <!-- <el-form-item label="显示方式">
+                <el-form-item label="显示方式">
                   <el-radio v-model="formHorse.scroll_type" :label="1" :disabled="!scrolling_open" @change="editHorseInfo">滚动</el-radio>
                   <el-radio v-model="formHorse.scroll_type" :label="2" :disabled="!scrolling_open" @change="editHorseInfo">闪烁</el-radio>
-                </el-form-item> -->
+                </el-form-item>
                 <el-form-item label="文本类型">
                   <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open" @change="editHorseInfo">固定文本</el-radio>
                   <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open" @change="editHorseInfo">固定文本+观看者ID和昵称</el-radio>
@@ -54,7 +54,7 @@
                   <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="formHorse.color"></color-set>
                 </el-form-item>
                 <el-form-item label="不透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px" @change="editHorseInfo"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
-                <el-form-item label="移动速度">
+                <el-form-item label="移动速度" v-if="formHorse.scroll_type == 1">
                   <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open" @change="editHorseInfo">慢</el-radio>
                   <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open" @change="editHorseInfo">中</el-radio>
                   <el-radio v-model="formHorse.speed" :label="3000" :disabled="!scrolling_open" @change="editHorseInfo">快</el-radio>
@@ -65,8 +65,7 @@
                   <el-radio v-model="formHorse.position" :label="3" :disabled="!scrolling_open" @change="editHorseInfo">中</el-radio>
                   <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open" @change="editHorseInfo">下</el-radio>
                 </el-form-item>
-                <!-- v-if="formHorse.scroll_type == 1" -->
-                <el-form-item label="间隔时间" prop="interval">
+                <el-form-item label="间隔时间" prop="interval" v-if="formHorse.scroll_type == 1">
                   <el-input
                     v-model="formHorse.interval"
                     :disabled="!scrolling_open"
@@ -147,43 +146,55 @@
         <el-tab-pane label="其它" name="third">
         <div class="give-item">
           <div class="give-prize">
-              <el-form :model="formOther" ref="ruleForm" label-width="100px">
-            <el-form-item label="弹幕">
-              <p class="switch__box">
-                <el-switch
-                  v-model="formOther.bulletChat"
-                  active-color="#ff4949"
-                  inactive-color="#ccc"
-                  :active-text="bulletChatText"
-                  @change="otherOtherInfo(formOther.bulletChat, 1)"
-                >
-                </el-switch>
-              </p>
-            </el-form-item>
-            <el-form-item label="进度条">
-              <p class="switch__box">
-                <el-switch
-                  v-model="formOther.progress"
-                  active-color="#ff4949"
-                  inactive-color="#ccc"
-                  :active-text="progressText"
-                  @change="otherOtherInfo(formOther.progress, 2)"
-                >
-                </el-switch>
-              </p>
-            </el-form-item>
-            <el-form-item label="倍速">
-              <p class="switch__box">
-                <el-switch
-                  v-model="formOther.doubleSpeed"
-                  active-color="#ff4949"
-                  inactive-color="#ccc"
-                  :active-text="doubleSpeedText"
-                  @change="otherOtherInfo(formOther.doubleSpeed, 3)"
-                >
-                </el-switch>
-              </p>
-            </el-form-item>
+            <el-form :model="formOther" ref="ruleForm" label-width="100px">
+              <el-form-item label="弹幕">
+                <p class="switch__box">
+                  <el-switch
+                    v-model="formOther.bulletChat"
+                    active-color="#ff4949"
+                    inactive-color="#ccc"
+                    :active-text="bulletChatText"
+                    @change="otherOtherInfo(formOther.bulletChat, 1)"
+                  >
+                  </el-switch>
+                </p>
+              </el-form-item>
+              <el-form-item label="进度条">
+                <p class="switch__box">
+                  <el-switch
+                    v-model="formOther.progress"
+                    active-color="#ff4949"
+                    inactive-color="#ccc"
+                    :active-text="progressText"
+                    @change="otherOtherInfo(formOther.progress, 2)"
+                  >
+                  </el-switch>
+                </p>
+              </el-form-item>
+              <el-form-item label="倍速">
+                <p class="switch__box">
+                  <el-switch
+                    v-model="formOther.doubleSpeed"
+                    active-color="#ff4949"
+                    inactive-color="#ccc"
+                    :active-text="doubleSpeedText"
+                    @change="otherOtherInfo(formOther.doubleSpeed, 3)"
+                  >
+                  </el-switch>
+                </p>
+              </el-form-item>
+              <el-form-item label="自动播放">
+                <p class="switch__box">
+                  <el-switch
+                    v-model="formOther.autoplay"
+                    active-color="#ff4949"
+                    inactive-color="#ccc"
+                    :active-text="autoPlayText"
+                    @change="otherOtherInfo(formOther.autoplay, 4)"
+                  >
+                  </el-switch>
+                </p>
+              </el-form-item>
           </el-form>
           </div>
         </div>
@@ -340,7 +351,7 @@ export default {
         text: '版权所有，盗版必究',
         position: 1,
         alpha: 100,
-        // scroll_type: 1,
+        scroll_type: 1,
         interval: 20
       },
       fontList: [],
@@ -355,6 +366,7 @@ export default {
         progress: true,
         bulletChat: false,
         doubleSpeed: false,
+        autoplay: false,
         type: 2,
       },
       prizeForm: {
@@ -372,7 +384,7 @@ export default {
         color: '#FFFFFF',   //  文字颜色
         interval: 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: 6000, // 跑马灯移动速度  3000快     6000中   10000慢
-        // displayType: 0,
+        displayType: 0,
         position: 1
       },
       rules: {
@@ -419,6 +431,13 @@ export default {
         return "开启后，观看页播放器画面显示弹幕功能";
       }
     },
+    autoPlayText(){
+      if(this.formOther.autoplay){
+        return '已开启，音视频自动播放';
+      }else{
+        return "开启后，音视频自动播放";
+      }
+    },
     doubleSpeedText(){
       if(this.formOther.doubleSpeed){
         return '已开启，观看回放时播放器画面显示倍速功能';
@@ -435,11 +454,11 @@ export default {
   created() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getFontList();
-    this.getVideoAppid();
     this.getBasescrollingList();
     this.getBaseWaterList();
     // 获取其他信息
     this.getBaseOtherList();
+    this.getVideoAppid();
   },
   mounted () {
   },
@@ -522,7 +541,7 @@ export default {
       let otherArr = [100680, 100682, 100684, 100686]
       this.$vhall_paas_port({
         k: value ? otherArr[index - 1] : otherArr[index - 1] + 1,
-        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.preOthersOptions();
     },
@@ -537,9 +556,9 @@ export default {
         alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
         size:this.formHorse.size,      // 文字大小
         color: this.formHorse.color || '#FFFFFF',   //  文字颜色
-        interval:this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
+        interval: this.formHorse.scroll_type == 1 ? this.formHorse.interval : 1, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: this.formHorse.speed || 6000, // 跑马灯移动速度  3000快     6000中   10000慢
-        // displayType: this.formHorse.scroll_type == 1 ? 0 : 1,
+        displayType: this.formHorse.scroll_type == 1 ? 0 : 1,
         position:this.formHorse.position
       }
     },
@@ -549,6 +568,7 @@ export default {
         if (res.code == 200) {
           this.formHorse = {...res.data};
           this.scrolling_open = Boolean(res.data.scrolling_open);
+          this.getMarqueeOptionInfo()
         }
         this.$nextTick(() => {
           this.$refs.pageThemeColors.initColor(this.formHorse.color);
@@ -573,6 +593,7 @@ export default {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
           this.formOther.progress = Boolean(res.data.progress_bar);
           this.formOther.doubleSpeed = Boolean(res.data.speed);
+          this.formOther.autoplay = Boolean(res.data.autoplay);
         }
       }).catch(res => {
         this.$message({
@@ -629,10 +650,10 @@ export default {
           data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
       }
-      // this.$vhall_paas_port({
-      //   k: this.formHorse.scroll_type == 1 ? 100647 : 100646,
-      //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      // })
+      this.$vhall_paas_port({
+        k: this.formHorse.scroll_type == 1 ? 100647 : 100646,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$vhall_paas_port({
         k: this.formHorse.text_type == 1 ? 100648 : 100649,
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
@@ -717,6 +738,7 @@ export default {
         barrage_button: Number(this.formOther.bulletChat),
         progress_bar: Number(this.formOther.progress),
         speed: Number(this.formOther.doubleSpeed),
+        autoplay: Number(this.formOther.autoplay),
         type: 2
       }
       console.log('params',params);
@@ -763,6 +785,7 @@ export default {
         this.totalTime = this.$Vhallplayer.getDuration(() => {
           console.log('获取总时间失败');
         });
+        this.$Vhallplayer && this.$Vhallplayer.play();
         this.listen();
         // 初试完播放器获取其它设置
         this.getBaseOtherList()
@@ -800,6 +823,7 @@ export default {
         type: 'vod', // live 直播  vod 点播  必填
         videoNode: 'videoDom', // 播放器的容器， div的id 必填
         poster: '', // 封面地址  仅支持.jpg
+        autoplay: true,
         vodOption: { recordId: this.videoParam.paas_record_id, forceMSE: false },
         marqueeOption: this.marqueeOption,
         watermarkOption: { // 选填

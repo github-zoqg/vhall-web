@@ -316,32 +316,32 @@ export default {
   position: relative;
 }
 .plan-func-pc {
-  width: 421px;
+  width: 440px;
   height: 254px;
-  background-image: url('../../common/images/plan-function/pc-default.png');
+  background-image: url('../../common/images/plan-function/pc-dafault2.png');
   background-size: 100%;
   background-position: center;
   background-size: cover;
   position: relative;
   &.zj {
-    background-image: url('../../common/images/plan-function/pc-zj.png');
+    background-image: url('../../common/images/plan-function/pc-zj2.png');
   }
   .share-span{
     position: absolute;
-    bottom: 2px;
-    left: 0;
+    top: 23px;
+    right: 53px;
     display: inline-block;
-    width: 28px;
-    height: 11px;
+    width: 8px;
+    height: 10px;
     background-repeat: no-repeat;
     background-size: 100% 100%;
     margin-left: 2px;
-    background-image: url('../../common/images/plan-function/pc-share@2x.png');
+    background-image: url('../../common/images/plan-function/share-pc.png');
   }
   .icon-spans {
     position: absolute;
-    bottom: 0;
-    right: 118px;
+    bottom: 31px;
+    right: 150px;
     span {
       display: inline-block;
       width: 10px;
