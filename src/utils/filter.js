@@ -48,8 +48,10 @@ export const actionText = (val) => {
 };
 export const unitTime = (val) => {
   let str;
-  str = val.substring(0, 16);
-  return str;
+  if(val) {
+    str = val.substring(0, 16);
+  }
+  return str || '';
 };
 export const unitCovert = (val) => {
   val = Number(val);

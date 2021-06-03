@@ -4,6 +4,7 @@
   >
   <div class="vh-chose-active-item" v-if="activeList.length == 0">
       <div class="vh-chose-active-item__cover">
+        <!-- TODO 示例直播组件 -->
         <!-- <img :src="" alt=""> -->
         <div class="vh-chose-active-item__cover-status">
           <span class="liveTag">
@@ -32,7 +33,9 @@
       :key="item.webinar_id"
     >
       <div class="vh-chose-active-item__cover">
+      <!-- TODO 选择直播后，反显已选择面板（至少有一个已选中的，后续选择都在此面板） -->
         <img :src="item.img_url" alt="">
+        <span class="vh-chose-active-item__del" @click.stop="delActiveItem(item.id, item.player)"><img src="../images/icon-trash-line-01.png" alt=""></span>
         <div class="vh-chose-active-item__cover-status">
           <span class="liveTag">
             <!-- <label class="live-status" v-if="item.webinar_state == 1">
@@ -58,12 +61,14 @@
 </div>
 </template>
 <script>
+import EventBus from '../../bus'
+import eventsType from '../../EventConts'
 export default {
   props: ['checkedList'],
   data() {
     return {
       activeList: [],
-      loading: false,
+      loading: false
     }
   },
   mounted() {
@@ -77,6 +82,7 @@ export default {
   },
   methods: {
     getActiveList() {
+      // alert(this.checkedList.length)
       if(this.checkedList.length == 0) {
         this.activeList = []
         return
@@ -84,7 +90,7 @@ export default {
       this.loading = true
       const userId = sessionStorage.getItem('userId')
       this.$fetch('batchGetWebinarInfo', {
-        webinar_ids:this.checkedList.join(','),
+        webinar_ids: this.checkedList.join(','),
         user_id: userId,
       }).then((res) => {
         if(res.code == 200) {
@@ -101,8 +107,25 @@ export default {
         }
       })
     },
+    // 移除初始值
+    delActiveItem(webinar_id, player) {
+      if(player == 1) {
+        this.$confirm(`当前活动为Flash活动，保存后将会为您删除，此活动为您保存在旧平台`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {
+          EventBus.$emit(eventsType.EDITOR_COMPONENT_ITEM_INFO, webinar_id)
+        }).catch(() => {});
+      } else {
+        EventBus.$emit(eventsType.EDITOR_COMPONENT_ITEM_INFO, webinar_id)
+      }
+    }
   },
-
+  created() {
+  }
 }
 </script>
 
@@ -216,5 +239,16 @@ export default {
     }
   }
 }
-
+.vh-chose-active-item__del {
+  z-index: 8;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  right: 1px;
+  top: 3px;
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
 </style>

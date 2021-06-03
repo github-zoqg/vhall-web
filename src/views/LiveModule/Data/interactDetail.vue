@@ -775,7 +775,7 @@ export default {
           this.text = '您还没有发红包记录！';
         }
         this.tableList.map((item, index) => {
-          item.method = item.pay_channel == 1 ? '微信' : item.pay_channel == 2 ? '支付宝' : item.pay_channel == 3 ? '余额支付' : '其它';
+          item.method = item.pay_channel == 1 ? '微信' : item.pay_channel == 2 ? '支付宝' : item.pay_channel == 3 ? '余额支付' : '-';
           item.type = item.type === 1 ? '均分红包' : '拼手气';
           item.index = index + 1;
         })
