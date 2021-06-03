@@ -516,7 +516,7 @@ export default {
           })
         }
       }
-      // this.getDetailList('search')
+      this.getDetailList('search')
     },
     getDetailList(params) {
       // let pageInfo = {};

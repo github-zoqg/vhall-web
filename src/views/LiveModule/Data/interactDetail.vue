@@ -321,14 +321,12 @@ export default {
           this.placeholder = '请输入聊天内容';
           this.tabelColumn= this.chatColumn;
           this.tableRowBtnFun = this.chatBtnFun;
-          this.searchTime = '';
           this.chatInfo();
           break;
         case '问答':
           this.isCheckout = true;
           this.tabelColumn= this.questColumn;
           this.tableRowBtnFun = this.anwerBtnFun;
-          this.searchTime = '';
           this.getRecordList();
           break;
         case '抽奖':

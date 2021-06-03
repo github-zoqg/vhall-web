@@ -83,6 +83,9 @@ const apis = {
   getCardList: ['/v3/interacts/invite-card/get-list', 'POST'], //获取邀请列表
   getTopList: ['/v3/interacts/invite-card/get-top-list', 'POST'], //获取邀请榜
 
+  // 分享设置
+  getShareSettingInfo: ['/v3/webinars/share/info', 'POST'],  //获取分享设置详情
+  setShareSettingInfo: ['/v3/webinars/share/edit', 'POST'],  //保存分享设置
 
   // 直播模块
   createLive: ['/v3/webinars/webinar/create', 'POST'], // 活动创建/直播创建 jian.chang  √

@@ -282,33 +282,13 @@ export default {
     this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
     this.childNum = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['child_num_limit'];
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
-    this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
-    if (!this.versionType) {
-      this.tabelColumn = this.tabelColumns.concat({
-        label: '最高并发（方）',
-        key: 'webinar_max_uv',
-        width: 150
-      })
-    } else {
-      this.tabelColumn = this.tabelColumns.concat({
-        label: '消耗流量（GB）',
-        key: 'webinar_flow',
-        width: 150
-      })
-    }
+    this.getVersion();
     if (this.parentId == 0 && this.childNum == 1) {
       this.type = true;
     }
   },
   mounted() {
-    this.status = JSON.parse(sessionOrLocal.get("arrears")).total_fee || 0;
-    if (this.status) {
-      this.initPayMessage();
-    }
     this.initPage();
-    this.getVersion();
-    this.getLineList();
-    this.getAccountList();
   },
   beforeRouteLeave(to, from, next) {
     if (this.status) {
@@ -332,9 +312,32 @@ export default {
     getVersion() {
       this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
         this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
+        this.versionType = parseInt(res.data.type)
+        this.getLineList();
+        this.getAccountList();
+        this.getCumlus(this.versionType)
+        this.status = res.data.arrears.total_fee
+        if (this.status) {
+          this.initPayMessage(res.data.arrears);
+        }
       }).catch(e=>{
         console.log(e);
       });
+    },
+    getCumlus(versionType) {
+      if (!versionType) {
+        this.tabelColumn = this.tabelColumns.concat({
+          label: '最高并发（方）',
+          key: 'webinar_max_uv',
+          width: 150
+        })
+      } else {
+        this.tabelColumn = this.tabelColumns.concat({
+          label: '消耗流量（GB）',
+          key: 'webinar_flow',
+          width: 150
+        })
+      }
     },
     getSearchLineList() {
       this.$vhall_paas_port({
@@ -357,7 +360,7 @@ export default {
       this.getFlowTrend(obj);
     },
     getFlowTrend(obj) {
-      let url = this.versionType == '1' ? 'getFlowLineInfo' : 'getTrendLineInfo';
+      let url = this.versionType == 1 ? 'getFlowLineInfo' : 'getTrendLineInfo';
       this.$fetch(url, obj).then(res =>{
         this.lintData = res.data.list;
       }).catch(e=>{
@@ -366,7 +369,7 @@ export default {
     },
     // 获取并发-最高  流量-活动个数
     getOnlinePay(obj) {
-      let url = this.versionType == '1' ? 'getFlowPayInfo' : 'getTrendHighInfo';
+      let url = this.versionType == 1 ? 'getFlowPayInfo' : 'getTrendHighInfo';
       this.$fetch(url, obj).then(res =>{
         this.trendData = res.data || {};
       }).catch(e=>{
@@ -424,7 +427,7 @@ export default {
       this.getDataList(this.$params(obj));
     },
     getDataList(obj) {
-      let url = this.versionType == '1' ? 'getBusinessList' : 'getAccountList';
+      let url = this.versionType == 1 ? 'getBusinessList' : 'getAccountList';
       this.$fetch(url, obj).then(res =>{
         let costList = res.data.list;
         this.totalNum = res.data.total;
@@ -440,7 +443,7 @@ export default {
     getOrderArrear() {
       let params = {
         user_id: this.userId,
-        type: this.versionType == '1' ? 1 : 2
+        type: this.versionType == 1 ? 1 : 2
       };
       this.$fetch('orderArrears', params).then(res =>{
         if (res.code == 200) {
@@ -463,16 +466,17 @@ export default {
         console.log(res);
       });
     },
-    initPayMessage() {
+    initPayMessage(info) {
       let that = this;
-      let flow = JSON.parse(sessionOrLocal.get("arrears")).flow
-      let extendFee = JSON.parse(sessionOrLocal.get("arrears")).extend
+      let flow = info.flow
+      let extendFee = info.extend
       let total = flow < 0 ? `${ flow } G` : `${ extendFee } 方`
+      let text  = `您有${ this.versionType == 1 ? '流量' : '并发'}欠费${info.total_fee}元未支付(${total})`
       this.vm = this.$message({
         showClose: true,
         duration: 0,
         dangerouslyUseHTMLString: true,
-        message: '<p style="color:#1A1A1A">您有流量欠费' + that.status + '元未支付(' + total + ')<span id="openList" style="color:#FA9A32;cursor: pointer;padding-left:10px">请立即支付</span></p>',
+        message: '<p style="color:#1A1A1A">' + text + '<span id="openList" style="color:#FA9A32;cursor: pointer;padding-left:10px">请立即支付</span></p>',
         type: 'warning'
       });
       let open = document.querySelector('#openList');
@@ -483,7 +487,7 @@ export default {
     },
     // 导出用量统计
     exportCenterData() {
-      let url = this.versionType == '1' ? 'exportFlow' : 'exportOnline';
+      let url = this.versionType == 1 ? 'exportFlow' : 'exportOnline';
       this.$fetch(url, this.lineParams).then(res => {
         this.$vhall_paas_port({
           k: 100696,
@@ -509,7 +513,7 @@ export default {
     },
     // 导出消费账单
     exportAccount() {
-      let url = this.versionType == '1' ? 'exportFlowDetail' : 'exportOnlineDetail';
+      let url = this.versionType == 1 ? 'exportFlowDetail' : 'exportOnlineDetail';
       this.$fetch(url, this.dataParams).then(res => {
         this.$vhall_paas_port({
           k: 100702,
