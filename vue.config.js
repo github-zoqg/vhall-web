@@ -7,7 +7,7 @@ let cdn = {
     "//static.vhallyun.com/jssdk/vhall-jssdk-base/vhall-msg-1.0.9.js",
     "//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js",
     "//cnstatic01.e.vhall.com/vhall-new-saas/static/polyfill.js?v=202",
-    "//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.5.js",
+    "//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.6.js",
     // '//cnstatic01.e.vhall.com/3rdlibs/common-libs/vue/VhallLibs.js',
     // '//cnstatic01.e.vhall.com/3rdlibs/common-libs/ui-frame/element-UI.js',
     // "//static01-open.e.vhall.com/jssdk/question-component/1.0.3/questionnaire_service.js",
