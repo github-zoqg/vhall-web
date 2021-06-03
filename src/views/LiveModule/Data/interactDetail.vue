@@ -7,8 +7,8 @@
     </pageTitle>
     <div class="operaBox">
       <div class="searchBox" v-show="totalNum || isSearch">
-        <VhallInput v-model="searchText" v-clearEmoij :placeholder="placeholder"  v-if="title=='邀请排名'" style="margin-right: 20px;" @keyup.enter.native="inviteInfo"  @clear="inviteInfo" clearable>
-          <i slot="suffix" class="el-icon-search el-input__icon" @click="inviteInfo" style="cursor: pointer; line-height: 36px;"></i>
+        <VhallInput v-model="searchText" v-clearEmoij :placeholder="placeholder"  v-if="title=='邀请排名'" style="margin-right: 20px;" @keyup.enter.native="searchInviteInfo"  @clear="searchInviteInfo" clearable>
+          <i slot="suffix" class="el-icon-search el-input__icon" @click="searchInviteInfo" style="cursor: pointer; line-height: 36px;"></i>
         </VhallInput>
         <!-- <el-input
           :placeholder="placeholder"
@@ -88,6 +88,11 @@ export default {
       seleteAnwerList: [], //答案
       seleteQuestionList: [],//问题
       totalNum: 0,
+      pageInfo: {
+        pos: 0,
+        pageNum: 1,
+        limit: 10
+      },
       pickerOptions: {
         // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
         disabledDate: (time) => {
@@ -301,6 +306,7 @@ export default {
       }).join(' ');
     },
     changeColumn(title) {
+      let pageInfo = this.$refs.tableList.pageInfo;
       this.params = {};
       switch (title) {
         case '邀请排名':
@@ -308,7 +314,7 @@ export default {
           this.tabelColumn= this.inviteColumn;
           this.tableRowBtnFun = this.inviteBtnFun;
           this.placeholder = '搜索用户昵称';
-          this.inviteInfo();
+          this.inviteInfo(pageInfo);
           break;
         case '签到':
           this.isCheckout = false;
@@ -321,13 +327,13 @@ export default {
           this.placeholder = '请输入聊天内容';
           this.tabelColumn= this.chatColumn;
           this.tableRowBtnFun = this.chatBtnFun;
-          this.chatInfo();
+          this.chatInfo(pageInfo);
           break;
         case '问答':
           this.isCheckout = true;
           this.tabelColumn= this.questColumn;
           this.tableRowBtnFun = this.anwerBtnFun;
-          this.getRecordList();
+          this.getRecordList(pageInfo);
           break;
         case '抽奖':
           this.isCheckout = false;
@@ -353,18 +359,21 @@ export default {
     },
     changeDate() {
       if(this.title === '问答') {
-        this.getRecordList();
+        this.getRecordList(this.pageInfo);
       } else {
-        this.chatInfo();
+        this.chatInfo(this.pageInfo);
       }
     },
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
+    searchInviteInfo () {
+      this.inviteInfo(this.pageInfo)
+    },
     // 邀请排名
-    inviteInfo() {
-      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+    inviteInfo(pageInfo) {
+      // let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
         webinar_id: this.webinarId,
         keyword: this.searchText,
@@ -388,14 +397,12 @@ export default {
       });
     },
     // 聊天
-    chatInfo() {
-      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+    chatInfo(pageInfo) {
+      // let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
         room_id: this.roomId
       };
       if (this.searchTime) {
-        pageInfo.pos = 0;
-        pageInfo.pageNum= 1;
         this.$refs.tableList.clearSelect();
         params.start_time = this.searchTime[0] + ' 00:00:00';
         params.end_time = this.searchTime[1] + ' 23:59:59';
@@ -477,7 +484,7 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box'
             });
-            this.chatInfo();
+            this.chatInfo(this.pageInfo);
           });
         }).catch(() => {
           this.$message({
@@ -548,7 +555,7 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box'
             });
-            this.getRecordList();
+            this.getRecordList(this.pageInfo);
           });
         }).catch(() => {
           this.$message({
@@ -580,7 +587,7 @@ export default {
               data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
             that.$message.success('删除成功');
-            that.getRecordList();
+            that.getRecordList(this.pageInfo);
           });
         }).catch(() => {
           that.$message({
@@ -664,14 +671,12 @@ export default {
 
     },
     // 回答
-    getRecordList() {
-      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+    getRecordList(pageInfo) {
+      // let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
         room_id: this.roomId
       };
       if (this.searchTime) {
-        pageInfo.pos = 0;
-        pageInfo.pageNum= 1;
         this.$refs.tableList.clearSelect();
         params.start_time = this.searchTime[0];
         params.end_time = this.searchTime[1];
@@ -745,7 +750,7 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box'
             });
-            this.getRecordList();
+            this.getRecordList(this.pageInfo);
           });
         }).catch(() => {
           this.$message({
