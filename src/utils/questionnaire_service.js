@@ -2460,7 +2460,7 @@ exports.default = {
       currentIndex: 1,
       drag: false,
       domainUrl: '',
-      isPlayBack: false,
+      isPlayBack: true,
       defaultImg: __webpack_require__(/*! ./signup-form/form-head-new1.png */ "./src/views/signup-form/form-head-new1.png"),
       mainContentFixed: false,
       menuBarFixed: '',
