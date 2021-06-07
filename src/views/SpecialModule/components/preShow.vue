@@ -1,63 +1,67 @@
 <template>
   <div class="show-special">
-    <OldHeader scene="preShow" :isWhiteBg=true v-if="specialInfo && specialInfo.user_id" :user_id="specialInfo.user_id"></OldHeader>
+    <OldHeader scene="preShow" :isWhiteBg=true v-if="specialInfo && specialInfo.user_id" :user_id="specialInfo.user_id" :isSpecial=true :specialInfo="specialInfo" @share="share"></OldHeader>
     <div class="special-show-ctx">
-      <!-- <pageTitle pageTitle="专题详情"></pageTitle> -->
       <div class="special-info">
         <div class="special-main">
-          <div class="special-img">
-            <img :src="specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`">
+          <div class="special-imgTitle">
+            <div class="special-img">
+              <img :src="specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`">
+            </div>
+            <div class="special-title">
+              <p><i class="iconfont-v3 saasicon_kaibo"></i> {{ specialInfo.webinar_num }}</p>
+              <p v-if="specialInfo.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{ specialInfo.pv | formatNum }}</p>
+              <p v-if="specialInfo.hide_appointment"><i class="iconfont-v3 saasicon-share1"></i> {{ specialInfo.order_num }}</p>
+            </div>
           </div>
           <div class="special-detail">
-            <h1>{{ specialInfo.title }}</h1>
-            <p>{{ (specialInfo && specialInfo.created_at ? specialInfo.created_at : '') | unitTime  }}</p>
-            <h2>共<b>{{ specialInfo.webinar_num }}</b>个直播<span v-if="specialInfo.hide_pv"><i style="color:#FB3A32" class="iconfont-v3 saasicon_redu"></i> 热度<b>{{ specialInfo.pv | formatNum}}</b></span><label v-if="specialInfo.hide_appointment"><b>{{ specialInfo.order_num }}</b>次预约</label></h2>
-            <div class="shareText">
-              <el-popover
-                placement="bottom-start"
-                trigger="click">
-                <div class="shareSubject">
-                  <share slot="content" ref="share" :shareVo="shareVo" ></share>
-                </div>
-                <i class="el-icon-share" slot="reference"><b> 分享</b></i>
-              </el-popover>
-              <!-- <h3 slot="reference"><i class="el-icon-share"></i>分享</h3> -->
-            </div>
+            <vhscroll>
+              <div class="text" v-html="specialInfo.intro"></div>
+            </vhscroll>
           </div>
         </div>
       </div>
       <div class="special-list">
-        <el-tabs v-model="activeName" @tab-click="handleClick" v-loadMore="moreLoadData">
-          <el-tab-pane label="专题简介" name="first">
-            <div class="text" v-html="specialInfo.intro"></div>
-          </el-tab-pane>
-          <el-tab-pane label="目录列表" name="second">
-              <el-row :gutter="40" class="lives">
-                  <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
-                    <a class="inner" :href="toPageHandle(item)" target="_blank">
-                      <div class="top">
-                        <span class="liveTag">{{item | liveTag }}</span>
-                        <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
-                      </div>
-                      <div class="bottom">
-                        <div class="">
-                          <p  class="liveTitle" :title="item.subject" >{{item.subject}}</p>
-                          <p class="liveTime">{{item.start_time}} <span v-if="item.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{item.pv | formatNum}}</span></p>
-                        </div>
-                      </div>
-                    </a>
-                  </el-col>
-              </el-row>
-          </el-tab-pane>
-        </el-tabs>
+        <div class="lives">
+          <div class="liveItem" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
+            <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
+              <div class="top">
+                <span class="liveTag">{{item | liveTag }}</span>
+                <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
+              </div>
+              <div class="bottom">
+                <div class="">
+                  <p  class="liveTitle" :title="item.subject" >{{item.subject}}</p>
+                  <p class="liveTime">{{item.start_time}} <span v-if="item.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{item.pv | formatNum}}</span></p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <!-- <el-row :gutter="40" class="lives">
+          <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
+            <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
+              <div class="top">
+                <span class="liveTag">{{item | liveTag }}</span>
+                <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
+              </div>
+              <div class="bottom">
+                <div class="">
+                  <p  class="liveTitle" :title="item.subject" >{{item.subject}}</p>
+                  <p class="liveTime">{{item.start_time}} <span v-if="item.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{item.pv | formatNum}}</span></p>
+                </div>
+              </div>
+            </a>
+          </el-col>
+        </el-row> -->
       </div>
     </div>
-    <!-- <share slot="content" ref="share" :shareVo="shareVo" ></share> -->
+    <share ref="share" :shareVo="shareVo" ></share>
   </div>
 </template>
 <script>
 import OldHeader from '@/components/OldHeader';
-import share from './shareShow'
+import share from './share'
 import Env from '@/api/env.js';
 export default {
   data() {
@@ -153,26 +157,75 @@ export default {
 .titleBox {
   margin-top: 40px;
 }
-.special-show-ctx {
-  width: 1300px;
-  margin: 40px auto 50px auto;
+@media (min-width: 1920px) {
+ .special-show-ctx {
+    width: calc(100% - 414px);
+    margin: 40px auto 50px auto;
+  }
+  .liveItem{
+    margin-right: 27px;
+    &:nth-of-type(5n) {
+      margin-right: 0;
+    }
+  }
 }
+@media (min-width: 1366px) {
+ .special-show-ctx {
+    width: calc(100% - 166px);
+    margin: 40px auto 50px auto;
+  }
+ .liveItem{
+    margin-right: 27px;
+    &:nth-of-type(4n) {
+      margin-right: 0;
+    }
+  }
+}
+@media (min-width: 1440px) {
+ .special-show-ctx {
+    width: calc(100% - 240px);
+    margin: 40px auto 50px auto;
+  }
+  .liveItem{
+    margin-right: 27px;
+    &:nth-of-type(4n) {
+      margin-right: 0;
+    }
+  }
+}
+@media (min-width: 1600px) {
+ .special-show-ctx {
+    width: calc(100% - 400px);
+    margin: 40px auto 50px auto;
+  }
+  .liveItem{
+    margin-right: 27px;
+    &:nth-of-type(4n) {
+      margin-right: 0;
+    }
+  }
+}
+// .special-show-ctx {
+//   width: 1300px;
+//   margin: 40px auto 50px auto;
+// }
 .shareSubject{
   padding: 15px 20px 0;
 }
 .show-special{
   height: 100%;
-  /deep/.el-card__body {
-    padding: 24px 32px;
-  }
   .special-main{
     display: flex;
   }
+  .special-imgTitle{
+    width: calc(100% - 380px);
+  }
   .special-img{
-    width: 720px;
-    height: 400px;
+    width: 100%;
+    height: 460px;
     border-radius: 4px;
     background-color: #1a1a1a;
+    flex: 1;
     img{
       width: 100%;
       height: 100%;
@@ -180,102 +233,25 @@ export default {
       object-fit: scale-down;
     }
   }
-  .special-detail{
-    margin-left: 23px;
-    padding-right: 30px;
-    width: calc(100% - 722px);
-    h1{
-      font-size: 20px;
-      color: #333333;
-      padding-top: 10px;
-      margin-bottom: 20px;
-      width: 100%;
-      line-height: 1.5;
-      // max-width: 300px;
-      text-overflow: -o-ellipsis-lastline;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
-      -webkit-box-orient: vertical;
-    }
+  .special-title{
+    display: flex;
+    padding: 18px 24px;
+    background: #fff;
+    border-radius: 0 0 4px 4px;
     p{
-      font-size: 16px;
-      color: #8c8786;
-      margin-bottom: 20px;
-    }
-    h2{
-      font-size: 16px;
-      color: #666666;
-      margin-bottom: 25px;
-      span{
-        padding: 0 25px;
-      }
-      b{
-        font-weight: 500;
-        color: #ff3333;
-        padding: 0 3px;
-      }
-    }
-    .shareText{
-      font-size: 12px;
-      color: #999999;
-      cursor: pointer;
-      span{
-        color: #1A1A1A;
-      }
-      i{
-        padding-right: 5px;
-        font-size: 14px;
-      }
-      b{
-        font-weight: normal;
-        color: #999;
+      padding-right: 18px;
+      color: #666;
+      .iconfont-v3{
+        font-size: 16px;
       }
     }
   }
-  .el-tabs__content{
-    min-height: 300px;
-    padding: 20px;
-    overflow: auto;
-    max-height: 500px;
-    // 滚动条的宽度
-    &::-webkit-scrollbar {
-      width: 6px; // 横向滚动条
-      height: 6px; // 纵向滚动条 必写
-    }
-    // 滚动条的滑块
-    &::-webkit-scrollbar-thumb {
-      border-radius: 3px;
-      transition: all 0.3s;
-      cursor: pointer;
-      display: none;
-      background-color: #cccccc;
-      &:hover {
-        background-color: #cccccc;
-      }
-      &:active {
-        background-color: #cccccc;
-      }
-    }
-    &:hover {
-      &::-webkit-scrollbar-thumb {
-        display: block;
-      }
-    }
-  }
-  .special-info{
+  .special-detail{
+    margin-left: 20px;
+    padding: 24px;
     background: #fff;
     border-radius: 4px;
-    padding: 24px 32px;
-  }
-  .special-list{
-    margin-top: 20px;
-    background: #fff;
-    border-radius: 4px;
-    padding: 24px 32px;
-    // max-height: 500px;
+    width: 360px;
     .text{
       color: #1a1a1a;
       height: calc(100% - 592px);
@@ -288,10 +264,24 @@ export default {
         font-style:normal;
       }
     }
+
+  }
+  .special-info{
+    background:  #F7F7F7;
+    border-radius: 4px;
+  }
+  .special-list{
+    margin-top: 24px;
+    background: #F7F7F7;
+    border-radius: 4px;
     .lives{
       // max-height: 500px;
+      display: flex;
+      flex-wrap: wrap;
+      // justify-content: space-between;
       .liveItem{
-        height: 255px;
+        width: 282px;
+        // height: 255px;
         margin-bottom: 24px;
         border-radius: 4px;
         // border: 1px solid #ccc;
@@ -358,7 +348,7 @@ export default {
         }
         .bottom{
           height: 84px;
-          background: #f7f7f7;
+          background: #fff;
           box-sizing: border-box;
           padding: 10px 14px;
           display: flex;
