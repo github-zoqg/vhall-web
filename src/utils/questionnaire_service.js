@@ -10814,16 +10814,18 @@ var render = function() {
                               ]),
                               _vm._v(" "),
                               _c("div", { staticClass: "mask" }, [
-                                _c("span", [
-                                  _c("i", {
-                                    staticClass: "el-icon-refresh-left"
-                                  }),
-                                  _vm._v(" "),
-                                  _c("br"),
-                                  _vm._v(
-                                    "\n                      更换\n                    "
-                                  )
-                                ]),
+                                _vm.domainUrl
+                                  ? _c("span", [
+                                      _c("i", {
+                                        staticClass: "el-icon-refresh-left"
+                                      }),
+                                      _vm._v(" "),
+                                      _c("br"),
+                                      _vm._v(
+                                        "\n                      更换\n                    "
+                                      )
+                                    ])
+                                  : _vm._e(),
                                 _vm._v(" "),
                                 _c(
                                   "span",
