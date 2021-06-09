@@ -253,7 +253,7 @@ export default {
         },
         {
           label: '红包类型',
-          key: 'type',
+          key: 'typeStr',
         }
       ],
       tableRowBtnFun: [],
@@ -779,7 +779,7 @@ export default {
         }
         this.tableList.map((item, index) => {
           item.method = item.pay_channel == 1 ? '微信' : item.pay_channel == 2 ? '支付宝' : item.pay_channel == 3 ? '余额支付' : '-';
-          item.type = item.type === 1 ? '均分红包' : '拼手气';
+          item.typeStr = item.type === 1 ? '均分红包' : '拼手气';
           item.index = index + 1;
         })
       });
