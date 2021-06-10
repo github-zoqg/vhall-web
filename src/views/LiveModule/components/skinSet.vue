@@ -215,6 +215,7 @@ export default {
         type: this.$parent.type,
         webinar_id: this.$parent.type == 1 ? this.$route.params.str : ''
       }
+      this.skinVo = {}
       this.$fetch('getInterWebinarSkin', this.$params(params)).then(res => {
         this.skinVo = res.data || {};
         this.showBtn = this.skinVo.status !== undefined && this.skinVo.status !== null && this.skinVo.status !== '';
@@ -239,7 +240,7 @@ export default {
         this.previewShow();
       }).catch(err=>{
         console.log(err);
-        this.skinVo = {};
+        // this.skinVo = {};
       });
     },
     skinSetSave() {
