@@ -218,6 +218,7 @@ export default {
           ...res.data,
           url: res.data.goods_url
         };
+        this.form.description = this.repalceHtml(this.form.description)
         this.fileList = res.data.img_list.map(item => {
           this.form.img_id.push(item.img_id);
           return {
@@ -392,11 +393,18 @@ export default {
         console.log(err);
       });
     },
+    repalceHtml(str) {
+      let desc = null
+      desc = str.replace(/gt/ig, '')
+      desc = desc.replace(/<[^<>&]+>/g, '').replace(/&(lt|gt|nbsp|amp|quot|middot);/ig, '').replace(/(\r\n)|(\n)/g, '')
+      return desc
+    },
     onSubmit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           this.defaultCover = this.fileList.filter(item => item.cover).map(item => item.img_id).join(',');
           // this.form.imgIdArr = this.fileList.map(item => item.img_id);
+          this.form.description = this.repalceHtml(this.form.description)
           const obj = {
             ...this.form,
             webinar_id: this.$route.params.str,
