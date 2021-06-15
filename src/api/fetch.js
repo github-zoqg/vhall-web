@@ -130,8 +130,9 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
     if (res.code === 404 || res.code === 403) {
       sessionStorage.setItem('errorReturn', this.$route.path);
       this.$router.push({
-        path: '/error'
+        path: '/warning/error'
       });
+      return
     } else if (res.code === 510015 || res.code == 10015) {
       this.$router.push({
         path: '/upgrading'
