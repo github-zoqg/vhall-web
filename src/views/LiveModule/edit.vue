@@ -484,7 +484,7 @@ export default {
       }else{
         this.title = '编辑'
       }
-      this.getLiveBaseInfo(this.webinarId);
+      this.getLiveBaseInfo(this.webinarId, false);
     } else {
       this.title = '创建';
       this.webinarId = '';
@@ -496,7 +496,7 @@ export default {
         paas_record_id: this.$route.query.paas_record_id,
         name: this.$route.query.name
       }
-      this.getLiveBaseInfo(this.$route.query.webinar_id)
+      this.getLiveBaseInfo(this.$route.query.webinar_id, true)
     }
     this.versionType = JSON.parse(sessionOrLocal.get('versionType'));
     if (!this.versionType) {
@@ -505,7 +505,7 @@ export default {
 
   },
   methods: {
-    getLiveBaseInfo(id) {
+    getLiveBaseInfo(id, flag) {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         if( res.code != 200 ){
           return this.$message.warning(res.msg)
@@ -536,7 +536,12 @@ export default {
           this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
           this.selectMedia.id = this.liveDetailInfo.record_id;
           this.selectMedia.name = this.liveDetailInfo.record_subject;
+          this.selectMedia.msg_url = this.liveDetailInfo.msg_url || '.MP4';
         }
+        if (flag) {
+          this.selectMedia.msg_url = this.liveDetailInfo.webinar_type == 1 ? '.MP3' : '.MP4';
+        }
+        console.log(this.selectMedia, '?????????')
         // 重置修改状态
         setTimeout(() => {
           this.isChange = false
