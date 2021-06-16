@@ -232,7 +232,6 @@ export default {
 <style lang="less" scoped>
   .pay-list{
     color: #1A1A1A;
-    position: relative;
     .el-table td, .el-table th{
       height: 56px;
     }
