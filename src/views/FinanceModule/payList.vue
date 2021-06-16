@@ -232,6 +232,7 @@ export default {
 <style lang="less" scoped>
   .pay-list{
     color: #1A1A1A;
+    position: relative;
     .el-table td, .el-table th{
       height: 56px;
     }
@@ -240,9 +241,8 @@ export default {
     }
     .down-time{
       position: fixed;
-      width: 100%;
       top: 6px;
-      left: 0px;
+      left: 40%;
       z-index: 100;
       p{
         height: 52px;
@@ -252,7 +252,6 @@ export default {
         background: #fb3a32;
         color:#fff;
         font-size: 14px;
-        margin: auto;
         border-radius: 4px;
         i{
           font-size: 20px;
