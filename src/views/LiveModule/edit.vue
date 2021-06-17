@@ -692,22 +692,32 @@ export default {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
           this.$fetch(url, this.$params(data)).then(res=>{
-            this.$message({
-              message: `${this.title}成功`,
-              showClose: true,
-              // duration: 0,
-              type: 'success',
-              customClass: 'zdy-info-box'
-            });
-            this.$route.query.record_id ? this.reVodEditReportData() : this.reportData();
-            this.isChange = false;
-            console.log(res);
-            setTimeout(()=>{
-              this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
-            }, 500);
+            if (res.code == 200) {
+              this.$message({
+                message: `${this.title}成功`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
+              this.$route.query.record_id ? this.reVodEditReportData() : this.reportData();
+              this.isChange = false;
+              console.log(res);
+              setTimeout(()=>{
+                this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
+              }, 500);
+            } else {
+              this.$message({
+                message: res.msg || `操作失败`,
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
+            }
           }).catch(res=>{
             this.$message({
-              message: res.msg || `操作失败，`,
+              message: res.msg || `操作失败`,
               showClose: true,
               // duration: 0,
               type: 'error',
