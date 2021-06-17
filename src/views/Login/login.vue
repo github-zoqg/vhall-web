@@ -463,7 +463,9 @@ export default {
         // 用户登录完成后，用户ID写入Cookie
         Cookies.set('gray-id', res.data.user_id)
         // 登录完成后，获取当前用户的权限
-        this.$fetch('planFunctionGet', {}).then(vRes => {
+        this.$fetch('planFunctionGet', {}, {
+          'gray-id': res.data.user_id
+        }).then(vRes => {
           let permissions = vRes.data.permissions;
           if(permissions) {
             // 设置全部权限

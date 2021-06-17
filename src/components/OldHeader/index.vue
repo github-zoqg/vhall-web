@@ -134,6 +134,8 @@ export default {
     userLogoGet(id) {
       this.$fetch('userLogoGet', {
         webinar_user_id: id
+      }, {
+        'gray-id': id
       }).then(res => {
         console.log('用户控制台标识图：', res);
         this.logo = res.data.logo || '';
