@@ -259,11 +259,10 @@ export default {
         width: 100%;
         object-fit: scale-down;
       }
-      &.tipsIndex{
+    }
+    &.tipsIndex{
         z-index: -1;
       }
-    }
-
     .video-end{
       position: absolute;
       width: 100%;
