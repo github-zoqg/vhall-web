@@ -536,10 +536,10 @@ export default {
           this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
           this.selectMedia.id = this.liveDetailInfo.record_id;
           this.selectMedia.name = this.liveDetailInfo.record_subject;
-          this.selectMedia.msg_url = this.liveDetailInfo.msg_url || '.MP4';
+          this.selectMedia.msg_url = this.liveDetailInfo.msg_url || '.mp4';
         }
         if (flag) {
-          this.selectMedia.msg_url = this.liveDetailInfo.webinar_type == 1 ? '.MP3' : '.MP4';
+          this.selectMedia.msg_url = this.liveDetailInfo.webinar_type == 1 ? '.mp3' : '.mp4';
         }
         console.log(this.selectMedia, '?????????')
         // 重置修改状态

@@ -246,6 +246,7 @@ export default {
     top: 0;
     width: 100%;
     height: 100%;
+    background: #000;
     .video-img{
       width: 180px;
       height: 110px;

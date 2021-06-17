@@ -209,7 +209,7 @@ export default {
           if (res.data.record_id) {
             this.selectMedia.paas_record_id = res.data.record_id;
             this.selectMedia.name = res.data.record_name;
-            this.selectMedia.msg_url = '.MP4';
+            this.selectMedia.msg_url = '.mp4';
           }
           this.warmForm.record_id = res.data.record_id;
           // 重置修改状态
