@@ -347,12 +347,33 @@ export default {
       this.isValidaLoginPhone = false;
     }
   },
+  created() {
+    this.judgeIswap()
+  },
   mounted() {
     this.$nextTick(() => {
       this.callCaptcha();
     });
   },
   methods: {
+    // 手机适配
+    judgeIswap() {
+      const uA = navigator.userAgent.toLowerCase();
+      const ipad = uA.match(/ipad/i) == "ipad";
+      const iphone = uA.match(/iphone os/i) == "iphone os";
+      const midp = uA.match(/midp/i) == "midp";
+      const uc7 = uA.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";
+      const uc = uA.match(/ucweb/i) == "ucweb";
+      const android = uA.match(/android/i) == "android";
+      const windowsce = uA.match(/windows ce/i) == "windows ce";
+      const windowsmd = uA.match(/windows mobile/i) == "windows mobile";
+      if (!(ipad || iphone || midp || uc7 || uc || android || windowsce || windowsmd)) {
+        // PC 端
+      }else{
+        // 移动端
+        document.getElementById('app').style.minWidth = 'auto'
+      }
+    },
     handleFocus(key) {
       this[key] = true;
     },
