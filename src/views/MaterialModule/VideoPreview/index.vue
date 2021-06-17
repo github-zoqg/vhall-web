@@ -2,7 +2,7 @@
   <div class="preview-wrap">
     <div class="content" v-loading="loading" element-loading-text="加载中" element-loading-background="rgba(0,0,0,.9)"  @mousemove="wrapEnter" @mouseleave="wrapLeave">
       <div id="videoDom"></div>
-      <div class="tips" v-if="!loading">
+      <div class="tips" v-if="!loading" :class="videoParam.msg_url.toLowerCase()=='.mp3' || videoParam.msg_url.toLowerCase()=='.mav' ? '' : 'tipsIndex'">
         <div class="video-img" v-if="videoParam.msg_url.toLowerCase()=='.mp3' || videoParam.msg_url.toLowerCase()=='.mav' || !videoParam.msg_url">
           <img class="audio-img" :src="audioImg" alt="">
         </div>
@@ -258,6 +258,9 @@ export default {
         height: 100%;
         width: 100%;
         object-fit: scale-down;
+      }
+      &.tipsIndex{
+        z-index: -1;
       }
     }
 
