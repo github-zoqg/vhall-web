@@ -335,7 +335,7 @@ export default {
         .then(res => {
           if (res.code === 50014) {
             this.queryMessage()
-          }else if(res.code == 10001){
+          }else if(res.code == 510001){
             this.$message.warning(res.msg)
           }
         })

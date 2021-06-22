@@ -306,7 +306,7 @@ export default {
           });
         }
       }).catch(err => {
-        if (err.code == 12800) {
+        if (err.code == 512800) {
           this.$message({
             message:  '报名表单不能与白名单同时开启',
             showClose: true, // 是否展示关闭按钮

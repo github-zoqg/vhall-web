@@ -117,7 +117,7 @@ export default {
           this.signId = res.data.id
           this.setSignState({signInfo: state});
           this.setIntervalAction();
-        } else if(res.code == 13204){
+        } else if(res.code == 513204){
           this.endSignServe()
         }else{
           this.$message.warning(res.msg)
