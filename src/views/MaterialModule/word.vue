@@ -12,7 +12,7 @@
         <br>
         5.文档转换较慢，请于直播前提前上传
       </div>
-      <div class="title_text">推荐开播前提前上传课件，上传过程中如果遇到问题请查看<a href="https://saas-doc.vhall.com/docs/show/1278">《常见问题》</a></div>
+      <div class="title_text">推荐开播前提前上传课件，上传过程中如果遇到问题请查看<a href="https://saas-doc.vhall.com/docs/show/1278" target="_blank">《常见问题》</a></div>
     </pageTitle>
     <!-- 无权限，未创建 -->
     <div>
