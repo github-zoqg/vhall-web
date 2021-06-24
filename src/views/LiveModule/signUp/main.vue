@@ -399,6 +399,9 @@ export default {
             }
           });
         } else if (info.name === 'duty' || info.type === 'select' && opts.items && opts.items.length) {
+          if (opts.items.length < filedJson.nodes.length) {
+            filedJson.nodes.length = opts.items.length
+          }
           opts.items.forEach((item, index) => {
             const length = filedJson.nodes.length;
             if (index < length) {
