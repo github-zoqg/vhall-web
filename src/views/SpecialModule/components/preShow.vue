@@ -22,7 +22,7 @@
         </div>
       </div>
       <div class="special-list">
-        <div class="lives">
+        <!-- <div class="lives">
           <div class="liveItem" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
             <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
               <div class="top">
@@ -37,8 +37,8 @@
               </div>
             </a>
           </div>
-        </div>
-        <!-- <el-row :gutter="40" class="lives">
+        </div> -->
+        <el-row :gutter="40" class="lives">
           <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
             <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
               <div class="top">
@@ -53,7 +53,7 @@
               </div>
             </a>
           </el-col>
-        </el-row> -->
+        </el-row>
       </div>
     </div>
     <share ref="share" :shareVo="shareVo" ></share>
@@ -162,11 +162,8 @@ export default {
     width: calc(100% - 414px);
     margin: 40px auto 50px auto;
   }
-  .liveItem{
-    margin-right: 27px;
-    &:nth-of-type(5n) {
-      margin-right: 0;
-    }
+  .el-col-xl-6{
+    width: 20%;
   }
 }
 @media (min-width: 1366px) {
@@ -174,23 +171,11 @@ export default {
     width: calc(100% - 166px);
     margin: 40px auto 50px auto;
   }
- .liveItem{
-    margin-right: 27px;
-    &:nth-of-type(4n) {
-      margin-right: 0;
-    }
-  }
 }
 @media (min-width: 1440px) {
  .special-show-ctx {
     width: calc(100% - 240px);
     margin: 40px auto 50px auto;
-  }
-  .liveItem{
-    margin-right: 27px;
-    &:nth-of-type(4n) {
-      margin-right: 0;
-    }
   }
 }
 @media (min-width: 1600px) {
@@ -198,17 +183,7 @@ export default {
     width: calc(100% - 400px);
     margin: 40px auto 50px auto;
   }
-  .liveItem{
-    margin-right: 27px;
-    &:nth-of-type(4n) {
-      margin-right: 0;
-    }
-  }
 }
-// .special-show-ctx {
-//   width: 1300px;
-//   margin: 40px auto 50px auto;
-// }
 .shareSubject{
   padding: 15px 20px 0;
 }
@@ -280,11 +255,8 @@ export default {
       flex-wrap: wrap;
       // justify-content: space-between;
       .liveItem{
-        width: 282px;
-        // height: 255px;
         margin-bottom: 24px;
         border-radius: 4px;
-        // border: 1px solid #ccc;
         .inner{
           display: inline-block;
           width: 100%;
@@ -427,17 +399,17 @@ export default {
       background: linear-gradient(0deg, rgba(0, 0, 0, .4) 0%, rgba(0, 0, 0, .8) 100%);
       z-index: 1;
     }
-    .liveListBox {
-      margin: auto;
-      width: 1020px;
-    }
-    @media screen and (min-width: 1920px) {
-      .liveListBox {
-        // padding: 0px 140px;
-        margin: auto;
-        width: 1374px;
-      }
-    }
+    // .liveListBox {
+    //   margin: auto;
+    //   width: 1020px;
+    // }
+    // @media screen and (min-width: 1920px) {
+    //   .liveListBox {
+    //     // padding: 0px 140px;
+    //     margin: auto;
+    //     width: 1374px;
+    //   }
+    // }
   }
 }
 </style>
