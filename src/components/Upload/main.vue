@@ -28,7 +28,7 @@
             </span>
           </div>
           <div class="bottom-mask" v-else>
-            <span @click="refresh($event)">重置</span>
+            <span @click="refresh($event)">更换</span>
             <span @click.stop.prevent="deletes">删除</span>
           </div>
         </div>
