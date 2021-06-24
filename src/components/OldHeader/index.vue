@@ -11,6 +11,16 @@
             <img src="../../common/images/sys/logo@2x.png" alt="" v-else />
           </a>
         </div>
+        <div class="navbar-title" v-if="isSpecial">
+          <div class="navbar-intro">
+            <p>{{ specialInfo.title }}</p>
+            <span class="time">{{ (specialInfo && specialInfo.created_at ? specialInfo.created_at : '') | unitTime  }}</span>
+            <div class="share" @click="share">
+              <i class="iconfont-v3 saasicon-share1" slot="reference"></i>
+              <span>分享</span>
+            </div>
+          </div>
+        </div>
         <div class="collapse navbar-collapse" v-if="isShowLogin">
           <div class="pull-right login-reg" >
             <div class="" v-if="isLogin">
@@ -71,6 +81,14 @@ export default {
     isWhiteBg: {
       require: false,
       default: false
+    },
+    isSpecial: {
+      require: false,
+      default: false
+    },
+    specialInfo: {
+      require: false,
+      default: false
     }
   },
   data() {
@@ -82,6 +100,7 @@ export default {
       logo_jump_url: null
     };
   },
+
   computed: {
     show_name: function() {
       if (this.userInfo && this.userInfo.nick_name) {
@@ -168,6 +187,9 @@ export default {
           this.logo_jump_url = res.data.skip_url ? res.data.skip_url : process.env.VUE_APP_COMPANY_URL;
         }
       })
+    },
+    share() {
+      this.$emit('share')
     }
   },
   mounted() {
@@ -234,6 +256,39 @@ header.commen-header {
       width: 100%;
       height: 100%;
       object-fit: scale-down;
+    }
+  }
+  .navbar-title{
+    position: absolute;
+    left: 160px;
+    right: 180px;
+    .navbar-intro{
+      width: 100%;
+    }
+    p{
+      padding-top: 13px;
+      line-height: 24px;
+      color: #1a1a1a;
+      font-size: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-right: 120px;
+    }
+    .time{
+      color: #999;
+      font-size: 14px;
+    }
+    .share{
+      float: right;
+      margin-top: -20px;
+      text-align: center;
+      font-size: 14px;
+      cursor: pointer;
+      span{
+        display: block;
+        padding-top: 3px;
+      }
     }
   }
   .navbar-collapse {

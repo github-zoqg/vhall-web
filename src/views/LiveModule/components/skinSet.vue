@@ -48,7 +48,7 @@
         <div class="hide-white" v-show="!brandConfig"></div>
       </div>
       <!-- 预览区域 -->
-      <brand-set-preview ref="brandSetPreviewComp" class="brand--preview" :brandType="brandType"></brand-set-preview>
+      <brand-set-preview ref="brandSetPreviewComp" class="brand--preview" :brandType="brandType" :tabType="'skinSet'"></brand-set-preview>
     </div>
   </div>
 </template>
@@ -71,11 +71,11 @@ export default {
       skinType: 0, // 0-默认皮肤；1-自定义皮肤
       brandType: 1,
       skinVo: {},
-      pageBgColors: ['FFFFFF', 'F2F2F2', '1A1A1A'],
+      pageBgColors: ['1A1A1A', 'FFFFFF', 'F2F2F2'],
       pageThemeColors: ['FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
       skinSetForm: {
         bg_url: null,
-        bgColor: '#FFFFFF',
+        bgColor: '#1A1A1A',
         pageStyle: '#FB3A32',
         popStyle: ''
       },

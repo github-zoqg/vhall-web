@@ -113,6 +113,9 @@ export default {
     padding-bottom: 4px;
     border-radius: 4px;
   }
+  /deep/.el-dialog__body{
+    padding-bottom: 20px;
+  }
   /deep/ .smallSwtich{
     margin-left: 12px;
     vertical-align: text-bottom;

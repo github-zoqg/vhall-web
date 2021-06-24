@@ -95,8 +95,7 @@ export default {
           { required: true, message: '请选择消息格式', trigger: 'blur' }
         ]
       },
-      keyList: [],
-      fail_try_request: 0
+      keyList: []
     }
   },
   created() {
@@ -126,14 +125,6 @@ export default {
         }
         this.isAdd = !(res.data && res.data.id);
         let keyList = [
-          // {
-          //   type: 'key_2',
-          //   key_name: '失败重启',
-          //   openShow: '开启后，系统需在5秒内响应SUCCESS(不区分大小写)',
-          //   closeShow: '已开启，系统需在5秒内响应SUCCESS(不区分大小写)',
-          //   value: Number(eventsList.includes('2') ? 1 : 0) || 0,
-          //   k: eventsList.includes('2') ? 100599 : 100600
-          // },
           {
             type: 'key_1',
             key_name: '活动状态',
@@ -299,10 +290,14 @@ export default {
         k: 100596,
         data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-      // this.$vhall_paas_port({
-      //   k: this.form.callback_type == 1 ? 100597 : 100598,
-      //   data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
-      // })
+      this.$vhall_paas_port({
+        k: this.form.msg_type == 1 ? 100597 : 100598,
+        data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: this.form.fail_try_request == 1 ? 100599 : 100600,
+        data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       list.map(item => {
         this.$vhall_paas_port({
           k: item.value == 1 ? item.k : item.k + 1,
@@ -391,7 +386,7 @@ export default {
 .leve3_title {
   display: inline-block;
   text-align: right;
-  min-width: 80px;
+  min-width: 88px;
 }
 
 .saasicon_help_m {
