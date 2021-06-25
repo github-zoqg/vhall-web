@@ -596,6 +596,7 @@ export default {
           params.password = this.handleEncryptPassword(params.password)
           params.captcha = this.mobileKey;
           params.source = this.$route.query.source || 1;
+          params.uuid = this.loginKey.uuid
           this.$fetch('register', params).then(res => {
             this.$message({
               message:  `注册成功`,
