@@ -99,8 +99,8 @@ export default {
       baseInfo: {
         open_link: 0,
         theme_color: 'red',
-        tab_verify_title: '验证',
-        tab_form_title: '用户报名',
+        tab_verify_title: '我已报名',
+        tab_form_title: '活动报名',
         title: '',
         intro: '',
         cover: ''
