@@ -74,6 +74,7 @@ export default {
       maxPage: 0,
       pagePos: 0,
       totalElement: 0,
+      processEnv: process.env.VUE_APP_WEB_URL,
       shareVo: {
         url: `${process.env.VUE_APP_WAP_WATCH}/special/detail/${this.$route.query.id}`,
         pcUrl:`${process.env.VUE_APP_WEB_URL}/special/detail/?id=${this.$route.query.id}`
@@ -191,6 +192,7 @@ export default {
   height: 100%;
   .special-main{
     display: flex;
+    height: 516px;
   }
   .special-imgTitle{
     width: calc(100% - 380px);
@@ -210,7 +212,7 @@ export default {
   }
   .special-title{
     display: flex;
-    padding: 18px 24px;
+    padding: 20px 24px;
     background: #fff;
     border-radius: 0 0 4px 4px;
     p{
@@ -227,6 +229,7 @@ export default {
     background: #fff;
     border-radius: 4px;
     width: 360px;
+    height: 100%;
     .text{
       color: #1a1a1a;
       height: calc(100% - 592px);
