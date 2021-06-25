@@ -539,7 +539,7 @@ export default {
             this.fetchData()
 
           } else {
-            if (res.code == 12042) {
+            if (res.code == 512042) {
               this.errorMessage = '图片验证码错误'
               this.callCaptcha('#photoCaptcha')
             }
