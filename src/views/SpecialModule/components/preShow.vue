@@ -13,7 +13,7 @@
           <div class="special-main">
             <div class="special-imgTitle">
               <div class="special-img">
-                <img :src="cover">
+                <img :src="specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`">
               </div>
               <div class="special-title">
                 <p><i class="iconfont-v3 saasicon_kaibo"></i> {{ specialInfo.webinar_num }}</p>
@@ -101,7 +101,6 @@ export default {
         if (res.code === 200 && res.data) {
           this.isErrorPage = false
           this.specialInfo = res.data.webinar_subject;
-          this.cover = this.specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`
           this.loading = false;
           // this.liveList = res.data.webinar_subject.webinar_list;
           this.totalList = res.data.webinar_subject.webinar_list;
