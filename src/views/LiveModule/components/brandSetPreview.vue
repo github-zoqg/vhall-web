@@ -81,8 +81,8 @@ export default {
       bgColorType: 'black',
       signSetVo: null,
       skinSetVo: {
-        bgColor: '#1A1A1A', // 背景色
-        pageStyle: '#FB3A32', // 按钮色
+        bgColor: '1A1A1A', // 背景色
+        pageStyle: 'ff3333', // 按钮色
         bg_url: '' // 背景图
       },
       logoUrl: null,
@@ -102,7 +102,6 @@ export default {
     },
     skinSetVoInfo(vo) {
       this.$nextTick(() => {
-        this.skinSetVo = vo;
         if (vo && Number(vo.status) > 0)  {
           // 页面赋值
           this.skinSetVo = vo;
@@ -145,19 +144,19 @@ export default {
           if (this.skinSetVo.status > 0)  {
             // 页面赋值
             let skin_json_pc = JSON.parse(res.data.skin_json_pc);
-            this.skinSetVo.bgColor = skin_json_pc.bgColor || '#FFFFFF';
+            this.skinSetVo.bgColor = skin_json_pc.bgColor || '#1A1A1A';
             this.skinSetVo.pageStyle = skin_json_pc.pageStyle || '#FB3A32';
             this.skinSetVo.bg_url = skin_json_pc.background;
           } else {
             this.skinSetVo = {
-              bgColor: '#FFFFFF', // 背景色
+              bgColor: '#1A1A1A', // 背景色
               pageStyle: '#FB3A32', // 按钮色
               bg_url: '' // 背景图
             };
           }
         } else {
           this.skinSetVo = {
-            bgColor: '#FFFFFF', // 背景色
+            bgColor: '#1A1A1A', // 背景色
             pageStyle: '#FB3A32', // 按钮色
             bg_url: '' // 背景图
           };
@@ -165,7 +164,7 @@ export default {
       }).catch(err=>{
         console.log(err);
         this.skinSetVo = {
-          bgColor: '#FFFFFF', // 背景色
+          bgColor: '#1A1A1A', // 背景色
           pageStyle: '#FB3A32', // 按钮色
           bg_url: '' // 背景图
         };
