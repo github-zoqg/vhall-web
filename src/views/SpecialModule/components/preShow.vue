@@ -65,7 +65,6 @@ export default {
       pageSize: 100,
       pageNum: 1,
       maxPage: 0,
-      cover: '',
       pagePos: 0,
       loading: true,
       totalElement: 0,
