@@ -75,7 +75,7 @@ export default {
       pageThemeColors: ['FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
       skinSetForm: {
         bg_url: null,
-        bgColor: '#FFFFFF',
+        bgColor: '#1A1A1A',
         pageStyle: '#FB3A32',
         popStyle: ''
       },
