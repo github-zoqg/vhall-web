@@ -229,7 +229,7 @@ export default {
           this.$refs['pageBgColors'].initColor(this.skinSetForm.bgColor)
           this.$refs['pageThemeColors'].initColor(this.skinSetForm.pageStyle)
         } else {
-          this.skinSetForm.bgColor = '#FFFFFF';
+          this.skinSetForm.bgColor = '#1A1A1A';
           this.skinSetForm.pageStyle = '#FB3A32';
           this.skinSetForm.bg_url = '';
           this.domain_url = '';
