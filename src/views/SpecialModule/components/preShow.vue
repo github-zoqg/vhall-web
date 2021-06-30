@@ -1,11 +1,10 @@
 <template>
-  <div>
+  <div v-loading='loading' element-loading-background="#1a1a1a" element-loading-text="加载中..." v-if="!loading">
     <div class="error-special" v-if="isErrorPage">
       <div class="error__img">
         <img src="../../../common/images/subject_null.png" alt="">
         <p>此专题已下线</p>
       </div>
-      
     </div>
     <div class="show-special" v-else>
       <OldHeader scene="preShow" :isWhiteBg=true v-if="specialInfo && specialInfo.user_id" :user_id="specialInfo.user_id" :isSpecial=true :specialInfo="specialInfo" @share="share"></OldHeader>
@@ -14,7 +13,7 @@
           <div class="special-main">
             <div class="special-imgTitle">
               <div class="special-img">
-                <img :src="specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`">
+                <img :src="cover">
               </div>
               <div class="special-title">
                 <p><i class="iconfont-v3 saasicon_kaibo"></i> {{ specialInfo.webinar_num }}</p>
@@ -66,7 +65,9 @@ export default {
       pageSize: 100,
       pageNum: 1,
       maxPage: 0,
+      cover: '',
       pagePos: 0,
+      loading: true,
       totalElement: 0,
       processEnv: process.env.VUE_APP_WEB_URL,
       shareVo: {
@@ -100,16 +101,20 @@ export default {
         if (res.code === 200 && res.data) {
           this.isErrorPage = false
           this.specialInfo = res.data.webinar_subject;
+          this.cover = this.specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`
+          this.loading = false;
           // this.liveList = res.data.webinar_subject.webinar_list;
           this.totalList = res.data.webinar_subject.webinar_list;
           this.liveList = this.totalList.slice(0, this.pageSize);
           let totalElement = res.data.webinar_subject.webinar_num;
           this.maxPage = Math.ceil(totalElement / this.pageSize);
         } else {
+          this.isErrorPage = false
           this.isErrorPage = true
         }
        
       }).catch(res => {
+        this.loading = false;
         this.isErrorPage = true
         console.log('获取结果失败', res);
       })
