@@ -1,62 +1,55 @@
 <template>
-  <div class="show-special">
-    <OldHeader scene="preShow" :isWhiteBg=true v-if="specialInfo && specialInfo.user_id" :user_id="specialInfo.user_id" :isSpecial=true :specialInfo="specialInfo" @share="share"></OldHeader>
-    <div class="special-show-ctx">
-      <div class="special-info">
-        <div class="special-main">
-          <div class="special-imgTitle">
-            <div class="special-img">
-              <img :src="specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`">
+  <div>
+    <div class="error-special" v-if="isErrorPage">
+      <div class="error__img">
+        <img src="../../../common/images/subject_null.png" alt="">
+        <p>此专题已下线</p>
+      </div>
+      
+    </div>
+    <div class="show-special" v-else>
+      <OldHeader scene="preShow" :isWhiteBg=true v-if="specialInfo && specialInfo.user_id" :user_id="specialInfo.user_id" :isSpecial=true :specialInfo="specialInfo" @share="share"></OldHeader>
+      <div class="special-show-ctx">
+        <div class="special-info">
+          <div class="special-main">
+            <div class="special-imgTitle">
+              <div class="special-img">
+                <img :src="specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`">
+              </div>
+              <div class="special-title">
+                <p><i class="iconfont-v3 saasicon_kaibo"></i> {{ specialInfo.webinar_num }}</p>
+                <p v-if="specialInfo.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{ specialInfo.pv | formatNum }}</p>
+                <p v-if="specialInfo.hide_appointment"><i class="iconfont-v3 saasicon-share1"></i> {{ specialInfo.order_num }}</p>
+              </div>
             </div>
-            <div class="special-title">
-              <p><i class="iconfont-v3 saasicon_kaibo"></i> {{ specialInfo.webinar_num }}</p>
-              <p v-if="specialInfo.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{ specialInfo.pv | formatNum }}</p>
-              <p v-if="specialInfo.hide_appointment"><i class="iconfont-v3 saasicon-share1"></i> {{ specialInfo.order_num }}</p>
+            <div class="special-detail">
+              <vhscroll>
+                <div class="text" v-html="specialInfo.intro"></div>
+              </vhscroll>
             </div>
-          </div>
-          <div class="special-detail">
-            <vhscroll>
-              <div class="text" v-html="specialInfo.intro"></div>
-            </vhscroll>
           </div>
         </div>
+        <div class="special-list">
+          <el-row :gutter="40" class="lives">
+              <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
+                <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
+                  <div class="top">
+                    <span class="liveTag">{{item | liveTag }}</span>
+                    <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
+                  </div>
+                  <div class="bottom">
+                    <div class="">
+                      <p  class="liveTitle" :title="item.subject" >{{item.subject}}</p>
+                      <p class="liveTime">{{item.start_time}} <span v-if="item.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{item.pv | formatNum}}</span></p>
+                    </div>
+                  </div>
+                </a>
+              </el-col>
+          </el-row>
+        </div>
       </div>
-      <div class="special-list">
-        <!-- <div class="lives">
-          <div class="liveItem" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
-            <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
-              <div class="top">
-                <span class="liveTag">{{item | liveTag }}</span>
-                <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
-              </div>
-              <div class="bottom">
-                <div class="">
-                  <p  class="liveTitle" :title="item.subject" >{{item.subject}}</p>
-                  <p class="liveTime">{{item.start_time}} <span v-if="item.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{item.pv | formatNum}}</span></p>
-                </div>
-              </div>
-            </a>
-          </div>
-        </div> -->
-        <el-row :gutter="40" class="lives">
-          <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
-            <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
-              <div class="top">
-                <span class="liveTag">{{item | liveTag }}</span>
-                <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
-              </div>
-              <div class="bottom">
-                <div class="">
-                  <p  class="liveTitle" :title="item.subject" >{{item.subject}}</p>
-                  <p class="liveTime">{{item.start_time}} <span v-if="item.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{item.pv | formatNum}}</span></p>
-                </div>
-              </div>
-            </a>
-          </el-col>
-        </el-row>
-      </div>
+      <share ref="share" :shareVo="shareVo" ></share>
     </div>
-    <share ref="share" :shareVo="shareVo" ></share>
   </div>
 </template>
 <script>
@@ -68,8 +61,9 @@ export default {
     return {
       activeName: 'first',
       specialInfo: {},
+      isErrorPage: false,
       env: Env,
-      pageSize: 12,
+      pageSize: 100,
       pageNum: 1,
       maxPage: 0,
       pagePos: 0,
@@ -103,13 +97,20 @@ export default {
     },
     getSpecialList() {
       this.$fetch('subjectInfo', {subject_id: this.$route.query.id}).then(res => {
-        this.specialInfo = res.data.webinar_subject;
-        // this.liveList = res.data.webinar_subject.webinar_list;
-        this.totalList = res.data.webinar_subject.webinar_list;
-        this.liveList = this.totalList.slice(0, this.pageSize);
-        let totalElement = res.data.webinar_subject.webinar_num;
-        this.maxPage = Math.ceil(totalElement / this.pageSize);
+        if (res.code === 200 && res.data) {
+          this.isErrorPage = false
+          this.specialInfo = res.data.webinar_subject;
+          // this.liveList = res.data.webinar_subject.webinar_list;
+          this.totalList = res.data.webinar_subject.webinar_list;
+          this.liveList = this.totalList.slice(0, this.pageSize);
+          let totalElement = res.data.webinar_subject.webinar_num;
+          this.maxPage = Math.ceil(totalElement / this.pageSize);
+        } else {
+          this.isErrorPage = true
+        }
+       
       }).catch(res => {
+        this.isErrorPage = true
         console.log('获取结果失败', res);
       })
     },
@@ -188,6 +189,29 @@ export default {
 .shareSubject{
   padding: 15px 20px 0;
 }
+.error-special{
+    width: 100%;
+    height: 100vh;
+    background: #fff;
+    .error__img {
+      width: 202px;
+      height: 90px;
+      margin: 0 auto;
+      text-align: center;
+      padding-top: 162px;
+      img {
+        width: 100%;
+      }
+    p{
+      text-align: center;
+      font-size: 16px;
+      color: #1A1A1A;
+      line-height: 22px;
+      padding-top: 12px;
+      padding-left: 20px;
+    }
+    }
+  }
 .show-special{
   height: 100%;
   .special-main{
@@ -252,11 +276,8 @@ export default {
     margin-top: 24px;
     background: #F7F7F7;
     border-radius: 4px;
+    height: 100%;
     .lives{
-      // max-height: 500px;
-      display: flex;
-      flex-wrap: wrap;
-      // justify-content: space-between;
       .liveItem{
         margin-bottom: 24px;
         border-radius: 4px;
