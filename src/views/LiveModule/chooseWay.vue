@@ -1,6 +1,6 @@
 <template>
   <div :class="['chooseWay', {'no-login': executeType !== 'ctrl'}]">
-    <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl'" scene="chooseWay" :isWhiteBg="executeType !== 'ctrl'"></OldHeader>
+    <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl' && arr[1] != 1 && arr[1] != 2" scene="chooseWay" :isWhiteBg="executeType !== 'ctrl'"></OldHeader>
     <pageTitle :pageTitle="arr[1] == 1 ? '选择发起方式' : '选择进入方式'" v-if="executeType === 'ctrl'"></pageTitle>
     <div class="choose__way__main">
       <div class="choose__way__ctx">
