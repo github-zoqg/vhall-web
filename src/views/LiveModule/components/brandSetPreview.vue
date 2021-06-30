@@ -103,13 +103,13 @@ export default {
     skinSetVoInfo(vo) {
       this.$nextTick(() => {
         this.skinSetVo = vo;
-        if (vo.status > 0)  {
+        if (vo && Number(vo.status) > 0)  {
           // 页面赋值
           this.skinSetVo = vo;
           this.skinSetVo.bg_url = vo.bg_url || vo.domain_url;
         } else {
           this.skinSetVo = {
-            bgColor: '#FFFFFF', // 背景色
+            bgColor: '#1A1A1A', // 背景色
             pageStyle: '#ff3333', // 按钮色
             bg_url: '' // 背景图
           };

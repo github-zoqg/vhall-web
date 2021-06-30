@@ -240,6 +240,7 @@ export default {
         this.previewShow();
       }).catch(err=>{
         console.log(err);
+        this.previewShow();
         // this.skinVo = {};
       });
     },

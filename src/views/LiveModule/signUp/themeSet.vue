@@ -14,23 +14,23 @@
       <span style="color:#1a1a1a;">标签页标题</span>
     </p>
     <div :class="['tabs', colorIndex]">
-      <div :class="{active: tabs=='title'}" @click="tabs='title'">{{title1 || '用户报名'}}</div>
-      <div :class="{active: tabs=='valite'}" @click="tabs='valite'">{{title2 || '验证'}}</div>
+      <div :class="{active: tabs=='title'}" @click="tabs='title'">{{title1 || '活动报名'}}</div>
+      <div :class="{active: tabs=='valite'}" @click="tabs='valite'">{{title2 || '我已报名'}}</div>
     </div>
-    <el-input maxlength="8" v-show="tabs=='title'" v-model.trim="title1" placeholder="用户报名">
+    <el-input maxlength="8" v-show="tabs=='title'" v-model.trim="title1" placeholder="活动报名">
       <span
-        v-if="title1 != '用户报名'"
+        v-if="title1 != '活动报名'"
         class="el-input__icon resetbtn"
         slot="suffix"
-        @click="title1 = '用户报名'">重置
+        @click="title1 = '活动报名'">重置
       </span>
     </el-input>
-    <el-input maxlength="8" v-show="tabs=='valite'" v-model.trim="title2" placeholder="验证">
+    <el-input maxlength="8" v-show="tabs=='valite'" v-model.trim="title2" placeholder="我已报名">
       <span
-        v-if="title2 != '验证'"
+        v-if="title2 != '我已报名'"
         class="el-input__icon resetbtn"
         slot="suffix"
-        @click="title2 = '验证'">重置
+        @click="title2 = '我已报名'">重置
       </span>
     </el-input>
     <span slot="footer" class="dialog-footer">
@@ -61,8 +61,8 @@ export default {
     return {
       dialogVisible: false,
       tabs: 'title',
-      title1: '用户报名',
-      title2: '验证',
+      title1: '活动报名',
+      title2: '我已报名',
       colorIndex: 'red',
     };
   },
@@ -70,8 +70,8 @@ export default {
     save() {
       const options = {
         theme_color: this.colorIndex,
-        tab_form_title: this.title1 || '用户报名',
-        tab_verify_title: this.title2 || '验证',
+        tab_form_title: this.title1 || '活动报名',
+        tab_verify_title: this.title2 || '我已报名',
       };
       const that = this;
       let userId = this.$parent.userId

@@ -6,8 +6,8 @@
     <article>
       <h1 class="pageTitle">{{ baseInfo.title }}</h1>
       <div :class="['tabs', colorIndex]">
-        <div :class="{active: tabs==1}" @click="tabs=1">用户报名</div>
-        <div :class="{active: tabs==2}" @click="tabs=2">验证</div>
+        <div :class="{active: tabs==1}" @click="tabs=1">活动报名</div>
+        <div :class="{active: tabs==2}" @click="tabs=2">我已报名</div>
       </div>
       <!-- 表单块 -->
       <template>
