@@ -11,12 +11,19 @@
       <!-- 标识预览 -->
       <div  class="pc" v-if="switchType === 'pc' && tabType === 'signSet' ">
         <div :class="`skin-preview preview-${switchType} sign-preview`">
-          <div class="pc-header" v-if="signSetVo && signSetVo.view_status == 1">
-            <img class="logo-image" :src="domain_url || signSetVo.logo_url" alt="标志图" v-if="(signSetVo && signSetVo.logo_url) || domain_url"/>
-            <img class="logo-image" src="../../../common/images/skin/logo.png" v-else/>
-          </div>
-          <div class="sign-title" :class="signSetVo && signSetVo.organizers_status == 1 ? 'sign-open' : 'sign-close'">
-            <p><span v-if="signSetVo && signSetVo.organizers_status == 1">主办方：<a class="blue" href="javascript:void(0);">微吼 </a></span><span class="time"> 2020-12-18 00:00:00</span></p>
+          <div class="pc-preview">
+            <div class="pc-header" v-if="signSetVo && signSetVo.view_status == 1">
+              <img class="logo-image" :src="domain_url || signSetVo.logo_url" alt="标志图" v-if="(signSetVo && signSetVo.logo_url) || domain_url"/>
+              <img class="logo-image" src="../../../common/images/skin/logo.png" v-else/>
+            </div>
+            <div class="pc-contain">
+              <div class="sign-intro">
+                <p>数字化转型时代企业如何做好直播营销<span><img src="../../../common/images/skin/white/live@2x.png" alt=""></span></p>
+              </div>
+              <div class="sign-title" :class="signSetVo && signSetVo.organizers_status == 1 ? 'sign-open' : 'sign-close'">
+                <p><span v-if="signSetVo && signSetVo.organizers_status == 1">主办方：<a class="blue" href="javascript:void(0);">微吼 </a></span><span class="time"> 2020-12-18 00:00:00</span></p>
+              </div>
+            </div>
           </div>
           <div class="sign-version" v-show="(signSetVo && signSetVo.reserved_status > 0)">
             <p>微吼提供技术支持  | <span class="blue">反馈与举报</span></p>
@@ -24,7 +31,7 @@
         </div>
       </div>
       <!-- 皮肤预览 -->
-        <div  class="pc" v-if="switchType === 'pc' && tabType === 'skinSet' ">
+      <div  class="pc" v-if="switchType === 'pc' && tabType === 'skinSet' ">
         <div :class="`skin-preview preview-${switchType} brand-preview`">
           <div class="skin-header">
             <img src="../../../common/images/skin/skin-header.png" alt="">
@@ -204,6 +211,7 @@ export default {
 .sign-preview{
   background-image: url(../../../common/images/skin/white/brand.png);
   background-size: 100% 100%;
+  overflow: hidden;
 }
 .brand-preview{
   overflow: hidden;
@@ -252,17 +260,69 @@ export default {
 .zdy--switch {
   margin-bottom: 16px;
 }
-.pc-header {
-  width: 25px;
-  height: 12px;
-  position: absolute;
-  top: 20px;
-  left: 8px;
-  .logo-image {
-    width: 100%;
+.pc-preview{
+  margin-top: 16px;
+  width: 100%;
+  height: 20px;
+  display: flex;
+  .pc-header {
+    width: 25px;
     height: 100%;
-    // float: left;
-    object-fit: scale-down;
+    padding: 2px 0 0 10px;
+    .logo-image {
+      width: 100%;
+      height: 100%;
+      // float: left;
+      object-fit: scale-down;
+    }
+  }
+  .pc-contain{
+    height: 100%;
+    // width: calc(100% - 25px);
+    width: 100%;
+    position: relative;
+    margin-left: -115px;
+    .sign-intro{
+      font-size: 12px;
+      color: #999;
+      transform:scale(0.4);
+      position: absolute;
+      top: -3px;
+      left: 29px;
+      span{
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+        margin-left: 10px;
+        vertical-align: text-bottom;
+        img{
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
+        }
+      }
+      
+    }
+    .sign-title{
+      font-size: 12px;
+      color: #999;
+      transform:scale(0.4);
+      position: absolute;
+      left: 60px;
+      top: 10px;
+      .time{
+        padding-left: 10px;
+      }
+      .blue{
+        color: #999;
+        &:hover{
+          color: blue;
+        }
+      }
+      &.sign-close{
+        left: 80px;
+      }
+    }
   }
 }
 .sign-version{
@@ -278,28 +338,6 @@ export default {
         color: blue;
       }
     }
-  }
-}
-.sign-title{
-  position: absolute;
-  top: 24px;
-  font-size: 12px;
-  color: #999;
-  transform:scale(0.4);
-  .time{
-    padding-left: 10px;
-  }
-  .blue{
-    color: #999;
-    &:hover{
-      color: blue;
-    }
-  }
-  &.sign-close{
-    left: -3px;
-  }
-  &.sign-open{
-    left: -22px;
   }
 }
 
