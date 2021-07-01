@@ -490,22 +490,16 @@ export default {
       })
       console.warn(this.givePrizeList);
       this.$fetch('saveDrawPrizeInfo', {webinar_id: this.$route.params.str,data:JSON.stringify(this.givePrizeList)}).then(res => {
-        this.setPrizePortData()
-        this.$message({
-          message: `保存成功`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-      }).catch((err)=>{
-        this.$message({
-          message: err.msg || `保存失败`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
+        if (res.code == 200) {
+          this.$message({
+            message: `保存成功111`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.setPrizePortData()
+        }
       })
     },
     handleClick(tab) {
