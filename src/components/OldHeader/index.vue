@@ -3,7 +3,7 @@
     <header class="commen-header home-header">
       <nav :class="['navbar nav-top all']" role="navigation">
         <div :class="['navbar-header', {'white-bg': isWhiteBg}]">
-          <a :href="logo_jump_url" v-if="logo" class="navbar-brand">
+          <a :href="logo_jump_url" v-if="logo" class="navbar-brand" target="_blank">
             <img v-if="logo" :src="logo">
           </a>
           <a class="navbar-brand" :href="logo_jump_url" v-else>
