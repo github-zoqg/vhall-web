@@ -258,6 +258,10 @@ export default {
     width: 360px;
     height: 100%;
     overflow-y: scroll;
+    img{
+      width: 100%;
+      height: 100%;
+    }
     .text{
       color: #1a1a1a;
       height: calc(100% - 592px);

@@ -267,9 +267,9 @@
           <!-- <div id="videoDom" v-show="showVideo"></div> -->
           <p class="show-purple-info">
             <span>提示</span>
-            <span>1. 移动端全屏播放时，跑马灯会失效</span>
-            <span>2. 安卓手机浏览器劫持可能导致跑马灯失效</span>
-            <span>3.因浏览器自身策略原因，开启自动播放后也会出现无法自动播放情况</span>
+            <span>1.移动端全屏播放时，跑马灯会失效</span>
+            <span>2.安卓手机浏览器劫持可能导致跑马灯失效</span>
+            <span>3.因浏览器自身策略，开启自动播放也会出现无法自动播放情况</span>
           </p>
       </div>
     </div>
@@ -1151,7 +1151,7 @@ export default {
       border: 1px solid #ccc;
     }
     &-info {
-      width: 300px;
+      width: 100%;
       margin-top: 15px;
       span {
         display: block;

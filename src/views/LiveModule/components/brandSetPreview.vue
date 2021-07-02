@@ -281,7 +281,7 @@ export default {
     // width: calc(100% - 25px);
     width: 100%;
     position: relative;
-    margin-left: -115px;
+    margin-left: -95px;
     .sign-intro{
       font-size: 12px;
       color: #999;
@@ -308,7 +308,7 @@ export default {
       color: #999;
       transform:scale(0.4);
       position: absolute;
-      left: 60px;
+      left: 46px;
       top: 10px;
       .time{
         padding-left: 10px;
@@ -320,7 +320,7 @@ export default {
         }
       }
       &.sign-close{
-        left: 80px;
+        left: 65px;
       }
     }
   }
