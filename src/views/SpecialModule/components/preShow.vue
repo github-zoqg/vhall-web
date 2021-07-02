@@ -261,6 +261,7 @@ export default {
     img{
       width: 100%;
       height: 100%;
+      object-fit: scale-down;
     }
     .text{
       color: #1a1a1a;
