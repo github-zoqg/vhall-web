@@ -11,7 +11,7 @@
             <img src="../../common/images/sys/logo@2x.png" alt="" v-else />
           </a>
         </div>
-        <div class="navbar-title" v-if="isSpecial">
+        <div v-if="isSpecial" :class="['navbar-title', {'unlogin-title': !isLogin}]">
           <div class="navbar-intro">
             <p>{{ specialInfo.title }}</p>
             <span class="time">{{ (specialInfo && specialInfo.created_at ? specialInfo.created_at : '') | unitTime  }}</span>
@@ -48,9 +48,11 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
-            <div class=""  v-if="!isLogin">
-              <el-button size="small" round @click="toLoginPageHandle">登录</el-button>
-              <el-button type="primary" size="small" round @click="toRegisterHandle">注册</el-button>
+            <div class="unlogin"  v-if="!isLogin">
+              <span><img src="../../common/images/sys/my-light@2x.png" alt=""></span>
+              <label @click="toLoginPageHandle">登录</label>
+              <!-- <el-button size="small" round @click="toLoginPageHandle">登录</el-button>
+              <el-button type="primary" size="small" round @click="toRegisterHandle">注册</el-button> -->
             </div>
           </div>
         </div>
@@ -229,6 +231,7 @@ header.commen-header {
     border: none;
     &.all {
       width: 100%;
+      padding-right: 32px;
     }
   }
   .navbar {
@@ -285,10 +288,14 @@ header.commen-header {
       text-align: center;
       font-size: 14px;
       cursor: pointer;
+      color: #1a1a1a;
       span{
         display: block;
         padding-top: 3px;
       }
+    }
+    &.unlogin-title{
+      right: 140px;
     }
   }
   .navbar-collapse {
@@ -334,6 +341,30 @@ header.commen-header {
       margin-left: 5px;
      /*  margin-bottom: 13px; */
       margin-bottom: 4px;
+    }
+    .unlogin{
+      span{
+        width: 36px;
+        height: 36px;
+        display: inline-block;
+        border-radius: 50%;
+        margin-right: 8px;
+        cursor: pointer;
+        vertical-align: middle;
+        margin-top: -5px;
+      }
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: scale-down;
+      }
+      label {
+        font-size: 14px;
+        font-weight: 400;
+        color: #666;
+        line-height: 14px;
+        cursor: pointer;
+      }
     }
   }
   header #personal-info {

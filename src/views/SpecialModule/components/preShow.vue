@@ -1,5 +1,5 @@
 <template>
-  <div v-loading='loading' element-loading-background="#1a1a1a" element-loading-text="加载中..." v-if="!loading">
+  <div v-loading='loading' element-loading-background="#1a1a1a" element-loading-text="加载中..." v-if="!loading" style="height:100%">
     <div class="error-special" v-if="isErrorPage">
       <div class="error__img">
         <img src="../../../common/images/subject_null.png" alt="">
@@ -7,46 +7,53 @@
       </div>
     </div>
     <div class="show-special" v-else>
-      <OldHeader scene="preShow" :isWhiteBg=true v-if="specialInfo && specialInfo.user_id" :user_id="specialInfo.user_id" :isSpecial=true :specialInfo="specialInfo" @share="share"></OldHeader>
-      <div class="special-show-ctx">
-        <div class="special-info">
-          <div class="special-main">
-            <div class="special-imgTitle">
-              <div class="special-img">
-                <img :src="specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`">
+      <el-scrollbar  style="height:100%" v-loadMore="moreLoadData">
+        <OldHeader scene="preShow" :isWhiteBg=true v-if="specialInfo && specialInfo.user_id" :user_id="specialInfo.user_id" :isSpecial=true :specialInfo="specialInfo" @share="share"></OldHeader>
+        <div class="special-show-ctx">
+          <div class="special-info">
+            <div class="special-main">
+              <div class="special-imgTitle">
+                <div class="special-img">
+                  <img :src="specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`">
+                </div>
+                <div class="special-title">
+                  <p><i class="iconfont-v3 saasguankan_icon"></i> {{ specialInfo.webinar_num }}</p>
+                  <p v-if="specialInfo.hide_pv"><i class="iconfont-v3 saasredu_icon"></i> {{ specialInfo.pv || 0 | formatNum }}</p>
+                  <p v-if="specialInfo.hide_appointment"><i class="iconfont-v3 saasyuyue_icon"></i> {{ specialInfo.order_num }}</p>
+                </div>
               </div>
-              <div class="special-title">
-                <p><i class="iconfont-v3 saasguankan_icon"></i> {{ specialInfo.webinar_num }}</p>
-                <p v-if="specialInfo.hide_pv"><i class="iconfont-v3 saasredu_icon"></i> {{ specialInfo.pv || 0 | formatNum }}</p>
-                <p v-if="specialInfo.hide_appointment"><i class="iconfont-v3 saasyuyue_icon"></i> {{ specialInfo.order_num }}</p>
+              <div class="special-detail">
+                <vhscroll>
+                  <div class="text" v-html="specialInfo.intro"></div>
+                </vhscroll>
               </div>
             </div>
-            <div class="special-detail">
-              <vhscroll>
-                <div class="text" v-html="specialInfo.intro"></div>
-              </vhscroll>
+          </div>
+          <div class="special-list">
+            <el-row :gutter="40" class="lives">
+                <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
+                  <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
+                    <div class="top">
+                      <span class="liveTag">{{item | liveTag }}</span>
+                      <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
+                    </div>
+                    <div class="bottom">
+                      <div class="">
+                        <p  class="liveTitle" :title="item.subject" >{{item.subject}}</p>
+                        <p class="liveTime">{{item.start_time}} <span v-if="item.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{item.pv | formatNum}}</span></p>
+                      </div>
+                    </div>
+                  </a>
+                </el-col>
+            </el-row>
+            <div v-loading='moreLoading' v-if="moreLoading" class="spectial-title" element-loading-background="#1a1a1a" element-loading-text="加载中...">
+            </div>
+            <div v-if="isNullText" class="spectial-title">
+              已经到底啦～
             </div>
           </div>
         </div>
-        <div class="special-list">
-          <el-row :gutter="40" class="lives">
-              <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
-                <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
-                  <div class="top">
-                    <span class="liveTag">{{item | liveTag }}</span>
-                    <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
-                  </div>
-                  <div class="bottom">
-                    <div class="">
-                      <p  class="liveTitle" :title="item.subject" >{{item.subject}}</p>
-                      <p class="liveTime">{{item.start_time}} <span v-if="item.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{item.pv | formatNum}}</span></p>
-                    </div>
-                  </div>
-                </a>
-              </el-col>
-          </el-row>
-        </div>
-      </div>
+      </el-scrollbar>
       <share ref="share" :shareVo="shareVo" ></share>
     </div>
   </div>
@@ -62,12 +69,14 @@ export default {
       specialInfo: {},
       isErrorPage: false,
       env: Env,
-      pageSize: 100,
+      pageSize: 20,
       pageNum: 1,
       maxPage: 0,
       pagePos: 0,
       loading: true,
       totalElement: 0,
+      moreLoading: false,
+      isNullText: false,
       processEnv: process.env.VUE_APP_WEB_URL,
       shareVo: {
         url: `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.query.id}`,
@@ -89,11 +98,18 @@ export default {
       this.$refs.share.dialogVisible = true;
     },
     moreLoadData() {
-      if (this.pageNum >= this.maxPage) {
-        return false;
-      }
-      this.pageNum ++;
-      this.liveList = this.totalList.slice(0, this.pageSize * this.pageNum)
+      // alert('1111111111111')
+      if (this.isNullText) return
+      this.moreLoading = true
+      setTimeout(() => {
+        this.moreLoading = false
+        if (this.pageNum >= this.maxPage) {
+          this.isNullText = true
+          return false;
+        }
+        this.pageNum ++;
+        this.liveList = this.totalList.slice(0, this.pageSize * this.pageNum)
+      }, 1000)
     },
     getSpecialList() {
       this.$fetch('subjectInfo', {subject_id: this.$route.query.id}).then(res => {
@@ -216,7 +232,10 @@ export default {
     }
   }
 .show-special{
-  height: 100%;
+  height: 97%;
+  overflow: scroll;
+  position: absolute;
+  margin-bottom: 20px;
   .special-main{
     display: flex;
     height: 516px;
@@ -261,6 +280,7 @@ export default {
     img{
       width: 100%;
       height: 100%;
+      object-fit: scale-down;
     }
     .text{
       color: #1a1a1a;
@@ -443,5 +463,13 @@ export default {
     //   }
     // }
   }
+  .spectial-title{
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+  }
+}
+/deep/.el-loading-spinner .path{
+  stroke: #FB3A32;
 }
 </style>
