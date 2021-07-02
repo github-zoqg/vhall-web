@@ -405,7 +405,7 @@ exports.default = {
         isRemove: true
       }, {
         value: 'address',
-        label: '详细地址',
+        label: '请输入详细地址',
         isRemove: true
       }],
       area: {},
