@@ -118,10 +118,9 @@ export default {
   },
   methods: {
     toLoginPageHandle() {
-      this.$refs.regLogin.dialogVisible = true
-      // this.$router.push({
-      //   path: '/login'
-      // });
+      this.$router.push({
+        path: '/login'
+      });
     },
     toRegisterHandle() {
       this.$router.push({
