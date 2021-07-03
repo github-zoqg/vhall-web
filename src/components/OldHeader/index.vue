@@ -58,12 +58,14 @@
         </div>
       </nav>
     </header>
+    <RegLogin ref="regLogin"></RegLogin>
   </div>
 </template>
 
 <script>
 import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
+import RegLogin from "./components/reg-login/index.vue"
 
 export default {
   name: "index.vue",
@@ -93,6 +95,9 @@ export default {
       default: false
     }
   },
+  components: {
+    RegLogin
+  },
   data() {
     return {
       isLogin: null,
@@ -118,9 +123,10 @@ export default {
   },
   methods: {
     toLoginPageHandle() {
-      this.$router.push({
-        path: '/login'
-      });
+      this.$refs.regLogin.dialogVisible = true
+      // this.$router.push({
+      //   path: '/login'
+      // });
     },
     toRegisterHandle() {
       this.$router.push({
