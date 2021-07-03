@@ -58,14 +58,12 @@
         </div>
       </nav>
     </header>
-    <RegLogin ref="regLogin"></RegLogin>
   </div>
 </template>
 
 <script>
 import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
-import RegLogin from "./components/reg-login/index.vue"
 
 export default {
   name: "index.vue",
@@ -94,9 +92,6 @@ export default {
       require: false,
       default: false
     }
-  },
-  components: {
-    RegLogin
   },
   data() {
     return {
