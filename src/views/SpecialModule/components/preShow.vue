@@ -233,6 +233,7 @@ export default {
   }
 .show-special{
   height: 97%;
+  width: 100%;
   overflow: scroll;
   position: absolute;
   margin-bottom: 20px;
