@@ -54,6 +54,7 @@
             :type="isPassWordType ? 'password' : 'text'"
             auto-complete="off"
             onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]/g,'')"
+            @keyup.enter.native="loginAccount"
             v-model.trim="loginForm.password">
             <span slot="suffix" @click="passWordType" class="closePwd">
               <icon class="icon" icon-class="saaseyeclose_huaban1" v-show="isPassWordType"></icon>
@@ -114,6 +115,7 @@
                 :placeholder="!isLoginPasswordFocus1 ? '动态密码' : ''"
                 @focus="handleFocus('isLoginPasswordFocus1')"
                 @blur="handleBlur('isLoginPasswordFocus1')"
+                @keyup.enter.native="loginDynamic"
                 clearable
                 :maxlength="6"
                 auto-complete="off"
@@ -182,6 +184,7 @@
                 clearable
                 @focus="handleFocus('isPasswordFocus')"
                 @blur="handleBlur('isPasswordFocus')"
+                @keyup.enter.native="registerAccount"
                 :placeholder="!isPasswordFocus ? '设置密码（6-30个字符）' : ''"
                 :maxlength="30"
                 auto-complete="off"
