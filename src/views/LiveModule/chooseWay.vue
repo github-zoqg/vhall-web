@@ -46,7 +46,6 @@
 import PageTitle from '@/components/PageTitle';
 import {sessionOrLocal, getQueryString} from "@/utils/utils";
 import OldHeader from '@/components/OldHeader';
-import { browserDetect } from '@/utils/utils';
 import Env from '@/api/env';
 export default {
   name: 'chooseWay.vue',
@@ -65,7 +64,6 @@ export default {
       clientOpen: '',
       executeType: 'ctrl', // 是否控制台 ctrl 控制台
       downloadUrl: '',
-      browserDetectData: browserDetect()
     };
   },
   created(){
@@ -96,38 +94,28 @@ export default {
     goLive(){
       if(this.chooseType !== 'client') {
         // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
-        if(this.browserDetectData) {
-          // if (Number(this.arr[1]) === 1) {
-            // 进入直播前检测，若是直接发起
-            this.$fetch('checkLive', this.$params({
-              webinar_id: this.arr[0]
-            }), {
-              platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
-            }).then((res) => {
-              if(res && res.code === 200) {
-               /*  this.$router.push({
-                  path: this.watchUrl
-                }) */
-                console.error(this.watchUrl);
-                window.location.href = this.watchUrl;
-              }
-            }).catch(res => {
-              this.$message({
-                message: res.msg || "检测异常",
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box'
-              });
-              console.log(res);
-            });
-          // }else{
-          //   // this.$router.push({name: 'LiveRoom', params: {il_id: this.arr[0]}})
-          //   window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}`;
-          // }
-        } else {
-          this.$router.push({path: '/browser'})
-        }
+        this.$fetch('checkLive', this.$params({
+          webinar_id: this.arr[0]
+        }), {
+          platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
+        }).then((res) => {
+          if(res && res.code === 200) {
+            /*  this.$router.push({
+              path: this.watchUrl
+            }) */
+            console.error(this.watchUrl);
+            window.location.href = this.watchUrl;
+          }
+        }).catch(res => {
+          this.$message({
+            message: res.msg || "检测异常",
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+          console.log(res);
+        });
       } else {
         // 客户端启动
         document.querySelector('#start_live').setAttribute('src', this.scheme);
