@@ -501,12 +501,14 @@ export default {
       params = JSON.parse(JSON.stringify(params))
       params.captcha = this.mobileKey;
       params.remember = this.remember ? 1 : 0;
-      await this.getLoginKey()
-      params.password = this.handleEncryptPassword(params.password)
+      if (this.isActive == 1) {
+        await this.getLoginKey()
+        params.password = this.handleEncryptPassword(params.password)
+        params.uuid = this.loginKey.uuid
+      }
       let retParams = this.$params(params)
       this.$fetch('loginInfo', {
         ...retParams,
-        uuid: this.loginKey.uuid
       }).then(res => {
         this.mobileKey = '';
         this.errorText = '';
