@@ -492,7 +492,7 @@ export default {
       this.$fetch('saveDrawPrizeInfo', {webinar_id: this.$route.params.str,data:JSON.stringify(this.givePrizeList)}).then(res => {
         if (res.code == 200) {
           this.$message({
-            message: `保存成功111`,
+            message: `保存成功`,
             showClose: true,
             // duration: 0,
             type: 'success',
