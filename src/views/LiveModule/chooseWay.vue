@@ -96,7 +96,7 @@ export default {
     goLive(){
       if(this.chooseType !== 'client') {
         // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
-        if(browserDetectData) {
+        if(this.browserDetectData) {
           // if (Number(this.arr[1]) === 1) {
             // 进入直播前检测，若是直接发起
             this.$fetch('checkLive', this.$params({
