@@ -34,13 +34,16 @@
                 <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
                   <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
                     <div class="top">
+                      <span class="hot">
+                        <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
+                      </span>
                       <span class="liveTag">{{item | liveTag }}</span>
                       <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
                     </div>
                     <div class="bottom">
                       <div class="">
                         <p  class="liveTitle" :title="item.subject" >{{item.subject}}</p>
-                        <p class="liveTime">{{item.start_time}} <span v-if="item.hide_pv"><i class="iconfont-v3 saasicon_redu"></i> {{item.pv | formatNum}}</span></p>
+                        <p class="liveTime">{{item.start_time}}</p>
                       </div>
                     </div>
                   </a>
@@ -98,7 +101,6 @@ export default {
       this.$refs.share.dialogVisible = true;
     },
     moreLoadData() {
-      // alert('1111111111111')
       if (this.isNullText) return
       this.moreLoading = true
       setTimeout(() => {
@@ -116,6 +118,7 @@ export default {
         if (res.code === 200 && res.data) {
           this.isErrorPage = false
           this.specialInfo = res.data.webinar_subject;
+          this.urlToLink(this.specialInfo.intro);
           this.loading = false;
           // this.liveList = res.data.webinar_subject.webinar_list;
           this.totalList = res.data.webinar_subject.webinar_list;
@@ -132,6 +135,37 @@ export default {
         this.isErrorPage = true
         console.log('获取结果失败', res);
       })
+    },
+    urlToLink(str) {
+       if (!str) return ''
+
+        // 提取聊天内容中的 img 标签
+        const regImg = /<img.*?(?:>|\/>)/g
+        const imgArr = str.match(regImg)
+
+        // 提取聊天内容中除去 img 标签以外的部分
+        const strArr = str.split(regImg)
+        const regUrl = /(((ht|f)tps?):\/\/)?[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])/g
+
+        // 将聊天内容中除去 img 标签以外的聊天内容中的链接用 a 标签包裹
+        strArr.forEach((item, index) => {
+          const tempStr = item.replace(regUrl, function(match) {
+            return `<a class='show-link' href='${match}' target='_blank'>${match}</a>`
+          })
+          strArr[index] = tempStr
+        })
+
+        // // 遍历 img 标签数组，将聊天内容中的 img 标签插回原来的位置
+        if (imgArr) {
+          const imgArrLength = imgArr.length
+          let imgIndex = 0
+          for (let strIndex = 0; strIndex < imgArrLength; ++strIndex) {
+            strArr.splice(strIndex + imgIndex + 1, 0, imgArr[imgIndex])
+            imgIndex++
+          }
+        }
+        console.log(strArr.join(''), '???123232432')
+        return strArr.join('')
     },
     toDetail(id) {
       this.$router.push({path: `/live/detail/${id}`});
@@ -234,7 +268,7 @@ export default {
 .show-special{
   height: 97%;
   width: 100%;
-  overflow: scroll;
+  overflow-y: scroll;
   position: absolute;
   margin-bottom: 20px;
   .special-main{
@@ -254,7 +288,7 @@ export default {
       width: 100%;
       height: 100%;
       border-radius: 4px;
-      object-fit: scale-down;
+      object-fit: fill;
     }
   }
   .special-title{
@@ -265,8 +299,10 @@ export default {
     p{
       padding-right: 18px;
       color: #666;
+      font-size: 14px;
       .iconfont-v3{
-        font-size: 16px;
+        font-size: 20px;
+        vertical-align: middle;
       }
     }
   }
@@ -277,7 +313,7 @@ export default {
     border-radius: 4px;
     width: 360px;
     height: 100%;
-    overflow-y: scroll;
+    // overflow-y: scroll;
     img{
       width: 100%;
       height: 100%;
@@ -293,6 +329,18 @@ export default {
       }
       p{
         font-style:normal;
+        padding: 5px 0;
+        font-size: 14px;
+        a{
+          color: #FB3A32;
+          cursor: pointer;
+        }
+        img{
+          margin: 5px 0;
+        }
+      } 
+      .show-link{
+        color: #FB3A32;
       }
     }
 
@@ -364,11 +412,19 @@ export default {
           }
           .hot{
             position: absolute;
-            bottom: 10px;
-            left: 10px;
+            bottom: 0;
+            left: 0;
             color: #fff;
             font-size: 14px;
             z-index: 2;
+            height: 40px;
+            width: 100%;
+            background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.6));
+            i{
+              position: absolute;
+              left: 14px;
+              bottom: 10px;
+            }
           }
         }
         .bottom{
