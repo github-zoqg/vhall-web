@@ -248,7 +248,7 @@ header.commen-header {
   }
   .navbar-brand {
     float: left;
-    margin: 10px 0 10px 18px;
+    margin: 10px 32px;
     text-align: left;
     width: 120px!important;
     height: 44px;
@@ -261,8 +261,8 @@ header.commen-header {
   }
   .navbar-title{
     position: absolute;
-    left: 160px;
-    right: 180px;
+    left: 190px;
+    right: 190px;
     .navbar-intro{
       width: 100%;
     }
@@ -275,6 +275,7 @@ header.commen-header {
       text-overflow: ellipsis;
       white-space: nowrap;
       padding-right: 120px;
+      font-weight: 600;
     }
     .time{
       color: #999;
@@ -286,10 +287,13 @@ header.commen-header {
       text-align: center;
       font-size: 14px;
       cursor: pointer;
-      color: #1a1a1a;
+      color: #666;
       span{
         display: block;
         padding-top: 3px;
+      }
+      &:hover{
+        color: #FB3A32;
       }
     }
     &.unlogin-title{
