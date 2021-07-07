@@ -16,7 +16,7 @@
             <p>{{ specialInfo.title }}</p>
             <span class="time">{{ (specialInfo && specialInfo.created_at ? specialInfo.created_at : '') | unitTime  }}</span>
             <div class="share" @click="share">
-              <i class="iconfont-v3 saasicon-share1" slot="reference"></i>
+              <i class="iconfont-v3 saasfenxiang_icon" slot="reference"></i>
               <span>分享</span>
             </div>
           </div>

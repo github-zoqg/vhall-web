@@ -17,9 +17,9 @@
                   <img :src="specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`">
                 </div>
                 <div class="special-title">
-                  <p><i class="iconfont-v3 saasguankan_icon"></i> {{ specialInfo.webinar_num }}</p>
+                  <p><i class="iconfont-v3 saasguankanrenshu_icon"></i> {{ specialInfo.webinar_num }}</p>
                   <p v-if="specialInfo.hide_pv"><i class="iconfont-v3 saasredu_icon"></i> {{ specialInfo.pv || 0 | formatNum }}</p>
-                  <p v-if="specialInfo.hide_appointment"><i class="iconfont-v3 saasyuyue_icon"></i> {{ specialInfo.order_num }}</p>
+                  <p v-if="specialInfo.hide_appointment"><i class="iconfont-v3 saasyuyuerenshu_icon"></i> {{ specialInfo.order_num }}</p>
                 </div>
               </div>
               <div class="special-detail">
@@ -301,7 +301,7 @@ export default {
       color: #666;
       font-size: 14px;
       .iconfont-v3{
-        font-size: 20px;
+        font-size: 18px;
         vertical-align: middle;
       }
     }
