@@ -65,7 +65,7 @@
           <div class="icon-spans">
            <span class="reward-span" v-if="rewardCompute"></span><span class="gift-span" v-if="giftCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
-           <span class="chat-stop" :class="chatCompute ? 'isChatStop' : ''">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
+           <span class="chat-stop" :class="chatCompute ? 'isChatStop' : ''" v-if="chapterCompute">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
         </div>
         <!--手机预览,begin-->
         <div :class="['plan-func-app', {'visible': !chapterCompute}]" v-show="switchType === 'app'">
@@ -200,7 +200,7 @@ export default {
         if (this.vm) {
           this.vm.close();
         }
-        this.messageInfo(`${str} ${item.key_name}`, 'sucesss')
+        this.messageInfo(`${str} ${item.key_name}`, 'success')
         // this.$message({
         //   message: `${str} ${item.key_name} 成功`,
         //   showClose: true,
