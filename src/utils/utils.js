@@ -410,7 +410,7 @@ export function checkAuth(to, from, next, that) {
       if(e.code == 11006){
         if(out_url) {
           // 清除cookies
-          Cookies.remove('user_id');
+          Cookies.remove('gray-id');
           window.location.href = out_url
         } else {
           next({path: '/login', query:{'form': isOld == 1 ? 1 : 0}});
@@ -426,7 +426,7 @@ export function checkAuth(to, from, next, that) {
           sessionOrLocal.clear();
           sessionOrLocal.clear('localStorage');
           // 清除cookies
-          Cookies.remove('user_id');
+          Cookies.remove('gray-id');
           next({path: '/upgrading'});
           NProgress.done();
         }
@@ -449,7 +449,7 @@ export function checkAuth(to, from, next, that) {
       let out_url = sessionOrLocal.get('SAAS_V3_CTRL_OUT', 'localStorage');
       if(out_url) {
         // 清除cookies
-        Cookies.remove('user_id');
+        Cookies.remove('gray-id');
         sessionOrLocal.clear();
         sessionOrLocal.clear('localStorage');
         window.location.href = out_url
