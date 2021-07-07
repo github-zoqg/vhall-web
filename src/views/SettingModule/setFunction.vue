@@ -85,7 +85,8 @@ export default {
       query: {},
       userId: JSON.parse(sessionOrLocal.get("userId")),
       keyList: [],
-      liveKeyList: []
+      liveKeyList: [],
+      vm: null
     };
   },
   computed: {
@@ -125,6 +126,16 @@ export default {
     changeSwitch(type) {
       this.switchType = type;
     },
+     //文案提示问题
+    messageInfo(title, type) {
+      this.vm = this.$message({
+        showClose: true,
+        duration: 2000,
+        message: title,
+        type: type,
+        customClass: 'zdy-info-box'
+      });
+    },
     changeStatus(callback, item, type) {
       item.value = Number(!callback)
       let params = {
@@ -149,22 +160,10 @@ export default {
         if (item.type === 'ui.watch_record_no_chatting' || item.type === 'ui.watch_record_chapter') {
           str = `${!callback ? '关闭' : '开启' } `
         }
-        this.$message({
-          message: `${str} ${item.key_name} 成功`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+         this.messageInfo(`${str} ${item.key_name}`, 'success')
         item.value = Number(callback);
       }).catch(res => {
-        this.$message({
-          message: res.msg || `${str} ${item.key_name} 失败`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
+         this.messageInfo(`${str} ${item.key_name}`, 'error')
       });
     },
     planSuccessRender (data) {
