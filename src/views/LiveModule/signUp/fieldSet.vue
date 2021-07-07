@@ -38,7 +38,7 @@
         :on-success="productLoadSuccess"
         :before-upload="beforeUploadHandler"
         :restPic="true"
-        :widthImg="524"
+        :widthImg="'100%'"
         :heightImg="138"
         @delete="deleteBanner"
       >
