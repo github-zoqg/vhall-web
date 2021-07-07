@@ -118,7 +118,7 @@ export default {
         if (res.code === 200 && res.data) {
           this.isErrorPage = false
           this.specialInfo = res.data.webinar_subject;
-          this.urlToLink(this.specialInfo.intro);
+          this.specialInfo.intro = this.urlToLink(this.specialInfo.intro);
           this.loading = false;
           // this.liveList = res.data.webinar_subject.webinar_list;
           this.totalList = res.data.webinar_subject.webinar_list;
@@ -340,7 +340,7 @@ export default {
         }
       } 
       .show-link{
-        color: #FB3A32;
+        color: #3562FA;
       }
     }
 
