@@ -287,13 +287,13 @@ export default {
     img{
       width: 100%;
       height: 100%;
-      border-radius: 4px;
+      border-radius: 4px 4px 0 0;
       object-fit: fill;
     }
   }
   .special-title{
     display: flex;
-    padding: 20px 24px;
+    padding: 18px 24px;
     background: #fff;
     border-radius: 0 0 4px 4px;
     p{
@@ -348,6 +348,7 @@ export default {
   .special-info{
     background:  #F7F7F7;
     border-radius: 4px;
+    // border: 1px solid #ccc;
   }
   .special-list{
     margin-top: 24px;

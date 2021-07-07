@@ -6,7 +6,7 @@
           <a :href="logo_jump_url" v-if="logo" class="navbar-brand" target="_blank">
             <img v-if="logo" :src="logo">
           </a>
-          <a class="navbar-brand" :href="logo_jump_url" v-else>
+          <a class="navbar-brand" :href="logo_jump_url" target="_blank" v-else>
             <img src="../../common/images/sys/logo-red@2x.png" alt="" v-if="isWhiteBg" />
             <img src="../../common/images/sys/logo@2x.png" alt="" v-else />
           </a>
