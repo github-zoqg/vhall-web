@@ -86,7 +86,7 @@
                     <img :src="domain_url" alt=""  v-if="domain_url"/>
                     <img src="../../../common/images/sys/default_code.jpeg" alt="" v-if="!domain_url"/>
                   </div>
-                  <p class="gzh_txt">使用微信"扫一扫"关注公众号</p>
+                  <p class="gzh_txt">使用微信“扫一扫” 关注公众号</p>
                 </div>
               </div>
               <div class="gzh_pc">
@@ -572,7 +572,7 @@ export default {
         line-height: 16px;
         text-align: center;
         width: 100%;
-        padding: 0 8px;
+        padding: 0 10px;
       }
     }
     .official-app{
