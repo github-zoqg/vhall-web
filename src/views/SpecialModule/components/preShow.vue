@@ -293,7 +293,7 @@ export default {
   }
   .special-title{
     display: flex;
-    padding: 18px 24px;
+    padding: 19px 24px;
     background: #fff;
     border-radius: 0 0 4px 4px;
     p{
