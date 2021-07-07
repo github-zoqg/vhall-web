@@ -160,10 +160,16 @@ export default {
         if (item.type === 'ui.watch_record_no_chatting' || item.type === 'ui.watch_record_chapter') {
           str = `${!callback ? '关闭' : '开启' } `
         }
+        if (this.vm) {
+          this.vm.close();
+        }
          this.messageInfo(`${str} ${item.key_name}`, 'success')
         item.value = Number(callback);
       }).catch(res => {
-         this.messageInfo(`${str} ${item.key_name}`, 'error')
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo(`${str} ${item.key_name}`, 'error')
       });
     },
     planSuccessRender (data) {
