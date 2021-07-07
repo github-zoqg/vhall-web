@@ -302,7 +302,7 @@ export default {
       font-size: 14px;
       .iconfont-v3{
         font-size: 18px;
-        vertical-align: middle;
+        vertical-align: text-bottom;
       }
     }
   }
