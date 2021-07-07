@@ -65,6 +65,7 @@
           <div class="icon-spans">
            <span class="reward-span" v-if="rewardCompute"></span><span class="gift-span" v-if="giftCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
+           <span class="chat-stop" :class="chatCompute ? 'isChatStop' : ''" v-if="chapterCompute">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
         </div>
         <!--手机预览,begin-->
         <div :class="['plan-func-app', {'visible': !chapterCompute}]" v-show="switchType === 'app'">
@@ -103,7 +104,8 @@ export default {
       functionOpen: true,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       keyList: [],
-      liveKeyList: []
+      liveKeyList: [],
+      vm: null
     };
   },
   computed: {
@@ -161,6 +163,16 @@ export default {
     changeSwitch(type) {
       this.switchType = type;
     },
+     //文案提示问题
+    messageInfo(title, type) {
+      this.vm = this.$message({
+        showClose: true,
+        duration: 2000,
+        message: title,
+        type: type,
+        customClass: 'zdy-info-box'
+      });
+    },
     changeStatus(callback, item, type) {
       item.value = Number(!callback)
       let params = {
@@ -185,22 +197,30 @@ export default {
         if (item.type === 'ui.watch_record_no_chatting' || item.type === 'ui.watch_record_chapter') {
           str = `${!callback ? '关闭' : '开启' } `
         }
-        this.$message({
-          message: `${str} ${item.key_name} 成功`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo(`${str} ${item.key_name}`, 'success')
+        // this.$message({
+        //   message: `${str} ${item.key_name} 成功`,
+        //   showClose: true,
+        //   // duration: 0,
+        //   type: 'success',
+        //   customClass: 'zdy-info-box'
+        // });
         item.value = Number(callback);
       }).catch(res => {
-        this.$message({
-          message: res.msg || `${str} ${item.key_name} 失败`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo(res.msg || `${str} ${item.key_name}`, 'error')
+        // this.$message({
+        //   message: res.msg || `${str} ${item.key_name} 失败`,
+        //   showClose: true,
+        //   // duration: 0,
+        //   type: 'error',
+        //   customClass: 'zdy-info-box'
+        // });
       });
     },
     planSuccessRender (data) {
@@ -448,6 +468,19 @@ export default {
     background-size: 100% 100%;
     margin-left: 2px;
     background-image: url('../../common/images/plan-function/share-pc.png');
+  }
+  .chat-stop{
+    position: absolute;
+    bottom: 35px;
+    right: 75px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #666666;
+    line-height: 12px;
+    transform:scale(0.6);
+    &.isChatStop{
+      right: 85px;
+    }
   }
   .icon-spans {
     position: absolute;

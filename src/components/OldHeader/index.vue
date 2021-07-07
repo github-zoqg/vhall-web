@@ -6,7 +6,7 @@
           <a :href="logo_jump_url" v-if="logo" class="navbar-brand" target="_blank">
             <img v-if="logo" :src="logo">
           </a>
-          <a class="navbar-brand" :href="logo_jump_url" v-else>
+          <a class="navbar-brand" :href="logo_jump_url" target="_blank" v-else>
             <img src="../../common/images/sys/logo-red@2x.png" alt="" v-if="isWhiteBg" />
             <img src="../../common/images/sys/logo@2x.png" alt="" v-else />
           </a>
@@ -16,7 +16,7 @@
             <p>{{ specialInfo.title }}</p>
             <span class="time">{{ (specialInfo && specialInfo.created_at ? specialInfo.created_at : '') | unitTime  }}</span>
             <div class="share" @click="share">
-              <i class="iconfont-v3 saasicon-share1" slot="reference"></i>
+              <i class="iconfont-v3 saasfenxiang_icon" slot="reference"></i>
               <span>分享</span>
             </div>
           </div>

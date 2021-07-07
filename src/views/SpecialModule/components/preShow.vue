@@ -17,9 +17,9 @@
                   <img :src="specialInfo.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`">
                 </div>
                 <div class="special-title">
-                  <p><i class="iconfont-v3 saasguankan_icon"></i> {{ specialInfo.webinar_num }}</p>
+                  <p><i class="iconfont-v3 saasguankanrenshu_icon"></i> {{ specialInfo.webinar_num }}</p>
                   <p v-if="specialInfo.hide_pv"><i class="iconfont-v3 saasredu_icon"></i> {{ specialInfo.pv || 0 | formatNum }}</p>
-                  <p v-if="specialInfo.hide_appointment"><i class="iconfont-v3 saasyuyue_icon"></i> {{ specialInfo.order_num }}</p>
+                  <p v-if="specialInfo.hide_appointment"><i class="iconfont-v3 saasyuyuerenshu_icon"></i> {{ specialInfo.order_num }}</p>
                 </div>
               </div>
               <div class="special-detail">
@@ -287,13 +287,13 @@ export default {
     img{
       width: 100%;
       height: 100%;
-      border-radius: 4px;
+      border-radius: 4px 4px 0 0;
       object-fit: fill;
     }
   }
   .special-title{
     display: flex;
-    padding: 20px 24px;
+    padding: 18px 24px;
     background: #fff;
     border-radius: 0 0 4px 4px;
     p{
@@ -301,7 +301,7 @@ export default {
       color: #666;
       font-size: 14px;
       .iconfont-v3{
-        font-size: 20px;
+        font-size: 18px;
         vertical-align: middle;
       }
     }
@@ -348,6 +348,7 @@ export default {
   .special-info{
     background:  #F7F7F7;
     border-radius: 4px;
+    // border: 1px solid #ccc;
   }
   .special-list{
     margin-top: 24px;
