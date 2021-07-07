@@ -63,6 +63,9 @@ export default {
     /deep/ img{
       max-width: 100%;
     }
+    p {
+      word-break: break-all;
+    }
   }
   .component-wrap-box{
     width: 100%;
