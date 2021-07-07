@@ -51,6 +51,7 @@
           <div class="icon-spans">
            <span class="reward-span" v-if="rewardCompute"></span><span class="gift-span" v-if="giftCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
+          <span class="chat-stop" :class="chatCompute ? 'isChatStop' : ''" v-if="chapterCompute">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
         </div>
         <!--手机预览,begin-->
         <div :class="['plan-func-app', {'visible': !chapterCompute}]" v-show="switchType === 'app'">
@@ -337,6 +338,19 @@ export default {
     background-size: 100% 100%;
     margin-left: 2px;
     background-image: url('../../common/images/plan-function/share-pc.png');
+  }
+  .chat-stop{
+    position: absolute;
+    bottom: 35px;
+    right: 75px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #666666;
+    line-height: 12px;
+    transform:scale(0.6);
+    &.isChatStop{
+      right: 85px;
+    }
   }
   .icon-spans {
     position: absolute;

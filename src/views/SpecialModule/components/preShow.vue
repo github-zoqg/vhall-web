@@ -293,7 +293,7 @@ export default {
   }
   .special-title{
     display: flex;
-    padding: 18px 24px;
+    padding: 19px 24px;
     background: #fff;
     border-radius: 0 0 4px 4px;
     p{
@@ -302,7 +302,7 @@ export default {
       font-size: 14px;
       .iconfont-v3{
         font-size: 18px;
-        vertical-align: middle;
+        vertical-align: text-bottom;
       }
     }
   }
