@@ -284,6 +284,7 @@ export default {
       let sysDate = new Date().getTime();
       let str = this.$moment(sysDate + 10 * 60 * 1000).format('HH:mm');
       let selectDate = this.$moment(this.formData.date1).format('YYYY-MM-DD');
+      console.log(selectDate, '??sd时间觉得可以')
       return selectDate + ' ' + `${str}:00`;
     },
     pathUrl: function() {
