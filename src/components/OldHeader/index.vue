@@ -263,7 +263,7 @@ header.commen-header {
   }
   .navbar-title{
     position: absolute;
-    left: 190px;
+    left: 185px;
     right: 190px;
     .navbar-intro{
       width: 100%;

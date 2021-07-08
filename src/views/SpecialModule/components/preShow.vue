@@ -331,10 +331,6 @@ export default {
         font-style:normal;
         padding: 5px 0;
         font-size: 14px;
-        a{
-          color: #FB3A32;
-          cursor: pointer;
-        }
         img{
           margin: 5px 0;
         }
@@ -425,6 +421,7 @@ export default {
               position: absolute;
               left: 14px;
               bottom: 10px;
+              font-size: 14px;
             }
           }
         }

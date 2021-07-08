@@ -34,7 +34,16 @@
       <div  class="pc" v-if="switchType === 'pc' && tabType === 'skinSet' ">
         <div :class="`skin-preview preview-${switchType} brand-preview`">
           <div class="skin-header">
-            <img src="../../../common/images/skin/skin-header.png" alt="">
+            <div class="skin-share">
+              <div class="skin-atton skin-left" :style="{'color': skinSetVo.pageStyle }">
+                <i class="iconfont-v3 saasfenxiang_icon"></i>
+                <p>分享</p>
+              </div>
+              <div class="skin-atton" :style="{'color': skinSetVo.pageStyle }">
+                <i class="iconfont-v3 saasicon_guanzhu"></i>
+                <p>关注</p>
+              </div>
+            </div>
           </div>
           <div class="skin-footer" :style="{backgroundImage: `url(${skinSetVo.bg_url})`, backgroundColor: `${skinSetVo.bgColor}`}">
             <img src="../../../common/images/skin/skin-footer.png" alt="">
@@ -217,11 +226,37 @@ export default {
   .skin-header{
     width: 100%;
     height: 36px;
-    img{
-      width: 100%;
-      height: 100%;
-      object-fit: scale-down;
+    background: url('../../../common/images/skin/skin-header.png') no-repeat;
+    background-size: 100% 100%;
+    position: relative;
+    .skin-share{
+      position: absolute;
+      right:30px;
+      top: 12px;
+      display: flex;
     }
+    .skin-atton{
+      font-size: 12px;
+      transform:scale(0.4);
+    }
+    .skin-left{
+      margin-right: -5px;
+    }
+    .iconfont-v3{
+      align-items: center;
+      padding-left: 3px;
+    }
+    // .skin-left{
+    //   position: absolute;
+    //   right: -5px;
+    //   top: 0px;
+    //   width: 50px;
+    // }
+    // img{
+    //   width: 100%;
+    //   height: 100%;
+    //   object-fit: scale-down;
+    // }
   }
   .skin-footer{
     height: 210px;

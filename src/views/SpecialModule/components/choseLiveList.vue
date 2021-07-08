@@ -36,13 +36,12 @@
                 <div class="vh-chose-active-item__cover-hots">
                 <i class="iconfont-v3 saasicon_redu"> {{ item.pv | formatNum }}</i>
                 </div>
-
               </div>
               <div class="vh-chose-active-item__title">
                 {{ item.subject }}
               </div>
               <div class="vh-chose-active-item__info">
-                {{ item.created_at | unitTime}}
+                {{ item.created_at | start_time}}
               </div>
             </div>
           </el-scrollbar>
