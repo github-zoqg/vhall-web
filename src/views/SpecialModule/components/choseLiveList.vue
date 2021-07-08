@@ -42,7 +42,7 @@
                 {{ item.subject }}
               </div>
               <div class="vh-chose-active-item__info">
-                {{ item.created_at | unitTime}}
+                {{ item.created_at | start_time}}
               </div>
             </div>
           </el-scrollbar>
