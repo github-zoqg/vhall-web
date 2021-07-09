@@ -247,7 +247,7 @@ export default {
 }
 @media (min-width: 1280px) {
  .special-show-ctx {
-    width: calc(100% - 100px);
+    width: calc(100% - 90px);
     margin: 40px auto 50px auto;
   }
 }
