@@ -300,7 +300,7 @@ export default {
       width: 100%;
       height: 100%;
       border-radius: 4px 4px 0 0;
-      object-fit: fill;
+      object-fit: cover;
     }
   }
   .special-title{
