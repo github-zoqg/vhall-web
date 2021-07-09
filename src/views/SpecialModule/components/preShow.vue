@@ -96,6 +96,12 @@ export default {
   created() {
     this.getSpecialList();
   },
+  mounted() {
+    document.getElementById('app').style.minWidth = 'auto'
+  },
+  beforeDestroy() {
+    document.getElementById('app').style.minWidth = '1366px'
+  },
   methods: {
     share() {
       this.$refs.share.dialogVisible = true;
@@ -129,7 +135,7 @@ export default {
           this.isErrorPage = false
           this.isErrorPage = true
         }
-       
+
       }).catch(res => {
         this.loading = false;
         this.isErrorPage = true
@@ -239,6 +245,12 @@ export default {
     margin: 40px auto 50px auto;
   }
 }
+@media (min-width: 1280px) {
+ .special-show-ctx {
+    width: calc(100% - 90px);
+    margin: 40px auto 50px auto;
+  }
+}
 .shareSubject{
   padding: 15px 20px 0;
 }
@@ -334,7 +346,7 @@ export default {
         img{
           margin: 5px 0;
         }
-      } 
+      }
       .show-link{
         color: #3562FA;
       }
