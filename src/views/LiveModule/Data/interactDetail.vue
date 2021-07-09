@@ -587,7 +587,7 @@ export default {
               data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
             that.$message.success('删除成功');
-            that.getRecordList(this.pageInfo);
+            that.getRecordList(that.pageInfo);
           });
         }).catch(() => {
           that.$message({
