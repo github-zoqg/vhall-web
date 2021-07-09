@@ -239,6 +239,12 @@ export default {
     margin: 40px auto 50px auto;
   }
 }
+@media (min-width: 1280px) {
+ .special-show-ctx {
+    width: calc(100% - 100px);
+    margin: 40px auto 50px auto;
+  }
+}
 .shareSubject{
   padding: 15px 20px 0;
 }
