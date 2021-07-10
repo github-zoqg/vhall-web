@@ -39,7 +39,7 @@
         :before-upload="beforeUploadHandler"
         :restPic="true"
         :widthImg="'100%'"
-        :heightImg="138"
+        :heightImg="120"
         @delete="deleteBanner"
       >
         <div slot="tip">
@@ -1119,6 +1119,7 @@ export default {
     cursor: not-allowed;
   }
   /deep/ .el-upload--picture-card {
+    height: 120px;
     i {
       font-size: 18px;
     }

@@ -1026,14 +1026,14 @@
       }
       header{
         width: 100%;
-        max-height: 200px;
+        height: 120px;
         overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
         img{
           width: 100%;
-          object-fit: scale-down;
+          object-fit: cover;
         }
       }
       .pageTitle{
@@ -1191,6 +1191,7 @@
       white-space: normal;
       font-size: 14px;
       color: #666;
+      font-weight: 400;
       .el-checkbox__input {
         padding-top: 3px;
       }
