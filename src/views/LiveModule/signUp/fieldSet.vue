@@ -1119,7 +1119,7 @@ export default {
     cursor: not-allowed;
   }
   /deep/ .el-upload--picture-card {
-    height: 125px;
+    height: 120px;
     i {
       font-size: 18px;
     }
