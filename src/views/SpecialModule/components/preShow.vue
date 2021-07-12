@@ -218,10 +218,24 @@ export default {
 .titleBox {
   margin-top: 40px;
 }
+.special-show-ctx {
+    width: 1204px;;
+    margin: 0 auto 0;
+  }
+  .special-main{
+    height: 520px;
+  }
+  .special-imgTitle{
+    width: 820px;
+  }
+  .special-img{
+    width: 100%;
+    height: 460px;
+  }
 @media (min-width: 1920px) {
  .special-show-ctx {
-    width: calc(100% - 602px);
-    margin: 40px auto 50px auto;
+    width: 1510px;
+    margin: 0 auto;
   }
   .special-main{
     height: 690px;
@@ -237,27 +251,21 @@ export default {
     width: 20%;
   }
 }
-@media (min-width: 1366px) {
- .special-show-ctx {
-    width: calc(100% - 166px);
-    margin: 40px auto 50px auto;
-  }
-}
-@media (min-width: 1440px) {
- .special-show-ctx {
-    width: calc(100% - 240px);
-    margin: 40px auto 50px auto;
-  }
-}
-@media (min-width: 1600px) {
- .special-show-ctx {
-    width: calc(100% - 400px);
-    margin: 40px auto 50px auto;
-  }
-}
-// @media (min-width: 1280px) {
+// @media (min-width: 1366px) {
 //  .special-show-ctx {
-//     width: calc(100% - 90px);
+//     width: calc(100% - 166px);
+//     margin: 40px auto 50px auto;
+//   }
+// }
+// @media (min-width: 1440px) {
+//  .special-show-ctx {
+//     width: calc(100% - 240px);
+//     margin: 40px auto 50px auto;
+//   }
+// }
+// @media (min-width: 1600px) {
+//  .special-show-ctx {
+//     width: calc(100% - 400px);
 //     margin: 40px auto 50px auto;
 //   }
 // }
