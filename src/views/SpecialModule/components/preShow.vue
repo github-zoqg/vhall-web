@@ -218,39 +218,57 @@ export default {
 .titleBox {
   margin-top: 40px;
 }
+.special-show-ctx {
+    width: 1204px;;
+    margin: 0 auto 0;
+  }
+  .special-main{
+    height: 520px;
+  }
+  .special-imgTitle{
+    width: 820px;
+  }
+  .special-img{
+    width: 100%;
+    height: 460px;
+  }
 @media (min-width: 1920px) {
  .special-show-ctx {
-    width: calc(100% - 414px);
-    margin: 40px auto 50px auto;
+    width: 1510px;
+    margin: 0 auto;
+  }
+  .special-main{
+    height: 690px;
+  }
+  .special-imgTitle{
+    width: 1126px;
+  }
+  .special-img{
+    width: 100%;
+    height: 632px;
   }
   .el-col-xl-6{
     width: 20%;
   }
 }
-@media (min-width: 1366px) {
- .special-show-ctx {
-    width: calc(100% - 166px);
-    margin: 40px auto 50px auto;
-  }
-}
-@media (min-width: 1440px) {
- .special-show-ctx {
-    width: calc(100% - 240px);
-    margin: 40px auto 50px auto;
-  }
-}
-@media (min-width: 1600px) {
- .special-show-ctx {
-    width: calc(100% - 400px);
-    margin: 40px auto 50px auto;
-  }
-}
-@media (min-width: 1280px) {
- .special-show-ctx {
-    width: calc(100% - 90px);
-    margin: 40px auto 50px auto;
-  }
-}
+// @media (min-width: 1366px) {
+//  .special-show-ctx {
+//     width: calc(100% - 166px);
+//     margin: 40px auto 50px auto;
+//   }
+// }
+// @media (min-width: 1440px) {
+//  .special-show-ctx {
+//     width: calc(100% - 240px);
+//     margin: 40px auto 50px auto;
+//   }
+// }
+// @media (min-width: 1600px) {
+//  .special-show-ctx {
+//     width: calc(100% - 400px);
+//     margin: 40px auto 50px auto;
+//   }
+// }
 .shareSubject{
   padding: 15px 20px 0;
 }
@@ -285,14 +303,14 @@ export default {
   margin-bottom: 20px;
   .special-main{
     display: flex;
-    height: 516px;
+    // height: 516px;
   }
   .special-imgTitle{
-    width: calc(100% - 380px);
+    width: calc(100% - 384px);
   }
   .special-img{
-    width: 100%;
-    height: 460px;
+    // width: 100%;
+    // height: 460px;
     border-radius: 4px;
     background-color: #1a1a1a;
     flex: 1;
@@ -320,7 +338,7 @@ export default {
   }
   .special-detail{
     margin-left: 20px;
-    padding: 24px;
+    padding: 16px 24px 8px 24px;
     background: #fff;
     border-radius: 4px;
     width: 360px;
