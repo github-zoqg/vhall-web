@@ -263,12 +263,25 @@ export default {
 //     margin: 40px auto 50px auto;
 //   }
 // }
-// @media (min-width: 1600px) {
-//  .special-show-ctx {
-//     width: calc(100% - 400px);
-//     margin: 40px auto 50px auto;
-//   }
-// }
+@media (min-width: 1600px) {
+ .special-show-ctx {
+    width: 1510px;
+    margin: 0 auto;
+  }
+  .special-main{
+    height: 690px;
+  }
+  .special-imgTitle{
+    width: 1126px;
+  }
+  .special-img{
+    width: 100%;
+    height: 632px;
+  }
+  .el-col-xl-6{
+    width: 20%;
+  }
+}
 .shareSubject{
   padding: 15px 20px 0;
 }
@@ -386,6 +399,8 @@ export default {
       .liveItem{
         margin-bottom: 24px;
         border-radius: 4px;
+        // padding-left: 12px !important; 
+        // padding-right: 0px !important;
         .inner{
           display: inline-block;
           width: 100%;
