@@ -303,6 +303,7 @@ export default {
   margin-bottom: 20px;
   .special-main{
     display: flex;
+    margin-top: 20px;
     // height: 516px;
   }
   .special-imgTitle{
