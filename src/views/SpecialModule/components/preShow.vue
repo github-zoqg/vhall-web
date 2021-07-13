@@ -338,7 +338,7 @@ export default {
   }
   .special-detail{
     margin-left: 20px;
-    padding: 16px 24px 8px 24px;
+    padding: 10px 24px 8px 24px;
     background: #fff;
     border-radius: 4px;
     width: 360px;
