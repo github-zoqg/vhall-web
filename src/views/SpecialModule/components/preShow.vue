@@ -264,7 +264,7 @@ export default {
 //   }
 // }
 @media (min-width: 1600px) {
- special-show-ctx {
+ .special-show-ctx {
     width: 1510px;
     margin: 0 auto;
   }
@@ -277,6 +277,9 @@ export default {
   .special-img{
     width: 100%;
     height: 632px;
+  }
+  .el-col-xl-6{
+    width: 20%;
   }
 }
 .shareSubject{
@@ -396,6 +399,8 @@ export default {
       .liveItem{
         margin-bottom: 24px;
         border-radius: 4px;
+        // padding-left: 12px !important; 
+        // padding-right: 0px !important;
         .inner{
           display: inline-block;
           width: 100%;
