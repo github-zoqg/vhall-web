@@ -83,15 +83,10 @@
         <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
       </noData>
     </div>
-    <div slot="footer" class="dialog-footer">
-      <div>
-        <p v-if="videoSet">当前选择 <b>0</b> 个文件</p>
-      </div>
-      <span>
-        <el-button type="primary" @click="handlerConfirm" :disabled="!tableSelect.length" round size="medium" v-preventReClick>确定</el-button>
-        <el-button @click="dialogVisible = false" round size="medium">取消</el-button>
-      </span>
-    </div>
+    <span slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="handlerConfirm" :disabled="!tableSelect.length" round size="medium" v-preventReClick>确定</el-button>
+      <el-button @click="dialogVisible = false" round size="medium">取消</el-button>
+    </span>
   </el-dialog>
   <template v-if="showDialog">
     <el-dialog class="vh-dialog" title="" :visible.sync="showDialog" width="30%" center
@@ -107,20 +102,7 @@
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
-  props: {
-    videoSize: {
-      required: false,
-      default: ''
-    },
-    videoType: {
-      required: false,
-      default: 'MP4'
-    },
-    videoSet: { //是否是转播文件
-      required: false,
-      default: false
-    }
-  },
+  props: ['videoSize', 'videoType'],
   data(){
     return {
       dialogVisible: false,
@@ -464,19 +446,6 @@ export default {
       background: #000;
       border-radius: 4px;
       padding: 0 4px;
-    }
-  }
-  .dialog-footer{
-    display: flex;
-    justify-content: space-between;
-    p{
-      font-size: 14px;
-      color: #666;
-      line-height: 36px;
-      b{
-        color: #FB3A32;
-        font-weight: normal;
-      }
     }
   }
  /*  /deep/ .el-table__header{
