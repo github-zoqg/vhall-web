@@ -140,7 +140,7 @@ export default {
           opacity: 1;
         }
         &.active{
-          opacity: 1;
+          color: #FB3A32;
         }
       }
       .bang-rule{
@@ -170,16 +170,17 @@ export default {
       margin: 10px;
       // background: #aaa;
       padding: 8px;
-      background: rgba(51,51,51,.95);
-      line-height: 24px;
-      color: #e6e6e6;
+      background: rgba(255, 255, 255, 0.95);
+      line-height: 16px;
+      color: #1a1a1a;
       overflow-y: scroll;
       word-break: break-all;
       // width: 97%;
       position: absolute;
       top: 25px;
       left: 0;
-      font-size: 12px;
+      font-size: 10px;
+      box-shadow: 0px 6px 10px 0px rgba(0, 0, 0, 0.05), 0px 2px 4px 0px rgba(0, 0, 0, 0.05);
       &.rankLine{
         height: 80px;
         width: 93%;
