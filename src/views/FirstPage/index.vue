@@ -653,6 +653,7 @@ export default {
         color: #fff;
         font-size: 16px;
         padding-left: 2px;
+        padding-bottom: 5px;
       }
       p{
         font-size: 14px;
