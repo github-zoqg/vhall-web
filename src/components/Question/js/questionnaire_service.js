@@ -2771,6 +2771,8 @@ exports.default = {
           _data.extension = (0, _stringify2.default)(_data.extension);
           if (_this5.domainUrl) {
             _data.imgUrl = _this5.domainUrl;
+          } else {
+            _data.imgUrl = '';
           }
           console.log(_data, 987654321);
           _this5.sdk.save(_data).then(function (res) {
