@@ -547,10 +547,16 @@ export default {
         top: 12px;
         left: 12px;
         .live-status{
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          margin-right:4px;
+          vertical-align: top;
           img{
-            margin-right:4px;
-            width: 8px;
-            height: 8px;
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            object-fit: scale-down;
           }
         }
       }
