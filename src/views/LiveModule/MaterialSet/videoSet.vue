@@ -627,7 +627,7 @@ export default {
     del(rows) {
       this.checkedList = [];
       if (this.audit_status) {
-          this.$confirm('该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除？', '提示', {
+          this.$confirm('删除后将会影响视频的演示和观看，确定删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',

@@ -71,7 +71,7 @@ export default {
       isFullscreen: false, // 全屏
       loading: true,
       hoveVideo: false,
-      audioImg: require('@/common/images/gif/MP3.gif'),
+      audioImg: require('@/common/images/gif/video.gif'),
       videoType: 1, // 1为视频   2为音频
       tipsType: 0, // 1为音频封面   2 播放结束
     };
