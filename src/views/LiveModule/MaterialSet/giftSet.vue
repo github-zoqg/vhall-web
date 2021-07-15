@@ -14,7 +14,7 @@
       <el-button
         round
         class="head-btn set-upload transparent-btn"
-        @click="handleAddGift" size="medium">
+        @click="handleAddGift" size="white-medium">
         资料库
       </el-button>
       <el-button

@@ -13,7 +13,7 @@
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
       <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="uploads" class="set-input" type="file" @change="tirggerFile($event)" accept=".mp4,.mp3,.rmvb,.avi,.mkv,.flv,.mov,.mav,.wmv"> </el-button>
-      <el-button size="medium" round class="transparent-btn" @click="choiceVideo">资料库</el-button>
+      <el-button size="white-medium" round class="transparent-btn" @click="choiceVideo">资料库</el-button>
       <el-button size="medium" round class="transparent-btn" @click="allDelete(null)" :disabled="!checkedList.length">批量删除</el-button>
       <VhallInput
         class="search-tag"
@@ -49,7 +49,7 @@
               <template slot-scope="scope">
                 <el-tooltip placement="top" :disabled="!isTextOverflow" :content="scope.row.video_name == '' ? '- -' : scope.row.video_name">
                   <div class="videoName custom-tooltip-content">
-                    <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'"></i>
+                    <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.file_type == '.mp3' || scope.row.file_type == '.mav'"></i>
                     <i class="iconfont-v3 saasshipinwenjian" v-else></i>
                     {{ scope.row.video_name  || '- -'}}
                   </div>
@@ -162,6 +162,25 @@
       </div>
       </VhallDialog>
     </template>
+    <!-- 同步功能 -->
+    <VhallDialog
+      title="提示"
+      :visible.sync="dialogTongVisible"
+      :close-on-click-modal="false"
+      class="zdy-async-dialog"
+      width="400px"
+    >
+      <div class="async__body">
+        <div class="async__ctx">
+          <p>上传文件同时共享至资料管理，便于其他活动使用？</p>
+          <el-checkbox v-model="sureChecked">共享到资料管理</el-checkbox>
+        </div>
+        <div class="async__footer">
+          <el-button type="primary" size="medium" v-preventReClick @click="sureMaterialPrize" round>确 定</el-button>
+          <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
+        </div>
+      </div>
+    </VhallDialog>
   </div>
 </template>
 <script>
@@ -202,7 +221,10 @@ export default {
       UploadSDK: null,
       uploadId: -1,
       uploadList: [],
-      vm: null
+      vm: null,
+      paramsCreate: {},
+      dialogTongVisible: false,
+      sureChecked: true
     };
   },
   components: {
@@ -250,6 +272,16 @@ export default {
     },
     mediaSelected(val) {
       console.log(val, '1233')
+      val = val.join(',')
+      let params = {
+        video_ids: val,
+        webinar_id: this.webinarId
+      }
+      this.$fetch('waitingVideoFile', params).then(res=>{
+        if (res.code == 200) {
+          this.getTableList('search');
+        }
+      });
     },
     initPayMessage() {
       // let that = this;
@@ -336,7 +368,7 @@ export default {
         file_name: beforeName,  //后端要求名称带上后缀名  如xxx 改成 xxx.mp4
         duration: '',
         video_name: beforeName,
-        msg_url: `.${videoArr[videoArr.length - 1]}`,
+        file_type: `.${videoArr[videoArr.length - 1]}`,
         uploadObj: {}, // type：1   上传视频     2创建点播
         id: onlyId
       };
@@ -382,30 +414,50 @@ export default {
       this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit);
       this.getTableList();
     },
-    createVod(_file){
-      this.UploadSDK.createDemand({ file: _file, fileName: 'name'},(res)=>{
-        // this.tableData.forEach((ele)=>{
-        //   if(ele.id == _file.id){
-        //     ele.uploadObj = {
-        //       type: 2,
-        //       test: '创建点播',
-        //       num: 100
-        //     };
-        //   }
-        // });
-        // console.warn(res);
-        this.$fetch('waitingVideoCreate', {paas_id: res.recordId, user_id: this.userId, filename: _file.name}).then(res=>{
-          this.tableData.splice(0, 1, this.uploadList);
-          console.log(this.tableData, this.uploadList, '000000000000000000')
-          this.$message({
-            message: `上传视频成功`,
-            showClose: true,
-            // duration: 0,
-            type: 'success',
-            customClass: 'zdy-info-box'
-          });
-          this.getTableList();
+    sureMaterialPrize() {
+      this.dialogTongVisible = false
+      if (this.sureChecked) {
+        this.waitingVideoCreate()
+        this.createVideo()
+      } else {
+        this.waitingVideoCreate()
+      }
+    },
+    waitingVideoCreate() {
+      this.paramsCreate.webinar_id = this.webinarId
+      this.paramsCreate.paas_record_id = this.paramsCreate.paas_id
+      this.$fetch('waitingVideoCreate', this.paramsCreate).then(res=>{
+        this.tableData.splice(0, 1, this.uploadList);
+        this.$message({
+          message: `上传视频成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
         });
+        this.getTableList();
+      });
+    },
+    createVideo() {
+      this.$fetch('createVideo', this.paramsCreate).then(res=>{
+        this.$message({
+          message: `视频同步资料库成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+      });
+    },
+    createVod(_file){
+      this.paramsCreate = {}
+      this.UploadSDK.createDemand({ file: _file, fileName: 'name'},(res)=>{
+        this.dialogTongVisible = true
+        this.paramsCreate = {
+          paas_id: res.recordId,
+          user_id: this.userId,
+          filename: _file.name
+        }
       },err=>{
         this.tableData.shift();
         this.uploadList.shift();
@@ -416,7 +468,7 @@ export default {
           type: 'error',
           customClass: 'zdy-info-box'
         });
-      });
+      })
     },
     initUpload(id, token){
       let option = {
@@ -442,13 +494,7 @@ export default {
           // 转码状态:0新增排队中 1转码成功 2转码失败 3转码中
           res.data.list.forEach(ele => {
             ele.video_name = ele.name;
-            ele.msg_url = ele.msg_url.toLowerCase();
-            // if (!ele.transcode_status) {
-            //   ele.uploadObj = {
-            //     text: '视频正在转码',
-            //     num: Math.floor(1*100)
-            //   }
-            // }
+            ele.file_type = ele.file_type.toLowerCase();
             switch (ele.transcode_status) {
               case '0':
                 ele.transcode_status_text = '转码中';
@@ -518,8 +564,13 @@ export default {
        this.errorText = true;
        return;
      } else {
-       let name = `${this.videoName}${this.lowName}`
-      this.$fetch('waitingVideoEdit', {video_id: this.videoId, user_id: this.userId, filename: name}).then(res=>{
+      let name = `${this.videoName}${this.lowName}`
+      let params = {
+        webinar_id: this.webinarId,
+        id: this.videoId,
+        name: name
+      }
+      this.$fetch('waitingVideoEdit', params).then(res=>{
         if (res.code == 200) {
           // this.$vhall_paas_port({
           //   k: 100521,
@@ -546,7 +597,7 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        this.$fetch('waitingVideoDelete', {video_ids: id, user_id:  this.userId}).then(res=>{
+        this.$fetch('waitingVideoDelete', {ids: id}).then(res=>{
           if (res.code == 200) {
             // this.$vhall_paas_port({
             //   k: index == 1 ? 100520 : 100519,

@@ -85,7 +85,7 @@
     </div>
     <div slot="footer" class="dialog-footer">
       <div>
-        <p v-if="videoSet">当前选择 <b>0</b> 个文件</p>
+        <p v-if="videoSet">当前选择 <b>{{ tableSelect.length }}</b> 个文件</p>
       </div>
       <span>
         <el-button type="primary" @click="handlerConfirm" :disabled="!tableSelect.length" round size="medium" v-preventReClick>确定</el-button>
@@ -232,10 +232,8 @@ export default {
     },
     handleSelectionChange(val){
       this.tableSelect = val;
-      console.log(this.tableSelect, '??????')
-      if (this.videoSet) {
-        // this.tableSelect.forEach(item)
-      } else {
+      console.log(val, '???sdfjkh1还得尽快回复')
+      if (!this.videoSet) {
         this.docList.forEach((item) => {
           if (val.length !== 0) {
             if (item.paas_record_id !== val[[val.length - 1]].paas_record_id) {
@@ -259,13 +257,12 @@ export default {
       if (this.videoSet) {
         let tableList = []
         this.tableSelect.map(item => {
-          tableList.concat(item.id)
+          tableList.push(item.id)
         })
         this.$emit('selected', tableList);
       } else {
         this.$emit('selected', this.tableSelect[0]);
       }
-      this.$emit('selected', this.tableSelect[0]);
       this.dialogVisible = false;
     },
     closeHandler(){

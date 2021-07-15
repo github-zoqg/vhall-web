@@ -6,7 +6,7 @@
     <div class="advertisement-main">
       <div class="search-data" v-show="total || isSearch">
         <el-button size="medium" class="length104" type="primary" @click="createAdvise()" round>创建广告</el-button>
-        <el-button size="medium" class="head-btn length104 transparent-btn" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
+        <el-button size="white-medium" class="head-btn length104 transparent-btn" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
         <el-button size="medium" class="head-btn length104 transparent-btn" round @click="allDelete(null)" :disabled="!adv_ids.length">批量删除</el-button>
         <VhallInput
           class="search-tag"
