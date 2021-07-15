@@ -215,6 +215,7 @@ export default {
     // 初始化聊天SDK
     // this.initChat();
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    this.webinarId = this.$route.params.str;
     this.getVideoAppid();
     this.getTableList();
     this.loading = false;
@@ -239,13 +240,16 @@ export default {
   },
   methods: {
     searchTableList() {
-      if (this.keyword) {
-        this.$vhall_paas_port({
-          k: 100524,
-          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-      }
+      // if (this.keyword) {
+      //   this.$vhall_paas_port({
+      //     k: 100524,
+      //     data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      //   })
+      // }
       this.getTableList('search');
+    },
+    mediaSelected(val) {
+      console.log(val, '1233')
     },
     initPayMessage() {
       // let that = this;
@@ -265,17 +269,17 @@ export default {
       }
       let formParams = {
         title: this.keyword,
-        user_id: this.userId,
+        webinar_id: this.webinarId,
         ...this.pageInfo
       }
       this.isSearch = this.keyword ? true : false;
       this.getList(formParams);
     },
     tirggerFile(event){
-      this.$vhall_paas_port({
-        k: 100518,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
+      // this.$vhall_paas_port({
+      //   k: 100518,
+      //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      // })
       const typeList = ['rmvb','mp4','avi','wmv','mkv','flv','mov','mp3','mav'];
       let file = event.target.files[0];
       let beforeName = event.target.files[0].name.toLowerCase();
@@ -390,7 +394,7 @@ export default {
         //   }
         // });
         // console.warn(res);
-        this.$fetch('createVideo', {paas_id: res.recordId, user_id: this.userId, filename: _file.name}).then(res=>{
+        this.$fetch('waitingVideoCreate', {paas_id: res.recordId, user_id: this.userId, filename: _file.name}).then(res=>{
           this.tableData.splice(0, 1, this.uploadList);
           console.log(this.tableData, this.uploadList, '000000000000000000')
           this.$message({
@@ -432,7 +436,7 @@ export default {
       })
     },
     getList(obj){
-      this.$fetch('dataVideoList', this.$params(obj)).then(res=>{
+      this.$fetch('waitingVideoList', this.$params(obj)).then(res=>{
         if(res.code == 200){
           this.total = res.data.total;
           // 转码状态:0新增排队中 1转码成功 2转码失败 3转码中
@@ -483,10 +487,10 @@ export default {
       this.errorText = false;
       this.videoName = rows.name
       this.videoId = rows.id;
-      this.$vhall_paas_port({
-        k: 100522,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
+      // this.$vhall_paas_port({
+      //   k: 100522,
+      //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      // })
       // that.$prompt('', '编辑',{
       //     confirmButtonText: '确定',
       //     cancelButtonText: '取消',
@@ -515,12 +519,12 @@ export default {
        return;
      } else {
        let name = `${this.videoName}${this.lowName}`
-      this.$fetch('dataVideoupdate', {video_id: this.videoId, user_id: this.userId, filename: name}).then(res=>{
+      this.$fetch('waitingVideoEdit', {video_id: this.videoId, user_id: this.userId, filename: name}).then(res=>{
         if (res.code == 200) {
-          this.$vhall_paas_port({
-            k: 100521,
-            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-          })
+          // this.$vhall_paas_port({
+          //   k: 100521,
+          //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          // })
           this.editShowDialog = false;
           this.$message({
             message: `修改成功`,
@@ -542,12 +546,12 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
+        this.$fetch('waitingVideoDelete', {video_ids: id, user_id:  this.userId}).then(res=>{
           if (res.code == 200) {
-            this.$vhall_paas_port({
-              k: index == 1 ? 100520 : 100519,
-              data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-            })
+            // this.$vhall_paas_port({
+            //   k: index == 1 ? 100520 : 100519,
+            //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            // })
             this.$refs.uploads.value = null
             this.getTableList('search');
             this.$message({
@@ -596,10 +600,10 @@ export default {
       if (rows.transcode_status == 1) {
         this.showDialog = true;
         this.videoParam = rows;
-        this.$vhall_paas_port({
-          k: 100523,
-          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
+        // this.$vhall_paas_port({
+        //   k: 100523,
+        //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        // })
       } else {
         this.$message.warning('只有转码成功才能查看');
       }

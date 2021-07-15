@@ -98,6 +98,13 @@ const apis = {
   checkLive: ['/v3/webinars/live/check', 'POST'], // 进入直播前检测
   getPCDownloadUrl: ['/v3/commons/version/upgrade', 'POST'], // 客户端下载地址获取接口
 
+  // 插播
+  waitingVideoList: ['/v3/webinars/waiting-file/get-list', 'POST'], // 插播列表
+  waitingVideoFile: ['/v3/webinars/waiting-file/batch-video-file', 'POST'], // 获取音视频导入插播文件
+  waitingVideoEdit: ['/v3/webinars/waiting-file/edit', 'POST'], // 插播文件编辑
+  waitingVideoCreate: ['/v3/webinars/waiting-file/create', 'POST'], // 插播文件创建
+  waitingVideoDelete: ['/v3/webinars/waiting-file/deletes', 'POST'], // 插播文件删除
+
   // 专题
   subjectCreate: ['/v3/webinars/subject/create', 'POST'], // 专题创建
   subjectList: ['/v3/webinars/subject/get-list', 'POST'], // 专题列表

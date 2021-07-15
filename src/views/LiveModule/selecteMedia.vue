@@ -232,13 +232,18 @@ export default {
     },
     handleSelectionChange(val){
       this.tableSelect = val;
-      this.docList.forEach((item) => {
-        if (val.length !== 0) {
-          if (item.paas_record_id !== val[[val.length - 1]].paas_record_id) {
-            this.$refs.docList.toggleRowSelection(item, false);
+      console.log(this.tableSelect, '??????')
+      if (this.videoSet) {
+        // this.tableSelect.forEach(item)
+      } else {
+        this.docList.forEach((item) => {
+          if (val.length !== 0) {
+            if (item.paas_record_id !== val[[val.length - 1]].paas_record_id) {
+              this.$refs.docList.toggleRowSelection(item, false);
+            }
           }
-        }
-      });
+        });
+      }
     },
     handlerConfirm(){
       if (this.tableSelect[0].transcode_status != 1) {
@@ -250,6 +255,15 @@ export default {
           customClass: 'zdy-info-box'
         });
         return;
+      }
+      if (this.videoSet) {
+        let tableList = []
+        this.tableSelect.map(item => {
+          tableList.concat(item.id)
+        })
+        this.$emit('selected', tableList);
+      } else {
+        this.$emit('selected', this.tableSelect[0]);
       }
       this.$emit('selected', this.tableSelect[0]);
       this.dialogVisible = false;
