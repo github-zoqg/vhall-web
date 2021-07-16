@@ -141,7 +141,7 @@ export default {
       ],
       liveDataList: [
         { icon: 'icon_document@2x', id: 1, title: '文档', subText: '直播中使用文档演示', type: 100073, path: `/live/word/${this.$route.params.str}`,isShow: this.type != 4},
-        { icon: 'icon_document@2x', id: 1, title: '插播文件', subText: '直播中使用音视频文件演示', type: '000000', path: `/live/videoSet/${this.$route.params.str}`, isShow: true},
+        { icon: 'icon_videoSet@2x', id: 1, title: '插播文件', subText: '直播中使用音视频文件演示', type: '000000', path: `/live/videoSet/${this.$route.params.str}`, isShow: true},
         { icon: 'icon_Lucky draw@2x', id: 2, title: '抽奖', subText: '直播中发起抽奖活跃气氛', type: 100074, path: `/live/prizeSet/${this.$route.params.str}`, isShow: this.perssionInfo['ui.hide_lottery']==1 && this.type != 4},
         { icon: 'icon_questionnaire@2x', id: 3,title: '问卷', subText: '创建问卷收集信息', type: 100075, path: '/live/question',isShow: this.perssionInfo['ui.hide_survey']==1 && this.type != 4 },
         { icon: 'icon_goods@2x', id: 4, title: '商品', subText: '设置展示给观众的商品', type: 100076, path: `/live/productSet/${this.$route.params.str}`,isShow: this.perssionInfo.product_show==1},
