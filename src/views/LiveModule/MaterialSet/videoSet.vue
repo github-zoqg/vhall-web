@@ -243,10 +243,10 @@ export default {
     this.loading = false;
   },
   mounted() {
-    EventBus.$on('sign_trans_code', res => { // 转码状态
-      console.log(res, '监听到sign_trans_code未读消息提示事件');
+    EventBus.$on('waiting_sign_trans_code', res => { // 转码状态
+      console.log(res, '监听到waiting_sign_trans_code未读消息提示事件');
       this.tableData.map(item => {
-        if (res.record_id == item.id) {
+        if (res.waiting_id == item.id) {
           if (res.status == 1) {
             item.transcode_status = 1;
             item.duration = formateSeconds(res.duration);
@@ -284,7 +284,6 @@ export default {
       });
     },
     initPayMessage() {
-      // let that = this;
       this.vm = this.$message({
         showClose: true,
         duration: 0,
