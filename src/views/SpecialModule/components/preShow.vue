@@ -352,11 +352,11 @@ export default {
   }
   .special-detail{
     margin-left: 20px;
-    padding: 10px 24px 8px 24px;
     background: #fff;
     border-radius: 4px;
     width: 360px;
     height: 100%;
+    padding: 8px 0;
     // overflow-y: scroll;
     img{
       width: 100%;
@@ -368,6 +368,7 @@ export default {
       height: calc(100% - 592px);
       word-break: break-all;
       line-height: 1.5;
+      padding: 0 24px;
       strong{
         font-weight: bold;
       }
