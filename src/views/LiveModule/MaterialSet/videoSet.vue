@@ -495,18 +495,18 @@ export default {
             ele.video_name = ele.name;
             ele.file_type = ele.file_type.toLowerCase();
             switch (ele.transcode_status) {
-              case '0':
+              case 0:
                 ele.transcode_status_text = '转码中';
                 ele.duration = '——';
                 break;
-              case '1':
+              case 1:
                 ele.transcode_status_text = '转码成功';
                 break;
-              case '2':
+              case 2:
                 ele.transcode_status_text = '转码失败';
                 ele.duration = '——'
                 break;
-              case '3':
+              case 3:
                 ele.transcode_status_text = '转码中';
                 ele.duration = '——'
                 break;
