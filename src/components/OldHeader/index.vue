@@ -14,7 +14,7 @@
         <div v-if="isSpecial" :class="['navbar-title', {'unlogin-title': !isLogin}]">
           <div class="navbar-intro">
             <el-tooltip class="item" effect="dark" :content="specialInfo.title" placement="bottom-start">
-              <p>{{ specialInfo.title | splitLenStr(32) }}</p>
+              <p>{{ specialInfo.title }}</p>
             </el-tooltip>
             <!-- <p>{{ specialInfo.title }}</p> -->
             <span class="time">{{ (specialInfo && specialInfo.created_at ? specialInfo.created_at : '') | unitTime  }}</span>
@@ -104,11 +104,6 @@ export default {
       logo: null,
       logo_jump_url: null
     };
-  },
-  filters: {
-    splitLenStr: function(name, len) {
-      return name && name.length > len ? name.substring(0, len) + '...' : name
-    }
   },
   computed: {
     show_name: function() {
