@@ -514,6 +514,7 @@ export default {
         top: 55px;
         border-radius: 4px;
         max-width: 368px;
+        word-break: break-all;
         line-height: 17px;
         background: rgba(#1A1A1A, 0.85);
         font-size: 12px;
