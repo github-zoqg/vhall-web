@@ -2629,7 +2629,9 @@ exports.default = {
         }
         _this2.domainUrl = res.data.imgUrl;
         var extension = JSON.parse(res.data.extension);
-        _this2.isPlayBack = Boolean(extension.playback_filling);
+        if (extension) {
+          _this2.isPlayBack = Boolean(extension.playback_filling);
+        }
         console.log('问卷编辑');
         console.log(_this2.q);
       });
