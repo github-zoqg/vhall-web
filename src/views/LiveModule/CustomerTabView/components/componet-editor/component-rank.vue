@@ -8,19 +8,19 @@
         </div>
         <span class="bang-rule" @click="changeRule">排行榜规则<i class="iconfont-v3 saasicon_arrowdown1-copy" v-if="rankRule"></i><i class="iconfont-v3 saasicon_arrowdown1" v-else></i></span>
       </div>
-      <div class="ranking-box" v-show="rankRule">
+      <div class="ranking-box" v-show="rankRule" :class="pre == 1 ? 'rankLine' : 'rankBox'">
           <!-- <vhscroll> -->
-          <div class="rank-con" v-show="activeIndex == 1" v-html="info.inContent">
+          <div class="rank-con" v-show="activeIndex == 1" v-html="info.inContent || ' 什么规则都没有 '">
           </div>
-          <div class="rank-con" v-show="activeIndex == 2" v-html="info.rewardContent">
+          <div class="rank-con" v-show="activeIndex == 2" v-html="info.rewardContent || ' 什么规则都没有 '">
           </div>
           <!-- </vhscroll> -->
       </div>
       <div class="rank-band">
-        <img v-if="activeIndex == 1 && pre == 1" src="./phone-bang02@2x.png" alt="" />
-        <img v-if="activeIndex == 1 && pre == 2" src="./pc-bang02@2x.png" alt="" />
-        <img v-if="activeIndex == 2 && pre == 1" src="./phone-bang01@2x.png" alt="" />
-        <img v-if="activeIndex == 2 && pre == 2" src="./pc-bang01@2x.png" alt="" />
+        <img v-if="activeIndex == 1 && pre == 1" src="./invta_iphone.png" alt="" />
+        <img v-if="activeIndex == 1 && pre == 2" src="./invta_pc.png" alt="" />
+        <img v-if="activeIndex == 2 && pre == 1" src="./reward_iphone.png" alt="" />
+        <img v-if="activeIndex == 2 && pre == 2" src="./reward_pc.png" alt="" />
       </div>
     </div>
     <div class="rank-editor-box" v-if="mode == 2">
@@ -120,8 +120,10 @@ export default {
     padding-top: 16px;
   }
   .rank-previewbox{
-    background: url(./rank-bg.png) repeat;
+    // background: url(./rank-bg.png) repeat;
+    background: #fff;
     padding-bottom: 10px;
+    position: relative;
     .ranking-title {
       font-size: 14px;
       color: #fff;
@@ -133,11 +135,12 @@ export default {
         margin-right: 10px;
         opacity: 0.8;
         cursor: pointer;
+        color: #1A1A1A;
         &:hover {
           opacity: 1;
         }
         &.active{
-          opacity: 1;
+          color: #FB3A32;
         }
       }
       .bang-rule{
@@ -163,14 +166,29 @@ export default {
       }
     }
     .ranking-box{
-      border-radius: 2px;
+      border-radius: 4px;
       margin: 10px;
-      background: #fff;
+      // background: #aaa;
       padding: 8px;
-      line-height: 24px;
-      min-height: 30px;
+      background: rgba(255, 255, 255, 0.95);
+      line-height: 16px;
+      color: #1a1a1a;
       overflow-y: scroll;
       word-break: break-all;
+      // width: 97%;
+      position: absolute;
+      top: 25px;
+      left: 0;
+      font-size: 10px;
+      box-shadow: 0px 6px 10px 0px rgba(0, 0, 0, 0.05), 0px 2px 4px 0px rgba(0, 0, 0, 0.05);
+      &.rankLine{
+        height: 80px;
+        width: 93%;
+      }
+      &.rankBox{
+        height: 160px;
+        width: 97%;
+      }
     }
   }
   .switch-box{

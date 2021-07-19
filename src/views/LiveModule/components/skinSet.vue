@@ -48,7 +48,7 @@
         <div class="hide-white" v-show="!brandConfig"></div>
       </div>
       <!-- 预览区域 -->
-      <brand-set-preview ref="brandSetPreviewComp" class="brand--preview" :brandType="brandType"></brand-set-preview>
+      <brand-set-preview ref="brandSetPreviewComp" class="brand--preview" :brandType="brandType" :tabType="'skinSet'"></brand-set-preview>
     </div>
   </div>
 </template>
@@ -227,8 +227,8 @@ export default {
           this.skinSetForm.pageStyle = skin_json_pc.pageStyle;
           this.skinSetForm.bg_url = skin_json_pc.background;
           this.domain_url = skin_json_pc.background;
-          this.$refs['pageBgColors'].initColor(this.skinSetForm.bgColor)
-          this.$refs['pageThemeColors'].initColor(this.skinSetForm.pageStyle)
+          this.$refs['pageBgColors'] && this.$refs['pageBgColors'].initColor(this.skinSetForm.bgColor)
+          this.$refs['pageThemeColors'] && this.$refs['pageThemeColors'].initColor(this.skinSetForm.pageStyle)
         } else {
           this.skinSetForm.bgColor = '#1A1A1A';
           this.skinSetForm.pageStyle = '#FB3A32';

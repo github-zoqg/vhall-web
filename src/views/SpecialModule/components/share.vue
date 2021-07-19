@@ -9,9 +9,9 @@
       <div class="content">
         <div class="share-div">
           <ul class="icons">
+            <li><i @click="toShare('wechat')"></i><p>微信</p></li>
             <li><i @click="toShare('qq')"></i><p>QQ</p></li>
             <li><i @click="toShare('sina')"></i><p>微博</p></li>
-            <li><i @click="toShare('wechat')"></i><p>微信</p></li>
           </ul>
           <div class="inputCode">
              <el-input :value="shareVo.pcUrl || url" class="input-with-select" id="linkBox">
@@ -112,6 +112,9 @@ export default {
     height: auto;
     padding-bottom: 4px;
     border-radius: 4px;
+  }
+  /deep/.el-dialog__body{
+    padding-bottom: 20px;
   }
   /deep/ .smallSwtich{
     margin-left: 12px;
@@ -234,20 +237,20 @@ export default {
       &:last-child {
         margin-right: 0;
       }
-      &:nth-child(1){
-        i {
-          background: url("@{iconpath}/qq.png") center center no-repeat;
-          background-size: 100% 100%;
-        }
-      }
       &:nth-child(2){
         i {
-          background: url("@{iconpath}/weibo.png") center center no-repeat;
+          background: url("@{iconpath}/qq.png") center center no-repeat;
           background-size: 100% 100%;
         }
         margin: 0 48px;
       }
       &:nth-child(3){
+        i {
+          background: url("@{iconpath}/weibo.png") center center no-repeat;
+          background-size: 100% 100%;
+        }
+      }
+      &:nth-child(1){
         i {
           background: url("@{iconpath}/wechat.png") center center no-repeat;
           background-size: 100% 100%;

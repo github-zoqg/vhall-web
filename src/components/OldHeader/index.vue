@@ -3,13 +3,26 @@
     <header class="commen-header home-header">
       <nav :class="['navbar nav-top all']" role="navigation">
         <div :class="['navbar-header', {'white-bg': isWhiteBg}]">
-          <a :href="logo_jump_url" v-if="logo" class="navbar-brand">
+          <a :href="logo_jump_url" v-if="logo" class="navbar-brand" target="_blank">
             <img v-if="logo" :src="logo">
           </a>
-          <a class="navbar-brand" :href="logo_jump_url" v-else>
+          <a class="navbar-brand" :href="logo_jump_url" target="_blank" v-else>
             <img src="../../common/images/sys/logo-red@2x.png" alt="" v-if="isWhiteBg" />
             <img src="../../common/images/sys/logo@2x.png" alt="" v-else />
           </a>
+        </div>
+        <div v-if="isSpecial" :class="['navbar-title', {'unlogin-title': !isLogin}]">
+          <div class="navbar-intro">
+            <el-tooltip class="item" effect="dark" :content="specialInfo.title" placement="bottom-start">
+              <p>{{ specialInfo.title }}</p>
+            </el-tooltip>
+            <!-- <p>{{ specialInfo.title }}</p> -->
+            <span class="time">{{ (specialInfo && specialInfo.created_at ? specialInfo.created_at : '') | unitTime  }}</span>
+            <div class="share" @click="share">
+              <i class="iconfont-v3 saasfenxiang_icon" slot="reference"></i>
+              <span>分享</span>
+            </div>
+          </div>
         </div>
         <div class="collapse navbar-collapse" v-if="isShowLogin">
           <div class="pull-right login-reg" >
@@ -38,9 +51,11 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
-            <div class=""  v-if="!isLogin">
-              <el-button size="small" round @click="toLoginPageHandle">登录</el-button>
-              <el-button type="primary" size="small" round @click="toRegisterHandle">注册</el-button>
+            <div class="unlogin"  v-if="!isLogin">
+              <span><img src="../../common/images/sys/my-light@2x.png" alt=""></span>
+              <label @click="toLoginPageHandle">登录</label>
+              <!-- <el-button size="small" round @click="toLoginPageHandle">登录</el-button>
+              <el-button type="primary" size="small" round @click="toRegisterHandle">注册</el-button> -->
             </div>
           </div>
         </div>
@@ -69,6 +84,14 @@ export default {
       default: ''
     },
     isWhiteBg: {
+      require: false,
+      default: false
+    },
+    isSpecial: {
+      require: false,
+      default: false
+    },
+    specialInfo: {
       require: false,
       default: false
     }
@@ -168,6 +191,9 @@ export default {
           this.logo_jump_url = res.data.skip_url ? res.data.skip_url : process.env.VUE_APP_COMPANY_URL;
         }
       })
+    },
+    share() {
+      this.$emit('share')
     }
   },
   mounted() {
@@ -207,6 +233,7 @@ header.commen-header {
     border: none;
     &.all {
       width: 100%;
+      padding-right: 32px;
     }
   }
   .navbar {
@@ -225,7 +252,7 @@ header.commen-header {
   }
   .navbar-brand {
     float: left;
-    margin: 10px 0 10px 18px;
+    margin: 10px 32px;
     text-align: left;
     width: 120px!important;
     height: 44px;
@@ -234,6 +261,47 @@ header.commen-header {
       width: 100%;
       height: 100%;
       object-fit: scale-down;
+    }
+  }
+  .navbar-title{
+    position: absolute;
+    left: 185px;
+    right: 190px;
+    .navbar-intro{
+      width: 100%;
+    }
+    p{
+      padding-top: 13px;
+      line-height: 24px;
+      color: #1a1a1a;
+      font-size: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-right: 120px;
+      font-weight: 600;
+    }
+    .time{
+      color: #999;
+      font-size: 14px;
+    }
+    .share{
+      float: right;
+      margin-top: -20px;
+      text-align: center;
+      font-size: 14px;
+      cursor: pointer;
+      color: #666;
+      span{
+        display: block;
+        padding-top: 3px;
+      }
+      &:hover{
+        color: #FB3A32;
+      }
+    }
+    &.unlogin-title{
+      right: 140px;
     }
   }
   .navbar-collapse {
@@ -279,6 +347,30 @@ header.commen-header {
       margin-left: 5px;
      /*  margin-bottom: 13px; */
       margin-bottom: 4px;
+    }
+    .unlogin{
+      span{
+        width: 36px;
+        height: 36px;
+        display: inline-block;
+        border-radius: 50%;
+        margin-right: 8px;
+        cursor: pointer;
+        vertical-align: middle;
+        margin-top: -5px;
+      }
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: scale-down;
+      }
+      label {
+        font-size: 14px;
+        font-weight: 400;
+        color: #666;
+        line-height: 14px;
+        cursor: pointer;
+      }
     }
   }
   header #personal-info {
