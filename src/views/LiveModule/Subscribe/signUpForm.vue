@@ -720,7 +720,7 @@
                 this.getWebinarStatus()
               }
             }).catch(err => {
-              if (err.code == 12809 || err.code == 12570) {
+              if (err.code == 512809 || err.code == 512570) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
@@ -728,7 +728,7 @@
                   // 还原状态
                   this.isVerifyCodeErr = false
                 })
-              } else if (err.code == 12814) {
+              } else if (err.code == 512814) {
                 // res.data.visit_id && sessionStorage.setItem("visitor_id", res.data.visit_id);
                 // 报名成功的操作，跳转到直播间
                 this.closePreview()
@@ -766,7 +766,7 @@
                 }
               }
             }).catch(err => {
-              if (res.code == 12809 || err.code == 12570) {
+              if (res.code == 512809 || err.code == 512570) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true

@@ -407,7 +407,7 @@ export function checkAuth(to, from, next, that) {
       let out_url = sessionOrLocal.get('SAAS_V3_CTRL_OUT', 'localStorage');
       sessionStorage.clear()
       localStorage.clear()
-      if(e.code == 11006){
+      if(e.code == 511006){
         if(out_url) {
           // 清除cookies
           Cookies.remove('user_id');

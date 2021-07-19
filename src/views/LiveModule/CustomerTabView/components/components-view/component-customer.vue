@@ -211,6 +211,7 @@ export default {
       box-sizing: border-box;
       width: 285px;
       margin: 6px auto;
+      word-break: break-all;
       i{
         position: absolute;
         cursor: pointer;
