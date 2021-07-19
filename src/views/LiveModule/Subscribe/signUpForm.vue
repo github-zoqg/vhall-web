@@ -1009,7 +1009,7 @@
     }
     .signWrap {
       overflow-y: auto;
-      height: 90%;
+      height: 85%;
       border-radius: 4px;
       background: #fff;
       position: relative;
@@ -1020,20 +1020,20 @@
         box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
       }
       .entryFormBox {
-        width: 760px;
+        width: 720px;
         background: #fff;
         padding-bottom: 87px;
       }
       header{
         width: 100%;
-        max-height: 200px;
+        height: 120px;
         overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
         img{
           width: 100%;
-          object-fit: scale-down;
+          object-fit: cover;
         }
       }
       .pageTitle{
@@ -1191,6 +1191,7 @@
       white-space: normal;
       font-size: 14px;
       color: #666;
+      font-weight: 400;
       .el-checkbox__input {
         padding-top: 3px;
       }

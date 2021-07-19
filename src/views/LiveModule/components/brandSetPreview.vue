@@ -140,7 +140,7 @@ export default {
       bgColorType: 'black',
       signSetVo: null,
       skinSetVo: {
-        bgColor: 'ffffff', // 背景色
+        bgColor: '1A1A1A', // 背景色
         pageStyle: 'ff3333', // 按钮色
         bg_url: '' // 背景图
       },
@@ -156,26 +156,22 @@ export default {
       this.$nextTick(() => {
         this.signSetVo = vo;
         this.domain_url = domain_url;
-        // this.getInterWebinarSkin();
-        console.log(this.signSetVo, '4444444444444444')
       });
     },
     skinSetVoInfo(vo) {
       this.$nextTick(() => {
-        this.skinSetVo = vo;
-        if (vo.status > 0)  {
+        if (vo && Number(vo.status) > 0)  {
           // 页面赋值
           this.skinSetVo = vo;
           this.skinSetVo.bg_url = vo.bg_url || vo.domain_url;
         } else {
           this.skinSetVo = {
-            bgColor: '#FFFFFF', // 背景色
+            bgColor: '#1A1A1A', // 背景色
             pageStyle: '#ff3333', // 按钮色
             bg_url: '' // 背景图
           };
         }
         // this.getSignInfo();
-        console.log(this.skinSetVo, '11111111111111')
       });
     },
     getSignInfo() {
@@ -190,7 +186,6 @@ export default {
         } else {
           this.signSetVo = {};
         }
-        console.log(this.signSetVo, '2222222222222')
       }).catch(err=>{
         console.log(err);
         this.signSetVo = {};
@@ -207,12 +202,12 @@ export default {
           if (this.skinSetVo.status > 0)  {
             // 页面赋值
             let skin_json_pc = JSON.parse(res.data.skin_json_pc);
-            this.skinSetVo.bgColor = skin_json_pc.bgColor || '#FFFFFF';
+            this.skinSetVo.bgColor = skin_json_pc.bgColor || '#1A1A1A';
             this.skinSetVo.pageStyle = skin_json_pc.pageStyle || '#FB3A32';
             this.skinSetVo.bg_url = skin_json_pc.background;
           } else {
             this.skinSetVo = {
-              bgColor: '#FFFFFF', // 背景色
+              bgColor: '#1A1A1A', // 背景色
               pageStyle: '#FB3A32', // 按钮色
               bg_url: '' // 背景图
             };
@@ -220,7 +215,7 @@ export default {
           console.log(this.skinSetVo, '333333333333333')
         } else {
           this.skinSetVo = {
-            bgColor: '#FFFFFF', // 背景色
+            bgColor: '#1A1A1A', // 背景色
             pageStyle: '#FB3A32', // 按钮色
             bg_url: '' // 背景图
           };
@@ -228,7 +223,7 @@ export default {
       }).catch(err=>{
         console.log(err);
         this.skinSetVo = {
-          bgColor: '#FFFFFF', // 背景色
+          bgColor: '#1A1A1A', // 背景色
           pageStyle: '#FB3A32', // 按钮色
           bg_url: '' // 背景图
         };
