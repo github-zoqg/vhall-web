@@ -401,12 +401,10 @@ export default {
         })
       }
       this.givePrizeList.forEach((ele, index)=>{
-        if (ele.placeholder !== this.lotteryPageMessage[index].placeholder) {
-          this.$vhall_paas_port({
-            k: prizeArr[ele.rank],
-            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-          })
-        }
+        this.$vhall_paas_port({
+          k: prizeArr[ele.rank],
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         if (ele.field === '手机号') {
           this.$vhall_paas_port({
             k: ele.is_required ? 100318 : 100319,
@@ -500,6 +498,14 @@ export default {
           });
           this.setPrizePortData()
         }
+      }).catch((err)=>{
+        this.$message({
+          message: err.msg || '保存失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     handleClick(tab) {
