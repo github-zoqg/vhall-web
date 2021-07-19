@@ -197,6 +197,12 @@ export default {
 };
 </script>
 <style lang="less">
+ .el-tooltip__popper {
+    max-width: 390px;
+    // line-height: 17px;
+  }
+</style>
+<style lang="less">
 ::v-deep.head-wrap{
   .collapse{
     height: 100%;

@@ -13,7 +13,10 @@
         </div>
         <div v-if="isSpecial" :class="['navbar-title', {'unlogin-title': !isLogin}]">
           <div class="navbar-intro">
-            <p>{{ specialInfo.title }}</p>
+            <el-tooltip class="item" effect="dark" :content="specialInfo.title" placement="bottom-start">
+              <p>{{ specialInfo.title }}</p>
+            </el-tooltip>
+            <!-- <p>{{ specialInfo.title }}</p> -->
             <span class="time">{{ (specialInfo && specialInfo.created_at ? specialInfo.created_at : '') | unitTime  }}</span>
             <div class="share" @click="share">
               <i class="iconfont-v3 saasfenxiang_icon" slot="reference"></i>
@@ -102,7 +105,6 @@ export default {
       logo_jump_url: null
     };
   },
-
   computed: {
     show_name: function() {
       if (this.userInfo && this.userInfo.nick_name) {
