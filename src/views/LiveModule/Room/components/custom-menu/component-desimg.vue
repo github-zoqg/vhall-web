@@ -29,6 +29,7 @@ export default {
     color: #1A1A1A;
     line-height: 24px;
     p{
+      word-break: break-all;
       img{
         object-fit: scale-down;
       }

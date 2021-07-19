@@ -54,6 +54,7 @@
             :type="isPassWordType ? 'password' : 'text'"
             auto-complete="off"
             onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]/g,'')"
+            @keyup.enter.native="loginAccount"
             v-model.trim="loginForm.password">
             <span slot="suffix" @click="passWordType" class="closePwd">
               <icon class="icon" icon-class="saaseyeclose_huaban1" v-show="isPassWordType"></icon>
@@ -114,6 +115,7 @@
                 :placeholder="!isLoginPasswordFocus1 ? '动态密码' : ''"
                 @focus="handleFocus('isLoginPasswordFocus1')"
                 @blur="handleBlur('isLoginPasswordFocus1')"
+                @keyup.enter.native="loginDynamic"
                 clearable
                 :maxlength="6"
                 auto-complete="off"
@@ -182,6 +184,7 @@
                 clearable
                 @focus="handleFocus('isPasswordFocus')"
                 @blur="handleBlur('isPasswordFocus')"
+                @keyup.enter.native="registerAccount"
                 :placeholder="!isPasswordFocus ? '设置密码（6-30个字符）' : ''"
                 :maxlength="30"
                 auto-complete="off"
@@ -216,6 +219,7 @@ import Cookies from 'js-cookie'
 import footerSection from '../../components/Footer/index';
 import Env from "@/api/env";
 import pwdinput from './components/pwdInput'
+import { JSEncrypt } from 'jsencrypt'
 export default {
   components: {
     footerSection,
@@ -468,10 +472,44 @@ export default {
         });
       });
     },
-    login(params) {
+    getLoginKey() {
+      return new Promise((resolove, reject) => {
+        this.$fetch('getLoginKey').then(res => {
+          console.log(res)
+          if (res.code === 200) {
+            this.loginKey = res.data
+          }
+          resolove()
+        })
+      })
+    },
+    handleEncryptPassword(password) {
+      let retPassword = ''
+      // 新建JSEncrypt对象
+      let encryptor = new JSEncrypt();
+      // 设置公钥
+      encryptor.setPublicKey(this.loginKey.public_key);
+      // 加密数据
+      retPassword = encryptor.encrypt(password)
+      retPassword = retPassword.replace(/\+/g, '-').replace(/\//g, '_')
+      while(retPassword[retPassword.length - 1] === '=') {
+        retPassword = retPassword.substr(0,retPassword.length-1)
+      }
+      return retPassword
+    },
+    async login(params) {
+      params = JSON.parse(JSON.stringify(params))
       params.captcha = this.mobileKey;
       params.remember = this.remember ? 1 : 0;
-      this.$fetch('loginInfo', this.$params(params)).then(res => {
+      if (this.isActive == 1) {
+        await this.getLoginKey()
+        params.password = this.handleEncryptPassword(params.password)
+        params.uuid = this.loginKey.uuid
+      }
+      let retParams = this.$params(params)
+      this.$fetch('loginInfo', {
+        ...retParams,
+      }).then(res => {
         this.mobileKey = '';
         this.errorText = '';
         this.errorMsgShow = '';
@@ -556,11 +594,15 @@ export default {
       }
     },
     registerAccount() {
-      this.$refs.registerForm.validate((valid) => {
+      this.$refs.registerForm.validate(async (valid) => {
         if (valid) {
-          this.registerForm.captcha = this.mobileKey;
-          this.registerForm.source = this.$route.query.source || 1;
-          this.$fetch('register', this.registerForm).then(res => {
+          let params = JSON.parse(JSON.stringify(this.registerForm))
+          await this.getLoginKey()
+          params.password = this.handleEncryptPassword(params.password)
+          params.captcha = this.mobileKey;
+          params.source = this.$route.query.source || 1;
+          params.uuid = this.loginKey.uuid
+          this.$fetch('register', params).then(res => {
             this.$message({
               message:  `注册成功`,
               showClose: true,

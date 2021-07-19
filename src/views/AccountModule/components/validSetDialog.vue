@@ -683,7 +683,7 @@ export default {
               sessionOrLocal.clear();
               sessionOrLocal.clear('localStorage');
               // 清除cookies
-              Cookies.remove('user_id');
+              Cookies.remove('gray-id');
               // 监听消息变化
               this.$router.push({path: '/login'});
             }).catch(res => {

@@ -190,7 +190,7 @@ export default {
         sessionOrLocal.clear();
         sessionOrLocal.clear('localStorage');
         // 清除cookies
-        Cookies.remove('user_id');
+        Cookies.remove('gray-id');
         // 监听消息变化
         this.$EventBus.$emit('saas_vs_login_out', true);
         if(res.data && out_url) {
@@ -210,7 +210,7 @@ export default {
         });
       }).finally(() => {
         // 清除cookies
-        Cookies.remove('user_id');
+        Cookies.remove('gray-id');
         sessionOrLocal.clear();
         sessionOrLocal.clear('localStorage');
         // 监听消息变化

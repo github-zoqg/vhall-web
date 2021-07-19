@@ -639,7 +639,7 @@ export default {
           height: 50px;
           width: 100%;
           /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
-          background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.2));
+          background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.6));
           bottom: 0px;
           left: 0px;
           color: #fff;

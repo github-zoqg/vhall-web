@@ -86,11 +86,11 @@
                     <img :src="domain_url" alt=""  v-if="domain_url"/>
                     <img src="../../../common/images/sys/default_code.jpeg" alt="" v-if="!domain_url"/>
                   </div>
-                  <p class="gzh_txt">扫码关注公众号</p>
+                  <p class="gzh_txt">使用微信“扫一扫” 关注公众号</p>
                 </div>
               </div>
               <div class="gzh_pc">
-                <img class="gzh_bg_default" src="../../../common/images/official/pc_yl@2x.png" alt=""/>
+                <img class="gzh_bg_default" src="../../../common/images/official/pc@2x.png" alt=""/>
               </div>
             </div>
           </div>
@@ -478,9 +478,10 @@ export default {
       position: relative;
       img {
         width: 400px;
-        height: 274px;
+        height: 230px;
         display: block;
         margin: 24px auto 0;
+        border-radius: 4px;
       }
       .pc-poster-wrap{
         position: absolute;
@@ -539,10 +540,11 @@ export default {
         top: 69px;
         right: calc(50% - 62px);
         width: 124px;
-        height: 138px;
+        // height: 138px;
         background: #FFFFFF;
         border-radius: 4px;
         text-align: center;
+        padding-bottom: 10px;
       }
       p {
         text-align: right;
@@ -564,11 +566,13 @@ export default {
         }
       }
       .gzh_txt {
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 400;
         color: #1A1A1A;
-        line-height: 20px;
+        line-height: 16px;
         text-align: center;
+        width: 100%;
+        padding: 0 10px;
       }
     }
     .official-app{

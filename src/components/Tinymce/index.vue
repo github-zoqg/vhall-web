@@ -189,9 +189,9 @@ export default {
   .blue{
   }
 }
-/deep/.tox-tinymce{
-  padding-bottom: 25px !important;
-}
+// /deep/.tox-tinymce{
+//   padding-bottom: 25px !important;
+// }
 /deep/.tox .tox-tbtn svg {
   display: block;
   fill: #666!important;
@@ -229,6 +229,9 @@ export default {
   /deep/ .tox-tinymce{
     border-radius: 4px;
     border: 1px solid #ccc;
+  }
+  /deep/.tox-tinymce {
+    padding: 0;
   }
   /deep/ .tox-toolbar__primary{
     background: #f7f7f7;

@@ -294,7 +294,7 @@ export default {
     // &:first-child{
     //   padding-left: 24px;
     // }
-    .first-version{
+    &.first-version{
       padding-left: 24px;
     }
   }

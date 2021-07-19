@@ -643,19 +643,22 @@ export default {
       position: fixed;
       right: 0;
       bottom: 60px;
-      width: 30px;
-      background: #999;
+      width: 32px;
+      background: #FB3A32;
       color: #fff;
       padding: 12px 7px;
       cursor: pointer;
-      border-radius: 4px;
+      border-radius: 2px 0 0 2px;
       i{
         color: #fff;
-        font-size: 20px;
+        font-size: 16px;
+        padding-left: 2px;
+        padding-bottom: 5px;
       }
       p{
         font-size: 14px;
         text-align: center;
+        line-height: 18px;
       }
     }
   }

@@ -662,7 +662,7 @@ export default {
           window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/recordvideo/${this.webinar_id}`;
         }
       }).catch(err => {
-        if (err.code == 12550) {
+        if (err.code == 512550) {
           this.$message.warning('该活动正在直播或录制中，无法重复发起')
         } else {
           this.$message.warning(err.msg)
