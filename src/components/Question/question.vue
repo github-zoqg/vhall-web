@@ -78,6 +78,7 @@ export default {
         },
         // 是否开启消息提示，非必填,默认是true
         notify: true,
+        uploadUrl: process.env.VUE_APP_BASE_URL,
         isPreview: this.questionId ? true : false
       });
 
