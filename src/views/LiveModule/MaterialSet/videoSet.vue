@@ -682,11 +682,11 @@ export default {
       this.vm.close()
       this.vm = null
     }
-    if (this.UploadSDK) {
-      this.UploadSDK.destroy()
-      this.UploadSDK = null;
-    }
-    EventBus.$off("sign_trans_code");
+    // if (this.UploadSDK) {
+    //   this.UploadSDK.destroy()
+    //   this.UploadSDK = null;
+    // }
+    EventBus.$off("waiting_sign_trans_code");
   }
 };
 </script>
