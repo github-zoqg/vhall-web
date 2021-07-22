@@ -619,10 +619,10 @@ export default {
       this.vm.close()
       this.vm = null
     }
-    if (this.UploadSDK) {
-      this.UploadSDK.destroy()
-      this.UploadSDK = null;
-    }
+    // if (this.UploadSDK) {
+    //   this.UploadSDK.destroy()
+    //   this.UploadSDK = null;
+    // }
     EventBus.$off("sign_trans_code");
   }
 };
