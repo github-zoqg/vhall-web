@@ -581,3 +581,8 @@ export default {
   stroke: #FB3A32;
 }
 </style>
+<style lang="less" scoped>
+  /deep/.el-scrollbar__thumb{
+    background-color: transparent;
+  }
+</style>
