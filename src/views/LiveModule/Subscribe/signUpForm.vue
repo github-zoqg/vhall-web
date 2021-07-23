@@ -720,7 +720,7 @@
                 this.getWebinarStatus()
               }
             }).catch(err => {
-              if (err.code == 12809 || err.code == 12570) {
+              if (err.code == 512809 || err.code == 512570) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
@@ -728,7 +728,7 @@
                   // 还原状态
                   this.isVerifyCodeErr = false
                 })
-              } else if (err.code == 12814) {
+              } else if (err.code == 512814) {
                 // res.data.visit_id && sessionStorage.setItem("visitor_id", res.data.visit_id);
                 // 报名成功的操作，跳转到直播间
                 this.closePreview()
@@ -766,7 +766,7 @@
                 }
               }
             }).catch(err => {
-              if (res.code == 12809 || err.code == 12570) {
+              if (res.code == 512809 || err.code == 512570) {
                 // 短信验证码验证失败，触发表单验证失败
                 // 现在的表单验证码逻辑完全由后端返回结果决定，前端不验证格式
                 this.isVerifyCodeErr = true
@@ -1009,7 +1009,7 @@
     }
     .signWrap {
       overflow-y: auto;
-      height: 90%;
+      height: 85%;
       border-radius: 4px;
       background: #fff;
       position: relative;
@@ -1020,20 +1020,20 @@
         box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.15);
       }
       .entryFormBox {
-        width: 760px;
+        width: 720px;
         background: #fff;
         padding-bottom: 87px;
       }
       header{
         width: 100%;
-        max-height: 200px;
+        height: 120px;
         overflow: hidden;
         display: flex;
         justify-content: center;
         align-items: center;
         img{
           width: 100%;
-          object-fit: scale-down;
+          object-fit: cover;
         }
       }
       .pageTitle{
@@ -1191,6 +1191,7 @@
       white-space: normal;
       font-size: 14px;
       color: #666;
+      font-weight: 400;
       .el-checkbox__input {
         padding-top: 3px;
       }

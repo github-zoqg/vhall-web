@@ -272,7 +272,7 @@ export default {
       let sysDate = new Date().getTime();
       let str = this.$moment().format('HH:mm');
       console.log(this.formData.date1, str);
-      let selectDate = this.$moment(this.formData.date1).format('YYYY-MM-DD');
+      let selectDate = this.$moment(this.formData.date1).format('YYYY/MM/DD');
       let targetDate = new Date(`${selectDate} 00:00:00`).getTime();
       if (targetDate > sysDate) {
         return `00:00:00 - 23:59:00`;
@@ -283,7 +283,7 @@ export default {
     dafaultTime() {
       let sysDate = new Date().getTime();
       let str = this.$moment(sysDate + 10 * 60 * 1000).format('HH:mm');
-      let selectDate = this.$moment(this.formData.date1).format('YYYY-MM-DD');
+      let selectDate = this.$moment(this.formData.date1).format('YYYY/MM/DD');
       return selectDate + ' ' + `${str}:00`;
     },
     pathUrl: function() {

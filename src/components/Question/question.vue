@@ -28,7 +28,7 @@
   </div>
 </template>
 <script>
-import {VHall_Questionnaire_Service, VHall_Questionnaire_Const} from '@/utils/questionnaire_service';
+import {VHall_Questionnaire_Service, VHall_Questionnaire_Const} from './js/questionnaire_service';
 import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
@@ -78,6 +78,7 @@ export default {
         },
         // 是否开启消息提示，非必填,默认是true
         notify: true,
+        uploadUrl: process.env.VUE_APP_BASE_URL,
         isPreview: this.questionId ? true : false
       });
 
@@ -98,6 +99,7 @@ export default {
       this.$service.$on(VHall_Questionnaire_Const.EVENT.CREATE, data => {
         // data  回答Id
         // naire_id  问卷Id
+        this.questionDataInfo = data;
         if (this.type == 1) {
           // 资料库问卷创建
           this.materialQuestion(data.id, data.title, data.description);
@@ -106,12 +108,12 @@ export default {
             return;
           }
           this.dialogTongVisible = true;
-          this.questionDataInfo = data;
           // this.sureMaterialPrize(data.id, data.title, data.description);
         }
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.UPDATE, data => {
+        this.questionDataInfo = data;
         if (this.type == 1) {
           // 资料库问卷编辑
           this.materialEditQuestion(data.id, data.title, data.description);
@@ -157,7 +159,15 @@ export default {
       this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
     },
     materialQuestion(id, title, description) {
-      this.$fetch('createQuestion', {survey_id: id, title: title, description: description}).then(res => {
+      let extension = JSON.parse(this.questionDataInfo.extension)
+      let params = {
+        survey_id: id,
+        title: title,
+        description: description,
+        img_url: this.questionDataInfo.imgUrl,
+        playback_filling: extension.playback_filling
+      }
+      this.$fetch('createQuestion', params).then(res => {
         if (this.type == 1) {
           this.$vhall_paas_port({
             k: 100526,
@@ -176,7 +186,15 @@ export default {
       })
     },
     materialEditQuestion(id, title, description) {
-      this.$fetch('editQuestion', {survey_id: id, title: title, description: description}).then(res => {
+      let extension = JSON.parse(this.questionDataInfo.extension)
+      let params = {
+        survey_id: id,
+        title: title,
+        description: description,
+        img_url: this.questionDataInfo.imgUrl,
+        playback_filling: extension.playback_filling
+      }
+      this.$fetch('editQuestion', params).then(res => {
         this.$vhall_paas_port({
           k: 100527,
           data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
@@ -193,12 +211,15 @@ export default {
       })
     },
     liveMaterialQuestion(id, title, description) {
+      let extension = JSON.parse(this.questionDataInfo.extension)
       let params = {
         survey_id: id,
         webinar_id: this.$route.query.webinarId,
         room_id: this.$route.query.roomId,
         title: title,
         description: description,
+        img_url: this.questionDataInfo.imgUrl,
+        playback_filling: extension.playback_filling
       }
       this.$fetch('createLiveQuestion', params).then(res => {
         this.$vhall_paas_port({
@@ -211,7 +232,7 @@ export default {
           type: res.code == 200 ? 'success' : 'error',
           customClass: 'zdy-info-box'
         });
-        this.setReportData(id, title, description, this.questionDataInfo.detail)
+        this.setReportData()
         this.dialogTongVisible = false;
         this.$router.push({
           path: `/live/question/${this.$route.query.webinarId}`,
@@ -222,12 +243,15 @@ export default {
       })
     },
     liveMaterialEditQuestion(id, title, description) {
+      let extension = JSON.parse(this.questionDataInfo.extension)
       let params = {
         survey_id: id,
         webinar_id: this.$route.query.webinarId,
         room_id: this.$route.query.roomId,
         title: title,
         description: description,
+        img_url: this.questionDataInfo.imgUrl,
+        playback_filling: extension.playback_filling
       }
       this.$fetch('editLiveQuestion', params).then(res => {
         this.$vhall_paas_port({
@@ -249,7 +273,9 @@ export default {
           });
       })
     },
-    setReportData(id, title, description, list) {
+    setReportData() {
+      const { id, title, description, detail, imgUrl } = this.questionDataInfo
+      const playback_filling = JSON.parse(this.questionDataInfo.extension).playback_filling
       let userId = window.sessionStorage.getItem('userId')
       if (title !== '问卷标题') {
         this.$vhall_paas_port({
@@ -263,7 +289,17 @@ export default {
           data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
         })
       }
-      list.map(item => {
+      if (imgUrl) {
+        this.$vhall_paas_port({
+          k: 100345,
+          data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+        })
+      }
+      this.$vhall_paas_port({
+        k: playback_filling == 1 ? 100346 : 100347,
+        data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {id: id}, ref_url: '', req_url: ''}
+      })
+      detail.map(item => {
         if (item.style === 'name') {
           this.$vhall_paas_port({
             k: 100348,
@@ -438,7 +474,7 @@ export default {
           })
         }
       })
-    },
+    }
   }
 }
 </script>

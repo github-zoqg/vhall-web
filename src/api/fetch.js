@@ -133,7 +133,7 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
         path: '/warning/error'
       });
       return
-    } else if (res.code === 510015 || res.code == 10015) {
+    } else if (res.code === 510015) {
       this.$router.push({
         path: '/upgrading'
       });

@@ -53,6 +53,7 @@ export default {
   color: #1A1A1A;
   font-size: 14px;
   line-height: 22px;
+  text-align: center;
 }
   .qr-editor-box{
     padding-top: 16px;

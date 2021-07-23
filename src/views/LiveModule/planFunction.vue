@@ -65,6 +65,7 @@
           <div class="icon-spans">
            <span class="reward-span" v-if="rewardCompute"></span><span class="gift-span" v-if="giftCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
+           <span class="chat-stop" :class="chatCompute ? 'isChatStop' : ''" v-if="chapterCompute">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
         </div>
         <!--手机预览,begin-->
         <div :class="['plan-func-app', {'visible': !chapterCompute}]" v-show="switchType === 'app'">
@@ -103,7 +104,8 @@ export default {
       functionOpen: true,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       keyList: [],
-      liveKeyList: []
+      liveKeyList: [],
+      vm: null
     };
   },
   computed: {
@@ -161,6 +163,16 @@ export default {
     changeSwitch(type) {
       this.switchType = type;
     },
+     //文案提示问题
+    messageInfo(title, type) {
+      this.vm = this.$message({
+        showClose: true,
+        duration: 2000,
+        message: title,
+        type: type,
+        customClass: 'zdy-info-box'
+      });
+    },
     changeStatus(callback, item, type) {
       item.value = Number(!callback)
       let params = {
@@ -185,22 +197,30 @@ export default {
         if (item.type === 'ui.watch_record_no_chatting' || item.type === 'ui.watch_record_chapter') {
           str = `${!callback ? '关闭' : '开启' } `
         }
-        this.$message({
-          message: `${str} ${item.key_name} 成功`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo(`${str} ${item.key_name}`, 'success')
+        // this.$message({
+        //   message: `${str} ${item.key_name} 成功`,
+        //   showClose: true,
+        //   // duration: 0,
+        //   type: 'success',
+        //   customClass: 'zdy-info-box'
+        // });
         item.value = Number(callback);
       }).catch(res => {
-        this.$message({
-          message: res.msg || `${str} ${item.key_name} 失败`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo(res.msg || `${str} ${item.key_name}`, 'error')
+        // this.$message({
+        //   message: res.msg || `${str} ${item.key_name} 失败`,
+        //   showClose: true,
+        //   // duration: 0,
+        //   type: 'error',
+        //   customClass: 'zdy-info-box'
+        // });
       });
     },
     planSuccessRender (data) {
@@ -423,9 +443,9 @@ export default {
   position: relative;
 }
 .plan-func-pc {
-  width: 421px;
+  width: 440px;
   height: 254px;
-  background-image: url('../../common/images/plan-function/pc-default.png');
+  background-image: url('../../common/images/plan-function/pc-dafault2.png');
   background-size: 100%;
   background-position: center;
   background-size: cover;
@@ -435,24 +455,37 @@ export default {
   -o-transition: opacity 0.15s ease-in-out;
   transition: opacity 0.15s ease-in-out;
   &.zj {
-    background-image: url('../../common/images/plan-function/pc-zj.png');
+    background-image: url('../../common/images/plan-function/pc-zj2.png');
   }
   .share-span{
     position: absolute;
-    bottom: 2px;
-    left: 0;
+    top: 23px;
+    right: 53px;
     display: inline-block;
-    width: 28px;
-    height: 11px;
+    width: 8px;
+    height: 10px;
     background-repeat: no-repeat;
     background-size: 100% 100%;
     margin-left: 2px;
-    background-image: url('../../common/images/plan-function/pc-share@2x.png');
+    background-image: url('../../common/images/plan-function/share-pc.png');
+  }
+  .chat-stop{
+    position: absolute;
+    bottom: 35px;
+    right: 75px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #666666;
+    line-height: 12px;
+    transform:scale(0.6);
+    &.isChatStop{
+      right: 85px;
+    }
   }
   .icon-spans {
     position: absolute;
-    bottom: 0;
-    right: 118px;
+    bottom: 31px;
+    right: 150px;
     span {
       display: inline-block;
       width: 10px;

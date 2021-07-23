@@ -630,7 +630,7 @@ export default {
             this.handleCancelEdit()
           }
         }).catch((err) => {
-            if (err.code == 13001) {
+            if (err.code == 513001) {
               this.$message({
                 message:  `直播中禁止编辑礼物`,
                 showClose: true,

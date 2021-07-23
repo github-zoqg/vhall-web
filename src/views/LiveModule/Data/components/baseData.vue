@@ -290,6 +290,7 @@ export default {
   data() {
     return {
       userId: JSON.parse(sessionOrLocal.get("userId")),
+      vm: null,
       dataInfo: {
         previewNum: 0,
         answerNum: 0,
@@ -338,6 +339,16 @@ export default {
     }
   },
   methods: {
+     //文案提示问题
+    messageInfo() {
+      this.vm = this.$message({
+        showClose: true,
+        duration: 2000,
+        message: '导出申请成功，请去下载中心下载',
+        type: 'success',
+        customClass: 'zdy-info-box'
+      });
+    },
     getAllDataInfo() {
       // 预约  报名表单（人）  试看（人）
       this.$fetch('getAnswerListInfo', {webinar_id: this.$route.params.str}).then(res => {
@@ -405,13 +416,12 @@ export default {
           k: 100442,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        if (this.vm) {
+          console.log('11111111111')
+          this.vm.close();
+        }
+        console.log('222222222')
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
@@ -422,13 +432,10 @@ export default {
           k: 100444,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+       if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
@@ -439,13 +446,10 @@ export default {
           k: 100446,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
@@ -456,13 +460,10 @@ export default {
           k: 100443,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+       if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
@@ -473,13 +474,10 @@ export default {
           k: 100453,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+       if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
@@ -490,13 +488,10 @@ export default {
           k: 100454,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
@@ -507,13 +502,10 @@ export default {
           k: 100455,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+       if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },

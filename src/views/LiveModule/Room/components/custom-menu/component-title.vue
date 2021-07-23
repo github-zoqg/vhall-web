@@ -28,5 +28,6 @@ export default {
     font-weight: 400;
     color: #3562FA;
     line-height: 22px;
+    text-align: center;
   }
 </style>

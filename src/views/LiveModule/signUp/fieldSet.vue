@@ -38,16 +38,16 @@
         :on-success="productLoadSuccess"
         :before-upload="beforeUploadHandler"
         :restPic="true"
-        :widthImg="524"
-        :heightImg="138"
+        :widthImg="'100%'"
+        :heightImg="120"
         @delete="deleteBanner"
       >
         <div slot="tip">
-          <p>建议尺寸：840*240px，小于2M</p>
+          <p>建议尺寸：750*125px，小于2M</p>
           <p>支持jpg、gif、png、bmp</p>
         </div>
       </upload>
-      <span class="header-img-tip">建议尺寸：840*240 px，小于2MB（支持格式jpg、png、gif、bmp）</span>
+      <span class="header-img-tip">建议尺寸：750*125 px，小于2MB（支持格式jpg、png、gif、bmp）</span>
       <div class="disable_wrap" v-show="!signUpSwtich"></div>
     </section>
     <!-- 表单名称、表单简介与表单头图为固定字段 -->
@@ -1119,6 +1119,7 @@ export default {
     cursor: not-allowed;
   }
   /deep/ .el-upload--picture-card {
+    height: 120px;
     i {
       font-size: 18px;
     }

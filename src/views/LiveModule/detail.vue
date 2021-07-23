@@ -514,6 +514,7 @@ export default {
         top: 55px;
         border-radius: 4px;
         max-width: 368px;
+        word-break: break-all;
         line-height: 17px;
         background: rgba(#1A1A1A, 0.85);
         font-size: 12px;
@@ -547,38 +548,38 @@ export default {
         top: 12px;
         left: 12px;
         .live-status{
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          margin-right:4px;
+          vertical-align: top;
           img{
-            margin-right:4px;
-            width: 8px;
-            height: 8px;
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            object-fit: scale-down;
           }
         }
       }
       .hot{
+        position: absolute;
+        height: 50px;
+        width: 100%;
+        /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
+        background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.6));
+        bottom: 0px;
+        left: 0px;
+        color: #fff;
+        font-size: 14px;
+        z-index: 2;
+        cursor: pointer;
+        border-radius: 0 0 4px 4px;
+        i{
           position: absolute;
-          height: 50px;
-          width: 100%;
-          /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
-          background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.2));
-          bottom: 0px;
-          left: 0px;
-          color: #fff;
-          font-size: 14px;
-          z-index: 2;
-          cursor: pointer;
-          i{
-            position: absolute;
-            left: 14px;
-            bottom: 10px;
-          }
+          left: 14px;
+          bottom: 10px;
         }
-      // .hot{
-      //   position: absolute;
-      //   bottom: 10px;
-      //   left: 10px;
-      //   color: #fff;
-      //   font-size: 14px;
-      // }
+      }
     }
     .tag{
       border-radius: 20px;
