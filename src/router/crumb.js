@@ -468,6 +468,22 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
+  else if (metaName === 'videoSet') {// 插播文件
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '活动详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '插播文件',
+        path: `/live/videoSet/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
   else if (metaName === 'prizeSet') {// 抽奖
     return [
       ...CrumbLiveList('liveList'),

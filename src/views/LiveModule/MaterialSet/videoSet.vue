@@ -1,7 +1,7 @@
 <template>
   <div class="video-wrap">
-    <pageTitle pageTitle="音视频">
-      <span class="video-text">音视频中的文件内容应用于暖场视频和点播</span>
+    <pageTitle pageTitle="插播文件">
+      <!-- <span class="video-text">音视频中的文件内容应用于暖场视频和点播</span> -->
       <div slot="content">
         1.上传单个文件最大2G，文件标题不能带有特殊字符和空格
         <br>
@@ -13,10 +13,11 @@
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
       <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="uploads" class="set-input" type="file" @change="tirggerFile($event)" accept=".mp4,.mp3,.rmvb,.avi,.mkv,.flv,.mov,.mav,.wmv"> </el-button>
+      <el-button size="white-medium" round class="transparent-btn" @click="choiceVideo">资料库</el-button>
       <el-button size="medium" round class="transparent-btn" @click="allDelete(null)" :disabled="!checkedList.length">批量删除</el-button>
       <VhallInput
         class="search-tag"
-        placeholder="请输入音视频名称"
+        placeholder="请输入视频文件名称"
         v-model="keyword"
         clearable
         v-clearEmoij
@@ -48,7 +49,7 @@
               <template slot-scope="scope">
                 <el-tooltip placement="top" :disabled="!isTextOverflow" :content="scope.row.video_name == '' ? '- -' : scope.row.video_name">
                   <div class="videoName custom-tooltip-content">
-                    <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'"></i>
+                    <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.file_type == '.mp3' || scope.row.file_type == '.mav'"></i>
                     <i class="iconfont-v3 saasshipinwenjian" v-else></i>
                     {{ scope.row.video_name  || '- -'}}
                   </div>
@@ -131,8 +132,11 @@
           上传
           <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)">
         </el-button>
+        <el-button size="white-primary" class="transparent-btn" round  @click="choiceVideo" v-preventReClick>资料库</el-button>
       </noData>
     </div>
+    <!-- 资料库选择组件 -->
+    <selectMedia ref="selecteMedia" @selected='mediaSelected' :videoSet="true"></selectMedia>
     <!-- 预览功能 -->
     <template v-if="showDialog">
       <el-dialog class="vh-dialog" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center
@@ -158,18 +162,38 @@
       </div>
       </VhallDialog>
     </template>
+    <!-- 同步功能 -->
+    <VhallDialog
+      title="提示"
+      :visible.sync="dialogTongVisible"
+      :close-on-click-modal="false"
+      class="zdy-async-dialog"
+      width="400px"
+    >
+      <div class="async__body">
+        <div class="async__ctx">
+          <p>上传文件同时共享至资料管理，便于其他活动使用？</p>
+          <el-checkbox v-model="sureChecked">共享到资料管理</el-checkbox>
+        </div>
+        <div class="async__footer">
+          <el-button type="primary" size="medium" v-preventReClick @click="sureMaterialPrize" round>确 定</el-button>
+          <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
+        </div>
+      </div>
+    </VhallDialog>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
-import VideoPreview from './VideoPreview/index.vue';
+import VideoPreview from '../../MaterialModule/VideoPreview/index.vue';
+import selectMedia from '../selecteMedia.vue';
 import { sessionOrLocal } from '@/utils/utils';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import EventBus from "@/utils/Events";
 import { formateSeconds } from '@/utils/general';
 import tableCellTooltip from '@/components/TableList/mixins/tableCellTooltip'
 export default {
-  name: 'video.vue',
+  name: 'videoSet.vue',
   mixins: [tableCellTooltip],
   data() {
     return {
@@ -197,27 +221,32 @@ export default {
       UploadSDK: null,
       uploadId: -1,
       uploadList: [],
-      vm: null
+      vm: null,
+      paramsCreate: {},
+      dialogTongVisible: false,
+      sureChecked: true
     };
   },
   components: {
     PageTitle,
     VideoPreview,
-    noData
+    noData,
+    selectMedia
   },
   created() {
     // 初始化聊天SDK
     // this.initChat();
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    this.webinarId = this.$route.params.str;
     this.getVideoAppid();
     this.getTableList();
     this.loading = false;
   },
   mounted() {
-    EventBus.$on('sign_trans_code', res => { // 转码状态
-      console.log(res, '监听到sign_trans_code未读消息提示事件');
+    EventBus.$on('waiting_sign_trans_code', res => { // 转码状态
+      console.log(res, '监听到waiting_sign_trans_code未读消息提示事件');
       this.tableData.map(item => {
-        if (res.record_id == item.id) {
+        if (res.waiting_id == item.id) {
           if (res.status == 1) {
             item.transcode_status = 1;
             item.duration = formateSeconds(res.duration);
@@ -233,16 +262,28 @@ export default {
   },
   methods: {
     searchTableList() {
-      if (this.keyword) {
-        this.$vhall_paas_port({
-          k: 100524,
-          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-      }
+      // if (this.keyword) {
+      //   this.$vhall_paas_port({
+      //     k: 100524,
+      //     data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      //   })
+      // }
       this.getTableList('search');
     },
+    mediaSelected(val) {
+      console.log(val, '1233')
+      val = val.join(',')
+      let params = {
+        video_ids: val,
+        webinar_id: this.webinarId
+      }
+      this.$fetch('waitingVideoFile', params).then(res=>{
+        if (res.code == 200) {
+          this.getTableList('search');
+        }
+      });
+    },
     initPayMessage() {
-      // let that = this;
       this.vm = this.$message({
         showClose: true,
         duration: 0,
@@ -259,17 +300,17 @@ export default {
       }
       let formParams = {
         title: this.keyword,
-        user_id: this.userId,
+        webinar_id: this.webinarId,
         ...this.pageInfo
       }
       this.isSearch = this.keyword ? true : false;
       this.getList(formParams);
     },
     tirggerFile(event){
-      this.$vhall_paas_port({
-        k: 100518,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
+      // this.$vhall_paas_port({
+      //   k: 100518,
+      //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      // })
       const typeList = ['rmvb','mp4','avi','wmv','mkv','flv','mov','mp3','mav'];
       let file = event.target.files[0];
       let beforeName = event.target.files[0].name.toLowerCase();
@@ -326,7 +367,7 @@ export default {
         file_name: beforeName,  //后端要求名称带上后缀名  如xxx 改成 xxx.mp4
         duration: '',
         video_name: beforeName,
-        msg_url: `.${videoArr[videoArr.length - 1]}`,
+        file_type: `.${videoArr[videoArr.length - 1]}`,
         uploadObj: {}, // type：1   上传视频     2创建点播
         id: onlyId
       };
@@ -372,30 +413,50 @@ export default {
       this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit);
       this.getTableList();
     },
-    createVod(_file){
-      this.UploadSDK.createDemand({ file: _file, fileName: 'name'},(res)=>{
-        // this.tableData.forEach((ele)=>{
-        //   if(ele.id == _file.id){
-        //     ele.uploadObj = {
-        //       type: 2,
-        //       test: '创建点播',
-        //       num: 100
-        //     };
-        //   }
-        // });
-        // console.warn(res);
-        this.$fetch('createVideo', {paas_id: res.recordId, user_id: this.userId, filename: _file.name}).then(res=>{
-          this.tableData.splice(0, 1, this.uploadList);
-          console.log(this.tableData, this.uploadList, '000000000000000000')
-          this.$message({
-            message: `上传视频成功`,
-            showClose: true,
-            // duration: 0,
-            type: 'success',
-            customClass: 'zdy-info-box'
-          });
-          this.getTableList();
+    sureMaterialPrize() {
+      this.dialogTongVisible = false
+      if (this.sureChecked) {
+        this.waitingVideoCreate()
+        this.createVideo()
+      } else {
+        this.waitingVideoCreate()
+      }
+    },
+    waitingVideoCreate() {
+      this.paramsCreate.webinar_id = this.webinarId
+      this.paramsCreate.paas_record_id = this.paramsCreate.paas_id
+      this.$fetch('waitingVideoCreate', this.paramsCreate).then(res=>{
+        this.tableData.splice(0, 1, this.uploadList);
+        this.$message({
+          message: `上传视频成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
         });
+        this.getTableList();
+      });
+    },
+    createVideo() {
+      this.$fetch('createVideo', this.paramsCreate).then(res=>{
+        this.$message({
+          message: `视频同步资料库成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+      });
+    },
+    createVod(_file){
+      this.paramsCreate = {}
+      this.UploadSDK.createDemand({ file: _file, fileName: 'name'},(res)=>{
+        this.dialogTongVisible = true
+        this.paramsCreate = {
+          paas_id: res.recordId,
+          user_id: this.userId,
+          filename: _file.name
+        }
       },err=>{
         this.tableData.shift();
         this.uploadList.shift();
@@ -406,7 +467,7 @@ export default {
           type: 'error',
           customClass: 'zdy-info-box'
         });
-      });
+      })
     },
     initUpload(id, token){
       let option = {
@@ -426,32 +487,26 @@ export default {
       })
     },
     getList(obj){
-      this.$fetch('dataVideoList', this.$params(obj)).then(res=>{
+      this.$fetch('waitingVideoList', this.$params(obj)).then(res=>{
         if(res.code == 200){
           this.total = res.data.total;
           // 转码状态:0新增排队中 1转码成功 2转码失败 3转码中
           res.data.list.forEach(ele => {
             ele.video_name = ele.name;
-            ele.msg_url = ele.msg_url.toLowerCase();
-            // if (!ele.transcode_status) {
-            //   ele.uploadObj = {
-            //     text: '视频正在转码',
-            //     num: Math.floor(1*100)
-            //   }
-            // }
+            ele.file_type = ele.file_type.toLowerCase();
             switch (ele.transcode_status) {
-              case '0':
+              case 0:
                 ele.transcode_status_text = '转码中';
                 ele.duration = '——';
                 break;
-              case '1':
+              case 1:
                 ele.transcode_status_text = '转码成功';
                 break;
-              case '2':
+              case 2:
                 ele.transcode_status_text = '转码失败';
                 ele.duration = '——'
                 break;
-              case '3':
+              case 3:
                 ele.transcode_status_text = '转码中';
                 ele.duration = '——'
                 break;
@@ -477,10 +532,10 @@ export default {
       this.errorText = false;
       this.videoName = rows.name
       this.videoId = rows.id;
-      this.$vhall_paas_port({
-        k: 100522,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
+      // this.$vhall_paas_port({
+      //   k: 100522,
+      //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      // })
       // that.$prompt('', '编辑',{
       //     confirmButtonText: '确定',
       //     cancelButtonText: '取消',
@@ -508,13 +563,18 @@ export default {
        this.errorText = true;
        return;
      } else {
-       let name = `${this.videoName}${this.lowName}`
-      this.$fetch('dataVideoupdate', {video_id: this.videoId, user_id: this.userId, filename: name}).then(res=>{
+      let name = `${this.videoName}${this.lowName}`
+      let params = {
+        webinar_id: this.webinarId,
+        id: this.videoId,
+        name: name
+      }
+      this.$fetch('waitingVideoEdit', params).then(res=>{
         if (res.code == 200) {
-          this.$vhall_paas_port({
-            k: 100521,
-            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-          })
+          // this.$vhall_paas_port({
+          //   k: 100521,
+          //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          // })
           this.editShowDialog = false;
           this.$message({
             message: `修改成功`,
@@ -536,12 +596,12 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
+        this.$fetch('waitingVideoDelete', {ids: id}).then(res=>{
           if (res.code == 200) {
-            this.$vhall_paas_port({
-              k: index == 1 ? 100520 : 100519,
-              data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-            })
+            // this.$vhall_paas_port({
+            //   k: index == 1 ? 100520 : 100519,
+            //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            // })
             this.$refs.uploads.value = null
             this.getTableList('search');
             this.$message({
@@ -566,7 +626,7 @@ export default {
     del(rows) {
       this.checkedList = [];
       if (this.audit_status) {
-          this.$confirm('该文件已被关联，删除将导致相关文件无法播放且不可恢复，确认删除？', '提示', {
+          this.$confirm('删除后将会影响视频的演示和观看，确定删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
@@ -590,13 +650,16 @@ export default {
       if (rows.transcode_status == 1) {
         this.showDialog = true;
         this.videoParam = rows;
-        this.$vhall_paas_port({
-          k: 100523,
-          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
+        // this.$vhall_paas_port({
+        //   k: 100523,
+        //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        // })
       } else {
         this.$message.warning('只有转码成功才能查看');
       }
+    },
+    choiceVideo() {
+       this.$refs.selecteMedia.dialogVisible = true
     },
     // operating(val){
     //   let methodsCombin = this.$options.methods;
@@ -623,7 +686,7 @@ export default {
     //   this.UploadSDK.destroy()
     //   this.UploadSDK = null;
     // }
-    EventBus.$off("sign_trans_code");
+    EventBus.$off("waiting_sign_trans_code");
   }
 };
 </script>
