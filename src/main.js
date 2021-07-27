@@ -3,6 +3,7 @@ import Vue from 'vue'
 import App from './App.vue';
 import router from './router';
 
+import clipboard from 'clipboard'
 // import VueTinymce from '@packy-tang/vue-tinymce/src/main';
 
 import vuescroll from 'vuescroll';
@@ -20,6 +21,7 @@ Vue.use(vuescroll, {
   },
   name: 'vhscroll' // customize component name, default -> vueScroll
 });
+Vue.prototype.$clipboard = clipboard
 
 
 

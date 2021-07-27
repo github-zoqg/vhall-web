@@ -42,19 +42,22 @@
                 </div>
                 <el-button round size="small" slot="reference">扫码</el-button>
               </el-popover>
-              <el-popover
-                placement="bottom"
-                trigger="hover"
-              >
-                <div class="invitation-code urlCopy">
-                  <p>观看页 <el-input v-model="link" style="width: 320px"></el-input></p>
+              <div class="check-url"
+                  @mouseout="handlerMouseOut"
+                  @mouseover="handleMouseIn">
+                <el-button round size="small"
+                  class="check-btn">查看</el-button>
+                <div class="invitation-code urlCopy float-dom"
+                  v-if="showFloat"
+                  @mouseout="handlerMouseOut"
+                  @mouseover="handleChildOver">
+                  <p>观看页 <el-input id="copy-val" v-model="link" style="width: 320px"></el-input></p>
                   <div class="copy-item">
-                    <el-button round size="small" type="primary" @click="doCopy">复制</el-button>
+                    <el-button round size="small" type="primary" data-clipboard-target="#copy-val" @click="doCopy" class="copy-link">复制</el-button>
                     <el-button round size="small" @click="openLink">打开页面</el-button>
                   </div>
                 </div>
-                <el-button round size="small" slot="reference">查看</el-button>
-              </el-popover>
+              </div>
             </div>
           </div>
         </div>
@@ -116,6 +119,8 @@ export default {
         webinar_state: 0,
         webinar_type: 0
       },
+      showFloat: false,
+      timer: null,
       link: `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       time: {
@@ -147,6 +152,22 @@ export default {
     console.log(this.$route.meta.title, '1111111111111111');
   },
   methods: {
+    handleChildOver () {
+      if (this.showFloat) {
+        clearTimeout(this.handleTimer)
+      }
+      this.showFloat = true
+    },
+    handleMouseIn () {
+      if (this.handleTimer) clearTimeout(this.handleTimer)
+      this.showFloat = true
+    },
+    handlerMouseOut () {
+      if (this.handleTimer) clearTimeout(this.handleTimer)
+      this.handleTimer = setTimeout(() => {
+        this.showFloat = false
+      }, 400)
+    },
     // 字符截取显示...兼容ie，用js
     fontNumber (date) {
       const length = date.length
@@ -251,27 +272,27 @@ export default {
     },
     // 复制
     doCopy () {
-      this.$copyText(this.link).then(e => {
-        this.$vhall_paas_port({
-          k: 100056,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$message({
-          message: `复制成功`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
+        let clipboard = new this.$clipboard('.copy-link')
+        clipboard.on('success', (e) => {
+          this.$message({
+            message: `复制成功`,
+            showClose: true,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          })
+          e.clearSelection();
+          clipboard.destroy();
         });
-      }).catch(res =>{
-        this.$message({
-          message: res.msg || `复制失败`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
+        clipboard.on('error', (e) => {
+          this.$message({
+            message: `复制失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          })
+          clipboard.destroy();
         });
-      });
     },
     // 打开页面
     openLink() {
@@ -590,7 +611,32 @@ export default {
     }
   }
 }
-//
+.float-dom{
+  position: absolute;
+  top: 40px;
+  left: -40px!important;
+  width: 420px;
+  height: 150px;
+  border-radius: 4px;
+  padding: 5px 10px;
+  background: #fff;
+  border: 1px solid #F2F2F2;
+  transform-origin: center top;
+  z-index: 2001;
+  color: #666;
+  line-height: 1.4;
+  text-align: justify;
+  font-size: 14px;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+  word-break: break-all;
+  p{
+    font-size: 14px!important;
+    margin-top: 30px!important;
+  }
+  .copy-item{
+    padding-top: 10px!important;
+  }
+}
 .invitation-code{
   text-align: center;
   padding: 2px 40px 10px;
@@ -645,6 +691,12 @@ export default {
 }
 .action-look{
   margin-top: 10px;
+}
+.check-url{
+  display: inline-block;
+  width: 62px;
+  height: 32px;
+  position: relative;
 }
 .font-20{
   font-size: @20;
