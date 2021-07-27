@@ -268,7 +268,7 @@ header.commen-header {
   }
   .navbar-title{
     flex:1;
-    max-width: calc(100% - 400px);
+    max-width: calc(100% - 405px);
     .navbar-intro{
       width: 100%;
     }
