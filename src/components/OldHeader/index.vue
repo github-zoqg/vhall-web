@@ -281,7 +281,7 @@ header.commen-header {
       text-overflow: ellipsis;
       white-space: nowrap;
       padding-right: 100px;
-      font-weight: 600;
+      font-weight: 500;
     }
     .time{
       color: #999;
