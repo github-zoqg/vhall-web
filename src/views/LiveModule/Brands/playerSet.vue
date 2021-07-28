@@ -783,7 +783,7 @@ export default {
         data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({
-        k: this.formHorse.speed == 3000 ? 100238 : this.formHorse.speed == 6000 ? 1000237 : 100236,
+        k: this.formHorse.speed == 3000 ? 100238 : this.formHorse.speed == 6000 ? 100237 : 100236,
         data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({
