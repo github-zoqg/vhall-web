@@ -241,6 +241,8 @@ export default {
     // this.initChat();
     if (this.webinarType == 1) {
       this.videoSetType = 'MP3, MAV'
+    } else {
+      this.videoSetType = ''
     }
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.webinarId = this.$route.params.str;
