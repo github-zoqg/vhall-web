@@ -627,7 +627,7 @@ export default {
   line-height: 1.4;
   text-align: justify;
   font-size: 14px;
-  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+  box-shadow: 0 2px 12px 0 rgb(0, 0, 0, 10%);
   word-break: break-all;
   p{
     font-size: 14px!important;
