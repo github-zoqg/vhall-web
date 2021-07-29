@@ -114,7 +114,7 @@ export default {
     },
     videoType: {
       required: false,
-      default: 'MP4'
+      default: ''
     },
     videoSet: { //是否是转播文件
       required: false,

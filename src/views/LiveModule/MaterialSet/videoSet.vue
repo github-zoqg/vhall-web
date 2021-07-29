@@ -9,6 +9,7 @@
         <br>
         3.上传的视频，不支持剪辑和下载
         <br>
+        4.视频直播、互动直播支持上传音视频文件，音频直播仅支持上传音频文件
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
@@ -136,7 +137,7 @@
       </noData>
     </div>
     <!-- 资料库选择组件 -->
-    <selectMedia ref="selecteMedia" @selected='mediaSelected' :videoSet="true"></selectMedia>
+    <selectMedia ref="selecteMedia" @selected='mediaSelected' :videoSet="true" :videoType="videoSetType"></selectMedia>
     <!-- 预览功能 -->
     <template v-if="showDialog">
       <el-dialog class="vh-dialog" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center
@@ -214,6 +215,8 @@ export default {
         pos: 0,
         limit: 10
       },
+      webinarType: JSON.parse(sessionOrLocal.get('webinarType')),
+      videoSetType: '',
       videoParam: {},
       // 表格
       tableData: [],
@@ -236,6 +239,11 @@ export default {
   created() {
     // 初始化聊天SDK
     // this.initChat();
+    if (this.webinarType == 1) {
+      this.videoSetType = 'MP3, MAV'
+    } else {
+      this.videoSetType = ''
+    }
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.webinarId = this.$route.params.str;
     this.getVideoAppid();
@@ -312,14 +320,15 @@ export default {
       //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       // })
       const typeList = ['rmvb','mp4','avi','wmv','mkv','flv','mov','mp3','mav'];
+      const videoList = ['mp3','mav']
       let file = event.target.files[0];
       let beforeName = event.target.files[0].name.toLowerCase();
       let videoArr = beforeName.toLowerCase().split('.');
-      console.log(videoArr, '??????????????')
-      const videoType = typeList.includes(videoArr[videoArr.length - 1]);
+      const listType = this.webinarType == 1 ? videoList : typeList
+      const videoType = listType.includes(videoArr[videoArr.length - 1]);
       if (!videoType) {
         this.$message({
-          message: `您上传的文件格式不正确`,
+          message: this.webinarType == 1 ? '音频直播仅支持上传音频文件' : '您上传的文件格式不正确',
           showClose: true,
           // duration: 0,
           type: 'error',
