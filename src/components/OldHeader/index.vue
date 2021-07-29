@@ -11,8 +11,8 @@
             <img src="../../common/images/sys/logo@2x.png" alt="" v-else />
           </a>
         </div>
-        <div v-if="isSpecial" class="navbar-title">
-          <div class="navbar-intro">
+        <div class="navbar-title">
+          <div class="navbar-intro" v-if="isSpecial">
             <el-tooltip class="item" effect="dark" :content="specialInfo.title" placement="bottom-start">
               <p>{{ specialInfo.title }}</p>
             </el-tooltip>
@@ -25,7 +25,7 @@
           </div>
         </div>
         <div class="collapse navbar-collapse" v-if="isShowLogin">
-          <div class="share" @click="share">
+          <div class="share" @click="share" v-if="isSpecial">
             <i class="iconfont-v3 saasfenxiang_icon" slot="reference"></i>
             <span>分享</span>
           </div>
