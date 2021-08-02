@@ -660,7 +660,7 @@ export default {
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({
-        k: this.formHorse.speed == 3000 ? 100652 : this.formHorse.speed == 6000 ? 1000651 : 100650,
+        k: this.formHorse.speed == 3000 ? 100652 : this.formHorse.speed == 6000 ? 100651 : 100650,
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({

@@ -11,21 +11,25 @@
             <img src="../../common/images/sys/logo@2x.png" alt="" v-else />
           </a>
         </div>
-        <div v-if="isSpecial" :class="['navbar-title', {'unlogin-title': !isLogin}]">
-          <div class="navbar-intro">
+        <div class="navbar-title">
+          <div class="navbar-intro" v-if="isSpecial">
             <el-tooltip class="item" effect="dark" :content="specialInfo.title" placement="bottom-start">
               <p>{{ specialInfo.title }}</p>
             </el-tooltip>
             <!-- <p>{{ specialInfo.title }}</p> -->
             <span class="time">{{ (specialInfo && specialInfo.created_at ? specialInfo.created_at : '') | unitTime  }}</span>
-            <div class="share" @click="share">
+            <!-- <div class="share" @click="share">
               <i class="iconfont-v3 saasfenxiang_icon" slot="reference"></i>
               <span>分享</span>
-            </div>
+            </div> -->
           </div>
         </div>
         <div class="collapse navbar-collapse" v-if="isShowLogin">
-          <div class="pull-right login-reg" >
+          <div class="share" @click="share" v-if="isSpecial">
+            <i class="iconfont-v3 saasfenxiang_icon" slot="reference"></i>
+            <span>分享</span>
+          </div>
+          <div class="pull-right login-reg">
             <div class="" v-if="isLogin">
              <!--  <el-dropdown @command="handleCommand" class="hover-dropdown">
                 <span class="el-dropdown-link">
@@ -233,40 +237,38 @@ header.commen-header {
     border: none;
     &.all {
       width: 100%;
-      padding-right: 32px;
+      // padding-right: 32px;
     }
   }
   .navbar {
-    position: relative;
-    min-height: 64px;
+    display: flex;
+    flex: 1;
     margin-bottom: 20px;
   }
   .navbar-header {
-    width: 224px;
+    flex: 0 0 180px;
     height: 64px;
     background: #FB3A32;
-    float: left;
     &.white-bg {
       background: #ffffff;
     }
-  }
-  .navbar-brand {
-    float: left;
-    margin: 10px 32px;
-    text-align: left;
-    width: 120px!important;
-    height: 44px;
-    img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: scale-down;
+    .navbar-brand {
+      float: left;
+      margin: 10px 32px;
+      text-align: left;
+      width: 120px!important;
+      height: 44px;
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: scale-down;
+      }
     }
   }
   .navbar-title{
-    position: absolute;
-    left: 185px;
-    right: 190px;
+    flex:1;
+    max-width: calc(100% - 405px);
     .navbar-intro{
       width: 100%;
     }
@@ -278,30 +280,12 @@ header.commen-header {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      padding-right: 120px;
-      font-weight: 600;
+      padding-right: 100px;
+      font-weight: 500;
     }
     .time{
       color: #999;
       font-size: 14px;
-    }
-    .share{
-      float: right;
-      margin-top: -20px;
-      text-align: center;
-      font-size: 14px;
-      cursor: pointer;
-      color: #666;
-      span{
-        display: block;
-        padding-top: 3px;
-      }
-      &:hover{
-        color: #FB3A32;
-      }
-    }
-    &.unlogin-title{
-      right: 140px;
     }
   }
   .navbar-collapse {
@@ -312,9 +296,27 @@ header.commen-header {
     border-top: 1px solid transparent;
     -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.1);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.1);
+    flex:0 0 220px;
   }
-  .pull-right {
-    float: right;
+  .collapse{
+    display: flex;
+    justify-items: center;
+    justify-content: flex-end;
+  }
+  .share{
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    color: #666;
+    margin-top: 18px;
+    padding-right: 14px;
+    span{
+      display: block;
+      padding-top: 3px;
+    }
+    &:hover{
+      color: #FB3A32;
+    }
   }
   .login-reg {
     padding: 16px 0 0 10px;

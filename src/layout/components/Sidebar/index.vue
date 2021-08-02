@@ -245,8 +245,7 @@ export default {
       }
     });
     let _this = this;//赋值vue的this
-    window.onresize = () => {
-  　　// 调用methods中的事件
+    window.onresize = () => { // 调用methods中的事件
       _this.pageResize();
     }
   },
