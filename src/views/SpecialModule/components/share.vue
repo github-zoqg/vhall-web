@@ -110,11 +110,8 @@ export default {
   /deep/ .share-dialog {
     max-height: 314px;
     height: auto;
-    padding-bottom: 4px;
-    border-radius: 4px;
-  }
-  /deep/.el-dialog__body{
     padding-bottom: 20px;
+    border-radius: 4px;
   }
   /deep/ .smallSwtich{
     margin-left: 12px;

@@ -428,7 +428,7 @@ export default {
           position: relative;
           border-radius: 4px 4px 0 0;
           .img-box{
-            // width: 101%;
+            width: 100%;
             height: 100%;
             position: absolute;
             top:0;
