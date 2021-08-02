@@ -32,7 +32,7 @@ import ELEMENT from 'element-ui';
 import '@/common/css/theme/index.css';
 import '@/components/Icon/index';
 // 七巧板组件库，直播间内使用
-import vhallSaas from './tangram/buTemplates/index.js';
+// import vhallSaas from './tangram/buTemplates/index.js';
 // 页面加载进度样式
 import 'nprogress/nprogress.css';
 // 系统通用重置样式
@@ -61,13 +61,13 @@ Vue.prototype.$img = require('./common/images/small.png');
 Vue.prototype.$checkUploadType = checkUploadType; // 验证上传格式
 Vue.use(ELEMENT);
 import './utils/message';
-Vue.use(vhallSaas, {
-  config: {
-    playbill: [`/api/webinar/v1/webinar/adv-info`, 'POST'] // 开屏海报
-  },
-  baseUrl: process.env.VUE_APP_BASE_URL,
-  buHost: "https://e.vhall.com"
-});
+// Vue.use(vhallSaas, {
+//   config: {
+//     playbill: [`/api/webinar/v1/webinar/adv-info`, 'POST'] // 开屏海报
+//   },
+//   baseUrl: process.env.VUE_APP_BASE_URL,
+//   buHost: "https://e.vhall.com"
+// });
 
 moment.locale(); // zh-cn
 window.mom = moment

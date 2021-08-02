@@ -3,7 +3,7 @@
     <pageTitle pageTitle="插播文件">
       <!-- <span class="video-text">音视频中的文件内容应用于暖场视频和点播</span> -->
       <div slot="content">
-        1.上传单个文件最大2G，文件标题不能带有特殊字符和空格
+        1.上传单个文件最大2G
         <br>
         2.上传视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV
         <br>
