@@ -78,7 +78,7 @@
 import PageTitle from '@/components/PageTitle';
 import fieldSet from './fieldSet';
 import shareDialog from './shareDialog';
-import signUpForm from '../Subscribe/signUpForm';
+import signUpForm from './components/signUpForm.vue';
 import themeSet from './themeSet';
 import {getfiledJson} from './util';
 import { sessionOrLocal } from '@/utils/utils';

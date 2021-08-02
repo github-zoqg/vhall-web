@@ -60,7 +60,7 @@
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
-import { textToEmoji } from '@/tangram/libs/chat/js/emoji';
+import { textToEmoji } from './js/emoji';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import {sessionOrLocal} from "@/utils/utils";
 export default {
