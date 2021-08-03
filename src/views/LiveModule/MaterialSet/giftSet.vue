@@ -175,26 +175,27 @@
       <div class="select-matrial-wrap">
         <div v-show="!isNull" class="material-box">
           <el-scrollbar style="height:100%" v-loadMore="moreLoadData">
-            <div
-              v-for="(item, index) in materiaTableData"
-              :key='index'
-              v-show="item.source_status == 1"
-              class="matrial-item"
-              :class="{active: item.isChecked}"
-              @click.stop="handleChooseGift(index, item)">
-              <div class="gift-cover">
-                <img :src="item.img" alt>
+            <template v-for="(item, index) in materiaTableData">
+              <div
+                :key='index'
+                v-if="item.source_status == 1"
+                class="matrial-item"
+                :class="{active: item.isChecked}"
+                @click.stop="handleChooseGift(index, item)">
+                <div class="gift-cover">
+                  <img :src="item.img" alt>
+                </div>
+                <div class="gift-info">
+                  <span class="gift-name">{{item.name}}</span>
+                  <span class="gift-price">￥{{item.price}}</span>
+                </div>
+                <!-- <i v-if="item.isChecked" class="el-icon-check"></i> -->
+                <!-- <label class="img-tangle" v-show="item.isChecked">
+                  <i class="el-icon-check"></i>
+                </label> -->
+                <label  class="img-tangle" v-show="item.isChecked"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </div>
-              <div class="gift-info">
-                <span class="gift-name">{{item.name}}</span>
-                <span class="gift-price">￥{{item.price}}</span>
-              </div>
-              <!-- <i v-if="item.isChecked" class="el-icon-check"></i> -->
-              <!-- <label class="img-tangle" v-show="item.isChecked">
-                <i class="el-icon-check"></i>
-              </label> -->
-              <label  class="img-tangle" v-show="item.isChecked"><img src="../../../common/images/icon-choose.png" alt=""></label>
-            </div>
+            </template>
           </el-scrollbar>
         </div>
         <null-page noSearchText="没有找到相关礼物" nullType="noData" v-if="isNull" :text="'暂无礼物'"></null-page>
