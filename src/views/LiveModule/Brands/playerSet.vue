@@ -391,7 +391,7 @@ export default {
         imageUrl: '',
       },
       videoParam: {
-        paas_record_id: process.env.VUE_APP_NODE_ENV === 'production' ? '68e25cad' : 'd57f42f4'
+        paas_record_id: process.env.VUE_APP_NODE_ENV === 'production' ? 'd57f42f4': '68e25cad'
       },
       marqueeOption: {
         enable: Boolean(this.scrolling_open),
