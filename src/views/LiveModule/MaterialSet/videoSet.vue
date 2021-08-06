@@ -182,12 +182,14 @@
         </div>
       </div>
     </VhallDialog>
+    <begin-play :webinarId="$route.params.str"></begin-play>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
 import VideoPreview from '../../MaterialModule/VideoPreview/index.vue';
 import selectMedia from '../selecteMedia.vue';
+import beginPlay from '@/components/beginBtn';
 import { sessionOrLocal } from '@/utils/utils';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import EventBus from "@/utils/Events";
@@ -234,7 +236,8 @@ export default {
     PageTitle,
     VideoPreview,
     noData,
-    selectMedia
+    selectMedia,
+    beginPlay
   },
   created() {
     // 初始化聊天SDK
@@ -307,7 +310,7 @@ export default {
         this.pageInfo.pos= 0;
       }
       let formParams = {
-        title: this.keyword,
+        name: this.keyword,
         webinar_id: this.webinarId,
         ...this.pageInfo
       }
