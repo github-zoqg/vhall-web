@@ -11,6 +11,7 @@
       title="提示"
       :visible.sync="dialogTongVisible"
       :close-on-click-modal="false"
+      :show-close="false"
       class="zdy-async-dialog"
       width="400px"
     >
@@ -20,8 +21,8 @@
           <el-checkbox v-model="sureChecked">共享到资料管理</el-checkbox>
         </div>
         <div class="async__footer">
-          <el-button type="primary" size="medium" v-preventReClick @click="sureMaterialPrize" round>确 定</el-button>
-          <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
+          <el-button type="primary" size="medium" v-preventReClick @click="sureMaterialQuestion" round>确 定</el-button>
+          <el-button size="medium"  @click="cancelMaterialQuestion"  round>取 消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -108,7 +109,6 @@ export default {
             return;
           }
           this.dialogTongVisible = true;
-          // this.sureMaterialPrize(data.id, data.title, data.description);
         }
       });
 
@@ -127,7 +127,7 @@ export default {
         console.log('问卷错误', data);
       });
     },
-    sureMaterialPrize() {
+    sureMaterialQuestion() {
       if (this.sureChecked) {
         this.copeQuestion(this.questionDataInfo.id);
         this.$vhall_paas_port({
@@ -141,6 +141,13 @@ export default {
         })
         this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
       }
+    },
+    cancelMaterialQuestion() {
+      this.$vhall_paas_port({
+        k: 100340,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.query.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.liveMaterialQuestion(this.questionDataInfo.id, this.questionDataInfo.title, this.questionDataInfo.description);
     },
     createQuestion (id) {
       this.isCreate = true;

@@ -131,7 +131,7 @@
       <noData :nullType="'nullData'" :text="'暂未上传音视频'">
         <el-button type="primary" round class="head-btn set-upload">
           上传
-          <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)">
+          <input ref="upload" class="set-input" type="file" accept=".mp4,.mp3,.rmvb,.avi,.mkv,.flv,.mov,.mav,.wmv" @change="tirggerFile($event)">
         </el-button>
         <el-button size="white-primary" class="transparent-btn" round  @click="choiceVideo" v-preventReClick>资料库</el-button>
       </noData>
@@ -167,8 +167,8 @@
     <VhallDialog
       title="提示"
       :visible.sync="dialogTongVisible"
-      :close-on-click-modal="false"
       class="zdy-async-dialog"
+      :show-close="false"
       width="400px"
     >
       <div class="async__body">
@@ -177,8 +177,8 @@
           <el-checkbox v-model="sureChecked">共享到资料管理</el-checkbox>
         </div>
         <div class="async__footer">
-          <el-button type="primary" size="medium" v-preventReClick @click="sureMaterialPrize" round>确 定</el-button>
-          <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
+          <el-button type="primary" size="medium" v-preventReClick @click="comfirmMaterialVideo" round>确 定</el-button>
+          <el-button size="medium" v-preventReClick  @click="cancelMaterialVideo"  round>取 消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -425,7 +425,7 @@ export default {
       this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit);
       this.getTableList();
     },
-    sureMaterialPrize() {
+    comfirmMaterialVideo() {
       this.dialogTongVisible = false
       if (this.sureChecked) {
         this.waitingVideoCreate()
@@ -433,6 +433,10 @@ export default {
       } else {
         this.waitingVideoCreate()
       }
+    },
+    cancelMaterialVideo() {
+      this.dialogTongVisible = false
+      this.waitingVideoCreate()
     },
     waitingVideoCreate() {
       this.paramsCreate.webinar_id = this.webinarId
@@ -601,7 +605,7 @@ export default {
      }
     },
     confirmDelete(id, index) {
-      this.$confirm('是否删除该文件？', '提示', {
+      this.$confirm('删除后将会影响视频的演示和观看，确定删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
@@ -615,6 +619,7 @@ export default {
             //   data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             // })
             this.$refs.uploads.value = null
+            this.checkedList = []
             this.getTableList('search');
             this.$message({
               message: `删除成功`,
@@ -636,21 +641,7 @@ export default {
       }).catch(() => {});
     },
     del(rows) {
-      this.checkedList = [];
-      if (this.audit_status) {
-          this.$confirm('删除后将会影响视频的演示和观看，确定删除？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          customClass: 'zdy-message-box',
-          lockScroll: false,
-          cancelButtonClass: 'zdy-confirm-cancel'
-        }).then(() => {
-          this.confirmDelete(rows.id, 2);
-        }).catch(() => {});
-      } else {
-        this.confirmDelete(rows.id, 2);
-      }
-
+      this.confirmDelete(rows.id, 2);
     },
     // 批量删除
     allDelete() {
@@ -820,7 +811,7 @@ export default {
     text-align: left;
   }
   ::v-deep .el-dialog__headerbtn{
-    top: 15px;
+    top: 30px;
   }
   ::v-deep .el-dialog--center .el-dialog__body{
     padding: 0px 10px 10px;

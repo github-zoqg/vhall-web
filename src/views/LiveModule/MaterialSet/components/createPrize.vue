@@ -82,6 +82,7 @@
       title="提示"
       :visible.sync="dialogTongVisible"
       :close-on-click-modal="false"
+      :show-close="false"
       class="zdy-async-dialog"
       width="400px"
     >
@@ -92,7 +93,7 @@
         </div>
         <div class="async__footer">
           <el-button type="primary" size="medium" v-preventReClick @click="sureMaterialPrize" round>确 定</el-button>
-          <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
+          <el-button size="medium"  @click="cancelMaterialPrize"  round>取 消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -229,6 +230,14 @@ export default {
         })
         this.dialogTongVisible = false;
       }
+    },
+    cancelMaterialPrize() {
+      this.dialogTongVisible = false;
+      this.liveSurePrize();
+      this.$vhall_paas_port({
+        k: 100331,
+        data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     // 资料库保存奖品
     materiaPrize() {
