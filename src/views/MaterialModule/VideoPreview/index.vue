@@ -5,6 +5,7 @@
       <div class="tips" v-if="!loading" :class="videoType.toLowerCase()=='.mp3' || videoType.toLowerCase()=='.mav' ? '' : 'tipsIndex'">
         <div class="video-img" v-if="videoType.toLowerCase()=='.mp3' || videoType.toLowerCase()=='.mav'">
           <img class="audio-img" :src="audioImg" alt="">
+          <p>语音播放中</p>
         </div>
         <div v-if="tipsType == 2" class="video-end">
           <div class="reset-play" @click="resetPlay">
@@ -262,6 +263,13 @@ export default {
         height: 100%;
         width: 100%;
         object-fit: scale-down;
+      }
+      p{
+        width: 100%;
+        color: #ccc;
+        position: absolute;
+        bottom: 90px;
+        text-align: center;
       }
     }
     &.tipsIndex{
