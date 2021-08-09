@@ -116,6 +116,7 @@
     <VhallDialog
       title="提示"
       :visible.sync="asyncDialog.visible"
+      :show-close="false"
       class="zdy-async-dialog"
       width="400px"
     >
