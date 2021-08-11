@@ -868,6 +868,9 @@ export default {
         }
       }
     }
+    /deep/.el-button{
+     margin-right: 2px;
+    }
   }
 }
 .edit-contianer{
