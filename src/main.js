@@ -8,6 +8,9 @@ import clipboard from 'clipboard'
 
 import vuescroll from 'vuescroll';
 import PaasPort from '@vhall/paas-report-data'
+
+import { refreshToken } from './utils/utils'
+
 // You can set global config here.
 Vue.use(vuescroll, {
   ops: {
@@ -145,6 +148,9 @@ let clientTokenVal = clientToken('token');
 if(clientTokenVal) {
   sessionOrLocal.set('token', clientTokenVal , 'localStorage');
   sessionOrLocal.set('platform', clientToken('platform'), 'localStorage');
+} else {
+  // 如果是非免登录的情况，初次进入项目的时候刷新一次 token
+  refreshToken()
 }
 let outUrlVal = clientToken('out_url');
 if(outUrlVal) {
