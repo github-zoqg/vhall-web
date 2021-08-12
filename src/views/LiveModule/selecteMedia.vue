@@ -190,6 +190,7 @@ export default {
         title: this.keyWords,
         storage: this.videoSize,
         file_type: this.videoType,
+        get_no_trans: 1,
         ...this.pageInfo
       }
       this.$fetch('dataVideoList', this.$params(params)).then(res=>{
@@ -232,7 +233,6 @@ export default {
     },
     handleSelectionChange(val){
       this.tableSelect = val;
-      console.log(val, '???sdfjkh1还得尽快回复')
       if (!this.videoSet) {
         this.docList.forEach((item) => {
           if (val.length !== 0) {
@@ -244,16 +244,16 @@ export default {
       }
     },
     handlerConfirm(){
-      if (this.tableSelect[0].transcode_status != 1) {
-        this.$message({
-          message: "只能选择已经转码成功的视频",
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-        return;
-      }
+      // if (this.tableSelect[0].transcode_status != 1) {
+      //   this.$message({
+      //     message: "只能选择已经转码成功的视频",
+      //     showClose: true,
+      //     // duration: 0,
+      //     type: 'error',
+      //     customClass: 'zdy-info-box'
+      //   });
+      //   return;
+      // }
       if (this.videoSet) {
         let tableList = []
         this.tableSelect.map(item => {
