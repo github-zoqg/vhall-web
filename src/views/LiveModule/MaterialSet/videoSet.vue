@@ -32,7 +32,7 @@
       </VhallInput>
     </div>
     <div class="video-list" v-if="total || isSearch">
-       <el-table
+      <el-table
             @cell-mouse-enter="handleCellMouseEnter"
             @cell-mouse-leave="handleCellMouseLeave"
             :data="tableData"
@@ -117,15 +117,15 @@
               </template>
             </el-table-column>
             <div slot="empty"><noData :nullType="'search'" v-if="!total"></noData></div>
-          </el-table>
-          <SPagination
-            :total="total"
-            v-if="total > pageInfo.limit"
-            :currentPage="pageInfo.pageNum"
-            @current-change="currentChangeHandler"
-            align="center"
-          >
-          </SPagination>
+      </el-table>
+      <SPagination
+        :total="total"
+        v-if="total > pageInfo.limit"
+        :currentPage="pageInfo.pageNum"
+        @current-change="currentChangeHandler"
+        align="center"
+      >
+      </SPagination>
     </div>
     <div class="no-live" v-else>
       <noData :nullType="'nullData'" :text="'暂未上传音视频'">
@@ -311,6 +311,7 @@ export default {
       }
       let formParams = {
         name: this.keyword,
+        get_no_trans: 0,
         webinar_id: this.webinarId,
         ...this.pageInfo
       }

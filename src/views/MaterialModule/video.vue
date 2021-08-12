@@ -259,6 +259,7 @@ export default {
       }
       let formParams = {
         title: this.keyword,
+        get_no_trans: 0,
         user_id: this.userId,
         ...this.pageInfo
       }
