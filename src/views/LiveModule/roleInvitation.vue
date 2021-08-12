@@ -73,7 +73,7 @@
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
             </div>
-            <p class="role-remark">嘉宾可进行推流，嘉宾切换、文档演示等操作</p>
+            <p class="role-remark">嘉宾支持连麦，获得主讲人权限后可进行文档演示</p>
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
