@@ -83,7 +83,7 @@
         <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
       </noData>
     </div>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer" class="dialog-footer" v-show="total || isSearch">
       <div>
         <p v-if="videoSet">当前选择 <b>{{ tableSelect.length }}</b> 个文件</p>
       </div>
