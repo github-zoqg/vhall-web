@@ -8,7 +8,7 @@
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
       <el-button type="primary" size="medium" round class="head-btn set-upload" @click="addQuestion">创建问卷</el-button>
-      <el-button round  @click="dataBase" class="transparent-btn" size="medium">资料库</el-button>
+      <el-button round  @click="dataBase" class="transparent-btn" size="white-medium">资料库</el-button>
       <el-button round class="transparent-btn" @click="deleteAll(null)" size="medium" :disabled="!selectChecked.length">批量删除</el-button>
       <div class="inputKey">
         <VhallInput v-model="keyword" v-clearEmoij placeholder="请输入问卷名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>

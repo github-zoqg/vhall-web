@@ -182,6 +182,12 @@ const router = [
         hidden: true
       },
       {
+        path: 'videoSet/:str(\\d+)',
+        component: () => import('@/views/LiveModule/MaterialSet/videoSet'),
+        meta:{ auth: true, title: '插播文件', name: 'videoSet', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'prizeSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/MaterialSet/prizeSet'),
         meta:{ auth: true, title: '抽奖', name: 'prizeSet', activeMenu: '/live/list'},

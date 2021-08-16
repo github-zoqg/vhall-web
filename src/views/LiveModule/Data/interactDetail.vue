@@ -60,7 +60,7 @@
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
-import { textToEmoji } from '@/tangram/libs/chat/js/emoji';
+import { textToEmoji } from './js/emoji';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import {sessionOrLocal} from "@/utils/utils";
 export default {
@@ -400,25 +400,17 @@ export default {
     chatInfo(pageInfo) {
       // let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
-        room_id: this.roomId
+        room_id: this.roomId,
+        ...pageInfo
       };
       if (this.searchTime) {
         this.$refs.tableList.clearSelect();
         params.start_time = this.searchTime[0] + ' 00:00:00';
         params.end_time = this.searchTime[1] + ' 23:59:59';
-        this.params = {
-          room_id: this.roomId,
-          start_time: this.searchTime[0] + ' 00:00:00',
-          end_time: this.searchTime[1] + ' 23:59:59'
-        }
-      } else {
-        this.params = {
-          room_id: this.roomId
-        }
       }
 
-      let obj = Object.assign({}, pageInfo, params);
-      this.$fetch('getChatListInfo', obj).then(res => {
+      // let obj = Object.assign({}, pageInfo, params);
+      this.$fetch('getChatListInfo', params).then(res => {
         this.tableList = res.data.list;
         this.tableList.map(item => {
           item.name = item.role_name == 1 ? '主持人' : item.role_name == 2 ? '观众' : item.role_name == 3 ? '助理' : '嘉宾';

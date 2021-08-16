@@ -34,7 +34,7 @@
                 <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
                   <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
                     <div class="top">
-                      <span class="hot">
+                      <span class="hot" v-if="item.hide_pv">
                         <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
                       </span>
                       <span class="liveTag">{{item | liveTag }}</span>
@@ -428,7 +428,7 @@ export default {
           position: relative;
           border-radius: 4px 4px 0 0;
           .img-box{
-            // width: 101%;
+            width: 100%;
             height: 100%;
             position: absolute;
             top:0;

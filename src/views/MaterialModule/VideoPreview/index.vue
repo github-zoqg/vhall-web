@@ -2,9 +2,10 @@
   <div class="preview-wrap">
     <div class="content" v-loading="loading" element-loading-text="加载中" element-loading-background="rgba(0,0,0,.9)"  @mousemove="wrapEnter" @mouseleave="wrapLeave">
       <div id="videoDom"></div>
-      <div class="tips" v-if="!loading" :class="videoParam.msg_url.toLowerCase()=='.mp3' || videoParam.msg_url.toLowerCase()=='.mav' ? '' : 'tipsIndex'">
-        <div class="video-img" v-if="videoParam.msg_url.toLowerCase()=='.mp3' || videoParam.msg_url.toLowerCase()=='.mav' || !videoParam.msg_url">
+      <div class="tips" v-if="!loading" :class="videoType.toLowerCase()=='.mp3' || videoType.toLowerCase()=='.mav' ? '' : 'tipsIndex'">
+        <div class="video-img" v-if="videoType.toLowerCase()=='.mp3' || videoType.toLowerCase()=='.mav'">
           <img class="audio-img" :src="audioImg" alt="">
+          <p>语音播放中</p>
         </div>
         <div v-if="tipsType == 2" class="video-end">
           <div class="reset-play" @click="resetPlay">
@@ -71,8 +72,7 @@ export default {
       isFullscreen: false, // 全屏
       loading: true,
       hoveVideo: false,
-      audioImg: require('@/common/images/gif/MP3.gif'),
-      videoType: 1, // 1为视频   2为音频
+      audioImg: require('@/common/images/gif/video.gif'),
       tipsType: 0, // 1为音频封面   2 播放结束
     };
   },
@@ -83,10 +83,15 @@ export default {
       return secondToDateZH(val);
     },
   },
+  computed: {
+    videoType() {
+      return this.videoParam.msg_url || this.videoParam.file_type
+    }
+  },
   created() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getVideoAppid();
-    console.log(this.videoParam, '???????????')
+    console.log(this.videoParam, this.videoType, '?123454?????')
   },
   beforeDestroy() {
     if(this.$Vhallplayer){
@@ -248,8 +253,8 @@ export default {
     height: 100%;
     background: #000;
     .video-img{
-      width: 180px;
-      height: 110px;
+      width: 100%;
+      height: 100%;
       position: absolute;
       top:50%;
       left:50%;
@@ -258,6 +263,13 @@ export default {
         height: 100%;
         width: 100%;
         object-fit: scale-down;
+      }
+      p{
+        width: 100%;
+        color: #ccc;
+        position: absolute;
+        bottom: 90px;
+        text-align: center;
       }
     }
     &.tipsIndex{
