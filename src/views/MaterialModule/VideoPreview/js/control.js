@@ -38,12 +38,30 @@ const controle = {
         this.$Vhallplayer.play();
       }
     },
-    enterFullscreen(){
-      this.$Vhallplayer.enterFullScreen( ()=> {});
+    /**
+     * 全屏切换
+     */
+     enterFullscreen() {
+      this.isFullscreen = true
+      const element = document.querySelector('.content-player')
+      if (element.requestFullscreen) element.requestFullscreen()
+      else if (element.mozRequestFullScreen) element.mozRequestFullScreen()
+      else if (element.webkitRequestFullscreen) element.webkitRequestFullscreen()
+      else if (element.msRequestFullscreen) element.msRequestFullscreen()
     },
-    exitFullscreen(){
-      this.$Vhallplayer.exitFullScreen(() => {});
+    exitFullscreen() {
+      this.isFullscreen = false
+      if (document.exitFullscreen) document.exitFullscreen()
+      else if (document.mozCancelFullScreen) document.mozCancelFullScreen()
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen()
+      else if (document.msExitFullscreen) document.msExitFullscreen()
     },
+    // enterFullscreen(){
+    //   this.$Vhallplayer.enterFullScreen( ()=> {});
+    // },
+    // exitFullscreen(){
+    //   this.$Vhallplayer.exitFullScreen(() => {});
+    // },
     wrapEnter(){
       this.hoveVideo = true;
     },
