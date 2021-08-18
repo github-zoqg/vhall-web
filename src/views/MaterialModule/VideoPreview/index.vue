@@ -1,10 +1,10 @@
 <template>
   <div class="preview-wrap">
-    <div class="content" v-loading="loading" element-loading-text="加载中" element-loading-background="rgba(0,0,0,.9)"  @mousemove="wrapEnter" @mouseleave="wrapLeave">
+    <div class="content content-player" v-loading="loading" element-loading-text="加载中" element-loading-background="rgba(0,0,0,.9)"  @mousemove="wrapEnter" @mouseleave="wrapLeave">
       <div id="videoDom"></div>
       <div class="tips" v-if="!loading" :class="videoType.toLowerCase()=='.mp3' || videoType.toLowerCase()=='.mav' ? '' : 'tipsIndex'">
         <div class="video-img" v-if="videoType.toLowerCase()=='.mp3' || videoType.toLowerCase()=='.mav'">
-          <img class="audio-img" :src="audioImg" alt="">
+          <!-- <img class="audio-img" :src="audioImg" alt=""> -->
           <p>语音播放中</p>
         </div>
         <div v-if="tipsType == 2" class="video-end">
@@ -259,11 +259,13 @@ export default {
       top:50%;
       left:50%;
       transform: translate(-50%, -50%);
-      .audio-img{
-        height: 100%;
-        width: 100%;
-        object-fit: scale-down;
-      }
+      background: url('../../../common/images/gif/video.gif') no-repeat;
+      background-size: 100% 100%;
+      // .audio-img{
+      //   height: 100%;
+      //   width: 100%;
+      //   object-fit: scale-down;
+      // }
       p{
         width: 100%;
         color: #ccc;
