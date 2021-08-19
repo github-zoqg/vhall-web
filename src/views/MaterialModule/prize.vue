@@ -10,8 +10,8 @@
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch" :class="source==0 ? 'head-prize' : ''">
-      <el-button size="medium" type="primary" round class="head-btn length104" @click="createPrize">创建奖品</el-button>
-      <el-button size="medium" round class="head-btn length104" v-if="$route.meta.title !== '奖品'" @click="prizeMeterial">资料库</el-button>
+      <el-button size="medium" type="primary" round  @click="createPrize">创建奖品</el-button>
+      <el-button size="white-medium" round class="transparent-btn" v-if="$route.meta.title !== '奖品'" @click="prizeMeterial">资料库</el-button>
       <el-button size="medium" round class="head-btn batch-del transparent-btn" @click="allDelete(null)" :disabled="!prizeChecked.length">批量删除</el-button>
       <VhallInput
         class="search-tag"

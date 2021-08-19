@@ -193,13 +193,14 @@ export default {
     overflow: hidden;
     // border: 1px solid #E2E2E2;
     border-radius: 50%;
-    background: #1a1a1a;
+    
   }
   img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit:cover;
+    // background: #1a1a1a;
     // margin: 0 auto;
     // width: 100px;
     // height: 100px;

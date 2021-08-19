@@ -391,7 +391,7 @@ export default {
         imageUrl: '',
       },
       videoParam: {
-        paas_record_id: process.env.VUE_APP_NODE_ENV === 'production' ? '4b39a1a' : '27d23478'
+        paas_record_id: process.env.VUE_APP_NODE_ENV === 'production' ? 'd57f42f4': '68e25cad'
       },
       marqueeOption: {
         enable: Boolean(this.scrolling_open),
@@ -507,7 +507,9 @@ export default {
           this.getBaseWaterList();
           // 获取其他信息
           this.getBaseOtherList();
-          this.getVideoAppid();
+          setTimeout(() => {
+            this.getVideoAppid();
+          }, 200)
         }
       }).catch(e => {});
     },
@@ -969,7 +971,7 @@ export default {
         vodOption: { recordId: this.videoParam.paas_record_id, forceMSE: false },
         marqueeOption: this.marqueeOption,
         watermarkOption: { // 选填
-          enable: Boolean(this.watermark_open), // 默认 false
+          enable: false, // 默认 false
           url: this.domain_url || this.audioImg, // 水印图片的路径
           align: this.fromalAlign(this.formWatermark.img_position), // 图片的对其方式， tl | tr | bl | br 分别对应：左上，右上，左下，右下
           position: ['20px', '20px'], // 对应的横纵位置，支持px,vh,vw,%
