@@ -682,8 +682,11 @@ export default {
         webinar_curr_num: this.formData.limitCapacitySwtich ? this.formData.limitCapacity : 0,// 	最高并发 0 无限制
         is_capacity: Number(this.formData.capacity),// 是否扩容 1 是 0 否
         img_url: this.$parseURL(this.formData.imageUrl).path, // 封面图
-        copy_webinar_id: this.title == '复制' ? this.webinarId : ''
+        copy_webinar_id: this.title == '复制' ? this.webinarId : '',
+        no_delay_webinar: 0
       };
+      console.log('>>>>>>>>>>111', data)
+
       if(this.$route.query.type != 2 ) {
          data = this.$params(data)
       }
@@ -696,6 +699,8 @@ export default {
           } else {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
+      console.log('>>>>>>>>>>112', data)
+
           this.$fetch(url, this.$params(data)).then(res=>{
             if (res.code == 200) {
               this.$message({
