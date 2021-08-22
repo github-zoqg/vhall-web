@@ -103,6 +103,17 @@
         </div>
         <div class="modeHide" v-if="$route.query.type==2"></div>
       </el-form-item>
+      <!--TODO:-->
+      <el-form-item label="直播延迟" required>
+        <div class="titleBox">
+          <span class="pageTitle">无延迟直播为付费功能请，<span v-if="title == '编辑'">{{liveMode | filterLiveMode}}</span><a v-if="title != '编辑'" class="blue" href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span></span>
+        </div>
+        <div class="delay-select">
+          <div class="mode-common" :class="{delayActive: selectDelayMode == 'common'}" @click.stop="handleSelectDelayMode('common')">常规延迟≈5S{{webinarDelay}}</div>
+          <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay'}" @click.stop="handleSelectDelayMode('delay')">无延迟&lt;0.4S</div>
+          <div v-if="!webinarDelay" class="mode-delay">无延迟&lt;0.4S<span class="no-open">未开通</span></div>
+        </div>
+      </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}封面`">
         <upload
           class="upload__avatar"
@@ -246,6 +257,30 @@
       </el-dialog>
     </template>
     <begin-play :webinarId="$route.params.id" v-if="liveDetailInfo.webinar_state!=4&&title!=='创建'"></begin-play>
+    <div class="delay-mask" v-if="showDelayMask">
+      <div class="delay-intro">
+        <span class="close" @click.stop="showDelayMask = false">X</span>
+        <div class="title">无延迟直播介绍</div>
+        <div class="content">
+          <div class="lf"></div>
+          <div class="lr">
+            <div class="sub-title">使用场景</div>
+            <div class="sub-content">
+              传统直播中，观众与主办方存在4-10秒的时间差，微吼全新VRTC技术使延时低至0.4秒，打造零距离交流场景。支持实时性的直播场景，例如在线大班课、电商直播、在线拍卖场景，互动更加实时
+            </div>
+            <div class="sub-title">注意事项</div>
+            <div class="sub-content">
+              1、使用PC客户端、移动APP、移动SDK发起直播时，目前暂不支持无延时直播，后续进行迭代支持，敬请期待；<br/>
+              2、使用PC标准网页、手机wap端网页、网页完全嵌入方式观看时支持无延时直播<br/>
+              3、以下情况不支持无延时观看：<br/>
+              （1）使用JS-SDK、移动SDK、单视频嵌入的观看形式，不支持无延时观看，后续进行迭代支持，敬请期待；<br/>
+              （2）将观看页直接嵌入到客户的小程序进行观看，不支持无延时观看，因为小程序环境采用的方式不是webrtc技术，无法支持<br/>
+              4、无延迟直播不支持第三方推流、转播功能；目前暂不支持设置跑马灯、水印、弹幕，和清晰度，弹幕功能直播时默认进行隐藏，回放不受影响。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -367,6 +402,15 @@ export default {
         return true;
       }
     },
+    // admin无延迟活动权限
+    webinarDelay() {
+      // no.delay.webinar 1:有无延迟权限  0:无权限
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['no.delay.webinar'] == '1') {
+        return true;
+      } else {
+        return false;
+      }
+    },
     start_line: function() {
       // 获取当前时分
       let sysDate = new Date();
@@ -379,6 +423,17 @@ export default {
         minutes = `0${minutes}`
       }
       return `${hours}:${minutes}`;
+    }
+  },
+  filters: {
+    filterLiveMode(mode) {
+      if (mode == 1) {
+        return '音频模式将不可修改'
+      } else if (mode == 2) {
+        return '视频模式将不可修改'
+      } else {
+        return '互动模式将不可修改'
+      }
     }
   },
   watch: {
@@ -397,6 +452,8 @@ export default {
   },
   data(){
     return {
+      showDelayMask: false,
+      selectDelayMode: 'common',
       formData: {
         title: '',
         date1: '',
@@ -505,12 +562,17 @@ export default {
 
   },
   methods: {
+    handleSelectDelayMode(mode) {
+      if (this.title === '编辑') return
+      this.selectDelayMode = mode
+    },
     getLiveBaseInfo(id, flag) {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
         if( res.code != 200 ){
           return this.$message.warning(res.msg)
         }
         this.liveDetailInfo = res.data;
+        this.selectDelayMode = this.liveDetailInfo.no_delay_webinar == 1 ? 'delay' : 'common'
         this.formData.title = this.liveDetailInfo.subject;
         this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
         this.formData.date2 = this.liveDetailInfo.start_time.substring(11, 16);
@@ -683,7 +745,7 @@ export default {
         is_capacity: Number(this.formData.capacity),// 是否扩容 1 是 0 否
         img_url: this.$parseURL(this.formData.imageUrl).path, // 封面图
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
-        no_delay_webinar: 0
+        no_delay_webinar: this.selectDelayMode == 'delay' ? 1 : 0
       };
       console.log('>>>>>>>>>>111', data)
 
@@ -699,8 +761,6 @@ export default {
           } else {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
-      console.log('>>>>>>>>>>112', data)
-
           this.$fetch(url, this.$params(data)).then(res=>{
             if (res.code == 200) {
               this.$message({
@@ -958,7 +1018,55 @@ export default {
     color: #666666;
     line-height: 40px;
     margin-right: 9px;
+    .blue{
+      color: #3562FA;
+      &:hover{
+        cursor: pointer;
+      }
+    }
     // padding-bottom: 5px;
+  }
+  .delay-select{
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    .mode-common, .mode-delay{
+      width: 183px;
+      height: 86px;
+      border: 1px solid #F2F2F2;
+      background: #F2F2F2;
+      border-radius: 4px;
+      position: relative;
+      line-height: 86px;
+      text-align: center;
+      color: #666666;
+      &:hover{
+        cursor: pointer;
+      }
+      .no-open{
+        width: 44px;
+        height: 18px;
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        background: #999999;
+        border-radius: 0px 12px 0px 4px;
+        text-align: center;
+        font-size: 12px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #FFFFFF;
+        line-height: 17px;
+      }
+    }
+    .mode-delay{
+      margin-left: 24px;
+    }
+    .delayActive{
+      border-color: #FB3A32;
+    }
   }
   .el-icon-question {
     color: #999999;
@@ -1259,6 +1367,72 @@ export default {
   /deep/.saasicon_help_m {
     color: #999999;
     vertical-align: bottom;
+  }
+  .delay-mask{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, .5);
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+    .delay-intro{
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border-radius: 8px;
+      width: 740px;
+      height: 500px;
+      .title{
+        width: 310px;
+        min-height: 30px;
+        font-size: 44px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #FB3B32;
+        line-height: 62px;
+        margin: 60px auto 56px;
+        text-align: center;
+        position: relative;
+      }
+      .content{
+        display: flex;
+        flex-direction: row;
+        .lf, .lr{
+          flex: 1;
+        }
+        .lr{
+          box-sizing: border-box;
+          padding: 0px 50px 0px 30px;
+          height: 260px;
+          overflow-y: scroll;
+          .sub-title{
+            width: 95px;
+            height: 24px;
+            background: #FB3D32;
+            border-radius: 15px;
+            font-size: 16px;
+            font-family: HiraginoSansGB-W6, HiraginoSansGB;
+            font-weight: normal;
+            color: #FFFFFF;
+            line-height: 24px;
+            text-align:center;
+            margin-bottom: 24px;
+            position: relative;
+          }
+          .sub-content{
+            color: #1a1a1a;
+            font-size: 14px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            font-weight: 400;
+            line-height: 20px;
+            margin-bottom: 16px;
+          }
+        }
+      }
+    }
   }
 </style>
 <style lang="less">

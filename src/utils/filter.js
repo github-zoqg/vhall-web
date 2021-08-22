@@ -38,6 +38,9 @@ export const liveTag = (val) => {
     if (val.webinar_state != 4) {
       str += ` | ${liveStatusStr[val.webinar_type]}`;
     }
+    if (val.no_delay_webinar && val.no_delay_webinar == 1) {
+      str += ' | 无延迟'
+    }
     return str;
 };
 export const actionText = (val) => {

@@ -23,6 +23,7 @@
                 <el-form-item label="跑马灯">
                   <p class="switch__box">
                     <el-switch
+                      :disabled="delayStatus == 1"
                       v-model="scrolling_open"
                       active-color="#ff4949"
                       inactive-color="#ccc"
@@ -104,6 +105,7 @@
                 <el-form-item label="水印">
                   <p class="switch__box">
                     <el-switch
+                      :disabled="delayStatus == 1"
                       v-model="watermark_open"
                       active-color="#ff4949"
                       inactive-color="#ccc"
@@ -163,6 +165,7 @@
             <el-form-item label="弹幕">
               <p class="switch__box">
                 <el-switch
+                  :disabled="delayStatus == 1"
                   v-model="formOther.bulletChat"
                   active-color="#ff4949"
                   inactive-color="#ccc"
@@ -284,10 +287,22 @@
             <span>1.移动端全屏播放时，跑马灯会失效</span>
             <span>2.安卓手机浏览器劫持可能导致跑马灯失效</span>
             <span>3.因浏览器自身策略，开启自动播放也会出现无法自动播放情况</span>
+            <span>4.无延迟直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能</span>
           </p>
       </div>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
+    <div v-if="showDelay" class="delay-mask">
+      <div class="tip">
+        <div class="head"><span class="title">提示</span><span class="close" @click.stop="showDelay = false">X</span></div>
+        <div class="delay-content">
+          当前模式为无延时模式，暂不支持设置跑马灯、水印、弹幕功能。以上功能仅生效于回放状态。
+        </div>
+        <div class="btn" @click.stop="showDelay = false">
+          我知道了
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -317,6 +332,8 @@ export default {
     };
     this.$Vhallplayer = null;
     return {
+      delayStatus: 0,
+      showDelay: false,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       perssionWebInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
       activeName: 'first',
@@ -485,6 +502,7 @@ export default {
   },
   created() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    this.getLiveBaseInfo()
     this.getPermission()
     this.getFontList();
   },
@@ -497,6 +515,30 @@ export default {
     }
   },
   methods: {
+    getLiveBaseInfo() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+        if( res.code != 200 ){
+          return this.$message.warning(res.msg)
+        }
+        this.showDelay = res.data.no_delay_webinar == 1 ? true : false
+        this.delayStatus = res.data.no_delay_webinar
+        if (this.showDelay) {
+          setTimeout(() => {
+            this.formOther.bulletChat = false
+          }, 2000)
+        }
+      }).catch(res=>{
+        this.$message({
+          message: res.msg || "获取信息失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
+      }).finally(()=>{
+      });
+    },
     // 获取配置项
     getPermission() {
       this.$fetch('planFunctionGet', {webinar_id: this.$route.params.str, webinar_user_id: this.userId, scene_id: 1}).then(res => {
@@ -733,6 +775,7 @@ export default {
     },
     // 保存跑马灯
     preFormHorse() {
+      if (this.delayStatus == 1) return
       // 校验间隔时间的输入
       if(this.formHorse.interval > 300){
         this.$message({
@@ -807,6 +850,7 @@ export default {
     },
     // 保存水印
     preWatermark(index) {
+      if (this.delayStatus == 1) return
       if (!this.domain_url && this.watermark_open) {
         this.$message({
           message: `水印图片不能为空`,
@@ -1559,6 +1603,72 @@ export default {
 .giftUpload{
   /deep/.el-upload--picture-card {
     height: 130px;
+  }
+}
+.delay-mask{
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.5);
+  z-index: 1000;
+  .tip{
+    width: 400px;
+    height: 200px;
+    background: #FFFFFF;
+    box-shadow: 0px 12px 42px 0px rgba(51, 51, 51, 0.24);
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 24px 32px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    .head{
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      .title{
+        width: 40px;
+        height: 28px;
+        font-size: 20px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: #1A1A1A;
+        line-height: 28px;
+      }
+      .close:hover{
+        cursor: pointer;
+      }
+    }
+    .delay-content{
+      width: 336px;
+      height: 40px;
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #1A1A1A;
+      line-height: 20px;
+      margin: 24px 0px;
+    }
+    .btn{
+      float: right;
+      width: 104px;
+      height: 36px;
+      background: #FB3A32;
+      border-radius: 20px;
+      text-align: center;
+      line-height: 36px;
+      color: #fff;
+      &:hover{
+        cursor: pointer;
+      }
+      &:after{
+        clear: both;
+      }
+    }
   }
 }
 </style>

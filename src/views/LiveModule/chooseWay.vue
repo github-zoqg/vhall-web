@@ -19,6 +19,9 @@
             <p>需要使用chrome浏览器</p>
           </div> -->
           <div class="choose-p choose-a-way " :class="chooseType === 'client' ? 'client active' : 'choose-a-way'" @click.prevent.stop="changeChoose('client')">
+            <div v-if="delayStatus == 1" class="delay-mask">
+              无延迟直播暂不支持此方式发起
+            </div>
             <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
             <p class="f-20">客户端发起</p>
             <p>需安装客户端、支持多种视频采集卡、插入视频等功能</p>
@@ -64,7 +67,8 @@ export default {
       browserStatus: false,
       clientOpen: '',
       executeType: 'ctrl', // 是否控制台 ctrl 控制台
-      downloadUrl: ''
+      downloadUrl: '',
+      delayStatus: 0
     };
   },
   created(){
@@ -78,8 +82,18 @@ export default {
     this.arr = [_data.str, _data.role]
     this.getRoleUrl();
     this.getDownloadUrl();
+    this.getLiveBaseInfo()
   },
   methods: {
+    getLiveBaseInfo() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+        if( res.code == 200 ){
+          this.delayStatus = res.data.no_delay_webinar
+        }
+      }).catch(res=>{
+        console.log(res);
+      })
+    },
     getDownloadUrl() {
       this.$fetch('getPCDownloadUrl', {
         source: 'assistant'
@@ -90,6 +104,7 @@ export default {
       })
     },
     changeChoose(type) {
+      if (this.delayStatus == 1) return
       this.chooseType = type;
     },
     goLive(){
@@ -272,6 +287,8 @@ export default {
     // background: #fff;
     // background-size: 200px;
     // position: relative;
+    position:relative;
+    
   }
   &:hover{
     box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
@@ -311,5 +328,17 @@ export default {
     left: unset;
     width: 850px
   }
+}
+.delay-mask{
+  position: absolute;
+  width:400px;
+  height: 220px;
+  background: rgba(0,0,0,.5);
+  text-align: center;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #FFFFFF;
+  line-height: 220px;
 }
 </style>
