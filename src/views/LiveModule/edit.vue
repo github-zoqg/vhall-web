@@ -103,13 +103,12 @@
         </div>
         <div class="modeHide" v-if="$route.query.type==2"></div>
       </el-form-item>
-      <!--TODO:-->
-      <el-form-item label="直播延迟" required>
+      <el-form-item v-if="isDelay" label="直播延迟" required>
         <div class="titleBox">
-          <span class="pageTitle">无延迟直播为付费功能请，<span v-if="title == '编辑'">{{liveMode | filterLiveMode}}</span><a v-if="title != '编辑'" class="blue" href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span></span>
+          <span class="pageTitle">无延迟直播为付费功能请,<span v-if="isDelay">{{liveMode | filterLiveMode}}</span><span v-else><a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通</span>,点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span></span>
         </div>
         <div class="delay-select">
-          <div class="mode-common" :class="{delayActive: selectDelayMode == 'common'}" @click.stop="handleSelectDelayMode('common')">常规延迟≈5S{{webinarDelay}}</div>
+          <div class="mode-common" :class="{delayActive: selectDelayMode == 'common'}" @click.stop="handleSelectDelayMode('common')">常规延迟≈5S</div>
           <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay'}" @click.stop="handleSelectDelayMode('delay')">无延迟&lt;0.4S</div>
           <div v-if="!webinarDelay" class="mode-delay">无延迟&lt;0.4S<span class="no-open">未开通</span></div>
         </div>
@@ -259,7 +258,7 @@
     <begin-play :webinarId="$route.params.id" v-if="liveDetailInfo.webinar_state!=4&&title!=='创建'"></begin-play>
     <div class="delay-mask" v-if="showDelayMask">
       <div class="delay-intro">
-        <span class="close" @click.stop="showDelayMask = false">X</span>
+        <span class="close iconfont-v3 saasclose" @click.stop="showDelayMask = false"></span>
         <div class="title">无延迟直播介绍</div>
         <div class="content">
           <div class="lf"></div>
@@ -452,6 +451,8 @@ export default {
   },
   data(){
     return {
+      hideDelay: false,
+      isDelay: false,
       showDelayMask: false,
       selectDelayMode: 'common',
       formData: {
@@ -533,7 +534,9 @@ export default {
     });
   },
   created(){
+    
     window.scrollTo(0,0);
+    this.planFunctionGet()
     if (this.$route.query.id || this.$route.params.id) {
       this.webinarId = this.$route.query.id || this.$route.params.id;
       if(this.$route.query.id){
@@ -562,6 +565,29 @@ export default {
 
   },
   methods: {
+    // 获取可配置选项
+    planFunctionGet() {
+      let userId = JSON.parse(sessionOrLocal.get('userId'));
+      let params = {
+        webinar_id: this.$route.params.str || '',
+        webinar_user_id: userId,
+        scene_id: 2
+      }
+      this.$fetch('planFunctionGet', this.$params(params)).then(res=>{
+        // 数据渲染
+        if (res.data && res.code == 200) {
+          const data = JSON.parse(res.data.permissions)
+          let delay = data['no.delay.webinar'] ? true : false
+          const path = this.$route.path
+          if (path == '/live/vodEdit') {
+            delay = false
+          }
+          this.isDelay = delay
+        }
+      }).catch(res =>{
+        console.log(res);
+      });
+    },
     handleSelectDelayMode(mode) {
       if (this.title === '编辑') return
       this.selectDelayMode = mode
@@ -1396,12 +1422,38 @@ export default {
         margin: 60px auto 56px;
         text-align: center;
         position: relative;
+        &::before{
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: -70px;
+          transform: translateY(-50%);
+          background: url('../../common/images/delay-intro-left.png');
+          background-position: center;
+          background-size: 60px 22px;
+          width: 60px;
+          height: 22px;
+          display: inline-block;
+        }
+        &::after{
+          content: '';
+          position: absolute;
+          top: 50%;
+          right: -70px;
+          transform: translateY(-50%);
+          background: url('../../common/images/delay-intro-right.png');
+          background-position: center;
+          background-size: 60px 22px;
+          width: 60px;
+          height: 22px;
+          display: inline-block;
+        }
       }
       .content{
         display: flex;
         flex-direction: row;
         .lf, .lr{
-          flex: 1;
+          width: 50%;
         }
         .lr{
           box-sizing: border-box;
@@ -1421,6 +1473,17 @@ export default {
             text-align:center;
             margin-bottom: 24px;
             position: relative;
+            &::after{
+              content: '';
+              position: absolute;
+              bottom: -12px;
+              left: 0px;
+              width: 40px;
+              height: 4px;
+              background: url('../../common/images/delay-bottom.png');
+              background-position: center;
+              background-size: 40px 4px;
+            }
           }
           .sub-content{
             color: #1a1a1a;
@@ -1430,6 +1493,22 @@ export default {
             line-height: 20px;
             margin-bottom: 16px;
           }
+        }
+        .lf{
+          height: 306px;
+          // border-bottom-left-radius: 8px;
+          background: url('../../common/images/nodelay.png') no-repeat;
+          background-position: center;
+          background-size: 100%;
+        }
+      }
+      .close{
+        position: absolute;
+        top: -25px;
+        right: 4px;
+        color: #fff;
+        &:hover{
+          cursor: pointer;
         }
       }
     }

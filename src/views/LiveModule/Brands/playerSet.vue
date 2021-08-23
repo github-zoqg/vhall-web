@@ -23,7 +23,6 @@
                 <el-form-item label="跑马灯">
                   <p class="switch__box">
                     <el-switch
-                      :disabled="delayStatus == 1"
                       v-model="scrolling_open"
                       active-color="#ff4949"
                       inactive-color="#ccc"
@@ -105,7 +104,6 @@
                 <el-form-item label="水印">
                   <p class="switch__box">
                     <el-switch
-                      :disabled="delayStatus == 1"
                       v-model="watermark_open"
                       active-color="#ff4949"
                       inactive-color="#ccc"
@@ -165,7 +163,6 @@
             <el-form-item label="弹幕">
               <p class="switch__box">
                 <el-switch
-                  :disabled="delayStatus == 1"
                   v-model="formOther.bulletChat"
                   active-color="#ff4949"
                   inactive-color="#ccc"
@@ -287,7 +284,7 @@
             <span>1.移动端全屏播放时，跑马灯会失效</span>
             <span>2.安卓手机浏览器劫持可能导致跑马灯失效</span>
             <span>3.因浏览器自身策略，开启自动播放也会出现无法自动播放情况</span>
-            <span>4.无延迟直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能</span>
+            <span v-if="showDelayText">4.无延迟直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能</span>
           </p>
       </div>
     </div>
@@ -332,8 +329,8 @@ export default {
     };
     this.$Vhallplayer = null;
     return {
-      delayStatus: 0,
       showDelay: false,
+      showDelayText: false,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       perssionWebInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
       activeName: 'first',
@@ -521,12 +518,7 @@ export default {
           return this.$message.warning(res.msg)
         }
         this.showDelay = res.data.no_delay_webinar == 1 ? true : false
-        this.delayStatus = res.data.no_delay_webinar
-        if (this.showDelay) {
-          setTimeout(() => {
-            this.formOther.bulletChat = false
-          }, 2000)
-        }
+        this.showDelayText = true
       }).catch(res=>{
         this.$message({
           message: res.msg || "获取信息失败",
@@ -536,8 +528,7 @@ export default {
           customClass: 'zdy-info-box'
         });
         console.log(res);
-      }).finally(()=>{
-      });
+      })
     },
     // 获取配置项
     getPermission() {
@@ -620,7 +611,8 @@ export default {
         k: 100229,
         data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-      const { href } = this.$router.resolve({path:'/setting/player'});
+      let { href } = this.$router.resolve({path:'/setting/player'});
+      href += `/${this.$route.params.str}`
       window.open(href, '_blank');
     },
     choseOtherSpeed(item) {
@@ -657,7 +649,7 @@ export default {
       }
     },
     // 关闭跑马灯
-    closeHorseInfo() {
+    async closeHorseInfo() {
       if (!this.scrolling_open) {
         this.$vhall_paas_port({
           k: 100231,
@@ -673,7 +665,7 @@ export default {
       this.$Vhallplayer.editMarquee(this.marqueeOption);
     },
     // 关闭水印
-    openWaterMarkInfo() {
+    async openWaterMarkInfo() {
       if (!this.watermark_open) {
          this.$vhall_paas_port({
           k: 100260,
@@ -775,7 +767,6 @@ export default {
     },
     // 保存跑马灯
     preFormHorse() {
-      if (this.delayStatus == 1) return
       // 校验间隔时间的输入
       if(this.formHorse.interval > 300){
         this.$message({
@@ -850,7 +841,6 @@ export default {
     },
     // 保存水印
     preWatermark(index) {
-      if (this.delayStatus == 1) return
       if (!this.domain_url && this.watermark_open) {
         this.$message({
           message: `水印图片不能为空`,

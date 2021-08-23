@@ -270,6 +270,7 @@
             <span>1.移动端全屏播放时，跑马灯会失效</span>
             <span>2.安卓手机浏览器劫持可能导致跑马灯失效</span>
             <span>3.因浏览器自身策略，开启自动播放也会出现无法自动播放情况</span>
+            <span v-if="showDelayText">4.无延迟直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能</span>
           </p>
       </div>
     </div>
@@ -301,6 +302,7 @@ export default {
     };
     this.$Vhallplayer = null;
     return {
+      showDelayText: false,
       activeName: 'first',
       isShowSpeed: false,
       sliderVal: 0, // seek
@@ -457,6 +459,7 @@ export default {
     this.getFontList();
     this.getBasescrollingList();
     this.getBaseWaterList();
+    this.getLiveBaseInfo()
     // 获取其他信息
     this.getBaseOtherList();
     setTimeout(() => {
@@ -472,6 +475,23 @@ export default {
     }
   },
   methods: {
+    getLiveBaseInfo() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+        if( res.code != 200 ){
+          return this.$message.warning(res.msg)
+        }
+        this.showDelayText = true
+      }).catch(res=>{
+        this.$message({
+          message: res.msg || "获取信息失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
+      })
+    },
     blurChange() {
       if (!this.formHorse.interval || this.formHorse.interval < 0) {
         this.formHorse.interval = 20;
