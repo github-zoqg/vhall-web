@@ -407,6 +407,15 @@ export default {
         this.$refs.tableList.clearSelect();
         params.start_time = this.searchTime[0] + ' 00:00:00';
         params.end_time = this.searchTime[1] + ' 23:59:59';
+        this.params = {
+          room_id: this.roomId,
+          start_time: this.searchTime[0] + ' 00:00:00',
+          end_time: this.searchTime[1] + ' 23:59:59'
+        }
+      } else {
+        this.params = {
+          room_id: this.roomId
+        }
       }
 
       // let obj = Object.assign({}, pageInfo, params);
