@@ -382,7 +382,7 @@ export default {
       marqueeOption: {
         enable: Boolean(this.scrolling_open),
         text: '版权所有，盗版必究',
-        alpha: 100,    // 透明度  100 完全显示   0 隐藏
+        alpha: 100,    // 透明度  100 完全显示   0 隐藏 
         size: 20,      // 文字大小
         color: '#FFFFFF',   //  文字颜色
         interval: 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
