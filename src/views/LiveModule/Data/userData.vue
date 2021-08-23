@@ -3,7 +3,7 @@
     <div class="title-data">
       <pageTitle pageTitle="用户统计">
         <div slot="content">
-          1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
+          1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据<br />3.当前仅展示观众信息，不展示主持人、嘉宾、助理
         </div>
       </pageTitle>
     </div>
@@ -27,7 +27,7 @@
           value-format="yyyy-MM-dd"
           type="daterange"
           unlink-panels
-          @change="searchTableList"
+          @change="searchTime"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
@@ -90,6 +90,7 @@ import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
+    let _this = this;
     return {
       active: 2,
       totalNum: 0,
@@ -99,8 +100,10 @@ export default {
       type:'1',
       switchId: 0,
       dateValue: '',
+      timeType: 0,
       checkedValue: false,
       title: '',
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       liveDetailInfo: {},
       switchList: [],
       tableList: [],
@@ -113,14 +116,17 @@ export default {
         {
           label: '手机号',
           key: 'phone',
+          customTooltip: true
         },
         {
           label: '邮箱',
           key: 'email',
+          customTooltip: true
         },
         {
           label: '进入时间',
           key: 'join_time',
+          customTooltip: true
         },
         {
           label: '观看时长（分）',
@@ -165,6 +171,7 @@ export default {
               end.setTime(end.getTime());
               start.setTime(start.getTime());
               picker.$emit('pick', [start, end]);
+              _this.timeType = 0;
             }
           },
           {
@@ -180,6 +187,7 @@ export default {
               end.setTime(end.getTime() - 3600 * 1000 * 24);
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
               picker.$emit('pick', [start, end]);
+              _this.timeType = 1;
             }
           }, {
             text: '近30日',
@@ -194,6 +202,7 @@ export default {
               end.setTime(end.getTime() - 3600 * 1000 * 24);
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
               picker.$emit('pick', [start, end]);
+              _this.timeType = 2;
             }
           }],
         // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
@@ -233,7 +242,30 @@ export default {
       start.setTime(start.getTime());
       this.dateValue = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
     },
+    searchTime() {
+      if (this.type == 1) {
+        let timeArr = [100475, 100476, 100477]
+        let vitimeArr = [100483, 100484, 100485]
+        this.$vhall_paas_port({
+          k: this.activeName == 1 ? timeArr[this.timeType] : vitimeArr[this.timeType],
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.getTableList('search');
+    },
     searchTableList() {
+      if (this.checkedValue) {
+        this.$vhall_paas_port({
+          k: this.activeName == 1 ? 100480 : 100486,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      if (this.title) {
+        this.$vhall_paas_port({
+          k: this.activeName == 1 ? 100482 : 100488,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList('search');
     },
     //获取直播详情
@@ -244,6 +276,7 @@ export default {
           this.getLiveSwitchInfo();
         } else {
           this.isSwitch = false;
+          this.activeName = '2'
         }
         this.getTableList();
       }).catch(res=>{
@@ -259,13 +292,17 @@ export default {
     },
     // 获取直播场次
     getLiveSwitchInfo() {
+      this.switchList = [{
+        label: `全部`,
+        value: 0
+      }]
       this.$fetch('getWebinarSwitchList', {webinar_id: this.$route.params.str}).then(res => {
-        this.switchList = res.data.switch_list.map((item, index) => {
-          return {
-            label: `第${index + 1}场`,
-            value: item.id
-          }
-        });
+        res.data.switch_list.map((item, index) => {
+          this.switchList.push({
+             label: `第${index + 1}场`,
+             value: item.id
+          })
+        })
       })
     },
     getTableList(params) {
@@ -289,7 +326,7 @@ export default {
       this.getBaseUserInfo(obj);
     },
     getBaseUserInfo(params) {
-      this.$fetch('getUserBaseinfo', params).then(res => {
+      this.$fetch('getUserBaseinfo', this.$params(params)).then(res => {
         this.tableList = res.data.list;
         // this.tableList.map(item => {
         //   item.userName = `${item.nick_name == null ? '' : item.nick_name}${item.w_name == null ? '' : item.w_name}`;
@@ -300,6 +337,10 @@ export default {
     // 导出
     exportCenterData() {
       this.$fetch('exportUserinfo', this.params).then(res => {
+        this.$vhall_paas_port({
+          k: this.activeName == 1 ? 100481 : 100487,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `用户统计数据导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -328,17 +369,27 @@ export default {
       } else {
         this.dateValue = '';
       }
+      this.$vhall_paas_port({
+        k: this.type == 1 ? 100478 : 100479,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.getTableList('search');
     },
     handleClick(tab) {
       this.activeName = tab.name;
       // tab切换时搜索的值和分页的值都重置
       this.isSwitch = tab.name == '2' ? false : true;
+      let queryDocument = document.querySelectorAll('.el-picker-panel__shortcut');
+      if (queryDocument.length > 0) {
+        queryDocument[0].style.color = '#fb3a32';
+        queryDocument[1].style.color = '#666'
+        queryDocument[2].style.color = '#666'
+      }
       this.initPage();
       this.type = '1';
       this.title = '';
       this.checkedValue = false;
-      this.switchId = '';
+      this.switchId = '0';
       this.getTableList('search');
     }
   }
@@ -372,12 +423,14 @@ export default {
     }
     /deep/.el-range-input{
       background: transparent;
+      width: 43%;
     }
     /deep/.el-date-editor .el-range__icon{
       line-height: 29px;
     }
     /deep/.el-date-editor .el-range__close-icon {
       line-height: 28px;
+      width: 20px;
     }
     /deep/.el-input__icon{
       line-height: 36px;

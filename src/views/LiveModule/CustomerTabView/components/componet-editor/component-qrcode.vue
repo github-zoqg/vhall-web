@@ -10,11 +10,11 @@
         <span style="color:#FB3A32">*</span>二维码
       </div>
       <div class="editorContent">
-        <el-upload
+        <!-- <el-upload
             class="upload-imglink"
             drag
             :show-file-list="false"
-            :headers="{token: token, platform: 17}"
+            :headers="headersVo"
             name="resfile"
             :data="saveData"
             :action="actionUrl"
@@ -32,15 +32,32 @@
                 </div>
               </div>
             </div>
-          </el-upload>
+          </el-upload> -->
+          <upload
+            class="upload-imglink"
+            v-model="domain_url"
+            :domain_url="info.imageSrc"
+            :saveData="{
+              path: 'interacts/menu-qrcode-imgs',
+              type: 'image',
+            }"
+            :on-success="handleUploadSuccess"
+            @delete="deleteImg"
+            :before-upload="beforeUploadHnadler">
+            <div slot="tip">
+              <p>建议尺寸：300*300px，小于2M</p>
+              <p>支持jpg、gif、png、bmp</p>
+            </div>
+          </upload>
       </div>
     </div>
   </div>
 </template>
 <script>
-import Upload from '@/components/Upload/main';
+import upload from '@/components/Upload/main';
 import EventBus from '../../bus'
 import eventsType from '../../EventConts'
+import {v1 as uuidV1} from "uuid";
 
 export default {
   name: 'component-qrcode',
@@ -55,9 +72,9 @@ export default {
     }
   },
 
-  // components: {
-  //   Upload
-  // },
+  components: {
+    upload
+  },
 
   data() {
     return {
@@ -71,10 +88,20 @@ export default {
       token: localStorage.getItem('token') || ''
     }
   },
-
+  computed: {
+    headersVo: function() {
+      let vo = {token: this.token, platform: 17, 'request-id': uuidV1()}
+      // 取缓存userId相关
+      if (window.sessionStorage.getItem('userId')) {
+        vo['gray-id'] = window.sessionStorage.getItem('userId')
+      }
+      return vo
+    },
+  },
   methods: {
     handleUploadSuccess(e) {
       console.log('二维码上传成功', e)
+      this.domain_url = e.data.domain_url
       if(e.code == 200) {
         this.info.imageSrc = e.data.domain_url
         this.$emit('updateInfo', {
@@ -92,7 +119,39 @@ export default {
         });
       }
     },
-
+    deleteImg() {
+      this.info.imageSrc = this.defaultQr;
+      this.domain_url = '';
+    },
+    beforeUploadHnadler(file){
+      console.log(file);
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message({
+          message: `上传的图片只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
+      }
+      if (!isLt2M) {
+        this.$message({
+          message: `上传的图片大小不能超过 2M`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
+      }
+      return isType && isLt2M;
+    },
     uploadError(e) {
       console.log('upload error', e)
       this.$message({
@@ -186,7 +245,7 @@ export default {
     }
     /deep/ .el-upload--picture-card, /deep/ .el-upload-dragger{
       width: 100%;
-      height: 100%;
+      height: 180px;
       border: 0;
       background: #F7F7F7;
     }

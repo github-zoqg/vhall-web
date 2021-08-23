@@ -5,12 +5,12 @@
        <img :src="liveDetailInfo.img_url" alt="">
       </div>
       <div class="box-title">
-        <div class="title-status" v-if="liveDetailInfo.webinar_state == 1">
+        <div class="title-status" :class="{moreText: liveDetailInfo.no_delay_webinar}" v-if="liveDetailInfo.webinar_state == 1">
           <img src="../../../../common/images/live/lives.gif" alt="">
-          <b>直播</b>
+          <b>直播 <span v-if="liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
         </div>
-        <div class="title-status grayColor" v-else>
-          <b>{{ liveDetailInfo.webinar_state | actionText }}</b>
+        <div class="title-status grayColor" :class="{moreText: liveDetailInfo.no_delay_webinar}" v-else>
+          <b>{{ liveDetailInfo.webinar_state | actionText }} <span v-if="liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
         </div>
         <div class="title-text">
           <p>
@@ -24,7 +24,12 @@
 </template>
 <script>
 export default {
-  props: ['liveDetailInfo']
+  props: ['liveDetailInfo'],
+  mounted() {
+    this.$nextTick(() => {
+    console.log('9999999', this.liveDetailInfo)
+    })
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -55,7 +60,7 @@ export default {
   flex: 1;
   width: 70%;
   .title-status {
-    width: 52px;
+    min-width: 52px;
     height: 18px;
     line-height: 18px;
     text-align: center;
@@ -86,6 +91,9 @@ export default {
     opacity: 0.6;
     text-align: center;
     padding-left: 10px;
+  }
+  .moreText{
+    width: 100px;
   }
   .title-text {
     p {

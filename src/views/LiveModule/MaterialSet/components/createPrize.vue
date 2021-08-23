@@ -6,7 +6,6 @@
       v-if="dialogVisible"
       :close-on-click-modal=false
       :close-on-press-escape=false
-      :lock-scroll=false
       width="468px">
       <el-form :model="prizeForm" :rules="rules" ref="prizeForm" label-width="80px" onsubmit="return false;">
         <el-form-item label="图片上传" required>
@@ -19,6 +18,8 @@
             :on-error="uploadError"
             :on-preview="uploadPreview"
             @delete="deleteImg"
+            :widthImg="231"
+            :heightImg="130"
             :before-upload="beforeUploadHandler">
             <div slot="tip">
               <p>建议尺寸：240*240px，小于2M</p>
@@ -40,7 +41,6 @@
       :visible.sync="dialogPrizeVisible"
       :close-on-click-modal="false"
       :before-close="handleClose"
-      :lock-scroll=false
       style="overflow: hidden;"
       custom-class="choose-gift"
       width="588px">
@@ -82,7 +82,7 @@
       title="提示"
       :visible.sync="dialogTongVisible"
       :close-on-click-modal="false"
-      :lock-scroll=false
+      :show-close="false"
       class="zdy-async-dialog"
       width="400px"
     >
@@ -93,7 +93,7 @@
         </div>
         <div class="async__footer">
           <el-button type="primary" size="medium" v-preventReClick @click="sureMaterialPrize" round>确 定</el-button>
-          <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
+          <el-button size="medium"  @click="cancelMaterialPrize"  round>取 消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -214,14 +214,30 @@ export default {
     // 同步资料库的保存
     sureMaterialPrize() {
       if (this.sureChecked) {
+        this.$vhall_paas_port({
+          k: 100330,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.materiaPrize();
         this.liveSurePrize();
         this.dialogTongVisible = false;
       } else {
         // 不保存资料库
         this.liveSurePrize();
+        this.$vhall_paas_port({
+          k: 100331,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.dialogTongVisible = false;
       }
+    },
+    cancelMaterialPrize() {
+      this.dialogTongVisible = false;
+      this.liveSurePrize();
+      this.$vhall_paas_port({
+        k: 100331,
+        data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     // 资料库保存奖品
     materiaPrize() {
@@ -230,6 +246,10 @@ export default {
       this.$fetch('createPrize', this.$params(this.prizeForm)).then(res => {
         if (res.code == 200) {
           this.dialogVisible = false;
+          this.$vhall_paas_port({
+            k: this.title === '编辑' ? 100535 : 100534,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: `资料中心奖品${this.title === '编辑' ? '修改' : '新建'}成功`,
             showClose: true,
@@ -257,6 +277,10 @@ export default {
       this.$fetch('createPrize', this.$params(this.prizeForm)).then(res => {
         if (res.code == 200) {
           this.dialogVisible = false;
+          this.$vhall_paas_port({
+            k: this.title === '编辑' ? 100325 : 100324,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: `直播下奖品${this.title === '编辑' ? '修改' : '新建'}成功`,
             showClose: true,
@@ -293,6 +317,10 @@ export default {
         prize_id: this.checkedList.join(',')
       }
       this.$fetch('saveLotteryPrize', params).then(res => {
+        this.$vhall_paas_port({
+          k: 100326,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `选择成功`,
           showClose: true,

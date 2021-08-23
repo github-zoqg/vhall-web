@@ -32,7 +32,90 @@
           </div>
         </div>
         <!-- 列表 -->
-        <table-list
+        <div class="viewer_list" v-if="viewerDao.total || query.keyword">
+          <el-table
+              :data="viewerDao.list"
+              style="width: 100%"
+              @selection-change="handleSelectionChange"
+              :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+            >
+              <el-table-column
+                type="selection"
+                width="52"
+                align="left"
+              />
+              <el-table-column
+                prop="name"
+                label="姓名"
+                min-width="200"
+                >
+              </el-table-column>
+              <el-table-column
+                label="行业"
+                min-width="200"
+                >
+                <template slot-scope="scope">
+                  <span>{{ scope.row.industry || '- -' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="邮箱"
+                width="150">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.email || '- -' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="手机号"
+                width="120">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.phone || '- -' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="工号"
+                width="120">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.job_number || '- -' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="其他"
+                width="180">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.other || '- -' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                width="100"
+                v-if="viewerDao.total"
+                fixed="right"
+                label="操作">
+                <template slot-scope="scope">
+                  <el-button
+                    type="text"
+                    @click="viewerDialogShow(scope.row)"
+                    >修改</el-button
+                  >
+                  <el-button
+                    type="text"
+                    @click="delViewer(scope.row)"
+                    >删除</el-button
+                  >
+                </template>
+              </el-table-column>
+              <div slot="empty"><NullPage :nullType="'search'" v-if="!viewerDao.total" :text="'暂无数据'" :height="20"></NullPage></div>
+          </el-table>
+          <SPagination
+              :total="viewerDao.total"
+              v-if="viewerDao.total > 10"
+              :currentPage="pageInfo.pageNum"
+              @current-change="currentChangeHandler"
+              align="center"
+            >
+          </SPagination>
+        </div>
+        <!-- <table-list
           ref="viewerTable"
           :manageTableData="viewerDao.list"
           :tabelColumnLabel="tableColumn"
@@ -46,9 +129,9 @@
           @getTableList="viewerList"
           @changeTableCheckbox="handleSelectionChange"
         >
-        </table-list>
+        </table-list> -->
         <!-- 无消息内容 -->
-        <null-page nullType="other" v-if="!(viewerDao && viewerDao.total > 0)"></null-page>
+        <null-page nullType="other" v-else></null-page>
       </div>
       <div  class="group__container">
         <p class="group__title">全部分组</p>
@@ -83,7 +166,7 @@
       </null-page>
     </div>
     <!-- 添加分组/ 重命名分组 -->
-    <VhallDialog :title="groupDialog.title" v-if="groupDialog.visible" :visible.sync="groupDialog.visible" :lock-scroll='false' width="420px">
+    <VhallDialog :title="groupDialog.title" v-if="groupDialog.visible" :visible.sync="groupDialog.visible" width="420px">
       <el-form :model="groupForm" ref="groupForm" :rules="groupFormRules" @submit.native.prevent>
         <el-form-item prop="subject">
           <VhallInput v-model.trim="groupForm.subject" auto-complete="off" placeholder="请输入分组名称" :maxlength="15"
@@ -96,7 +179,7 @@
       </div>
     </VhallDialog>
     <!-- 添加观众/ 观众修改 -->
-    <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" :lock-scroll='false' width="484px">
+    <VhallDialog :title="viewerDialog.title" :visible.sync="viewerDialog.visible" width="484px">
       <el-form :model="viewerForm" ref="viewerForm" :rules="viewerFormRules" :label-width="viewerDialog.formLabelWidth">
         <el-form-item label="姓名" prop="name">
           <VhallInput v-model="viewerForm.name" v-clearEmoij auto-complete="off" placeholder="请输入姓名（最多50个字符）" :maxlength="50"/>
@@ -118,12 +201,12 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" v-preventReClick @click="viewerSend('viewerForm')" size="medium" round :disabled="!viewerForm.name || !viewerForm.phone">确定</el-button>
+        <el-button type="primary" v-preventReClick @click="viewerSend('viewerForm')" size="medium" round :disabled="!viewerForm.name || (!viewerForm.email && !viewerForm.phone && !viewerForm.job_number && !viewerForm.other)">确定</el-button>
         <el-button @click="viewerDialog.visible = false" size="medium" round>取消</el-button>
       </div>
     </VhallDialog>
     <!-- 导入观众excel -->
-    <VhallDialog title="导入观众" :lock-scroll='false' :visible.sync="importFileShow" width="400px" @close="closeImportViewer">
+    <VhallDialog title="导入观众"  :visible.sync="importFileShow" width="400px" @close="closeImportViewer">
       <div class="upload-dialog-content">
         <file-upload
           ref="viewerUpload"
@@ -153,12 +236,15 @@
             </div>
             <!-- 状态4:  检测成功 -->
             <div class="change-txt" v-if="uploadResult && uploadResult.status === 'success'">
-              <p class="p-right">上传成功，共检测到{{importResult && importResult.success}}条有效数据</p>
+              <p class="p-right">上传成功，共检测到{{importResult && importResult.success}}条有效数据，{{importResult && importResult.fail}}条无效数据</p>
             </div>
           </div>
           <!-- 状态1： 未上传 -->
           <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && !fileUrl">请使用模版上传文件</p>
         </file-upload>
+        <p  class="down-error" v-show="importResult && importResult.fail > 0">
+          <a href="javascript:void(0)" @click="downErrorHandle">下载查看无效数据</a>
+        </p>
         <p class="uploadtips">提示：单个文件不超过5000条数据，数据量较大时请拆分上传</p>
         <div class="dialog-right-btn dialog-footer">
           <el-button type="primary" v-preventReClick @click="reloadViewerList" size="medium" round :disabled="fileResult === 'error'">确定</el-button>
@@ -193,6 +279,7 @@ export default {
         text: '请选择模板文件'
       },
       percent: 0,
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       isCheckout: true,
       isHandle: true,
       tableColumn: [
@@ -237,6 +324,11 @@ export default {
           methodName: 'delViewer'
         }
       ],
+      pageInfo: {
+        pageNum: 1,
+        pos: 0,
+        limit: 10
+      },
       query: {
         keyword: '',
         group_id: null,
@@ -298,7 +390,7 @@ export default {
           {pattern: /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/, message: '请输入正确的邮箱', trigger: 'blur'},
         ],
         phone: [
-          {required: true, message: '请输入手机号码', trigger: 'blur'},
+          {required: false, message: '请输入手机号码', trigger: 'blur'},
           {pattern: /^1[0-9]{10}$/, message: '请输入正确的手机号码', trigger: 'blur'},
           {max: 11, message: '请输入正确的手机号码', trigger: 'blur'},
           {min: 1, message: '请输入正确的手机号码', trigger: 'blur'}
@@ -367,9 +459,15 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
+     // 页码改变按钮事件
+    currentChangeHandler(current) {
+      this.pageInfo.pageNum = current;
+      this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit);
+      this.queryList();
+    },
     // 复选
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
+    handleSelectionChange(item) {
+      this.multipleSelection = item;
     },
     // 展示分组修改
     addGroupDialogShow(item) {
@@ -410,6 +508,7 @@ export default {
         // 默认第一个展示
         if (this.groupList.length > 0) {
           this.query.group_id = this.groupList[0].id;
+          this.activeGroupIndex = 0;
           this.queryList();
         } else {
           // 若无分组，默认清空列表
@@ -435,6 +534,10 @@ export default {
             params.group_id = this.groupDialog.row.id;
           }
           this.$fetch(this.groupDialog.type === 'add' ? 'postGroupAdd' : 'postGroupEdit', this.$params(params)).then(res => {
+            this.$vhall_paas_port({
+              k: this.groupDialog.type === 'add' ? 100546 : 100547,
+              data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message:  `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作成功`,
               showClose: true,
@@ -472,6 +575,10 @@ export default {
           group_ids: item.id
         };
         this.$fetch('postGroupDel', this.$params(params)).then(res => {
+          this.$vhall_paas_port({
+            k: 100548,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message:  `删除分组-操作成功`,
             showClose: true,
@@ -495,24 +602,35 @@ export default {
       });
     },
     queryList() {
-      this.query.pos = 0;
-      this.query.pageNumber = 0;
-      this.query.limit = 10;
-      // 表格切换到第一页
-      try {
-        this.$refs.viewerTable.pageInfo.pageNum = 1;
-        this.$refs.viewerTable.pageInfo.pos = 0;
-      } catch (e) {
-        console.log(e);
+      if (this.query.keyword) {
+        this.query.pos = 0;
+        this.pageInfo.pageNum = 1;
+        this.$vhall_paas_port({
+          k: 100549,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      } else {
+        this.query.pos = this.pageInfo.pos;
       }
+      this.query.limit = 10
+      // this.query.pos = 0;
+      // this.query.pageNumber = 0;
+      // this.query.limit = 10;
+      // 表格切换到第一页
+      // try {
+      //   this.$refs.viewerTable.pageInfo.pageNum = 1;
+      //   this.$refs.viewerTable.pageInfo.pos = 0;
+      // } catch (e) {
+      //   console.log(e);
+      // }
       this.viewerList();
     },
     // 白名单根据分组获取观众列表
-    viewerList(row) {
-      if (row) {
-        this.query.pos = row.pos;
-        this.query.pageNumber = row.pageNum;
-      }
+    viewerList() {
+      // if (row) {
+      //   this.query.pos = row.pos;
+      //   this.query.pageNumber = row.pageNum;
+      // }
       this.$fetch('viewerList', this.$params(this.query)).then(res => {
         res && res.code === 200 && res.data && res.data.total > 0 ? this.viewerDao = res.data : this.viewerDao = {
           total: 0,
@@ -548,7 +666,7 @@ export default {
     viewerDialogAdd() {
       // 判断是否有分组
       if(this.query.group_id) {
-        this.viewerDialogShow(this, {rows: null});
+        this.viewerDialogShow();
       } else {
         this.$message({
           message:  `请选择分组`,
@@ -560,37 +678,37 @@ export default {
       }
     },
     // 展示观众修改
-    viewerDialogShow(that, { rows }) {
+    viewerDialogShow(rows) {
       let item = rows;
       try{
-        if (that.$refs.viewerForm) {
-          that.$refs.viewerForm.resetFields();
+        if (this.$refs.viewerForm) {
+          this.$refs.viewerForm.resetFields();
         }
       }catch (e){
         console.log(e);
       }
       if(item) { // 观众信息修改
-        that.viewerDialog.type = 'edit';
-        that.viewerDialog.title = '观众信息修改';
-        that.viewerDialog.row = item;
-        that.$set(that.viewerForm, 'name', item.name);
-        that.$set(that.viewerForm, 'industry', item.industry);
-        that.$set(that.viewerForm, 'phone', item.phone);
-        that.$set(that.viewerForm, 'job_number', item.job_number);
-        that.$set(that.viewerForm, 'email', item.email);
-        that.$set(that.viewerForm, 'other', item.other);
-        that.viewerDialog.visible = true;
+        this.viewerDialog.type = 'edit';
+        this.viewerDialog.title = '观众信息修改';
+        this.viewerDialog.row = item;
+        this.$set(this.viewerForm, 'name', item.name);
+        this.$set(this.viewerForm, 'industry', item.industry);
+        this.$set(this.viewerForm, 'phone', item.phone);
+        this.$set(this.viewerForm, 'job_number', item.job_number);
+        this.$set(this.viewerForm, 'email', item.email);
+        this.$set(this.viewerForm, 'other', item.other);
+        this.viewerDialog.visible = true;
       } else { // 添加观众
-        that.viewerDialog.type = 'add';
-        that.viewerDialog.title = '添加观众';
-        that.viewerDialog.row = null;
-        that.$set(that.viewerForm, 'name', '');
-        that.$set(that.viewerForm, 'industry', '');
-        that.$set(that.viewerForm, 'phone', '');
-        that.$set(that.viewerForm, 'job_number', '');
-        that.$set(that.viewerForm, 'email', '');
-        that.$set(that.viewerForm, 'other', '');
-        that.viewerDialog.visible = true;
+        this.viewerDialog.type = 'add';
+        this.viewerDialog.title = '添加观众';
+        this.viewerDialog.row = null;
+        this.$set(this.viewerForm, 'name', '');
+        this.$set(this.viewerForm, 'industry', '');
+        this.$set(this.viewerForm, 'phone', '');
+        this.$set(this.viewerForm, 'job_number', '');
+        this.$set(this.viewerForm, 'email', '');
+        this.$set(this.viewerForm, 'other', '');
+        this.viewerDialog.visible = true;
       }
     },
     // 白名单添加观众至分组 or 白名单观众信息修改
@@ -600,6 +718,10 @@ export default {
           console.log('新增 or 修改观众信息：' + JSON.stringify(this.viewerForm));
           let params = Object.assign(this.viewerDialog.type === 'add' ? {group_id: this.query.group_id} : {id: this.viewerDialog.row.id, group_id: this.query.group_id }, this.viewerForm);
           this.$fetch(this.viewerDialog.type === 'add' ? 'viewerAdd' : 'viewerEdit', this.$params(params)).then(res => {
+            this.$vhall_paas_port({
+              k: this.viewerDialog.type === 'add' ? 100541 : 100543,
+              data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message:  `${this.viewerDialog.type === 'add' ? '添加观众' : '观众信息修改'}操作成功`,
               showClose: true,
@@ -623,23 +745,27 @@ export default {
         }
       });
     },
-    delViewer(that, { rows }) {
-      that.$confirm('确定从当前组里删除该观众？', '删除观众', {
+    delViewer(rows) {
+      this.$confirm('确定从当前组里删除该观众？', '删除观众', {
         confirmButtonText: '删除',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        that.sendViewerDel([rows.id]);
+        this.sendViewerDel([rows.id], 2);
       }).catch(() => {
       });
     },
-    sendViewerDel(ids) {
+    sendViewerDel(ids, index) {
       this.$fetch('viewerDel', {
         audience_ids: ids.join(',')
       }).then(res => {
         if(res && res.code === 200) {
+          this.$vhall_paas_port({
+            k: index === 1 ? 100545 : 100544,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message:  `删除观众-操作成功`,
             showClose: true,
@@ -647,7 +773,9 @@ export default {
             type: 'success',
             customClass: 'zdy-info-box'
           });
-          this.$refs.viewerTable.clearSelect();
+          // this.$refs.viewerTable.clearSelect();
+          this.pageInfo.pageNum = 1;
+          this.pageInfo.pos = 0;
           this.queryList();
         } else {
           this.$message({
@@ -683,7 +811,7 @@ export default {
             return item.id;
           });
           console.log(`批量删除-观众ID集合为${ids.join(',')}`);
-          this.sendViewerDel(ids);
+          this.sendViewerDel(ids, 1);
         }).catch(() => {
         });
       } else {
@@ -700,6 +828,7 @@ export default {
     changeViewerList(item, index) {
       this.activeGroupIndex = index;
       this.query.group_id = item.id;
+      this.query.keyword = '';
       this.queryList();
     },
     // 文件上传成功
@@ -815,6 +944,10 @@ export default {
         group_id: this.query.group_id,
         request_type: 1 // 保存
       }).then(resV => {
+        this.$vhall_paas_port({
+          k: 100542,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         /* this.$message({
           message:resV.msg || '导入观众信息成功',
           showClose: true,
@@ -841,6 +974,18 @@ export default {
         });
       });
     },
+    // 下载无效数据
+    downErrorHandle() {
+      this.$EventBus.$emit('saas_vs_download_change');
+      this.$message({
+        message: `无效数据导出申请成功，请去下载中心下载`,
+        showClose: true,
+        // duration: 0,
+        type: 'success',
+        customClass: 'zdy-info-box'
+      });
+      // this.$router.push({path: '/other/downloadList'});
+    }
   },
   created() {
     this.audienceGet();
@@ -869,9 +1014,18 @@ export default {
   //   font-size: 44px;
   // }
 
+  .down-error {
+    font-size: 14px;
+    font-weight: 400;
+    color: #3562FA;
+    text-align: right;
+    margin-top: 10px;
+    width: 100%;
+  }
   /deep/ .el-upload--picture-card {
     width: 100%;
-    height: 130px;
+    /*height: 130px;*/
+    height: 160px;
   }
   /deep/ .el-dialog__title {
     line-height: 24px;
@@ -954,12 +1108,36 @@ export default {
   width: calc(100% - 224px);
   .padding-table-list2();
   background: #FFFFFF;
-  min-height: 676px;
-  .data-list {
-    min-height: auto;
-    /deep/ .el-table__empty-block {
-      display: none;
+  min-height: 640px;
+  .viewer_list{
+    // min-height: 520px;
+    width: 100%;
+  }
+  .pageBox{
+    margin-top: 30px;
+  }
+  /deep/.el-table__empty-block {
+    min-height: 450px;
+  }
+  /deep/.el-table__fixed-right{
+    height: 100% !important;
+    &::before{
+      background-color: #Fff;
+      height: 0;
     }
+  }
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+    width: 6px; // 横向滚动条
+    height: 6px; // 纵向滚动条
+  }
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: #dedede;
+    border-radius: 5px;
+  }
+  /deep/ .el-table__body::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    background: rgba(255,255,255,1);
   }
 }
 .row__container {
@@ -973,9 +1151,10 @@ export default {
   border-radius: 4px;
   margin-left: 24px;
   padding: 24px 24px;
-  max-height: 778px;
+  padding-right: 10px;
+  max-height: 640px;
   ul {
-    max-height: 646px;
+    max-height: 520px;
     overflow-y: auto;
     position: relative;
     left: 6px;
@@ -989,7 +1168,8 @@ export default {
       border-radius: 3px;
       transition: all 0.3s;
       cursor: pointer;
-      display: none;
+      // display: none;
+      // margin-left: 6px;
       background-color: #cccccc;
       &:hover {
         background-color: #cccccc;
@@ -1090,7 +1270,8 @@ export default {
   cursor: pointer;
 }
 .group_button__add {
-  text-align: center;
+  text-align: left;
+  margin-left: 6px;
   color: @font_color_h1;
   cursor: pointer;
   margin-bottom: 12px;

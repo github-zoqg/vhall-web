@@ -20,6 +20,8 @@
                 :on-error="uploadError"
                 :on-preview="uploadPreview"
                 :isProduct="true"
+                :widthImg="148"
+                :heightImg="148"
                 @resetImage="resetPic(item)"
                 :coverPic="!item.cover"
                 @delete="formDelete(item)"
@@ -132,9 +134,7 @@ export default {
     };
     // 商品优惠价
     const priceCountValidate = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error('请输入商品优惠价'));
-      } else {
+      if (value) {
         if (value <= 0 || value > 99999999.99) {
           callback && callback('价格必须大于0且小于99999999.99');
         } else {
@@ -144,6 +144,8 @@ export default {
             callback();
           }
         }
+      } else {
+        callback();
       }
     }
     return {
@@ -176,7 +178,7 @@ export default {
           { required: true, validator: priceValidate, trigger: 'blur' }
         ],
         discount_price: [
-          { required: true, validator: priceCountValidate, trigger: 'blur' }
+          { required: false, validator: priceCountValidate, trigger: 'blur' }
         ],
         url: [
           { required: true, validator: linkValidate, trigger: 'blur'},
@@ -216,6 +218,7 @@ export default {
           ...res.data,
           url: res.data.goods_url
         };
+        this.form.description = this.repalceHtml(this.form.description)
         this.fileList = res.data.img_list.map(item => {
           this.form.img_id.push(item.img_id);
           return {
@@ -390,11 +393,18 @@ export default {
         console.log(err);
       });
     },
+    repalceHtml(str) {
+      let desc = null
+      desc = str.replace(/gt/ig, '')
+      desc = desc.replace(/<[^<>&]+>/g, '').replace(/&(lt|gt|nbsp|amp|quot|middot);/ig, '').replace(/(\r\n)|(\n)/g, '')
+      return desc
+    },
     onSubmit() {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           this.defaultCover = this.fileList.filter(item => item.cover).map(item => item.img_id).join(',');
           // this.form.imgIdArr = this.fileList.map(item => item.img_id);
+          this.form.description = this.repalceHtml(this.form.description)
           const obj = {
             ...this.form,
             webinar_id: this.$route.params.str,
@@ -408,6 +418,10 @@ export default {
             url = 'goodsCreate';
           }
           this.$fetch(url, this.$params(obj)).then(res => {
+            this.$vhall_paas_port({
+              k: this.$route.query.goodId ? 100391 : 100390,
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: this.$route.query.goodId ? '修改成功' : '创建成功',
               showClose: true,
@@ -515,8 +529,11 @@ export default {
         height: 150px;
         border: 4px;
         position: relative;
-        margin-right: 10px;
+        margin-right: 15px;
         cursor: pointer;
+        &:last-child{
+          margin-right: 0;
+        }
         .cover-item{
           z-index: 100;
           position: absolute;

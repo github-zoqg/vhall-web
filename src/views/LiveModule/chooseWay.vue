@@ -1,10 +1,10 @@
 <template>
   <div :class="['chooseWay', {'no-login': executeType !== 'ctrl'}]">
-    <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl'" scene="chooseWay" :isWhiteBg="executeType !== 'ctrl'"></OldHeader>
-    <pageTitle pageTitle="选择发起方式" v-if="executeType === 'ctrl'"></pageTitle>
+    <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl' && arr[1] != 1 && arr[1] != 2" scene="chooseWay" :isWhiteBg="executeType !== 'ctrl'"></OldHeader>
+    <pageTitle :pageTitle="arr[1] == 1 ? '选择发起方式' : '选择进入方式'" v-if="executeType === 'ctrl'"></pageTitle>
     <div class="choose__way__main">
       <div class="choose__way__ctx">
-        <h1 class="choose-method" v-if="executeType !== 'ctrl'" >选择发起方式</h1>
+        <h1 class="choose-method" v-if="executeType !== 'ctrl'" >{{ arr[1] == 1 ? '选择发起方式' : '选择进入方式'}}</h1>
         <div class="select-way">
           <div class="choose-p choose-a-way " :class="chooseType === 'browser' ? 'active' : 'choose-a-way'" @click.prevent.stop="changeChoose('browser')">
             <div class="choose-img"><img src="../../common/images/live/app.png" alt=""></div>
@@ -19,6 +19,9 @@
             <p>需要使用chrome浏览器</p>
           </div> -->
           <div class="choose-p choose-a-way " :class="chooseType === 'client' ? 'client active' : 'choose-a-way'" @click.prevent.stop="changeChoose('client')">
+            <div v-if="delayStatus == 1" class="delay-mask">
+              无延迟直播暂不支持此方式发起
+            </div>
             <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
             <p class="f-20">客户端发起</p>
             <p>需安装客户端、支持多种视频采集卡、插入视频等功能</p>
@@ -31,7 +34,7 @@
           </div> -->
         </div>
         <div class="choose-btn">
-          <el-button type="primary" round @click="goLive" class="length152" v-preventReClick>发起直播</el-button>
+          <el-button type="primary" round @click="goLive" class="length152" v-preventReClick>{{ arr[1] == 1 ? '发起直播' : '进入直播'}}</el-button>
           <iframe src="" class="hide" frameborder="0" scrolling="no" id="start_live"></iframe>
         </div>
         <div :class="['v-download', {'css': executeType === 'ctrl'} ]" v-if="chooseType === 'client' && downloadUrl">
@@ -64,13 +67,14 @@ export default {
       browserStatus: false,
       clientOpen: '',
       executeType: 'ctrl', // 是否控制台 ctrl 控制台
-      downloadUrl: ''
+      downloadUrl: '',
+      delayStatus: 0
     };
   },
   created(){
     this.executeType = this.$route.query.type;
     if (this.executeType === 'ctrl') {
-      // 清除live_tokend等数据
+      // 控制台，清除live_tokend等数据
       sessionOrLocal.removeItem('live_token', 'localStorage')
     }
     // 动态获取 下载客户端地址 + 启动PC客户端应用程序地址命令
@@ -78,16 +82,29 @@ export default {
     this.arr = [_data.str, _data.role]
     this.getRoleUrl();
     this.getDownloadUrl();
+    this.getLiveBaseInfo()
   },
   methods: {
+    getLiveBaseInfo() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+        if( res.code == 200 ){
+          this.delayStatus = res.data.no_delay_webinar
+        }
+      }).catch(res=>{
+        console.log(res);
+      })
+    },
     getDownloadUrl() {
       this.$fetch('getPCDownloadUrl', {
         source: 'assistant'
+      }, {
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
       }).then(res => {
         this.downloadUrl = res.data.download_link
       })
     },
     changeChoose(type) {
+      if (this.delayStatus == 1) return
       this.chooseType = type;
     },
     goLive(){
@@ -98,7 +115,9 @@ export default {
             // 进入直播前检测，若是直接发起
             this.$fetch('checkLive', this.$params({
               webinar_id: this.arr[0]
-            })).then((res) => {
+            }), {
+              platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
+            }).then((res) => {
               if(res && res.code === 200) {
                /*  this.$router.push({
                   path: this.watchUrl
@@ -139,7 +158,9 @@ export default {
       if(location.search.includes('liveT') && params.live_token != '' && getQueryString('liveT')){
         params.live_token = getQueryString('liveT')
       }
-      this.$fetch('getJoinUrl', this.$params(params)).then((res) => {
+      this.$fetch('getJoinUrl', this.$params(params), {
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
+      }).then((res) => {
         if(res && res.code === 200) {
           // this.watchUrl = res.data.page_url;
           this.scheme = res.data.client_protocol;
@@ -158,6 +179,8 @@ export default {
     userLogoGet() {
       this.$fetch('userLogoGet', {
         home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
+      }, {
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
       }).then(res => {
         console.log(res);
       }).catch(err=>{
@@ -167,6 +190,8 @@ export default {
     getSignInfo () {
       return this.$fetch('watchInterGetWebinarTag', {
         webinar_id: this.$route.params.id
+      }, {
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
       }).then(res => {
         if (res.data) {
           this.signInfo = res.data
@@ -231,6 +256,7 @@ export default {
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
+  transition: all 0.15s ease-in;
   p {
     text-align: center;
     font-size: 14px;
@@ -261,13 +287,16 @@ export default {
     // background: #fff;
     // background-size: 200px;
     // position: relative;
+    position:relative;
+    
   }
   &:hover{
-    border: 1px solid #FB3A32;
+    box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+    // border: 1px solid #FB3A32;
   }
   &.active {
     border: 1px solid #FB3A32;
-    box-shadow: 0px 6px 12px 0px rgba(251, 58, 50, 0.16);
+    box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
   }
 }
 .choose-btn {
@@ -299,5 +328,17 @@ export default {
     left: unset;
     width: 850px
   }
+}
+.delay-mask{
+  position: absolute;
+  width:400px;
+  height: 220px;
+  background: rgba(0,0,0,.5);
+  text-align: center;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #FFFFFF;
+  line-height: 220px;
 }
 </style>

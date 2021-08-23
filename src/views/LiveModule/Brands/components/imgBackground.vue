@@ -24,12 +24,13 @@
             @delete="daleteImg()"
             @fullCover="choseBackground(-1)"
             :isFullCover="false"
-            :bottom="4"
+            :widthImg="138"
+            :heightImg="138"
             @handleFileChange="handleFileChange"
             :before-upload="beforeUploadHnadler">
             <div slot="tip">
               <p>建议尺寸：750*1334px,小于4M</p>
-              <p>支持jpg、gif、png、bmp</p>
+              <p>支持jpg、png、bmp</p>
             </div>
           </upload>
           <label  class="img-tangle" v-if="isType === 0"><img src="../../../../common/images/icon-choose.png" alt=""></label>
@@ -120,7 +121,7 @@ export default {
     },
     beforeUploadHnadler(file){
       console.log(file);
-      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      const typeList = ['png', 'jpeg', 'bmp'];
       console.log(file.type.toLowerCase())
       let typeArr = file.type.toLowerCase().split('/');
       const isType = typeList.includes(typeArr[typeArr.length - 1]);

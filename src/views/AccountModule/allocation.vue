@@ -7,12 +7,11 @@
         <el-tabs v-model="tabType" @tab-click="handleClick">
           <el-tab-pane :label="item.label" :name="item.value" v-for="(item, ins) in tabList" :key="ins"></el-tab-pane>
         </el-tabs>
-        <el-button round @click.prevent.stop="multiSetHandle()" :class="['panel-btn length104', {'btn-right': resourcesVo && resourcesVo.extend_day}]"
+        <el-button round @click.prevent.stop="multiSetHandle()" :class="['panel-btn length104', {'btn-right': resourcesVo && resourcesVo.extend_end_time != ''}]"
                    size="medium"
                    v-if="!(is_dynamic > 0) && dataList.length > 0" :disabled="!multipleSelection.length">{{resourcesVo && Number(resourcesVo.type) === 1 ? '批量分配' : '分配并发包'}}</el-button>
         <el-button round @click.prevent.stop="multiSetHandle('more')" class="panel-btn length104" size="medium"
-                   v-if="!(is_dynamic > 0) && dataList.length > 0 && resourcesVo && resourcesVo.extend_day" :disabled="!multipleSelection.length">分配扩展包</el-button>
-
+                   v-if="!(is_dynamic > 0) && dataList.length > 0 && resourcesVo && resourcesVo.extend_end_time != ''" :disabled="!multipleSelection.length">分配扩展包</el-button>
         <!-- 固定分配，有查询列表。 -->
         <div v-if="tabType === 'regular'" :class="['regular-ctx', {'regular-list': !(is_dynamic > 0)}]">
           <p v-if="is_dynamic > 0">每个子账号可单独分配用量，<br/>所有用量之和不能大于可分配用量</p>
@@ -77,7 +76,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="分配扩展包" v-if="resourcesVo && resourcesVo.extend_day"
+              label="分配扩展包" v-if="resourcesVo && resourcesVo.extend_end_time != ''"
               align="left"
               width="230">
               <template slot-scope="scope">
@@ -130,7 +129,7 @@
             <li>可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量` : `并发`) : ''}} {{resourcesVo ? (resourcesVo.type > 0 ? `（GB）` : `（方）`) : ''}}</li>
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
-          <ul class="allocation_one mt32" v-if="resourcesVo && resourcesVo.extend_day">
+          <ul class="allocation_one mt32" v-if="resourcesVo && resourcesVo.extend_end_time != ''">
             <li class="custom-font-barlow">{{ (resourcesVo && resourcesVo.extend_day ? resourcesVo.extend_day : 0)  | unitCovert}} </li>
             <li>可分配并发扩展包（天）</li>
             <li>有效期至 {{resourcesVo && resourcesVo.extend_end_time ? resourcesVo.extend_end_time : '--'}}</li>
@@ -144,7 +143,7 @@
       </div>
     </div>
     <!-- 批量分配-弹出框 -->
-    <VhallDialog title="批量分配" :visible.sync="multiAllocShow" :lock-scroll='false' class="dialog__group" width="380px" v-if="multiAllocShow" @close="closeAllocDialog">
+    <VhallDialog title="批量分配" :visible.sync="multiAllocShow" class="dialog__group" width="380px" v-if="multiAllocShow" @close="closeAllocDialog">
       <el-form :model="multiAllocForm" ref="multiAllocForm" :rules="multiAllocFormRules" label-width="80px">
         <!--  <el-form-item label="分配数量" prop="count">
           <el-input v-model.trim="multiAllocForm.count" maxlength="5" auto-complete="off" placeholder="请输入分配数量" class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
@@ -367,6 +366,10 @@
         this.$fetch('userEdit', {
           is_dynamic: type === 'regular' ? 0 : 1
         }).then(res=>{
+           this.$vhall_paas_port({
+            k: type === 'regular' ? 100817 : 100818,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message:  '保存分配方式成功',
             showClose: true,
@@ -465,6 +468,7 @@
           this.resourcesVo = null;
         })
         if (res && res.code === 200) {
+          // res = {"msg":"操作成功！","code":200,"data":{"extend_end_time":"2022-03-03 23:59:59","end_time":"2022-03-03 23:59:59","type":0,"total":0,"extend_day": 0,"flow":"297.59"},"request_id":"35d779b0-808d-11eb-8860-937321402ac7"}
           this.resourcesVo = res.data;
           let userResult = await this.$fetch('getInfo', {scene_id: 2}).catch(error => {
             console.log('获取账户信息异常', error)
@@ -834,17 +838,17 @@
     .el-input__inner {
       padding: 0 36px 0 12px;
     }
-    /deep/.el-input-group__append {
-      position: absolute;
-      right: 10px;
-      top: 7px;
-      width: 20px!important;
-      background-color: transparent;
-      border: 0;
-      border-bottom-right-radius: 4px;
-      border-top-right-radius: 4px;
-      color: #1A1A1A;
-    }
+  }
+  /deep/.el-input-group__append {
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    width: 20px!important;
+    background-color: transparent;
+    border: 0;
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
+    color: #1A1A1A;
   }
   .dialog__group{
     /deep/.el-input__inner{

@@ -29,7 +29,7 @@
         <p>支付超时</p>
         <span @click="repurchase">重新购买</span>
       </div>
-      <div class="pay-method" v-if="time != '0:0'">
+      <div class="pay-method" v-if="time != '00分00秒'">
           <p>支付方式</p>
           <div class="pay-list">
             <div class="pay-item" @click="changeColor('1')" :class="isChecked == '1' ? 'isActive' : ''">
@@ -44,15 +44,16 @@
             </div>
           </div>
           <el-dialog
-            title="订单支付中..."
+            title="支付"
             :visible.sync="dialogBuyVisible"
             :close-on-click-modal=false
             :close-on-press-escape=false
             width="340px"
           >
           <div class="isPay">
+            <h3>订单支付中...</h3>
             <div class="reBtn">
-              <span class="first-span" @click="dialogBuyVisible=false">选择其他支付方式</span>
+              <span class="first-span" @click="dialogBuyVisible=false">其他支付方式</span>
               <span class="second-span" @click="finishPay">完成支付</span>
             </div>
           </div>
@@ -75,7 +76,7 @@
       </div>
     </div>
     <div class="down-time" v-if="!timeOut">
-      <p><i class="el-icon-warning-outline"></i> 请在<span>{{ time }}</span>内完成支付</p>
+      <p><i class="iconfont-v3 saasicon-time"></i> 请在<span>{{ time }}</span>内完成支付</p>
     </div>
   </div>
 </template>
@@ -90,7 +91,7 @@ export default {
       dialogweiXinVisible: false,
       payCode: '',
       diffSetTime: null,
-      time:'0:0',
+      time:'00分00秒',
       method: 'ALIPAY',
       payInfo: {},
       arrearInfo: {} //欠费订单
@@ -110,7 +111,7 @@ export default {
       };
       this.$fetch('orderInfo', params).then(res =>{
         this.payInfo = res.data;
-        this.downTime(res.data.current_time.replace(/-/g,'/'), res.data.exp_timeire_time.replace(/-/g,'/'));
+        this.downTime(res.data.current_time.replace(/-/g,'/'), res.data.expire_time.replace(/-/g,'/'));
       }).catch(res=>{
         this.$message({
           message: res.msg || "获取信息失败",
@@ -138,10 +139,11 @@ export default {
 
         let limit2 = limit1 % (3600 * 1000);
         let minute = Math.floor(limit2 / (60 * 1000));
-
+        minute = minute > 9 ? minute : `0${minute}`
         let limit3 = limit2 % (60 * 1000);
         let second = Math.floor(limit3 / 1000);
-        this.time = `${minute}:${second}`;
+        second = second > 9 ? second : `0${second}`
+        this.time = `${minute}分${second}秒`;
         if (diff) {
           let diffSetTime = window.setTimeout(() => {
             this.downTime(targetStart, targetEnd);
@@ -149,6 +151,7 @@ export default {
           }, 1000);
         } else {
           this.timeOut = true;
+          this.time = '00分00秒';
           return this.time;
         }
       }
@@ -237,26 +240,26 @@ export default {
     }
     .down-time{
       position: fixed;
-      width: 100%;
-      top: 20px;
-      left: 0px;
+      top: 6px;
+      left: 40%;
       z-index: 100;
       p{
-        height: 39px;
-        line-height: 39px;
+        height: 52px;
+        line-height: 52px;
         width: 400px;
         text-align: center;
-        background: #fc5659;
+        background: #fb3a32;
         color:#fff;
         font-size: 14px;
-        margin: auto;
+        border-radius: 4px;
         i{
           font-size: 20px;
           vertical-align: middle;
         }
         span{
-          font-size: 16px;
-
+          display: inline-block;
+          font-size: 14px;
+          width: 63px;
         }
       }
     }
@@ -394,8 +397,14 @@ export default {
       }
     }
     .isPay{
-      padding-bottom: 30px;
+      padding-bottom: 24px;
       p{
+        text-align: center;
+      }
+      h3{
+        padding-bottom: 24px;
+        font-size: 16px;
+        color: #1A1A1A;
         text-align: center;
       }
       .reBtn{
@@ -403,12 +412,12 @@ export default {
         span{
           display: inline-block;
           width: 120px;
-          height: 30px;
-          line-height: 30px;
-          font-size: 12px;
+          height: 36px;
+          line-height: 36px;
+          font-size: 14px;
           text-align: center;
           color: #fff;
-          border-radius: 2px;
+          border-radius: 20px;
           cursor: pointer;
         }
         .first-span {
@@ -416,8 +425,8 @@ export default {
           border: 1px solid #d2d2d2;
         }
         .second-span {
-          background: #fc5659;
-          border: 1px solid #fc5659;
+          background: #fb3a32;
+          border: 1px solid #fb3a32;
           color: #fff;
           margin-left: 10px;
         }

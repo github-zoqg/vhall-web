@@ -60,6 +60,18 @@ export default {
           formatter: `{b0}<br />${that.type == 1 ? '流量' : that.type == 3 ? '观看人数' : '并发'}:{c0}${that.type == 1 ? 'GB' : that.type == 3 ? '' : '方'}`
           // formatter: `{b0}<br />${that.type == 3 ? '并发' : that.type == 1 ? that.versionType == 1 ? '流量' : '并发' : '观看人数'}: {c0}${that.type == 3 ? '方' : that.type == 1 ? that.versionType == 1 ? 'GB' : '方' : ''}`,
         },
+        title: {
+          text: '暂无数据',
+          x: 'center',
+          y: 'center',
+          show: !visitDataValue.length,
+          textStyle: {
+            fontSize: 14,
+            fontStyle: 'normal',
+            fontWeight: 'normal',
+            color: '#666'
+          }
+        },
         xAxis: {
           // name: '日期',
           name: '',

@@ -64,8 +64,7 @@ const router = [
       {
         path: 'vodEdit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '创建点播', name: 'vodCreate', webniarType: 'vod', activeMenu: '/live/list'},
-        hidden: true
+        meta: { auth: true, title: '创建点播', name: 'vodCreate', webniarType: 'vod', activeMenu: '/live/vodEdit', auth_key: 'ui.upload_video_as_demand'},
       },
       {
         path: 'detail/:str(\\d+)',
@@ -164,6 +163,12 @@ const router = [
         hidden: true
       },
       {
+        path: 'shareSetting/:str(\\d+)',
+        component: () => import('@/views/LiveModule/Brands/shareSetting'),
+        meta:{ auth: true, title: '分享设置', name: 'shareSet', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'customTab/:str(\\d+)',
         component: CustomerTab,
         // component: () => import('@/views/LiveModule/customTab'),
@@ -174,6 +179,12 @@ const router = [
         path: 'word/:str(\\d+)',
         component: () => import('@/views/MaterialModule/word'),
         meta:{ auth: true, title: '文档', name: 'word', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'videoSet/:str(\\d+)',
+        component: () => import('@/views/LiveModule/MaterialSet/videoSet'),
+        meta:{ auth: true, title: '插播文件', name: 'videoSet', activeMenu: '/live/list'},
         hidden: true
       },
       {
@@ -228,6 +239,12 @@ const router = [
         path: 'recordplayback/:str(\\d+)',
         component: () => import('@/views/LiveModule/PlayBack/list'),
         meta:{ auth: true, title: '点播管理', name: 'recordplayback', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'vodreset/:str(\\d+)',
+        component: () => import('@/views/LiveModule/PlayBack/vodreset'),
+        meta:{ auth: true, title: '课件重制', name: 'vodreset', activeMenu: '/live/list'},
         hidden: true
       },
       {

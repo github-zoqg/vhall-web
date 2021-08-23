@@ -3,16 +3,33 @@
     <header class="commen-header home-header">
       <nav :class="['navbar nav-top all']" role="navigation">
         <div :class="['navbar-header', {'white-bg': isWhiteBg}]">
-          <a :href="logo_jump_url" v-if="logo" class="navbar-brand">
+          <a :href="logo_jump_url" v-if="logo" class="navbar-brand" target="_blank">
             <img v-if="logo" :src="logo">
           </a>
-          <a class="navbar-brand" :href="logo_jump_url" v-else>
+          <a class="navbar-brand" :href="logo_jump_url" target="_blank" v-else>
             <img src="../../common/images/sys/logo-red@2x.png" alt="" v-if="isWhiteBg" />
             <img src="../../common/images/sys/logo@2x.png" alt="" v-else />
           </a>
         </div>
+        <div class="navbar-title">
+          <div class="navbar-intro" v-if="isSpecial">
+            <el-tooltip class="item" effect="dark" :content="specialInfo.title" placement="bottom-start">
+              <p>{{ specialInfo.title }}</p>
+            </el-tooltip>
+            <!-- <p>{{ specialInfo.title }}</p> -->
+            <span class="time">{{ (specialInfo && specialInfo.created_at ? specialInfo.created_at : '') | unitTime  }}</span>
+            <!-- <div class="share" @click="share">
+              <i class="iconfont-v3 saasfenxiang_icon" slot="reference"></i>
+              <span>分享</span>
+            </div> -->
+          </div>
+        </div>
         <div class="collapse navbar-collapse" v-if="isShowLogin">
-          <div class="pull-right login-reg" >
+          <div class="share" @click="share" v-if="isSpecial">
+            <i class="iconfont-v3 saasfenxiang_icon" slot="reference"></i>
+            <span>分享</span>
+          </div>
+          <div class="pull-right login-reg">
             <div class="" v-if="isLogin">
              <!--  <el-dropdown @command="handleCommand" class="hover-dropdown">
                 <span class="el-dropdown-link">
@@ -30,17 +47,19 @@
                   <span>{{show_name}}</span>
                 </div>
                 <el-dropdown-menu slot="dropdown" class="user-dropdown">
-                  <el-dropdown-item divided @click.native="toLive">我的直播</el-dropdown-item>
-                  <el-dropdown-item divided @click.native="toFinance">账户中心</el-dropdown-item>
-                  <el-dropdown-item divided @click.native="toMyHome">我的主页</el-dropdown-item>
-                  <el-dropdown-item divided @click.native="toAccount">账户设置</el-dropdown-item>
-                  <el-dropdown-item divided @click.native="loginOut">退出</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="toLive"><i class="iconfont-v3 saasicon_lives1"></i> 我的直播</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="toFinance"><i class="iconfont-v3 saasicon_account1"></i> 账户中心</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="toMyHome"><i class="iconfont-v3 saasicon_home1"></i> 我的主页</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="toAccount"><i class="iconfont-v3 saasicon_Settings1"></i> 账户设置</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="loginOut"><i class="iconfont-v3 saasicon_exit"></i> 退出</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
-            <div class=""  v-if="!isLogin">
-              <el-button size="small" round @click="toLoginPageHandle">登录</el-button>
-              <el-button type="primary" size="small" round @click="toRegisterHandle">注册</el-button>
+            <div class="unlogin"  v-if="!isLogin">
+              <span><img src="../../common/images/sys/my-light@2x.png" alt=""></span>
+              <label @click="toLoginPageHandle">登录</label>
+              <!-- <el-button size="small" round @click="toLoginPageHandle">登录</el-button>
+              <el-button type="primary" size="small" round @click="toRegisterHandle">注册</el-button> -->
             </div>
           </div>
         </div>
@@ -69,6 +88,14 @@ export default {
       default: ''
     },
     isWhiteBg: {
+      require: false,
+      default: false
+    },
+    isSpecial: {
+      require: false,
+      default: false
+    },
+    specialInfo: {
       require: false,
       default: false
     }
@@ -134,6 +161,8 @@ export default {
     userLogoGet(id) {
       this.$fetch('userLogoGet', {
         webinar_user_id: id
+      }, {
+        'gray-id': id
       }).then(res => {
         console.log('用户控制台标识图：', res);
         this.logo = res.data.logo || '';
@@ -157,6 +186,8 @@ export default {
     getSignInfo (id) {
       return this.$fetch('watchInterGetWebinarTag', {
         webinar_id: id
+      }, {
+        platform: this.$route.query.type === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
       }).then(res => {
         if (res.data) {
           // this.signInfo = res.data
@@ -164,6 +195,9 @@ export default {
           this.logo_jump_url = res.data.skip_url ? res.data.skip_url : process.env.VUE_APP_COMPANY_URL;
         }
       })
+    },
+    share() {
+      this.$emit('share')
     }
   },
   mounted() {
@@ -203,33 +237,55 @@ header.commen-header {
     border: none;
     &.all {
       width: 100%;
+      // padding-right: 32px;
     }
   }
   .navbar {
-    position: relative;
-    min-height: 64px;
+    display: flex;
+    flex: 1;
     margin-bottom: 20px;
   }
   .navbar-header {
-    width: 224px;
+    flex: 0 0 180px;
     height: 64px;
     background: #FB3A32;
-    float: left;
     &.white-bg {
       background: #ffffff;
     }
+    .navbar-brand {
+      float: left;
+      margin: 10px 32px;
+      text-align: left;
+      width: 120px!important;
+      height: 44px;
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: scale-down;
+      }
+    }
   }
-  .navbar-brand {
-    float: left;
-    margin: 10px 0 10px 18px;
-    text-align: left;
-    width: 120px!important;
-    height: 44px;
-    img {
-      display: block;
+  .navbar-title{
+    flex:1;
+    max-width: calc(100% - 405px);
+    .navbar-intro{
       width: 100%;
-      height: 100%;
-      object-fit: scale-down;
+    }
+    p{
+      padding-top: 13px;
+      line-height: 24px;
+      color: #1a1a1a;
+      font-size: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-right: 100px;
+      font-weight: 500;
+    }
+    .time{
+      color: #999;
+      font-size: 14px;
     }
   }
   .navbar-collapse {
@@ -240,9 +296,27 @@ header.commen-header {
     border-top: 1px solid transparent;
     -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.1);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.1);
+    flex:0 0 220px;
   }
-  .pull-right {
-    float: right;
+  .collapse{
+    display: flex;
+    justify-items: center;
+    justify-content: flex-end;
+  }
+  .share{
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    color: #666;
+    margin-top: 18px;
+    padding-right: 14px;
+    span{
+      display: block;
+      padding-top: 3px;
+    }
+    &:hover{
+      color: #FB3A32;
+    }
   }
   .login-reg {
     padding: 16px 0 0 10px;
@@ -275,6 +349,30 @@ header.commen-header {
       margin-left: 5px;
      /*  margin-bottom: 13px; */
       margin-bottom: 4px;
+    }
+    .unlogin{
+      span{
+        width: 36px;
+        height: 36px;
+        display: inline-block;
+        border-radius: 50%;
+        margin-right: 8px;
+        cursor: pointer;
+        vertical-align: middle;
+        margin-top: -5px;
+      }
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: scale-down;
+      }
+      label {
+        font-size: 14px;
+        font-weight: 400;
+        color: #666;
+        line-height: 14px;
+        cursor: pointer;
+      }
     }
   }
   header #personal-info {
@@ -348,6 +446,8 @@ header.commen-header {
     font-weight: 400;
     color: rgba(0, 0, 0, 0.65);
     border-radius: 0 0 4px 4px;
+    text-align: left;
+    padding: 0 16px;
   }
   li:first-child {
     border-radius: 4px 4px 0 0;
@@ -364,10 +464,13 @@ header.commen-header {
   .hover-icon {
     margin-right: 12px;
   }
-
+  .iconfont-v3{
+    font-size: 16px;
+    vertical-align: bottom;
+  }
   .el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover {
-    background-color: #ffebeb;
-    color: #FB3A32;
+    background-color: #f7f7f7;
+    color: #1a1a1a;
   }
 }
 </style>

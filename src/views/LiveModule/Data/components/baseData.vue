@@ -67,7 +67,7 @@
             </div>
           </div>
         </div>
-        <div class="base-item" @click="lookOption('邀请排名')">
+        <div class="base-item" @click="lookOption('邀请排名', 100445)">
           <p>查看</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_ranking@2x.png" alt=""></label>
@@ -117,7 +117,7 @@
     </div>
     <el-row :gutter="40">
       <el-col class="liveItem">
-        <div class="base-item" @click="lookOption('聊天')">
+        <div class="base-item" @click="lookOption('聊天', 100447)">
           <p>查看</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_ban@2x.png" alt=""></label>
@@ -135,7 +135,7 @@
             </div>
           </div>
         </div>
-        <div class="base-item" v-if="isStatus!=4" @click="lookOption('问答')">
+        <div class="base-item" v-if="isStatus!=4" @click="lookOption('问答', 100448)">
           <p >查看</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_Question@2x.png" alt=""></label>
@@ -170,7 +170,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4" @click="lookOption('签到')">
+         <div class="base-item" v-if="isStatus!=4" @click="lookOption('签到', 100449)">
           <p>查看</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_Sign@2x.png" alt=""></label>
@@ -188,7 +188,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4"  @click="lookOption('问卷')">
+         <div class="base-item" v-if="isStatus!=4"  @click="lookOption('问卷', 100450)">
           <p>查看</p>
          <div class="base-main">
            <label><img src="../../../../common/images/icon/icon_questionnaire@2x.png" alt=""></label>
@@ -206,7 +206,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4" @click="lookOption('抽奖')">
+         <div class="base-item" v-if="isStatus!=4" @click="lookOption('抽奖', 100451)">
           <p>查看</p>
           <div class="base-main">
             <!-- <icon icon-class="saasicon_choujiang"></icon> -->
@@ -224,7 +224,7 @@
             </div>
           </div>
         </div>
-        <div class="base-item" v-if="isStatus!=4" @click="lookOption('发群红包')">
+        <div class="base-item" v-if="isStatus!=4" @click="lookOption('发群红包', 100452)">
           <p>查看</p>
          <div class="base-main">
            <label><img src="../../../../common/images/icon/icon_envelope@2x.png" alt=""></label>
@@ -285,9 +285,12 @@
 </template>
 <script>
 import CountTo from 'vue-count-to';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   data() {
     return {
+      userId: JSON.parse(sessionOrLocal.get("userId")),
+      vm: null,
       dataInfo: {
         previewNum: 0,
         answerNum: 0,
@@ -336,6 +339,16 @@ export default {
     }
   },
   methods: {
+     //文案提示问题
+    messageInfo() {
+      this.vm = this.$message({
+        showClose: true,
+        duration: 2000,
+        message: '导出申请成功，请去下载中心下载',
+        type: 'success',
+        customClass: 'zdy-info-box'
+      });
+    },
     getAllDataInfo() {
       // 预约  报名表单（人）  试看（人）
       this.$fetch('getAnswerListInfo', {webinar_id: this.$route.params.str}).then(res => {
@@ -399,95 +412,108 @@ export default {
     // 预约-导出
     exportSubscribeInfo() {
       this.$fetch('exportSubscribe',{webinar_id: this.$route.params.str}).then(res => {
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        this.$vhall_paas_port({
+          k: 100442,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        if (this.vm) {
+          console.log('11111111111')
+          this.vm.close();
+        }
+        console.log('222222222')
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 试看-导出
     exportPreviewInfo() {
       this.$fetch('exportPreview',{webinar_id: this.$route.params.str}).then(res => {
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        this.$vhall_paas_port({
+          k: 100444,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+       if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 分享导出
     exportShare() {
       this.$fetch('exportShareInfo',{room_id: this.roomId}).then(res => {
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        this.$vhall_paas_port({
+          k: 100446,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     //报名表单导出
     exportAnswer() {
       this.$fetch('exportForm',{webinar_id: this.$route.params.str}).then(res => {
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        this.$vhall_paas_port({
+          k: 100443,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+       if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
      //打赏---导出
     exportReward() {
       this.$fetch('exportReward',{webinar_id: this.$route.params.str}).then(res => {
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        this.$vhall_paas_port({
+          k: 100453,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+       if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 礼物---导出
     exportGift() {
       this.$fetch('exportGift',{room_id: this.roomId}).then(res => {
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        this.$vhall_paas_port({
+          k: 100454,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
     // 连麦---导出
     exportSpeak() {
        this.$fetch('exportSpeak',{room_id: this.roomId}).then(res => {
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        this.$vhall_paas_port({
+          k: 100455,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+       if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo()
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
-    lookOption(title) {
+    lookOption(title, index) {
+      this.$vhall_paas_port({
+        k: index,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({
         path: '/live/interactionDetail',
         query: {

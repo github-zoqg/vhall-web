@@ -12,6 +12,7 @@
         <br>
         5.文档转换较慢，请于直播前提前上传
       </div>
+      <div class="title_text">推荐开播前提前上传课件，上传过程中如果遇到问题请查看<a href="https://saas-doc.vhall.com/docs/show/1278" target="_blank">《常见问题》</a></div>
     </pageTitle>
     <!-- 无权限，未创建 -->
     <div>
@@ -19,7 +20,7 @@
         <el-upload
            class="btn-upload"
           :action=actionUrl
-          :headers="{token: token, platform: 17}"
+          :headers="headersVo"
           :data=saveData
           accept="*"
           name="resfile"
@@ -38,7 +39,7 @@
         <el-upload
           class="btn-upload"
           :action=actionUrl
-          :headers="{token: token, platform: 17}"
+          :headers="headersVo"
           :data=saveData
           accept="*"
           name="resfile"
@@ -52,7 +53,7 @@
           <el-button round type="primary" size="medium">上传</el-button>
         </el-upload>
         <!--<el-button type="primary" round @click.prevent.stop="importWordOpen" size="medium">上传文档</el-button>-->
-        <el-button type="primary" round @click="openCheckWord" size="medium" v-if="$route.params.str">资料库</el-button>
+        <el-button round @click="openCheckWord" class="transparent-btn" size="white-medium" v-if="$route.params.str">资料库</el-button>
         <el-button round @click="wordMultiDel" class="transparent-btn" size="medium" :disabled="multipleSelection && multipleSelection.length === 0">批量删除</el-button>
         <VhallInput
           class="head-btn search-tag"
@@ -92,7 +93,7 @@
       <!--<el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
         <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>-->
-      <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" :lock-scroll='false' height="458px" :modalClick=true>
+      <VhallDialog  class="preview-doc-dialog" :visible.sync="showDialog" width="736px" height="458px" :modalClick=true>
         <div class="loadingWrap"  element-loading-background="rgba(255,255,255)" v-loading="!docLoadComplete"  v-show="!docLoadComplete"></div>
         <div style="position: relative;height: 396px;" v-show="isDot && docLoadComplete">
           <!-- 动态文档区域-->
@@ -115,7 +116,7 @@
     <VhallDialog
       title="提示"
       :visible.sync="asyncDialog.visible"
-      :lock-scroll=false
+      :show-close="false"
       class="zdy-async-dialog"
       width="400px"
     >
@@ -165,6 +166,7 @@ export default {
       },
       importWordShow: false,
       env: Env,
+      userId: '',
       activeIns: null,
       isLoading: false,
       no_show: false,
@@ -179,7 +181,8 @@ export default {
         {
           label: '文档名称',
           key: 'file_name',
-          width: 'auto'
+          width: 'auto',
+          customTooltip: true
         },
         {
           label: '上传时间',
@@ -249,6 +252,14 @@ export default {
     };
   },
   computed: {
+    headersVo: function() {
+      let vo = {token: this.token, platform: 17, 'request-id': uuidV1()}
+      // 取缓存userId相关
+      if (window.sessionStorage.getItem('userId')) {
+        vo['gray-id'] = window.sessionStorage.getItem('userId')
+      }
+      return vo
+    },
     saveData: function() {
       let data = {
         path: 'interacts/docs',
@@ -377,12 +388,28 @@ export default {
       }
     },
     sureAsyncHandle() {
+      this.$vhall_paas_port({
+        k: 100299,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       if (this.asyncDialog.sureChecked) {
         // 同步到资料库
         this.asyncWord(this.asyncDialog.rows);
+        this.$vhall_paas_port({
+          k: 100300,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        this.$vhall_paas_port({
+          k: 100304,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       } else {
         this.asyncDialog.visible = false;
         // 未勾选同步，不同步数据
+        this.$vhall_paas_port({
+          k: 100305,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.initPage();
       }
     },
@@ -429,6 +456,12 @@ export default {
     },
     beforeUploadHandler(file){
       console.log(file);
+      if (!this.$route.params.str) {
+        this.$vhall_paas_port({
+          k: 100511,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       const typeList = ['doc','docx','xls','xlsx','ppt','pptx','pdf','jpeg','jpg','png','bmp'];
       let fileNameArr = file.name.split('.');
       let lastFileKey = fileNameArr[fileNameArr.length - 1];
@@ -458,7 +491,12 @@ export default {
       if (isType && isLt2M) {
         this.totalNum = 1;
         this.no_show = false;
-        this.initPayMessage()
+        if (this.vm) {
+          this.vm.close()
+          this.initPayMessage()
+        } else {
+          this.initPayMessage()
+        }
         // 若是当前为 this.no_show
         this.tableList.unshift({
           created_at: this.$moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
@@ -513,7 +551,7 @@ export default {
           });
           this.deleteSend({
             id: ids.join(',')
-          })
+          }, 1)
         }).catch(() => {
         });
       } else {
@@ -629,6 +667,10 @@ export default {
       that.docLoadComplete = false;
       await that.$nextTick(() => {})
       that.docEvents(rows);
+      that.$vhall_paas_port({
+        k: that.$route.params.str ? 100306 : 100514,
+        data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     // 动态演示
     async preDocShow(that, { rows }) {
@@ -641,6 +683,10 @@ export default {
       that.docLoadComplete = false;
       await that.$nextTick(() => {})
       that.docDotEvents(rows);
+      that.$vhall_paas_port({
+        k: that.$route.params.str ? 100307 : 100515,
+        data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     // 删除
     deleteHandle(that, { rows }) {
@@ -652,7 +698,7 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        that.deleteSend(rows);
+        that.deleteSend(rows, 2);
       }).catch(() => {
         that.$message({
           message:  `已取消删除`,
@@ -663,13 +709,23 @@ export default {
         });
       });
     },
-    deleteSend(rows) {
+    deleteSend(rows, index) {
       let params = {
         ids: rows.id,
         tag: this.$route.params.str ? 1 : 2,
         webinar_id: this.$route.params.str
       };
       this.$fetch('delWordList', this.$params(params)).then(res=>{
+        let k = 0
+        if (this.$route.params.str) {
+          k = index == 1 ? 100303 : 100302
+        } else {
+          k = index == 1 ? 100513 : 100512
+        }
+        this.$vhall_paas_port({
+          k: k,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message:  `删除成功`,
           showClose: true,
@@ -713,6 +769,12 @@ export default {
         this.$refs.tableListWord.pageInfo.pos = 0;
       } catch (e) {
         console.log(e);
+      }
+      if (this.formParams.keyword) {
+        this.$vhall_paas_port({
+          k: this.$route.params.str ? 100308 : 100516,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       }
       this.getTableWordList();
     },
@@ -865,6 +927,7 @@ export default {
           accountId: result.data.accountId || '', // 第三方用户ID
           channelId: this.channel_id || '', // 频道id 必须 => 活动的
           token: result.data.paasAccessToken || '', // 必须， token，初始化接口获取
+          hide: true
         }
         window.VhallChat.createInstance(option, (event) => {
           this.$WebinarChat = event.message; // 聊天实例句柄
@@ -905,6 +968,7 @@ export default {
   },
   created() {
     // 如果存在活动Id，查询活动接口
+    this.userId = JSON.parse(sessionOrLocal.get("userId"))
     let id = this.$route.params.str;
     if(id) {
       this.getWebinarInfo();
@@ -1093,6 +1157,15 @@ export default {
 }
 .word-wrap {
   height: 100%;
+  .title_text{
+    color: #999;
+    font-size: 14px;
+    padding-left: 10px;
+    a{
+      color: #3562FA;
+      cursor: pointer;
+    }
+  }
   /deep/.el-card__body{
     padding: 32px 24px;
   }
@@ -1179,7 +1252,7 @@ export default {
     }
   }
   /deep/.el-dialog__body {
-    padding: 16px 16px 0 16px;
+    padding: 4px 4px 0 4px;
   }
   /deep/.el-loading-mask {
     border-radius: 4px;

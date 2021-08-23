@@ -7,6 +7,7 @@
       </el-form-item>
       <el-form-item label="专题封面">
         <upload
+          class="upload__avatar"
           v-model="formData.imageUrl"
           :domain_url="formData.domain_url"
           :saveData="{
@@ -93,6 +94,7 @@
             <draggable
               :list="formData.selectedActives"
               chosenClass="vh-sort-tables__tbody-selected"
+              @update="updateDrag"
               @dragstart="dragStart"
               @dragend="dragEnd"
             >
@@ -104,7 +106,7 @@
                 <div class="vh-sort-tables__tbody-id">
                   {{ index + 1 }}
                 </div>
-                <div class="vh-sort-tables__tbody-title">
+                <div class="vh-sort-tables__tbody-title" @click="goWebinarSpecial(item.webinar_id, item.webinar_state, item.player)">
                   {{ item.subject }}
                 </div>
                 <div class="vh-sort-tables__tbody-status">
@@ -131,8 +133,14 @@
                   {{ item.pv | formatNum }}
                 </div>
                 <div class="vh-sort-tables__tbody-editor">
-                  <i class="iconfont-v3 saasicon-trash" @click="deleteSpecial(item.webinar_id)"></i>
-                  <i class="iconfont-v3 saasicon_move"></i>
+                  <el-tooltip class="item" effect="dark" content="删除" placement="top" v-tooltipMove>
+                    <i class="iconfont-v3 saasicon-trash" @click.prevent.stop="deleteSpecial(item.webinar_id)"></i>
+                  </el-tooltip>
+                   <el-tooltip class="item" effect="dark" content="移动" placement="top" v-tooltipMove>
+                    <i class="iconfont-v3 saasicon_move"></i>
+                  </el-tooltip>
+                  <!-- <i class="iconfont-v3 saasicon-trash" @click="deleteSpecial(item.webinar_id)"></i>
+                  <i class="iconfont-v3 saasicon_move"></i> -->
                 </div>
               </div>
             </draggable>
@@ -160,6 +168,7 @@ import upload from '@/components/Upload/main';
 import VEditor from '@/components/Tinymce';
 import Env from "@/api/env";
 import ChoseActives from './components/choseLiveList'
+import { sessionOrLocal } from "@/utils/utils";
 
 export default {
   components: {
@@ -199,6 +208,7 @@ export default {
       subject_id: '',
       subjectInfo: {
       },
+      userId:JSON.parse(sessionOrLocal.get("userId")),
       loading: false,
       webinarIds: [],
       rules: {
@@ -391,9 +401,17 @@ export default {
           if(url == 'subjectEdit') {
             data.id = this.subject_id
           }
+          this.$fetch(url, data).then(res=>{
+            if (!this.$route.query.id) {
+              let refer = this.$route.query.refer || 2
+              this.$vhall_paas_port({
+                k: 100489,
+                data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: refer, s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
 
-          this.$fetch(url, this.$params(data)).then(res=>{
             if(res.code == 200) {
+              this.setReportData(webinar_ids.length)
               this.subject_id = res.data.subject_id;
               this.$message({
                 message: this.$route.query.id ? '编辑成功' : `创建成功`,
@@ -435,6 +453,30 @@ export default {
           return false;
         }
       });
+    },
+    setReportData(len) {
+      if (this.formData.imageUrl) {
+        this.$vhall_paas_port({
+          k: 100498,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.$vhall_paas_port({
+        k: this.formData.reservation ? 100499 : 100500,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: this.formData.hot ? 100501 : 100502,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: this.formData.home ? 100503 : 100504,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: 100505,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {vip:len}, ref_url: '', req_url: ''}
+      })
     },
     // 判断是否填写数据
     isContent() {
@@ -488,6 +530,10 @@ export default {
               this.formData.selectedActives.splice(index, 1);
             }
           })
+          this.$vhall_paas_port({
+            k: 100507,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
         }).catch(() => {
           this.$message({
             message:  `已取消删除`,
@@ -498,8 +544,29 @@ export default {
           });
         });
     },
+    // 跳转活动页面
+    goWebinarSpecial(id, state, player) {
+      this.$vhall_paas_port({
+        k: 100508,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      if(player == 1) {// flash
+        let href = `${process.env.VUE_APP_E_COMPANY_URL}/auth/check-token?after_login=mywebinar/edit?id=${id}&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`
+        window.open(href, '_blank');
+      } else {
+        let path = state === 4 ? '/live/vodEdit/' : '/live/edit/';
+        const { href } = this.$router.resolve({path: `${path}${id}`, query: {type: 2 }});
+        window.open(href, '_blank');
+      }
+    },
     dragStart(e) {
       console.log('vhall saas Event 拖动开始::', e)
+    },
+    updateDrag(e) {
+      this.$vhall_paas_port({
+        k: 100506,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     dragEnd(e) {
       console.log('vhall saas Event 拖动结束::', e)
@@ -571,6 +638,16 @@ export default {
     }
     .el-button.is-round{
       padding: 10px 23px;
+    }
+  }
+  /* 图片上传 */
+  .upload__avatar {
+    /deep/.el-upload--picture-card {
+      height: 180px;
+      border: 1px solid #CCCCCC;
+    }
+    /deep/.box > div {
+      height: 180px;
     }
   }
  /* .editBox {
@@ -651,6 +728,11 @@ export default {
         text-overflow: ellipsis;
         overflow: hidden;
         word-break: break-all;
+        cursor: pointer;
+        color: #3562FA;
+        &:hover{
+          color: #FB3A32;
+        }
       }
       &-status{
         width: 88px;
@@ -664,6 +746,9 @@ export default {
           font-size: 20px;
           margin: 0 5px;
           cursor: pointer;
+          &:hover{
+            color: #FB3A32;
+          }
         }
       }
     }

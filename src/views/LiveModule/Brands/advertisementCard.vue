@@ -6,7 +6,7 @@
     <div class="advertisement-main">
       <div class="search-data" v-show="total || isSearch">
         <el-button size="medium" class="length104" type="primary" @click="createAdvise()" round>创建广告</el-button>
-        <el-button size="medium" class="head-btn length104 transparent-btn" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
+        <el-button size="white-medium" class="head-btn length104 transparent-btn" round @click="createCenter()" v-if="$route.path !='/material/advertCard'">资料库</el-button>
         <el-button size="medium" class="head-btn length104 transparent-btn" round @click="allDelete(null)" :disabled="!adv_ids.length">批量删除</el-button>
         <VhallInput
           class="search-tag"
@@ -72,6 +72,7 @@ export default {
        {
           label: '图片',
           key: 'img_url',
+          width: 170
         },
         {
           label: '标题',
@@ -80,10 +81,12 @@ export default {
         {
           label: '链接',
           key: 'url',
+          customTooltip: true
         },
         {
           label: '创建时间',
           key: 'created_at',
+          width: 170
         }
       ],
       tableRowBtnFun:[
@@ -104,11 +107,20 @@ export default {
     noData,
     beginPlay
   },
+  created() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
+  },
   mounted() {
     this.getAdvTableList();
   },
   methods: {
     searchAdvTableList() {
+      if (this.paramsObj.keyword) {
+        this.$vhall_paas_port({
+          k: this.$route.params.str ? 100288 : 100555,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getAdvTableList('search')
     },
     getAdvTableList(param) {
@@ -139,9 +151,9 @@ export default {
       that.$refs.adviseSonChild.dialogVisible = true;
     },
     delete(that, { rows }) {
-      that.deleteConfirm(rows.adv_id);
+      that.deleteConfirm(rows.adv_id, 2);
     },
-    deleteConfirm(id) {
+    deleteConfirm(id, index) {
       this.$confirm('是否删除当前广告？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -154,6 +166,16 @@ export default {
           webinar_id: this.$route.params.str
         })).then(res => {
           if (res && res.code === 200) {
+            let k = 0
+            if (this.$route.params.str) {
+              k = index == 1 ? 100285 : 100284
+            } else {
+              k = index == 1 ? 100554 : 100553
+            }
+            this.$vhall_paas_port({
+              k: k,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: `删除成功`,
               showClose: true,
@@ -187,7 +209,7 @@ export default {
     },
     allDelete(id) {
       id = this.adv_ids.join(',');
-      this.deleteConfirm(id);
+      this.deleteConfirm(id, 1);
     },
     changeTableCheckbox(val) {
       console.log(val);
@@ -214,7 +236,7 @@ export default {
   }
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .advert-card-list {
   .layout--right--main();
   .padding-table-list();
@@ -276,5 +298,8 @@ export default {
       margin: 0;
     }
   }
+}
+/deep/ .el-table .cell {
+  padding-left: 10px;
 }
 </style>

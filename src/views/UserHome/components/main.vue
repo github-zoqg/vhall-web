@@ -44,7 +44,7 @@
               <span class="hot" v-if="item.hide_pv > 0">
                  <i class="iconfont-v3 saasicon_redu"> {{ item.pv | formatNum}}</i>
               </span>
-              <a :href="item.share_link" target="_blank" v-if="tabType === 'live' ? item.img_url : item.cover">
+              <a :href="toPageHandle(item)" target="_blank" v-if="tabType === 'live' ? item.img_url : item.cover">
                 <img :src="tabType === 'live' ? item.img_url : item.cover" alt="" />
               </a>
             </div>
@@ -109,11 +109,21 @@ export default {
     // 切换选项卡
     handleClick(tab, event) {
       console.log(tab, event);
+      this.$vhall_paas_port({
+        k: this.tabType === 'live' ? 100801 : 100802,
+        data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.query.keyword = '';
       this.searchHandle();
     },
     // 查询
     searchHandle() {
+      if (this.query.keyword) {
+        this.$vhall_paas_port({
+          k: 100803,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.query.pos = 0;
       this.query.pageNumber = 1;
       this.getDataList();
@@ -142,7 +152,7 @@ export default {
         order_type: 1, // 排序规则 1 按照创建时间排序 2 按照最后直播时间排序
         webinar_states: this.liveStatus, // 直播状态 默认为0 可以传入多个值 使用逗号分隔  0 全部 2 预告 1 直播 3 结束 5 回放 4 点播
         is_private: 0, // 展示所有公开的
-        need_flash: 0 // 是否需要flash数据 0 否 1 是liveStatus
+        need_flash: 1 // 是否需要flash数据 0 否 1 是liveStatus
       };
       this.loading = true;
       this.$fetch('liveList', this.$params(params), {
@@ -152,7 +162,7 @@ export default {
         if (res && res.code === 200) {
           let list = res.data.list;
           list.map(item => {
-            item.share_link = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/watch/${item.webinar_id}`
+            item.share_link = `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${item.webinar_id}`
           });
           this.dataList = list;
           this.tabList[0].total = res.data.total;
@@ -177,7 +187,8 @@ export default {
         limit: this.query.limit,
         title: this.query.keyword,
         is_private: 0, // 展示所有公开的
-        order_type: 1 // 排序规则 1 按照创建时间排序 2 按照最后直播时间排序
+        order_type: 1, // 排序规则 1 按照创建时间排序 2 按照最后直播时间排序
+        // need_flash: 1  个人主页不能展示双语专题
       };
       this.loading = true;
       this.$fetch('subjectList', this.$params(params), {
@@ -473,7 +484,7 @@ export default {
         height: 50px;
         width: 100%;
         /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
-        background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.2));
+        background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.6));
         bottom: 0px;
         left: 0px;
         color: #fff;

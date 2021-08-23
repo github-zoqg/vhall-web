@@ -8,7 +8,7 @@
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
       <el-button type="primary" size="medium" round class="head-btn set-upload" @click="addQuestion">创建问卷</el-button>
-      <el-button round  @click="dataBase" class="transparent-btn" size="medium">资料库</el-button>
+      <el-button round  @click="dataBase" class="transparent-btn" size="white-medium">资料库</el-button>
       <el-button round class="transparent-btn" @click="deleteAll(null)" size="medium" :disabled="!selectChecked.length">批量删除</el-button>
       <div class="inputKey">
         <VhallInput v-model="keyword" v-clearEmoij placeholder="请输入问卷名称"  @keyup.enter.native="searchTableList" maxlength="50" @clear="searchTableList" clearable>
@@ -32,28 +32,17 @@
       <div class="show-question" @click="isShowQuestion = false">
         <div class="show-main" @click.stop="isShowQuestion=true">
           <span class="close-btn"><i class="el-icon-close" @click.stop="isShowQuestion=false"></i></span>
-          <el-scrollbar>
+          <vhscroll>
             <div class="question_main">
               <pre-question  :questionId="questionId"></pre-question>
+              <div class="submit-footer">
+                <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
+              </div>
             </div>
-          </el-scrollbar>
-          <!-- <pre-question  :questionId="questionId"></pre-question> -->
-          <div class="submit-footer">
-            <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
-          </div>
+          </vhscroll>
         </div>
       </div>
     </template>
-    <!-- <template v-if="isShowQuestion">
-      <el-dialog class="vh-dialog" title="问卷预览" :visible.sync="isShowQuestion"  width="50%" center
-      :close-on-click-modal=false
-      :close-on-press-escape=false>
-        <pre-question   :questionId="questionId"></pre-question>
-        <div class="submit-footer">
-          <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
-        </div>
-      </el-dialog>
-    </template> -->
     <base-question ref="dataBase" @getTableList="getTableList"></base-question>
     <begin-play :webinarId="$route.params.str"></begin-play>
   </div>
@@ -65,6 +54,7 @@ import preQuestion from '@/components/Question/preQuestion';
 import baseQuestion from './components/questionBase';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import beginPlay from '@/components/beginBtn';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: "question",
   data() {
@@ -73,6 +63,7 @@ export default {
       isSearch: false, //是否是搜索
       selectChecked: [],
       keyword: '',
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       loading: true,
       isShowQuestion: false,
       questionId: '',
@@ -80,6 +71,7 @@ export default {
         {
           label: '问卷名称',
           key: 'title',
+          customTooltip: true
         },
         {
           label: '更新时间',
@@ -115,6 +107,12 @@ export default {
       methodsCombin[val.type](this, val);
     },
     searchTableList() {
+      if (this.keyword) {
+        this.$vhall_paas_port({
+          k: 100342,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList('search')
     },
     getTableList(params) {
@@ -138,11 +136,19 @@ export default {
     // 预览
     preview(that, {rows}) {
       console.log('预览', rows);
+      that.$vhall_paas_port({
+        k: 100341,
+        data: {business_uid: that.userId, user_id: '', webinar_id: that.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       that.isShowQuestion = true;
       that.questionId = rows.question_id;
     },
     // 复制
     cope(that, {rows}) {
+      that.$vhall_paas_port({
+        k: 100336,
+        data: {business_uid: that.userId, user_id: '', webinar_id: that.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       let params = {
         survey_id: rows.question_id,
         webinar_id: that.$route.params.str,
@@ -200,9 +206,9 @@ export default {
     },
     // 删除
     del(that, {rows}) {
-      that.deleteConfirm(rows.question_id);
+      that.deleteConfirm(rows.question_id, 2);
     },
-    deleteConfirm(id) {
+    deleteConfirm(id, index) {
       this.$confirm('删除后，此问卷将无法使用，确认删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -211,6 +217,10 @@ export default {
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.$fetch('deleteLiveQuestion', {survey_ids: id, webinar_id: this.webinarId}).then(res => {
+            this.$vhall_paas_port({
+              k: index === 1 ? 100338 : 100337,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             if (res.code == 200) {
               this.$message({
                 message: `删除成功`,
@@ -251,7 +261,7 @@ export default {
           });
         } else {
           id = this.selectChecked.join(',');
-          this.deleteConfirm(id);
+          this.deleteConfirm(id, 1);
         }
     },
     // 选中
@@ -329,19 +339,21 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, .3);
+    background: rgba(0, 0, 0, .5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     .show-main{
-      position: absolute;
-      top: 48%;
-      left: 50%;
+      height: 90%;
+      border-radius: 4px;
       background: #fff;
-      transform: translate(-50%, -50%);
-      width: 760px;
-      padding-bottom: 24px;
-      // padding: 24px 32px;
+      position: relative;
+      z-index: 101;
       .question_main{
-        max-height: 700px;
+        // max-height: 550px;
         position: relative;
+        width: 760px;
+        padding-bottom: 24px;
       }
       .close-btn{
         z-index: 100;

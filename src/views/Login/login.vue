@@ -54,6 +54,7 @@
             :type="isPassWordType ? 'password' : 'text'"
             auto-complete="off"
             onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]/g,'')"
+            @keyup.enter.native="loginAccount"
             v-model.trim="loginForm.password">
             <span slot="suffix" @click="passWordType" class="closePwd">
               <icon class="icon" icon-class="saaseyeclose_huaban1" v-show="isPassWordType"></icon>
@@ -114,12 +115,13 @@
                 :placeholder="!isLoginPasswordFocus1 ? '动态密码' : ''"
                 @focus="handleFocus('isLoginPasswordFocus1')"
                 @blur="handleBlur('isLoginPasswordFocus1')"
+                @keyup.enter.native="loginDynamic"
                 clearable
                 :maxlength="6"
                 auto-complete="off"
                 v-model.trim="dynamicForm.dynamic_code">
                 <template slot="append">
-                  <span @click="getDyCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
+                  <span @click="time == 60 && getDyCode()" :class="showCaptcha && isValidaLoginPhone ? 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
                 </template>
               </el-input>
             </div>
@@ -171,7 +173,7 @@
                   auto-complete="off"
                   v-model="registerForm.code">
                   <template slot="append">
-                    <span @click="getRegisterCode()" :class="showCaptcha ? time < 60 ? 'isSend' : 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
+                    <span @click="time == 60 && getRegisterCode()" :class="showCaptcha && isValidaregisterPhone ? 'isLoginActive'  : ''">{{ time == 60 ? '获取验证码' : `获取验证码(${time}s)` }}</span>
                   </template>
                 </VhallInput>
               </div>
@@ -182,6 +184,7 @@
                 clearable
                 @focus="handleFocus('isPasswordFocus')"
                 @blur="handleBlur('isPasswordFocus')"
+                @keyup.enter.native="registerAccount"
                 :placeholder="!isPasswordFocus ? '设置密码（6-30个字符）' : ''"
                 :maxlength="30"
                 auto-complete="off"
@@ -211,11 +214,12 @@
   </div>
 </template>
 <script>
-import {sessionOrLocal} from "@/utils/utils";
+import {sessionOrLocal, getQueryString} from "@/utils/utils";
 import Cookies from 'js-cookie'
 import footerSection from '../../components/Footer/index';
 import Env from "@/api/env";
 import pwdinput from './components/pwdInput'
+import { JSEncrypt } from 'jsencrypt'
 export default {
   components: {
     footerSection,
@@ -224,13 +228,16 @@ export default {
   data() {
     var validatePhone = (rule, value, callback) => {
       // this.registerText = '';
+      this.isValidaregisterPhone = false;
       if (value === '') {
         callback(new Error('请输入手机号'));
       } else {
         if (!(/^1[0-9]{10}$/.test(value))) {
           callback(new Error('请输入正确的手机号'));
+        } else {
+          this.isValidaregisterPhone = true;
+          callback();
         }
-        callback();
       }
     };
     var validAccout = (rule, value, callback) => {
@@ -251,6 +258,7 @@ export default {
     };
     var validateLoginPhone = (rule, value, callback) => {
       this.errorMsgShow = '';
+      this.isValidaLoginPhone = false;
       if (value === '') {
         callback(new Error('请输入手机号'));
       } else {
@@ -261,6 +269,7 @@ export default {
             if (!res.data.account_exist) {
               callback(new Error('该手机号未注册，请先注册'));
             } else {
+              this.isValidaLoginPhone = true;
               callback();
             }
           }).catch(res => {
@@ -297,6 +306,12 @@ export default {
       registerRules: {
         phone: [
           { validator: validatePhone, trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入短信验证码', trigger: 'blur' }
         ]
       },
       loginRules: {
@@ -319,6 +334,8 @@ export default {
       mobileKey: '', // 云盾值
       captcha: null, // 云盾本身
       errorMsgShow: '',
+      isValidaLoginPhone: false,
+      isValidaregisterPhone: false,
       time: 60,
       isActive: 1,
       isOpenOther: true
@@ -330,7 +347,12 @@ export default {
       this.registerText = '';
       this.errorText = '';
       this.errorMsgShow = '';
+      this.isValidaregisterPhone = false;
+      this.isValidaLoginPhone = false;
     }
+  },
+  created() {
+    this.judgeIswap()
   },
   mounted() {
     this.$nextTick(() => {
@@ -338,6 +360,24 @@ export default {
     });
   },
   methods: {
+    // 手机适配
+    judgeIswap() {
+      const uA = navigator.userAgent.toLowerCase();
+      const ipad = uA.match(/ipad/i) == "ipad";
+      const iphone = uA.match(/iphone os/i) == "iphone os";
+      const midp = uA.match(/midp/i) == "midp";
+      const uc7 = uA.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";
+      const uc = uA.match(/ucweb/i) == "ucweb";
+      const android = uA.match(/android/i) == "android";
+      const windowsce = uA.match(/windows ce/i) == "windows ce";
+      const windowsmd = uA.match(/windows mobile/i) == "windows mobile";
+      if (!(ipad || iphone || midp || uc7 || uc || android || windowsce || windowsmd)) {
+        // PC 端
+      }else{
+        // 移动端
+        document.getElementById('app').style.minWidth = 'auto'
+      }
+    },
     handleFocus(key) {
       this[key] = true;
     },
@@ -432,10 +472,44 @@ export default {
         });
       });
     },
-    login(params) {
+    getLoginKey() {
+      return new Promise((resolove, reject) => {
+        this.$fetch('getLoginKey').then(res => {
+          console.log(res)
+          if (res.code === 200) {
+            this.loginKey = res.data
+          }
+          resolove()
+        })
+      })
+    },
+    handleEncryptPassword(password) {
+      let retPassword = ''
+      // 新建JSEncrypt对象
+      let encryptor = new JSEncrypt();
+      // 设置公钥
+      encryptor.setPublicKey(this.loginKey.public_key);
+      // 加密数据
+      retPassword = encryptor.encrypt(password)
+      retPassword = retPassword.replace(/\+/g, '-').replace(/\//g, '_')
+      while(retPassword[retPassword.length - 1] === '=') {
+        retPassword = retPassword.substr(0,retPassword.length-1)
+      }
+      return retPassword
+    },
+    async login(params) {
+      params = JSON.parse(JSON.stringify(params))
       params.captcha = this.mobileKey;
       params.remember = this.remember ? 1 : 0;
-      this.$fetch('loginInfo', this.$params(params)).then(res => {
+      if (this.isActive == 1) {
+        await this.getLoginKey()
+        params.password = this.handleEncryptPassword(params.password)
+        params.uuid = this.loginKey.uuid
+      }
+      let retParams = this.$params(params)
+      this.$fetch('loginInfo', {
+        ...retParams,
+      }).then(res => {
         this.mobileKey = '';
         this.errorText = '';
         this.errorMsgShow = '';
@@ -448,12 +522,19 @@ export default {
         // 用户登录完成后，用户ID写入Cookie
         Cookies.set('gray-id', res.data.user_id)
         // 登录完成后，获取当前用户的权限
-        this.$fetch('planFunctionGet', {}).then(vRes => {
+        this.$fetch('planFunctionGet', {}, {
+          'gray-id': res.data.user_id
+        }).then(vRes => {
           let permissions = vRes.data.permissions;
           if(permissions) {
             // 设置全部权限
             sessionOrLocal.set('SAAS_VS_PES', permissions, 'localStorage');
-            this.$router.push({path: '/'});
+            let isOld = localStorage.getItem('isOld')
+            if(getQueryString('form') && getQueryString('form') == 1 ){
+              this.$router.push({path: '/', query:{'form': 1}});
+            }else{
+              this.$router.push({path: '/'});
+            }
           } else {
             this.$message({
               message: vRes.msg || `用户权限获取失败`,
@@ -480,6 +561,7 @@ export default {
             this.errorMsgShow = res.msg || '登录失败！';
           }
           sessionOrLocal.set('token', '', 'localStorage');
+          this.mobileKey = '';
           this.callCaptcha();
       })
     },
@@ -489,8 +571,10 @@ export default {
          this.$fetch('loginCheck', {account: this.registerForm.phone}).then(res => {
           if (res.data.account_exist) {
             this.registerText = '该手机号已注册';
+             this.isValidaregisterPhone = false;
           } else {
             this.registerText = '';
+             this.isValidaregisterPhone = true;
           }
         }).catch(res => {
           this.registerText = res.msg || '注册失败';
@@ -510,23 +594,35 @@ export default {
       }
     },
     registerAccount() {
-      this.registerForm.captcha = this.mobileKey;
-      this.registerForm.source = this.$route.query.source || 1;
-      this.$fetch('register', this.registerForm).then(res => {
-        this.$message({
-          message:  `注册成功`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.mobileKey = '';
-        setTimeout(() => {
-          this.$router.push({path:'/login'})
-        }, 1000)
-      }).catch(res => {
-        console.log(res);
-        this.registerText = res.msg || '注册失败';
+      this.$refs.registerForm.validate(async (valid) => {
+        if (valid) {
+          let params = JSON.parse(JSON.stringify(this.registerForm))
+          await this.getLoginKey()
+          params.password = this.handleEncryptPassword(params.password)
+          params.captcha = this.mobileKey;
+          params.source = this.$route.query.source || 1;
+          params.uuid = this.loginKey.uuid
+          this.$fetch('register', params).then(res => {
+            this.$message({
+              message:  `注册成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.mobileKey = '';
+            setTimeout(() => {
+              this.$router.push({path:'/login'})
+            }, 1000)
+          }).catch(res => {
+            console.log(res);
+            this.callCaptcha();
+            this.mobileKey = '';
+            this.registerText = res.msg || '注册失败';
+          });
+        } else {
+          return false;
+        }
       });
     },
     /**
@@ -539,6 +635,8 @@ export default {
           this.countDown();
         }, 1000);
       } else {
+        this.mobileKey = '';
+        this.callCaptcha();
         this.time = 60;
       }
     },
@@ -594,7 +692,7 @@ export default {
 .wapper {
   width: 100%;
   height: 100%;
-  min-height: 600px;
+  min-height: 800px;
   background-color: #fff;
   position: relative;
   font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif!important;
@@ -658,19 +756,14 @@ export default {
   width: 50%;
   height: 100%;
   background-color: #fff;
-  position: relative
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-box {
   width: 340px;
-  position: absolute;
-  left: 50%;
-  top: 51%;
-  margin-left: -170px;
-  transform: translateY(-50%);
-  &.register {
-    top: 48%;
-  }
 }
 
 .login-box h3 {
@@ -771,11 +864,11 @@ export default {
     border-radius: unset;
     padding: 0 0;
     &:hover {
-      border-bottom-color: #FB3A32;
+      border-bottom-color: #666;
     }
     &:active {
       color: #1A1A1A;
-      border-color: #FB3A32;
+      border-color: #666;
     }
   }
   input::-webkit-input-placeholder {
@@ -826,74 +919,60 @@ export default {
       cursor: pointer;
     }
   }
-  &#captcha-box {
+}
+#captcha-box {
+  .captcha {
     // 云盾样式重置
-    /deep/ .yidun {
+   /deep/.yidun_tips {
+      color: #999999;
+      line-height: 38px!important;
+      .yidun_tips__text {
+        vertical-align: initial;
+      }
+    }
+    /deep/.yidun_slider {
+      .yidun_slider__icon {
+        background-image: url(./images/icon-slide1.png) !important;
+        background-size: 28px 20px;
+        background-position: center;
+        margin-top: -5px;
+      }
+      &:hover {
+        .yidun_slider__icon {
+          background-image: url(./images/icon-slide.png) !important;
+        }
+      }
+    }
+    /deep/ .yidun--success {
       .yidun_control {
-        border: 1px solid #e2e2e2;
-        background-color: #ffffff;
-        .yidun_tips {
-          height: 38px;
-          line-height: 38px!important;
-          .yidun_tips__text {
-            color: #888888;
-            font-size: 14px;
-          }
+        .yidun_slider__icon {
+          background-image: url(./images/icon-succeed.png)!important;
         }
         .yidun_slider {
           .yidun_slider__icon {
-            background-image: url(./images/icon-slide1.png);
+            background-image: url(./images/icon-succeed.png);
             background-size: 28px 20px;
             background-position: center;
           }
           &:hover {
-            // background-color: #FB3A32;
-            .yidun_slider__icon {
-              background-image: url(./images/icon-slide.png);
-            }
-          }
-        }
-        // &.yidun_control--moving {
-        //   background-color: #E2E2E2;
-        //   border-color: #FB3A32;
-        //   .yidun_slide_indicator {
-        //     border-color: #FB3A32;
-        //     background-color: #E2E2E2;
-        //   }
-        // }
-      }
-    }
-    /deep/ .yidun--success {
-      // .yidun_control--moving {
-      //   background-color: #F0F1FE!important;
-      //   .yidun_slide_indicator {
-      //     background-color: #F0F1FE!important;
-      //   }
-      // }
-      .yidun_control {
-        // border-color: #3562FA!important;
-        .yidun_slider {
-          .yidun_slider__icon {
-            background-image: url(./images/icon-succeed.png);
-          }
-          &:hover {
-            // background-color: #FB3A32;
             .yidun_slider__icon {
               background-image: url(./images/icon-succeed.png);
+              background-size: 28px 20px;
+              background-position: center;
             }
           }
         }
       }
     }
-    // .yidun.yidun--light.yidun--success.yidun--jigsaw {
-    //   .yidun_control .yidun_slider {
-    //     background-color: #3562FA;
-    //   }
-    //   .yidun_slide_indicator {
-    //     border-color: #3562FA;
-    //     background-color: #E2E2E2;
-    //   }
-    // }
+    .yidun.yidun--light{
+      .yidun_feedback{
+        background-position: 0px -240px;
+        height: 30px;
+      }
+      .yidun_refresh{
+        background-position: 0px -339px;
+      }
+    }
   }
 }
 .form-items {
@@ -1056,30 +1135,29 @@ export default {
     position: absolute;
     bottom: 3px;
     right: 0;
-    cursor: pointer;
     span {
       border: 0;
       position: absolute;
       bottom: 3px;
       right: 0;
       width: 103px;
-      background: #E8E8E8;
+      background: #F2F2F2;
       border-radius: 2px;
       font-size: 13px;
       font-weight: 400;
       color: #222222;
-      cursor: pointer;
       padding: 8px 0;
-      cursor: pointer;
       line-height: 18px;
       text-align: center;
+      cursor: not-allowed;
       &.isLoginActive{
         background: #FB3A32;
         border-radius: 2px;
         color: #FFFFFF;
+        cursor: pointer;
       }
       &.isSend {
-        background: #E8E8E8;
+        background: #F2F2F2;
         color: #222222;
       }
     }

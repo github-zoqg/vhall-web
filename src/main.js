@@ -3,20 +3,25 @@ import Vue from 'vue'
 import App from './App.vue';
 import router from './router';
 
+import clipboard from 'clipboard'
 // import VueTinymce from '@packy-tang/vue-tinymce/src/main';
 
 import vuescroll from 'vuescroll';
-
+import PaasPort from '@vhall/paas-report-data'
 // You can set global config here.
 Vue.use(vuescroll, {
   ops: {
     // The global config
     bar: {
       background: 'rgba(0,0,0,0.3)'
-    }
+    },
+    /* scrollPanel: {
+      initialScrollY: '100%'
+    } */
   },
   name: 'vhscroll' // customize component name, default -> vueScroll
 });
+Vue.prototype.$clipboard = clipboard
 
 
 
@@ -27,7 +32,7 @@ import ELEMENT from 'element-ui';
 import '@/common/css/theme/index.css';
 import '@/components/Icon/index';
 // 七巧板组件库，直播间内使用
-import vhallSaas from './tangram/buTemplates/index.js';
+// import vhallSaas from './tangram/buTemplates/index.js';
 // 页面加载进度样式
 import 'nprogress/nprogress.css';
 // 系统通用重置样式
@@ -56,13 +61,13 @@ Vue.prototype.$img = require('./common/images/small.png');
 Vue.prototype.$checkUploadType = checkUploadType; // 验证上传格式
 Vue.use(ELEMENT);
 import './utils/message';
-Vue.use(vhallSaas, {
-  config: {
-    playbill: [`/api/webinar/v1/webinar/adv-info`, 'POST'] // 开屏海报
-  },
-  baseUrl: process.env.VUE_APP_BASE_URL,
-  buHost: "https://t.e.vhall.com"
-});
+// Vue.use(vhallSaas, {
+//   config: {
+//     playbill: [`/api/webinar/v1/webinar/adv-info`, 'POST'] // 开屏海报
+//   },
+//   baseUrl: process.env.VUE_APP_BASE_URL,
+//   buHost: "https://e.vhall.com"
+// });
 
 moment.locale(); // zh-cn
 window.mom = moment
@@ -108,6 +113,12 @@ Vue.use(VueI18n);
 Vue.use(loadMore)
 Vue.use(tooltipMove)
 Vue.use(clearEmoij)
+Vue.use(PaasPort, {
+  app_id: process.env.VUE_APP_NODE_ENV === 'production' ? '15df4d3f' : 'fd8d3653',
+  pf: 8,
+  noConsole: false,
+  isProduction: process.env.VUE_APP_NODE_ENV === 'production' ? true : false
+})
 const i18n = new VueI18n({
   locale: ['en', 'cn'].includes(getParams('lang')) ? getParams('lang') : 'cn', // 语言标识
   messages: {
@@ -134,6 +145,10 @@ let clientTokenVal = clientToken('token');
 if(clientTokenVal) {
   sessionOrLocal.set('token', clientTokenVal , 'localStorage');
   sessionOrLocal.set('platform', clientToken('platform'), 'localStorage');
+}
+let outUrlVal = clientToken('out_url');
+if(outUrlVal) {
+  sessionOrLocal.set('SAAS_V3_CTRL_OUT', outUrlVal , 'localStorage');
 }
 window.vm = new Vue({
   router,

@@ -34,6 +34,8 @@
                   :on-progress="uploadProcess"
                   :on-error="uploadError"
                   :on-preview="uploadPreview"
+                  :widthImg="130"
+                  :heightImg="130"
                   @handleFileChange="handleFileChange"
                   :before-upload="beforeUploadHnadler"
                   @delete="form.img = '', domain_url = ''">
@@ -84,11 +86,11 @@
                     <img :src="domain_url" alt=""  v-if="domain_url"/>
                     <img src="../../../common/images/sys/default_code.jpeg" alt="" v-if="!domain_url"/>
                   </div>
-                  <p class="gzh_txt">扫码关注公众号</p>
+                  <p class="gzh_txt">使用微信“扫一扫” 关注公众号</p>
                 </div>
               </div>
               <div class="gzh_pc">
-                <img class="gzh_bg_default" src="../../../common/images/official/pc_yl@2x.png" alt=""/>
+                <img class="gzh_bg_default" src="../../../common/images/official/pc@2x.png" alt=""/>
               </div>
             </div>
           </div>
@@ -108,6 +110,7 @@
                     <img :src="domain_url" alt=""  v-if="domain_url" />
                     <img src="../../../common/images/sys/default_code.jpeg" v-if="!domain_url"/>
                   </div>
+                  <p class="gzh_txt">长按识别二维码</p>
                 </div>
             </div>
               <!-- 非默认图，有文字
@@ -133,6 +136,7 @@ export default {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       domain_url: '',
       imgShowUrl: '',
+      userId: '',
       status: null,
       alertType: null,
       switchType: 'app',
@@ -181,6 +185,7 @@ export default {
     beginPlay
   },
   mounted() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"))
     this.getData();
   },
   methods: {
@@ -192,6 +197,10 @@ export default {
         status: status, //是否展示公众号/是否展示开屏海报：0开启1关闭
       };
       this.$fetch('setPublicInfo', params).then(res => {
+        this.$vhall_paas_port({
+          k: status == 1 ? 100290 : 100289,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           showClose: true,
           message: status > 0 ? '关闭成功' : '开启成功',
@@ -265,6 +274,10 @@ export default {
       this.$refs.officialForm.validate((valid) => {
         if (valid) {
           this.$fetch('setPublicInfo', params).then(res => {
+            this.$vhall_paas_port({
+              k: type == 1 ? 100292 : 100291,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: '保存成功',
               showClose: true,
@@ -465,9 +478,10 @@ export default {
       position: relative;
       img {
         width: 400px;
-        height: 274px;
+        height: 230px;
         display: block;
         margin: 24px auto 0;
+        border-radius: 4px;
       }
       .pc-poster-wrap{
         position: absolute;
@@ -526,10 +540,11 @@ export default {
         top: 69px;
         right: calc(50% - 62px);
         width: 124px;
-        height: 138px;
+        // height: 138px;
         background: #FFFFFF;
         border-radius: 4px;
         text-align: center;
+        padding-bottom: 10px;
       }
       p {
         text-align: right;
@@ -551,11 +566,13 @@ export default {
         }
       }
       .gzh_txt {
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 400;
         color: #1A1A1A;
-        line-height: 20px;
+        line-height: 16px;
         text-align: center;
+        width: 100%;
+        padding: 0 10px;
       }
     }
     .official-app{
@@ -701,16 +718,20 @@ export default {
       .gzh_txt {
         font-size: 14px;
         font-weight: 400;
-        color: #FFFFFF;
+        color: #1a1a1a;
         line-height: 20px;
         text-align: center;
-        margin-top: 9px;
+        padding-top: 4px;
+        // margin-top: 9px;
       }
     }
   }
   .img-box{
     width: 100%;
     height: 140px;
+    /deep/.el-upload--picture-card{
+      height: 130px;
+    }
     // .picInco{
     //   height: 40px;
     // }

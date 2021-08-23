@@ -216,12 +216,17 @@ export default {
         this.query.pageNumber = row.pageNum;
       }
       let params = {
-        start_time: this.timeStr[0] || '',
-        end_time: this.timeStr[1] || '',
         file_name: this.file_name || '',
         limit: this.query.limit,
         pos: this.query.pos,
       };
+      if(this.timeStr && this.timeStr[0] && this.timeStr[1]) {
+        params.start_time = this.timeStr[0] || '';
+        params.end_time = this.timeStr[1] || '';
+      } else {
+        params.start_time = ''
+        params.end_time = ''
+      }
       this.$fetch('downloadedList', this.$params(params)).then(res =>{
         let dao =  res && res.code === 200 && res.data ? res.data : {
           total: 0,
@@ -266,7 +271,7 @@ export default {
             platform: sessionOrLocal.get('platform', 'localStorage') || 17,
             token: sessionOrLocal.get('token', 'localStorage') || '',
             'request-id': uuidV1(),
-            'interact-token': sessionStorage.getItem('interact_token') || null
+            // 'interact-token': sessionStorage.getItem('interact_token') || null
           };
           let option = {
             method: result.data.request_method, // *GET, POST, PUT, DELETE, etc.
@@ -293,11 +298,11 @@ export default {
             console.log(e);
           });
           // 重新拉取数据
-          this.search();
+          that.search();
         }
       } catch (e) {
         console.log(e);
-        this.$message({
+        that.$message({
           message: e.msg || '重新生成失败',
           showClose: true,
           // duration: 0,
@@ -382,6 +387,7 @@ export default {
           accountId: result.data.accountId || '', // 第三方用户ID
           channelId: result.data.channelId || '', // 频道id 必须
           token: result.data.paasAccessToken || '', // 必须， token，初始化接口获取
+          hide: true
         }
         window.VhallChat.createInstance(option, (event) => {
           this.$Chat = event.message; // 聊天实例句柄

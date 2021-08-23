@@ -173,5 +173,9 @@ const browserSupport = function () {
   const shells = ['qq', 'wechat', 'uc', '2345', 'sougou', 'liebao', 'maxthon', 'baidu', '360'];
   return (((supporter === 'chrome') || (supporter === 'safari' && (parseFloat(supporterVs) >= 12.1))) && !shells.includes(shell)) && !is360();
 };
+const isBrower = function () {
+  const { supporter } = getBrowserType();
+  return supporter;
+}
 
-export { browserSupport };
+export { browserSupport, isBrower };

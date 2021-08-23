@@ -1,6 +1,19 @@
 <template>
   <div class="prize-card">
-    <pageTitle pageTitle="播放器设置"></pageTitle>
+    <pageTitle pageTitle="播放器设置">
+      <div class="title_text">
+        <p class="switch__box">
+          <el-switch
+            v-model="playerOpen"
+            active-color="#FB3A32"
+            inactive-color="#CECECE"
+            @change="closePlayerOpen"
+            :active-text="reservationDesc">
+          </el-switch>
+          <span @click="toSettingDetail">查看账号下播放器设置</span>
+        </p>
+      </div>
+    </pageTitle>
     <div class="player-set" style="min-height:741px;">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="防录屏跑马灯" name="first">
@@ -10,6 +23,7 @@
                 <el-form-item label="跑马灯">
                   <p class="switch__box">
                     <el-switch
+                      :disabled="delayStatus == 1"
                       v-model="scrolling_open"
                       active-color="#ff4949"
                       inactive-color="#ccc"
@@ -19,10 +33,10 @@
                     </el-switch>
                   </p>
                 </el-form-item>
-                <!-- <el-form-item label="显示方式">
+                <el-form-item label="显示方式">
                   <el-radio v-model="formHorse.scroll_type" :label="1" :disabled="!scrolling_open" @change="editHorseInfo">滚动</el-radio>
                   <el-radio v-model="formHorse.scroll_type" :label="2" :disabled="!scrolling_open" @change="editHorseInfo">闪烁</el-radio>
-                </el-form-item> -->
+                </el-form-item>
                 <el-form-item label="文本类型">
                   <el-radio v-model="formHorse.text_type" :label='1' :disabled="!scrolling_open" @change="editHorseInfo">固定文本</el-radio>
                   <el-radio v-model="formHorse.text_type" :label='2' :disabled="!scrolling_open" @change="editHorseInfo">固定文本+观看者ID和昵称</el-radio>
@@ -54,7 +68,7 @@
                   <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors :openSelect=true  @color="pageStyleHandle" :colorDefault="formHorse.color"></color-set>
                 </el-form-item>
                 <el-form-item label="不透明度"><el-slider v-model="formHorse.alpha" :disabled="!scrolling_open" style="width:315px" @change="editHorseInfo"></el-slider><span class="isNum">{{formHorse.alpha}}%</span></el-form-item>
-                <el-form-item label="移动速度">
+                <el-form-item label="移动速度" v-if="formHorse.scroll_type == 1">
                   <el-radio v-model="formHorse.speed" :label="10000" :disabled="!scrolling_open" @change="editHorseInfo">慢</el-radio>
                   <el-radio v-model="formHorse.speed" :label="6000" :disabled="!scrolling_open" @change="editHorseInfo">中</el-radio>
                   <el-radio v-model="formHorse.speed" :label="3000" :disabled="!scrolling_open" @change="editHorseInfo">快</el-radio>
@@ -65,8 +79,7 @@
                   <el-radio v-model="formHorse.position" :label="3" :disabled="!scrolling_open" @change="editHorseInfo">中</el-radio>
                   <el-radio v-model="formHorse.position" :label="4" :disabled="!scrolling_open" @change="editHorseInfo">下</el-radio>
                 </el-form-item>
-                <!-- v-if="formHorse.scroll_type == 1" -->
-                <el-form-item label="间隔时间" prop="interval">
+                <el-form-item label="间隔时间" prop="interval" v-if="formHorse.scroll_type == 1">
                   <el-input
                     v-model="formHorse.interval"
                     :disabled="!scrolling_open"
@@ -82,7 +95,7 @@
                 </el-form-item>
               </el-form>
             </div>
-            <div class="give-white" v-show="!scrolling_open"></div>
+            <div class="give-white" v-show="!(scrolling_open && playerOpen)" :class="playerOpen ? 'webinarTop' : 'userTop'"></div>
           </div>
         </el-tab-pane>
         <el-tab-pane label="水印设置" name="second">
@@ -92,6 +105,7 @@
                 <el-form-item label="水印">
                   <p class="switch__box">
                     <el-switch
+                      :disabled="delayStatus == 1"
                       v-model="watermark_open"
                       active-color="#ff4949"
                       inactive-color="#ccc"
@@ -110,6 +124,8 @@
                       path: 'interacts/watermark-imgs',
                       type: 'image',
                     }"
+                    :heightImg="130"
+                    :widthImg="231"
                     :on-success="uploadAdvSuccess"
                     :on-progress="uploadProcess"
                     :on-error="uploadError"
@@ -135,11 +151,11 @@
                   <span class="isNum">{{formWatermark.img_alpha}}%</span>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary length152" v-preventReClick class="common-save" :disabled="!watermark_open" @click="preWatermark">保存</el-button>
+                  <el-button type="primary length152" v-preventReClick class="common-save" :disabled="!watermark_open" @click="preWatermark(1)">保存</el-button>
                 </el-form-item>
               </el-form>
             </div>
-            <div class="give-white" v-show="!watermark_open"></div>
+            <div class="give-white" v-show="!(watermark_open && playerOpen)" :class="playerOpen ? 'webinarTop' : 'userTop'"></div>
           </div>
         </el-tab-pane>
         <el-tab-pane label="其它" name="third">
@@ -149,11 +165,12 @@
             <el-form-item label="弹幕">
               <p class="switch__box">
                 <el-switch
+                  :disabled="delayStatus == 1"
                   v-model="formOther.bulletChat"
                   active-color="#ff4949"
                   inactive-color="#ccc"
                   :active-text="bulletChatText"
-                  @change="otherOtherInfo(1)"
+                  @change="otherOtherInfo(formOther.bulletChat, 1)"
                 >
                 </el-switch>
               </p>
@@ -165,7 +182,7 @@
                   active-color="#ff4949"
                   inactive-color="#ccc"
                   :active-text="progressText"
-                  @change="otherOtherInfo(2)"
+                  @change="otherOtherInfo(formOther.progress, 2)"
                 >
                 </el-switch>
               </p>
@@ -177,13 +194,26 @@
                   active-color="#ff4949"
                   inactive-color="#ccc"
                   :active-text="doubleSpeedText"
-                  @change="otherOtherInfo(3)"
+                  @change="otherOtherInfo(formOther.doubleSpeed, 3)"
+                >
+                </el-switch>
+              </p>
+            </el-form-item>
+            <el-form-item label="自动播放">
+              <p class="switch__box">
+                <el-switch
+                  v-model="formOther.autoplay"
+                  active-color="#ff4949"
+                  inactive-color="#ccc"
+                  :active-text="autoPlayText"
+                  @change="otherOtherInfo(formOther.autoplay, 4)"
                 >
                 </el-switch>
               </p>
             </el-form-item>
           </el-form>
           </div>
+          <div class="give-white" v-show="!playerOpen" :class="playerOpen ? '' : 'userTop'"></div>
         </div>
         </el-tab-pane>
       </el-tabs>
@@ -254,12 +284,25 @@
           <!-- <div id="videoDom" v-show="showVideo"></div> -->
           <p class="show-purple-info">
             <span>提示</span>
-            <span>1. 移动端全屏播放时，跑马灯会失效</span>
-            <span>2. 安卓手机浏览器劫持可能导致跑马灯失效</span>
+            <span>1.移动端全屏播放时，跑马灯会失效</span>
+            <span>2.安卓手机浏览器劫持可能导致跑马灯失效</span>
+            <span>3.因浏览器自身策略，开启自动播放也会出现无法自动播放情况</span>
+            <span>4.无延迟直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能</span>
           </p>
-        </div>
+      </div>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
+    <div v-if="showDelay" class="delay-mask">
+      <div class="tip">
+        <div class="head"><span class="title">提示</span><span class="close" @click.stop="showDelay = false">X</span></div>
+        <div class="delay-content">
+          当前模式为无延时模式，暂不支持设置跑马灯、水印、弹幕功能。以上功能仅生效于回放状态。
+        </div>
+        <div class="btn" @click.stop="showDelay = false">
+          我知道了
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -289,9 +332,13 @@ export default {
     };
     this.$Vhallplayer = null;
     return {
+      delayStatus: 0,
+      showDelay: false,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
+      perssionWebInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
       activeName: 'first',
       isShowSpeed: false,
+      playerOpen: true,
       sliderVal: 0, // seek
       hoverLeft: 10,
       hoveVideo:false,
@@ -340,7 +387,7 @@ export default {
         text: '版权所有，盗版必究',
         position: 1,
         alpha: 100,
-        // scroll_type: 1,
+        scroll_type: 1,
         interval: 20
       },
       fontList: [],
@@ -354,13 +401,14 @@ export default {
         progress: true,
         bulletChat: false,
         doubleSpeed: false,
+        autoplay: false
       },
       prizeForm: {
         name: '',
         imageUrl: '',
       },
       videoParam: {
-        paas_record_id: '27d23478'
+        paas_record_id: process.env.VUE_APP_NODE_ENV === 'production' ? 'd57f42f4': '68e25cad'
       },
       marqueeOption: {
         enable: Boolean(this.scrolling_open),
@@ -370,7 +418,7 @@ export default {
         color: '#FFFFFF',   //  文字颜色
         interval: 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: 6000, // 跑马灯移动速度  3000快     6000中   10000慢
-        // displayType: 0,
+        displayType: 0,
         position: 1
       },
       rules: {
@@ -424,6 +472,27 @@ export default {
       }else{
         return "开启后，观看回放时播放器画面显示倍速功能";
       }
+    },
+    reservationDesc(){
+      if(this.playerOpen){
+        return '已开启，使用当前活动播放器设置';
+      }else{
+        return "开启后，将使用当前活动播放器设置";
+      }
+    },
+    autoPlayText(){
+      if(this.formOther.autoplay){
+        return '已开启，音视频自动播放';
+      }else{
+        return "开启后，音视频自动播放";
+      }
+    },
+    reservationDisable() {
+      if (this.perssionWebInfo['player_config'] > 0) {
+        return false
+      } else {
+        return true
+      }
     }
   },
   filters: {
@@ -433,12 +502,9 @@ export default {
   },
   created() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
+    this.getLiveBaseInfo()
+    this.getPermission()
     this.getFontList();
-    this.getVideoAppid();
-    this.getBasescrollingList();
-    this.getBaseWaterList();
-    // 获取其他信息
-    this.getBaseOtherList();
   },
   mounted () {
   },
@@ -449,6 +515,46 @@ export default {
     }
   },
   methods: {
+    getLiveBaseInfo() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+        if( res.code != 200 ){
+          return this.$message.warning(res.msg)
+        }
+        this.showDelay = res.data.no_delay_webinar == 1 ? true : false
+        this.delayStatus = res.data.no_delay_webinar
+        if (this.showDelay) {
+          setTimeout(() => {
+            this.formOther.bulletChat = false
+          }, 2000)
+        }
+      }).catch(res=>{
+        this.$message({
+          message: res.msg || "获取信息失败",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        console.log(res);
+      }).finally(()=>{
+      });
+    },
+    // 获取配置项
+    getPermission() {
+      this.$fetch('planFunctionGet', {webinar_id: this.$route.params.str, webinar_user_id: this.userId, scene_id: 1}).then(res => {
+        if(res.code == 200) {
+          let permissions = JSON.parse(res.data.permissions)
+          this.playerOpen = permissions['is_player_cofig'] > 0 ? true : false
+          this.getBasescrollingList();
+          this.getBaseWaterList();
+          // 获取其他信息
+          this.getBaseOtherList();
+          setTimeout(() => {
+            this.getVideoAppid();
+          }, 200)
+        }
+      }).catch(e => {});
+    },
     blurChange() {
       if (!this.formHorse.interval || this.formHorse.interval < 0) {
         this.formHorse.interval = 20;
@@ -457,6 +563,65 @@ export default {
     },
     choseSpeed() {
       this.isShowSpeed = true;
+    },
+    closePlayerOpen() {
+      if (this.reservationDisable && !this.playerOpen) {
+        this.playerOpen = true;
+        this.$alert('尊敬的用户，您的账号无此权限。如需使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询', '提示', {
+          confirmButtonText: '我知道了',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          callback: action => {}
+        });
+        return;
+      }
+      let params = {
+        webinar_id: this.$route.params.str,
+        permission_key: 'is_player_cofig',
+        status: Number(this.playerOpen)
+      };
+      console.log('当前参数传递：', params);
+      this.$fetch('planFunctionEdit', params).then(res => {
+        this.$vhall_paas_port({
+          k: this.playerOpen ? 100227 : 100228,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        this.getBasescrollingList();
+        this.getBaseWaterList();
+        this.getBaseOtherList();
+        if (!this.playerOpen){
+          this.$message({
+            message:"正在使用账号下品牌设置",
+            showClose: true,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
+        }
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `操作失败`,
+          showClose: true,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      });
+    },
+    toSettingDetail() {
+      if (this.reservationDisable) {
+        this.$alert('尊敬的用户，您的账号无此权限。如需使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询', '提示', {
+          confirmButtonText: '我知道了',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          callback: action => {}
+        });
+        return;
+      }
+      this.$vhall_paas_port({
+        k: 100229,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      const { href } = this.$router.resolve({path:'/setting/player'});
+      window.open(href, '_blank');
     },
     choseOtherSpeed(item) {
       this.isShowSpeed = false;
@@ -494,6 +659,10 @@ export default {
     // 关闭跑马灯
     closeHorseInfo() {
       if (!this.scrolling_open) {
+        this.$vhall_paas_port({
+          k: 100231,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.preFormHorse();
       }
       this.editHorseInfo();
@@ -506,56 +675,21 @@ export default {
     // 关闭水印
     openWaterMarkInfo() {
       if (!this.watermark_open) {
-        this.preWatermark();
+         this.$vhall_paas_port({
+          k: 100260,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        this.preWatermark(0);
       }
     },
     // 关闭或保存其他信息
-    otherOtherInfo(value) {
+    otherOtherInfo(value, index) {
+      let otherArr = [100266, 100268, 100270, 100272]
+      this.$vhall_paas_port({
+        k: value ? otherArr[index - 1]: otherArr[index - 1] + 1,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.preOthersOptions();
-      // 1--弹幕  2--进度条  3--倍速
-      // switch (value) {
-      //   case 1 :
-      //     if (this.formOther.bulletChat) {
-      //       let content = "弹幕已开启";
-      //       var opt = {
-      //             position: 0,     // 位置   int  0上    1中  2下  3全屏
-      //             alpha: 1,      // 透明度 int  0~1
-      //             fontsize: 15,    // 字体大小 int
-      //             color: "#000000"  // 颜色   string
-      //           }
-      //       vp.setBarrageInfo(opt ,failure=>{
-      //         console.log('failure',failure);
-      //       } )
-      //       vp.openBarrage()
-      //       setTimeout (()=>{
-      //         vp.addBarrage(content , failure=>{
-      //           console.log('failure',failure);
-      //         })
-      //       },2000)
-
-      //     } else {
-      //       vp.closeBarrage()
-      //     }
-      //     break;
-      //   case 2 :
-      //     // eslint-disable-next-line no-case-declarations
-      //     let progressContainer =  document.querySelector('.vhallPlayer-progress-container')
-      //      this.formOther.progress ? progressContainer.style.display = 'block' : progressContainer.style.display = 'none'
-      //     break;
-      //   case 3 :
-      //     // eslint-disable-next-line no-case-declarations
-      //     let list = this.$Vhallplayer.getUsableSpeed()
-      //     console.log(list, '?????????')
-      //     if (this.formOther.doubleSpeed) {
-      //       this.$Vhallplayer.setPlaySpeed(list[0])
-
-      //        document.querySelector('.vhallPlayer-speed-component').style.display = "block"
-      //     }else {
-      //       document.querySelector('.vhallPlayer-speed-component').style.display = "none"
-      //     }
-      //     break;
-      // }
-      // this.initNodePlay()
     },
     getMarqueeOptionInfo() {
       let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
@@ -568,28 +702,37 @@ export default {
         alpha: this.formHorse.alpha,    // 透明度  100 完全显示   0 隐藏
         size:this.formHorse.size,      // 文字大小
         color: this.formHorse.color || '#FFFFFF',   //  文字颜色
-        interval:this.formHorse.interval, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
+        interval:this.formHorse.scroll_type == 1 ? this.formHorse.interval : 1, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位
         speed: this.formHorse.speed || 6000, // 跑马灯移动速度  3000快     6000中   10000慢
-        // displayType: this.formHorse.scroll_type == 1 ? 0 : 1,
+        displayType: this.formHorse.scroll_type == 1 ? 0 : 1,
         position:this.formHorse.position
       }
     },
     // 获取跑马灯基本信息
     getBasescrollingList() {
-      this.$fetch('getScrolling', {webinar_id: this.$route.params.str}).then(res => {
-        if (res.code == 200 && res.data.webinar_id) {
+      let params = {
+        type: this.playerOpen ? 1 : 2,
+        webinar_id: this.playerOpen ? this.$route.params.str : ''
+      }
+      this.$fetch('getScrolling', this.$params(params)).then(res => {
+        if (res.code == 200) {
           this.formHorse = {...res.data};
-          this.$nextTick(() => {
-            this.$refs.pageThemeColors.initColor(res.data.color);
-          })
           this.scrolling_open = Boolean(res.data.scrolling_open);
+          this.getMarqueeOptionInfo()
         }
+        this.$nextTick(() => {
+          this.$refs.pageThemeColors.initColor(this.formHorse.color);
+        })
       })
     },
      // 获取水印基本信息
     getBaseWaterList() {
-       this.$fetch('getWatermark', {webinar_id: this.$route.params.str}).then(res => {
-        if (res.code == 200 && res.data.webinar_id) {
+      let params = {
+        type: this.playerOpen ? 1 : 2,
+        webinar_id: this.playerOpen ? this.$route.params.str : ''
+      }
+       this.$fetch('getWatermark', this.$params(params)).then(res => {
+        if (res.code == 200) {
           this.formWatermark = {...res.data};
           this.formWatermark.img_alpha = Number(res.data.img_alpha);
           this.domain_url = res.data.img_url;
@@ -599,11 +742,16 @@ export default {
     },
     // 获取其他基本信息
     getBaseOtherList() {
-       this.$fetch('getOtherOptions', {webinar_id: this.$route.params.str}).then(res => {
+      let params = {
+        type: this.playerOpen ? 1 : 2,
+        webinar_id: this.playerOpen ? this.$route.params.str : ''
+      }
+       this.$fetch('getOtherOptions', this.$params(params)).then(res => {
         if (res.code == 200) {
           this.formOther.bulletChat = Boolean(res.data.barrage_button);
           this.formOther.progress = Boolean(res.data.progress_bar);
           this.formOther.doubleSpeed = Boolean(res.data.speed);
+          this.formOther.autoplay = Boolean(res.data.autoplay);
           // let progressContainers =  document.querySelector('.vhallPlayer-progress-container')
           // this.formOther.progress ? progressContainers.style.display = 'block' : progressContainers.style.display = 'none'
           // this.$nextTick(()=>{
@@ -627,6 +775,7 @@ export default {
     },
     // 保存跑马灯
     preFormHorse() {
+      if (this.delayStatus == 1) return
       // 校验间隔时间的输入
       if(this.formHorse.interval > 300){
         this.$message({
@@ -641,11 +790,12 @@ export default {
       this.formHorse.interval = this.formHorse.interval || 10;
       this.formHorse.text = this.formHorse.text || '版权所有，盗版必究';
       this.formHorse.scrolling_open = Number(this.scrolling_open);
+      this.formHorse.type = 1;
       this.$fetch('setScrolling',this.$params(this.formHorse)).then(res => {
+        this.setHorseReportData()
         this.$message({
           message: this.scrolling_open ? "跑马灯开启成功" : '跑马灯关闭成功',
           showClose: true,
-          // duration: 0,
           type: 'success',
           customClass: 'zdy-info-box'
         });
@@ -653,14 +803,54 @@ export default {
         this.$message({
           message:res.msg || "保存跑马灯失败",
           showClose: true,
-          // duration: 0,
           type: 'error',
           customClass: 'zdy-info-box'
         });
       });
     },
+    // 设置跑马埋点数据
+    setHorseReportData() {
+      console.log(this.formHorse)
+      let loactionArr = [100239, 100240, 100241, 100242]
+      let fontArr = [100243, 100244, 100245, 100246, 100247, 100248, 100249, 100250, 100251, 100252, 100253, 100254, 100255, 100256]
+      if (this.scrolling_open) {
+         this.$vhall_paas_port({
+          k: 100230,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.$vhall_paas_port({
+        k: this.formHorse.scroll_type == 1 ? 100233 : 100232,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: this.formHorse.text_type == 1 ? 100234 : 100235,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: this.formHorse.speed == 3000 ? 100238 : this.formHorse.speed == 6000 ? 100237 : 100236,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: loactionArr[this.formHorse.position - 1],
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: fontArr[(this.formHorse.size - 10) / 2],
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: 100257,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {alpha:this.formHorse.alpha}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: 100258,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {interval:this.formHorse.interval}, ref_url: '', req_url: ''}
+      })
+    },
     // 保存水印
-    preWatermark() {
+    preWatermark(index) {
+      if (this.delayStatus == 1) return
       if (!this.domain_url && this.watermark_open) {
         this.$message({
           message: `水印图片不能为空`,
@@ -674,7 +864,9 @@ export default {
       this.formWatermark.webinar_id = this.$route.params.str;
       this.formWatermark.img_url = this.$parseURL(this.domain_url).path;
       this.formWatermark.watermark_open = Number(this.watermark_open);
+       this.formWatermark.type = 1;
       this.$fetch('setWatermark', this.$params(this.formWatermark)).then(res => {
+        index === 1 && this.setWaterReportData()
         this.$message({
           message: this.watermark_open ? "水印开启成功" : "水印关闭成功",
           showClose: true,
@@ -693,12 +885,31 @@ export default {
         });
       });
     },
+    setWaterReportData() {
+      let loactionArr = [100261, 100262, 100264, 100263]
+      if (this.watermark_open) {
+        this.$vhall_paas_port({
+          k: 100259,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.$vhall_paas_port({
+        k: loactionArr[this.formWatermark.img_position - 1],
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: 100265,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {alpha: this.formWatermark.img_alpha}, ref_url: '', req_url: ''}
+      })
+    },
     // 保存播放器其他设置
     preOthersOptions () {
       let params = {
         barrage_button: Number(this.formOther.bulletChat),
         progress_bar: Number(this.formOther.progress),
         speed: Number(this.formOther.doubleSpeed),
+        autoplay: Number(this.formOther.autoplay),
+        type: 1,
         webinar_id: this.$route.params.str
       }
       console.log('params',params);
@@ -730,10 +941,11 @@ export default {
     //文案提示问题
     messageInfo() {
       this.vm = this.$message({
-        showClose: false,
+        showClose: true,
         duration: 2000,
         message: '设置成功',
-        type: 'success'
+        type: 'success',
+        customClass: 'zdy-info-box'
       });
     },
     // 初始化播放器
@@ -744,6 +956,7 @@ export default {
           this.totalTime = this.$Vhallplayer.getDuration(() => {
             console.log('获取总时间失败');
           });
+          this.$Vhallplayer && this.$Vhallplayer.play()
           this.listen();
         // 初试完播放器获取其它设置
         this.getBaseOtherList()
@@ -798,10 +1011,11 @@ export default {
         type: 'vod', // live 直播  vod 点播  必填
         videoNode: 'videoDom', // 播放器的容器， div的id 必填
         poster: '', // 封面地址  仅支持.jpg
+        autoplay: true,
         vodOption: { recordId: this.videoParam.paas_record_id, forceMSE: false },
         marqueeOption: this.marqueeOption,
         watermarkOption: { // 选填
-          enable: Boolean(this.watermark_open), // 默认 false
+          enable: false, // 默认 false
           url: this.domain_url || this.audioImg, // 水印图片的路径
           align: this.fromalAlign(this.formWatermark.img_position), // 图片的对其方式， tl | tr | bl | br 分别对应：左上，右上，左下，右下
           position: ['20px', '20px'], // 对应的横纵位置，支持px,vh,vw,%
@@ -990,6 +1204,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+/deep/.div__sketch{
+  right: 0;
+}
 #videoDom {
   width: 100%;
   height: 100%;
@@ -1019,6 +1236,15 @@ export default {
 }
 .prize-card {
   height: 100%;
+  .title_text{
+    color: #999;
+    font-size: 14px;
+    span{
+      color: #3562FA;
+      cursor: pointer;
+      vertical-align: middle;
+    }
+  }
  .player-set{
    background: #fff;
    position: relative;
@@ -1118,10 +1344,16 @@ export default {
       position: absolute;
       width: 100%;
       height: 100%;
-      top:80px;
+      // top:80px;
       left:0;
       background: rgba(255, 255, 255, 0.5);
       z-index: 9;
+    }
+    .webinarTop{
+      top: 80px;
+    }
+    .userTop {
+      top: 20px;
     }
   }
   .show-purple{
@@ -1131,7 +1363,7 @@ export default {
     margin-left: 20px;
     border-radius: 5px;
     position: absolute;
-    top: 20px;
+    top: 8px;
     left: 53%;
     img{
       width: 400px;
@@ -1143,7 +1375,7 @@ export default {
       border: 1px solid #ccc;
     }
     &-info {
-      width: 300px;
+      width: 100%;
       margin-top: 15px;
       span {
         display: block;
@@ -1366,6 +1598,77 @@ export default {
     position: absolute;
     top: -41px;
     left: 0;
+  }
+}
+.giftUpload{
+  /deep/.el-upload--picture-card {
+    height: 130px;
+  }
+}
+.delay-mask{
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.5);
+  z-index: 1000;
+  .tip{
+    width: 400px;
+    height: 200px;
+    background: #FFFFFF;
+    box-shadow: 0px 12px 42px 0px rgba(51, 51, 51, 0.24);
+    border-radius: 4px;
+    box-sizing: border-box;
+    padding: 24px 32px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    .head{
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      .title{
+        width: 40px;
+        height: 28px;
+        font-size: 20px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: #1A1A1A;
+        line-height: 28px;
+      }
+      .close:hover{
+        cursor: pointer;
+      }
+    }
+    .delay-content{
+      width: 336px;
+      height: 40px;
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #1A1A1A;
+      line-height: 20px;
+      margin: 24px 0px;
+    }
+    .btn{
+      float: right;
+      width: 104px;
+      height: 36px;
+      background: #FB3A32;
+      border-radius: 20px;
+      text-align: center;
+      line-height: 36px;
+      color: #fff;
+      &:hover{
+        cursor: pointer;
+      }
+      &:after{
+        clear: both;
+      }
+    }
   }
 }
 </style>

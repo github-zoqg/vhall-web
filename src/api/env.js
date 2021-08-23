@@ -7,11 +7,10 @@
  * fileBaseUrl = 文件所在域名地址
  */
 let staticLinkVo = {
-  kf: 'http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738',
+  kf: 'https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038',
   aliQr: '//aliqr.e.vhall.com/qr.png?t=',
   uploadBaseUrl: '//t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/upload/', // 图片上传后回显域名（后期字段变化）
   tmplDownloadUrl: 'https://t-alistatic01.e.vhall.com/static', // 原有静态模板下载地址
-  downOldUrl: '//t.e.vhall.com', // 旧版控制台地址，AG: 下载邀请码等；跳转旧版控制台
   helpLinkUrl: 'https://www.vhall.com/help' // 帮助中心跳转地址
 };
 let staticImgs = {
@@ -27,7 +26,7 @@ let staticImgs = {
     'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_9@2x.png'
   ],
 }
-if (process.env.NODE_ENV === 'production') {
+if (process.env.VUE_APP_NODE_ENV === 'production') {
   staticLinkVo.uploadBaseUrl = 'https://cnstatic01.e.vhall.com/upload/'
   staticLinkVo.tmplDownloadUrl = 'https://cnstatic01.e.vhall.com/static'
   staticImgs = {

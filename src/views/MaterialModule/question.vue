@@ -40,14 +40,14 @@
       <div class="show-question" @click="isShowQuestion=false">
         <div class="show-main" @click.stop="isShowQuestion=true">
           <span class="close-btn"><i class="el-icon-close" @click.stop="isShowQuestion=false"></i></span>
-          <el-scrollbar>
+          <vhscroll>
             <div class="question_main">
               <pre-question  :questionId="questionId"></pre-question>
+              <div class="submit-footer">
+                <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
+              </div>
             </div>
-          </el-scrollbar>
-          <div class="submit-footer">
-            <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
-          </div>
+          </vhscroll>
         </div>
       </div>
     </template>
@@ -72,6 +72,7 @@ export default {
         {
           label: '问卷名称',
           key: 'title',
+          customTooltip: true
         },
         {
           label: '更新时间',
@@ -107,6 +108,12 @@ export default {
       e.stopPropagation()
     },
     searchTableList() {
+      if (this.keyword) {
+        this.$vhall_paas_port({
+          k: 100532,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList('search')
     },
     getTableList(params) {
@@ -130,15 +137,25 @@ export default {
     preview(that, {rows}) {
       console.log('预览', rows);
       that.isShowQuestion = true;
+      that.$vhall_paas_port({
+        k: 100531,
+        data: {business_uid: that.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       // document.querySelector('.section__main').style.minHeight = 640 + 'px'
       that.questionId = rows.question_id;
     },
     // 复制
     cope(that, {rows}) {
       that.$fetch('copyQuestion', {survey_id: rows.question_id}).then(res => {
+        that.$vhall_paas_port({
+          k: 100528,
+          data: {business_uid: that.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         that.$message({
+          message: res.code == 200 ? '复制成功' : '复制失败',
+          showClose: true,
           type: res.code == 200 ? 'success' : 'error',
-          message: res.msg,
+          customClass: 'zdy-info-box'
         });
         that.getTableList();
       })
@@ -156,9 +173,9 @@ export default {
     },
     // 删除
     del(that, {rows}) {
-      that.deleteConfirm(rows.question_id);
+      that.deleteConfirm(rows.question_id, 2);
     },
-    deleteConfirm(id) {
+    deleteConfirm(id, index) {
       this.$confirm('删除后，此问卷将无法使用，确认删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -167,11 +184,14 @@ export default {
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.$fetch('deleteQuestion', {survey_ids: id}).then(res => {
+            this.$vhall_paas_port({
+              k: index == 1 ? 100530 : 100529,
+              data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.getTableList('search');
             this.$message({
               message: `删除成功`,
               showClose: true,
-              // duration: 0,
               type: 'success',
               customClass: 'zdy-info-box'
             });
@@ -179,7 +199,6 @@ export default {
             this.$message({
               message: res.msg || '删除失败',
               showClose: true,
-              // duration: 0,
               type: 'error',
               customClass: 'zdy-info-box'
             });
@@ -188,7 +207,6 @@ export default {
           this.$message({
             message:  `已取消删除`,
             showClose: true,
-            // duration: 0,
             type: 'info',
             customClass: 'zdy-info-box'
           });
@@ -196,7 +214,7 @@ export default {
     },
     deleteAll(id) {
       id = this.selectChecked.join(',');
-      this.deleteConfirm(id);
+      this.deleteConfirm(id, 1);
     },
     // 选中
     changeTableCheckbox(val) {
@@ -273,20 +291,31 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, .3);
+    background: rgba(0, 0, 0, .5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     .show-main{
-      position: absolute;
-      top: 48%;
-      left: 50%;
-      background: #fff;
-      transform: translate(-50%, -50%);
-      width: 760px;
-      padding-bottom: 24px;
-      // padding: 0 32px 24px 32px;
+      // position: absolute;
+      // top: 48%;
+      // left: 50%;
+      // background: #fff;
+      // transform: translate(-50%, -50%);
+      // width: 760px;
+      // padding-bottom: 24px;
+      // // padding: 0 32px 24px 32px;
+      // border-radius: 4px;
+      // overflow-y: auto;
+      height: 90%;
       border-radius: 4px;
+      background: #fff;
+      position: relative;
+      z-index: 101;
       .question_main{
-        max-height: 700px;
+        // max-height: 550px;
         position: relative;
+        width: 760px;
+        padding-bottom: 24px;
       }
       .close-btn{
         z-index: 100;

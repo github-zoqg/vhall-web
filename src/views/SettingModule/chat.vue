@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="!auth_show">
-      <null-page text="聊天严禁词为高级功能，设置后可以防止观众在聊天内容中输入不符合自身利益的词语，<br/>保障直播间健康有序地交流。联系您的客户经理获取权限后方可使用。" nullType="noAuth">
+      <null-page text="聊天严禁词为高级功能，设置后可以防止观众在聊天内容中输入不符合自身利益的词语，<br/>保障直播间健康有序地交流。联系您的客户经理获取权限后方可使用。" nullType="setting">
         <el-button type="primary" round @click="openChat">联系客服</el-button>
       </null-page>
     </div>
@@ -15,7 +15,7 @@
       </pageTitle>
       <div>
         <el-button type="primary" @click.prevent.stop="setKeyWordShow" class="length104" size="medium" round>设置</el-button>
-        <a :href="downloadHref" class="btn-a">
+        <a :href="downloadHref" class="btn-a" @click="downLoad">
           <el-button class="length104" size="medium" round v-if="downloadHref">
             下载模板
           </el-button>
@@ -37,7 +37,7 @@
         </el-form>
       </div>
       <!-- 聊天严禁词弹出框 -->
-      <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow" :lock-scroll=false  @close="handleClose">
+      <VhallDialog width="800px" title="聊天严禁词设置" :visible.sync="listPanelShow"  @close="handleClose">
         <div class="chat-dialog-content">
           <!-- 全部无结果 -->
           <div class="all-no-data" v-if="total === 0  && pageInfo.keyword === ''">
@@ -59,13 +59,13 @@
                   placeholder="搜索严禁词"
                   v-model="pageInfo.keyword"
                   clearable
-                  @clear="searchKeyWord"
-                  @keyup.enter.native="searchKeyWord"
+                  @clear="searchWord"
+                  @keyup.enter.native="searchWord"
                   >
                   <i
                     class="el-icon-search el-input__icon"
-                    slot="suffix"
-                    @click="searchKeyWord">
+                    slot="prefix"
+                    @click="searchWord">
                   </i>
                 </el-input>
               </div>
@@ -76,6 +76,7 @@
               tooltip-effect="dark"
               style="width: 100%"
               class="table-td56"
+              height="328px"
               max-height="328px"
               :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
               @selection-change="checkMoreRow"
@@ -103,7 +104,7 @@
                     v-preventReClick @click="keywordEdit(scope.row)">编辑</el-button>
                   <el-button
                   type="text"
-                  v-preventReClick  @click="keywordDel(scope.row)">删除</el-button>
+                  v-preventReClick  @click="keywordDel(scope.row, 2)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -114,7 +115,7 @@
         </div>
       </VhallDialog>
       <!-- 添加严禁词 -->
-      <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body :lock-scroll=false>
+      <VhallDialog width="468px" :title="addForm.executeType === 'edit' ? '编辑严禁词' : '添加严禁词'" :visible.sync="addShow" append-to-body >
         <div :class="`chat-add-dialog-content ${addForm.executeType}`">
           <el-form :model="addForm" ref="addForm" :rules="dynamicRules" label-width="54px">
             <el-form-item label="严禁词" prop="name">
@@ -144,7 +145,7 @@
         </div>
       </VhallDialog>
       <!-- 批量上传 -->
-      <VhallDialog class="addForbidWord" width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body :lock-scroll=false @close="closeImportChat">
+      <VhallDialog class="addForbidWord" width="468px" title="添加严禁词" :visible.sync="multiUploadShow" append-to-body  @close="closeImportChat">
         <div class="upload-dialog-content">
           <file-upload
             ref="chatUpload"
@@ -197,7 +198,7 @@ import NullPage from '../PlatformModule/Error/nullPage.vue';
 import {sessionOrLocal} from "@/utils/utils";
 import env from "@/api/env";
 export default {
-  name: "chat.vue",
+  name: "chatMgr",
   components: {
     PageTitle,
     FileUpload,
@@ -306,7 +307,17 @@ export default {
       }
     },
     openChat() {
+      this.$vhall_paas_port({
+        k: 100017,
+        data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: 3, report_extra: {}, ref_url: '', req_url: ''}
+      })
       window.open(`${env.staticLinkVo.kf}`, '_blank');
+    },
+    downLoad() {
+      this.$vhall_paas_port({
+        k: 100588,
+        data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     deleteFile() {
       this.fileUrl = ''
@@ -332,6 +343,14 @@ export default {
       });
     },
     handleClose() {
+      // 情况所有选中效果
+      this.ids = [];
+      this.isCheckAll = false;
+      try{
+        this.$refs.chatTable.clearSelection();
+      }catch(e) {
+      }
+
       this.pageInfo.pageNum = 1;
       this.getAllKeyWordList();
     },
@@ -366,6 +385,15 @@ export default {
       this.listPanelShow = true;
       this.pageInfo.keyword = '';
       this.searchKeyWord();
+    },
+    searchWord() {
+      if (this.pageInfo.keyword) {
+        this.$vhall_paas_port({
+          k: 100587,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.searchKeyWord()
     },
     searchKeyWord() {
       this.pageInfo.pos = 0;
@@ -446,6 +474,10 @@ export default {
                 customClass: 'zdy-info-box'
               });
             }
+            this.$vhall_paas_port({
+              k: this.addForm.executeType === 'add' ? 100582 : 100584,
+              data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.addShow = false;
             this.searchKeyWord(); // 刷新列表数据
           }).catch(res => {
@@ -462,7 +494,7 @@ export default {
       });
     },
     // 删除
-    keywordDel(rows) {
+    keywordDel(rows, index) {
       let that = this;
       that.$confirm('是否要删除选中的严禁词？', '提示', {
         cancelButtonText: '取消',
@@ -474,6 +506,10 @@ export default {
         that.$fetch('multiKeywordDel', {
           keyword_ids: rows.id
         }).then(res => {
+          that.$vhall_paas_port({
+            k: index === 1 ? 100586 : 100585,
+            data: {business_uid: that.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           that.$message({
             message:  `删除成功`,
             showClose: true,
@@ -520,7 +556,7 @@ export default {
         }); */
         this.keywordDel({
           id: this.ids.join(',')
-        });
+        }, 1);
       }
     },
     // 打开新增弹出框
@@ -621,6 +657,10 @@ export default {
       this.$fetch('uploadKeywordAdd', {
         file: this.fileUrl
       }).then(resV => {
+        this.$vhall_paas_port({
+          k: 100583,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.importResult = resV.data;
         this.multiUploadShow = false;
         this.isUploadEnd = false;
@@ -702,6 +742,7 @@ export default {
     }
   },
   created() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getSysConfig();
   }
 };
@@ -770,11 +811,11 @@ export default {
       .el-input__icon{
         cursor: pointer;
       }
-      /deep/ .el-input__suffix {
+      /deep/ .el-input__prefix {
         cursor: pointer;
         /deep/ .el-input__icon {
-          width: auto;
-          margin-right: 5px;
+          // width: auto;
+          // margin-right: 5px;
           line-height: 36px;
         }
       }
@@ -786,7 +827,7 @@ export default {
       color: #666666;
       height: 36px;
       line-height: 36px;
-      padding-right: 50px;
+      padding-right: 30px;
     }
   }
 }

@@ -1,9 +1,9 @@
 <template>
   <div class="video-wrap">
     <pageTitle pageTitle="音视频">
-      <span class="video-text">音视频中的文件内容应用于暖场视频和点播</span>
+      <span class="video-text">音视频中的文件内容应用于暖场视频、点播和插播文件</span>
       <div slot="content">
-        1.上传单个文件最大2G，文件标题不能带有特殊字符和空格
+        1.上传单个文件最大2G
         <br>
         2.上传视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV
         <br>
@@ -12,7 +12,7 @@
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">
-      <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="upload" class="set-input" type="file" @change="tirggerFile($event)" accept=".mp4,.mp3,.rmvb,.avi,.mkv,.flv,.mov,.mav,.wmv"> </el-button>
+      <el-button size="medium" type="primary" round class="length104 head-btn set-upload">上传 <input ref="uploads" class="set-input" type="file" @change="tirggerFile($event)" accept=".mp4,.mp3,.rmvb,.avi,.mkv,.flv,.mov,.mav,.wmv"> </el-button>
       <el-button size="medium" round class="transparent-btn" @click="allDelete(null)" :disabled="!checkedList.length">批量删除</el-button>
       <VhallInput
         class="search-tag"
@@ -31,6 +31,8 @@
     </div>
     <div class="video-list" v-if="total || isSearch">
        <el-table
+            @cell-mouse-enter="handleCellMouseEnter"
+            @cell-mouse-leave="handleCellMouseLeave"
             :data="tableData"
             @selection-change="changeTableCheckbox"
             :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
@@ -42,13 +44,15 @@
             />
             <el-table-column
               label="音视频名称"
-              show-overflow-tooltip>
+            >
               <template slot-scope="scope">
-              <div class="videoName">
-                <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'"></i>
-                <i class="iconfont-v3 saasshipinwenjian" v-else></i>
-                {{ scope.row.video_name  || '- -'}}
-              </div>
+                <el-tooltip placement="top" :disabled="!isTextOverflow" :content="scope.row.video_name == '' ? '- -' : scope.row.video_name">
+                  <div class="videoName custom-tooltip-content">
+                    <i class="iconfont-v3 saasyinpinwenjian" v-if="scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'"></i>
+                    <i class="iconfont-v3 saasshipinwenjian" v-else></i>
+                    {{ scope.row.video_name  || '- -'}}
+                  </div>
+                </el-tooltip>
               </template>
             </el-table-column>
             <el-table-column
@@ -81,7 +85,7 @@
                   <!-- {{scope.row}} -->
                   <p v-if="scope.row.transcode_status_text">
                     <!-- 列表 -->
-                    <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : 'failer'">{{ scope.row.transcode_status_text }}</span>
+                    <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : scope.row.transcode_status == 0 ? 'wating' : 'failer'">{{ scope.row.transcode_status_text }}</span>
                   </p>
                 </div>
               </template>
@@ -163,8 +167,10 @@ import { sessionOrLocal } from '@/utils/utils';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import EventBus from "@/utils/Events";
 import { formateSeconds } from '@/utils/general';
+import tableCellTooltip from '@/components/TableList/mixins/tableCellTooltip'
 export default {
   name: 'video.vue',
+  mixins: [tableCellTooltip],
   data() {
     return {
       total: 0,
@@ -227,6 +233,12 @@ export default {
   },
   methods: {
     searchTableList() {
+      if (this.keyword) {
+        this.$vhall_paas_port({
+          k: 100524,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList('search');
     },
     initPayMessage() {
@@ -247,6 +259,7 @@ export default {
       }
       let formParams = {
         title: this.keyword,
+        get_no_trans: 0,
         user_id: this.userId,
         ...this.pageInfo
       }
@@ -254,6 +267,10 @@ export default {
       this.getList(formParams);
     },
     tirggerFile(event){
+      this.$vhall_paas_port({
+        k: 100518,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       const typeList = ['rmvb','mp4','avi','wmv','mkv','flv','mov','mp3','mav'];
       let file = event.target.files[0];
       let beforeName = event.target.files[0].name.toLowerCase();
@@ -299,7 +316,12 @@ export default {
       //   });
       //   return;
       // }
-      this.initPayMessage();
+      if (this.vm) {
+        this.vm.close()
+        this.initPayMessage()
+      } else {
+        this.initPayMessage()
+      }
       let param = {
         create_time: this.$moment(file.lastModifiedDate).format('YYYY-MM-DD HH:mm:ss'),
         file_name: beforeName,  //后端要求名称带上后缀名  如xxx 改成 xxx.mp4
@@ -456,6 +478,10 @@ export default {
       this.errorText = false;
       this.videoName = rows.name
       this.videoId = rows.id;
+      this.$vhall_paas_port({
+        k: 100522,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       // that.$prompt('', '编辑',{
       //     confirmButtonText: '确定',
       //     cancelButtonText: '取消',
@@ -486,6 +512,10 @@ export default {
        let name = `${this.videoName}${this.lowName}`
       this.$fetch('dataVideoupdate', {video_id: this.videoId, user_id: this.userId, filename: name}).then(res=>{
         if (res.code == 200) {
+          this.$vhall_paas_port({
+            k: 100521,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.editShowDialog = false;
           this.$message({
             message: `修改成功`,
@@ -499,7 +529,7 @@ export default {
       });
      }
     },
-    confirmDelete(id) {
+    confirmDelete(id, index) {
       this.$confirm('是否删除该文件？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -509,6 +539,11 @@ export default {
       }).then(() => {
         this.$fetch('dataVideoDel', {video_ids: id, user_id:  this.userId}).then(res=>{
           if (res.code == 200) {
+            this.$vhall_paas_port({
+              k: index == 1 ? 100520 : 100519,
+              data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+            this.$refs.uploads.value = null
             this.getTableList('search');
             this.$message({
               message: `删除成功`,
@@ -539,23 +574,27 @@ export default {
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
-          this.confirmDelete(rows.id);
+          this.confirmDelete(rows.id, 2);
         }).catch(() => {});
       } else {
-        this.confirmDelete(rows.id);
+        this.confirmDelete(rows.id, 2);
       }
 
     },
     // 批量删除
     allDelete() {
       let id = this.checkedList.join(',');
-      this.confirmDelete(id);
+      this.confirmDelete(id, 1);
     },
     preview(rows) {
       //  this.videoParam 进本信息
       if (rows.transcode_status == 1) {
         this.showDialog = true;
         this.videoParam = rows;
+        this.$vhall_paas_port({
+          k: 100523,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       } else {
         this.$message.warning('只有转码成功才能查看');
       }
@@ -581,10 +620,10 @@ export default {
       this.vm.close()
       this.vm = null
     }
-    if (this.UploadSDK) {
-      this.UploadSDK.destroy()
-      this.UploadSDK = null;
-    }
+    // if (this.UploadSDK) {
+    //   this.UploadSDK.destroy()
+    //   this.UploadSDK = null;
+    // }
     EventBus.$off("sign_trans_code");
   }
 };
@@ -606,6 +645,11 @@ export default {
   }
   /deep/ thead tr th:nth-child(2) .cell{
     padding-left: 10px;
+  }
+  /deep/.el-table__row:hover{
+   .el-button{
+      color: #FB3A32;
+    }
   }
 }
 // /deep/.el-input__inner{
@@ -655,6 +699,9 @@ export default {
       color: #ff733c;
       padding-right: 3px;
     }
+  }
+  /deep/.el-progress-bar__inner {
+   background-color: #14BA6A;
   }
   .statusTag{
     font-size: 14px;
@@ -728,10 +775,10 @@ export default {
     }
     /deep/ .el-dialog__body{
       width: 642px;
-      height: 375px;
-      border-top: 4px solid #1a1a1a;
-      border-bottom: 4px solid #1a1a1a;
-      background: #1a1a1a;
+      height: 361px;
+      border-top: 4px solid #000;
+      border-bottom: 4px solid #000;
+      background: #000;
       border-radius: 4px;
       padding: 0 4px;
     }

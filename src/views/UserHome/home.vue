@@ -9,7 +9,7 @@
      <div :class="['user__layout--title', {'ctrl-layout': $route.meta.type === 'owner'}]">
        <ul>
          <li>
-           <img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" class="user__avatar"/>
+          <span class="image-contain"><img :src="userHomeVo && userHomeVo.homepage_avatar ? userHomeVo.homepage_avatar || avatarImgUrl : avatarImgUrl" alt="" class="user__avatar"/></span>
          </li>
          <li :class="`layout__center ${!(userHomeVo && Number(userHomeVo.show_share) === 1) ? 'one--btn' : ''}`">
            <h1>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</h1>
@@ -80,6 +80,10 @@ export default {
   methods: {
     // 打开 dialog 方法（通用）
     openDialog(ref){
+      this.$vhall_paas_port({
+        k: 100799,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$refs[ref].dialogVisible = true;
     },
     showSetHandle(type) {
@@ -87,6 +91,12 @@ export default {
       this.getHomePageInfo();
     },
     showBtnChange() {
+      if (this.open_hide) {
+        this.$vhall_paas_port({
+          k: 100804,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.open_hide = !this.open_hide;
     },
     getHomePageInfo() {
@@ -127,6 +137,7 @@ export default {
   },
   created() {
     this.static_img_url = `${defaultbg}`
+    this.userId = sessionOrLocal.get('userId');
     this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     this.getHomePageInfo();
   },
@@ -259,14 +270,25 @@ export default {
     right: 0;
     bottom: 0;*/
   }
-}
-.user__avatar {
-  display: block;
-  width: 100px;
-  height: 100px;
-  border: 1px solid #E2E2E2;
-  border-radius: 100%;
-  margin-right: 16px;
+  .image-contain{
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    border: 1px solid #E2E2E2;
+    border-radius: 50%;
+    margin-right: 16px;
+    .user__avatar {
+      width: 100%;
+      height: 100%;
+      object-fit:cover;
+      // display: block;
+      // width: 100px;
+      // height: 100px;
+      // border: 1px solid #E2E2E2;
+      border-radius: 50%;
+      // margin-right: 16px;
+    }
+  }
 }
 .user__layout--main {
   margin-top: 30px;

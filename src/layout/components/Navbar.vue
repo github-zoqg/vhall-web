@@ -6,9 +6,9 @@
     <div class="right-menu">
       <div
         class="right-menu-item"
-        v-if="!(userInfo && userInfo.is_new_regist > 0) && (userInfo && userInfo.user_extends.extends_remark !== 1) && !isMiniScreen"
+        v-if="isShowOld && !isMiniScreen"
       >
-        <a :href="oldUrl" class="set-font">返回旧版</a>
+        <a :href="oldUrl" class="set-font" @click="returnOldVersion">返回旧版</a>
       </div>
       <!-- 下载中心 -->
       <div v-if="!isMiniScreen" class="right-menu-item" @click.prevent.stop="toDownloadPage">
@@ -66,7 +66,7 @@
             <el-dropdown-item v-if="isMiniScreen" divided @click.native.prevent.stop="toHelpPage">
               <div
                 class="right-menu-item"
-                v-if="!(userInfo && userInfo.is_new_regist > 0) && (userInfo && userInfo.user_extends.extends_remark !== 1)"
+                v-if="isShowOld"
               >
                 <a :href="oldUrl" class="set-font">返回旧版</a>
               </div>
@@ -118,21 +118,50 @@ export default {
       } else {
         return '';
       }
+    },
+    isShowOld: function(){
+      if( (this.userInfo && (this.userInfo.is_new_regist == 0 || this.userInfo.is_new_regist == 4)) && (this.userInfo && this.userInfo.user_extends.extends_remark !== 1)){
+        return true
+      }else{
+        return false
+      }
     }
   },
   // inject: [],
   methods: {
     toHelpPage() {
+      this.$vhall_paas_port({
+        k: 100003,
+        data: {business_uid: this.userInfo.user_id, user_id: this.userInfo.user_id, s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       window.open(Env.staticLinkVo.helpLinkUrl, '_blank');
     },
     toMsgPage() {
+      this.$vhall_paas_port({
+        k: 100004,
+        data: {business_uid: this.userInfo.user_id, user_id: this.userInfo.user_id, s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({path: '/other/msgList'});
     },
     toDownloadPage() {
       this.getDownNum();
+      this.$vhall_paas_port({
+        k: 100002,
+        data: {business_uid: this.userInfo.user_id, user_id: this.userInfo.user_id, s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({path: '/other/downloadList'});
     },
+    returnOldVersion() {
+      this.$vhall_paas_port({
+        k: 100001,
+        data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+    },
     toAccountPage() {
+      this.$vhall_paas_port({
+        k: 100831,
+        data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({path: '/acc/info'});
     },
     getUnreadNum() {
@@ -152,16 +181,25 @@ export default {
       });
     },
     logout() {
+      let out_url = sessionOrLocal.get('SAAS_V3_CTRL_OUT', 'localStorage');
       this.$fetch('loginOut', {}).then(res =>{
+        this.$vhall_paas_port({
+          k: 100832,
+          data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         sessionOrLocal.clear();
         sessionOrLocal.clear('localStorage');
         // 清除cookies
-        Cookies.remove('user_id');
+        Cookies.remove('gray-id');
         // 监听消息变化
         this.$EventBus.$emit('saas_vs_login_out', true);
-        this.$router.push({
-          path: '/login'
-        });
+        if(res.data && out_url) {
+          window.location.href = out_url
+        } else {
+          this.$router.push({
+            path: '/login'
+          });
+        }
       }).catch(res=>{
         this.$message({
           message: res.msg || `退出失败`,
@@ -171,13 +209,19 @@ export default {
           customClass: 'zdy-info-box'
         });
       }).finally(() => {
+        // 清除cookies
+        Cookies.remove('gray-id');
         sessionOrLocal.clear();
         sessionOrLocal.clear('localStorage');
         // 监听消息变化
         this.$EventBus.$emit('saas_vs_login_out', true);
-        this.$router.push({
-          path: '/login'
-        });
+        if(out_url) {
+          window.location.href = out_url
+        } else {
+          this.$router.push({
+            path: '/login'
+          });
+        }
       });
     },
     updateAccount(account) {
@@ -223,6 +267,9 @@ export default {
         if (msg.data.type == "record_download" && msg.data.user_id == sessionOrLocal.get('userId')) {
           EventBus.$emit('record_download', msg.data);
         }
+        if (msg.data.type === 'waiting_sign_trans_code') {
+          EventBus.$emit('waiting_sign_trans_code', msg.data);
+        }
       })
     },
     // 初始化
@@ -235,6 +282,7 @@ export default {
           accountId: result.data.accountId || '', // 第三方用户ID
           channelId: result.data.channelId || '', // 频道id 必须
           token: result.data.paasAccessToken || '', // 必须， token，初始化接口获取
+          hide: true
         }
         window.VhallChat.createInstance(option, (event) => {
           this.$Chat = event.message; // 聊天实例句柄
@@ -427,23 +475,39 @@ export default {
       color: #666666;
     }
     &.more {
-
+      .el-badge__content.is-fixed {
+        height: 18px;
+        background: #FB3A32;
+        top: 4px;
+        right: 10px;
+        text-align: center;
+        width: 28px;
+        border-radius: 9px;
+        line-height: 16px;
+        border: 1px solid #fb3a32;
+      }
     }
     &.item {
       .el-badge__content.is-fixed {
         width: 18px;
         height: 18px;
         background: #FB3A32;
-        top: 10px;
+        top: 4px;
         right: 10px;
         text-align: center;
         line-height: 16px;
         padding: 0 0;
+        border: 1px solid #fb3a32;
       }
     }
   }
+  /deep/.el-badge__content.is-dot {
+    height: 10px;
+    width: 10px;
+  }
   /deep/.el-badge__content.is-fixed.is-dot {
-    top: 9px;
+    top: 8px;
+    right: 6px;
   }
 }
 .avatar-wrapper {

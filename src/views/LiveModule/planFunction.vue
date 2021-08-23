@@ -1,6 +1,19 @@
 <template>
   <div class="page-padding">
-    <pageTitle pageTitle="功能配置"></pageTitle>
+    <pageTitle pageTitle="功能配置">
+      <div class="title_text">
+        <p class="switch__box">
+          <el-switch
+            v-model="functionOpen"
+            active-color="#FB3A32"
+            inactive-color="#CECECE"
+            @change="closefunctionOpen"
+            :active-text="reservationDesc">
+          </el-switch>
+          <span @click="toSettingDetail">查看账号下功能配置</span>
+        </p>
+      </div>
+    </pageTitle>
     <!-- 内容区域  -->
     <div class="plan-func-main">
       <div class="plan-func-form">
@@ -15,7 +28,7 @@
                 :inactive-value="1"
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
-                @change="changeStatus($event, item)">
+                @change="changeStatus($event, item, 1)">
               </el-switch>
               <span class="leve3_title title--999">{{!!item.value ? item.openShow : item.closeShow }}</span>
             </li>
@@ -32,12 +45,13 @@
                   :inactive-value="0"
                   active-color="#FB3A32"
                   inactive-color="#CECECE"
-                  @change="changeStatus($event, item)">
+                  @change="changeStatus($event, item, 2)">
                 </el-switch>
                 <span class="leve3_title title--999">{{!!item.value ? item.openShow : item.closeShow }}</span>
             </li>
           </ul>
         </div>
+        <div class="hide-white" v-if="!functionOpen"></div>
       </div>
       <div class="plan-func-preview">
         <!-- 模拟开关 -->
@@ -51,6 +65,7 @@
           <div class="icon-spans">
            <span class="reward-span" v-if="rewardCompute"></span><span class="gift-span" v-if="giftCompute"></span><span class="like-span" v-if="likeCompute"></span>
           </div>
+           <span class="chat-stop" :class="chatCompute ? 'isChatStop' : ''" v-if="chapterCompute">{{!chatCompute ? `您已被禁言` : `说点什么`}}</span>
         </div>
         <!--手机预览,begin-->
         <div :class="['plan-func-app', {'visible': !chapterCompute}]" v-show="switchType === 'app'">
@@ -85,9 +100,12 @@ export default {
     return {
       switchType: 'app',
       query: {},
+      userId: '',
+      functionOpen: true,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       keyList: [],
-      liveKeyList: []
+      liveKeyList: [],
+      vm: null
     };
   },
   computed: {
@@ -114,7 +132,14 @@ export default {
     chapterCompute: function() {
       let voArr =  this.liveKeyList.filter(item => item.type === 'ui.watch_record_chapter')[0];
       return !(voArr && voArr.value > 0);
-    }
+    },
+    reservationDesc(){
+      if(this.functionOpen){
+        return '已开启，使用当前活动功能配置设置';
+      }else{
+        return "开启后，将使用当前活动功能配置设置";
+      }
+    },
   },
   methods: {
     showLiveKey(key) {
@@ -123,11 +148,32 @@ export default {
       console.log(live, liveKey)
       return live[0] || liveKey[0]
     },
+    // 获取配置项
+    getPermission() {
+      let userId = JSON.parse(sessionOrLocal.get("userId"));
+      this.$fetch('planFunctionGet', {webinar_id: this.$route.params.str, webinar_user_id: userId, scene_id: 1}).then(res => {
+        if(res.code == 200) {
+          let permissions = JSON.parse(res.data.permissions)
+          this.functionOpen = permissions['is_function_cofig'] > 0 ? true : false
+          this.planFunctionGet();
+        }
+      }).catch(e => {});
+    },
     // 预览切换
     changeSwitch(type) {
       this.switchType = type;
     },
-    changeStatus(callback, item) {
+     //文案提示问题
+    messageInfo(title, type) {
+      this.vm = this.$message({
+        showClose: true,
+        duration: 2000,
+        message: title,
+        type: type,
+        customClass: 'zdy-info-box'
+      });
+    },
+    changeStatus(callback, item, type) {
       item.value = Number(!callback)
       let params = {
         webinar_id: this.$route.params.str,
@@ -136,27 +182,45 @@ export default {
       };
       console.log('当前参数传递：', params);
       this.$fetch('planFunctionEdit', params).then(res => {
-        console.log(res);
+        if (type === 1) {
+          this.$vhall_paas_port({
+            k: Number(callback) === 1 ? item.num + 1 : item.num,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        } else {
+          this.$vhall_paas_port({
+            k: Number(callback) === 1 ? item.num : item.num + 1,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
         let str = `${!callback ? '开启' : '关闭'}`
         if (item.type === 'ui.watch_record_no_chatting' || item.type === 'ui.watch_record_chapter') {
           str = `${!callback ? '关闭' : '开启' } `
         }
-        this.$message({
-          message: `${str} ${item.key_name} 成功`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo(`${str} ${item.key_name}`, 'success')
+        // this.$message({
+        //   message: `${str} ${item.key_name} 成功`,
+        //   showClose: true,
+        //   // duration: 0,
+        //   type: 'success',
+        //   customClass: 'zdy-info-box'
+        // });
         item.value = Number(callback);
       }).catch(res => {
-        this.$message({
-          message: res.msg || `${str} ${item.key_name} 失败`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo(res.msg || `${str} ${item.key_name}`, 'error')
+        // this.$message({
+        //   message: res.msg || `${str} ${item.key_name} 失败`,
+        //   showClose: true,
+        //   // duration: 0,
+        //   type: 'error',
+        //   customClass: 'zdy-info-box'
+        // });
       });
     },
     planSuccessRender (data) {
@@ -171,6 +235,7 @@ export default {
         {
           type: 'ui.hide_reward',
           key_name: '打赏功能',
+          num: 100085,
           openShow: '开启后，观看页显示打赏功能',
           closeShow: '已开启，观看页显示打赏功能',
           value: Number(dataVo['ui.hide_reward']) || 0
@@ -178,6 +243,7 @@ export default {
         {
           type: 'ui.watch_hide_like',
           key_name: '点赞功能',
+          num: 100087,
           openShow: '开启后，观看页显示点赞功能',
           closeShow: '已开启，观看页显示点赞功能',
           value: Number(dataVo['ui.watch_hide_like']) || 0
@@ -185,6 +251,7 @@ export default {
         {
           type: 'ui.hide_gifts',
           key_name: '礼物功能',
+          num: 100089,
           openShow: '开启后，观看页显示礼物功能',
           closeShow: '已开启，观看页显示礼物功能',
           value: Number(dataVo['ui.hide_gifts']) || 0
@@ -192,6 +259,7 @@ export default {
         {
           type: 'ui.watch_hide_share',
           key_name: '分享功能',
+          num: 100091,
           openShow: '开启后，观看页显示分享功能（包含微信内分享）',
           closeShow: '已开启，观看页显示分享功能（包含微信内分享）',
           value: Number(dataVo['ui.watch_hide_share']) || 0
@@ -200,6 +268,7 @@ export default {
       this.liveKeyList = [{
         type: 'ui.watch_record_no_chatting',
         key_name: '回放禁言',
+        num: 100093,
         openShow: '已开启，回放/点播不支持聊天',
         closeShow: '开启后，回放/点播不支持聊天',
         value: Number(dataVo['ui.watch_record_no_chatting']) || 0
@@ -208,12 +277,11 @@ export default {
         this.liveKeyList.push({
           type: 'ui.watch_record_chapter',
           key_name: '回放章节',
+          num: 100095,
           openShow: '已开启，回放/点播观看端显示文档章节',
           closeShow: '开启后，回放/点播观看端显示文档章节',
           value: Number(dataVo['ui.watch_record_chapter']) || 0
         })
-      } else {
-        // this.liveKeyList = [];
       }
     },
     planErrorRender(err) {
@@ -228,11 +296,12 @@ export default {
     },
     // 获取可配置选项
     planFunctionGet() {
-      this.$fetch('planFunctionGet', {
-        webinar_id: this.$route.params.str,
-        webinar_user_id: sessionOrLocal.get('userId'),
+      let params = {
+        webinar_id: this.functionOpen ? this.$route.params.str : '',
+        webinar_user_id: this.functionOpen ? this.userId : '',
         scene_id: 2
-      }).then(res=>{
+      }
+      this.$fetch('planFunctionGet', this.$params(params)).then(res=>{
         console.log(res);
         // 数据渲染
         if (res.data) {
@@ -242,10 +311,54 @@ export default {
         console.log(res);
         this.planErrorRender(res);
       });
-    }
+    },
+    closefunctionOpen() {
+      let params = {
+        webinar_id: this.$route.params.str,
+        permission_key: 'is_function_cofig',
+        status: Number(this.functionOpen)
+      };
+      console.log('当前参数传递：', params);
+      this.$fetch('planFunctionEdit', params).then(res => {
+        this.$vhall_paas_port({
+          k: this.functionOpen ? 100082 : 100083,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+       if (!this.functionOpen){
+          this.functionOpen = false;
+          this.planFunctionGet();
+          this.$message({
+            message:"正在使用账号下功能配置",
+            showClose: true,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
+        } else {
+          this.functionOpen = true;
+          this.planFunctionGet();
+        }
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `操作失败`,
+          showClose: true,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      });
+    },
+    toSettingDetail() {
+      this.$vhall_paas_port({
+        k: 100084,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      const { href } = this.$router.resolve({path:'/setting/function'});
+      window.open(href, '_blank');
+    },
   },
   created() {
-    this.planFunctionGet();
+    // this.functionOpen = this.perssionInfo.is_function_cofig > 0 ? true : false
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    this.getPermission();
   }
 };
 </script>
@@ -255,6 +368,21 @@ export default {
 @import '../../common/css/base.less';
 .page-padding {
   padding: 0 0;
+  /deep/.el-switch__label {
+    color: #999;
+    &.is-active{
+      color: #999;
+    }
+  }
+  .title_text{
+    color: #999;
+    font-size: 14px;
+    span{
+      color: #3562FA;
+      cursor: pointer;
+      vertical-align: middle;
+    }
+  }
 }
 .plan-func-main {
   display: flex;
@@ -267,6 +395,16 @@ export default {
 .plan-func-form {
   width: 500px;
   margin-right: 64px;
+  position: relative;
+}
+.hide-white{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top:0;
+  left:0;
+  background: rgba(255, 255, 255, 0.5);
+  z-index: 9;
 }
 .h1__title {
   margin-bottom: 32px;
@@ -305,32 +443,49 @@ export default {
   position: relative;
 }
 .plan-func-pc {
-  width: 421px;
+  width: 440px;
   height: 254px;
-  background-image: url('../../common/images/plan-function/pc-default.png');
+  background-image: url('../../common/images/plan-function/pc-dafault2.png');
   background-size: 100%;
   background-position: center;
   background-size: cover;
   position: relative;
+  -webkit-transition: opacity 0.15s ease-in-out;
+  -moz-transition: opacity 0.15s ease-in-out;
+  -o-transition: opacity 0.15s ease-in-out;
+  transition: opacity 0.15s ease-in-out;
   &.zj {
-    background-image: url('../../common/images/plan-function/pc-zj.png');
+    background-image: url('../../common/images/plan-function/pc-zj2.png');
   }
   .share-span{
     position: absolute;
-    bottom: 2px;
-    left: 0;
+    top: 23px;
+    right: 53px;
     display: inline-block;
-    width: 28px;
-    height: 11px;
+    width: 8px;
+    height: 10px;
     background-repeat: no-repeat;
     background-size: 100% 100%;
     margin-left: 2px;
-    background-image: url('../../common/images/plan-function/pc-share@2x.png');
+    background-image: url('../../common/images/plan-function/share-pc.png');
+  }
+  .chat-stop{
+    position: absolute;
+    bottom: 35px;
+    right: 75px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #666666;
+    line-height: 12px;
+    transform:scale(0.6);
+    &.isChatStop{
+      right: 85px;
+    }
   }
   .icon-spans {
     position: absolute;
-    bottom: 0;
-    right: 118px;
+    bottom: 31px;
+    right: 150px;
     span {
       display: inline-block;
       width: 10px;
@@ -362,10 +517,10 @@ export default {
   position: absolute;
   left:0;
   top:54px;
-  -webkit-transition: opacity 0.5s ease-in-out;
-  -moz-transition: opacity 0.5s ease-in-out;
-  -o-transition: opacity 0.5s ease-in-out;
-  transition: opacity 0.5s ease-in-out;
+  -webkit-transition: opacity 0.15s ease-in-out;
+  -moz-transition: opacity 0.15s ease-in-out;
+  -o-transition: opacity 0.15s ease-in-out;
+  transition: opacity 0.15s ease-in-out;
   &.visible {
     opacity:0;
     filter: alpha(opacity=0);

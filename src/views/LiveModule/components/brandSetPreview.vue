@@ -8,91 +8,48 @@
     <!-- 预览区域 -->
     <div>
       <!--PC预览,begin-->
-      <div class="pc" v-show="switchType === 'pc'">
-        <div :class="`skin-preview preview-${switchType}`" :style="{ backgroundColor: `${skinSetVo.bgColor}`}">
-          <div class="logo-brand"></div>
-          <header class="pc-header" v-if="signSetVo && signSetVo.view_status == 1">
-            <img class="logo-image" :src="domain_url || signSetVo.logo_url" alt="标志图" v-if="(signSetVo && signSetVo.logo_url) || domain_url"/>
-            <img class="logo-image" src="../../../common/images/logo4.png" v-else/>
-            <div class="title-right">
-              <el-button class="button-style button-login" size="mini">登录</el-button>
-              <el-button class="button-style button-register" size="mini" type="primary">注册</el-button>
+      <!-- 标识预览 -->
+      <div  class="pc" v-if="switchType === 'pc' && tabType === 'signSet' ">
+        <div :class="`skin-preview preview-${switchType} sign-preview`">
+          <div class="pc-preview">
+            <div class="pc-header" v-if="signSetVo && signSetVo.view_status == 1">
+              <img class="logo-image" :src="domain_url || signSetVo.logo_url" alt="标志图" v-if="(signSetVo && signSetVo.logo_url) || domain_url"/>
+              <img class="logo-image" src="../../../common/images/skin/logo.png" v-else/>
             </div>
-          </header>
-          <section class="watchContainer"
-                   :style="{background: `url(${skinSetVo.bg_url}) 0% 0% / cover no-repeat`}">
-            <div class="area">
-              <div class="topInfo">
-                <p class="">
-                  <b>活动标题</b>
-                  <span class="tag">直播</span>
-                  <span class="right gray font-14">131次观看</span>
-                </p>
-                <p class="top-bottom" >
-                  <span class="mrR" v-if="signSetVo && signSetVo.organizers_status == 1">主办方：<a class="blue" href="javascript:void(0);">微吼</a></span>
-                  <span>时间：2020-12-18 00:00:00</span>
-                  <span class="right iconBtn" v-if="signSetVo && signSetVo.organizers_status == 1">
-                    <icon icon-class="saasyijianfankui">反馈</icon>
-                    <template>
-                      <i class="focusBtn" :style="{'backgroundColor': skinSetVo.pageStyle}">关注</i>
-                      <i class="focusCount">1314520</i>
-                    </template>
-                    </span>
-                </p>
+            <div class="pc-contain">
+              <div class="sign-intro">
+                <p>数字化转型时代企业如何做好直播营销<span><img src="../../../common/images/skin/white/live@2x.png" alt=""></span></p>
               </div>
-              <div class="player">
-                <div class="player-content">
-                  <div class="player-video">
-                    <img width="350" src="../../../common/images/skin/white/player1.png"/>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-          <!-- <div class="recommend">
-            <div class="rcm-list">
-              <div class="rcm-title">
-                <div class="title-text" :style="{'borderBottomColor': skinSetVo.pageStyle}">
-                  <img width="30" height="10" src="../../../common/images/skin/white/recommend-title.png"
-                       v-if="skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'"/>
-                  <img width="28" height="10" src="../../../common/images/skin/black/recommend-title.png"
-                       v-else/>
-                </div>
-              </div>
-              <div class="rcm-li">
-                <img width="350" height="69" src="../../../common/images/skin/white/recommend-list.png"
-                     v-if="skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'" />
-                <img width="350" height="69" src="../../../common/images/skin/black/recommend-list.png"
-                     v-else/>
-              </div>
-            </div>
-          </div> -->
-          <div class="discription">
-            <div class="dct-list">
-              <div class="dct-title">
-                <div class="title-text" :style="{'borderBottomColor': skinSetVo.pageStyle}">
-                  <img width="28" height="10" src="../../../common/images/skin/white/discription-title.png"
-                       v-if="skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'" />
-                  <img width="28" height="10" src="../../../common/images/skin/black/discription-title.png"
-                       v-else/>
-                </div>
-              </div>
-              <div class="dct-cont">
-                <img width="350" height="68" src="../../../common/images/skin/white/discription-content.png"
-                     v-if="skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'"/>
-                <img width="350" height="68" src="../../../common/images/skin/black/discription-content.png"
-                     v-else/>
+              <div class="sign-title" :class="signSetVo && signSetVo.organizers_status == 1 ? 'sign-open' : 'sign-close'">
+                <p><span v-if="signSetVo && signSetVo.organizers_status == 1">主办方：<a class="blue" href="javascript:void(0);">微吼 </a></span><span class="time"> 2020-12-18 00:00:00</span></p>
               </div>
             </div>
           </div>
-          <div class="copyright" v-show="(signSetVo && signSetVo.reserved_status > 0)">
-            <div class="content">
-              <img width="176" height="25" src="../../../common/images/skin/white/copyright.png"
-                   v-if="skinSetVo.bgColor.toUpperCase() !== '#1A1A1A'" />
-              <img width="176" height="25" src="../../../common/images/skin/black/copyright.png"
-                   v-else/>
+          <div class="sign-version" v-show="(signSetVo && signSetVo.reserved_status > 0)">
+            <p>微吼提供技术支持  | <span class="blue">反馈与举报</span></p>
+          </div>
+        </div>
+      </div>
+      <!-- 皮肤预览 -->
+      <div  class="pc" v-if="switchType === 'pc' && tabType === 'skinSet' ">
+        <div :class="`skin-preview preview-${switchType} brand-preview`">
+          <div class="skin-header">
+            <div class="skin-share">
+              <div class="skin-atton skin-left" :style="{'color': skinSetVo.pageStyle }">
+                <i class="iconfont-v3 saasfenxiang_icon"></i>
+                <p>分享</p>
+              </div>
+              <div class="skin-atton" :style="{'color': skinSetVo.pageStyle }">
+                <i class="iconfont-v3 saasicon_guanzhu"></i>
+                <p>关注</p>
+              </div>
             </div>
           </div>
+          <div class="skin-footer" :style="{backgroundImage: `url(${skinSetVo.bg_url})`, backgroundColor: `${skinSetVo.bgColor}`}">
+            <img src="../../../common/images/skin/skin-footer.png" alt="">
+            <p class="footer-text">微吼提供技术支持  | <span class="blue">反馈与举报</span></p>
+          </div>
+          <div class="color-text"><p :style="{backgroundColor: `${skinSetVo.pageStyle}`}"></p></div>
         </div>
       </div>
       <!--PC预览,end-->
@@ -133,14 +90,15 @@
 <script>
 export default {
   name: "brandSetPreview.vue",
+  props: ['brandType', 'tabType'],
   data() {
     return {
       switchType: 'pc',
       bgColorType: 'black',
       signSetVo: null,
       skinSetVo: {
-        bgColor: 'ffffff', // 背景色
-        pageStyle: 'ff3333', // 按钮色
+        bgColor: '#1A1A1A', // 背景色
+        pageStyle: '#FB3A32', // 按钮色
         bg_url: '' // 背景图
       },
       logoUrl: null,
@@ -155,65 +113,66 @@ export default {
       this.$nextTick(() => {
         this.signSetVo = vo;
         this.domain_url = domain_url;
-        console.log(this.signSetVo, '4444444444444444')
+        // this.getInterWebinarSkin();
       });
     },
     skinSetVoInfo(vo) {
       this.$nextTick(() => {
-        this.skinSetVo = vo;
-        if (vo.status > 0)  {
+        if (vo && Number(vo.status) > 0)  {
           // 页面赋值
           this.skinSetVo = vo;
           this.skinSetVo.bg_url = vo.bg_url || vo.domain_url;
         } else {
           this.skinSetVo = {
-            bgColor: '#FFFFFF', // 背景色
+            bgColor: '#1A1A1A', // 背景色
             pageStyle: '#ff3333', // 按钮色
             bg_url: '' // 背景图
           };
         }
-        console.log(this.skinSetVo, '11111111111111')
+        // this.getSignInfo();
       });
     },
     getSignInfo() {
-      this.$fetch('getInterWebinarTag', {
-        webinar_id: this.$route.params.str
-      }).then(res => {
+      let params = {
+        webinar_id: this.brandType == 1 ? this.$route.params.str : '',
+        type: this.brandType
+      }
+      this.$fetch('getInterWebinarTag', this.$params(params)).then(res => {
         console.log(res);
         if (res && res.code === 200) {
           this.signSetVo = res.data;
         } else {
           this.signSetVo = {};
         }
-        console.log(this.signSetVo, '2222222222222')
       }).catch(err=>{
         console.log(err);
         this.signSetVo = {};
       });
     },
     getInterWebinarSkin() {
-      this.$fetch('getInterWebinarSkin', {
-        webinar_id: this.$route.params.str
-      }).then(res => {
+      let params = {
+        webinar_id: this.brandType == 1 ? this.$route.params.str : '',
+        type: this.brandType
+      }
+      this.$fetch('getInterWebinarSkin', this.$params(params)).then(res => {
         if (res && res.code === 200) {
           this.skinSetVo.status = res.data.status
           if (this.skinSetVo.status > 0)  {
             // 页面赋值
             let skin_json_pc = JSON.parse(res.data.skin_json_pc);
-            this.skinSetVo.bgColor = skin_json_pc.bgColor || '#FFFFFF';
+            this.skinSetVo.bgColor = skin_json_pc.bgColor || '#1A1A1A';
             this.skinSetVo.pageStyle = skin_json_pc.pageStyle || '#FB3A32';
             this.skinSetVo.bg_url = skin_json_pc.background;
           } else {
             this.skinSetVo = {
-              bgColor: '#FFFFFF', // 背景色
+              bgColor: '#1A1A1A', // 背景色
               pageStyle: '#FB3A32', // 按钮色
               bg_url: '' // 背景图
             };
           }
-          console.log(this.skinSetVo, '333333333333333')
         } else {
           this.skinSetVo = {
-            bgColor: '#FFFFFF', // 背景色
+            bgColor: '#1A1A1A', // 背景色
             pageStyle: '#FB3A32', // 按钮色
             bg_url: '' // 背景图
           };
@@ -221,7 +180,7 @@ export default {
       }).catch(err=>{
         console.log(err);
         this.skinSetVo = {
-          bgColor: '#FFFFFF', // 背景色
+          bgColor: '#1A1A1A', // 背景色
           pageStyle: '#FB3A32', // 按钮色
           bg_url: '' // 背景图
         };
@@ -234,6 +193,13 @@ export default {
   },
   created() {
    this.initPage();
+  },
+  watch: {
+    brandType() {
+      if (this.brandType) {
+        this.initPage();
+      }
+    }
   }
 };
 </script>
@@ -246,192 +212,169 @@ export default {
   padding-bottom: -10px;
   border-radius: 4px;
   border-top: 0;
+  height: 220px;
   position: relative;
+  transition:background-color ease-in-out .5s;
+}
+.sign-preview{
+  background-image: url(../../../common/images/skin/white/brand.png);
+  background-size: 100% 100%;
+  overflow: hidden;
+}
+.brand-preview{
+  overflow: hidden;
+  .skin-header{
+    width: 100%;
+    height: 36px;
+    background: url('../../../common/images/skin/skin-header.png') no-repeat;
+    background-size: 100% 100%;
+    position: relative;
+    .skin-share{
+      position: absolute;
+      right:30px;
+      top: 12px;
+      display: flex;
+    }
+    .skin-atton{
+      font-size: 12px;
+      transform:scale(0.4);
+    }
+    .skin-left{
+      margin-right: -5px;
+    }
+    .iconfont-v3{
+      align-items: center;
+      padding-left: 3px;
+    }
+    // .skin-left{
+    //   position: absolute;
+    //   right: -5px;
+    //   top: 0px;
+    //   width: 50px;
+    // }
+    // img{
+    //   width: 100%;
+    //   height: 100%;
+    //   object-fit: scale-down;
+    // }
+  }
+  .skin-footer{
+    height: 210px;
+    width: 100%;
+    background-color: #1A1A1A;
+    background-size: 100% 100%;
+    padding-top: 5px;
+    position: relative;
+    img{
+      width: 100%;
+      height: 100%;
+      object-fit: scale-down;
+    }
+    .footer-text{
+      position: absolute;
+      bottom: 32px;
+      left: 115px;
+      font-size: 12px;
+      transform:scale(0.5);
+      color: #999;
+    }
+  }
+  .color-text{
+    position: absolute;
+    top: 119px;
+    right: 115px;
+    p{
+      width: 9px;
+      height: 1px;
+      border-radius: 10px;
+      background-color: #FB3A32;
+    }
+  }
 }
 .zdy--switch {
   margin-bottom: 16px;
 }
-.logo-brand{
+.pc-preview{
+  margin-top: 16px;
   width: 100%;
   height: 20px;
-  background: url(../../../common/images/skin/white/headerLogo.png) no-repeat;
-  background-size: 100% 100%;
-}
-.pc-header {
-  padding: 0 24px;
-
-  .logo-image {
-    width: auto;
-    height: 26px;
-    float: left;
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
-  .title-right {
-    float: right;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    /deep/.el-button {
-      width: 48px;
-      height: 26px;
-      line-height: 26px;
-      padding: 0 0;
+  display: flex;
+  .pc-header {
+    width: 25px;
+    height: 100%;
+    padding: 2px 0 0 10px;
+    .logo-image {
+      width: 100%;
+      height: 100%;
+      // float: left;
+      object-fit: scale-down;
     }
   }
-}
-.watchContainer{
-  clear: both;
-}
-.area {
-  margin: 0 24px;
-  overflow: hidden;
-  width: auto;
-  padding: 12px 0;
-}
-.topInfo{
-  b{
-    font-size: 12px;
-    font-weight: normal;
-  }
-  .tag{
-    display: inline-block;
-    font-size: 10px;
-    width: 34px;
-    height: 16px;
-    background: red;
-    line-height: 16px;
-    vertical-align: middle;
-    margin-left: 8px;
-    text-align: center;
-    color: #ffffff;
-    border-radius: 3px;
-  }
-  .top-bottom {
-    margin-bottom: 12px;
-    span {
-      color: #7c8287;
-      font-size: 10px;
+  .pc-contain{
+    height: 100%;
+    // width: calc(100% - 25px);
+    width: 100%;
+    position: relative;
+    margin-left: -95px;
+    .sign-intro{
+      font-size: 12px;
+      color: #999;
+      transform:scale(0.4);
+      position: absolute;
+      top: -3px;
+      left: 29px;
+      span{
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+        margin-left: 10px;
+        vertical-align: text-bottom;
+        img{
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
+        }
+      }
+      
     }
-    .mrR {
-      a {
-        color: #7c8287;
-        margin-right: 8px;
+    .sign-title{
+      font-size: 12px;
+      color: #999;
+      transform:scale(0.4);
+      position: absolute;
+      left: 46px;
+      top: 10px;
+      .time{
+        padding-left: 10px;
+      }
+      .blue{
+        color: #999;
+        &:hover{
+          color: blue;
+        }
+      }
+      &.sign-close{
+        left: 65px;
       }
     }
   }
-  .right{
-    float: right;
-    width: auto;
-    display: flex;
-    flex-direction:row;
-    align-items: center;
-    color: #7c8287;
-    font-size: 10px;
-  }
-  .focusBtn {
-    display: inline-block;
-    background-color: #ff3333;
-    color: #fff;
-    text-align: center;
-    border-radius: 3px 0 0 3px;
-    cursor: pointer;
-    font-size: 10px;
-    line-height: 1;
-    padding: 2px 5px;
-    font-style: normal;
-  }
-  .focusCount {
-    background-color: #fbdcdc;
-    display: inline-block;
-    text-align: center;
-    border-radius: 0 3px 3px 0;
-    cursor: pointer;
-    font-size: 10px;
-    line-height: 1;
-    padding: 2px 5px;
-    color: #ff3333;
-    font-style: normal;
-  }
 }
-.recommend {
-  width: 100%;
-  height: 110px;
-  margin-top: 10px;
-}
-.rcm-list {
-  margin: 0 auto;
-  height: 110px;
-  width: 402px;
-  border: 1px solid rgba(210,210,210,0.08);
-  border-radius: 2px;
-  background: rgba(255,255,255,0.08);
-}
-.rcm-title {
-  height: 18px;
-  border-bottom: 1px solid rgba(210,210,210,0.08);
-}
-.title-text {
-  text-align: center;
-  vertical-align: middle;
-  height: 18px;
-  line-height: 18px;
-  width: 60px;
-  border-bottom: 2px solid #ff0000;
-  img {
-    margin: 0 auto;
-    padding-bottom: 3px;
-  }
-}
-.rcm-li {
-  height: 90px;
-  line-height: 90px;
-  text-align: center;
-  margin-top: 10px;
-}
-.dct-list {
-  margin: 0 auto;
-  height: 110px;
-  width: 402px;
-  border: 1px solid rgba(210,210,210,0.08);
-  border-radius: 2px;
-  background: rgba(255,255,255,0.08);
-  padding-top: 12px;
-}
-.dct-title {
-  height: 18px;
-  padding: 0 24px;
-  border-bottom: 1px solid rgba(210, 210, 210, 0.08);
-  .title-text {
-    text-align: center;
-    vertical-align: middle;
-    height: 18px;
-    line-height: 18px;
-    width: 60px;
-    border-bottom: 2px solid #ff0000;
-    img {
-      margin: 0 auto;
-      padding-bottom: 3px;
+.sign-version{
+  position: absolute;
+  left: 80px;
+  bottom: 2px;
+  p{
+    color: #666;
+    transform:scale(0.3);
+    .blue{
+      color: #666;
+      &:hover{
+        color: blue;
+      }
     }
   }
 }
-.dct-cont {
-  text-align: center;
-  height: 90px;
-  line-height: 90px;
-  margin-top: 10px;
-}
-.copyright {
-  width: 100%;
-  padding-top: 10px;
-  .content {
-    margin: 0 auto;
-    height: 42px;
-    line-height: 42px;
-    width: 402px;
-    text-align: center;
-    border-top: 1px solid rgba(210,210,210,0.08);
-  }
-}
+
 .skin-preview.preview-app {
   width: 368px;
   height: 674px;

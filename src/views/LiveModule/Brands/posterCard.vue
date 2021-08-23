@@ -30,6 +30,8 @@
                      path: pathUrl,
                      type: 'image',
                   }"
+                  :widthImg="231"
+                  :heightImg="130"
                   :on-success="pcUploadAdvSuccess"
                   :on-progress="pcUploadProcess"
                   :on-error="pcUploadError"
@@ -54,6 +56,8 @@
                      path: pathUrl,
                      type: 'image',
                   }"
+                  :widthImg="231"
+                  :heightImg="130"
                   :on-success="uploadAdvSuccess"
                   :on-progress="uploadProcess"
                   :on-error="uploadError"
@@ -104,11 +108,11 @@
               <!-- 开屏海报 -->
               <div class="hb_pc">
                 <!-- <img class="hb_bg_default hb_bg"  src="../../../common/images/official/poster.png" alt="" /> -->
-                <img class="hb_bg_default" src="../../../common/images/poster/pc_yl@2x.png" alt=""/>
+                <img class="hb_bg_default" src="../../../common/images/poster/pc-2.png" alt=""/>
                 <!-- 开启 并且有图-->
                 <div class="pc-poster-wrap">
                   <img class="hb_img v-poster-preview" :src="domain_url" alt="" v-if="status <= 0 && domain_url"/>
-                  <img class="hb_img v-poster-preview" src="../../../common/images/poster/pc_poster_default.png"  v-if="!domain_url" />
+                  <img class="hb_img v-poster-preview" src="../../../common/images/poster/pc-1.png"  v-if="!domain_url" />
                 </div>
                <!--  <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button> -->
                 <div :class="['poster-btn', {'five': alertType > 0}]"></div>
@@ -152,6 +156,7 @@ export default {
       alertType: null,
       switchType: 'app',
       showPoster: false,
+      userId: '',
       form: {
         img: '',
         m_img: '',
@@ -200,6 +205,7 @@ export default {
     beginPlay
   },
   mounted() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"))
     this.getData();
   },
   methods: {
@@ -211,6 +217,10 @@ export default {
         status: status, //是否展示公众号/是否展示开屏海报：0开启1关闭
       };
       this.$fetch('setPosterInfo', params).then(res => {
+        this.$vhall_paas_port({
+          k: status == 1 ? 100294 : 100293,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           showClose: true,
           message: status > 0 ? '关闭成功' : '开启成功',
@@ -287,6 +297,14 @@ export default {
       this.$refs.officialForm.validate((valid) => {
         if (valid) {
           this.$fetch('setPosterInfo', params).then(res => {
+            this.$vhall_paas_port({
+              k: type == 1 ? 100296 : 100295,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+            this.$vhall_paas_port({
+              k: this.form.url ? 100297 : 100298,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: '保存成功',
               showClose: true,
@@ -737,6 +755,9 @@ export default {
   .img-box{
     width: 100%;
     height: 140px;
+    /deep/.el-upload--picture-card{
+      height: 130px;
+    }
   }
   /deep/.length152{
     margin-top: 0px!important;

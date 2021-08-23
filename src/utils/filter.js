@@ -38,6 +38,9 @@ export const liveTag = (val) => {
     if (val.webinar_state != 4) {
       str += ` | ${liveStatusStr[val.webinar_type]}`;
     }
+    if (val.no_delay_webinar && val.no_delay_webinar == 1) {
+      str += ' | 无延迟'
+    }
     return str;
 };
 export const actionText = (val) => {
@@ -48,8 +51,10 @@ export const actionText = (val) => {
 };
 export const unitTime = (val) => {
   let str;
-  str = val.substring(0, 16);
-  return str;
+  if(val) {
+    str = val.substring(0, 16);
+  }
+  return str || '';
 };
 export const unitCovert = (val) => {
   val = Number(val);
@@ -113,6 +118,12 @@ export const wordStatusCss = (ext) => {
     return 'saasexcelwendang color-14BA6A';
   } else if (ext === 'media') {
     return 'saasyinpinwenjian color-3562FA';
+  } else {
+    return 'saasexcelwendang color-14BA6A';
   }
+}
+export const filterSource = (value) => {
+  let arrType = ['线下购买', '线上购买', '商务合作', '客户试用', ' 员工账号', '研发测试'];
+  return arrType[value - 5];
 }
 

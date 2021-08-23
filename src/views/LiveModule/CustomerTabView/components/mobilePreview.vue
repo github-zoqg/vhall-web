@@ -273,6 +273,17 @@ export default {
               components: []
             })
           }
+          if (this.menus.length) {
+            let menus = this.menus.filter(item => {
+              return ('components' in item)
+            })
+            let insertArr = [100210, 100211, 100212, 100213, 100214, 100215]
+            this.$vhall_paas_port({
+              k: insertArr[menus.length - 1] || 100210,
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
+
           setTimeout(() => {
             this.choseMenu(this.$insertIndex, this.menus[this.$insertIndex])
           }, 500)
@@ -442,7 +453,7 @@ export default {
         &__active{
           color: #FB3A32;
           span{
-            border-bottom: 2px solid #FB3A32;
+            // border-bottom: 2px solid #FB3A32;
           }
         }
     }
@@ -511,7 +522,7 @@ export default {
     height: 305px;
     width: 310px;
     margin: 0 auto;
-    padding: 15px 0;
+    padding: 15px 0 25px 0;
     margin: 0 auto;
   }
 

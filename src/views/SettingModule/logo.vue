@@ -1,6 +1,6 @@
 <template>
   <div v-if="!auth_show">
-    <null-page text="控制台标志为高级功能，开通后您可以替换为您的品牌标志。<br/>联系您的客户经理获取权限后方可使用。" nullType="noAuth">
+    <null-page text="控制台标志为高级功能，开通后您可以替换为您的品牌标志。<br/>联系您的客户经理获取权限后方可使用。" nullType="setting">
       <el-button type="primary" round @click="openChat">联系客服</el-button>
     </null-page>
   </div>
@@ -49,7 +49,7 @@ import NullPage from '../PlatformModule/Error/nullPage.vue';
 import {sessionOrLocal} from "@/utils/utils";
 import env from "@/api/env";
 export default {
-  name: "logo.vue",
+  name: "logoMgr",
   components: {
     PageTitle,
     Upload,
@@ -96,6 +96,10 @@ export default {
       }
     },
     openChat() {
+      this.$vhall_paas_port({
+        k: 100017,
+        data: {business_uid: this.userId, user_id: '',webinar_id: '', s: '', refer: 5, report_extra: {}, ref_url: '', req_url: ''}
+      })
       window.open(`${env.staticLinkVo.kf}`, '_blank');
     },
     handleUploadSuccess(res, file) {
@@ -156,6 +160,10 @@ export default {
     },
     saveConsoleLogo(type) {
       if(type === 'default') {
+        this.$vhall_paas_port({
+          k: 100619,
+          data: {business_uid: this.userId, user_id: '',webinar_id: '', s: '', refer: 5, report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.saveSend({
           logo: '',
           logo_jump_url: ''
@@ -188,6 +196,18 @@ export default {
           } catch (e) {
             console.log(e);
           }
+        } else {
+          this.$vhall_paas_port({
+            k: 100617,
+            data: {business_uid: this.userId, user_id: '',webinar_id: '', s: '', refer: 5, report_extra: {}, ref_url: '', req_url: ''}
+          })
+          if (this.logoForm.logo_jump_url) {
+            this.$vhall_paas_port({
+              k: 100618,
+              data: {business_uid: this.userId, user_id: '',webinar_id: '', s: '', refer: 5, report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
+
         }
         this.getAccountInfo();
       }).catch(res => {
@@ -222,6 +242,7 @@ export default {
     }
   },
   created() {
+    this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getSysConfig();
   }
 };

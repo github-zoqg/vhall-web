@@ -7,8 +7,8 @@
     </pageTitle>
     <div class="operaBox">
       <div class="searchBox" v-show="totalNum || isSearch">
-        <VhallInput v-model="searchText" v-clearEmoij :placeholder="placeholder"  v-if="title=='邀请排名'" style="margin-right: 20px;" @keyup.enter.native="inviteInfo"  @clear="inviteInfo" clearable>
-          <i slot="suffix" class="el-icon-search el-input__icon" @click="inviteInfo" style="cursor: pointer; line-height: 36px;"></i>
+        <VhallInput v-model="searchText" v-clearEmoij :placeholder="placeholder"  v-if="title=='邀请排名'" style="margin-right: 20px;" @keyup.enter.native="searchInviteInfo"  @clear="searchInviteInfo" clearable>
+          <i slot="suffix" class="el-icon-search el-input__icon" @click="searchInviteInfo" style="cursor: pointer; line-height: 36px;"></i>
         </VhallInput>
         <!-- <el-input
           :placeholder="placeholder"
@@ -60,8 +60,9 @@
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
-import { textToEmoji } from '@/tangram/libs/chat/js/emoji';
+import { textToEmoji } from './js/emoji';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   components: {
     PageTitle,
@@ -79,6 +80,7 @@ export default {
       webinarId: '',
       num:0,
       roomId: '',
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       searchTime: null,
       searchText: '',
       params: {},
@@ -86,6 +88,11 @@ export default {
       seleteAnwerList: [], //答案
       seleteQuestionList: [],//问题
       totalNum: 0,
+      pageInfo: {
+        pos: 0,
+        pageNum: 1,
+        limit: 10
+      },
       pickerOptions: {
         // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
         disabledDate: (time) => {
@@ -125,7 +132,6 @@ export default {
         {
           label: '发送时间',
           key: 'date_time',
-          width: 150
         },
         {
           label: '消息内容',
@@ -247,7 +253,7 @@ export default {
         },
         {
           label: '红包类型',
-          key: 'type',
+          key: 'typeStr',
         }
       ],
       tableRowBtnFun: [],
@@ -289,6 +295,9 @@ export default {
       return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
     },
     emojiToText (content) {
+      if (!content) {
+        return '';
+      }
       console.warn(content, 'content');
       return textToEmoji(content).map(c => {
         return c.msgType == 'text'
@@ -297,6 +306,7 @@ export default {
       }).join(' ');
     },
     changeColumn(title) {
+      let pageInfo = this.$refs.tableList.pageInfo;
       this.params = {};
       switch (title) {
         case '邀请排名':
@@ -304,7 +314,7 @@ export default {
           this.tabelColumn= this.inviteColumn;
           this.tableRowBtnFun = this.inviteBtnFun;
           this.placeholder = '搜索用户昵称';
-          this.inviteInfo();
+          this.inviteInfo(pageInfo);
           break;
         case '签到':
           this.isCheckout = false;
@@ -317,13 +327,13 @@ export default {
           this.placeholder = '请输入聊天内容';
           this.tabelColumn= this.chatColumn;
           this.tableRowBtnFun = this.chatBtnFun;
-          this.chatInfo();
+          this.chatInfo(pageInfo);
           break;
         case '问答':
           this.isCheckout = true;
           this.tabelColumn= this.questColumn;
           this.tableRowBtnFun = this.anwerBtnFun;
-          this.getRecordList();
+          this.getRecordList(pageInfo);
           break;
         case '抽奖':
           this.isCheckout = false;
@@ -349,18 +359,21 @@ export default {
     },
     changeDate() {
       if(this.title === '问答') {
-        this.getRecordList();
+        this.getRecordList(this.pageInfo);
       } else {
-        this.chatInfo();
+        this.chatInfo(this.pageInfo);
       }
     },
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
+    searchInviteInfo () {
+      this.inviteInfo(this.pageInfo)
+    },
     // 邀请排名
-    inviteInfo() {
-      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+    inviteInfo(pageInfo) {
+      // let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
         webinar_id: this.webinarId,
         keyword: this.searchText,
@@ -384,46 +397,37 @@ export default {
       });
     },
     // 聊天
-    chatInfo() {
-      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+    chatInfo(pageInfo) {
+      // let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
-        room_id: this.roomId
+        room_id: this.roomId,
+        ...pageInfo
       };
       if (this.searchTime) {
-        pageInfo.pos = 0;
-        pageInfo.pageNum= 1;
         this.$refs.tableList.clearSelect();
         params.start_time = this.searchTime[0] + ' 00:00:00';
         params.end_time = this.searchTime[1] + ' 23:59:59';
-        this.params = {
-          room_id: this.roomId,
-          start_time: this.searchTime[0] + ' 00:00:00',
-          end_time: this.searchTime[1] + ' 23:59:59'
-        }
-      } else {
-        this.params = {
-          room_id: this.roomId
-        }
       }
 
-      let obj = Object.assign({}, pageInfo, params);
-      this.$fetch('getChatListInfo', obj).then(res => {
+      // let obj = Object.assign({}, pageInfo, params);
+      this.$fetch('getChatListInfo', params).then(res => {
         this.tableList = res.data.list;
         this.tableList.map(item => {
-          item.name = item.role_name == 1 ? '主持人' : item.role_name == 2 ? '观众' : item.role_name == 3 ? '助理' : '助理';
-          if (item.data.barrage_txt) {
-            if((/\[|\]/g).test(item.data.barrage_txt)) {
-              item.data.barrage_txt = this.emojiToText(item.data.barrage_txt) || '';
-            }
-          } else {
-            item.data.barrage_txt = this.emojiToText(item.data.text_content) || '';
+          item.name = item.role_name == 1 ? '主持人' : item.role_name == 2 ? '观众' : item.role_name == 3 ? '助理' : '嘉宾';
+          if(item.data.barrage_txt && (/\[|\]/g).test(item.data.barrage_txt)) {
+            item.data.barrage_txt = this.emojiToText(item.data.barrage_txt) || '';
           }
-
+          if (item.data.text_content && (/\[|\]/g).test(item.data.text_content)) {
+            item.data.barrage_txt = this.emojiToText(item.data.text_content)
+          } else {
+            item.data.barrage_txt = item.data.text_content || '';
+          }
           if (item.data.image_urls && item.data.image_urls.length != 0) {
             item.chatImg = this.chartsImgs(item.data.image_urls);
           } else {
             item.chatImg = ''
           }
+          item.data.barrage_txt = item.data.barrage_txt.replace(/\*\*\*/g, "@")
           item.imgOrText = item.data.barrage_txt + item.chatImg
         })
         this.totalNum = res.data.total;
@@ -448,7 +452,7 @@ export default {
       return arr;
     },
     //删除聊天（二次确认）
-    chatConfirmSure(id) {
+    chatConfirmSure(id, index) {
       this.$confirm('确定要删除该聊天记录吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -461,6 +465,10 @@ export default {
             room_id: this.roomId
           }
           this.$fetch('deleteChatList', obj).then(res => {
+            this.$vhall_paas_port({
+              k: index === 1 ? 100459 : 100460,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: `删除成功`,
               showClose: true,
@@ -468,7 +476,7 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box'
             });
-            this.chatInfo();
+            this.chatInfo(this.pageInfo);
           });
         }).catch(() => {
           this.$message({
@@ -482,7 +490,7 @@ export default {
     },
     // 聊天删除
     chatDetele(that, { rows }) {
-      that.chatConfirmSure(rows.msg_id);
+      that.chatConfirmSure(rows.msg_id, 2);
     },
     // 批量删除(问答和聊天)
     deleteAll(id) {
@@ -497,7 +505,7 @@ export default {
           });
         } else {
           id = this.seleteAllOptionList.join(',');
-          this.chatConfirmSure(id);
+          this.chatConfirmSure(id, 1);
         }
       } else {
           if (this.seleteAnwerList.length < 1 && this.seleteQuestionList.length < 1) {
@@ -528,6 +536,10 @@ export default {
             room_id: this.roomId
           }
           this.$fetch('deleteAllRecodrder', this.$params(obj)).then(res => {
+            this.$vhall_paas_port({
+              k: 100463,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: `删除成功`,
               showClose: true,
@@ -535,7 +547,7 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box'
             });
-            this.getRecordList();
+            this.getRecordList(this.pageInfo);
           });
         }).catch(() => {
           this.$message({
@@ -562,8 +574,12 @@ export default {
             room_id: that.roomId
           }
           that.$fetch('deleteRecodrder', obj).then(res => {
+            that.$vhall_paas_port({
+              k: 100462,
+              data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             that.$message.success('删除成功');
-            that.getRecordList();
+            that.getRecordList(that.pageInfo);
           });
         }).catch(() => {
           that.$message({
@@ -647,14 +663,12 @@ export default {
 
     },
     // 回答
-    getRecordList() {
-      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+    getRecordList(pageInfo) {
+      // let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
         room_id: this.roomId
       };
       if (this.searchTime) {
-        pageInfo.pos = 0;
-        pageInfo.pageNum= 1;
         this.$refs.tableList.clearSelect();
         params.start_time = this.searchTime[0];
         params.end_time = this.searchTime[1];
@@ -663,8 +677,8 @@ export default {
       let obj = Object.assign({}, pageInfo, params);
       this.params = params;
       this.$fetch('getRecodrderList', obj).then(res => {
-        this.params.start_time = res.data.start_time;
-        this.params.end_time = res.data.end_time;
+        // this.params.start_time = res.data.start_time;
+        // this.params.end_time = res.data.end_time;
         // this.tableList = res.data.list;
         // this.tableList.map(item => {
         //   item.statusText = item.status == 1 ? '不处理' : item.status == 2 ? '转给主持人 即语音回复' : item.status == 3 ? '文字回复' : '未处理';
@@ -676,6 +690,11 @@ export default {
         // })
         let tableList = res.data.list;
         tableList.map((item, index) => {
+          if(item.content && (/\[|\]/g).test(item.content)) {
+            item.content = this.emojiToText(item.content) || '';
+          } else {
+            item.content = item.content || '';
+          }
           item.statusText = item.status == 1 ? '不处理' : item.status == 2 ? '语音回复' : item.status == 3 ? '文字回复' : '未处理';
           item.name = '问';
           item.imgOrText = `${item.nick_name} | 观众 <br /> ${item.content}`;
@@ -723,7 +742,7 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box'
             });
-            this.getRecordList();
+            this.getRecordList(this.pageInfo);
           });
         }).catch(() => {
           this.$message({
@@ -751,8 +770,8 @@ export default {
           this.text = '您还没有发红包记录！';
         }
         this.tableList.map((item, index) => {
-          item.method = item.pay_channel == 1 ? '微信' : item.pay_channel == 2 ? '支付宝' : item.pay_channel == 3 ? '余额支付' : '其它';
-          item.type = item.type === 1 ? '均分红包' : '拼手气';
+          item.method = item.pay_channel == 1 ? '微信' : item.pay_channel == 2 ? '支付宝' : item.pay_channel == 3 ? '余额支付' : '-';
+          item.typeStr = item.type === 1 ? '均分红包' : '拼手气';
           item.index = index + 1;
         })
       });
@@ -817,6 +836,10 @@ export default {
     // 邀请详情导出
     exportInviteDetailInfo(id) {
        this.$fetch('exportDetailInvite', {webinar_id: this.webinarId, join_id: id }).then(res => {
+        this.$vhall_paas_port({
+          k: 100457,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -830,6 +853,10 @@ export default {
     // 邀请导出
     exportInviteInfo() {
       this.$fetch('exportInvite', {webinar_id: this.webinarId}).then(res => {
+        this.$vhall_paas_port({
+          k: 100456,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -843,6 +870,10 @@ export default {
     // 聊天
     exportChatInfo() {
       this.$fetch('exportChat', this.params).then(res => {
+        this.$vhall_paas_port({
+          k: 100458,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -855,7 +886,11 @@ export default {
     },
     // 问答
     exportRecordInfo() {
-      this.$fetch('exportRecodrder', this.params).then(res => {
+      this.$fetch('exportRecodrder', this.$params(this.params)).then(res => {
+        this.$vhall_paas_port({
+          k: 100461,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -869,6 +904,10 @@ export default {
     // 签到
     exportSignInfo() {
       this.$fetch('exportSign', {room_id: this.roomId}).then(res => {
+        this.$vhall_paas_port({
+          k: 100465,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -881,6 +920,10 @@ export default {
     },
     exportDetailSignInfo(id) {
       this.$fetch('exportDetailSign',{room_id: this.roomId, sign_id: id}).then(res => {
+        this.$vhall_paas_port({
+          k: 100464,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -894,6 +937,10 @@ export default {
     // 问卷
     exportQuestionInfo() {
       this.$fetch('exportSurvey',{webinar_id: this.webinarId, room_id: this.roomId}).then(res => {
+        this.$vhall_paas_port({
+          k: 100469,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -907,6 +954,10 @@ export default {
     // 抽奖
     exportPrizeInfo() {
       this.$fetch('exportLottery', this.params).then(res => {
+        this.$vhall_paas_port({
+          k: 100471,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -920,6 +971,10 @@ export default {
     // 抽奖单个
     exportPrizeDetailInfo(item) {
       this.$fetch('exportDetailLottery',{webinar_id: this.webinarId, id: item.id}).then(res => {
+        this.$vhall_paas_port({
+          k: 100472,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -933,6 +988,10 @@ export default {
     // 发群红包
     exportRedpacketInfo() {
       this.$fetch('exportRedpacket',{webinar_id: this.webinarId}).then(res => {
+        this.$vhall_paas_port({
+          k: 100473,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -946,6 +1005,10 @@ export default {
      // 发群红包---导出明细
     exportRedpacketDetailInfo(uuid, type) {
       this.$fetch('exportDetailRedpacket',{webinar_id: this.webinarId, red_packet_uuid: uuid, type: type}).then(res => {
+        this.$vhall_paas_port({
+          k: 100474,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -959,6 +1022,10 @@ export default {
     // 问卷查看
     lookDetail(that, val) {
       let rows = val.rows;
+      that.$vhall_paas_port({
+        k: 100470,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       that.$router.push({path: `${val.path}/${that.webinarId}`, query: {surveyId: rows.survey_id,roomId:that.$route.query.roomId, subject: rows.subject, number: rows.filled_number}});
     }
   }
@@ -1050,14 +1117,14 @@ export default {
 }
 .search-export{
   float: right;
-  /deep/.el-button{
-    background: transparent;
-    &:hover{
-      background: #fb3a32;
-      span{
-        color: #fff;
-      }
-    }
-  }
+  // /deep/.el-button{
+  //   background: transparent;
+  //   &:hover{
+  //     background: #fb3a32;
+  //     span{
+  //       color: #fff;
+  //     }
+  //   }
+  // }
 }
 </style>

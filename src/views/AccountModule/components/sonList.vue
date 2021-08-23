@@ -12,7 +12,7 @@
     <div class="all-yes-data" v-else>
       <!-- 搜索 -->
       <div class="list--search">
-        <el-button :disabled="isForbidCreate" size="medium" type="primary" round @click.prevent.stop="addSonShow(null)">创建</el-button>
+        <el-button size="medium" type="primary" :disabled="isForbidCreate" round @click.prevent.stop="addSonShow(null)">创建</el-button>
         <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
         <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="!(this.ids && this.ids.length > 0)">批量删除</el-button>
         <el-button size="medium" round @click="downloadHandle">导出</el-button>
@@ -24,7 +24,7 @@
                   @keyup.enter.native="initQuerySonList">
           <i class="el-icon-search el-input__icon" slot="prefix" @click="initQuerySonList"></i>
         </VhallInput>
-        <el-select placeholder="全部" round v-model="query.role_id" @change="initQuerySonList">
+        <el-select placeholder="全部" round v-model="query.role_id" @change="initQuerySonList" style="width:102px">
           <el-option value="">全部</el-option>
           <el-option
             v-for="item in roleList"
@@ -58,75 +58,81 @@
       <null-page class="search-no-data" :height="0" v-if="sonDao && sonDao.total === 0"></null-page>
     </div>
     <!-- 添加/ 观众子账号 -->
-    <VhallDialog :title="sonDialog.title" :visible.sync="sonDialog.visible" :lock-scroll='false' :before-close='handleClose'
+    <VhallDialog class="sonAdd" :title="sonDialog.title" :visible.sync="sonDialog.visible" style="overflow: hidden;" :before-close='handleClose'
                  width="460px">
-      <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth">
-        <el-form-item label="批量创建" prop="is_batch" v-if="sonDialog.type === 'add'" class="switch--item">
-          <div class="switch__box">
-            <el-switch
-              v-model="sonForm.is_batch"
-              :active-value="1"
-              :inactive-value="0"
-              active-color="#FB3A32"
-              inactive-color="#CECECE"
-              @change="sonCountGetHandle"
-            >
-            </el-switch>
-            <span class="leve3_title title--999" v-if="sonForm.is_batch">生成子账号的昵称、密码、角色一致</span>
-          </div>
-        </el-form-item>
-        <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums" class="account--nums">
-          <VhallInput v-model.trim="sonForm.nums" autocomplete="off" ></VhallInput>
-          <span>可创建<strong>{{ sonCountVo.available_num }}</strong>个</span>
-        </el-form-item>
-        <el-form-item label="账号昵称" prop="nick_name">
-          <VhallInput type="text" placeholder="请输入昵称，默认使用账号ID" autocomplete="off"  v-model="sonForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
-        </el-form-item>
-        <el-form-item label="预设密码" prop="password" v-if="sonDialog.type === 'add'">
-          <pwd-input type="password" v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
-                    :maxlength="30" :minlength="6" show-word-limit></pwd-input>
-        </el-form-item>
-        <el-form-item label="预设密码" prop="editPwd" v-else>
-          <pwd-input type="password" v-model.trim="sonForm.editPwd" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
-                    :maxlength="30" show-word-limit></pwd-input>
-        </el-form-item>
-        <el-form-item label="账号角色" prop="role_id">
-          <el-select placeholder="请选择角色"  round v-model="sonForm.role_id">
-            <el-option
-              v-for="item in roleList"
-              :key="item.id"
-              :label="item.role_name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="手机号码" class="no-execute">
-          <VhallInput v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative"
-                    :maxlength="30" disabled>
-            <el-button
-              v-show="sonDialog.type !== 'add'"
-              class="no-border"
-              type="text"
-              size="mini"
-              slot="append"
-              @click="resetPhoneOrEmail('phone', isReset.phone)"
-            >{{ isReset.phone ? '取消重置' : '重置' }}</el-button>
-          </VhallInput>
-        </el-form-item>
-        <el-form-item label="邮箱地址" class="no-execute">
-          <VhallInput v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative"
-                    :maxlength="30" disabled>
-            <el-button
-              v-show="sonDialog.type !== 'add'"
-              class="no-border"
-              type="text"
-              size="mini"
-              slot="append"
-              @click="resetPhoneOrEmail('email', isReset.email)"
-            >{{ isReset.email ? '取消重置' : '重置' }}</el-button>
-          </VhallInput>
-        </el-form-item>
-      </el-form>
+      <el-scrollbar  :style="{height: sonDialog.type === 'edit' || sonForm.is_batch == 0 ? 'auto' : '374px'}">
+        <!-- 创建子账号（开启-424；关闭374px） -->
+        <el-form :model="sonForm" ref="sonForm" :rules="sonFormRules" :label-width="sonDialog.formLabelWidth" :class="{'more': sonDialog.type === 'add' && sonForm.is_batch != 0, 'edit-mini': sonDialog.type === 'edit'}">
+          <el-form-item label="批量创建" prop="is_batch" v-if="sonDialog.type === 'add'" class="switch--item">
+            <div class="switch__box">
+              <el-switch
+                v-model="sonForm.is_batch"
+                :active-value="1"
+                :inactive-value="0"
+                active-color="#FB3A32"
+                inactive-color="#CECECE"
+                @change="sonCountGetHandle"
+              >
+              </el-switch>
+              <span class="leve3_title title--999" v-if="sonForm.is_batch">生成子账号的昵称、密码、角色一致</span>
+            </div>
+          </el-form-item>
+          <el-form-item label="账号数量" v-if="sonForm.is_batch" prop="nums" class="account--nums">
+            <VhallInput v-model.trim="sonForm.nums" autocomplete="off" ></VhallInput>
+            <span>可创建<strong>{{ sonCountVo.available_num }}</strong>个</span>
+          </el-form-item>
+          <el-form-item label="账号昵称" prop="nick_name">
+            <VhallInput type="text" placeholder="请输入昵称，默认使用账号ID" autocomplete="off"  v-model="sonForm.nick_name" :maxlength="30" show-word-limit></VhallInput>
+          </el-form-item>
+          <el-form-item label="预设密码" prop="password" v-if="sonDialog.type === 'add'">
+            <pwd-input type="password" v-model.trim="sonForm.password" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
+                      :maxlength="30" :minlength="6" show-word-limit></pwd-input>
+          </el-form-item>
+          <el-form-item label="预设密码" prop="editPwd" v-else>
+            <pwd-input type="password" v-model.trim="sonForm.editPwd" auto-complete="off" placeholder="支持数字，大小写英文，最多输入30个字符"
+                      :maxlength="30" show-word-limit></pwd-input>
+          </el-form-item>
+          <el-form-item label="账号角色" prop="role_id">
+            <el-select placeholder="请选择角色"  round v-model="sonForm.role_id">
+              <el-option
+                v-for="item in roleList"
+                :key="item.id"
+                :label="item.role_name"
+                :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="手机号码" class="no-execute">
+            <VhallInput v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative"
+                      :maxlength="30" disabled  v-if="sonDialog.type !== 'add'">
+              <el-button
+                class="no-border"
+                type="text"
+                size="mini"
+                slot="append"
+                @click="resetPhoneOrEmail('phone', isReset.phone)"
+              >{{ isReset.phone ? '取消重置' : '重置' }}</el-button>
+            </VhallInput>
+            <VhallInput v-model.trim="sonForm.phone" autocomplete="off" :placeholder="phonePlaceholder" class="btn-relative" :maxlength="30" disabled  v-else>
+            </VhallInput>
+          </el-form-item>
+          <el-form-item label="邮箱地址" class="no-execute">
+            <VhallInput v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative"
+                      :maxlength="30" disabled v-if="sonDialog.type !== 'add'">
+              <el-button
+                v-show="sonDialog.type !== 'add'"
+                class="no-border"
+                type="text"
+                size="mini"
+                slot="append"
+                @click="resetPhoneOrEmail('email', isReset.email)"
+              >{{ isReset.email ? '取消重置' : '重置' }}</el-button>
+            </VhallInput>
+            <VhallInput v-model.trim="sonForm.email" autocomplete="off" :placeholder="emailPlaceholder" class="btn-relative" :maxlength="30" disabled v-else>
+            </VhallInput>
+          </el-form-item>
+        </el-form>
+      </el-scrollbar>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" v-preventReClick @click="sonSaveSend('sonForm')" size="medium" round>确 定</el-button>
         <el-button @click="handleClose" size="medium" round>取 消</el-button>
@@ -209,7 +215,8 @@ export default {
         {
           label: '昵称',
           key: 'nick_name',
-          width: 'auto'
+          width: 'auto',
+          customTooltip: true
         },
         {
           label: '手机号码',
@@ -303,6 +310,10 @@ export default {
     },
     // 跳转消息详情页
     toSonDetail(that, {rows}) {
+      that.$vhall_paas_port({
+        k: 100814,
+        data: {business_uid: that.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       that.$router.push({
         path: `/sonDetail/${rows.child_id}`,
       });
@@ -310,6 +321,10 @@ export default {
     // 跳转到用量分配
     toAllocationPage() {
       // 1表示并发
+      this.$vhall_paas_port({
+        k: 100816,
+        data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({
         path: `/allocation`,
       });
@@ -336,7 +351,7 @@ export default {
           rows: {
             child_id: this.ids.join(',')
           }
-        });
+        }, 1);
       }
     },
     downloadHandle() {
@@ -347,6 +362,10 @@ export default {
         limit: 999999, // TODO 跟大龙确定，传值大于0，后台下载依然是所有符合条件的全部数据
       };
       this.$fetch('sonChildExport', params).then(res => {
+        this.$vhall_paas_port({
+          k: 100809,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
          this.$message({
           message: '下载申请成功，请去下载中心下载该项！',
           showClose: true,
@@ -383,7 +402,7 @@ export default {
       });
     },
     // 删除单条消息数据
-    sonDel(that, {rows}) {
+    sonDel(that, {rows}, index) {
       that.$confirm('正在直播或有未提现收益的账号不会被删除，确定删除？', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
@@ -394,6 +413,10 @@ export default {
         that.$fetch('sonDel', {
           child_ids: rows.child_id
         }).then(res => {
+          that.$vhall_paas_port({
+            k: index === 1 ? 100813 : 100812,
+            data: {business_uid: that.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           that.$message({
             message: '删除成功',
             showClose: true,
@@ -482,6 +505,15 @@ export default {
             return;
           }
           let params = null;
+          this.$vhall_paas_port({
+            k: this.sonDialog.type === 'add' ? 100806 : 100811,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+
+          this.$vhall_paas_port({
+            k: this.sonForm.is_batch ? 100807 : 100808,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           if (this.sonDialog.type === 'add') {
             params = this.$params({
               is_batch: this.sonForm.is_batch,
@@ -628,6 +660,12 @@ export default {
       this.initQuerySonList();
     },
     initQuerySonList() {
+      if (this.query.keyword) {
+        this.$vhall_paas_port({
+          k: 100810,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.query.pos = 0;
       this.query.pageNumber = 1;
       this.query.limit = 10;
@@ -658,18 +696,18 @@ export default {
 </script>
 <style lang="less" scoped>
 // 初始化查询子账号列表信息
-.all-no-data {
+/deep/.all-no-data {
   /* 基于外边框已经有距离： padding: 24px 24px 40px 24px; */
   padding-top: 30px;
   margin-top: 110px;
-  /deep/.createActive {
+  .createActive {
     padding-bottom: 30px;
   }
 }
-.all-yes-data {
+/deep/.all-yes-data {
   padding: 24px 24px 40px 24px;
-  /deep/.data-list {
-    /deep/.el-table {
+  .data-list {
+    .el-table {
       margin-bottom: 40px;
       .cell{
         line-height: 25px;
@@ -677,19 +715,19 @@ export default {
     }
   }
 }
-.search-no-data {
+/deep/.search-no-data {
   padding-top: 148px;
-  /deep/.search {
+  .search {
     padding-bottom: 0;
   }
 }
-.list--search {
+/deep/.list--search {
   margin-bottom: 20px;
   .el-select {
     width: 100px;
     float: right;
     margin-right: 20px;
-    /deep/ .el-input__inner {
+    .el-input__inner {
       user-select: none;
       border-radius: 50px;
       font-size: 14px;
@@ -697,24 +735,23 @@ export default {
       height: 36px;
       line-height: 36px;
     }
-    /deep/.el-select__caret.el-input__icon.el-icon-arrow-up{
+    .el-select__caret.el-input__icon.el-icon-arrow-up{
       line-height: 36px;
     }
   }
-
   .el-input {
     width: 220px;
     float: right;
-    /deep/ .el-input__icon {
+    .el-input__icon {
       line-height: 36px;
     }
-    /deep/ .el-input__inner {
+    .el-input__inner {
       border-radius: 20px;
       height: 36px;
       padding-right: 30px !important;
     }
 
-    /deep/ .el-input__prefix {
+    .el-input__prefix {
       cursor: pointer;
     }
   }
@@ -723,31 +760,30 @@ export default {
   margin-bottom: 14px;
 }
 /deep/.el-form-item.account--nums {
-  /deep/.el-input {
+  .el-input {
     width: 210px;
     margin-right: 12px;
   }
-  /deep/span {
+  span {
     font-size: 14px;
     font-weight: 400;
     color: #1A1A1A;
     line-height: 20px;
   }
-  /deep/strong {
+  strong {
     color: #FB3A32;
   }
 }
 /deep/.no-execute {
-  /deep/.el-input.is-disabled .el-input__inner {
+  .el-input.is-disabled .el-input__inner {
     background-color: #F7F7F7;
     border-color: #cccccc;
     font-size: 14px;
     font-weight: 400;
     color: #999999;
-    border-right: 0;
     cursor: not-allowed;
   }
-  /deep/.el-input-group__append {
+  .el-input-group__append {
     background-color: #F7F7F7;
     border-color: #cccccc;
     font-size: 14px;
@@ -756,7 +792,7 @@ export default {
     border-left: 0;
     cursor: not-allowed;
   }
-  /deep/span {
+  span {
     font-size: 14px;
     font-weight: 400;
     color: #666666;
@@ -765,12 +801,35 @@ export default {
     }
   }
 }
-/deep/.el-dialog__wrapper {
-  .el-select {
-    width: 318px;
+/deep/.sonAdd {
+  /* .el-dialog__body {
+    height: 374px;
+    overflow-y: auto;
+  } */
+  .el-dialog__body {
+    padding: 0 0;
   }
-}
-/deep/.el-dialog__footer {
-  padding: 0 32px 24px 32px;
+  .el-form-item__content {
+    width: 316px;
+  }
+  .el-form {
+    display: flex;
+    margin: 0 32px;
+    flex-wrap: wrap;
+    height: 374px;
+    &.more {
+      height: 424px;
+    }
+    &.edit-mini {
+      margin: 0 32px 54px 32px;
+      height: 320px;
+    }
+  }
+  .el-select {
+    width: 100%;
+  }
+  .el-dialog__footer {
+    padding: 0 32px 24px 32px;
+  }
 }
 </style>

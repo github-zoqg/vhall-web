@@ -14,66 +14,97 @@
             ref="searchDetail"
             :searchAreaLayout="searchDetail"
             @onExportData="exportAccount()"
-            @onSearchFun="getDetailList('search')"
+            @onSearchFun="getSearchList('search')"
           >
           </search-area>
         </div>
-        <div class="interact-detail" v-show="activeIndex==1">
+        <div class="interact-detail">
           <el-table
+            @cell-mouse-enter="handleCellMouseEnter"
+            @cell-mouse-leave="handleCellMouseLeave"
             :data="tableList"
+            v-if="isDetail"
+            style="width: 100%"
             :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
            >
             <el-table-column
-              prop="order_id"
+              :prop="activeIndex==1 ? 'order_id' : 'id'"
               label="订单编号"
-              show-overflow-tooltip
               width="145"
               >
             </el-table-column>
             <el-table-column
-              prop="create_time"
-              show-overflow-tooltip
               label="交易时间"
+              width="180"
               >
-            </el-table-column>
-            <el-table-column
-              prop="type"
-              show-overflow-tooltip
-              label="订单类型"
-              width="120">
-            </el-table-column>
-            <el-table-column
-              prop="amount"
-              show-overflow-tooltip
-              label="交易金额"
-              width="95">
-            </el-table-column>
-            <el-table-column
-              prop="content"
-              show-overflow-tooltip
-              label="购买内容"
-              width="95">
-            </el-table-column>
-            <el-table-column
-              label="订单状态"
-              show-overflow-tooltip
-              width="95">
               <template slot-scope="scope">
-              <span class="buyStatus"><i :class="scope.row.status == '1' ? 'active-success': scope.row.status == '-1' ? 'active-error' : 'active-waiting'"></i>{{scope.row.statusText}}</span>
+                <el-tooltip placement="top" :disabled="!isTextOverflow" :content="scope.row.create_time == '' ? '- -' : scope.row.create_time">
+                  <p class="custom-tooltip-content">{{ scope.row.create_time == '' ? '- -' : scope.row.create_time }}</p>
+                </el-tooltip>
               </template>
             </el-table-column>
             <el-table-column
-              prop="start_time"
-              show-overflow-tooltip
-              label="启用日期">
+              prop="type"
+              label="订单类型"
+              width="150">
             </el-table-column>
             <el-table-column
-              prop="end_time"
-              show-overflow-tooltip
-              label="失效日期">
+              prop="amount"
+              v-if="activeIndex==1"
+              label="交易金额"
+              width="120">
+            </el-table-column>
+            <el-table-column
+              prop="content"
+              label="购买内容"
+              width="120">
+            </el-table-column>
+            <el-table-column
+              label="订单状态"
+              v-if="activeIndex==1"
+              width="120">
+              <template slot-scope="scope">
+                <span class="buyStatus" ><i :class="scope.row.status == 1 ? 'active-success': scope.row.status == -1 ? 'active-error' : 'active-waiting'"></i>{{scope.row.statusText}}</span>
+              </template>
+            </el-table-column>
+             <el-table-column
+             v-if="activeIndex==2"
+              label="订单状态"
+              width="120">
+              <template slot-scope="scope">
+                <span class="buyStatus" ><i :class="scope.row.status == 1 ? 'active-success': scope.row.status == -1 ? 'active-error' : 'active-waiting'"></i>{{scope.row.statusText}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              v-if="activeIndex==2"
+              label="来源"
+              width="120">
+              <template slot-scope="scope">
+                <span>{{scope.row.source | filterSource}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="启用日期"
+              width="180">
+              <template slot-scope="scope">
+                <el-tooltip placement="top" :disabled="!isTextOverflow" :content="scope.row.start_time == '' ? '- -' : scope.row.start_time">
+                  <p class="custom-tooltip-content">{{ scope.row.start_time == '' ? '- -' : scope.row.start_time }}</p>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="失效日期"
+              width="180">
+              <template slot-scope="scope">
+                <el-tooltip placement="top" :disabled="!isTextOverflow" :content="scope.row.end_time == '' ? '- -' : scope.row.end_time">
+                  <p class="custom-tooltip-content">{{ scope.row.end_time == '' ? '- -' : scope.row.end_time }}</p>
+                </el-tooltip>
+              </template>
             </el-table-column>
             <el-table-column
               width="130"
+              v-if="activeIndex==1 && totalNum"
+              fixed="right"
               label="操作">
               <template slot-scope="scope">
                 <el-button
@@ -89,7 +120,7 @@
                 >
               </template>
             </el-table-column>
-            <div slot="empty"><noData :nullType="'nullData'" v-if="!totalNum && activeIndex==1" :text="'暂无数据'"></noData></div>
+            <div slot="empty"><noData :nullType="'nullData'" v-if="!totalNum" :text="'暂无数据'"></noData></div>
           </el-table>
           <SPagination
             :total="totalNum"
@@ -100,7 +131,7 @@
           >
           </SPagination>
         </div>
-        <table-list
+        <!-- <table-list
           v-show="activeIndex==2"
           ref="tableDetail"
           :manageTableData="tableList"
@@ -110,8 +141,8 @@
           :totalNum="totalNum"
           @getTableList="getDetailList"
           >
-        </table-list>
-        <noData :nullType="'nullData'" v-if="!totalNum&&activeIndex==2" :text="'暂无数据'" :height="100"></noData>
+        </table-list> -->
+        <!-- <noData :nullType="'nullData'" v-if="!totalNum&&activeIndex==2" :text="'暂无数据'" :height="100"></noData> -->
       </el-tabs>
     </div>
   </div>
@@ -121,12 +152,15 @@
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 import noData from '@/views/PlatformModule/Error/nullPage';
+import tableCellTooltip from '@/components/TableList/mixins/tableCellTooltip'
 export default {
   name: "income",
+  mixins: [tableCellTooltip],
   data() {
     return {
       activeIndex: '1',
       totalNum: 0,
+      isDetail: false,
       isHandle: true,
       params: {},
       pageInfo: {
@@ -137,7 +171,7 @@ export default {
       options: [
         {
           label: '全部',
-          value: ''
+          value: '',
         },
         {
           label: '流量包',
@@ -348,7 +382,8 @@ export default {
         {
           label: '购买内容',
           key: 'content',
-          width: 95
+          width: 95,
+          customTooltip: true
         },
         {
           label: '订单状态',
@@ -390,7 +425,7 @@ export default {
         // 购买明细
         this.searchDetail = this.searchList;
       }
-    }
+    },
   },
   methods: {
     getRoleList() {
@@ -399,7 +434,8 @@ export default {
         res.data.list.map(item => {
           arrList.push({
             label: item.role_name,
-            value: item.id
+            value: item.id,
+            k: item.id
           })
         })
       })
@@ -416,25 +452,86 @@ export default {
     },
     handleClick(tab) {
       this.activeIndex = tab.name;
-      this.$refs.tableDetail.pageInfo.pos = 0;
-      this.$refs.tableDetail.pageInfo.pageNum = 1;
+      this.pageInfo.pos = 0;
+      this.pageInfo.pageNum = 1;
+      this.isDetail = false;
+      // this.$refs.tableDetail.pageInfo.pos = 0;
+      // this.$refs.tableDetail.pageInfo.pageNum = 1;
       this.$refs.searchDetail.searchParams = {};
       this.getDetailList();
     },
-    getDetailList(params) {
-      let pageInfo = {};
-      if (this.activeIndex == 1) {
-        pageInfo = this.pageInfo;
-      } else {
-        pageInfo = this.$refs.tableDetail.pageInfo;
+    getSearchList() {
+      let formParams = this.$refs.searchDetail.searchParams;
+      console.log(formParams, '?????????')
+      for (let i in formParams) {
+        if (i === 'searchTime' && formParams.searchTime) {
+          this.$vhall_paas_port({
+            k: this.activeIndex == 1 ? 100708 : 100724,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+        if (i === 'orderType') {
+          let k = 100709;
+          let typeOrder = [100710, 100711, '', 100712, 100713, 100714, 100715, 100716, 100466, 100467]
+          let typeDetail = [100730, 100731, 100732, 100733, 100734, 100735, 100736, 100737, 100726, 100727, 100728, 100729]
+          if (this.activeIndex == 1) {
+            k = formParams.orderType ? typeOrder[formParams.orderType - 7] : 100709
+          } else {
+            if (typeof(formParams.orderType) == 'number') {
+              if (formParams.orderType > 8) {
+                k = 104000
+              } else {
+                k = typeDetail[formParams.orderType]
+              }
+
+            } else {
+              let type = formParams.orderType;
+              k = type === 'flow' ? 100726 : type === 'concurrency' ? 100727 : type === 'extend_people' ? 100728 :  type === 'extend_day' ? 100729 : 100725
+            }
+          }
+          this.$vhall_paas_port({
+            k: k,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+        if (i === 'status') {
+          let k = this.activeIndex == 1 ? 100717 : 100738;
+          if (formParams.status === 1) {
+            k = this.activeIndex == 1 ? 100720 : 100740
+          } else if (formParams.status === -1) {
+            k = this.activeIndex == 1 ? 100718 : 100741
+          } else if (formParams.status === 0) {
+             k = this.activeIndex == 1 ? 100719 : 100739
+          }
+          this.$vhall_paas_port({
+            k: k,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+        if (i === 'source' && this.activeIndex == 2) {
+          let sourceArr = [100743, 100744, 100745, 100746, 100747, 100748]
+          this.$vhall_paas_port({
+            k: formParams.source ? sourceArr[formParams.source - 5] : 100742,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
       }
+      this.getDetailList('search')
+    },
+    getDetailList(params) {
+      // let pageInfo = {};
+      // if (this.activeIndex == 1) {
+      //   pageInfo = this.pageInfo;
+      // } else {
+      //   pageInfo = this.$refs.tableDetail.pageInfo;
+      // }
       let formParams = this.$refs.searchDetail.searchParams; //获取搜索参数
       let paramsObj = {
         user_id: this.userId,
       };
       if (params === 'search') {
-        pageInfo.pos= 0;
-        pageInfo.pageNum = 1;
+        this.pageInfo.pos= 0;
+        this.pageInfo.pageNum = 1;
       }
       for (let i in formParams) {
         if (i === 'searchTime' && formParams.searchTime) {
@@ -445,22 +542,26 @@ export default {
         }
       }
       paramsObj.type = formParams.orderType || '';
-      let obj = Object.assign({}, pageInfo, paramsObj);
+      let obj = Object.assign({}, this.pageInfo, paramsObj);
       this.params = paramsObj;
-      let url = this.activeIndex == '1' ? "buyDetail" : "orderDetail";
+      let url = this.activeIndex == 1 ? "buyDetail" : "orderDetail";
       this.$fetch(url, this.$params(obj)).then(res =>{
         this.totalNum = res.data.total;
         let tableList = res.data.list;
-        tableList.map(item=> {
-          if (this.activeIndex == '1') {
-            item.statusText = item.status== 1 ? '成功' : item.status== -1 ? '失败' : '待支付';
-            item.type = this.culesType(item.type);
-          } else {
-            item.statusText = item.status== 1 ? '生效中' : item.status== -1 ? '已失效' : '待生效';
-          }
-          item.source = this.buyMethods(item.source);
-        });
+        if (res.data.total > 0) {
+          tableList.map(item=> {
+            if (this.activeIndex == 1) {
+              item.statusText = item.status== 1 ? '成功' : item.status== -1 ? '失败' : '待支付';
+              item.type = this.culesType(item.type);
+            } else {
+              item.statusText = item.status== 1 ? '生效中' : item.status== -1 ? '已失效' : '待生效';
+              // item.source = this.buyMethods(item.source);
+            }
+          });
+        }
         this.tableList = tableList;
+        this.isDetail = true;
+        console.log(this.tableList, '????kaitongmingxi开通明细')
         if (this.tableList.length == 0) {
           //兼容有无数据来修改element样式
           document.querySelector('.el-table').style.position = 'inherit'
@@ -517,6 +618,10 @@ export default {
     },
     deleteList(id) {
       this.$fetch('deleteDetail', {id: id}).then(res =>{
+        this.$vhall_paas_port({
+          k: 100721,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {orderId: id}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: '删除成功',
           showClose: true,
@@ -537,6 +642,10 @@ export default {
       });
     },
     pay(rows)  {
+      this.$vhall_paas_port({
+        k: 100722,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({
         path: '/finance/payOrder',
         query: {
@@ -549,6 +658,10 @@ export default {
     exportAccount() {
       let url = this.activeIndex == '1' ? 'exporOrder' : 'exportAdmin';
       this.$fetch(url, this.$params(this.params)).then(res => {
+        this.$vhall_paas_port({
+          k: this.activeIndex == '1' ? 100707 : 100723,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `${this.activeIndex == 1 ? '购买' : '开通'}账单明细导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -593,9 +706,29 @@ export default {
     }
     /deep/.el-table .cell{
       width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      // overflow: hidden;
+      // text-overflow: ellipsis;
+      // white-space: nowrap;
+    }
+    /deep/.el-table__fixed-right{
+      height: 100% !important;
+      &::before{
+        background-color: #Fff;
+        height: 0;
+      }
+    }
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+      width: 6px; // 横向滚动条
+      height: 6px; // 纵向滚动条
+    }
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+      background-color: #dedede;
+      border-radius: 5px;
+    }
+    /deep/ .el-table__body::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+      border-radius: 5px;
+      background: rgba(255,255,255,1);
     }
     /deep/.el-select{
       width: 140px!important;

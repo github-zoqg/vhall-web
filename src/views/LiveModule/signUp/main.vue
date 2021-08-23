@@ -15,7 +15,7 @@
         <div class="headBtnGroup">
           <el-button round size="medium" class="transparent-btn" @click="openDialog('theme')">设置</el-button>
           <el-button round size="medium"  class="transparent-btn" @click="openDialog('share')">分享</el-button>
-          <el-button type="primary" round size="medium" @click="rightComponent='signUpForm'">预览</el-button>
+          <el-button type="primary" round size="medium" @click="showSignUp">预览</el-button>
         </div>
       </pageTitle>
       <div id="settingBox" class="settingBox clearFix">
@@ -46,6 +46,7 @@
             v-show="rightComponent == 'fieldSet'"
             :questionArr.sync="questionArr"
             :signUpSwtich="signUpSwtich"
+            :regionalOptions="regionalOptions"
             @setBaseInfo="setBaseInfo"
           ></fieldSet>
           <!-- 表单预览组件 -->
@@ -77,7 +78,7 @@
 import PageTitle from '@/components/PageTitle';
 import fieldSet from './fieldSet';
 import shareDialog from './shareDialog';
-import signUpForm from '../Subscribe/signUpForm';
+import signUpForm from './components/signUpForm.vue';
 import themeSet from './themeSet';
 import {getfiledJson} from './util';
 import { sessionOrLocal } from '@/utils/utils';
@@ -98,13 +99,18 @@ export default {
       baseInfo: {
         open_link: 0,
         theme_color: 'red',
-        tab_verify_title: '验证',
-        tab_form_title: '用户报名',
+        tab_verify_title: '我已报名',
+        tab_form_title: '活动报名',
         title: '',
         intro: '',
         cover: ''
       },
+      regionalOptions: {
+        1: true,
+        2: true
+      },
       radio: 3,
+      userId: '',
       rightComponent: 'fieldSet',
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       setOptions: {
@@ -162,6 +168,7 @@ export default {
     }
   },
   created(){
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getBaseInfo();
     this.getQuestionList();
   },
@@ -287,6 +294,10 @@ export default {
         webinar_id: this.webinar_id
       }).then(res => {
         if (res.code === 200) {
+          this.$vhall_paas_port({
+            k: value ? 100137 : 100138,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message:  `报名表单${ behaviour }成功`,
             showClose: true, // 是否展示关闭按钮
@@ -295,7 +306,7 @@ export default {
           });
         }
       }).catch(err => {
-        if (err.code == 12800) {
+        if (err.code == 512800) {
           this.$message({
             message:  '报名表单不能与白名单同时开启',
             showClose: true, // 是否展示关闭按钮
@@ -311,6 +322,13 @@ export default {
           });
         }
       });
+    },
+    showSignUp() {
+      this.rightComponent='signUpForm';
+      this.$vhall_paas_port({
+        k: 100188  ,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     // 更改表单基本信息的方法（通用）
     setBaseInfo(options, callback) {
@@ -381,6 +399,9 @@ export default {
             }
           });
         } else if (info.name === 'duty' || info.type === 'select' && opts.items && opts.items.length) {
+          if (opts.items.length < filedJson.nodes.length) {
+            filedJson.nodes.length = opts.items.length
+          }
           opts.items.forEach((item, index) => {
             const length = filedJson.nodes.length;
             if (index < length) {
@@ -420,6 +441,14 @@ export default {
           filedJson.value = []
         }
         this.questionArr.push(filedJson);
+        // 地域选项状态
+        if (filedJson.reqType === 5) {
+            // 地域
+            this.regionalOptions = {
+              1: !!Number(filedJson.options.show_city),
+              2: !!Number(filedJson.options.show_district)
+            }
+          }
         return false;
       }
 
@@ -545,6 +574,12 @@ export default {
     },
     // 打开 dialog 方法（通用）
     openDialog(ref){
+      if (ref === 'share') {
+        this.$vhall_paas_port({
+          k: 100182,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.$refs[ref].dialogVisible = true;
     }
   }

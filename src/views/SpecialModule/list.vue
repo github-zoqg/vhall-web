@@ -6,9 +6,9 @@
 
     <!-- 操作栏 -->
     <div class="operaBox" v-if="totalElement || isSearch">
-      <el-button size="medium" type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})">创建专题</el-button>
+      <el-button size="medium" type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建', refer: 1}})">创建专题</el-button>
       <div class="searchBox">
-        <el-select v-model="orderBy" placeholder="请选择" @change="searchHandler">
+        <el-select v-model="orderBy" placeholder="请选择" @change="changeOrder">
           <el-option
             v-for="item in orderOptions"
             :key="item.value+item.label"
@@ -74,7 +74,7 @@
     <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
      <div class="no-live" v-show="!totalElement">
       <noData :nullType="nullText" :text="text">
-        <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建'}})" v-if="nullText==='nullData'">创建专题</el-button>
+        <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建', refer: 1}})" v-if="nullText==='nullData'">创建专题</el-button>
       </noData>
     </div>
    <share ref="share" :shareVo="shareVo"></share>
@@ -98,11 +98,13 @@ import noData from '@/views/PlatformModule/Error/nullPage';
 import Env from '@/api/env.js';
 import share from './components/share'
 import introduceShow from './components/moduleTutorial'
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   data() {
     return {
       liveStatus: 0,
       isSearch: false,
+      userId:JSON.parse(sessionOrLocal.get("userId")),
       tutorialVisible:false,
       nullText: 'nullData',
       text: '暂未创建专题活动',
@@ -142,6 +144,13 @@ export default {
       this.pos = 0;
       this.getLiveList();
       console.log('searchHandler');
+    },
+    changeOrder() {
+      this.$vhall_paas_port({
+        k: this.orderBy == 1 ? 100491 : 100492,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.searchHandler()
     },
     currentChangeHandler(current) {
       this.pageNum = current;
@@ -208,6 +217,10 @@ export default {
     trueDelete(id) {
       this.$fetch('subjectDel', {subject_ids: id}).then(res=>{
         if(res && res.code === 200) {
+          this.$vhall_paas_port({
+            k: 100497,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: `删除成功`,
             showClose: true,
@@ -232,21 +245,37 @@ export default {
     },
     // 编辑专题
     editSpecialInfo(id) {
+      this.$vhall_paas_port({
+        k: 100496,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       const { href } = this.$router.resolve({path:'/special/edit',query: {id: id, title: '编辑'}});
       window.open(href, '_blank');
     },
     toShare(id) {
       this.$refs.share.dialogVisible = true;
+      this.$vhall_paas_port({
+        k: 100495,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       // this.dialogShareVisible = true;
-      this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail/?id=${id}`;
-      this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail/?id=${id}`;
+      this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${id}`;
+      this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail?id=${id}`;
     },
     // 预览页面
     specialDetail(item) {
+      this.$vhall_paas_port({
+        k:100494,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
       window.open(routeData.href, '_blank');
     },
     introduceDetail() {
+      this.$vhall_paas_port({
+        k: 100493,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.tutorialVisible = true;
     }
   },
@@ -323,6 +352,13 @@ export default {
       background: transparent!important;
       border: none;
       box-shadow: none;
+      @media (max-width: 1440px) {
+        margin-top: 9vh!important;
+      }
+      @media (max-width: 1366px) {
+        margin-top: 2vh!important;
+        margin-bottom: 0;
+      }
       .el-dialog__headerbtn {
         top: 24px;
         right: 0;
@@ -462,7 +498,7 @@ export default {
           position: absolute;
           height: 40px;
           width: 100%;
-          background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.2));
+          background: linear-gradient(180deg, transparent, rgba(0, 0,0, 0.6));
           /* background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%); */
           bottom: 0px;
           left: 0px;

@@ -7,7 +7,7 @@ let cdn = {
     "//static.vhallyun.com/jssdk/vhall-jssdk-base/vhall-msg-1.0.9.js",
     "//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js",
     "//cnstatic01.e.vhall.com/vhall-new-saas/static/polyfill.js?v=202",
-    "//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.5.js",
+    "//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.6.js",
     // '//cnstatic01.e.vhall.com/3rdlibs/common-libs/vue/VhallLibs.js',
     // '//cnstatic01.e.vhall.com/3rdlibs/common-libs/ui-frame/element-UI.js',
     // "//static01-open.e.vhall.com/jssdk/question-component/1.0.3/questionnaire_service.js",
@@ -16,6 +16,7 @@ let cdn = {
 
 let publicPath = null
 
+console.warn('配置环境变量----',process.env.VUE_APP_NODE_ENV, process.env.VUE_APP_WEB_URL);
 switch (process.env.VUE_APP_NODE_ENV)  {
   case 'development':
     publicPath = '/'
@@ -24,6 +25,9 @@ switch (process.env.VUE_APP_NODE_ENV)  {
     publicPath = '//t-alistatic01.e.vhall.com/saas-v3-web/'
     break;
   case 'production':
+    publicPath = '//cnstatic01.e.vhall.com/saas-v3-web/'
+    break;
+  case 'pre':
     publicPath = '//cnstatic01.e.vhall.com/saas-v3-web/'
     break;
   default :
@@ -63,6 +67,15 @@ module.exports = {
       }
     }
   },
+  // pwa: {
+  //   iconPaths: {
+  //     favicon32: 'favicon.ico',
+  //     favicon16: 'favicon.ico',
+  //     appleTouchIcon: 'favicon.ico',
+  //     maskIcon: 'favicon.ico',
+  //     msTileImage: 'favicon.ico'
+  //   }
+  // },
   chainWebpack: config=>{
     config.plugin('html').tap(options=>{
       options[0].cdn = cdn

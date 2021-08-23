@@ -12,8 +12,7 @@
         ></el-button> -->
       </el-tooltip>
     </div>
-    <div :style="{ height: '300px', width: '100%' }" ref="terBroEchart" v-if="isShow"></div>
-    <div class="noPage" v-else>暂无数据</div>
+    <div :style="{ height: '300px', width: '100%' }" ref="terBroEchart"></div>
   </div>
 </template>
 <script>
@@ -24,7 +23,6 @@ export default {
     return {
       isActive: true,
       terBarCharts: null,
-      isShow: true,
       terColorList: ['#4383E4', '#FA9A32', '#7D43E4', '#FB3A32', '#ccc'],
       broColorList: ['#FB3A32', '#4383E4', '#10D3A8', '#FA9A32', '#7D43E4','#ccc']
     };
@@ -32,10 +30,6 @@ export default {
   watch: {
     terDataList: {
       handler(data) {
-        if (!data.length) {
-          this.isShow = false;
-          return
-        }
         this.initTerBroCharts(data);
       }
     }
@@ -51,6 +45,18 @@ export default {
         tooltip: {
           trigger: 'item',
           formatter: '{b}<br/>观看次数  {c}  ({d}%)',
+        },
+        title: {
+          text: '暂无数据',
+          x: 'center',
+          y: 'center',
+          show: !data.length,
+          textStyle: {
+            fontSize: 14,
+            fontStyle: 'normal',
+            fontWeight: 'normal',
+            color: '#666'
+          }
         },
         legend: {
           orient: 'vertical',

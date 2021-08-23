@@ -5,14 +5,13 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       customClass="share-dialog"
-      :lock-scroll='false'
       width="570px">
       <div class="content">
         <div class="share-div">
           <ul class="icons">
+            <li><i @click="toShare('wechat')"></i><p>微信</p></li>
             <li><i @click="toShare('qq')"></i><p>QQ</p></li>
             <li><i @click="toShare('sina')"></i><p>微博</p></li>
-            <li><i @click="toShare('wechat')"></i><p>微信</p></li>
           </ul>
           <div class="inputCode">
              <el-input :value="shareVo.pcUrl || url" class="input-with-select" id="linkBox">
@@ -83,7 +82,7 @@ export default {
       }
     },
     doCopy () {
-      let url = this.shareVo.url || this.url;
+      let url = this.shareVo.pcUrl || this.url;
       this.$copyText(url).then(e => {
         this.$message({
           message: `复制成功`,
@@ -111,7 +110,7 @@ export default {
   /deep/ .share-dialog {
     max-height: 314px;
     height: auto;
-    padding-bottom: 4px;
+    padding-bottom: 20px;
     border-radius: 4px;
   }
   /deep/ .smallSwtich{
@@ -201,6 +200,7 @@ export default {
        /deep/.el-input__inner {
         border: none;
         height: 38px;
+        padding: 0 0 0 12px;
       }
       span{
         display: inline-block;
@@ -234,20 +234,20 @@ export default {
       &:last-child {
         margin-right: 0;
       }
-      &:nth-child(1){
-        i {
-          background: url("@{iconpath}/qq.png") center center no-repeat;
-          background-size: 100% 100%;
-        }
-      }
       &:nth-child(2){
         i {
-          background: url("@{iconpath}/weibo.png") center center no-repeat;
+          background: url("@{iconpath}/qq.png") center center no-repeat;
           background-size: 100% 100%;
         }
         margin: 0 48px;
       }
       &:nth-child(3){
+        i {
+          background: url("@{iconpath}/weibo.png") center center no-repeat;
+          background-size: 100% 100%;
+        }
+      }
+      &:nth-child(1){
         i {
           background: url("@{iconpath}/wechat.png") center center no-repeat;
           background-size: 100% 100%;

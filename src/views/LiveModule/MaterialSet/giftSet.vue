@@ -14,7 +14,7 @@
       <el-button
         round
         class="head-btn set-upload transparent-btn"
-        @click="handleAddGift" size="medium">
+        @click="handleAddGift" size="white-medium">
         资料库
       </el-button>
       <el-button
@@ -116,6 +116,8 @@
                path: 'interacts/gift-imgs',
                type: 'image',
             }"
+            :widthImg="231"
+            :heightImg="130"
             :on-success="handleuploadSuccess"
             :on-progress="uploadProcess"
             :on-error="uploadError"
@@ -173,26 +175,27 @@
       <div class="select-matrial-wrap">
         <div v-show="!isNull" class="material-box">
           <el-scrollbar style="height:100%" v-loadMore="moreLoadData">
-            <div
-              v-for="(item, index) in materiaTableData"
-              :key='index'
-              v-show="item.source_status == 1"
-              class="matrial-item"
-              :class="{active: item.isChecked}"
-              @click.stop="handleChooseGift(index, item)">
-              <div class="gift-cover">
-                <img :src="item.img" alt>
+            <template v-for="(item, index) in materiaTableData">
+              <div
+                :key='index'
+                v-if="item.source_status == 1"
+                class="matrial-item"
+                :class="{active: item.isChecked}"
+                @click.stop="handleChooseGift(index, item)">
+                <div class="gift-cover">
+                  <img :src="item.img" alt>
+                </div>
+                <div class="gift-info">
+                  <span class="gift-name">{{item.name}}</span>
+                  <span class="gift-price">￥{{item.price}}</span>
+                </div>
+                <!-- <i v-if="item.isChecked" class="el-icon-check"></i> -->
+                <!-- <label class="img-tangle" v-show="item.isChecked">
+                  <i class="el-icon-check"></i>
+                </label> -->
+                <label  class="img-tangle" v-show="item.isChecked"><img src="../../../common/images/icon-choose.png" alt=""></label>
               </div>
-              <div class="gift-info">
-                <span class="gift-name">{{item.name}}</span>
-                <span class="gift-price">￥{{item.price}}</span>
-              </div>
-              <!-- <i v-if="item.isChecked" class="el-icon-check"></i> -->
-              <!-- <label class="img-tangle" v-show="item.isChecked">
-                <i class="el-icon-check"></i>
-              </label> -->
-              <label  class="img-tangle" v-show="item.isChecked"><img src="../../../common/images/icon-choose.png" alt=""></label>
-            </div>
+            </template>
           </el-scrollbar>
         </div>
         <null-page noSearchText="没有找到相关礼物" nullType="noData" v-if="isNull" :text="'暂无礼物'"></null-page>
@@ -200,7 +203,7 @@
       <div class="control">
         <span>当前选中<span class="choosed-num"> {{addGiftsIds.length}} </span>件礼物</span>
         <div class="control-btn" style="text-align: right;">
-          <el-button @click="chooseGift" type="primary" round :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
+          <el-button @click="chooseGift()" type="primary" round :class="{disabled: addGiftsIds.length <= 0}" :disabled="addGiftsIds.length <= 0">确定</el-button>
           <el-button @click="handleCloseChooseGift" round>取消</el-button>
         </div>
       </div>
@@ -238,6 +241,7 @@ export default {
     };
     return {
       webinar_id: this.$route.params.str,
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       room_id: this.$route.query.roomId,
       total: 0,
@@ -424,6 +428,12 @@ export default {
       })
     },
     searchGifts() {
+      if (this.searchName) {
+         this.$vhall_paas_port({
+          k: 100404,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.getTableList(true)
     },
     selectHandle(row) {
@@ -605,6 +615,10 @@ export default {
           room_id: this.room_id
         }).then((res) => {
           if (res.code == 200) {
+            this.$vhall_paas_port({
+              k: 100399,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: `编辑成功`,
               showClose: true,
@@ -617,7 +631,7 @@ export default {
             this.handleCancelEdit()
           }
         }).catch((err) => {
-            if (err.code == 13001) {
+            if (err.code == 513001) {
               this.$message({
                 message:  `直播中禁止编辑礼物`,
                 showClose: true,
@@ -652,6 +666,10 @@ export default {
           room_id: this.room_id
         }).then((res) => {
           if (res.code == 200) {
+            this.$vhall_paas_port({
+              k: 100398,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
             this.$message({
               message: `创建成功`,
               showClose: true,
@@ -787,7 +805,7 @@ export default {
       this.tableData = resData
       this.addedGiftsIds = this.addedGiftsIds.filter(curItem => curItem != this.deleteId)
 
-      this.chooseGift(1)
+      this.chooseGift(1, 2)
 
       this.total = this.tableData.length
       // 切换table显示的内容
@@ -844,7 +862,7 @@ export default {
           return index < (this.searchParams.page * this.searchParams.page_size) && index >= (this.searchParams.page - 1) * this.searchParams.page_size
         })
       }
-      this.chooseGift(1)
+      this.chooseGift(1, 1)
       this.selectIds = []
     },
     // 选择奖品添加
@@ -865,12 +883,17 @@ export default {
       }
       this.materiaTableData[index].isChecked = !this.materiaTableData[index].isChecked
     },
-    chooseGift(isDeleteChoose) {
+    chooseGift(isDeleteChoose, index) {
+      // index: 1：批量删除   2：删除  3：选择礼物
       this.resultAddGifts = [...(new Set([...this.addedGiftsIds, ...this.addGiftsIds]))]
       this.$fetch('setRelevance', {
         gift_ids: this.resultAddGifts.join(','),
         room_id: this.room_id
       }).then(res => {
+        this.$vhall_paas_port({
+          k: index === 1 ?  100403: index === 2 ? 100402 : 100401,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.handleCloseChooseGift()
         isDeleteChoose != 1 && this.getTableList()
       })
@@ -945,9 +968,7 @@ export default {
   }
   /deep/.el-upload--picture-card{
     width:100%;
-  }
-  /deep/.el-upload--picture-card .box img {
-    width: auto
+    height: 130px;
   }
   /deep/.el-form-item {
     .el-input__inner {

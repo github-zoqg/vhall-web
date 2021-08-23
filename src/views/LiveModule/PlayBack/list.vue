@@ -13,10 +13,10 @@
         <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
         <el-button v-if="WEBINAR_PES.btn_record"  class="transparent-btn" size="medium" plain round @click="toRecord">录制</el-button>
         <el-button size="medium"  class="transparent-btn" round @click="settingHandler">回放设置</el-button>
-        <el-button size="medium" class="transparent-btn" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','))">批量删除</el-button>
+        <el-button size="medium" class="transparent-btn" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','), 1)">批量删除</el-button>
         <VhallInput
           clearable
-          @keyup.enter.native="getList"
+          @keyup.enter.native="getSearchList"
           placeholder="请输入内容标题"
           autocomplete="off"
           v-clearEmoij
@@ -26,7 +26,7 @@
           <i
             class="el-icon-search el-input__icon"
             slot="prefix"
-            @click="getList">
+            @click="getSearchList">
           </i>
         </VhallInput>
       </div>
@@ -42,10 +42,10 @@
           <el-table-column
             v-if="!isDemand"
             type="selection"
-            width="55">
+            :width="isBidScreen ? 55 : 52">
           </el-table-column>
           <el-table-column
-            :width="isDemand === true ? 430 : 420"
+            :width="isDemand === true ? 375 : 365"
             label="内容标题">
             <template slot-scope="scope">
               {{ scope.row.date }}
@@ -53,8 +53,8 @@
                 <div class="imageBox">
                   <div class="imageWrap" v-if="scope.row.transcode_status != 1">
 
-                    <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">转码失败</p>
-                    <p v-else class="statusDesc">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
+                    <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">生成失败</p>
+                    <p v-else class="statusDesc disabled">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
                   </div>
                   <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
                   <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
@@ -63,6 +63,7 @@
                   <p class="name">{{ scope.row.name }}</p>
                   <p class="create-time">{{ scope.row.created_at }}</p>
                   <span v-if="scope.row.doc_status && WEBINAR_PES['ui.record_chapter']" class="tag">章节</span>
+                  <span v-if="scope.row.layout != 0" class="tag">重制</span>
                 </div>
               </div>
             </template>
@@ -84,33 +85,44 @@
 
           <el-table-column
             label="时长"
+            :width="isBidScreen ? '' : 91"
             show-overflow-tooltip>
             <span class="playpackSource" slot-scope="scope">{{scope.row.duration}}</span>
           </el-table-column>
 
           <el-table-column
             v-if="!isDemand"
+            label="布局"
+            :width="isBidScreen ? '' : 78"
+            show-overflow-tooltip>
+            <span class="playpackSource" slot-scope="scope">{{scope.row.layout | layoutFilter}}</span>
+          </el-table-column>
+
+          <el-table-column
+            v-if="!isDemand"
             label="暂存至"
+            :width="isBidScreen ? '' : 108"
+            class-name="deltime"
             show-overflow-tooltip>
             <span class="playpackSource" slot-scope="scope">{{scope.row.save_time}}</span>
           </el-table-column>
 
           <el-table-column
-            width="190"
+            :width="isBidScreen ? 190 : 176"
             label="操作"
-            show-overflow-tooltip
             align="left"
           >
             <template slot-scope="scope">
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
-              <el-button :disabled="!!scope.row.transcoding" v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">{{ !!scope.row.transcoding ? '转码中' : '下载' }}</el-button>
+              <el-button v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
               <el-button v-if="WEBINAR_PES['ui.record_chapter']" type="text" @click="toChapter(scope.row)">章节</el-button>
               <el-dropdown v-if="!isDemand" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
-                  <el-dropdown-item :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
-                  <el-dropdown-item v-if="WEBINAR_PES['publish_record']" :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
+                  <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
+                  <el-dropdown-item v-if="!scope.row.layout" :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
+                  <el-dropdown-item v-if="WEBINAR_PES['publish_record'] && !scope.row.layout" :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'delete', data: scope.row}">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -180,6 +192,7 @@ export default {
       showDialog: false,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       videoParamId: '',
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       tableData: [],
       defaultImg: require('../../../common/images/v35-webinar.png'),
       keyWords: '',
@@ -207,7 +220,9 @@ export default {
         { label: '打点录制', value: '3' }
       ],
       // 权限配置
-      WEBINAR_PES: {}
+      WEBINAR_PES: {},
+      isBidScreen: true,
+      versionExpired: false, // 用户套餐是否过期
       // WEBINAR_PES: sessionOrLocal.get('WEBINAR_PES', 'localStorage') && JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')) || {},
     };
   },
@@ -233,10 +248,10 @@ export default {
     this.getLiveDetail();
     EventBus.$on('record_download', this.handleDownload)
     this.getPermission(this.$route.params.str)
+    this.getVersion()
   },
   mounted(){
-
-
+    window.addEventListener('resize', this.calcScreenWidth)
   },
   beforeDestroy(){
     if (!this.WEBINAR_PES['forbid_delrecord'] || !this.WEBINAR_PES['publish_record']) {
@@ -247,27 +262,58 @@ export default {
       this.chatSDK = null
     }
     EventBus.$off('record_download', this.handleDownload)
+    window.removeEventListener('resize', this.calcScreenWidth)
   },
   methods: {
+    getVersion() {
+      this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
+        this.versionExpired = res.data.expired == 1;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    calcScreenWidth() {
+      const clientWidth = document.body.clientWidth
+      if (this.isDemand) return;
+      if (clientWidth < 1920) {
+        this.isBidScreen = false
+      } else {
+        this.isBidScreen = true
+      }
+    },
     handleTipMsgVisible() {
+      let that = this;
       if (!this.WEBINAR_PES['forbid_delrecord']) {
         this.tipMsg = this.$message({
           dangerouslyUseHTMLString: true,
           message: `
             ${this.WEBINAR_PES['forbid_delrecord'] ? '' : '<span class="msgGray">非默认回放暂存15天</span>'}
             ${!this.WEBINAR_PES['forbid_delrecord'] && !this.WEBINAR_PES['publish_record'] ? '，' : ''}
-            ${this.WEBINAR_PES['publish_record'] ? "" : "<a href='http://webim.qiao.baidu.com/im/index?siteid=113762&ucid=2052738' target='_blank' class='msgBlue'>开通点播服务</a>"}
+            ${this.WEBINAR_PES['publish_record'] ? "" : "<span class='msgBlue' id='msgBlue'>开通点播服务</span>"}
           `,
           showClose: true,
-          duration: 0,
-          offset: 74
+          duration: 0
+        });
+        let open = document.querySelector('#msgBlue');
+        open.addEventListener('click', function(e){
+          let url = 'https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038'
+          that.$vhall_paas_port({
+            k: 100017,
+            data: {business_uid: that.userId, user_id: '', webinar_id: that.$route.params.str, s: '', refer: 2, report_extra: {}, ref_url: '', req_url: ''}
+          })
+          window.open(url, "_blank");
         });
       }
     },
+    goReportData() {
+      this.$vhall_paas_port({
+        k: 100017,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: 2, report_extra: {}, ref_url: '', req_url: ''}
+      })
+    },
     getPermission(id) {
-      let userId = JSON.parse(sessionOrLocal.get('userId'));
       // 活动权限
-      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: userId, scene_id: 1}).then(res => {
+      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: this.userId, scene_id: 1}).then(res => {
         if(res.code == 200) {
           if(res.data.permissions) {
             sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
@@ -288,10 +334,19 @@ export default {
         this.showDialog = true;
         this.videoParamId = data.id;
       } else {
-        this.$message.warning('只有转码成功才能查看');
+        this.$message.warning('只有生成成功才能查看');
       }
     },
     reTranscode(data) {
+      if (data.transcode_status == 2 && data.layout != 0) {
+        this.$message({
+          message: `检测到当前视频未演示文档导致课件重制功能无法正常使用，请使用其他视频`,
+          showClose: true,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        })
+        return false
+      }
       this.$fetch('recordReTranscode', {
         paas_record_id: data.paas_record_id,
         webinar_id: this.webinar_id
@@ -314,6 +369,7 @@ export default {
       this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
         this.liveDetailInfo = res.data;
         this.isDemand = this.liveDetailInfo.is_demand == 1;
+        this.calcScreenWidth()
         if (this.isDemand) {
           this.recordType = '上传'
           this.typeOptions = [
@@ -368,21 +424,44 @@ export default {
     },
     handleCommand(param){
       if(param.command == 'delete'){
-        this.deletePlayBack(param.data.id);
+        this.deletePlayBack(param.data.id, 2);
       }else if(param.command == 'tailoring'){
+        this.$vhall_paas_port({
+          k: 100411,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.toTailoring(param.data.id, param.data.name);
       } else if (param.command == 'publish') {
+        this.$vhall_paas_port({
+          k: 100413,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.toCreateDemand(param.data);
+      } else if (param.command == 'vodreset') {
+        this.$vhall_paas_port({
+          k: 100415,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        this.toVodreset(param.data)
       }
     },
     currentChangeHandler(num){
       this.pageNum = num;
       this.getList();
     },
+    getSearchList() {
+      if (this.keyWords) {
+        this.$vhall_paas_port({
+          k: 100418,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      this.getList();
+    },
     getList(){
       let param = {
         webinar_id: this.webinar_id,
-        user_id: window.sessionStorage.getItem('userId'),
+        user_id: this.userId,
         pos: this.pos,
         limit: this.pageSize,
         source: this.recordType,
@@ -433,27 +512,44 @@ export default {
     },
     // 下载回放
     downPlayBack(data) {
-      console.log(data);
-      this.$fetch('playBackDownUrlGet', {
-        record_id: data.id
-      }).then(res => {
-        console.log(res)
-        if (res.data.has_download_url == 0) {
-          data.transcoding = true;
-          this.transcodingArr.push(data);
-          this.$message({
-            message: `正在转码，请稍侯...`,
-            showClose: true,
-            // duration: 0,
-            type: 'success',
-            customClass: 'zdy-info-box'
-          });
-          return false;
-        }
-        window.open(res.data.download_url);
-      })
+      if (this.versionExpired) {
+        this.$confirm('尊敬的用户，您的账号已到期。为了保证正常使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询', '提示', {
+          confirmButtonText: '我知道了',
+          showCancelButton: false,
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {}).catch(() => {});
+        return false
+      }
+
+      const fetchCb = () => {
+        this.$fetch('playBackDownUrlGet', {
+          record_id: data.id
+        }).then(res => {
+          console.log(res)
+          this.$vhall_paas_port({
+            k: 100409,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+          if (res.data.has_download_url == 0) {
+            data.transcoding = true;
+            this.transcodingArr.push(data);
+            this.$message({
+              message: `正在生成，请稍侯...`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            return false;
+          }
+          window.open(res.data.download_url);
+        })
+      }
+      this.checkTransStatus(data.id, fetchCb)
     },
-    deletePlayBack(ids){
+    deletePlayBack(ids, index){
       this.$confirm('删除回放会导致目前已生成回放的数据丢失，请谨慎操作，确定要删除这段回放么？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -463,6 +559,10 @@ export default {
       }).then(() => {
         this.loading = true;
         this.$fetch('playBackDelete', { record_ids: ids}).then(res=>{
+          this.$vhall_paas_port({
+            k: index === 1 ? 100416 : 100417,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: `已删除`,
             showClose: true,
@@ -494,6 +594,10 @@ export default {
         });
       this.editLoading =true;
       this.$fetch('playBackEdit', { record_id: this.editRecord.id, name: this.titleEdit}).then(res=>{
+        this.$vhall_paas_port({
+          k: 100408,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `修改成功`,
           showClose: true,
@@ -516,7 +620,33 @@ export default {
       });
     },
     settingHandler(){
+      this.$vhall_paas_port({
+        k: 100407,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.$router.push({path: `/live/planFunction/${this.webinar_id}`});
+    },
+    toVodreset(data) {
+      if (this.versionExpired) {
+        this.$confirm('尊敬的用户，您的账号已到期。为了保证正常使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询', '提示', {
+          confirmButtonText: '我知道了',
+          // cancelButtonText: '暂不关闭',
+          showCancelButton: false,
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {}).catch(() => {});
+        return false
+      }
+      const routerPush = () => {
+        this.$router.push({
+          path: `/live/vodreset/${this.webinar_id}`,
+          query: {
+            record_id: data.id
+          }
+        });
+      }
+      this.checkTransStatus(data.id, routerPush)
     },
     toCreate() {
       this.$router.push({path: `/videoTailoring/${this.webinar_id}`});
@@ -532,7 +662,7 @@ export default {
           window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/recordvideo/${this.webinar_id}`;
         }
       }).catch(err => {
-        if (err.code == 12550) {
+        if (err.code == 512550) {
           this.$message.warning('该活动正在直播或录制中，无法重复发起')
         } else {
           this.$message.warning(err.msg)
@@ -540,11 +670,39 @@ export default {
       })
     },
     toTailoring(recordId, recordName){
-      this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
-      // const routeData = this.$router.resolve({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
-      // window.open(routeData.href, '_blank');
+      const routerPush = () => {
+        this.$router.push({path: `/videoTailoring/${this.webinar_id}`, query: {recordId, recordName}});
+      }
+      this.checkTransStatus(recordId, routerPush)
+    },
+    checkTransStatus(recordId, cb) {
+      this.$fetch('recordInfo', {
+        record_id: recordId
+      }).then(res => {
+        if (res.data.transcode_status == 0 || res.data.transcode_status == 3) {
+          this.$message({
+            message:  '视频生成中，请在成功后使用',
+            showClose: true, // 是否展示关闭按钮
+            type: 'warning', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        } else if (res.data.transcode_status == 2){
+          this.$message({
+            message:  '视频生成失败',
+            showClose: true, // 是否展示关闭按钮
+            type: 'error', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        } else {
+          cb && cb()
+        }
+      })
     },
     async toChapter(row){
+      this.$vhall_paas_port({
+        k: 100410,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       const recordId = row.id
       const chapterType = this.isDemand ? 'recordchapter' : 'chapter'
       // 如果回放转码完成，并且支持章节功能或者是点播活动，直接跳转
@@ -558,14 +716,14 @@ export default {
       }).then(res => {
         if (res.data.transcode_status == 0 || res.data.transcode_status == 3) {
           this.$message({
-            message:  '视频转码中，请稍后再试',
+            message:  '视频生成中，请稍后再试',
             showClose: true, // 是否展示关闭按钮
             type: 'warning', //  提示类型
             customClass: 'zdy-info-box' // 样式处理
           });
         } else if (res.data.transcode_status == 2){
           this.$message({
-            message:  '视频转码失败',
+            message:  '视频生成失败',
             showClose: true, // 是否展示关闭按钮
             type: 'error', //  提示类型
             customClass: 'zdy-info-box' // 样式处理
@@ -609,18 +767,32 @@ export default {
     },
     // 发布
     toCreateDemand(recordData) {
-      this.$router.push({
-        path: `/live/vodEdit`,
-        query: {
-          record_id: recordData.id,
-          paas_record_id: recordData.paas_record_id,
-          name: recordData.name,
-          webinar_id: this.webinar_id
-        }
-      });
+      const routerPush = () => {
+        this.$router.push({
+          path: `/live/vodEdit`,
+          query: {
+            record_id: recordData.id,
+            paas_record_id: recordData.paas_record_id,
+            name: recordData.name,
+            webinar_id: this.webinar_id
+          }
+        })
+      }
+      this.checkTransStatus(recordData.id, routerPush)
     }
   },
   filters: {
+    layoutFilter: function(layout) {
+      if(layout == 0) {
+        return '-';
+      } else if (layout == 1) {
+        return '三分屏';
+      } else if (layout == 2) {
+        return '纯文档';
+      } else if (layout == 3) {
+        return '画中画';
+      }
+    },
     secondsFormmat(val){
       val = Number(val);
       if(isNaN(val)) return val;
@@ -685,6 +857,9 @@ export default {
   .tableBox{
     padding: 24px 24px;
     background: #fff;
+    /deep/ .deltime .cell{
+      padding-left: 22px;
+    }
     /deep/ .el-table__empty-block {
       display: none;
     }
@@ -740,8 +915,8 @@ export default {
     .imageBox{
       position: relative;
       float: left;
-      width: 160px;
-      height: 90px;
+      width: 140px;
+      height: 79px;
       border-radius: 4px;
       background-color: #1a1a1a;
       .imageWrap{
@@ -767,6 +942,9 @@ export default {
           background: #FB3A32;
           border-radius: 15px;
           cursor: pointer;
+          &.disabled {
+            cursor: default;
+          }
         }
       }
       .defaultSign{
@@ -803,7 +981,7 @@ export default {
     .info{
       margin-left: 12px;
       font-size: 14px;
-      width: 222px;
+      width: 187px;
       color: #1A1A1A;
       float: left;
       .name{
@@ -813,7 +991,7 @@ export default {
         text-overflow: ellipsis;
         display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
         -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
-        -webkit-line-clamp: 2; /** 显示的行数 **/
+        -webkit-line-clamp: 1; /** 显示的行数 **/
         overflow: hidden;  /** 隐藏超出的内容 **/
       }
       .create-time{
@@ -858,17 +1036,13 @@ export default {
       /deep/ .el-input__inner {
         border-radius: 20px;
         height: 36px;
-        padding-right: 50px!important;
+        padding-right: 30px!important;
       }
-
-      /deep/ .el-input__suffix {
+       /deep/ .el-input__icon {
+        line-height: 36px;
+      }
+      /deep/ .el-input__prefix {
         cursor: pointer;
-
-        /deep/ .el-input__icon {
-          width: auto;
-          margin-right: 5px;
-          line-height: 36px;
-        }
       }
     }
   }
@@ -898,5 +1072,6 @@ export default {
   }
   .msgBlue{
     color: #3562FA;
+    cursor: pointer;
   }
 </style>

@@ -51,6 +51,8 @@
                  path: 'interacts/skin-imgs',
                  type: 'image',
               }"
+              :heightImg="130"
+              :widthImg="231"
               :on-success="handleUploadSuccess"
               :on-progress="uploadProcess"
               :on-error="uploadError"
@@ -70,9 +72,10 @@
             <el-button type="primary" round v-preventReClick @click.prevent.stop="signSetSave">保 存</el-button>
           </el-form-item>
         </el-form>
+        <div class="hide-white" v-show="!brandConfig"></div>
       </div>
       <!-- 预览区域 -->
-      <brand-set-preview ref="brandSetPreviewComp" class="brand--preview"></brand-set-preview>
+      <brand-set-preview ref="brandSetPreviewComp" class="brand--preview" :brandType="brandType" :tabType="'signSet'"></brand-set-preview>
     </div>
   </div>
 </template>
@@ -83,6 +86,7 @@ import BrandSetPreview from '../../LiveModule/components/brandSetPreview';
 import Env from "@/api/env";
 export default {
   name: "signSet.vue",
+  props: ['brandConfig'],
   components: {
     Upload,
     BrandSetPreview
@@ -96,6 +100,7 @@ export default {
         logo_url: null,
         skip_url: null
       },
+      brandType: 1,
       domain_url: '',
       signSetFormRules: {
         logo_url: [
@@ -108,6 +113,13 @@ export default {
         ]
       }
     };
+  },
+  watch: {
+    '$parent.type'() {
+      if (this.brandType) {
+        this.initComp();
+      }
+    }
   },
   methods: {
     handleUploadSuccess(res, file){
@@ -184,9 +196,11 @@ export default {
     },
     // 获取活动标记记录
     getSignInfo() {
-      this.$fetch('getInterWebinarTag', {
-        webinar_id: this.$route.params.str
-      }).then(res => {
+      let params = {
+        type: this.brandType,
+        webinar_id: this.brandType == 1 ? this.$route.params.str : ''
+      }
+      this.$fetch('getInterWebinarTag', this.$params(params)).then(res => {
         console.log(res);
         if (res && res.code === 200) {
           if (res.data) {
@@ -220,6 +234,7 @@ export default {
       });
     },
     initComp() {
+      this.brandType = this.$parent.type;
       this.getSignInfo();// 获取活动标志内容
     },
     // 保存
@@ -227,9 +242,10 @@ export default {
       this.$refs.signSetForm.validate((valid) => {
         if(valid) {
           console.log(this.signSetForm, 'signSetForm');
-          let params = Object.assign(this.signSetForm, {webinar_id: this.$route.params.str});
+          let params = Object.assign(this.signSetForm, {webinar_id: this.$route.params.str || '', type: this.brandType});
+          let signObj = {}
           this.$fetch('setInterWebinarTag', this.$params(params)).then(res => {
-            console.log(res);
+            this.setReportData(this.$params(params))
             this.$message({
               message:  `保存基本设置成功`,
               showClose: true,
@@ -251,6 +267,40 @@ export default {
           });
         }
       });
+    },
+    setReportData(params) {
+      let {keys,values} = Object;
+      let wData = {
+        'organizers_status': 100199,
+        'reserved_status': 100201,
+        'view_status': 100203
+      }
+      let UData = {
+        'organizers_status': 100634,
+        'reserved_status': 100636,
+        'view_status': 100638
+      }
+      let data = this.$route.params.str ? wData : UData
+      keys(params).map((item,value) => {
+        if (data[item]) {
+          this.$vhall_paas_port({
+            k: Number(values(params)[value]) === 1 ? data[item] + 1 : data[item],
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+      })
+      if (params.logo_url) {
+        this.$vhall_paas_port({
+          k: this.$route.params.str ? 100205 : 100640,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+      if (params.skip_url) {
+        this.$vhall_paas_port({
+          k: this.$route.params.str ? 100206 : 100641,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str|| '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
     }
   }
 };
@@ -267,8 +317,18 @@ export default {
 }
 .sign--set--left {
   width: 480px;
+  position: relative;
   /deep/.el-form-item__label {
     line-height: 40px;
+  }
+  .hide-white{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    background: rgba(255, 255, 255, 0.5);
+    z-index: 9;
   }
 }
 .brand--preview {

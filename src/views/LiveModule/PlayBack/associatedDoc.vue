@@ -1,6 +1,6 @@
 <template>
   <!-- 关联文档 -->
-  <VhallDialog title="关联文档" :lock-scroll='false' :before-close="handleClose" :visible.sync="dialogVisible"
+  <VhallDialog title="关联文档"  :before-close="handleClose" :visible.sync="dialogVisible"
     :close-on-click-modal=false
     :close-on-press-escape=false width="800px">
     <div class="word-list">
@@ -283,6 +283,7 @@ export default {
             lockScroll: false,
             cancelButtonClass: 'zdy-confirm-cancel'
           }).then(() => {
+            this.$parent.isLinkDoc = true;
             this.$EventBus.$emit('demonstration', {
               documentIds: this.dialogMulti
             });

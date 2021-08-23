@@ -47,7 +47,7 @@
            <el-form-item label="动态密码">
             <div class="inputCode">
               <VhallInput v-model.trim="code" style="width: 150px"></VhallInput>
-              <span @click="mobileKey && getBangCode()" :class="mobileKey ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+              <span @click="mobileKey && time == 60 && getBangCode()" :class="mobileKey ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
             </div>
             <p class="codeTitle" v-if="phone">已向绑定手机号{{ phone | filterPhone }}发送验证码</p>
           </el-form-item>
@@ -87,7 +87,7 @@
         <el-form-item label="动态密码" prop="code">
           <div class="inputCode">
             <VhallInput v-model.trim="withdrawForm.code" v-clearEmoij style="width: 150px"></VhallInput>
-            <span @click="getCode()" :class="(mobileKey && isTrue) ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+            <span @click="time == 60 && getCode()" :class="(mobileKey && isTrue) ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
           </div>
           <p class="codeTitle" v-if="phone">已向绑定手机号{{ phone }}发送验证码</p>
         </el-form-item>
@@ -119,10 +119,10 @@ export default {
         this.isTrue = false;
         callback(new Error('请输入数字值'));
       } else {
-        if (value < 1 || value > 800) {
+        if (1 - value > 0 || value - 800 > 0) {
           this.isTrue = false;
           callback(new Error('请输入大于等于1且小于等于800的数字'));
-        } else if (value > parseInt(this.money)) {
+        } else if (value - this.money > 0) {
           this.isTrue = false;
           callback(new Error('提现值必须小于可用金额'));
         } else {
@@ -140,6 +140,7 @@ export default {
         money: '',
       },
       code: "",
+      isEditWeixin: false,
       phone: '',
       isTrue: false,
       nickName: '微吼直播',
@@ -344,6 +345,12 @@ export default {
       if (this.qrcode) {
         this.$fetch('getInfo', {scene_id: 2}).then(res => {
           if(res.code === 200) {
+            if (this.isEditWeixin) {
+              this.$vhall_paas_port({
+                k: 100753,
+                data: {business_uid: res.data.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
             sessionOrLocal.set('userInfo', JSON.stringify(res.data));
             sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
             window.location.reload();
@@ -355,6 +362,10 @@ export default {
       }
     },
     getNetWork() {
+       this.$vhall_paas_port({
+        k: 100754,
+        data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       let href = `https://e.vhall.com/home/vhallapi/exchangeagreement`;
       window.open(href, '_blank');
     },
@@ -369,6 +380,8 @@ export default {
         }, 1000);
       } else {
         this.time = 60;
+        this.mobileKey = '';
+        this.callCaptcha()
       }
     },
     changeBinding() {
@@ -387,6 +400,7 @@ export default {
       }
       this.$fetch('codeCheck', params).then(res => {
         if (res.code == 200) {
+          this.isEditWeixin = true;
           this.dialogChangeVisible = false;
           this.goBangWeixin();
           this.dialogVisible = true;
@@ -553,10 +567,11 @@ export default {
     background: #F2F2F2;
     color:#666666;
     vertical-align: top;
-    cursor: pointer;
+    cursor: not-allowed;
     &.isLoginActive{
       background: #fc5659;
       color: #fff;
+      cursor: pointer;
     }
   }
   // i {
@@ -623,13 +638,10 @@ export default {
     }
   }
   /deep/ .yidun--success {
-    // .yidun_control--moving {
-    //   background-color: #F0F1FE!important;
-    //   .yidun_slide_indicator {
-    //     background-color: #F0F1FE!important;
-    //   }
-    // }
     .yidun_control {
+      .yidun_slider__icon {
+        background-image: url(./images/icon-succeed.png)!important;
+      }
       .yidun_slider {
         .yidun_slider__icon {
           background-image: url(./images/icon-succeed.png);
@@ -645,6 +657,15 @@ export default {
           }
         }
       }
+    }
+  }
+  .yidun.yidun--light{
+    .yidun_feedback{
+      background-position: 0px -240px;
+      height: 30px;
+    }
+    .yidun_refresh{
+      background-position: 0px -339px;
     }
   }
 }

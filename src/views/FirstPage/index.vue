@@ -4,46 +4,54 @@
       <data-usage></data-usage>
       <el-row type="flex" class="row-center" :gutter="16" >
         <el-col :xl="{span: colVal}">
-          <router-link :to="{path:'/live/edit'}"  class="center-item">
+          <router-link :to="{path:'/live/edit',query: {refer:1}}"  class="center-item">
           <p class="icon"><i class="iconfont-v3 saasicon_chuangjianzhibo"></i></p>
             <!-- <p><icon icon-class="saasicon_chuangjianzhibo-copy"></icon></p> -->
             <h3>创建直播</h3>
           </router-link>
         </el-col>
         <el-col :xl="{span: colVal}">
-          <router-link :to="{path:'/material/word'}"  class="center-item">
-          <p class="icon"><i class="iconfont-v3 saasicon_shangchuanwendang"></i></p>
-            <!-- <p><icon icon-class="saasicon_shangchuanwendang-copy"></icon></p> -->
-            <h3>上传文档</h3>
-          </router-link>
+          <div @click="reportData(0)">
+            <router-link :to="{path:'/material/word'}"  class="center-item">
+            <p class="icon"><i class="iconfont-v3 saasicon_shangchuanwendang"></i></p>
+              <!-- <p><icon icon-class="saasicon_shangchuanwendang-copy"></icon></p> -->
+              <h3>上传文档</h3>
+            </router-link>
+          </div>
         </el-col>
         <el-col :xl="{span: colVal}">
-          <router-link :to="{path:'/setting/info'}"  class="center-item">
-          <p class="icon"><i class="iconfont-v3 saasset"></i></p>
-            <!-- <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p> -->
-            <h3>设置中心</h3>
-          </router-link>
+          <div @click="reportData(1)">
+            <router-link :to="{path:'/setting/chat'}"  class="center-item">
+            <p class="icon"><i class="iconfont-v3 saasset"></i></p>
+              <!-- <p><icon icon-class="saasicon_pinpaishezhi-copy"></icon></p> -->
+              <h3>设置中心</h3>
+            </router-link>
+          </div>
         </el-col>
         <el-col :xl="{span: colVal}" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
-          <router-link :to="{path:'/data/info'}"  class="center-item">
-          <p class="icon"><i class="iconfont-v3 saasicon_zhanghaoshuju"></i></p>
-            <!-- <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p> -->
-            <h3>数据中心</h3>
-          </router-link>
+          <div @click="reportData(2)">
+            <router-link :to="{path:'/data/info'}"  class="center-item">
+            <p class="icon"><i class="iconfont-v3 saasicon_zhanghaoshuju"></i></p>
+              <!-- <p><icon icon-class="saasicon_zhanghaoshuju-copy"></icon></p> -->
+              <h3>数据中心</h3>
+            </router-link>
+          </div>
         </el-col>
         <el-col :xl="{span: colVal}">
-          <router-link :to="{path:'/finance/info'}"  class="center-item">
-          <p class="icon"><i class="iconfont-v3 saasicon_caiwuzonglan"></i></p>
-            <!-- <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p> -->
-            <h3>财务中心</h3>
-          </router-link>
+          <div  @click="reportData(3)">
+            <router-link :to="{path:'/finance/info'}"  class="center-item" >
+            <p class="icon"><i class="iconfont-v3 saasicon_caiwuzonglan"></i></p>
+              <!-- <p><icon icon-class="saasicon_caiwuzonglan-copy"></icon></p> -->
+              <h3>财务中心</h3>
+            </router-link>
+          </div>
         </el-col>
       </el-row>
       <div class="row-list" v-if="!(childPremission && Number(childPremission.permission_data) === 0)">
         <p class="list-title">数据统计</p>
          <el-tooltip effect="dark" placement="right" v-tooltipMove>
             <div slot="content">
-            统计近7日数据
+            统计近7日数据，删除活动不影响已统计的历史数据
             </div>
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
@@ -103,7 +111,7 @@
           <p>用量统计</p>
           <el-tooltip effect="dark" placement="right" v-tooltipMove>
             <div slot="content">
-            统计近7日数据
+            统计近7日数据，删除活动不影响已统计的历史数据
             </div>
             <i class="iconfont-v3 saasicon_help_m"></i>
           </el-tooltip>
@@ -123,7 +131,7 @@
           <h1>微吼直播客户端</h1>
           <p>强大稳定的直播工具，支持插播视频、桌面共享等功能。</p>
         </div>
-        <a href="https://www.vhall.com/saas/client" class="download-btn" target="_blank">立即下载</a>
+        <a href="https://www.vhall.com/saas/client" class="download-btn" target="_blank" @click="download('pc')">立即下载</a>
       </div>
       <div class="app-download">
         <div class="app-web">
@@ -133,34 +141,73 @@
           <h1>微吼直播APP下载</h1>
           <p>把微吼装进口袋，随时随地发直播，让直播更便捷</p>
         </div>
-        <a href="http://e.vhall.com/app" class="download-btn" target="_blank">立即下载</a>
+        <a href="http://e.vhall.com/app" class="download-btn" target="_blank" @click="download('app')">立即下载</a>
       </div>
       <div class="data-document">
-        <h2>文档中心<a href="https://saas-doc.vhall.com/document/document/index" target="_blank">更多</a></h2>
-        <p><a href="https://saas-doc.vhall.com/docs/show/947" target="_blank">API文档</a></p>
-        <p><a href="https://www.vhall.com/saas/doc/260.html" target="_blank">JSSDK文档</a></p>
-        <p><a href="https://saas-doc.vhall.com/docs/show/1175" target="_blank">IOS SDK文档</a></p>
-        <p><a href="https://saas-doc.vhall.com/docs/show/1203" target="_blank">Andriod SDK文档</a></p>
+        <h2>文档中心<a href="https://saas-doc.vhall.com/document/document/index" target="_blank" @click="documentCenter(0)">更多</a></h2>
+        <p><a href="https://saas-doc.vhall.com/docs/show/947" target="_blank" @click="documentCenter(1)">API文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1176" target="_blank" @click="documentCenter(2)">JSSDK文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1311" target="_blank" @click="documentCenter(3)">点播SDK文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1175" target="_blank" @click="documentCenter(4)">IOS SDK文档</a></p>
+        <p><a href="https://saas-doc.vhall.com/docs/show/1203" target="_blank" @click="documentCenter(5)">Andriod SDK文档</a></p>
       </div>
       <div class="helpMsg" @click="contactUs">
         <i class="el-icon-chat-dot-round"></i>
         <p>联系我们</p>
       </div>
     </div>
+    <!--新版本无延迟上线了-->
+    <template>
+      <!-- <div class="prompt" v-if="!openSys && isOld" > -->
+      <div class="prompt" v-if="showDelay">
+        <div class="prompt-wrap delay">
+            <!-- <i class="prompt-con-img i-close saasclose iconfont-v3" @click="iKonw"></i> -->
+            <i class="prompt-con-img i-close saasclose iconfont-v3" @click="showDelay = false"></i>
+            <img class="prompt-con-img" src="//cnstatic01.e.vhall.com/static/images/watch/notice_img.png" alt="">
+            <p class="prompt-con-text prompt-con-text-one">【新版本上线了】</p>
+            <p class="prompt-con-text prompt-con-text-three">尊敬的用户：</p>
+            <p class="prompt-con-text no-bottom">观看有延迟？互动不同步？从现在开始这些统统不存在！马上创建无延时</p>
+            <p class="prompt-con-text no-bottom">直播，体验面对面的畅快沟通吧！</p>
+            <p class="prompt-con-text no-bottom">无延时直播为收费功能，请联系您的专属售后或拨打400-888-9970转2</p>
+            <p class="prompt-con-text no-bottom">咨询。</p>
+            <!-- <a class="prompt-con-text-four" href="javascript:;" @click="iKonw">我知道了</a> -->
+            <a class="prompt-con-text-four" href="javascript:;" @click="showDelay = false">我知道了</a>
+        </div>
+      </div>
+    </template>
+    <!-- 用户迁移升级完成 - 此弹窗出现，新版本体验弹窗不展示-->
+    <template>
+      <div class="prompt" v-if="openSys">
+        <div class="prompt-wrap mini">
+            <i class="prompt-con-img i-close saasclose iconfont-v3" @click="closeOpenSys"></i>
+            <img class="prompt-con-img" src="//cnstatic01.e.vhall.com/static/images/watch/notice_img.png" alt="">
+            <p class="prompt-con-text prompt-con-text-one">【系统升级完成】</p>
+            <p class="prompt-con-text prompt-con-text-three">尊敬的用户：</p>
+            <p class="prompt-con-text prompt-con-text-two no-bottom"> 感谢您对微吼直播的支持，系统升级已完成！在这里，你可以体验全新产品，满足多场景直播所需功能。</p>
+            <p class="prompt-con-text prompt-con-text-two no-bottom"> 每一次的改动，都是为了让你用得更爽，马上来体验吧！</p>
+            <p class="prompt-con-text prompt-con-text-two"> 如有问题请联系您的专属售后或拨打400-888-9970转2咨询</p>
+            <a class="prompt-con-text-four" href="javascript:;" @click="closeOpenSys">我知道了</a>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 <script>
 import LineEcharts from '@/components/Echarts/lineEcharts.vue';
 import DataUsage from '@/components/DataUsage/index.vue';
-import { sessionOrLocal } from '@/utils/utils';
+import { sessionOrLocal,getQueryString } from '@/utils/utils';
 import CountTo from 'vue-count-to';
 export default {
   data() {
     return {
       userInfo: {},
       mainKeyData: {},
+      versionType: 0,
       lineDataList: [],
-      childPremission: {}
+      childPremission: {},
+      isOld: false,
+      openSys: false,
+      showDelay: true
     };
   },
   components: {
@@ -174,8 +221,28 @@ export default {
       return !(this.childPremission && Number(this.childPremission.permission_data) === 0) ? 5 : 6;
     }
   },
+  beforeCreate() {
+     if(location.search.includes('form') && getQueryString('form') == 1 ){
+       localStorage.setItem('isOld', true)
+     }else{
+        localStorage.setItem('isOld', false)
+     }
+    // sessionOrLocal.get('openSys') || false // 用户迁移完成弹窗状态
+  },
   created() {
+    this.getUserMigrate()
+    try {
+      let newUserId = JSON.parse(sessionStorage.getItem('userInfo')).user_id
+      if(localStorage.getItem(`new_${newUserId}_${new Date().toLocaleDateString("en-US").replace(/\//g, '_')}`)){
+        this.isOld = false
+      }else{
+        if(localStorage.getItem('isOld') && localStorage.getItem('isOld') == 'true'){
+          this.isOld = true
+        }
+      }
+    } catch (error) {}
     let userInfo = sessionOrLocal.get('userInfo');
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     if (userInfo) {
       this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
       if (this.parentId > 0) {
@@ -185,19 +252,29 @@ export default {
     if (document.body.clientWidth < 1366) {
       document.getElementById('app').style.minWidth="auto"
     }
+    this.getVersion();
   },
   mounted() {
-    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     // this.parentId = JSON.parse(sessionOrLocal.get('userInfo')).parent_id;
-    this.getLiveList();
-    this.$nextTick(() => {
-      this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
-    })
+    // this.$nextTick(() => {
+    //   if (sessionOrLocal.get("versionType")) {
+    //     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
+    //   }
+    // })
   },
   beforeDestroy() {
     document.getElementById('app').style.minWidth="1366px"
   },
   methods: {
+    iKonw(){
+      this.isOld = false
+      let newUserId = JSON.parse(sessionStorage.getItem('userInfo')).user_id
+      localStorage.setItem(`new_${newUserId}_${new Date().toLocaleDateString("en-US").replace(/\//g, '_')}`, true)
+    },
+    closeOpenSys() {
+      this.openSys = false
+      sessionOrLocal.set('openSys', JSON.stringify(false))
+    },
     getChildPermission() {
       this.$fetch('getChildPermission').then(res => {
         console.log('getChildPermission', res)
@@ -206,9 +283,64 @@ export default {
         this.childPremission = {};
       })
     },
+    getVersion() {
+      this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
+        this.versionType = res.data.type;
+        this.getLiveList();
+        sessionOrLocal.set('versionType', JSON.stringify(res.data.type));
+        sessionOrLocal.set('versionText', JSON.stringify(res.data.edition));
+        sessionOrLocal.set('arrears', JSON.stringify(res.data.arrears));
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    download(type) {
+      this.$vhall_paas_port({
+        k: type === 'pc' ? 100005 : 100006,
+        data: {business_uid: this.userId, user_id: this.userId, s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+    },
+    // 文档中心
+    documentCenter(type) {
+      let arrType = [100007, 100008, 100009, 100010, 100011, 100012]
+      let refer = type > 0 ? '' : 1;
+      this.$vhall_paas_port({
+        k: arrType[type],
+        data: {business_uid: this.userId, user_id: this.userId, s: '', refer: refer, report_extra: {}, ref_url: '', req_url: ''}
+      })
+    },
+    reportData(type) {
+      let arrType = [100013, 100014, 100015, 100016]
+      this.$vhall_paas_port({
+        k: arrType[type],
+        data: {business_uid: this.userId, user_id: this.userId, s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+    },
+    getUserMigrate() {
+      this.$fetch('userMigrate', {}).then(res => {
+        if(res.code == 200 && res.data.end_time) {
+          // 若已经点过关闭，当前不展示
+          if(sessionOrLocal.get('openSys') && JSON.parse(sessionOrLocal.get('openSys')) == false) {
+            this.openSys = false
+          } else {
+            let nowTime = JSON.parse(sessionOrLocal.get('currentDate'));
+            this.openSys = this.$moment(nowTime).diff(this.$moment(res.data.end_time), 'day') <= 3
+          }
+        } else {
+          this.openSys = false
+        }
+      }).catch(e=>{
+        console.log(e);
+        this.openSys = false
+      });
+    },
     // 联系我们
     contactUs() {
-      window.open(`http://p.qiao.baidu.com/cps/chat?siteId=113762&userId=2052738`, "_blank");
+      this.$vhall_paas_port({
+        k: 100017,
+        data: {business_uid: this.userId, user_id: this.userId, s: '', refer: 1, report_extra: {}, ref_url: '', req_url: ''}
+      })
+      window.open(`https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038`, "_blank");
     },
     getLiveList() {
       // 初始化设置日期为最近一周
@@ -220,7 +352,7 @@ export default {
       // parent_id > 0 子账号
       let params = {
         // account_id: this.userId,
-        // child_user_id: parentId == 0 ? '' : this.userId,
+        // user_id: parentId == 0 ? '' : this.userId,
         type: 1,
         start_time: this.$moment(start).format('YYYY-MM-DD'),
         end_time: this.$moment(end).format('YYYY-MM-DD')
@@ -245,6 +377,9 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+  a:-webkit-any-link {
+    color: #3562FA;
+  }
   .data-center{
     margin: auto;
     max-width: 1374px;
@@ -512,20 +647,109 @@ export default {
       position: fixed;
       right: 0;
       bottom: 60px;
-      width: 30px;
-      background: #999;
+      width: 32px;
+      background: #FB3A32;
       color: #fff;
       padding: 12px 7px;
       cursor: pointer;
-      border-radius: 4px;
+      border-radius: 2px 0 0 2px;
       i{
         color: #fff;
-        font-size: 20px;
+        font-size: 16px;
+        padding-left: 2px;
+        padding-bottom: 5px;
       }
       p{
         font-size: 14px;
         text-align: center;
+        line-height: 18px;
       }
     }
   }
+
+    .prompt{
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 9991;
+    }
+    .prompt .prompt-wrap{
+        position: relative;
+        left: 50%;
+        top: 50%;
+        transform: translate(-256px, -290px);
+        width: 518px;
+        height: 516px;
+        background: #FFFFFF;
+        box-shadow: 0px 12px 42px 0px rgba(51, 51, 51, 0.24), 0px 8px 32px 0px rgba(34, 34, 34, 0.24);
+        border-radius: 8px;
+        padding: 32px;
+        &.mini {
+          height: 440px;
+        }
+    }
+    .prompt .prompt-wrap .prompt-con-img{
+        width: 100px;
+        height: 100px;
+        display: block;
+        margin: 8px auto 32px;
+    }
+    .prompt .prompt-wrap  .i-close{
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      right: 30px;
+      top: 30px;
+      font-size: 24px;
+      color: #666;
+      cursor: pointer;
+    }
+    .prompt .prompt-wrap .prompt-con-close{
+        position: absolute;
+        right: 32px;
+        top: 32px;
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+    .prompt .prompt-wrap .prompt-con-text{
+        font-weight: 400;
+        color: #1A1A1A;
+        line-height: 26px;
+        font-size: 14px;
+    }
+    .prompt .prompt-wrap .prompt-con-text-one{
+        color: #222222;
+        font-size: 22px;
+        line-height: 26px;
+        text-align: center;
+    }
+    .prompt .prompt-wrap .prompt-con-text-one,.prompt-con-text-two{
+        margin-bottom: 16px;
+    }
+    .prompt .prompt-wrap .prompt-con-text-two.no-bottom{
+        margin-bottom: 0;
+    }
+    .prompt .prompt-wrap .prompt-con-text-three{
+        margin-bottom: 2px;
+    }
+    .prompt .prompt-wrap .prompt-con-text-two{
+      text-indent: 24px;
+    }
+    .prompt .prompt-wrap .prompt-con-text-four{
+        width: 180px;
+        height: 40px;
+        background: #FB3A32;
+        border-radius: 20px;
+        line-height: 40px;
+        margin: 20px auto 0;
+        font-size: 14px;
+        display: block;
+        text-align: center;
+        color: #FFFFFF;
+        text-decoration: none
+    }
 </style>

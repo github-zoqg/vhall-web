@@ -11,7 +11,7 @@
       <el-button type="primary" size="medium" round class="head-btn set-upload" @click="addGift">创建礼物</el-button>
       <el-button round size="medium" :class="['transparent-btn',{'no-data': selectIds.length <= 0}]"
                  :disabled="selectIds.length <= 0"
-                 @click="handleDelete">批量删除</el-button>
+                 @click="handleDelete('', 1)">批量删除</el-button>
       <VhallInput
         @keyup.enter.native="searchGifts"
         clearable
@@ -67,7 +67,7 @@
         <el-table-column label="操作" align="left" width="120">
           <template slot-scope="scope" v-if="scope.row.source_status == 1">
             <el-button v-preventReClick class="btns" type="text" @click="handleEditGift(scope.row)">编辑</el-button>
-            <el-button v-preventReClick class="btns" type="text" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button v-preventReClick class="btns" type="text" @click="handleDelete(scope.row, 2)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -99,6 +99,8 @@
             :on-progress="uploadProcess"
             :on-error="uploadError"
             :on-preview="uploadPreview"
+            :widthImg="231"
+            :heightImg="130"
             @delete="editParams.img = ''"
             :before-upload="beforeUploadHandler">
             <div slot="tip">
@@ -127,7 +129,7 @@
 import PageTitle from '@/components/PageTitle'
 import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
-import { debounce } from "@/utils/utils"
+import { debounce, sessionOrLocal } from "@/utils/utils"
 import NullPage from '../PlatformModule/Error/nullPage.vue';
 
 import Env from "@/api/env";
@@ -160,6 +162,7 @@ export default {
       },
       pos: 0,
       selectIds:[],
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       defaultImgHost: `http:${Env.staticLinkVo.uploadBaseUrl}`,
       searchName: '',
       editParams: {
@@ -277,6 +280,12 @@ export default {
       }
     },
     searchGifts() {
+      if (this.searchName) {
+        this.$vhall_paas_port({
+          k: 100561,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.searchParams.page = 1
       this.pos = 0;
       this.getTableList(true)
@@ -435,6 +444,10 @@ export default {
         ...this.editParams
       }).then((res) => {
         if (res.code == 200) {
+          this.$vhall_paas_port({
+            k: 100558,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: `编辑成功`,
             showClose: true,
@@ -461,6 +474,10 @@ export default {
         ...this.editParams
       })).then((res) => {
         if (res.code == 200) {
+          this.$vhall_paas_port({
+            k: 100557,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: `创建成功`,
             showClose: true,
@@ -491,12 +508,11 @@ export default {
       this.$refs.uploadimg.domainUrl = ''
     },
     // 删除礼品
-    handleDelete (data) {
+    handleDelete (data, index) {
       if (data.gift_id) {
         this.selectIds = []
         this.selectIds.push(data.gift_id)
       }
-
       this.$confirm('观众端礼物显示将受到影响, 确认删除?', '提示', {
         confirmButtonText: '确认',
         cancelButtonText: '取消',
@@ -504,14 +520,18 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        this.handleDeleteGift()
+        this.handleDeleteGift(index)
       })
     },
-    handleDeleteGift () {
+    handleDeleteGift (index) {
       this.$fetch('deleteGift', {
         gift_ids: this.selectIds.join(',')
       }).then((res) => {
         if (res.code == 200) {
+          this.$vhall_paas_port({
+            k: index === 1 ? 100560 : 100559,
+            data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: `删除成功`,
             showClose: true,
@@ -584,9 +604,6 @@ export default {
   }
   /deep/.el-upload--picture-card{
     width:100%;
-  }
-  /deep/.el-upload--picture-card .box img {
-    width: auto
   }
   // /deep/.el-upload--picture-card{
   //   font-size: 36px;

@@ -1,4 +1,5 @@
 import 'whatwg-fetch';
+import Cookies from 'js-cookie';
 import { v1 as uuidV1 } from 'uuid';
 import qs from 'qs';
 import getApi from './config';
@@ -69,11 +70,15 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   // 若head里面存在，以head传入的灰度ID为准
   if (header['gray-id'] > 0) {
     headers['gray-id'] = header['gray-id']
-  } else {
-    // 取缓存userId相关
-    if (window.sessionStorage.getItem('userId')) {
-      headers['gray-id'] = window.sessionStorage.getItem('userId')
-    }
+  } else if(window.sessionStorage.getItem('userId')) {
+    headers['gray-id'] = window.sessionStorage.getItem('userId')
+  } else if ( Cookies.get('gray-id')) {
+    headers['gray-id'] = Cookies.get('gray-id')
+  }
+  // 若选择发起传入了
+  if(window.location.href.indexOf('/chooseWay') !== -1) {
+    // pc观看等
+    headers.platform = header.platform || sessionOrLocal.get('platform', 'localStorage') || 17;
   }
   // interact_token && (headers['interact-token'] = interact_token)
   if(window.location.hash.indexOf('/live/watch/') !== -1) {
@@ -125,9 +130,18 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
     if (res.code === 404 || res.code === 403) {
       sessionStorage.setItem('errorReturn', this.$route.path);
       this.$router.push({
-        path: '/error'
+        path: '/warning/error'
       });
-    } else if (res.code === 200) {
+      return
+    } else if (res.code === 510015) {
+      this.$router.push({
+        path: '/upgrading'
+      });
+      return Promise.reject({
+        code: 510015,
+        msg: '00:00-07:00期间系统升级中，由此给您带来不便，敬请谅解！'
+      });
+    } else if (res.code == 200) {
       return res;
     } else {
       errMap = Object.assign(errMap, extendsMsg)

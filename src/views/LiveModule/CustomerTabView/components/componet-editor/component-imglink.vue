@@ -11,11 +11,11 @@
           <span style="color:#FB3A32">*</span>图片地址
         </div>
         <div class="editorContent">
-          <el-upload
+          <!-- <el-upload
             class="upload-imglink"
             drag
             :show-file-list="false"
-            :headers="{token: token, platform: 17}"
+            :headers="headersVo"
             name="resfile"
             :data="saveData"
             :action="actionUrl"
@@ -33,7 +33,23 @@
                 </div>
               </div>
             </div>
-          </el-upload>
+          </el-upload> -->
+           <upload
+            class="upload-imglink"
+            v-model="domain_url"
+            :domain_url="info.imageSrc"
+            :saveData="{
+              path: 'interacts/menu-link-imgs',
+              type: 'image',
+            }"
+            :on-success="handleUploadSuccess"
+            @delete="deleteImg"
+            :before-upload="beforeUploadHnadler">
+            <div slot="tip">
+              <p>建议尺寸：400*225px，小于2M</p>
+              <p>支持jpg、gif、png、bmp</p>
+            </div>
+          </upload>
         </div>
       </div>
       <div></div>
@@ -51,6 +67,8 @@
 <script>
 import EventBus from '../../bus'
 import eventsType from '../../EventConts'
+import {v1 as uuidV1} from "uuid";
+import upload from '@/components/Upload/main';
 
 export default {
   name: 'component-line',
@@ -64,7 +82,9 @@ export default {
       required: false
     }
   },
-
+  components: {
+    upload
+  },
   data() {
     return {
       domain_url: '',
@@ -77,16 +97,24 @@ export default {
       token: localStorage.getItem('token') || ''
     }
   },
-
-
+  computed: {
+    headersVo: function() {
+      let vo = {token: this.token, platform: 17, 'request-id': uuidV1()}
+      // 取缓存userId相关
+      if (window.sessionStorage.getItem('userId')) {
+        vo['gray-id'] = window.sessionStorage.getItem('userId')
+      }
+      return vo
+    },
+  },
   mounted() {
     console.log('上传相关地址', this.actionUrl)
   },
-
   methods: {
     handleUploadSuccess(e) {
       console.log('二维码上传成功', e)
       if(e.code == 200) {
+        this.domain_url = e.data.domain_url
         this.info.imageSrc = e.data.domain_url
         this.$emit('updateInfo', {
           ...this.info,
@@ -111,7 +139,39 @@ export default {
         this.$message.warning('请输入http://或https://开头的链接')
       }
     },
-
+    deleteImg() {
+      this.info.imageSrc = this.defaultImg;
+      this.domain_url = '';
+    },
+    beforeUploadHnadler(file){
+      console.log(file);
+      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      console.log(file.type.toLowerCase())
+      let typeArr = file.type.toLowerCase().split('/');
+      const isType = typeList.includes(typeArr[typeArr.length - 1]);
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isType) {
+        this.$message({
+          message: `上传的图片只能是 ${typeList.join('、')} 格式`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
+      }
+      if (!isLt2M) {
+        this.$message({
+          message: `上传的图片大小不能超过 2M`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false;
+      }
+      return isType && isLt2M;
+    },
     uploadError(e) {
       console.log('upload error', e)
       this.$message({
@@ -249,7 +309,7 @@ export default {
 
   .editorContent .el-upload--picture-card, .editorContent .el-upload-dragger {
     width: 100%;
-    height: 100%;
+    height: 180px;
     border: 0;
     background: #F7F7F7;
 }

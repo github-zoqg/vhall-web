@@ -36,13 +36,12 @@
                 <div class="vh-chose-active-item__cover-hots">
                 <i class="iconfont-v3 saasicon_redu"> {{ item.pv | formatNum }}</i>
                 </div>
-
               </div>
               <div class="vh-chose-active-item__title">
                 {{ item.subject }}
               </div>
               <div class="vh-chose-active-item__info">
-                {{ item.created_at | unitTime}}
+                {{ item.start_time }}
               </div>
             </div>
           </el-scrollbar>
@@ -100,7 +99,12 @@ export default {
   methods: {
     inputChange(isSearch) {
       if (isSearch && !this.keyword) return;
-
+      if (this.keyword) {
+        this.$vhall_paas_port({
+          k: 100509,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.activeList = [];
       // this.activeList.map(item => item.checked = false);
       this.selectedOption = [];

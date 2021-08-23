@@ -1,7 +1,8 @@
 // session存储（设置、获取、删除）
 import fetchData from "@/api/fetch";
 import NProgress from "nprogress";
-
+import { message } from 'element-ui';
+import Cookies from 'js-cookie';
 
 export const sessionOrLocal = {
   set: (key, value, saveType = 'sessionStorage') => {
@@ -256,8 +257,11 @@ export function getQueryString(name) {
   if(r!=null)return  unescape(r[2]); return null;
 }
 // 判断是否登录成功
-export function checkAuth(to, from, next) {
-
+export function checkAuth(to, from, next, that) {
+  let isOld = false
+  if(location.search && getQueryString('form') == 1){
+    isOld = true
+  }
   if(to.path.indexOf('/keylogin-host') !== -1 ||
     to.path.indexOf('/keylogin') !== -1 || to.path.indexOf('/embedclient') !== -1 ||
     from.path.indexOf('/keylogin') !== -1 ||
@@ -268,7 +272,7 @@ export function checkAuth(to, from, next) {
     to.path.indexOf('/register') !== -1 ||
     to.path.indexOf('/live/room') !== -1 ||
     to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'))
-    || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) ) {
+    || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) || to.path.indexOf('/upgrading') !== -1 || to.path.indexOf('/warning/') !== -1) {
     // 不验证直接进入
     next();
     NProgress.done();
@@ -320,7 +324,7 @@ export function checkAuth(to, from, next) {
             window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=2`;
           } else {
             // 获取回调token失败
-            this.$message({
+            that.$message({
               message: `登录信息获取失败，请重新登录`,
               showClose: true,
               // duration: 0,
@@ -331,7 +335,7 @@ export function checkAuth(to, from, next) {
             sessionOrLocal.clear();
           }
         } else{
-          this.$message({
+          that.$message({
             message: res.msg || '异常请求，无法操作',
             showClose: true,
             // duration: 0,
@@ -352,7 +356,7 @@ export function checkAuth(to, from, next) {
           window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=2`;
         } else {
           // 获取回调token失败
-          this.$message({
+          that.$message({
             message: '登录信息获取失败，请重新登录',
             showClose: true,
             // duration: 0,
@@ -364,7 +368,7 @@ export function checkAuth(to, from, next) {
         }
       } else{
         // 获取回调token失败
-        this.$message({
+        that.$message({
           message: e.msg || '登录信息获取失败，请重新登录',
           showClose: true,
           // duration: 0,
@@ -400,10 +404,17 @@ export function checkAuth(to, from, next) {
       }
     }).catch(e => {
       console.log(e);
+      let out_url = sessionOrLocal.get('SAAS_V3_CTRL_OUT', 'localStorage');
       sessionStorage.clear()
       localStorage.clear()
-      if(e.code == 11006){
-        next({path: '/login'});
+      if(e.code == 511006){
+        if(out_url) {
+          // 清除cookies
+          Cookies.remove('gray-id');
+          window.location.href = out_url
+        } else {
+          next({path: '/login', query:{'form': isOld == 1 ? 1 : 0}});
+        }
       }
       sessionOrLocal.removeItem('SAAS_VS_PES');
     });
@@ -411,6 +422,14 @@ export function checkAuth(to, from, next) {
     fetchData('getInfo', {scene_id: 2}).then(res => {
       // debugger;
       if(res.code === 200) {
+        if(res.data.is_new_regist == 2) {
+          sessionOrLocal.clear();
+          sessionOrLocal.clear('localStorage');
+          // 清除cookies
+          Cookies.remove('gray-id');
+          next({path: '/upgrading'});
+          NProgress.done();
+        }
         sessionOrLocal.set('userInfo', JSON.stringify(res.data));
         sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
         sessionOrLocal.set('currentDate', JSON.stringify(res.data.current_date));
@@ -427,7 +446,17 @@ export function checkAuth(to, from, next) {
       NProgress.done();
     }).catch(e=>{
       console.log(e);
-      NProgress.done();
+      let out_url = sessionOrLocal.get('SAAS_V3_CTRL_OUT', 'localStorage');
+      if(out_url) {
+        // 清除cookies
+        Cookies.remove('gray-id');
+        sessionOrLocal.clear();
+        sessionOrLocal.clear('localStorage');
+        window.location.href = out_url
+      } else {
+        next({path: '/login'});
+        NProgress.done();
+      }
     });
   } else {
     // 若无token，专题详情、个人主页亦是可以登录得
@@ -436,7 +465,57 @@ export function checkAuth(to, from, next) {
       NProgress.done();
       return;
     }
-    next({path: '/login'});
+    next({path: '/login', query:{'form': isOld == 1 ? 1 : 0}});
     NProgress.done();
   }
 }
+
+// element-ui 中用来判断 text-overflow 的工具方法 start
+
+const SPECIAL_CHARS_REGEXP = /([\:\-\_]+(.))/g;
+const MOZ_HACK_REGEXP = /^moz([A-Z])/;
+const ieVersion = Number(document.documentMode);
+
+/* istanbul ignore next */
+const camelCase = function(name) {
+  return name.replace(SPECIAL_CHARS_REGEXP, function(_, separator, letter, offset) {
+    return offset ? letter.toUpperCase() : letter;
+  }).replace(MOZ_HACK_REGEXP, 'Moz$1');
+};
+
+/* istanbul ignore next */
+export const getStyle = ieVersion < 9 ? function(element, styleName) {
+  if (!element || !styleName) return null;
+  styleName = camelCase(styleName);
+  if (styleName === 'float') {
+    styleName = 'styleFloat';
+  }
+  try {
+    switch (styleName) {
+      case 'opacity':
+        try {
+          return element.filters.item('alpha').opacity / 100;
+        } catch (e) {
+          return 1.0;
+        }
+      default:
+        return (element.style[styleName] || element.currentStyle ? element.currentStyle[styleName] : null);
+    }
+  } catch (e) {
+    return element.style[styleName];
+  }
+} : function(element, styleName) {
+  if (!element || !styleName) return null;
+  styleName = camelCase(styleName);
+  if (styleName === 'float') {
+    styleName = 'cssFloat';
+  }
+  try {
+    var computed = document.defaultView.getComputedStyle(element, '');
+    return element.style[styleName] || computed ? computed[styleName] : null;
+  } catch (e) {
+    return element.style[styleName];
+  }
+};
+
+// element-ui 中用来判断 text-overflow 的工具方法 end

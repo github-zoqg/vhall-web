@@ -54,7 +54,7 @@
             </div>
           </div>
           <div>
-            <el-button type="primary" round v-preventReClick @click.prevent="copy(urlText1)" class="copy-text">邀请</el-button>
+            <el-button type="primary" round v-preventReClick @click.prevent="copy(urlText1, 1)" class="copy-text">邀请</el-button>
           </div>
         </div>
         <!-- 嘉宾 -->
@@ -73,7 +73,7 @@
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
             </div>
-            <p class="role-remark">嘉宾可进行推流，嘉宾切换、文档演示等操作</p>
+            <p class="role-remark">嘉宾支持连麦，获得主讲人权限后可进行文档演示</p>
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
@@ -91,18 +91,18 @@
               <el-button size="mini" round @click="savePremHandle('guest')">保存权限</el-button>
             </div>
             <div class="role-qx-list" v-if="privilegeVo.permission_data.guest">
-              <el-checkbox  :value="true" disabled>文档白板</el-checkbox>
+              <!-- <el-checkbox  :value="true" disabled>文档白板</el-checkbox> -->
               <template v-for="(item, key, ins) in privilegeVo.permission_data.guest || {}">
                 <el-checkbox v-model="item.check"
                              :true-label="1"
                              :false-label="0"
-                             v-if="key !== 'white_board'"
+                            :disabled="key == 'white_board'"
                              :key="`guest_${key + ins}`">{{ item.label }}</el-checkbox>
               </template>
             </div>
           </div>
           <div>
-            <el-button  type="primary" round v-preventReClick @click="copy(urlText2)" class="copy-text">邀请</el-button>
+            <el-button  type="primary" round v-preventReClick @click="copy(urlText2, 2)" class="copy-text">邀请</el-button>
           </div>
         </div>
         <!-- 助理 -->
@@ -137,26 +137,26 @@
               <el-button size="mini" round @click="savePremHandle('assistant')">保存权限</el-button>
             </div>
             <div class="role-qx-list" v-if="privilegeVo.permission_data.assistant">
-              <el-checkbox  :value="true" disabled>文档翻页</el-checkbox>
+              <!-- <el-checkbox  :value="true" disabled>文档翻页</el-checkbox> -->
               <template v-for="(item, key, ins) in privilegeVo.permission_data.assistant || {}">
                 <el-checkbox v-model="item.check"
                              :true-label="1"
                              :false-label="0"
-                             v-if="key !== 'white_board'"
-                             :key="`assistant_${key + ins}`">{{ item.label }}</el-checkbox>
+                             :disabled="key == 'white_board'"
+                             :key="`assistant_${key + ins}`">{{ key== 'white_board' ? '文档翻页' : item.label }}</el-checkbox>
               </template>
             </div>
           </div>
           <div>
-            <el-button type="primary" round v-preventReClick @click.prevent="copy(urlText3)" class="copy-text">邀请</el-button>
+            <el-button type="primary" round v-preventReClick @click.prevent="copy(urlText3, 3)" class="copy-text">邀请</el-button>
           </div>
         </div>
       </div>
     </div>
     <!-- 编辑口令弹出框 -->
-    <VhallDialog title="编辑" :visible.sync="visible"
-                 :lock-scroll=false
-                 width="280px">
+    <VhallDialog title="编辑"
+      :visible.sync="visible"
+      width="280px">
       <div class="content">
         <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules" label-width="0">
           <el-form-item label="" prop="password">
@@ -207,6 +207,7 @@ export default {
     return {
       roleSwitch: null,
       webinarVo: {},
+      userId: '',
       isInteract: 1,
       privilegeVo: {
         host_password: '',
@@ -272,6 +273,7 @@ export default {
     }
   },
   created() {
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.isInteract = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')).new_interact;
     // 根據活動ID獲取活動信息
     this.getWebinarInfo();
@@ -300,6 +302,10 @@ export default {
           webinar_id: this.$route.params.str,
           is_privilege: roleSwitch
         }).then(res => {
+          this.$vhall_paas_port({
+            k: res.data.is_privilege == 1 ? 100107 : 100108,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           if (Number(res.data.is_privilege) === 1) {
             this.$message({
               showClose: true,
@@ -345,6 +351,10 @@ export default {
             password: this.pwdForm.password
           }).then(res => {
             if(res.data) {
+              this.$vhall_paas_port({
+                k: this.pwdForm.type == 1 ? 100122 : this.pwdForm.type == 2 ? 100109 : 100111,
+                data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
               this.$message({
                 message:  '修改成功',
                 showClose: true,
@@ -394,8 +404,9 @@ export default {
       let keysObj = this.privilegeVo.permission_data[keyName];
       let {keys,values} = Object;
       let obj = {};
-      keys(keysObj).filter(item => item !== 'white_board').forEach((keyItem, ins) => {
-        console.log(keyItem + ',' + ins);
+      // .filter(item => item !== 'white_board')
+      keys(keysObj).forEach((keyItem, ins) => {
+        console.log(keyItem + 'vvv,' + Number(values(keysObj)[ins].check));
         obj[keyItem] = Number(values(keysObj)[ins].check);
       });
       obj.webinar_id = this.$route.params.str;
@@ -403,6 +414,49 @@ export default {
       obj.webinar_type = this.privilegeVo.webinar_type; // 活动类型 1:音频 2:视频 3:互动
       // console.log(obj);
       this.$fetch('privilegePrem', obj).then(res => {
+        // 助理
+        if (keyName === 'assistant') {
+          let assObj = {
+            'comment_check': 100118,
+            'disable_msg': 100120,
+            'members_manager': 100117,
+            'personal_chat': 100115,
+            'share': 100121,
+            'sign_in': 100116,
+            'survey': 100114,
+            'webinar_award': 100113,
+            'webinar_notice': 100119
+          }
+          keys(keysObj).forEach((keyItem, ins) => {
+            if (Number(values(keysObj)[ins].check)) {
+              this.$vhall_paas_port({
+                k: assObj[keyItem],
+                data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+          });
+        } else {
+          // 嘉宾
+          let assObj = {
+            'comment_check': 100128,
+            'disable_msg': 100130,
+            'members_manager': 100127,
+            'personal_chat': 100125,
+            'share': 100131,
+            'sign_in': 100126,
+            'survey': 100124,
+            'webinar_award': 100123,
+            'webinar_notice': 100129
+          }
+          keys(keysObj).forEach((keyItem, ins) => {
+            if (Number(values(keysObj)[ins].check)) {
+              this.$vhall_paas_port({
+                k: assObj[keyItem],
+                data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+          });
+        }
         this.$message({
           message:  `保存成功`,
           showClose: true,
@@ -433,16 +487,16 @@ export default {
               res.data.guest_password = '';
               res.data.assistant_password = '';
             }
-            try {
-              delete res.data.permission_data.guest['white_board'];
-            }catch (e) {
-              console.log('guest',0);
-            }
-            try {
-              delete res.data.permission_data.assistant['white_board'];
-            }catch (e) {
-              console.log('assistant', 1);
-            }
+            // try {
+            //   delete res.data.permission_data.guest['white_board'];
+            // }catch (e) {
+            //   console.log('guest',0);
+            // }
+            // try {
+            //   delete res.data.permission_data.assistant['white_board'];
+            // }catch (e) {
+            //   console.log('assistant', 1);
+            // }
             this.roleSwitch = Number(res.data.is_privilege);
             this.privilegeVo = res.data;
           } else {
@@ -453,11 +507,15 @@ export default {
         this.privilegeVo = {};
       });
     },
-    copy(text) {
+    copy(text, index) {
       let clipboard = new Clipboard('.copy-text', {
         text: () => text
       });
       clipboard.on('success', () => {
+        this.$vhall_paas_port({
+          k: index == 1 ? 100110 : index == 3 ? 100112 : 100132,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message:  `复制成功`,
           showClose: true,
@@ -533,6 +591,24 @@ export default {
   .role-card-head, .el-form, .role-qx-title {
     padding-right: 32px;
   }
+  /deep/.el-input-group__append {
+    width: 52px!important;
+    height: 38px;
+    background: #F7F7F7;
+    border-radius: 0 4px 4px 0;
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    line-height: 38px;
+    text-align: center;
+    padding: 0 0;
+    margin: 0 0;
+    font-size: 14px;
+    font-family: @fontRegular;
+    font-weight: 400;
+    color: #666666;
+    border: 0;
+  }
 }
 .title--label {
   font-size: 24px;
@@ -572,7 +648,7 @@ export default {
   }
   /deep/.input-no-right-border {
     .el-input__inner {
-      border-right: 0;
+      border-radius: 0 4px 4px 0;
     }
   }
   /deep/.btn-relative {
@@ -584,30 +660,30 @@ export default {
     }
     /deep/.el-input-group__append {
       position: absolute;
-      right: 10px;
+      right: 0px;
       top: 10px;
       width: 20px!important;
     }
-    &.btn-two {
-      /deep/.el-input-group__append {
-        width: 52px!important;
-        height: 38px;
-        background: #F7F7F7;
-        border-radius: 0 4px 4px 0;
-        position: absolute;
-        right: 1px;
-        top: 1px;
-        line-height: 38px;
-        text-align: center;
-        padding: 0 0;
-        margin: 0 0;
-        font-size: 14px;
-        font-family: @fontRegular;
-        font-weight: 400;
-        color: #666666;
-        border: 0;
-      }
-    }
+    // &.btn-two {
+    //   /deep/.el-input-group__append {
+    //     width: 52px!important;
+    //     height: 38px;
+    //     background: #F7F7F7;
+    //     border-radius: 0 4px 4px 0;
+    //     position: absolute;
+    //     right: 1px;
+    //     top: 1px;
+    //     line-height: 38px;
+    //     text-align: center;
+    //     padding: 0 0;
+    //     margin: 0 0;
+    //     font-size: 14px;
+    //     font-family: @fontRegular;
+    //     font-weight: 400;
+    //     color: #666666;
+    //     border: 0;
+    //   }
+    // }
   }
   /*/deep/.el-input-group__append, /deep/.el-input-group__prepend {
     width: 52px;
@@ -684,13 +760,13 @@ export default {
   background: #FFEBEB;
   border: 1px solid #FED8D6;
 }
-/deep/.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
-  background: #CCCCCC;
-  border: 1px solid #E6E6E6;
-  &::after {
-    border-color: #666666;
-  }
-}
+// /deep/.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+//   background: #CCCCCC;
+//   border: 1px solid #E6E6E6;
+//   &::after {
+//     border-color: #666666;
+//   }
+// }
 /deep/.el-checkbox__inner::after {
   border-color: #FB3A32;
   top: 2px;
@@ -716,11 +792,11 @@ export default {
 /deep/.saasicon_help_m {
   color: #999999;
 }
-/deep/.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
-  background: #E6E6E6;
-  border: 1px solid #CCCCCC;
-  color: #666666;
-}
+// /deep/.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+//   background: #E6E6E6;
+//   border: 1px solid #CCCCCC;
+//   color: #666666;
+// }
 /deep/button.el-button.el-button--mini.no-hover {
   padding: 0 12px!important;
   span {

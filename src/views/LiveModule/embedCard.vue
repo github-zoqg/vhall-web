@@ -9,7 +9,7 @@
           <el-input v-model="myMain" readonly style="max-width:640px">
             <template slot="suffix" >
               <el-tooltip class="item" effect="dark" content="复制" placement="top" v-tooltipMove>
-                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(myMain)"></i>
+                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(myMain, 1)"></i>
               </el-tooltip>
             </template>
           </el-input>
@@ -22,12 +22,12 @@
           <el-input v-model="liveContent" readonly style="max-width:640px">
             <template slot="suffix" >
               <el-tooltip class="item" effect="dark" content="复制" placement="top" v-tooltipMove>
-                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(liveContent)"></i>
+                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(liveContent, 2)"></i>
               </el-tooltip>
             </template>
           </el-input>
         </div>
-        <p>提示：在微信公众号管理平台，自定义菜单添加链接，用户点击菜单可快速观看直播，详细信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1243')"> 微信嵌入</a></p>
+        <p>提示：在微信公众号管理平台，自定义菜单添加链接，用户点击菜单可快速观看直播，详细信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1243', 1)"> 微信嵌入</a></p>
       </div>
     </div>
     <div class="network">
@@ -38,7 +38,7 @@
           <el-input v-model="completion" readonly style="max-width:640px">
             <template slot="suffix" >
               <el-tooltip class="item" effect="dark" content="复制" placement="top" v-tooltipMove>
-                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(completion)"></i>
+                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(completion, 3)"></i>
               </el-tooltip>
             </template>
           </el-input>
@@ -48,12 +48,12 @@
           <el-input v-model="video" readonly style="max-width:640px">
             <template slot="suffix" >
               <el-tooltip class="item" effect="dark" content="复制" placement="top" v-tooltipMove>
-                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(video)"></i>
+                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(video, 4)"></i>
               </el-tooltip>
             </template>
           </el-input>
         </div>
-        <p>提示：当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1238')"> 网页嵌入指南</a></p>
+        <p>提示：<span v-if="isInteract == 3">互动连麦功能必须要求浏览器地址为https协议进入！</span>1.视频嵌入不支持无延迟直播;2.当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1238', 2)"> 网页嵌入指南</a></p>
       </div>
     </div>
     <div class="thirdMethod">
@@ -76,6 +76,7 @@ export default {
     return {
       env: Env,
       isInteract: '',
+      userId: '',
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       myMain: `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/user/home/${sessionOrLocal.get('userId')}`,
       liveContent: `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
@@ -88,20 +89,33 @@ export default {
     beginPlay
   },
   created() {
+    this.userId = sessionOrLocal.get('userId')
     this.isInteract = this.$route.query.type;
   },
   methods: {
-    goForm(url) {
+    goForm(url, index) {
+      this.$vhall_paas_port({
+        k: index === 1 ? 100189 : 100190,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       window.open(url, "_blank");
     },
     goEmbedForm() {
-      // https://t.e.vhall.com/auth/check-token?after_login=webinar/marketing/index&token=aca55f6b78b2e246a1a38ff143531099
+      this.$vhall_paas_port({
+        k: 100191,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       let url = `${process.env.VUE_APP_E_COMPANY_URL}/auth/check-token?after_login=webinar/marketing/index&token=${sessionOrLocal.get('SAAS_V3_SSO_TOKEN', 'localStorage')}`;
       window.open(url, "_blank");
     },
-    cope(url) {
+    cope(url, index) {
       console.log(url);
+      let copeArr = [100192, 100193, 100194, 100195]
       this.$copyText(url).then(e => {
+        this.$vhall_paas_port({
+          k: copeArr[index - 1],
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `复制成功`,
           showClose: true,

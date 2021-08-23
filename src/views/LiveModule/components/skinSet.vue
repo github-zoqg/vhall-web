@@ -28,6 +28,8 @@
               :on-progress="uploadProcess"
               :on-error="uploadError"
               :on-preview="uploadPreview"
+              :heightImg="130"
+              :widthImg="231"
               :before-upload="beforeUploadHandler"
               @delete="resetLogoUrl">
               <div slot="tip">
@@ -43,9 +45,10 @@
             <el-button type="primary" v-preventReClick round @click.prevent.stop="skinSetSave">保 存</el-button>
           </el-form-item>
         </el-form>
+        <div class="hide-white" v-show="!brandConfig"></div>
       </div>
       <!-- 预览区域 -->
-      <brand-set-preview ref="brandSetPreviewComp" class="brand--preview"></brand-set-preview>
+      <brand-set-preview ref="brandSetPreviewComp" class="brand--preview" :brandType="brandType" :tabType="'skinSet'"></brand-set-preview>
     </div>
   </div>
 </template>
@@ -57,6 +60,7 @@ import ColorSet from '@/components/ColorSelect';
 
 export default {
   name: "skinSet.vue",
+  props: ['brandConfig'],
   components: {
     Upload,
     BrandSetPreview,
@@ -64,13 +68,14 @@ export default {
   },
   data() {
     return {
-      skinType: null, // 0-默认皮肤；1-自定义皮肤
+      skinType: 0, // 0-默认皮肤；1-自定义皮肤
+      brandType: 1,
       skinVo: {},
-      pageBgColors: ['FFFFFF', 'F2F2F2', '1A1A1A'],
+      pageBgColors: ['1A1A1A', 'FFFFFF', 'F2F2F2'],
       pageThemeColors: ['FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
       skinSetForm: {
         bg_url: null,
-        bgColor: '#FFFFFF',
+        bgColor: '#1A1A1A',
         pageStyle: '#FB3A32',
         popStyle: ''
       },
@@ -104,6 +109,13 @@ export default {
       }
     }
   },
+  watch: {
+    '$parent.type'() {
+      if (this.brandType) {
+        this.initComp();
+      }
+    }
+  },
   methods: {
     bgColorHandle(color) {
       this.skinSetForm.bgColor = color;
@@ -114,6 +126,9 @@ export default {
     pageStyleHandle(color) {
       this.skinSetForm.pageStyle = color;
       this.previewShow();
+    },
+    closeColor() {
+      // this.$refs.pageThemeColors.selectPanelShow = false;
     },
     previewShow() {
       let showRow = Object.assign(this.skinSetForm, {
@@ -192,12 +207,16 @@ export default {
     },
     initComp() {
       // 获取当前活动启用皮肤的信息详情
+      this.brandType = this.$parent.type;
       this.getInterWebinarSkin();
     },
     getInterWebinarSkin() {
-      this.$fetch('getInterWebinarSkin', {
-        webinar_id: this.$route.params.str
-      }).then(res => {
+      let params = {
+        type: this.$parent.type,
+        webinar_id: this.$parent.type == 1 ? this.$route.params.str : ''
+      }
+      this.skinVo = {}
+      this.$fetch('getInterWebinarSkin', this.$params(params)).then(res => {
         this.skinVo = res.data || {};
         this.showBtn = this.skinVo.status !== undefined && this.skinVo.status !== null && this.skinVo.status !== '';
         this.skinType = Number(res.data.status) > 0 ? 1 : 0;
@@ -208,8 +227,10 @@ export default {
           this.skinSetForm.pageStyle = skin_json_pc.pageStyle;
           this.skinSetForm.bg_url = skin_json_pc.background;
           this.domain_url = skin_json_pc.background;
+          this.$refs['pageBgColors'] && this.$refs['pageBgColors'].initColor(this.skinSetForm.bgColor)
+          this.$refs['pageThemeColors'] && this.$refs['pageThemeColors'].initColor(this.skinSetForm.pageStyle)
         } else {
-          this.skinSetForm.bgColor = '#FFFFFF';
+          this.skinSetForm.bgColor = '#1A1A1A';
           this.skinSetForm.pageStyle = '#FB3A32';
           this.skinSetForm.bg_url = '';
           this.domain_url = '';
@@ -219,17 +240,36 @@ export default {
         this.previewShow();
       }).catch(err=>{
         console.log(err);
-        this.skinVo = {};
+        this.previewShow();
+        // this.skinVo = {};
       });
     },
     skinSetSave() {
       this.$refs.skinSetForm.validate((valid) => {
         if(valid) {
+          let k = 0;
+          if (this.$route.params.str) {
+            k = this.skinType == 1 ? 100208 : 100207
+          } else {
+            k = this.skinType == 1 ? 100643 : 100642
+          }
+          this.$vhall_paas_port({
+            k: k,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+          if (this.skinSetForm.bg_url && this.$route.params.str) {
+            this.$vhall_paas_port({
+              k: 100209,
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
           if (this.skinType !== 1) {
-            this.$fetch('setSkinWebinarSkin', {
-              webinar_id: this.$route.params.str,
+            let params = {
+              webinar_id: this.$route.params.str || '',
+              type: this.$parent.type,
               status: 0
-            }).then(res => {
+            }
+            this.$fetch('setSkinWebinarSkin', this.$params(params)).then(res => {
               this.$message({
                 message:  `默认皮肤使用设置成功`,
                 showClose: true,
@@ -250,7 +290,8 @@ export default {
             });
           } else {
             let params = Object.assign({
-              webinar_id: this.$route.params.str,
+              webinar_id: this.$route.params.str || '',
+              type: this.$parent.type,
               status: 1
             }, this.tmpl, {
               skin_id: this.skinSetForm.skin_id || ''
@@ -295,6 +336,16 @@ export default {
 }
 .skin--set--left{
   width: 480px;
+  position: relative;
+  .hide-white{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    background: rgba(255, 255, 255, 0.5);
+    z-index: 9;
+  }
 }
 /deep/.el-form-item__label {
   line-height: 40px;

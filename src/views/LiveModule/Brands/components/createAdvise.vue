@@ -4,7 +4,6 @@
       :title="advInfo.adv_id ? '编辑广告' : '创建广告'"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
-      :lock-scroll=false
       custom-class="advinfo-dialog"
       width="468px">
       <el-form label-width="80px" :model="advertisement" ref="advertisementForm" :rules="rules">
@@ -23,6 +22,8 @@
               :on-error="uploadError"
               :on-preview="uploadPreview"
               :before-upload="beforeUploadHnadler"
+              :widthImg="231"
+              :heightImg="130"
               @delete="deleteImg"
               >
              <div slot="tip">
@@ -58,7 +59,7 @@
             <i slot="prefix" class="el-icon-search el-input__icon" @click="changeAdverment" style="cursor: pointer; line-height: 36px;"></i>
           </VhallInput>
           </div>
-        <el-scrollbar v-loadMore="moreLoadData" v-show="total">
+        <el-scrollbar v-loadMore="moreLoadData" v-show="total" style="height:328px">
           <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
               <span class="spanImg"> <img :src="`${item.img_url}`" alt=""></span>
@@ -86,7 +87,7 @@
       title="提示"
       :visible.sync="dialogTongVisible"
       :close-on-click-modal="false"
-      :lock-scroll=false
+      :show-close="false"
       class="zdy-async-dialog"
       width="400px"
     >
@@ -97,7 +98,7 @@
         </div>
         <div class="async__footer">
           <el-button type="primary" size="medium" v-preventReClick @click="sureMaterialAdver" round>确 定</el-button>
-          <el-button size="medium"  @click="dialogTongVisible=false"  round>取 消</el-button>
+          <el-button size="medium"  @click="cancelMaterialAdver"  round>取 消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -254,6 +255,10 @@ export default {
             // 直播-新建广告
             if (this.advInfo.adv_id) {
               this.createAdvAndsync(0);
+              this.$vhall_paas_port({
+                k: 100281,
+                data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
             } else {
               this.dialogTongVisible = true;
             }
@@ -270,11 +275,26 @@ export default {
         // 同步资料库
           // this.advertisement.is_sync = 1;
           this.createAdvAndsync(1);
+          this.$vhall_paas_port({
+            k: 100286,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
       } else {
         // 不同步资料库
         // this.advertisement.is_sync = 0;
         this.createAdvAndsync(0);
+        this.$vhall_paas_port({
+          k: 100287,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       }
+    },
+    cancelMaterialAdver() {
+      this.createAdvAndsync(0);
+      this.$vhall_paas_port({
+        k: 100287,
+        data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     createAdv() {
       this.$confirm('是否同步到资料库?', '提示', {
@@ -300,6 +320,23 @@ export default {
       params.img_url = this.$parseURL(params.img_url).path;
       this.$fetch(url, params).then(res => {
         if (res && res.code === 200) {
+          if (this.$route.params.str) {
+            this.$vhall_paas_port({
+              k: this.advertisement.adv_id ? 100281 : 100280,
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+            if (type === 1 && !this.advertisement.adv_id) {
+              this.$vhall_paas_port({
+                k: 100551,
+                data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
+            }
+          } else {
+            this.$vhall_paas_port({
+              k: this.advertisement.adv_id ? 100552 : 100551,
+              data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
           this.dialogVisible = false;
           this.dialogTongVisible = false;
           this.advertisement = {};
@@ -401,6 +438,10 @@ export default {
       }
       this.$fetch('advSaveToWebinar', params).then(res => {
         if (res.code == 200) {
+          this.$vhall_paas_port({
+            k: 100283,
+            data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           this.$message({
             message: `选择广告成功`,
             showClose: true,
@@ -538,6 +579,7 @@ export default {
   }
   /deep/.el-upload--picture-card{
     font-size: 36px;
+    // height: 130px;
     i.saasicon_shangchuan{
       font-size: 36px;
     }
@@ -592,15 +634,15 @@ export default {
      }
      .ad-list{
        display: flex;
-       padding: 0 32px;
+       margin: 0 32px;
       //  justify-content: space-between;
       //  align-items: center;
        flex-wrap: wrap;
-       height: 310px;
+       height: 320px;
       //  overflow: auto;
        .ad-item{
           width: 165px;
-          margin-bottom: 12px;
+          margin-bottom: 11px;
           background: #F7F7F7;
           position: relative;
           margin-right: 15px;
@@ -649,7 +691,7 @@ export default {
          }
         }
          p{
-           padding: 10px 0 0 5px;
+           padding: 5px 0 0 5px;
            color:#1A1A1A;
            font-size: 14px;
            line-height: 20px;

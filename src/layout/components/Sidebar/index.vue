@@ -29,6 +29,7 @@
         :unique-opened="true"
         active-text-color="#FB3A32"
         :collapse-transition="false"
+        @select="selectMenu"
         mode="vertical"
         class="el-menu-reset"
       >
@@ -82,7 +83,13 @@ export default {
     isShow(route) {
       if (this.childPremission && Number(this.childPremission.permission_data) === 0) {
         // 子账号有设置权限
-        return !(route && route.meta && route.meta.name === 'dataMgr');
+        return !(route && route.meta && route.meta.name === 'dataMgr').filter(item => {
+          if (this.vsQuanxian[item.meta.auth_key] > 0) {
+            return true
+          } else {
+            return false
+          }
+        });
       } else {
         // TODO 左侧导航菜单
         if (route.meta && route.meta.auth_key && this.vsQuanxian) {
@@ -117,6 +124,77 @@ export default {
     changeImg() {
       console.log(111111111111);
     },
+    selectMenu(index, indexPath) {
+      switch (index) {
+        case '/material/word':
+          this.setReport(100510)
+          break;
+        case '/material/video':
+          this.setReport(100517)
+          break;
+        case '/material/question':
+          this.setReport(100525)
+          break;
+        case '/material/prize':
+          this.setReport(100533)
+          break;
+        case '/material/viewer':
+          this.setReport(100540)
+          break;
+        case '/material/advertCard':
+          this.setReport(100550)
+          break;
+        case '/material/gift':
+          this.setReport(100556)
+          break;
+        case '/data/info':
+          this.setReport(100562)
+          break;
+        case '/data/live':
+          this.setReport(100577)
+          break;
+        case '/setting/function':
+          this.setReport(100620)
+          break;
+        case '/setting/dev':
+          this.setReport(100589)
+          break;
+        case '/setting/logo':
+          this.setReport(100615)
+          break;
+        case '/setting/chat':
+          this.setReport(100580)
+          break;
+        case '/setting/brand':
+          this.setReport(100633)
+          break;
+        case '/setting/player':
+          this.setReport(100490)
+          break;
+        case '/finance/info':
+          this.setReport(100688)
+          break;
+        case '/finance/income':
+          this.setReport(100749)
+          break;
+        case '/acc/info':
+          this.setReport(100777)
+          break;
+        case '/acc/myHome':
+          this.setReport(100790)
+          break;
+        case '/acc/son':
+          this.setReport(100805)
+          break;
+      }
+    },
+    setReport(k) {
+      let userId = sessionOrLocal.get('userId');
+      this.$vhall_paas_port({
+        k: k,
+        data: {business_uid: userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+    },
     pageResize(){
       this.$nextTick(()=>{
         let screenWidth = window.screen.width;
@@ -130,15 +208,15 @@ export default {
   },
   async created() {
     let userInfo = sessionOrLocal.get('userInfo');
+    let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+    if (vsPersonStr) {
+      this.vsQuanxian = JSON.parse(vsPersonStr);
+    }
     if (userInfo) {
       if(JSON.parse(userInfo).parent_id > 0) {
         // 获取子账号权限，更新
         await this.getChildPermission();
       }
-    }
-    let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
-    if (vsPersonStr) {
-      this.vsQuanxian = JSON.parse(vsPersonStr);
     }
   },
   mounted() {
@@ -167,8 +245,7 @@ export default {
       }
     });
     let _this = this;//赋值vue的this
-    window.onresize = () => {
-  　　// 调用methods中的事件
+    window.onresize = () => { // 调用methods中的事件
       _this.pageResize();
     }
   },
@@ -188,14 +265,13 @@ export default {
 }
 .sidebar-logo-container {
   position: relative;
-  width: 224px;
+  width: 100%!important;
   height: 64px;
   background: #FB3A32;
   text-align: center;
   overflow: hidden;
-  transition: width 0.3s;
   & .sidebar-logo-link {
-    width: 224px;
+    width: 100%;
     height: 64px;
     text-align: center;
     & .sidebar-logo {

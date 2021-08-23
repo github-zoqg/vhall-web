@@ -83,6 +83,9 @@ const apis = {
   getCardList: ['/v3/interacts/invite-card/get-list', 'POST'], //获取邀请列表
   getTopList: ['/v3/interacts/invite-card/get-top-list', 'POST'], //获取邀请榜
 
+  // 分享设置
+  getShareSettingInfo: ['/v3/webinars/share/info', 'POST'],  //获取分享设置详情
+  setShareSettingInfo: ['/v3/webinars/share/edit', 'POST'],  //保存分享设置
 
   // 直播模块
   createLive: ['/v3/webinars/webinar/create', 'POST'], // 活动创建/直播创建 jian.chang  √
@@ -94,6 +97,13 @@ const apis = {
   demandCreate: ['/v3/webinars/webinar/create-demand', 'POST'], // 点播创建
   checkLive: ['/v3/webinars/live/check', 'POST'], // 进入直播前检测
   getPCDownloadUrl: ['/v3/commons/version/upgrade', 'POST'], // 客户端下载地址获取接口
+
+  // 插播
+  waitingVideoList: ['/v3/webinars/waiting-file/get-list', 'POST'], // 插播列表
+  waitingVideoFile: ['/v3/webinars/waiting-file/batch-video-file', 'POST'], // 获取音视频导入插播文件
+  waitingVideoEdit: ['/v3/webinars/waiting-file/edit', 'POST'], // 插播文件编辑
+  waitingVideoCreate: ['/v3/webinars/waiting-file/create', 'POST'], // 插播文件创建
+  waitingVideoDelete: ['/v3/webinars/waiting-file/deletes', 'POST'], // 插播文件删除
 
   // 专题
   subjectCreate: ['/v3/webinars/subject/create', 'POST'], // 专题创建
@@ -234,6 +244,7 @@ const apis = {
   recordInfo: ['/v3/webinars/record/get-info', 'POST'], // 回放详情 xiaodong.ding
   getDefaultStartTime: ['/v3/webinars/record/get-record-time', 'POST'], // 获取创建回放初始时间-预览场景 xiaodong.ding
   recordReTranscode: ['/v3/webinars/record/record-trans-code', 'POST'], // 回放重新生成
+  recordRemark: ['/v3/webinars/record/record-remake', 'POST'], // 课件重制
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
@@ -247,6 +258,7 @@ const apis = {
   loginCheck: ['/v3/users/user/login-check', 'POST'],  //登录账号锁定检测接口
   sendCode: ['/v3/users/code/send', 'POST'],  //发送验证码接口
   register: ['/v3/users/user/register', 'POST'],  //注册接口
+  getLoginKey: ['/v3/users/user/get-key-login', 'POST'], // 获取登录公钥
 
   //数据中心
   getDataCenterInfo: ['/v3/data-center/account-all-data', 'GET'], //获取账户下的总数据  数据总览
@@ -311,7 +323,7 @@ const apis = {
   exportSign: ['/v3/interacts/sign/export-sign-list', 'POST'], //导出-签到列表
   exportDetailSign: ['/v3/interacts/sign/export-user-sign-list', 'POST'], //导出-签到明细列表
   exportSurvey: ['/v3/vss/survey/export-webinar-published-survey-usage', 'GET'], //导出问卷数据
-  exportSurveyDetial: ['/v3/vss/survey/export-get-webinar-survey-usage-detail', 'GET'], //导出问卷单个数据
+  exportSurveyDetial: ['/v3/vss/survey/export-get-webinar-survey-usage-detail', 'POST'], //导出问卷单个数据
   exportLottery: ['/v3/vss/lottery/export-prize-data-info-list', 'GET'], //导出-抽奖
   exportDetailLottery: ['/v3/vss/lottery/export-lottery-user-detail', 'GET'], //导出-抽奖-详情
   exportRedpacket: ['/v3/interacts/redpacket/export-redpacket-send-recorder', 'GET'], //导出活动群红包发送记录
@@ -416,6 +428,7 @@ const apis = {
   codeCheck: ['/v3/users/code/check', 'POST'], // check Jia.li
   bindInfo: ['/v3/users/user/bind-info', 'POST'], // 绑定邮箱、手机号接口 Jia.li
   unBindInfo: ['/v3/users/oauth/unbind', 'POST'],// 解除绑定
+  userMigrate: ['/v3/users/user-migrate/get-info', 'POST'],// 迁移用户-详情接口
 
   // 下载中心
   downloadedEdit: ['/v3/commons/downcenter/downloaded', 'POST'], // 下载中心-删除修改为已下载 √

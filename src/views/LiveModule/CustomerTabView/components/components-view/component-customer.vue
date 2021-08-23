@@ -6,14 +6,14 @@
     <template v-if="units.length == 0">
       <div class="drag-here"> 请拖拽组件至此处</div>
     </template>
-    <vhscroll>
+    <vhscroll @handle-resize="handleResize" ref="cusResize">
     <template v-if="units.length">
       <draggable
         :list="units"
       >
         <div
           class="editor-component-box"
-          :class="{'editor': index == editorIndex}"
+          :class="{'editor': index == editorIndex, 'splitLine': item.component_id == 8}"
           v-for="(item,index) in units"
           :key="index"
           @click="doEditor(index)"
@@ -71,7 +71,16 @@ export default {
   },
 
   methods: {
+    handleResize(vertical, horizontal, nativeEvent) {
+      // console.log('size变化', vertical, horizontal, nativeEvent)
+      this.$refs["cusResize"].scrollTo(
+        {
+          y: nativeEvent.height
+        }
+      );
+    },
     doEditor(index) {
+      console.log('sssssssss', this)
       this.editorIndex = index
       EventBus.$emit(eventsType.EDITOR_COMPONENT_INFO, index)
     },
@@ -198,10 +207,11 @@ export default {
     height: 100%;
     .editor-component-box{
       position: relative;
-      padding: 0 5px;
+      padding: 10px 5px;
       box-sizing: border-box;
       width: 285px;
-      margin: 0 auto;
+      margin: 6px auto;
+      word-break: break-all;
       i{
         position: absolute;
         cursor: pointer;
@@ -213,13 +223,21 @@ export default {
         background: #fff;
         display: none;
       }
-
+      /deep/.vh-chose-active-item__del {
+        display: none;
+      }
       &.editor{
         background: #FFF5F5;
         border: 1px dashed #F09D99;
         i{
           display: block;
         }
+        /deep/.vh-chose-active-item__del {
+          display: block;
+        }
+      }
+      &.splitLine{
+        padding: 0 5px;
       }
     }
   }

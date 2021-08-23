@@ -63,6 +63,7 @@ export default {
   data() {
     return {
       tabType: null,
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       userInfo: null,
       avatarImgUrl: ''
     };
@@ -71,6 +72,10 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
       let tabCount = this.tabType === 'validSet' ? 1 : this.tabType === 'accountSet' ? 2 : 0;
+      this.$vhall_paas_port({
+        k: tabCount === 1 ? 100779 : tabCount === 2 ? 100780 : 100778,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       // window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/acc/info?tab=${this.$route.query.tab}`;
       this.$router.push({path: `/acc/info`, query: {
         tab: tabCount
@@ -103,7 +108,7 @@ export default {
     if (bind_Result) {
       let auth_tag = sessionOrLocal.get('tag', 'localStorage');
       let res = JSON.parse(bind_Result);
-      if (res.code === 11042) {
+      if (res.code === 511042) {
         // 若是账号绑定异常，提示用户信息
         this.$confirm(auth_tag === 'bindWx' ? '该微信已被使用，绑定后，第三方账号的信息将被清空' : '该QQ已被使用，绑定后，第三方账号的信息将被清空', '提示', {
           confirmButtonText: '绑定',
@@ -188,13 +193,14 @@ export default {
     overflow: hidden;
     // border: 1px solid #E2E2E2;
     border-radius: 50%;
-    background: #1a1a1a;
+    
   }
   img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit:cover;
+    // background: #1a1a1a;
     // margin: 0 auto;
     // width: 100px;
     // height: 100px;
@@ -267,6 +273,7 @@ export default {
   min-height: 612px;
   height: auto;
   background: #FFFFFF;
+  border-radius: 4px;
 }
 /deep/.el-tabs__header {
   margin: 0 0;

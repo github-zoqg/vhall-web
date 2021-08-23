@@ -18,7 +18,7 @@
       </VhallInput>
       <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
     </div>
-    <div v-if="total || isSearch">
+    <div v-if="total || isSearch" style="min-height: 300px;">
       <el-table
         ref="docList"
         :data="docList"
@@ -79,14 +79,19 @@
       </el-table>
     </div>
     <div class="no-live" v-else>
-      <noData :nullType="'nullData'" text="您还上传过音视频，快来创建吧！" :height="0">
+      <noData :nullType="'nullData'" text="您还未上传过音视频，快来创建吧！" :height="0">
         <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
       </noData>
     </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="handlerConfirm" :disabled="!tableSelect.length" round size="medium" v-preventReClick>确定</el-button>
-      <el-button @click="dialogVisible = false" round size="medium">取消</el-button>
-    </span>
+    <div slot="footer" class="dialog-footer" v-show="total || isSearch">
+      <div>
+        <p v-if="videoSet">当前选择 <b>{{ tableSelect.length }}</b> 个文件</p>
+      </div>
+      <span>
+        <el-button type="primary" @click="handlerConfirm" :disabled="!tableSelect.length" round size="medium" v-preventReClick>确定</el-button>
+        <el-button @click="dialogVisible = false" round size="medium">取消</el-button>
+      </span>
+    </div>
   </el-dialog>
   <template v-if="showDialog">
     <el-dialog class="vh-dialog" title="" :visible.sync="showDialog" width="30%" center
@@ -102,7 +107,20 @@
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
-  props: ['videoSize', 'videoType'],
+  props: {
+    videoSize: {
+      required: false,
+      default: ''
+    },
+    videoType: {
+      required: false,
+      default: ''
+    },
+    videoSet: { //是否是转播文件
+      required: false,
+      default: false
+    }
+  },
   data(){
     return {
       dialogVisible: false,
@@ -172,6 +190,7 @@ export default {
         title: this.keyWords,
         storage: this.videoSize,
         file_type: this.videoType,
+        get_no_trans: 1,
         ...this.pageInfo
       }
       this.$fetch('dataVideoList', this.$params(params)).then(res=>{
@@ -214,26 +233,36 @@ export default {
     },
     handleSelectionChange(val){
       this.tableSelect = val;
-      this.docList.forEach((item) => {
-        if (val.length !== 0) {
-          if (item.paas_record_id !== val[[val.length - 1]].paas_record_id) {
-            this.$refs.docList.toggleRowSelection(item, false);
+      if (!this.videoSet) {
+        this.docList.forEach((item) => {
+          if (val.length !== 0) {
+            if (item.paas_record_id !== val[[val.length - 1]].paas_record_id) {
+              this.$refs.docList.toggleRowSelection(item, false);
+            }
           }
-        }
-      });
+        });
+      }
     },
     handlerConfirm(){
-      if (this.tableSelect[0].transcode_status != 1) {
-        this.$message({
-          message: "只能选择已经转码成功的视频",
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-        return;
+      // if (this.tableSelect[0].transcode_status != 1) {
+      //   this.$message({
+      //     message: "只能选择已经转码成功的视频",
+      //     showClose: true,
+      //     // duration: 0,
+      //     type: 'error',
+      //     customClass: 'zdy-info-box'
+      //   });
+      //   return;
+      // }
+      if (this.videoSet) {
+        let tableList = []
+        this.tableSelect.map(item => {
+          tableList.push(item.id)
+        })
+        this.$emit('selected', tableList);
+      } else {
+        this.$emit('selected', this.tableSelect[0]);
       }
-      this.$emit('selected', this.tableSelect[0]);
       this.dialogVisible = false;
     },
     closeHandler(){
@@ -440,12 +469,25 @@ export default {
     }
     /deep/ .el-dialog__body{
       width: 642px;
-      height: 375px;
-      border-top: 4px solid #1a1a1a;
-      border-bottom: 4px solid #1a1a1a;
-      background: #1a1a1a;
+      height: 361px;
+      border-top: 4px solid #000;
+      border-bottom: 4px solid #000;
+      background: #000;
       border-radius: 4px;
       padding: 0 4px;
+    }
+  }
+  .dialog-footer{
+    display: flex;
+    justify-content: space-between;
+    p{
+      font-size: 14px;
+      color: #666;
+      line-height: 36px;
+      b{
+        color: #FB3A32;
+        font-weight: normal;
+      }
     }
   }
  /*  /deep/ .el-table__header{

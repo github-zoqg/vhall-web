@@ -38,14 +38,16 @@
         :on-success="productLoadSuccess"
         :before-upload="beforeUploadHandler"
         :restPic="true"
+        :widthImg="'100%'"
+        :heightImg="120"
         @delete="deleteBanner"
       >
         <div slot="tip">
-          <p>建议尺寸：840*240px，小于2M</p>
+          <p>建议尺寸：750*125px，小于2M</p>
           <p>支持jpg、gif、png、bmp</p>
         </div>
       </upload>
-      <span class="header-img-tip">建议尺寸：840*240 px，小于2MB（支持格式jpg、png、gif、bmp）</span>
+      <span class="header-img-tip">建议尺寸：750*125 px，小于2MB（支持格式jpg、png、gif、bmp）</span>
       <div class="disable_wrap" v-show="!signUpSwtich"></div>
     </section>
     <!-- 表单名称、表单简介与表单头图为固定字段 -->
@@ -271,7 +273,7 @@
                 <i
                   class="iconfont-v3 saasicon-trash"
                   v-if="item.bottomBtn.includes('delete')"
-                  @click="deleteQuestion(questionArr, index)"
+                  @click="deleteQuestion(questionArr, index, item)"
                 ></i>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="移动" placement="top" v-tooltipMove>
@@ -313,9 +315,19 @@ export default {
     },
     signUpSwtich: {
       type: Boolean
+    },
+    regionalOptions: {
+      type: Object,
     }
   },
   watch:{
+    regionalOptions: {
+      handler(newVal){
+        this.regionalLevel = { ...newVal }
+      },
+      deep: true,
+      immediate: true
+    },
     questionArr: {
       handler(newVal){
         this.renderQuestion = newVal;
@@ -374,7 +386,7 @@ export default {
         this.regionalLevel[1] = true;
       }
       question.options.show_city = this.regionalLevel[1] ? 1 : 0;
-      question.options.show_country = this.regionalLevel[2] ? 1 : 0;
+      question.options.show_district = this.regionalLevel[2] ? 1 : 0;
       this.subjectChange(question);
     },
     onMove({ relatedContext, draggedContext }) {
@@ -392,6 +404,40 @@ export default {
     },
     // 保存表单
     sureQuestionnaire() {
+      let userId = this.$parent.userId;
+      console.log(this.renderQuestion)
+      this.renderQuestion.filter(item => item.name !== 'name').map(item => {
+        this.$vhall_paas_port({
+          k: item.reporType,
+          data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        if (item.reqType !== 6) {
+          this.$vhall_paas_port({
+            k: item.required ? item.reporType + 1 : item.reporType + 2,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+        if (item.reqType === 4) {
+          this.$vhall_paas_port({
+            k: item.reporType + 4,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {num: item.nodes.length}, ref_url: '', req_url: ''}
+          })
+        } else if (item.reqType === 2 || item.reqType === 3) {
+          let other = 0;
+          let total = item.nodes[0].children.length;
+          if (total > 0) {
+            other = item.nodes[0].children.filter(items => items.other).length
+          }
+          this.$vhall_paas_port({
+            k: item.reporType + 4,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '',  s: '', report_extra: {num: total - other}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.reporType + 5,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {num: other}, ref_url: '', req_url: ''}
+          })
+        }
+      })
       this.$message({
         message: `保存成功`,
         showClose: true,
@@ -403,7 +449,12 @@ export default {
     // 添加一个题目选项
     addOption(data, other){
       if ((data.nodes[0].children && data.nodes[0].children.length >= 20) || data.nodes.length >= 20) {
-        this.$alert('最多可添加20个选项')
+        this.$message({
+          message: `最多可添加20个选项`,
+          showClose: true,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
         return false;
       }
       let itemType = other ? 1: 0;
@@ -450,12 +501,13 @@ export default {
     },
     // 题目 title 改变
     subjectChange(question) {
-      this.questionEdit({
+      const params = {
         question_id: question.question_id,
         subject: question.label,
-        options: JSON.stringify(question.options),
         is_must: question.required ? 1 : 0
-      });
+      }
+      question.options !== '' && (params.options = JSON.stringify(question.options))
+      this.questionEdit(params);
     },
     // 下拉题目选项 subject 改变
     selectOptChange(question, node, isSelect, isPrivacy) {
@@ -523,7 +575,8 @@ export default {
       this.optionEdit(options);
     },
     // 删除一个题目
-    deleteQuestion(arr, index) {
+    deleteQuestion(arr, index, item) {
+      console.log(arr, index, item)
       this.$confirm('删除后已收集信息会被清空，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -534,6 +587,11 @@ export default {
         this.$fetch('regQDelete', {
           question_id: arr[index].question_id
         }).then(res => {
+          let userId = this.$parent.userId;
+          this.$vhall_paas_port({
+            k: item.reporType + 3,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
           arr.splice(index, 1);
           console.log(res);
         }).catch(err => {
@@ -751,6 +809,7 @@ export default {
     // 短信验证开关
     async phoneSwitchChange(question) {
       let isConfirm = true;
+      let userId = this.$parent.userId;
       if (!question.phoneValide) {
         await this.$confirm('关闭短信验证将会导致无法验证用户手机号码，同时用户将无法接收预约短信，确认是否关闭？', '提示', {
           confirmButtonText: '仍然关闭',
@@ -759,10 +818,20 @@ export default {
           customClass: 'zdy-message-box',
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
-        }).then(() => {}).catch(() => {
+        }).then(() => {
+          this.$vhall_paas_port({
+            k: 100139,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }).catch(() => {
           isConfirm = false;
           question.phoneValide = true;
         });
+      } else {
+        this.$vhall_paas_port({
+          k: 100080,
+          data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       }
       if (!isConfirm) return false;
       const options = {
@@ -851,6 +920,11 @@ export default {
   /deep/ .el-checkbox__inner {
     background-color: rgba(255, 255, 255, 0)
   }
+  &.viewItemHover{
+    /deep/.el-input__suffix{
+      right: 5px;
+    }
+  }
   &.privacyItem {
     .radioInput {
       margin-bottom: 10px;
@@ -897,7 +971,7 @@ export default {
       width: calc(100% - 14px);
       padding-left: 6px;
       .el-input__inner {
-        padding-right: 74px;
+        padding-right: 74px!important;
       }
     }
   }
@@ -916,11 +990,11 @@ export default {
         .radioInput {
           width: calc(100% - 24px);
           .el-input__inner {
-            padding-right: 74px;
+            padding-right: 74px!important;
           }
         }
         .radioGender .el-input__inner{
-          cursor: default;
+          cursor: not-allowed;
           color: #1a1a1a;
         }
         .other-input {
@@ -996,6 +1070,9 @@ export default {
       height: 20px;
       line-height: 20px;
       float: right;
+      i:hover{
+        color: #1a1a1a;
+      }
     }
     .swtich{
       vertical-align: text-top;
@@ -1033,6 +1110,7 @@ export default {
   /deep/ .el-input__inner {
     height: 40px;
     padding: 0 10px;
+    padding-right: 70px !important;
   }
   /deep/ .el-input.is-disabled .el-input__inner {
     background-color: #FFFFFF;
@@ -1041,6 +1119,7 @@ export default {
     cursor: not-allowed;
   }
   /deep/ .el-upload--picture-card {
+    height: 120px;
     i {
       font-size: 18px;
     }
@@ -1075,7 +1154,7 @@ export default {
 }
 .ghost {
   opacity: 0.5;
-  background: #c8ebfb;
+  background: #FFF2F2;
 }
 .list-group {
   min-height: 20px;
@@ -1091,13 +1170,13 @@ export default {
     border-color: transparent !important;
     &:focus{
       background: #F7F7F7;
-      /deep/ & + .el-input__suffix .el-input__count{
+      & + .el-input__suffix .el-input__count{
         visibility: visible;
       }
     }
     &:hover{
       background: #F7F7F7;
-      /deep/ & + .el-input__suffix .el-input__count{
+      & + .el-input__suffix .el-input__count{
         visibility: visible;
       }
     }

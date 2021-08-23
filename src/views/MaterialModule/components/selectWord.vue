@@ -1,6 +1,6 @@
 <template>
   <!-- 文档资料库 -->
-  <VhallDialog title="文档列表" :lock-scroll='false' :before-close="handleClose" :visible.sync="dialogVisible" :close-on-click-modal="false" width="800px">
+  <VhallDialog title="文档列表" :before-close="handleClose" :visible.sync="dialogVisible" :close-on-click-modal="false" width="800px">
     <div class="word-list">
       <div v-if="isSearch || total">
       <VhallInput
@@ -86,7 +86,7 @@
       </div>
       <null-page :nullType="'nullData'" v-else :height=60></null-page>
       <div class="btn-center" v-if="isSearch || total">
-        <span class="select-option">当前选中 <strong>{{dialogMulti.length}}</strong> 个文档</span>
+        <span class="select-option">当前选中 <b>{{dialogMulti.length}}</b> 个文档</span>
         <el-button  v-preventReClick type="primary" round size="medium" @click="saveCheckHandle" :disabled="!(dialogMulti && dialogMulti.length > 0)">确定</el-button>
         <el-button  round size="medium" @click="cancelCheckHandle">取消</el-button>
       </div>
@@ -287,6 +287,10 @@ export default {
           // 同步到资料库
           this.$fetch('asyncWordInfo', this.$params(params)).then(res=>{
             if(res && res.code === 200) {
+              this.$vhall_paas_port({
+                k: 100301,
+                data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              })
               this.$message({
                 message: '同步成功',
                 showClose: true,
@@ -477,7 +481,7 @@ export default {
   float: left;
   line-height: 20px;
   margin-top: 8px;
-  /deep/strong {
+  b{
     color: #FB3A32;
   }
 }

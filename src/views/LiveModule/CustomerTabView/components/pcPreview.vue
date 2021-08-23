@@ -1,6 +1,6 @@
 <template>
   <div class="vh-pc-preview">
-    <img class="cover" src="./images/pc-cover.png" alt="">
+    <img class="cover" src="./images/pc-cover@1x.png" alt="">
     <div class="pc-menus" v-show="activeIndex != null">
       <ul>
         <vhscroll>

@@ -4,9 +4,9 @@
       <template  slot="default">
         <div class="switch__box">
           <el-switch
-            v-model="warmFlag"
+            v-model="warmForm.warmFlag"
             @change="openCloseWarm"
-            :active-text="warmFlag ? '已开启，预告状态观看端显示暖场视频': '开启后，预告状态观看端显示暖场视频'">
+            :active-text="warmForm.warmFlag ? '已开启，预告状态观看端显示暖场视频': '开启后，预告状态观看端显示暖场视频'">
           </el-switch>
         </div>
       </template>
@@ -15,7 +15,7 @@
       <el-form :model="warmForm" ref="warmForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="选择视频" required>
           <div class="selet-video" @mouseenter="showMenu" @mouseleave="hiddenMenu">
-            <div class="mediaSlot" v-if="!selectMedia.paas_record_id" @click="warmFlag && changeVideo()">
+            <div class="mediaSlot" v-if="!selectMedia.paas_record_id" @click="warmForm.warmFlag && changeVideo()">
               <div class="picInco">
                 <i class="iconfont-v3 saasicon_shangchuan"></i>
               </div>
@@ -53,13 +53,13 @@
               path: 'users/logo-imgs',
               type: 'image',
             }"
-            :disabled='!warmFlag'
+            :disabled='!warmForm.warmFlag'
             :on-success="handleUploadSuccess"
             :on-progress="uploadProcess"
             :on-error="uploadError"
             :on-preview="uploadPreview"
             :before-upload="beforeUploadHandler"
-            @delete="warmFlag && deleteImg()">
+            @delete="warmForm.warmFlag && deleteImg()">
             <div slot="tip">
               <p>建议尺寸：1280*720px，小于4M</p>
               <p>支持jpg、gif、png、bmp</p>
@@ -67,10 +67,10 @@
           </upload>
         </el-form-item>
         <el-form-item>
-          <el-button round class="length152" :disabled='!warmFlag' type="primary" @click="submitForm('warmForm')" v-preventReClick>提交</el-button>
+          <el-button round class="length152" :disabled='!warmForm.warmFlag' type="primary" @click="submitForm('warmForm')" v-preventReClick>提交</el-button>
         </el-form-item>
       </el-form>
-      <div class="white-box" v-show="!warmFlag">
+      <div class="white-box" v-show="!warmForm.warmFlag">
       </div>
     </div>
     <selectMedias ref="selecteMedia" @selected='mediaSelected' :videoSize="videoSize" :videoType="videoType" @closeWarm="closeWarm"></selectMedias>
@@ -91,6 +91,7 @@ import PageTitle from '@/components/PageTitle';
 import Upload from '@/components/Upload/main';
 import beginPlay from '@/components/beginBtn';
 import selectMedias from './selecteMedia';
+import {sessionOrLocal} from "@/utils/utils";
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 export default {
   components: {
@@ -100,43 +101,57 @@ export default {
     VideoPreview,
     beginPlay
   },
+   watch: {
+    warmForm: {
+      deep: true,
+      handler() {
+        this.isChange = true;
+      }
+    },
+  },
   data() {
     return {
       showChecked: false, // 是否滑中选择视频
       warmFlag: false,
       loading: false,
+      isChange: false,
       videoSize: '200',
       videoType: 'MP4',
       warmId: '',
+      userId: '',
       selectMedia: {},
       showDialog: false,
       warmForm: {
         record_id: '',
-        imageUrl: ''
+        imageUrl: '',
+        warmFlag: false
       },
       domain_url: ''
     };
   },
   created() {
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getWarmVideoInfo();
   },
   beforeRouteLeave (to, from, next) {
-    if (this.warmFlag && !this.warmForm.record_id && !this.warmForm.imageUrl) {
-       this.$confirm('是否取消暖场视频的设置？', '提示', {
+     if (!this.isChange) {
+        next()
+        return false;
+      }
+      this.$confirm('是否取消暖场视频的设置？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        this.warmFlag = false;
-        this.openCloseWarm(1);
+        if (!this.warmForm.record_id) {
+          this.warmForm.warmFlag = false;
+          this.openCloseWarm(1);
+        }
         next();
       }).catch(() => {
       });
-    } else {
-      next();
-    }
   },
   methods: {
     // 鼠标离开
@@ -148,19 +163,25 @@ export default {
       this.showChecked = true
     },
     closeWarm() {
-      this.warmFlag = false
+      this.warmForm.warmFlag = false
       this.openCloseWarm(1);
     },
     // 开启或关闭暖场视频
     openCloseWarm(index) {
       let params = {
         webinar_id: this.$route.params.str,
-        is_open_warm_video: Number(this.warmFlag)
+        is_open_warm_video: Number(this.warmForm.warmFlag)
       }
       this.$fetch('warmOpen', params).then(res=>{
-        if(res.code == 200 && index != 1){
+        if(res.code == 200){
+          if (!this.warmForm.warmFlag) {
+            this.$vhall_paas_port({
+              k: 100134,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
           this.$message({
-            message: this.warmFlag ? '开启暖场视频成功' : '关闭暖场视频成功',
+            message: this.warmForm.warmFlag ? '开启暖场视频成功' : '关闭暖场视频成功',
             showClose: true,
             // duration: 0,
             type: 'success',
@@ -169,7 +190,7 @@ export default {
         }
       }).catch(res => {
         this.$message({
-          message: res.msg || (this.warmFlag ? '开启暖场视频失败' : '关闭暖场视频失败'),
+          message: res.msg || (this.warmForm.warmFlag ? '开启暖场视频失败' : '关闭暖场视频失败'),
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -181,15 +202,20 @@ export default {
     getWarmVideoInfo() {
       this.$fetch('warnInfo', {webinar_id: this.$route.params.str}).then(res => {
         if (res.code == 200) {
-          this.warmFlag = Boolean(res.data.is_open_warm_video);
+          this.warmForm.warmFlag = Boolean(res.data.is_open_warm_video);
           this.warmId = res.data.warm_id;
           this.domain_url = res.data.img_url;
           this.warmForm.imageUrl = res.data.img_url;
           if (res.data.record_id) {
             this.selectMedia.paas_record_id = res.data.record_id;
             this.selectMedia.name = res.data.record_name;
+            this.selectMedia.msg_url = '.mp4';
           }
           this.warmForm.record_id = res.data.record_id;
+          // 重置修改状态
+          setTimeout(() => {
+            this.isChange = false
+          }, 300)
         }
       })
     },
@@ -271,26 +297,28 @@ export default {
           customClass: 'zdy-info-box'
         });
       }else{
-        this.$confirm('是否保存当前设置？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          customClass: 'zdy-message-box',
-          lockScroll: false,
-          cancelButtonClass: 'zdy-confirm-cancel'
-        }).then(() => {
-          this.saveWarmInfo();
-        }).catch(() => {});
+        this.saveWarmInfo();
       }
     },
     saveWarmInfo() {
       let params = {
-        is_open_warm_video: Number(this.warmFlag),
+        is_open_warm_video: Number(this.warmForm.warmFlag),
         img_url:  this.warmForm.imageUrl,
         webinar_id: this.$route.params.str,
         warm_id: this.warmId,
         record_id: this.warmForm.record_id
       }
       this.$fetch('warnEdit', this.$params(params)).then(res => {
+        if (this.warmForm.imageUrl) {
+          this.$vhall_paas_port({
+            k: 100135,
+            data: {business_uid: this.userId, user_id: this.$route.params.str, webinar_id: '', refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
+        this.$vhall_paas_port({
+            k: 100133,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
         this.$message({
           message: `保存暖场视频成功`,
           showClose: true,
@@ -298,6 +326,10 @@ export default {
           type: 'success',
           customClass: 'zdy-info-box'
         });
+        this.isChange = false;
+        setTimeout(()=>{
+          this.$router.push({path: `/live/detail/${this.$route.params.str}`});
+        }, 500);
       }).catch(res => {
         this.$message({
           message: res.msg || "保存暖场视频失败",

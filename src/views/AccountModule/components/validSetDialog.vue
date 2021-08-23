@@ -2,7 +2,6 @@
   <VhallDialog
     :title="title"
     :visible.sync="visible"
-    :lock-scroll=false
     class="valid-set-dialog"
     width="400px">
     <div class="content">
@@ -14,7 +13,7 @@
         <el-form-item label="手机号" key="phone" prop="phone" v-if="showVo.executeType !== 'email' && showVo.step === 1">
           <el-input v-model.trim="form.phone" auto-complete="off" placeholder="请输入手机号" disabled :maxlength="30"/>
         </el-form-item>
-        <el-form-item label="图形码" v-show="showVo.step === 1 && showVo.executeType !== 'email'">
+        <el-form-item label="图形码" v-show="showVo.step === 1 && showVo.executeType !== 'email'" id="captcha-box">
           <div id="setCaptcha" class="captcha">
             <el-input  v-model.trim="form.imgCode"> </el-input>
           </div>
@@ -23,7 +22,8 @@
         <el-form-item label="动态密码" key="code" prop="code" v-if="showVo.step === 1">
           <div class="inputCode">
             <el-input v-model.trim="form.code" auto-complete="off" style="width: 141px" :maxlength="6"></el-input>
-            <span @click="getDyCode()" :class="showCaptcha ? 'isLoginActive' : ''">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+            <span v-if="showVo.executeType === 'email' && form.email" @click="time == 60 && getDyCode()" class="isLoginActive">{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
+            <span @click="time == 60 && getDyCode()" :class="showCaptcha ? 'isLoginActive' : ''" v-else>{{ time == 60 ? '获取验证码' : `${time}秒后发送` }}</span>
           </div>
           <p class="codeTitle" v-if="sendText">{{sendText}}</p>
         </el-form-item>
@@ -45,7 +45,7 @@
         <el-form-item label="手机号" key="new_phone"  prop="new_phone" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
           <el-input v-model.trim="form.new_phone" auto-complete="off" placeholder="请输入手机号" :maxlength="30"/>
         </el-form-item>
-        <el-form-item label="图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)">
+        <el-form-item label="图形码" v-if="showVo.executeType === 'phone' && (showVo.step === 2 || showVo.is_null)" id="captcha-box">
           <div id="setCaptcha1" class="captcha">
             <el-input  v-model.trim="form.imgCode1"> </el-input>
           </div>
@@ -54,7 +54,8 @@
         <el-form-item label="动态密码" key="new_code" prop="new_code" v-if="showVo.executeType !== 'pwd' && (showVo.step === 2 || showVo.is_null)">
           <div class="inputCode">
             <el-input v-model.trim="form.new_code" auto-complete="off" style="width: 141px" :maxlength="6"></el-input>
-            <span @click="getDyCode1()" :class="showCaptcha1 ? 'isLoginActive' : ''">{{ time1 == 60 ? '获取验证码' : `${time1}秒后发送` }}</span>
+            <span @click="time1 == 60 && getDyCode1()" :class="showCaptcha1 && isValidaCode ? 'isLoginActive' : ''" v-if="showVo.executeType === 'phone'">{{ time1 == 60 ? '获取验证码' : `${time1}秒后发送` }}</span>
+            <span @click="time1 == 60 && getDyCode1()" :class="isValidaEmail ? 'isLoginActive' : ''" v-if="showVo.executeType === 'email'">{{ time1 == 60 ? '获取验证码' : `${time1}秒后发送` }}</span>
           </div>
           <p class="codeTitle" v-if="sendText1">{{sendText1}}</p>
         </el-form-item>
@@ -82,7 +83,7 @@
           <pwd-input type="password" v-model.trim="form.new_password" auto-complete="off" placeholder="再输入一次" :maxlength="30"></pwd-input>
         </el-form-item>
         <el-form-item label="" class="link__to" v-if="showVo.step === 1">
-          <a :href="openLink" target="_blank">{{showVo.executeType === 'email' ? '邮箱不可用？' : '手机不可用？'}}</a>
+          <a :href="openLink" target="_blank" @click="reportData">{{showVo.executeType === 'email' ? '邮箱不可用？' : '手机不可用？'}}</a>
         </el-form-item>
       </el-form>
     </div>
@@ -102,6 +103,8 @@
 <script>
 import env from "@/api/env";
 import PwdInput from './pwdInput.vue';
+import { sessionOrLocal } from "@/utils/utils";
+import Cookies from 'js-cookie'
 export default {
   name: "validSetDialog.vue",
   components: {
@@ -130,6 +133,32 @@ export default {
         // this.isReset = false;
       }
     };
+    let validatePhone = (rule, value, callback) => {
+      this.isValidaCode = false;
+      if (value === '') {
+        callback(new Error('请输入手机号'));
+      } else {
+        if (!(/^1[0-9]{10}$/.test(value))) {
+          callback(new Error('请输入正确的手机号'));
+        } else {
+          this.isValidaCode = true;
+          callback();
+        }
+      }
+    };
+    let validateEmail = (rule, value, callback) => {
+      this.isValidaEmail = false;
+      if (value === '') {
+        callback(new Error('请输入邮箱'));
+      } else {
+        if (!(/^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/.test(value))) {
+          callback(new Error('请输入正确的邮箱格式'));
+        } else {
+          this.isValidaEmail = true;
+          callback();
+        }
+      }
+    };
     return {
       pwdTitle: "为了保证您的账号安全，修改密码请先验证绑定的手机号，验证成功后进行下一步操作",
       phoneTitle: '为了保证您的账号安全，修改手机号前请先验证已绑定的手机号',
@@ -140,6 +169,8 @@ export default {
         is_null: true // true表示未设置过
       },
       visible: false,
+      isValidaCode: false,
+      isValidaEmail: false,
       validate: {
         type: 1, // 发送类型： 1手机；2邮箱
         data: null,// 根据type值不同 分别传手机号、邮箱
@@ -176,10 +207,10 @@ export default {
           {required: true, message: '请输入动态密码', trigger: 'blur'}
         ],
         new_phone: [
-          {required: true, min: 6, max: 30, pattern: /^1[0-9]{10}$/, message: '请输入手机号', trigger: 'blur'}
+          {required: true, min: 6, max: 30, validator: validatePhone, trigger: 'blur'}
         ],
         new_email: [
-          {required: true, min: 1, max: 30, pattern: /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/, message: '请输入正确的邮箱格式', trigger: 'blur'}
+          {required: true, min: 1, max: 30, validator: validateEmail, trigger: 'blur'}
         ],
         new_code: [
           {required: true, message: '请输入动态密码', trigger: 'blur'}
@@ -268,6 +299,21 @@ export default {
         title: title,
         scene_id: scene_id
       };
+    },
+    reportData() {
+      let refer = '';
+      const userId = JSON.parse(sessionOrLocal.get("userId"));
+      if (this.title == '修改密码') {
+        refer = 6;
+      } else if (this.title == '修改密保手机') {
+        refer = 7;
+      } else if (this.title == '修改关联邮箱') {
+        refer = 8;
+      }
+      this.$vhall_paas_port({
+        k: 100017,
+        data: {business_uid: this.userId, user_id: this.userId, s: '', refer: refer, report_extra: {}, ref_url: '', req_url: ''}
+      })
     },
     // 场景适用： 设置密码、修改密码、修改手机号-第一步、修改邮箱-第一步
     getDyCode() {
@@ -498,6 +544,18 @@ export default {
           this.$fetch('codeCheck', params).then(res => {
             if (res.data.check_result > 0) {
               this.codeKey1 = res.data.key || '';
+              if (this.title === '修改密保手机') {
+                this.$vhall_paas_port({
+                  k: 100786,
+                  data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+                })
+              }
+              if (this.title === '修改关联邮箱') {
+                this.$vhall_paas_port({
+                  k: 100787,
+                  data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+                })
+              }
               this.bindSave();
             } else {
               this.$message({
@@ -570,6 +628,12 @@ export default {
               scene_id: this.getScenedTitle().scene_id
             };
             this.$fetch('codeCheck', params).then(res => {
+              if (this.title === '修改密码') {
+                this.$vhall_paas_port({
+                  k: 100785,
+                  data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+                })
+              }
               if (res.data.check_result > 0) {
                 this.codeKey = res.data.key || '';
                 // 验证码第一步，继续下一步
@@ -592,6 +656,7 @@ export default {
                 type: 'error',
                 customClass: 'zdy-info-box'
               });
+              // 验证码错误，重置验证码
             });
           } else {
             // 第二步密码保存 => 存储密码  scene_id场景ID：1账户信息-修改密码  4忘记密码-邮箱方式找回 5忘记密码-短信方式找回 9设置密码（密码不存在情况）
@@ -614,6 +679,13 @@ export default {
               this.visible = false;
               this.showCaptcha = false;
               this.showCaptcha1 = false;
+              // 跳转登录页
+              sessionOrLocal.clear();
+              sessionOrLocal.clear('localStorage');
+              // 清除cookies
+              Cookies.remove('gray-id');
+              // 监听消息变化
+              this.$router.push({path: '/login'});
             }).catch(res => {
               console.log(res);
               this.$message({
@@ -710,6 +782,8 @@ export default {
         this.form.imgCode1 = '';
         this.showCaptcha = false;
         this.showCaptcha1 = false;
+        this.isValidaEmail = false;
+        this.isValidaCode = false;
         if(this.downTimer) {
           window.clearTimeout(this.downTimer);
           this.isDisabledClick = false;
@@ -849,15 +923,71 @@ export default {
     background: #F2F2F2;
     color:#666666;
     vertical-align: top;
-    cursor: pointer;
+    cursor: not-allowed;
     &.isLoginActive{
       background: #fc5659;
       color: #fff;
+      cursor: pointer;
     }
   }
   // i {
   //   font-weight: normal;
   //   color: #ff0000;
   // }
+}
+#captcha-box{
+  .captcha {
+    // 云盾样式重置
+    /deep/.yidun_tips {
+        color: #999999;
+        line-height: 38px!important;
+        .yidun_tips__text {
+          vertical-align: initial;
+        }
+      }
+      /deep/.yidun_slider {
+        .yidun_slider__icon {
+          background-image: url(./images/icon-slide1.png) !important;
+          background-size: 28px 20px;
+          background-position: center;
+          margin-top: -5px;
+        }
+        &:hover {
+          .yidun_slider__icon {
+            background-image: url(./images/icon-slide.png) !important;
+          }
+        }
+      }
+      /deep/ .yidun--success {
+        .yidun_control {
+          .yidun_slider__icon {
+            background-image: url(./images/icon-succeed.png)!important;
+          }
+          .yidun_slider {
+            .yidun_slider__icon {
+              background-image: url(./images/icon-succeed.png);
+              background-size: 28px 20px;
+              background-position: center;
+            }
+            &:hover {
+              .yidun_slider__icon {
+                background-image: url(./images/icon-succeed.png);
+                background-size: 28px 20px;
+                background-position: center;
+              }
+            }
+          }
+        }
+      }
+    .yidun.yidun--light{
+      .yidun_feedback{
+        background-position: 0px -240px;
+        height: 30px;
+      }
+      .yidun_refresh{
+        background-position: 0px -339px;
+      }
+    }
+  }
 }
 </style>

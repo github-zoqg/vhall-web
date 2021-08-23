@@ -7,22 +7,64 @@
           ref="searchAccount"
           :searchAreaLayout="searchDetail"
           @onExportData="exportAccount()"
-          @onSearchFun="getDetailList('search')"
+          @onSearchFun="getSearchList()"
         >
       </search-area>
       <div>
-        <table-list
-          ref="tableAccount"
-          :manageTableData="tableList"
-          :tabelColumnLabel="tabelColumn"
-          :isCheckout="isCheckout"
-          :isHandle="isHandle"
-          :totalNum="totalNum"
-          @getTableList="getDetailList"
+        <el-table
+            :data="tableList"
+            style="width: 100%"
+            :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+           >
+            <el-table-column
+              prop="account"
+              label="收款账号"
+              min-width="300"
+              >
+            </el-table-column>
+            <el-table-column
+              prop="service_fee"
+              label="平台分成"
+              width="120"
+              >
+            </el-table-column>
+            <el-table-column
+              prop="withdraw_fee"
+              label="申请金额"
+              width="120">
+            </el-table-column>
+            <el-table-column
+              prop="type"
+              label="提现类型"
+              width="120">
+            </el-table-column>
+            <el-table-column
+              label="提现状态"
+              width="120">
+              <template slot-scope="scope">
+                <span class="buyStatus" ><i :class="scope.row.status == 1 ? 'active-success': scope.row.status == 2 ? 'active-error' : 'active-waiting'"></i>{{scope.row.statusText}}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="申请时间"
+              prop="created_at"
+              width="180">
+            </el-table-column>
+            <el-table-column
+              label="实际金额"
+              prop="actual_fee"
+              width="120">
+            </el-table-column>
+            <div slot="empty"><noData :nullType="'nullData'" v-if="!totalNum" :text="'暂无数据'" :height="70"></noData></div>
+        </el-table>
+        <SPagination
+            :total="totalNum"
+            v-if="totalNum > 10"
+            :currentPage="pageInfo.pageNum"
+            @current-change="currentChangeHandler"
+            align="center"
           >
-        </table-list>
-        <noData v-if="totalNum == 0" :nullType="'nullData'" :text="'暂无数据'" :height="100">
-        </noData>
+        </SPagination>
       </div>
     </div>
   </div>
@@ -84,39 +126,12 @@ export default {
           ]
         }
       ],
-      isCheckout: false,
-      isHandle: false,
       tableList: [],
-      tabelColumn: [
-        {
-          label: '收款账号',
-          key: 'account',
-        },
-        {
-          label: '平台分成',
-          key: 'service_fee',
-        },
-        {
-          label: '申请金额',
-          key: 'withdraw_fee',
-        },
-        {
-          label: '提现类型',
-          key: 'type',
-        },
-        {
-          label: '提现状态',
-          key: 'status',
-        },
-        {
-          label: '申请时间',
-          key: 'created_at',
-        },
-        {
-          label: '实际金额',
-          key: 'actual_fee',
-        }
-      ]
+      pageInfo: {
+        pageNum: 1,
+        limit: 10,
+        pos: 0
+      },
     };
   },
   components: {
@@ -128,13 +143,25 @@ export default {
     this.getDetailList();
   },
   methods: {
+    getSearchList() {
+      let formParams = this.$refs.searchAccount.searchParams;
+      this.$vhall_paas_port({
+        k: formParams.withdraw_status === 1 ? 100771 : formParams.withdraw_status === 2 ? 100772 : formParams.withdraw_status === 0 ? 100770 : 100769,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.$vhall_paas_port({
+        k: formParams.withdraw_type === 1 ? 100775 : formParams.withdraw_type === 0 ? 100774 : 100773,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      this.getDetailList('search')
+    },
     getDetailList(params) {
-      let pageInfo = this.$refs.tableAccount.pageInfo; //获取分页信息
+      // let pageInfo = this.$refs.tableAccount.pageInfo; //获取分页信息
       let formParams = this.$refs.searchAccount.searchParams; //获取搜索参数
       let paramsObj = {};
       if (params === 'search') {
-        pageInfo.pageNum= 1;
-        pageInfo.pos = 0;
+        this.pageInfo.pageNum= 1;
+        this.pageInfo.pos = 0;
       }
        for (let i in formParams) {
         if (i === 'searchTime' && formParams.searchTime) {
@@ -145,7 +172,7 @@ export default {
         }
       }
       paramsObj.user_id = this.userId;
-      let obj = Object.assign({}, pageInfo, paramsObj);
+      let obj = Object.assign({}, this.pageInfo, paramsObj);
       console.log(obj);
       this.params = paramsObj;
       this.$fetch('accountList', this.$params(obj)).then(res =>{
@@ -165,8 +192,18 @@ export default {
         item.status = item.withdraw_status;
       });
     },
+    // 页码改变按钮事件
+    currentChangeHandler(current) {
+      this.pageInfo.pageNum = current;
+      this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit);
+      this.getDetailList();
+    },
     exportAccount() {
        this.$fetch('exportWithdraw', this.$params(this.params)).then(res => {
+        this.$vhall_paas_port({
+          k: 100776,
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `账单明细导出申请成功，请去下载中心下载`,
           showClose: true,
@@ -194,5 +231,46 @@ export default {
     padding: 24px 32px;
     border-radius: 4px;
     min-height: 500px;
+    .pageBox{
+      margin-top: 20px;
+    }
+    .buyStatus{
+      i{
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        vertical-align: middle;
+        margin-right: 5px;
+        margin-top: -3px;
+        &.active-success {
+          background: #14BA6A;
+        }
+        &.active-error {
+          background: #FB3A32;
+        }
+        &.active-waiting {
+          background: #FA9A32;
+        }
+      }
+    }
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+      width: 6px; // 横向滚动条
+      height: 6px; // 纵向滚动条
+    }
+    /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+      background-color: #dedede;
+      border-radius: 5px;
+    }
+    /deep/ .el-table__body::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+      border-radius: 5px;
+      background: rgba(255,255,255,1);
+    }
+    // &:hover{
+    //   /deep/.el-table__body-wrapper::-webkit-scrollbar{
+    //     display: block;
+    //   }
+    // }
   }
 </style>

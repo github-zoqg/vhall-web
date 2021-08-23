@@ -71,6 +71,7 @@ export default {
       recordId: this.$route.query.recordId,
       webinar_id: this.$route.params.str,
       isNew: false,
+      userId: JSON.parse(sessionOrLocal.get("userId")),
       recordName: this.$route.query.recordName,
       saveParam: {},
       dataReady: false,
@@ -222,7 +223,7 @@ export default {
 
             Object.assign(msg, msg.data);
               console.log('==========自定义消息==========', msg)
-            if (msg.type == "vod_cut_preview" && msg.user_id == sessionOrLocal.get('userId')) {
+            if (msg.type == "vod_cut_preview" && msg.user_id == this.userId) {
               console.log('回放生成了')
               // 消息会下发三次，只处理第一次
               if (!this.handleMsgTimer) {
@@ -336,6 +337,7 @@ export default {
               });
             } else if (res.data.status == 1) {
               // 点击创建，如果 status===1 视频已生成，直接初始化剪辑台
+              this.isNew = true
               this.getPlayBackInfo(res.data.pass_record_id, true, res.data.pass_record_id)
             }
             this.editLoading = false;
@@ -400,6 +402,10 @@ export default {
       })
     },
     saveVideoHandler (param) {
+      this.$vhall_paas_port({
+        k: this.recordId ? 100412 : 100405,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.titleDialogVisible = true;
       this.saveParam = param;
     },
