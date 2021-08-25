@@ -18,7 +18,7 @@
             <p>可进行多人连麦</p>
             <p>需要使用chrome浏览器</p>
           </div> -->
-          <div class="choose-p choose-a-way " :class="chooseType === 'client' ? 'client active' : 'choose-a-way'" @click.prevent.stop="changeChoose('client')">
+          <div class="choose-p choose-a-way" :class="[chooseType === 'client' ? 'client active' : 'choose-a-way', delayStatus == 1 ? 'no-hover' : '']" @click.prevent.stop="changeChoose('client')">
             <div v-if="delayStatus == 1" class="delay-mask">
               无延迟直播暂不支持此方式发起
             </div>
@@ -288,6 +288,9 @@ export default {
     box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
   }
 }
+.no-hover:hover{
+  cursor: unset;
+}
 .choose-btn {
   text-align: center;
   margin-top: 32px;
@@ -329,5 +332,8 @@ export default {
   font-weight: 400;
   color: #FFFFFF;
   line-height: 220px;
+  &:hover{
+    cursor: unset;
+  }
 }
 </style>

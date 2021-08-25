@@ -103,14 +103,18 @@
         </div>
         <div class="modeHide" v-if="$route.query.type==2"></div>
       </el-form-item>
-      <el-form-item v-if="isDelay" label="直播延迟" required>
+      <el-form-item v-if="showDelayTag" label="直播延迟" required>
         <div class="titleBox">
-          <span class="pageTitle">无延迟直播为付费功能请,<span v-if="isDelay">{{liveMode | filterLiveMode}}</span><span v-else><a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通</span>,点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span></span>
+          <span class="pageTitle">
+            <span v-if="!hasDelayPermission">无延迟直播为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span></span>
+            <span v-else>直播创建成功后，直播延迟类型将不可修改，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span>
+            </span></span>
         </div>
         <div class="delay-select">
-          <div class="mode-common" :class="{delayActive: selectDelayMode == 'common'}" @click.stop="handleSelectDelayMode('common')">常规延迟≈5S</div>
-          <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay'}" @click.stop="handleSelectDelayMode('delay')">无延迟&lt;0.4S</div>
-          <div v-if="!webinarDelay" class="mode-delay">无延迟&lt;0.4S<span class="no-open">未开通</span></div>
+          <div class="mode-common" :class="{delayActive: selectDelayMode == 'common'}" @click.stop="handleSelectDelayMode('common')"><i class="iconfont-v3 saasicon-changgui"></i>
+常规延迟≈5S</div>
+          <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay'}" @click.stop="handleSelectDelayMode('delay')"><i class="iconfont-v3 saasicon-wuyanchi"></i> 无延迟&lt;0.4S</div>
+          <div v-if="!webinarDelay" class="mode-delay no-delay"><i class="iconfont-v3 saasjishiqi"></i> 无延迟&lt;0.4S<span class="no-open">未开通</span></div>
         </div>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}封面`">
@@ -265,7 +269,7 @@
           <div class="lr">
             <div class="sub-title">使用场景</div>
             <div class="sub-content">
-              传统直播中，观众与主办方存在4-10秒的时间差，微吼全新VRTC技术使延时低至0.4秒，打造零距离交流场景。支持实时性的直播场景，例如在线大班课、电商直播、在线拍卖场景，互动更加实时
+              传统直播中，观众与主办方存在4-10秒的时间差，微吼全新VRTC技术使延迟低至0.4秒，打造零距离交流场景。支持实时性的直播场景，例如在线大班课、电商直播、在线拍卖场景，互动更加实时
             </div>
             <div class="sub-title">注意事项</div>
             <div class="sub-content">
@@ -451,7 +455,8 @@ export default {
   },
   data(){
     return {
-      hideDelay: false,
+      showDelayTag: true,
+      hasDelayPermission: false, // 是否有无延迟权限
       isDelay: false,
       showDelayMask: false,
       selectDelayMode: 'common',
@@ -534,7 +539,10 @@ export default {
     });
   },
   created(){
-    
+    const path = this.$route.path
+    if (path == '/live/vodEdit') {
+      this.showDelayTag = false
+    }
     window.scrollTo(0,0);
     this.planFunctionGet()
     if (this.$route.query.id || this.$route.params.id) {
@@ -577,12 +585,10 @@ export default {
         // 数据渲染
         if (res.data && res.code == 200) {
           const data = JSON.parse(res.data.permissions)
-          let delay = data['no.delay.webinar'] ? true : false
-          const path = this.$route.path
-          if (path == '/live/vodEdit') {
-            delay = false
+          this.hasDelayPermission = data['no.delay.webinar'] && data['no.delay.webinar'] == 1 ? true : false
+          if (!this.hasDelayPermission) {
+            this.selectDelayMode = 'common'
           }
-          this.isDelay = delay
         }
       }).catch(res =>{
         console.log(res);
@@ -598,7 +604,8 @@ export default {
           return this.$message.warning(res.msg)
         }
         this.liveDetailInfo = res.data;
-        this.selectDelayMode = this.liveDetailInfo.no_delay_webinar == 1 ? 'delay' : 'common'
+        this.isDelay = this.liveDetailInfo.no_delay_webinar == 1 ? true : false
+        this.selectDelayMode = this.hasDelayPermission && this.liveDetailInfo.no_delay_webinar == 1 ? 'delay' : 'common'
         this.formData.title = this.liveDetailInfo.subject;
         this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
         this.formData.date2 = this.liveDetailInfo.start_time.substring(11, 16);
@@ -1086,12 +1093,35 @@ export default {
         color: #FFFFFF;
         line-height: 17px;
       }
+      .common-icon{
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+
+      }
+    }
+    .no-delay{
+      &:hover{
+        cursor: unset;
+      }
     }
     .mode-delay{
       margin-left: 24px;
     }
     .delayActive{
       border-color: #FB3A32;
+      position: relative;
+      &::after{
+        content: '';
+        position: absolute;
+        top: -1px;
+        right: -1px;
+        width: 20px;
+        height: 20px;
+        background: url('../../common/images/icon-choose.png');
+        background-size: 20px;
+        background-position: center;
+      }
     }
   }
   .el-icon-question {

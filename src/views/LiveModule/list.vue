@@ -54,7 +54,7 @@
               <!--  @click.prevent.stop="toDetail(item.webinar_id)" -->
               <div class="top">
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
-                  <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}</span>
+                  <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}<span v-if="isDelay && item.no_delay_webinar == 1"> | 无延迟</span></span>
                 <span class="hot">
                   <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
                 </span>
@@ -166,6 +166,10 @@ export default {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.vodPerssion = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['ui.upload_video_as_demand'];
     this.getLiveList();
+    const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
+    const permission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] : 0
+    this.isDelay = permission == 1 ? true : false
+    console.log('>>>>>>>10', this.isDelay)
   },
   methods: {
     toLiveDetail(webinar_id) {

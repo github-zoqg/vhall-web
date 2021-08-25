@@ -108,7 +108,7 @@ export default {
     getChildPermission() {
       return this.$fetch('getChildPermission').then(res => {
         console.log('当前权限', res.data)
-        sessionOrLocal.set('SAAS_V3_SON_PS', JSON.stringify(res.data));
+        sessionOrLocal.set('', JSON.stringify(res.data));
         this.childPremission = res.data;
       }).catch(res => {
         sessionOrLocal.removeItem('SAAS_V3_SON_PS');

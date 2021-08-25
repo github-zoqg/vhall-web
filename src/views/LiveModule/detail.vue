@@ -8,7 +8,7 @@
           <div class="thumb">
             <img :src="liveDetailInfo.img_url" alt="">
             <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>
-              {{ liveDetailInfo | liveTag }}
+              {{ liveDetailInfo | liveTag }}<span v-if="hasDelayPermission && isDelay"> | 无延迟</span>
             </span>
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"> {{ liveDetailInfo.pv | unitCovert }}</i>
@@ -105,6 +105,8 @@ export default {
   },
   data(){
     return {
+      isDelay: false,
+      hasDelayPermission: false,
       msg: '',
       userId: '',
       perssionInfo: {},
@@ -192,6 +194,7 @@ export default {
             // eslint-disable-next-line no-prototype-builtins
             return this.perssionInfo[item] > 0
           })
+          this.hasDelayPermission = this.perssionInfo['no.delay.webinar'] && this.perssionInfo['no.delay.webinar'] == 1 ? true : false
         } else {
           sessionOrLocal.removeItem('WEBINAR_PES');
         }
@@ -223,6 +226,7 @@ export default {
           let nowTime = res.data.time * 1000;
           this.downTime(formateDates(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
         }
+        this.isDelay = res.data.no_delay_webinar == 1 ? true : false
       }).catch(res=>{
         this.$message({
           message: res.msg || "获取信息失败",

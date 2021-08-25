@@ -1,16 +1,28 @@
 @font-face {
   font-family: "iconfont-v3"; /* Project id 2212678 */
-  src: url('iconfont.woff2?t=1625645529581') format('woff2'),
-       url('iconfont.woff?t=1625645529581') format('woff'),
-       url('iconfont.ttf?t=1625645529581') format('truetype');
+  src: url('iconfont.woff2?t=1629860837055') format('woff2'),
+       url('iconfont.woff?t=1629860837055') format('woff'),
+       url('iconfont.ttf?t=1629860837055') format('truetype');
 }
 
-.iconfont-v3 {
+.iconfont-v3{
   font-family: "iconfont-v3" !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.saasicon-wuyanchi:before {
+  content: "\e7ae";
+}
+
+.saasicon-changgui:before {
+  content: "\e7af";
+}
+
+.saasjishiqi:before {
+  content: "\e608";
 }
 
 .saasfenxiang_icon:before {
