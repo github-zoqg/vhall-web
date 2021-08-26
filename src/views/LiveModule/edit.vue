@@ -540,7 +540,8 @@ export default {
   },
   created(){
     const path = this.$route.path
-    if (path == '/live/vodEdit') {
+    console.log('>>>>>>>>11111', path)
+    if (path.indexOf('/live/vodEdit') != -1) {
       this.showDelayTag = false
     }
     window.scrollTo(0,0);
