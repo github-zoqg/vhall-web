@@ -18,8 +18,8 @@
             <p>可进行多人连麦</p>
             <p>需要使用chrome浏览器</p>
           </div> -->
-          <div class="choose-p choose-a-way" :class="[chooseType === 'client' ? 'client active' : 'choose-a-way', delayStatus == 1 ? 'no-hover' : '']" @click.prevent.stop="changeChoose('client')">
-            <div v-if="delayStatus == 1" class="delay-mask">
+          <div class="choose-p choose-a-way" :class="[chooseType === 'client' ? 'client active' : 'choose-a-way', hasDelayPermission && delayStatus == 1 ? 'no-hover' : '']" @click.prevent.stop="changeChoose('client')">
+            <div v-if="hasDelayPermission && delayStatus == 1" class="delay-mask">
               无延迟直播暂不支持此方式发起
             </div>
             <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
@@ -67,7 +67,8 @@ export default {
       clientOpen: '',
       executeType: 'ctrl', // 是否控制台 ctrl 控制台
       downloadUrl: '',
-      delayStatus: 0
+      delayStatus: 0,
+      hasDelayPermission: false
     };
   },
   created(){
@@ -83,6 +84,7 @@ export default {
     this.getDownloadUrl();
     this.getLiveBaseInfo()
   },
+
   methods: {
     getLiveBaseInfo() {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
@@ -103,7 +105,7 @@ export default {
       })
     },
     changeChoose(type) {
-      if (this.delayStatus == 1) return
+      if (this.hasDelayPermission && this.delayStatus == 1) return
       this.chooseType = type;
     },
     goLive(){
@@ -195,6 +197,10 @@ export default {
     }else{
       this.watchUrl = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}${location.search}`
     }
+    const perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+    if (perssionInfo) {
+      this.hasDelayPermission = perssionInfo['no.delay.webinar'] && perssionInfo['no.delay.webinar'] == 1 ? true : false
+    } 
   }
 };
 </script>
