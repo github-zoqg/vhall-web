@@ -111,9 +111,9 @@
             </span></span>
         </div>
         <div class="delay-select">
-          <div class="mode-common" :class="{delayActive: selectDelayMode == 'common'}" @click.stop="handleSelectDelayMode('common')"><i class="iconfont-v3 saasicon-changgui"></i>
+          <div class="mode-common" :class="{delayActive: selectDelayMode == 'common'}" @click.stop="handleSelectDelayMode('common')"><i class="iconfont-v3 saasicon-changgui ft20"></i>
 常规延迟≈5S</div>
-          <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay'}" @click.stop="handleSelectDelayMode('delay')"><i class="iconfont-v3 saasicon-wuyanchi"></i> 无延迟&lt;0.4S</div>
+          <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay'}" @click.stop="handleSelectDelayMode('delay')"><i class="iconfont-v3 saasicon-wuyanchi ft20"></i> 无延迟&lt;0.4S</div>
           <div v-if="!webinarDelay" class="mode-delay no-delay"><i class="iconfont-v3 saasjishiqi"></i> 无延迟&lt;0.4S<span class="no-open">未开通</span></div>
         </div>
       </el-form-item>
@@ -269,15 +269,15 @@
           <div class="lr">
             <div class="sub-title">使用场景</div>
             <div class="sub-content">
-              传统直播中，观众与主办方存在4-10秒的时间差，微吼全新VRTC技术使延迟低至0.4秒，打造零距离交流场景。支持实时性的直播场景，例如在线大班课、电商直播、在线拍卖场景，互动更加实时
+              传统直播中，观众与主办方存在4-10秒的时间差，微吼全新VRTC技术使延迟低至0.4秒，打造零距离交流场景。支持实时性的直播场景，例如在线大班课、电商直播、在线拍卖场景，互动更加实时。
             </div>
             <div class="sub-title">注意事项</div>
             <div class="sub-content">
-              1、使用PC客户端、移动APP、移动SDK发起直播时，目前暂不支持无延时直播，后续进行迭代支持，敬请期待；<br/>
-              2、使用PC标准网页、手机wap端网页、网页完全嵌入方式观看时支持无延时直播<br/>
-              3、以下情况不支持无延时观看：<br/>
-              （1）使用JS-SDK、移动SDK、单视频嵌入的观看形式，不支持无延时观看，后续进行迭代支持，敬请期待；<br/>
-              （2）将观看页直接嵌入到客户的小程序进行观看，不支持无延时观看，因为小程序环境采用的方式不是webrtc技术，无法支持<br/>
+              1、使用PC客户端、移动APP、移动SDK发起直播时，目前暂不支持无延迟直播，后续进行迭代支持，敬请期待；<br/>
+              2、使用PC标准网页、手机wap端网页、网页完全嵌入方式观看时支持无延迟直播<br/>
+              3、以下情况不支持无延迟观看：<br/>
+              （1）使用JS-SDK、移动SDK、单视频嵌入的观看形式，不支持无延迟观看，后续进行迭代支持，敬请期待；<br/>
+              （2）将观看页直接嵌入到客户的小程序进行观看，不支持无延迟观看，因为小程序环境采用的方式不是webrtc技术，无法支持<br/>
               4、无延迟直播不支持第三方推流、转播功能；目前暂不支持设置跑马灯、水印、弹幕，和清晰度，弹幕功能直播时默认进行隐藏，回放不受影响。
             </div>
           </div>
@@ -970,6 +970,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+ .ft20{
+   font-size: 20px;
+ }
   .el-form{
     background: #ffffff;
     padding: 48px 20px 50px 48px;

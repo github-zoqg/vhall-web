@@ -267,10 +267,10 @@
           <!-- <div id="videoDom" v-show="showVideo"></div> -->
           <p class="show-purple-info">
             <span>提示</span>
-            <span>1.移动端全屏播放时，跑马灯会失效</span>
-            <span>2.安卓手机浏览器劫持可能导致跑马灯失效</span>
-            <span>3.因浏览器自身策略，开启自动播放也会出现无法自动播放情况</span>
-            <span>4.无延迟直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能</span>
+            <span>1.移动端全屏播放时，跑马灯会失效；</span>
+            <span>2.安卓手机浏览器劫持可能导致跑马灯失效；</span>
+            <span>3.因浏览器自身策略，开启自动播放也会出现无法自动播放情况；</span>
+            <span>4.无延迟直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能。</span>
           </p>
       </div>
     </div>
@@ -381,7 +381,7 @@ export default {
       marqueeOption: {
         enable: Boolean(this.scrolling_open),
         text: '版权所有，盗版必究',
-        alpha: 100,    // 透明度  100 完全显示   0 隐藏 
+        alpha: 100,    // 透明度  100 完全显示   0 隐藏
         size: 20,      // 文字大小
         color: '#FFFFFF',   //  文字颜色
         interval: 20, // 下次跑马灯开始与本次结束的时间间隔 ， 秒为单位

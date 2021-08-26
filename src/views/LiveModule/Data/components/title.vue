@@ -5,11 +5,11 @@
        <img :src="liveDetailInfo.img_url" alt="">
       </div>
       <div class="box-title">
-        <div class="title-status" :class="{moreText: liveDetailInfo.no_delay_webinar}" v-if="liveDetailInfo.webinar_state == 1">
+        <div class="title-status" v-if="liveDetailInfo.webinar_state == 1">
           <img src="../../../../common/images/live/lives.gif" alt="">
           <b>直播 <span v-if="liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
         </div>
-        <div class="title-status grayColor" :class="{moreText: liveDetailInfo.no_delay_webinar}" v-else>
+        <div class="title-status grayColor" v-else>
           <b>{{ liveDetailInfo.webinar_state | actionText }} <span v-if="liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
         </div>
         <div class="title-text">
@@ -60,13 +60,14 @@ export default {
   flex: 1;
   width: 70%;
   .title-status {
-    min-width: 52px;
+    // min-width: 52px;
+    display: inline-block;
     height: 18px;
     line-height: 18px;
     text-align: center;
     background: linear-gradient(180deg, #ff584b 0%, #ff2820 100%);
     border-radius: 25px;
-    padding: 0 8px;
+    padding: 3 8px;
     img {
       height: 8px;
       width: 8px;
@@ -85,15 +86,12 @@ export default {
     }
   }
   .grayColor {
-    width: 46px;
+    // width: 46px;
     padding: 0 8px;
     background: #000000;
     opacity: 0.6;
     text-align: center;
     padding-left: 10px;
-  }
-  .moreText{
-    width: 100px;
   }
   .title-text {
     p {

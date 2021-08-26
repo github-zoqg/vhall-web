@@ -1195,6 +1195,9 @@ export default {
 /deep/.div__sketch{
   right: 0;
 }
+.saasclose{
+  cursor: pointer;
+}
 #videoDom {
   width: 100%;
   height: 100%;
@@ -1418,6 +1421,7 @@ export default {
       }
       .iconfont-v3{
         font-size: 12px;
+        cursor: pointer;
       }
       .slider::v-deep{
         width: 100%;
@@ -1644,11 +1648,12 @@ export default {
     .btn{
       float: right;
       width: 104px;
-      height: 36px;
+      // height: 36px;
+      padding: 12px 0;
       background: #FB3A32;
       border-radius: 20px;
       text-align: center;
-      line-height: 36px;
+      // line-height: 36px;
       color: #fff;
       &:hover{
         cursor: pointer;
