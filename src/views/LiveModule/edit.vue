@@ -114,7 +114,7 @@
           <div class="mode-common" :class="{delayActive: selectDelayMode == 'common'}" @click.stop="handleSelectDelayMode('common')"><i class="iconfont-v3 saasicon-changgui ft20"></i>
 常规延迟≈5S</div>
           <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay'}" @click.stop="handleSelectDelayMode('delay')"><i class="iconfont-v3 saasicon-wuyanchi ft20"></i> 无延迟&lt;0.4S</div>
-          <div v-if="!webinarDelay" class="mode-delay no-delay"><i class="iconfont-v3 saasjishiqi"></i> 无延迟&lt;0.4S<span class="no-open">未开通</span></div>
+          <div v-if="!webinarDelay" class="mode-delay no-delay"><i class="iconfont-v3 saasjishiqi ft20"></i> 无延迟&lt;0.4S<span class="no-open">未开通</span></div>
         </div>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}封面`">
@@ -973,6 +973,8 @@ export default {
 <style lang="less" scoped>
  .ft20{
    font-size: 20px;
+   position: relative;
+   top: 2px;
  }
   .el-form{
     background: #ffffff;

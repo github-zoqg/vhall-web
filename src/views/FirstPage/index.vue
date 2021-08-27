@@ -168,7 +168,7 @@
             <p class="prompt-con-text prompt-con-text-three">尊敬的用户：</p>
             <p class="prompt-con-text no-bottom">观看有延迟？互动不同步？从现在开始这些统统不存在！马上创建无延时</p>
             <p class="prompt-con-text no-bottom">直播，体验面对面的畅快沟通吧！</p>
-            <p class="prompt-con-text no-bottom">无延时直播为收费功能，请联系您的专属售后或拨打400-888-9970转2</p>
+            <p class="prompt-con-text no-bottom">无延迟直播为收费功能，请联系您的专属售后或拨打400-888-9970转2</p>
             <p class="prompt-con-text no-bottom">咨询。</p>
             <!-- <a class="prompt-con-text-four" href="javascript:;" @click="iKonw">我知道了</a> -->
             <a class="prompt-con-text-four" href="javascript:;" @click="showDelay = false">我知道了</a>

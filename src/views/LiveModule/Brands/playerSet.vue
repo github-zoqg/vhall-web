@@ -1648,12 +1648,12 @@ export default {
     .btn{
       float: right;
       width: 104px;
-      // height: 36px;
-      padding: 12px 0;
+      height: 36px;
+      font-size: 14px;
       background: #FB3A32;
       border-radius: 20px;
       text-align: center;
-      // line-height: 36px;
+      line-height: 36px;
       color: #fff;
       &:hover{
         cursor: pointer;

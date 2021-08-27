@@ -91,7 +91,6 @@ export default {
     background: #000000;
     opacity: 0.6;
     text-align: center;
-    padding-left: 10px;
   }
   .title-text {
     p {
