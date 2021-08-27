@@ -37,7 +37,7 @@
                       <span class="hot" v-if="item.hide_pv">
                         <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
                       </span>
-                      <span class="liveTag">{{item | liveTag }}</span>
+                      <span class="liveTag">{{item | liveTag }}<span v-if="isDelay && item.no_delay_webinar == 1"> | 无延迟</span></span>
                       <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
                     </div>
                     <div class="bottom">
@@ -65,6 +65,8 @@
 import OldHeader from '@/components/OldHeader';
 import share from './share'
 import Env from '@/api/env.js';
+import { sessionOrLocal } from '@/utils/utils';
+
 export default {
   data() {
     return {
@@ -86,7 +88,8 @@ export default {
         pcUrl:`${process.env.VUE_APP_WEB_URL}/special/detail?id=${this.$route.query.id}`
       },
       totalList: [], //总数
-      liveList: []
+      liveList: [],
+      isDelay: false
     };
   },
   components: {
@@ -94,6 +97,9 @@ export default {
     share
   },
   created() {
+    const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
+    const permission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] : 0
+    this.isDelay = permission == 1 ? true : false
     this.getSpecialList();
   },
   mounted() {
