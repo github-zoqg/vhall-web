@@ -1197,6 +1197,7 @@ export default {
 }
 .saasclose{
   cursor: pointer;
+  color: #666;
 }
 #videoDom {
   width: 100%;

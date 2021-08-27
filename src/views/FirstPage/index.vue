@@ -752,4 +752,7 @@ export default {
         color: #FFFFFF;
         text-decoration: none
     }
+    .delay{
+      height: 440px !important;
+    }
 </style>
