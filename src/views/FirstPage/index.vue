@@ -159,10 +159,10 @@
     <!--新版本无延迟上线了-->
     <template>
       <!-- <div class="prompt" v-if="!openSys && isOld" > -->
-      <div class="prompt" v-if="showDelay">
+      <div class="prompt" v-if="!openSys && showDelay">
         <div class="prompt-wrap delay">
             <!-- <i class="prompt-con-img i-close saasclose iconfont-v3" @click="iKonw"></i> -->
-            <i class="prompt-con-img i-close saasclose iconfont-v3" @click="showDelay = false"></i>
+            <i class="prompt-con-img i-close saasclose iconfont-v3" @click="closeOpenDelay"></i>
             <img class="prompt-con-img" src="//cnstatic01.e.vhall.com/static/images/watch/notice_img.png" alt="">
             <p class="prompt-con-text prompt-con-text-one">新版本上线了</p>
             <p class="prompt-con-text prompt-con-text-three">尊敬的用户：</p>
@@ -171,13 +171,13 @@
             <p class="prompt-con-text no-bottom">无延迟直播为收费功能，请联系您的专属售后或拨打400-888-9970转2</p>
             <p class="prompt-con-text no-bottom">咨询。</p>
             <!-- <a class="prompt-con-text-four" href="javascript:;" @click="iKonw">我知道了</a> -->
-            <a class="prompt-con-text-four" href="javascript:;" @click="showDelay = false">我知道了</a>
+            <a class="prompt-con-text-four" href="javascript:;" @click="closeOpenDelay">我知道了</a>
         </div>
       </div>
     </template>
     <!-- 用户迁移升级完成 - 此弹窗出现，新版本体验弹窗不展示-->
-    <template>
-      <div class="prompt" v-if="openSys">
+    <template v-if="openSys">
+      <div class="prompt">
         <div class="prompt-wrap mini">
             <i class="prompt-con-img i-close saasclose iconfont-v3" @click="closeOpenSys"></i>
             <img class="prompt-con-img" src="//cnstatic01.e.vhall.com/static/images/watch/notice_img.png" alt="">
@@ -241,6 +241,19 @@ export default {
         }
       }
     } catch (error) {}
+
+    // 获取用户无延迟直播状态
+    try {
+      let nowTime = JSON.parse(sessionOrLocal.get('currentDate'));
+      const isNewH = this.$moment(new Date().getTime()).diff(this.$moment(nowTime), 'h')
+      if (isNewH <= 24) {
+        // 有效期1天内，只能弹出1次
+        if(sessionOrLocal.get('showDelay') && JSON.parse(sessionOrLocal.get('showDelay')) == false) {
+          this.showDelay = false
+        }
+      }
+    } catch (error) {}
+
     let userInfo = sessionOrLocal.get('userInfo');
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     if (userInfo) {
@@ -274,6 +287,10 @@ export default {
     closeOpenSys() {
       this.openSys = false
       sessionOrLocal.set('openSys', JSON.stringify(false))
+    },
+    closeOpenDelay() {
+      this.showDelay = false
+      sessionOrLocal.set('showDelay', JSON.stringify(false))
     },
     getChildPermission() {
       this.$fetch('getChildPermission').then(res => {
