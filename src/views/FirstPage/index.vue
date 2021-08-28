@@ -244,13 +244,11 @@ export default {
 
     // 获取用户无延迟直播状态
     try {
-      let nowTime = JSON.parse(sessionOrLocal.get('currentDate'));
-      const isNewH = this.$moment(new Date().getTime()).diff(this.$moment(nowTime), 'h')
-      if (isNewH <= 24) {
-        // 有效期1天内，只能弹出1次
-        if(sessionOrLocal.get('showDelay') && JSON.parse(sessionOrLocal.get('showDelay')) == false) {
-          this.showDelay = false
-        }
+      if(sessionOrLocal.get('showDelay') && JSON.parse(sessionOrLocal.get('showDelay')) == false) {
+        this.showDelay = false
+      } else {
+        let nowTime = JSON.parse(sessionOrLocal.get('currentDate'));
+        this.showDelay =this.$moment(new Date().getTime()).diff(this.$moment(nowTime), 'h') <= 24
       }
     } catch (error) {}
 
