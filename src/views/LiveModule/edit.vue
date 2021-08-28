@@ -107,7 +107,7 @@
         <div class="titleBox">
           <span class="pageTitle">
             <span v-if="!hasDelayPermission">无延迟直播为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span></span>
-            <span v-else>直播创建成功后，直播延迟类型将不可修改，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span>
+            <span v-else>直播创建成功后，直播延迟类型将不可修改，点我了解<span class="color3562FA" @click.stop="showDelayMask = true">无延迟直播</span>
             </span></span>
         </div>
         <div class="delay-select">
@@ -1057,6 +1057,10 @@ export default {
     color: #666666;
     line-height: 40px;
     margin-right: 9px;
+    .color3562FA{
+      color: #3562FA;
+      cursor: default;
+    }
     .blue{
       color: #3562FA;
       &:hover{

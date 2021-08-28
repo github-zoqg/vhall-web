@@ -36,7 +36,7 @@
       <!-- TODO 选择直播后，反显已选择面板（至少有一个已选中的，后续选择都在此面板） -->
         <img :src="item.img_url" alt="">
         <span class="vh-chose-active-item__del" @click.stop="delActiveItem(item.id, item.player)"><img src="../images/icon-trash-line-01.png" alt=""></span>
-        <div class="vh-chose-active-item__cover-status" :class="{smallSize: hasDelayPermission && item.no_delay_webinar == 1}">
+        <div class="vh-chose-active-item__cover-status zdy" :class="{smallSize: hasDelayPermission && item.no_delay_webinar == 1}">
           <span class="liveTag">
             <!-- <label class="live-status" v-if="item.webinar_state == 1">
               <img src="../../../../../common/images/live.gif" alt="">
@@ -78,7 +78,7 @@ export default {
     const perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
     if (perssionInfo) {
       this.hasDelayPermission = perssionInfo['no.delay.webinar'] && perssionInfo['no.delay.webinar'] == 1 ? true : false
-    } 
+    }
   },
   watch: {
     checkedList : function(val) {
@@ -194,7 +194,7 @@ export default {
           height: 8px;
         }
       }
-      
+
       &-hots{
         position: absolute;
         left: 10px;
@@ -223,13 +223,22 @@ export default {
       line-height: 16px;
     }
     .liveTag{
-      background: rgba(0,0,0, .7);
+      background: rgba(0,0,0,1);
       color: #fff;
       font-size: 12px;
-      padding: 2px 9px;
+      padding: 2px 6px;
       border-radius: 20px;
       position: relative;
       z-index: 2;
+      transform: scale(.8);
+      white-space: nowrap;
+      transform-origin: 0 0;
+      display: inline-block;
+    }
+    .zdy{
+      background: none;
+      top: 0;
+      left: 3px;
     }
   }
 .menus-checkedBox{
