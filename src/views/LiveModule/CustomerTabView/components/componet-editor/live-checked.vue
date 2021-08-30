@@ -237,7 +237,7 @@ export default {
     }
     .zdy{
       background: none;
-      top: 0;
+      top: 4px;
       left: 3px;
     }
   }
