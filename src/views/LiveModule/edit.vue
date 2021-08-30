@@ -107,14 +107,14 @@
         <div class="titleBox">
           <span class="pageTitle">
             <span v-if="!hasDelayPermission">无延迟直播为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span></span>
-            <span v-else>直播创建成功后，直播延迟类型将不可修改，点我了解<span class="color3562FA" @click.stop="showDelayMask = true">无延迟直播</span>
+            <span v-else>直播创建成功后，直播延迟类型将不可修改，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span>
             </span></span>
         </div>
         <div class="delay-select">
-          <div class="mode-common" :class="{delayActive: selectDelayMode == 'common'}" @click.stop="handleSelectDelayMode('common')"><i class="iconfont-v3 saasicon-changgui ft20"></i>
+          <div class="mode-common" :class="{delayActive: selectDelayMode == 'common',noDelay:$route.params.id}" @click.stop="handleSelectDelayMode('common')"><i class="iconfont-v3 saasicon-changgui ft20"></i>
 常规延迟≈5S</div>
-          <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay'}" @click.stop="handleSelectDelayMode('delay')"><i class="iconfont-v3 saasicon-wuyanchi ft20"></i> 无延迟&lt;0.4S</div>
-          <div v-if="!webinarDelay" class="mode-delay no-delay"><i class="iconfont-v3 saasjishiqi ft20"></i> 无延迟&lt;0.4S<span class="no-open">未开通</span></div>
+          <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay',noDelay:$route.params.id}" @click.stop="handleSelectDelayMode('delay')"><i class="iconfont-v3 saasicon-wuyanchi ft20"></i> 无延迟&lt;0.4S</div>
+          <div v-if="!webinarDelay" class="mode-delay noDelay"><i class="iconfont-v3 saasjishiqi ft20"></i> 无延迟&lt;0.4S<span class="no-open">未开通</span></div>
         </div>
       </el-form-item>
       <el-form-item :label="`${webniarTypeToZH}封面`">
@@ -1057,10 +1057,6 @@ export default {
     color: #666666;
     line-height: 40px;
     margin-right: 9px;
-    .color3562FA{
-      color: #3562FA;
-      cursor: default;
-    }
     .blue{
       color: #3562FA;
       &:hover{
@@ -1077,7 +1073,7 @@ export default {
     flex-direction: row;
     .mode-common, .mode-delay{
       width: 183px;
-      height: 86px;
+      height: 80px;
       border: 1px solid #F2F2F2;
       background: #F2F2F2;
       border-radius: 4px;
@@ -1110,7 +1106,7 @@ export default {
 
       }
     }
-    .no-delay{
+    .noDelay{
       &:hover{
         cursor: unset;
       }
