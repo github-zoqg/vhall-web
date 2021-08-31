@@ -174,6 +174,7 @@ export default {
         height: 100%;
         object-fit: scale-down;
         position: absolute;
+        border-radius: 4px;
         top:0;
         left: 0;
       }
