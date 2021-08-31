@@ -1073,12 +1073,12 @@ export default {
     flex-direction: row;
     .mode-common, .mode-delay{
       width: 183px;
-      height: 80px;
+      height: 86px;
       border: 1px solid #F2F2F2;
       background: #F2F2F2;
       border-radius: 4px;
       position: relative;
-      line-height: 86px;
+      line-height: 80px;
       text-align: center;
       color: #666666;
       &:hover{
