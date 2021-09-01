@@ -207,7 +207,7 @@ export default {
       childPremission: {},
       isOld: false,
       openSys: false,
-      showDelay: true
+      showDelay: false
     };
   },
   components: {
@@ -242,16 +242,6 @@ export default {
       }
     } catch (error) {}
 
-    // 获取用户无延迟直播状态
-    try {
-      if(sessionOrLocal.get('showDelay') && JSON.parse(sessionOrLocal.get('showDelay')) == false) {
-        this.showDelay = false
-      } else {
-        let nowTime = JSON.parse(sessionOrLocal.get('currentDate'));
-        this.showDelay =this.$moment(new Date().getTime()).diff(this.$moment(nowTime), 'h') <= 24
-      }
-    } catch (error) {}
-
     let userInfo = sessionOrLocal.get('userInfo');
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     if (userInfo) {
@@ -272,11 +262,19 @@ export default {
     //     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     //   }
     // })
+    this.computedShowDelayWindow()
   },
   beforeDestroy() {
     document.getElementById('app').style.minWidth="1366px"
   },
   methods: {
+    computedShowDelayWindow() {
+      const now = new Date().getTime()
+      const start_time = new Date('September 2, 2021 00:00:01').getTime()
+      if (now - start_time <= (7 * 24 * 60 * 60 * 1000)) {
+        this.showDelay = true
+      }
+    },
     iKonw(){
       this.isOld = false
       let newUserId = JSON.parse(sessionStorage.getItem('userInfo')).user_id
@@ -288,7 +286,6 @@ export default {
     },
     closeOpenDelay() {
       this.showDelay = false
-      sessionOrLocal.set('showDelay', JSON.stringify(false))
     },
     getChildPermission() {
       this.$fetch('getChildPermission').then(res => {

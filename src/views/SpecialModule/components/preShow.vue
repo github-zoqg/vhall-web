@@ -37,7 +37,7 @@
                       <span class="hot" v-if="item.hide_pv">
                         <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
                       </span>
-                      <span class="liveTag">{{item | liveTag }}<span v-if="isDelay && item.no_delay_webinar == 1"> | 无延迟</span></span>
+                      <span class="liveTag">{{item | liveTag }}<span v-if="(!hasLogin && item.no_delay_webinar == 1) || (hasLogin && isDelay && item.no_delay_webinar == 1)"> | 无延迟</span></span>
                       <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
                     </div>
                     <div class="bottom">
@@ -98,8 +98,10 @@ export default {
   },
   created() {
     const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
+    const token = sessionOrLocal.get('token', 'localStorage')
     const permission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] : 0
     this.isDelay = permission == 1 ? true : false
+    this.hasLogin = token ? true : false
     this.getSpecialList();
   },
   mounted() {
