@@ -289,7 +289,7 @@
       </div>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
-    <div v-if="showDelay" class="delay-mask">
+    <div v-if="hasDelayPremission && showDelay" class="delay-mask">
       <div class="tip">
         <div class="head"><span class="title">提示</span><span class="iconfont-v3 saasclose" @click.stop="showDelay = false"></span></div>
         <div class="delay-content">
@@ -534,6 +534,7 @@ export default {
         if(res.code == 200) {
           let permissions = JSON.parse(res.data.permissions)
           this.playerOpen = permissions['is_player_cofig'] > 0 ? true : false
+          this.hasDelayPremission = permissions['no.delay.webinar'] == 1
           this.getBasescrollingList();
           this.getBaseWaterList();
           // 获取其他信息

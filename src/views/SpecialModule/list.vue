@@ -102,6 +102,7 @@ import {sessionOrLocal} from "@/utils/utils";
 export default {
   data() {
     return {
+      hasDelayPermission: 0,
       liveStatus: 0,
       isSearch: false,
       userId:JSON.parse(sessionOrLocal.get("userId")),
@@ -137,6 +138,9 @@ export default {
   },
   created() {
     this.getLiveList();
+    let SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+    let permissions = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES) : null
+    this.hasDelayPermission = permissions ? permissions['no.delay.webinar'] : 0
   },
   methods: {
     searchHandler() {
@@ -268,7 +272,7 @@ export default {
         k:100494,
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-      let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
+      let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id, delay: this.hasDelayPermission} });
       window.open(routeData.href, '_blank');
     },
     introduceDetail() {

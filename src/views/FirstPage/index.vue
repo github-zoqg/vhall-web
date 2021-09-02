@@ -262,19 +262,48 @@ export default {
     //     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     //   }
     // })
-    this.computedShowDelayWindow()
+    // const delayVersionInfo = {
+    //   hasClose: false,
+    //   endTime: 123123123123
+    // }
+    const now = new Date().getTime()
+    const start_time = new Date('September 2, 2021 00:00:01').getTime()
+    const today = new Date(new Date(new Date().toLocaleDateString()).getTime() +24 * 60 * 60 * 1000 -1).getTime()
+    if (now - start_time > (7 * 24 * 60 * 60 * 1000)) return
+
+    let delayVersionInfo = sessionOrLocal.get('delayVersionInfo')
+    if (delayVersionInfo) {
+      const info = JSON.parse(delayVersionInfo)
+      if (now < info.endTime) {
+        // 当天
+        if (info.hasClose) {
+          // 当天不在展示
+          this.showDelay = false
+        } else {
+          // 展示
+          this.showDelay = true
+        }
+      } else {
+        this.showDelay = true
+        // 第二天 重置关闭状态
+        sessionOrLocal.set('delayVersionInfo', JSON.stringify({
+          hasClose: false,
+          endTime: today
+        }))
+      }
+    } else {
+      this.showDelay = true
+      // 第二天 重置关闭状态
+      sessionOrLocal.set('delayVersionInfo', JSON.stringify({
+        hasClose: false,
+        endTime: today
+      }))
+    }
   },
   beforeDestroy() {
     document.getElementById('app').style.minWidth="1366px"
   },
   methods: {
-    computedShowDelayWindow() {
-      const now = new Date().getTime()
-      const start_time = new Date('September 2, 2021 00:00:01').getTime()
-      if (now - start_time <= (7 * 24 * 60 * 60 * 1000)) {
-        this.showDelay = true
-      }
-    },
     iKonw(){
       this.isOld = false
       let newUserId = JSON.parse(sessionStorage.getItem('userInfo')).user_id
@@ -285,6 +314,11 @@ export default {
       sessionOrLocal.set('openSys', JSON.stringify(false))
     },
     closeOpenDelay() {
+      const today = new Date(new Date(new Date().toLocaleDateString()).getTime() +24 * 60 * 60 * 1000 -1).getTime()
+      sessionOrLocal.set('delayVersionInfo', JSON.stringify({
+        hasClose: true,
+        endTime: today
+      }))
       this.showDelay = false
     },
     getChildPermission() {
