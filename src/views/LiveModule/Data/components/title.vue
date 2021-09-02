@@ -23,6 +23,8 @@
   </div>
 </template>
 <script>
+import { sessionOrLocal } from '@/utils/utils';
+
 export default {
   props: ['liveDetailInfo'],
   data() {
