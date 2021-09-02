@@ -97,8 +97,8 @@ export default {
       bgColorType: 'black',
       signSetVo: null,
       skinSetVo: {
-        bgColor: '#1A1A1A', // 背景色
-        pageStyle: '#FB3A32', // 按钮色
+        bgColor: '1A1A1A', // 背景色
+        pageStyle: 'ff3333', // 按钮色
         bg_url: '' // 背景图
       },
       logoUrl: null,

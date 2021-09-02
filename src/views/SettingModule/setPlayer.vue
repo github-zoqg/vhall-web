@@ -267,9 +267,10 @@
           <!-- <div id="videoDom" v-show="showVideo"></div> -->
           <p class="show-purple-info">
             <span>提示</span>
-            <span>1.移动端全屏播放时，跑马灯会失效</span>
-            <span>2.安卓手机浏览器劫持可能导致跑马灯失效</span>
-            <span>3.因浏览器自身策略，开启自动播放也会出现无法自动播放情况</span>
+            <span>1.移动端全屏播放时，跑马灯会失效；</span>
+            <span>2.安卓手机浏览器劫持可能导致跑马灯失效；</span>
+            <span>3.因浏览器自身策略，开启自动播放也会出现无法自动播放情况；</span>
+            <span>4.无延迟直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能。</span>
           </p>
       </div>
     </div>
@@ -472,6 +473,22 @@ export default {
     }
   },
   methods: {
+    // getLiveBaseInfo() {
+    //   this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+    //     if( res.code != 200 ){
+    //       return this.$message.warning(res.msg)
+    //     }
+    //   }).catch(res=>{
+    //     this.$message({
+    //       message: res.msg || "获取信息失败",
+    //       showClose: true,
+    //       // duration: 0,
+    //       type: 'error',
+    //       customClass: 'zdy-info-box'
+    //     });
+    //     console.log(res);
+    //   })
+    // },
     blurChange() {
       if (!this.formHorse.interval || this.formHorse.interval < 0) {
         this.formHorse.interval = 20;

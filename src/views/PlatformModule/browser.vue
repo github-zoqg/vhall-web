@@ -15,7 +15,7 @@ export default {
   name: "browser.vue",
   created() {
     // 若检测通过，跳转到前一个地址
-    this.$router.go(-1);
+    // this.$router.go(-1);
   }
 };
 </script>

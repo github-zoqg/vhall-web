@@ -18,7 +18,10 @@
             <p>可进行多人连麦</p>
             <p>需要使用chrome浏览器</p>
           </div> -->
-          <div class="choose-p choose-a-way " :class="chooseType === 'client' ? 'client active' : 'choose-a-way'" @click.prevent.stop="changeChoose('client')">
+          <div class="choose-p choose-a-way" :class="[chooseType === 'client' ? 'client active' : 'choose-a-way', hasDelayPermission && delayStatus == 1 ? 'no-hover' : '']" @click.prevent.stop="changeChoose('client')">
+            <div v-if="hasDelayPermission && delayStatus == 1" class="delay-mask">
+              无延迟直播暂不支持此方式发起
+            </div>
             <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
             <p class="f-20">客户端发起</p>
             <p>需安装客户端、支持多种视频采集卡、插入视频等功能</p>
@@ -46,7 +49,6 @@
 import PageTitle from '@/components/PageTitle';
 import {sessionOrLocal, getQueryString} from "@/utils/utils";
 import OldHeader from '@/components/OldHeader';
-import { browserDetect } from '@/utils/utils';
 import Env from '@/api/env';
 export default {
   name: 'chooseWay.vue',
@@ -64,7 +66,9 @@ export default {
       browserStatus: false,
       clientOpen: '',
       executeType: 'ctrl', // 是否控制台 ctrl 控制台
-      downloadUrl: ''
+      downloadUrl: '',
+      delayStatus: 0,
+      hasDelayPermission: false
     };
   },
   created(){
@@ -78,8 +82,19 @@ export default {
     this.arr = [_data.str, _data.role]
     this.getRoleUrl();
     this.getDownloadUrl();
+    this.getLiveBaseInfo()
   },
+
   methods: {
+    getLiveBaseInfo() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+        if( res.code == 200 ){
+          this.delayStatus = res.data.no_delay_webinar
+        }
+      }).catch(res=>{
+        console.log(res);
+      })
+    },
     getDownloadUrl() {
       this.$fetch('getPCDownloadUrl', {
         source: 'assistant'
@@ -90,43 +105,34 @@ export default {
       })
     },
     changeChoose(type) {
+      if (this.hasDelayPermission && this.delayStatus == 1) return
       this.chooseType = type;
     },
     goLive(){
       if(this.chooseType !== 'client') {
         // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
-        if(browserDetect()) {
-          // if (Number(this.arr[1]) === 1) {
-            // 进入直播前检测，若是直接发起
-            this.$fetch('checkLive', this.$params({
-              webinar_id: this.arr[0]
-            }), {
-              platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
-            }).then((res) => {
-              if(res && res.code === 200) {
-               /*  this.$router.push({
-                  path: this.watchUrl
-                }) */
-                console.error(this.watchUrl);
-                window.location.href = this.watchUrl;
-              }
-            }).catch(res => {
-              this.$message({
-                message: res.msg || "检测异常",
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box'
-              });
-              console.log(res);
-            });
-          // }else{
-          //   // this.$router.push({name: 'LiveRoom', params: {il_id: this.arr[0]}})
-          //   window.location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}`;
-          // }
-        } else {
-          this.$router.push({path: '/browser'})
-        }
+        this.$fetch('checkLive', this.$params({
+          webinar_id: this.arr[0]
+        }), {
+          platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
+        }).then((res) => {
+          if(res && res.code === 200) {
+            /*  this.$router.push({
+              path: this.watchUrl
+            }) */
+            console.error(this.watchUrl);
+            window.location.href = this.watchUrl;
+          }
+        }).catch(res => {
+          this.$message({
+            message: res.msg || "检测异常",
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+          console.log(res);
+        });
       } else {
         // 客户端启动
         document.querySelector('#start_live').setAttribute('src', this.scheme);
@@ -191,6 +197,10 @@ export default {
     }else{
       this.watchUrl = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}${location.search}`
     }
+    const perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+    if (perssionInfo) {
+      this.hasDelayPermission = perssionInfo['no.delay.webinar'] && perssionInfo['no.delay.webinar'] == 1 ? true : false
+    } 
   }
 };
 </script>
@@ -272,6 +282,8 @@ export default {
     // background: #fff;
     // background-size: 200px;
     // position: relative;
+    position:relative;
+    
   }
   &:hover{
     box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
@@ -281,6 +293,9 @@ export default {
     border: 1px solid #FB3A32;
     box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
   }
+}
+.no-hover:hover{
+  cursor: unset;
 }
 .choose-btn {
   text-align: center;
@@ -310,6 +325,21 @@ export default {
   &.css {
     left: unset;
     width: 850px
+  }
+}
+.delay-mask{
+  position: absolute;
+  width:400px;
+  height: 220px;
+  background: rgba(0,0,0,.5);
+  text-align: center;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #FFFFFF;
+  line-height: 220px;
+  &:hover{
+    cursor: unset;
   }
 }
 </style>

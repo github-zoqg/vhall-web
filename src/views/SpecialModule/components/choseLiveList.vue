@@ -31,6 +31,7 @@
                       <img src="../../../common/images/live.gif" alt="">
                     </label>
                     {{item | liveTag}}
+                    <span v-if="hasDelayPermission && item.no_delay_webinar == 1"> | 无延迟</span>
                   </span>
                 </div>
                 <div class="vh-chose-active-item__cover-hots">
@@ -63,10 +64,13 @@
 </template>
 <script>
 import noData from '@/views/PlatformModule/Error/nullPage';
+import { sessionOrLocal } from '@/utils/utils';
+
 export default {
   props: ['checkedList'],
   data() {
     return {
+      hasDelayPermission: false,
       page: 1,
       maxPage: 0,
       nullText: 'nullData',
@@ -94,6 +98,8 @@ export default {
   },
 
   mounted() {
+    const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
+    this.hasDelayPermission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] == '1' : false
   },
 
   methods: {

@@ -40,6 +40,7 @@
                   <!-- @click="toPageHandle(item)" -->
                   <img src="../../../common/images/live.gif" alt="" />
                 </label>{{item | liveTag}}
+                <span v-if='hasDelayPermission && item.no_delay_webinar == 1'> | 无延迟</span>
               </span>
               <span class="hot" v-if="item.hide_pv > 0">
                  <i class="iconfont-v3 saasicon_redu"> {{ item.pv | formatNum}}</i>
@@ -102,7 +103,8 @@ export default {
      tabType: null,
      dataList: [],
      vo: {},
-     vsQuanxian: []
+     vsQuanxian: [],
+     hasDelayPermission: false
    };
   },
   methods: {
@@ -233,7 +235,7 @@ export default {
         routerStr = `/lives/watch/${item.webinar_id}`;
       }
       if (this.tabType !== 'live') {
-        let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
+        let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id, delay: this.hasDelayPermission } });
         return routeData.href;
         // window.open(routeData.href, '_blank');
       } else {
@@ -308,6 +310,7 @@ export default {
             if(permissions) {
               // 设置全部权限
               this.vsQuanxian = JSON.parse(permissions);
+              this.hasDelayPermission = this.vsQuanxian['no.delay.webinar']
             }
             this.getShow(vo);
           }
@@ -319,12 +322,16 @@ export default {
         let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
         if (vsPersonStr) {
           this.vsQuanxian = JSON.parse(vsPersonStr);
+          this.hasDelayPermission = this.vsQuanxian['no.delay.webinar']
         }
         this.getShow(vo);
       }
     }
   },
   mounted() {
+    // const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
+    // this.hasDelayPermission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] == '1' : false
+    // console.log('>>>>>>>>>>>>>>>>',JSON.parse(SAAS_VS_PES)['no.delay.webinar'] )
   }
 };
 </script>

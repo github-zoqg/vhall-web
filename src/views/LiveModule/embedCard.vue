@@ -53,7 +53,7 @@
             </template>
           </el-input>
         </div>
-        <p>提示：<span v-if="isInteract == 3">互动连麦功能必须要求浏览器地址为https协议进入！</span>当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1238', 2)"> 网页嵌入指南</a></p>
+        <p>提示：<span v-if="isInteract == 3">互动连麦功能必须要求浏览器地址为https协议进入！</span><span v-if="isInteract != 3">1.视频嵌入不支持无延迟直播；2.</span>当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1238', 2)"> 网页嵌入指南</a></p>
       </div>
     </div>
     <div class="thirdMethod">

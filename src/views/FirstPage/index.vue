@@ -156,25 +156,28 @@
         <p>联系我们</p>
       </div>
     </div>
-    <!-- 新版本上线了
+    <!--新版本无延迟上线了-->
     <template>
-      <div class="prompt" v-if="!openSys && isOld" >
-        <div class="prompt-wrap">
-            <i class="prompt-con-img i-close saasclose iconfont-v3" @click="iKonw"></i>
+      <!-- <div class="prompt" v-if="!openSys && isOld" > -->
+      <div class="prompt" v-if="!openSys && showDelay">
+        <div class="prompt-wrap delay">
+            <!-- <i class="prompt-con-img i-close saasclose iconfont-v3" @click="iKonw"></i> -->
+            <i class="prompt-con-img i-close saasclose iconfont-v3" @click="closeOpenDelay"></i>
             <img class="prompt-con-img" src="//cnstatic01.e.vhall.com/static/images/watch/notice_img.png" alt="">
-            <p class="prompt-con-text prompt-con-text-one">【新版本上线了】</p>
+            <p class="prompt-con-text prompt-con-text-one">新版本上线了</p>
             <p class="prompt-con-text prompt-con-text-three">尊敬的用户：</p>
-            <p class="prompt-con-text prompt-con-text-two no-bottom">感谢您对微吼直播的支持！当前正在使用新版后台，请创建活动开始体验吧！</p>
-            <p class="prompt-con-text prompt-con-text-two no-bottom">如果您是通过API、SDK方式对接的微吼平台，为保证使用体验请返回旧版控制台创建直播，或更新新版API、SDK，详情请点击<a href="https://saas-doc.vhall.com/document/document/index">《文档中心》</a></p>
-            <p class="prompt-con-text prompt-con-text-two no-bottom">对于旧版已创建的H5播放器活动，微吼团队后续会统一迁移至此后台。Flash活动将会为您保留在旧版本后台，方便进行管理。</p>
-            <p class="prompt-con-text prompt-con-text-two">如有问题请联系您的专属售后或拨打400-888-9970转2咨询。</p>
-            <a class="prompt-con-text-four" href="javascript:;" @click="iKonw">我知道了</a>
+            <p class="prompt-con-text no-bottom">观看有延迟？互动不同步？从现在开始这些统统不存在！马上创建无延迟</p>
+            <p class="prompt-con-text no-bottom">直播，体验面对面的畅快沟通吧！</p>
+            <p class="prompt-con-text no-bottom">无延迟直播为收费功能，请联系您的专属售后或拨打400-888-9970转2</p>
+            <p class="prompt-con-text no-bottom">咨询。</p>
+            <!-- <a class="prompt-con-text-four" href="javascript:;" @click="iKonw">我知道了</a> -->
+            <a class="prompt-con-text-four" href="javascript:;" @click="closeOpenDelay">我知道了</a>
         </div>
       </div>
-    </template> -->
+    </template>
     <!-- 用户迁移升级完成 - 此弹窗出现，新版本体验弹窗不展示-->
-    <template>
-      <div class="prompt" v-if="openSys">
+    <template v-if="openSys">
+      <div class="prompt">
         <div class="prompt-wrap mini">
             <i class="prompt-con-img i-close saasclose iconfont-v3" @click="closeOpenSys"></i>
             <img class="prompt-con-img" src="//cnstatic01.e.vhall.com/static/images/watch/notice_img.png" alt="">
@@ -203,7 +206,8 @@ export default {
       lineDataList: [],
       childPremission: {},
       isOld: false,
-      openSys: false
+      openSys: false,
+      showDelay: false
     };
   },
   components: {
@@ -237,6 +241,7 @@ export default {
         }
       }
     } catch (error) {}
+
     let userInfo = sessionOrLocal.get('userInfo');
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     if (userInfo) {
@@ -257,11 +262,19 @@ export default {
     //     this.versionType = JSON.parse(sessionOrLocal.get("versionType"));
     //   }
     // })
+    this.computedShowDelayWindow()
   },
   beforeDestroy() {
     document.getElementById('app').style.minWidth="1366px"
   },
   methods: {
+    computedShowDelayWindow() {
+      const now = new Date().getTime()
+      const start_time = new Date('September 2, 2021 00:00:01').getTime()
+      if (now - start_time <= (7 * 24 * 60 * 60 * 1000)) {
+        this.showDelay = true
+      }
+    },
     iKonw(){
       this.isOld = false
       let newUserId = JSON.parse(sessionStorage.getItem('userInfo')).user_id
@@ -270,6 +283,9 @@ export default {
     closeOpenSys() {
       this.openSys = false
       sessionOrLocal.set('openSys', JSON.stringify(false))
+    },
+    closeOpenDelay() {
+      this.showDelay = false
     },
     getChildPermission() {
       this.$fetch('getChildPermission').then(res => {
@@ -747,5 +763,8 @@ export default {
         text-align: center;
         color: #FFFFFF;
         text-decoration: none
+    }
+    .delay{
+      height: 440px !important;
     }
 </style>

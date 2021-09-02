@@ -172,6 +172,9 @@ export default {
       e.preventDefault()
     },
 
+
+
+
     choseMenu(index, info) {
       // deal UI  显示
       this.activeIndex = index
@@ -453,7 +456,7 @@ export default {
             // border-bottom: 2px solid #FB3A32;
           }
         }
-      }
+    }
   }
   .vh-mobile-menus-item__popmenu{
       position: absolute;

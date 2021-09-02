@@ -7,10 +7,10 @@
       <div class="box-title">
         <div class="title-status" v-if="liveDetailInfo.webinar_state == 1">
           <img src="../../../../common/images/live/lives.gif" alt="">
-          <b>直播</b>
+          <b>直播 <span v-if="hasDelayPermission && liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
         </div>
         <div class="title-status grayColor" v-else>
-          <b>{{ liveDetailInfo.webinar_state | actionText }}</b>
+          <b>{{ liveDetailInfo.webinar_state | actionText }} <span v-if="hasDelayPermission && liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
         </div>
         <div class="title-text">
           <p>
@@ -23,8 +23,19 @@
   </div>
 </template>
 <script>
+import { sessionOrLocal } from '@/utils/utils';
+
 export default {
-  props: ['liveDetailInfo']
+  props: ['liveDetailInfo'],
+  data() {
+    return {
+      hasDelayPermission: false
+    }
+  },
+  mounted() {
+    const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
+    this.hasDelayPermission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] == '1' : false
+  }
 };
 </script>
 <style lang="less" scoped>
@@ -55,13 +66,14 @@ export default {
   flex: 1;
   width: 70%;
   .title-status {
-    width: 52px;
+    // min-width: 52px;
+    display: inline-block;
     height: 18px;
     line-height: 18px;
     text-align: center;
     background: linear-gradient(180deg, #ff584b 0%, #ff2820 100%);
     border-radius: 25px;
-    padding: 0 8px;
+    padding: 3 8px;
     img {
       height: 8px;
       width: 8px;
@@ -80,12 +92,11 @@ export default {
     }
   }
   .grayColor {
-    width: 46px;
+    // width: 46px;
     padding: 0 8px;
     background: #000000;
     opacity: 0.6;
     text-align: center;
-    padding-left: 10px;
   }
   .title-text {
     p {

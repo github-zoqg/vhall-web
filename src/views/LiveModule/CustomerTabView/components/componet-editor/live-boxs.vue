@@ -35,7 +35,7 @@
               <label class="live-status" v-if="item.webinar_state == 1">
                 <img src="../../../../../common/images/live.gif" alt="">
               </label>
-              {{item | liveTag}}
+              {{item | liveTag}}<span v-if="hasDelayPermission && item.no_delay_webinar == 1">| 无延迟</span>
             </span>
           </div>
           <div class="vh-chose-active-item__cover-hots">
@@ -59,6 +59,8 @@
 import noData from '@/views/PlatformModule/Error/nullPage';
 import EventBus from '../../bus'
 import eventsType from '../../EventConts'
+import { sessionOrLocal } from '@/utils/utils';
+
 export default {
   props: ['checkedList'],
   data() {
@@ -74,7 +76,8 @@ export default {
       lock: false,
       loading: false,
       visible: true,
-      isSearch: false
+      isSearch: false,
+      hasDelayPermission: false
     }
   },
   computed: {
@@ -94,6 +97,10 @@ export default {
   },
   mounted() {
     this.getActiveList();
+    const perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+    if (perssionInfo) {
+      this.hasDelayPermission = perssionInfo['no.delay.webinar'] && perssionInfo['no.delay.webinar'] == 1 ? true : false
+    } 
   },
 
   methods: {
