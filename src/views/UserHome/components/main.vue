@@ -235,7 +235,7 @@ export default {
         routerStr = `/lives/watch/${item.webinar_id}`;
       }
       if (this.tabType !== 'live') {
-        let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id } });
+        let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id, delay: this.hasDelayPermission } });
         return routeData.href;
         // window.open(routeData.href, '_blank');
       } else {

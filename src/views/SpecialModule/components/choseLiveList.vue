@@ -64,6 +64,8 @@
 </template>
 <script>
 import noData from '@/views/PlatformModule/Error/nullPage';
+import { sessionOrLocal } from '@/utils/utils';
+
 export default {
   props: ['checkedList'],
   data() {
