@@ -310,6 +310,7 @@ export default {
             if(permissions) {
               // 设置全部权限
               this.vsQuanxian = JSON.parse(permissions);
+              this.hasDelayPermission = this.vsQuanxian['no.delay.webinar']
             }
             this.getShow(vo);
           }
@@ -321,14 +322,16 @@ export default {
         let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
         if (vsPersonStr) {
           this.vsQuanxian = JSON.parse(vsPersonStr);
+          this.hasDelayPermission = this.vsQuanxian['no.delay.webinar']
         }
         this.getShow(vo);
       }
     }
   },
   mounted() {
-    const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
-    this.hasDelayPermission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] == '1' : false
+    // const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
+    // this.hasDelayPermission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] == '1' : false
+    // console.log('>>>>>>>>>>>>>>>>',JSON.parse(SAAS_VS_PES)['no.delay.webinar'] )
   }
 };
 </script>
