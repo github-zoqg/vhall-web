@@ -72,9 +72,6 @@ export default {
       }
     };
   },
-  async created() {
-    this.userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-  },
   computed: {
     vipTotal: function() {
       if (this.sonInfo && this.sonInfo.vip_info) {
@@ -121,6 +118,7 @@ export default {
   },
   created() {
     this.initPage();
+    this.userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
   }
 };
 </script>
