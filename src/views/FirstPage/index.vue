@@ -166,7 +166,7 @@
             <img class="prompt-con-img" src="//cnstatic01.e.vhall.com/static/images/watch/notice_img.png" alt="">
             <p class="prompt-con-text prompt-con-text-one">新版本上线了</p>
             <p class="prompt-con-text prompt-con-text-three">尊敬的用户：</p>
-            <p class="prompt-con-text no-bottom">观看有延迟？互动不同步？从现在开始这些统统不存在！马上创建无延时</p>
+            <p class="prompt-con-text no-bottom">观看有延迟？互动不同步？从现在开始这些统统不存在！马上创建无延迟</p>
             <p class="prompt-con-text no-bottom">直播，体验面对面的畅快沟通吧！</p>
             <p class="prompt-con-text no-bottom">无延迟直播为收费功能，请联系您的专属售后或拨打400-888-9970转2</p>
             <p class="prompt-con-text no-bottom">咨询。</p>
