@@ -7,10 +7,10 @@
       <div class="box-title">
         <div class="title-status" v-if="liveDetailInfo.webinar_state == 1">
           <img src="../../../../common/images/live/lives.gif" alt="">
-          <b>直播 <span v-if="liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
+          <b>直播 <span v-if="hasDelayPermission && liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
         </div>
         <div class="title-status grayColor" v-else>
-          <b>{{ liveDetailInfo.webinar_state | actionText }} <span v-if="liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
+          <b>{{ liveDetailInfo.webinar_state | actionText }} <span v-if="hasDelayPermission && liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
         </div>
         <div class="title-text">
           <p>
@@ -25,10 +25,14 @@
 <script>
 export default {
   props: ['liveDetailInfo'],
+  data() {
+    return {
+      hasDelayPermission: false
+    }
+  },
   mounted() {
-    this.$nextTick(() => {
-    console.log('9999999', this.liveDetailInfo)
-    })
+    const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
+    this.hasDelayPermission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] == '1' : false
   }
 };
 </script>

@@ -40,7 +40,7 @@
                   <!-- @click="toPageHandle(item)" -->
                   <img src="../../../common/images/live.gif" alt="" />
                 </label>{{item | liveTag}}
-                <span v-if='item.no_delay_webinar == 1'> | 无延迟</span>
+                <span v-if='hasDelayPermission && item.no_delay_webinar == 1'> | 无延迟</span>
               </span>
               <span class="hot" v-if="item.hide_pv > 0">
                  <i class="iconfont-v3 saasicon_redu"> {{ item.pv | formatNum}}</i>
@@ -103,7 +103,8 @@ export default {
      tabType: null,
      dataList: [],
      vo: {},
-     vsQuanxian: []
+     vsQuanxian: [],
+     hasDelayPermission: false
    };
   },
   methods: {
@@ -326,6 +327,8 @@ export default {
     }
   },
   mounted() {
+    const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
+    this.hasDelayPermission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] == '1' : false
   }
 };
 </script>
