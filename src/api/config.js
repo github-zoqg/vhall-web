@@ -630,6 +630,14 @@ const apis = {
   videoTipOff: ['/v3/interacts/feedback/user-create-feedback', 'POST'], // 观众反馈播放器
   pay: ['/v3/fin/webinar-pay', 'GET'], //支付二维码
   userSendQuestion: ['/v3/vss/survey/submit-answer', 'POST'], // 观众提交问卷
+  checkWithdrawalToB: ['/v3/users/oauth/check-withdrawal-to-b', 'POST'], // B端微信检测接口
+  // C端 - 登录/注册
+  loginInfoC: ['/v3/users/user-consumer/login', 'POST'],
+  registerC: ['/v3/users/user-consumer/register', 'POST'],
+  getInfoC: ['/v3/users/user-consumer/get-info', 'POST'],
+  codeCheckC: ['/v3/users/code-consumer/check', 'POST'],
+  sendCodeC: ['/v3/users/code-consumer/send', 'POST'],
+  loginCheckC: ['/v3/users/user/login-check', 'POST'],  //登录账号锁定检测接口
 };
 
 const getApi = api => {

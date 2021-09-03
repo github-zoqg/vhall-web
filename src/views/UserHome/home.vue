@@ -1,6 +1,6 @@
 <template>
  <div class="home-main console">
-   <OldHeader class="head-wrap" v-if="$route.meta.type !== 'owner'"  scene="userHome" :isWhiteBg=true></OldHeader>
+   <OldHeader class="head-wrap" v-if="$route.meta.type !== 'owner'"  scene="userHome" :isWhiteBg=true :isShowLogin=false></OldHeader>
    <pageTitle pageTitle="个人主页" v-if="$route.meta.type === 'owner'"></pageTitle>
    <div class="v-home-bg" v-if="$route.meta.type !== 'owner'" :style="{ background: `url(${userHomeVo && userHomeVo.img_url ? userHomeVo.img_url || static_img_url :
         static_img_url }) 0px center / 100% no-repeat`}"></div>
@@ -69,8 +69,9 @@ export default {
   computed: {
     setHomeCheck: function() {
       if (this.$route.params.str) {
-        // 包含路径，表示观看页 or 主办方页
-        return Number(this.$route.params.str) === Number(sessionOrLocal.get('userId'));
+        // 包含路径，表示观看页 or 主办方页  （2021-08-25 14点29分 中台去除登录状态 及 设置按钮）
+        // return Number(this.$route.params.str) === Number(sessionOrLocal.get('userId'));
+        return false;
       } else {
         // 不包含路径，表示控制台。
         return this.userHomeVo;
@@ -109,6 +110,9 @@ export default {
         if (res && res.code === 200) {
           // 粉丝数、是否关注、主页信息
           let {avatar, attentioned_count, follow, homepage_info } = res.data;
+          if (homepage_info && homepage_info.img_url === '0') {
+            homepage_info.img_url = ''
+          }
           this.userHomeVo = homepage_info;
           this.attentioned_count = attentioned_count;
           this.follow = follow;

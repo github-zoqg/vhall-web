@@ -13,7 +13,7 @@
       <!-- 搜索 -->
       <div class="role--list--search">
         <el-button size="medium" type="primary" round @click.prevent.stop="addRole">创建角色</el-button>
-        <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="!(this.ids && this.ids.length > 0)">批量删除</el-button>
+        <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="!(this.checkRows && this.checkRows.length > 0)">批量删除</el-button>
         <VhallInput placeholder="搜索角色名称" v-model="role_name"
                   clearable
                   v-clearEmoij
@@ -175,6 +175,7 @@ export default {
         }
       ],
       ids: [],
+      checkRows: [],
       roleDialogVisible: false,
       roleForm: {
         id: null,
@@ -206,8 +207,8 @@ export default {
     },
     // 批量选择
     checkMoreRow(val) {
-      console.log(val);
-      this.ids = val.map(item => {
+      console.log('checkMoreRow', val);
+      /*this.ids = val.map(item => {
         if (item.child_count > 0) {
           this.$alert('当前角色已关联子账号，请先解绑关系后再进行删除', '提示', {
             confirmButtonText: '我知道了',
@@ -218,11 +219,13 @@ export default {
         } else {
           return item.id;
         }
-      });
+      });*/
+      this.checkRows = val
+      console.log('结果复制', this.checkRows)
     },
     // 批量删除
     multiMsgDel() {
-      if (!(this.ids && this.ids.length > 0)) {
+      if (!(this.checkRows && this.checkRows.length > 0)) {
         this.$message({
           message:  `请至少选择一种角色删除`,
           showClose: true,
@@ -231,7 +234,24 @@ export default {
           customClass: 'zdy-info-box'
         });
       } else {
+        // 判断是否存在有角色已关联子账号
+        let isRoleInclude = this.checkRows.filter(item => {
+          return item.child_count > 0
+        })
+        if (isRoleInclude && isRoleInclude.length > 0) {
+          this.$alert('当前角色已关联子账号，请先解绑关系后再进行删除', '提示', {
+            confirmButtonText: '我知道了',
+            customClass: 'zdy-alert-box',
+            center: true,
+            lockScroll: false
+          }).then(()=>{
+          }).catch(()=>{});
+        } else {
+          this.ids = this.checkRows.map(item => {
+            return item.id
+          })
         this.deleteData(this.ids.join(','), 1)
+        }
       }
     },
     deleteData(ids, index) {
@@ -257,6 +277,7 @@ export default {
               customClass: 'zdy-info-box'
             });
             this.ids = [];
+            this.checkRows = [];
             try {
               this.$refs.roleTab.clearSelect();
             } catch(e) {

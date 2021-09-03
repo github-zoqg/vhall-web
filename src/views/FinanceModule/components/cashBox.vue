@@ -170,8 +170,12 @@ export default {
         this.phone = '';
         this.errorMsgShow = ''
         this.callCaptcha();
-        this.avatar = this.userInfo.user_extends.wechat_profile || require('../../../common/images/avatar.png');
-        this.nickName = this.userInfo.user_extends.wechat_name_wap || '微吼直播';
+        const cashWechat = JSON.parse(sessionOrLocal.get("cashWechat"));
+        this.$nextTick(() => {
+          this.avatar = cashWechat.wechat_profile || require('../../../common/images/avatar.png');
+          this.nickName = cashWechat.wechat_name_wap || '微吼直播';
+          console.log('当前用户头像', this.avatar, this.nickName)
+        })
       } else {
         this.mobileKey = '';
         this.showCaptcha = false;
@@ -228,7 +232,11 @@ export default {
       this.$refs['withdrawForm'].validate((valid) => {
         if (valid) {
           if (this.mobileKey && this.withdrawForm.money) {
-            this.$fetch('withdrawalPhoneCode', {user_id: this.userInfo.user_id, captcha: this.mobileKey}).then(res => {
+            this.$fetch('withdrawalPhoneCode', {
+              // user_id: this.userInfo.user_id,
+              captcha: this.mobileKey,
+              user_type: 1
+            }).then(res => {
               this.phone = res.data.phone;
               this.countDown();
             }).catch(res => {
@@ -260,10 +268,11 @@ export default {
     },
     withdrawMoney() {
       let params = {
-        user_id: this.userInfo.user_id,
+        // user_id: this.userInfo.user_id,
         verification_code: this.withdrawForm.code,
         fee: this.withdrawForm.money,
-        type: this.type
+        type: this.type,
+        user_type: 1
       };
       this.$fetch('withdrawal', params).then(res => {
         if (res.code == 200) {
@@ -326,7 +335,7 @@ export default {
       //获取key值
       this.$fetch('getBindKey').then(res => {
         if (res.code == 200) {
-          this.qrcode = `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=wap&jump_url=${process.env.VUE_APP_WAP_WATCH}/lives/bind/${res.data.mark}`;
+          this.qrcode = `${process.env.VUE_APP_BIND_BASE_URL}/v3/commons/auth/weixin?source=wap&jump_url=${process.env.VUE_APP_WAP_WATCH}/lives/bindB/${res.data.mark}`;
         }
       }).catch(res => {
         this.$message({

@@ -367,9 +367,9 @@ export default {
         return row.parent_id > 0;
       } else if (this.scene === 'downloadList') {
         return Number(row.file_status) === 1;
-      } else if(this.scene === 'roleList') {
+      } /*else if(this.scene === 'roleList') {
         return !(row.child_count > 0);
-      }else {
+      } */else {
         return true;
       }
     }

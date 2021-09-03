@@ -850,10 +850,10 @@ export default {
   },
   computed: {
     qqLink() {
-      return `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/qq?source=pc&jump_url=${this.location}/watch/${this.roomData.webinar.id}`
+      return `${process.env.VUE_APP_BIND_BASE_URL}/v3/commons/auth/qq?source=pc&jump_url=${this.location}/watch/${this.roomData.webinar.id}`
     },
     wxLink() {
-      return `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=pc&jump_url=${this.location}/watch/${this.roomData.webinar.id}`
+      return `${process.env.VUE_APP_BIND_BASE_URL}/v3/commons/auth/weixin?source=pc&jump_url=${this.location}/watch/${this.roomData.webinar.id}`
     }
   },
   methods: {

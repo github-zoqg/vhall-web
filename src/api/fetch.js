@@ -66,7 +66,10 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
     origin: window.location.origin,
     'request-id': uuidV1()
   };
-
+  // header 可能传gray-id，可能传递token，可能传递Content-Type
+  if (header['token'] !== null && header['token'] !== undefined) {
+    headers['token'] = header['token']
+  }
   // 若head里面存在，以head传入的灰度ID为准
   if (header['gray-id'] > 0) {
     headers['gray-id'] = header['gray-id']
