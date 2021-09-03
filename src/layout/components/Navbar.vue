@@ -37,7 +37,7 @@
           </div>
           <el-dropdown-menu slot="dropdown" class="user-dropdown">
             <el-dropdown-item divided @click.native="toAccountPage"><i class="iconfont-v3 saasicon_account1"></i> 账户信息</el-dropdown-item>
-            <el-dropdown-item divided @click.native="logout"><i class="iconfont-v3 saasicon_exit"></i>退出</el-dropdown-item>
+            <el-dropdown-item divided @click.native="logout"><i class="iconfont-v3 saasicon_exit"></i>退出登录</el-dropdown-item>
             <el-dropdown-item v-if="isMiniScreen" divided @click.native.prevent.stop="toDownloadPage">
               <!-- 下载中心 -->
               <div class="right-menu-item">

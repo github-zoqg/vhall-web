@@ -389,7 +389,7 @@ export default {
     },
      // 第三方登录
     thirdLogin(url) {
-      window.location.href = `${process.env.VUE_APP_BASE_URL}${url}${process.env.VUE_APP_WEB_URL}`;
+      window.location.href = `${process.env.VUE_APP_BIND_BASE_URL}${url}${process.env.VUE_APP_WEB_URL}`;
     },
     passWordType() {
       this.isPassWordType = !this.isPassWordType;
@@ -415,6 +415,8 @@ export default {
           data: this.dynamicForm.phoneNumber,
           validate: this.mobileKey,
           scene_id: 7
+        }, {
+          token: ''
         }).then(() => {
           this.countDown();
         });
@@ -474,7 +476,9 @@ export default {
     },
     getLoginKey() {
       return new Promise((resolove, reject) => {
-        this.$fetch('getLoginKey').then(res => {
+        this.$fetch('getLoginKey', {}, {
+          token: ''
+        }).then(res => {
           console.log(res)
           if (res.code === 200) {
             this.loginKey = res.data
@@ -509,6 +513,8 @@ export default {
       let retParams = this.$params(params)
       this.$fetch('loginInfo', {
         ...retParams,
+      }, {
+        token: ''
       }).then(res => {
         this.mobileKey = '';
         this.errorText = '';
@@ -588,6 +594,8 @@ export default {
           data: this.registerForm.phone,
           validate: this.mobileKey,
           scene_id: 8
+        }, {
+          token: ''
         }).then(() => {
           this.countDown();
         });
@@ -602,7 +610,9 @@ export default {
           params.captcha = this.mobileKey;
           params.source = this.$route.query.source || 1;
           params.uuid = this.loginKey.uuid
-          this.$fetch('register', params).then(res => {
+          this.$fetch('register', params, {
+            token: ''
+          }).then(res => {
             this.$message({
               message:  `注册成功`,
               showClose: true,

@@ -13,7 +13,7 @@
               :data="tableData"
               ref="tableList"
               style="width: 100%"
-              :height="isSearch ? 0 : 320"
+              :height="(isSearch && total == 0) ? 0 : 320"
               v-loadMore="moreLoadData"
               @selection-change="handleSelectionChange"
               @select-all="checkAllQuestion"
@@ -50,14 +50,14 @@
                 </template>
               </el-table-column>
             </el-table>
-            <noData :nullType="'search'" :height="50" v-if="isSearch"></noData>
+            <noData :nullType="'search'" :height="50" v-if="isSearch && total == 0"></noData>
         </div>
-        <div class="no-live" v-show="!total && !isSearch">
+        <div class="no-live" v-show="!total && !(isSearch && total == 0)">
           <noData :nullType="'nullData'" :text="'您还没有问卷，快来创建吧！'" :height="10">
             <el-button type="primary" round @click="addQuestion" v-preventReClick>创建问卷</el-button>
           </noData>
         </div>
-        <div v-show="total || isSearch">
+        <div v-show="total || (isSearch && total == 0)">
           <p class="text">已选择<span>{{ checkList.length }}</span>个问卷</p>
           <div slot="footer" class="dialog-footer">
             <el-button round size="medium" type="primary" @click.prevent.stop="choseSureQuestion" :disabled="!checkList.length" v-preventReClick>确 定</el-button>
@@ -156,10 +156,14 @@ export default {
     },
     getTitle() {
       this.tableData = [];
-      this.getTableList();
       this.pageInfo.pageNum = 1;
       this.pageInfo.pos = 0;
+      try {
+        if (this.$refs.tableList) {
       this.$refs.tableList.clearSelection();
+        }
+      } catch(e) {}
+      this.getTableList();
     },
     getTableList() {
       let formParams = {
