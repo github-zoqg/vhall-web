@@ -602,38 +602,40 @@ export default {
       }
     },
     registerAccount() {
-      this.$refs.registerForm.validate(async (valid) => {
-        if (valid) {
-          let params = JSON.parse(JSON.stringify(this.registerForm))
-          await this.getLoginKey()
-          params.password = this.handleEncryptPassword(params.password)
-          params.captcha = this.mobileKey;
-          params.source = this.$route.query.source || 1;
-          params.uuid = this.loginKey.uuid
-          this.$fetch('register', params, {
-            token: ''
-          }).then(res => {
-            this.$message({
-              message:  `注册成功`,
-              showClose: true,
-              // duration: 0,
-              type: 'success',
-              customClass: 'zdy-info-box'
+      if (!this.registerText) {
+        this.$refs.registerForm.validate(async (valid) => {
+          if (valid) {
+            let params = JSON.parse(JSON.stringify(this.registerForm))
+            await this.getLoginKey()
+            params.password = this.handleEncryptPassword(params.password)
+            params.captcha = this.mobileKey;
+            params.source = this.$route.query.source || 1;
+            params.uuid = this.loginKey.uuid
+            this.$fetch('register', params, {
+              token: ''
+            }).then(res => {
+              this.$message({
+                message:  `注册成功`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
+              this.mobileKey = '';
+              setTimeout(() => {
+                this.$router.push({path:'/login'})
+              }, 1000)
+            }).catch(res => {
+              console.log(res);
+              this.callCaptcha();
+              this.mobileKey = '';
+              this.registerText = res.msg || '注册失败';
             });
-            this.mobileKey = '';
-            setTimeout(() => {
-              this.$router.push({path:'/login'})
-            }, 1000)
-          }).catch(res => {
-            console.log(res);
-            this.callCaptcha();
-            this.mobileKey = '';
-            this.registerText = res.msg || '注册失败';
-          });
-        } else {
-          return false;
-        }
-      });
+          } else {
+            return false;
+          }
+        });
+      }
     },
     /**
      * 倒计时函数
