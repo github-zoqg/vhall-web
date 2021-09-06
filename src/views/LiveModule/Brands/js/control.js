@@ -26,6 +26,8 @@ const controle = {
       this.$Vhallplayer.setCurrentTime(_seekTime, () => {
         console.log('调整播放时间失败');
       });
+      // 拖动的时候，若进度大于0，设定播放效果
+      this.statePaly = this.formOther.progress > 0
     },
     videoPlayBtn(){
       if(this.statePaly){
