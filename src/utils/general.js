@@ -18,9 +18,9 @@ export const secondToDateZH = result => {
   const m = mat(Math.floor((result / 60) % 60));
   const s = mat(Math.floor(result % 60));
   if (h < 1) {
-    return `${m}:${s}`;
+    return `${m < 0 ? 0 : m}:${s < 0 ? 0 : s}`;
   } else {
-    return `${h}:${m}:${s}`;
+    return `${h < 0 ? 0 : h}:${m < 0 ? 0 : m}:${s < 0 ? 0 : s}`;
   }
 };
 // 定义 sessionStorage
