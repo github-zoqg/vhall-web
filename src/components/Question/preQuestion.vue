@@ -29,9 +29,6 @@ export default {
 #showQuestion /deep/ .el-button{
  background:#FB3A32;
 }
-/deep/ .__vuescroll  .__bar-is-vertical {
-  background: #e0e0e0 !important;
-}
   // #form-pc-preview /deep/.pc-preview{
   //  .line{
   //    background: #FB3A32;
