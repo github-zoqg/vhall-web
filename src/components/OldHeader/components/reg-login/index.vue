@@ -47,6 +47,7 @@
               <el-button class="vhsaas-red-button length-max vhsaas-login-btn" @click="telLogin">登录</el-button>
               <a href="javascript:void(0)" class="vhsaas-reg__link" @click="changeTagHandler(3)">立即注册</a>
               <!-- 第三方登录 -->
+              <p class="vhsaas-third-remark">其他登录方式</p>
               <div class="vhsaas-login__way">
                 <div class="vhsaas-login__third">
                   <a
@@ -112,6 +113,7 @@
               <el-button class="vhsaas-red-button length-max vhsaas-login-btn" @click="checkLoginAccount">登录</el-button>
               <a href="javascript:void(0)" :class="['vhsaas-reg__link', {'vhsaas-default': !photoCpathaShow}]" @click="changeTagHandler(3)">立即注册</a>
               <!-- 第三方登录 -->
+              <p class="vhsaas-third-remark">其他登录方式</p>
               <div class="vhsaas-login__way">
                 <div class="vhsaas-login__third">
                   <a
@@ -219,11 +221,11 @@
       cursor: pointer;
       display: inline-block;
       vertical-align: top;
-      height: 30px;
       font-size: 22px;
       font-weight: @font-weight-normal;
       color: @font-color-title;
       line-height: 30px;
+      padding-bottom: 4px;
       &.active {
         color: @font-color-title-active;
         border-bottom: 2px solid @font-color-title-active;
@@ -380,7 +382,8 @@
   .vhsaas-reg__link {
     margin: 14px auto 0 auto;
     &.vhsaas-default {
-      margin: 50px auto 0 auto;
+      /*margin: 50px auto 0 auto;*/
+      margin: 12px auto 0 auto;
     }
     display: block;
     text-align: center;
@@ -428,8 +431,17 @@
     .vhsaas-box__pwd {
       margin-bottom: 0;
     }
-    .vhsaas-login__way {
+    .vhsaas-third-remark {
       margin-top: 8px;
+      text-align: center;
+      height: 17px;
+      font-size: 12px;
+      font-weight: 400;
+      color: #999999;
+      line-height: 17px;
+    }
+    .vhsaas-login__way {
+      margin-top: 6px;
     }
     .vhsaas-login__third {
       text-align: center;
@@ -517,5 +529,29 @@
   }
   /deep/.vhsaas-yundun-captcha .yidun.yidun--light .yidun_top__right {
     line-height: normal;
+  }
+  /deep/ input.el-input__inner {
+    border: none;
+    border-radius: unset;
+    border-bottom: 1px solid #DCDFE6;
+    padding: 0 0;
+    &:hover {
+      border-color: #999;
+    }
+    &:focus {
+      border-color: #999;
+    }
+    &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+      color: #999999;
+    }
+    &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+      color: #999999;
+    }
+    &::-moz-placeholder { /* Mozilla Firefox 19+ */
+      color: #999999;
+    }
+    &:-ms-input-placeholder { /* Internet Explorer 10-11 */
+      color: #999999;
+    }
   }
 </style>
