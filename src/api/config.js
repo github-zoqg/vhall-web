@@ -259,6 +259,7 @@ const apis = {
   sendCode: ['/v3/users/code/send', 'POST'],  //发送验证码接口
   register: ['/v3/users/user/register', 'POST'],  //注册接口
   getLoginKey: ['/v3/users/user/get-key-login', 'POST'], // 获取登录公钥
+  refreshToken: ['/v3/users/user/refresh-token', 'post'], // 刷新token
 
   //数据中心
   getDataCenterInfo: ['/v3/data-center/account-all-data', 'GET'], //获取账户下的总数据  数据总览
