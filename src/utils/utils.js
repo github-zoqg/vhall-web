@@ -25,7 +25,6 @@ export const sessionOrLocal = {
     window[saveType].clear();
   }
 };
-window.testSess = sessionOrLocal
 // 判断是否IE
 export function isIE () {
   return (!!window.ActiveXObject || 'ActiveXObject' in window || navigator.userAgent.indexOf("Edge") > -1);
@@ -521,3 +520,19 @@ export const getStyle = ieVersion < 9 ? function(element, styleName) {
 };
 
 // element-ui 中用来判断 text-overflow 的工具方法 end
+
+// 刷新 token
+export const refreshToken = () => {
+  if (sessionOrLocal.get('token', 'localStorage')) {
+    return fetchData('refreshToken').then(res => {
+      sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+      sessionOrLocal.set('tokenExpiredTime', res.data.exp_time, 'localStorage')
+    }).catch(error => {
+      // token 失效
+      if (error.code == 511006 || error.code == 511007) {
+        sessionOrLocal.removeItem('token');
+        sessionOrLocal.removeItem('tokenExpiredTime');
+      }
+    })
+  }
+}
