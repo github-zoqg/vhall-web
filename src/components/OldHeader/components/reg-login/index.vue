@@ -12,11 +12,11 @@
         <!-- 登录 -->
         <div v-if="tag != 3" class="vhsaas-login-box">
           <p class="vhsaas-box-title">
-            <span :class="tag == 2 ? 'active' : ''" @click="changeTagHandler(2)">{{ $t('快捷登录')}}</span>
+            <span :class="tag == 2 ? 'active' : ''" @click="changeTagHandler(2)">{{ $t('验证码登录')}}</span>
             <em>|</em>
-            <span :class="tag == 1 ? 'active' : ''" @click="changeTagHandler(1)">{{ $t('账号登录')}}</span>
+            <span :class="tag == 1 ? 'active' : ''" @click="changeTagHandler(1)">{{ $t('密码登录')}}</span>
           </p>
-          <!-- 快捷登录 -->
+          <!-- 验证码登录 -->
           <el-form v-if="tag == 2" key="loginTwoForm" ref="ruleForm" :model="ruleForm"  :rules="ruleFormRules"  label-width="0">
             <!-- 账户相关 -->
             <el-form-item prop="usernames" :class="['vhsaas-box__name', {'vhsaas-box__msg__error' : isShowPhoneErr}]">
@@ -29,7 +29,7 @@
             <!-- 短信验证码 -->
             <el-form-item prop="captchas" class="vhsaas-wrap-code">
               <el-input v-model.trim="ruleForm.captchas" clearable type="captcha" :maxlength="6" placeholder="动态验证码"  @focus="smsLoginErrMsg = ''"></el-input>
-              <span type="danger" :disabled="buttonControl == 'disabled'" :class="['vhsaas-code-btn', buttonControl]" @click.stop.prevent="getCaptha">
+              <span type="danger" :disabled="buttonControl == 'disabled'" :class="['vhsaas-code-btn show-border', buttonControl]" @click.stop.prevent="getCaptha">
                 {{sendLoginMsgDisabled ? (time + '秒后重发') : '获取验证码'}}
               </span>
                <!-- TODO 可能注释掉 -->
@@ -40,9 +40,9 @@
               <div :class="['vhsaas-box__link', 'vhsaas-box__msg__error', {'vhsaas-box__link__error' : captchaError}]">
                 <el-checkbox v-model="accountChecked" class="vhsaas-box-checkbox"></el-checkbox>
                 <span class="vhsaas-box__auto vhsaas-box__checked" @click="accountChecked = !accountChecked">自动登录</span>
-                <span class="vhsaas-box__auto vhsaas-box__forget">
+                <!-- <span class="vhsaas-box__auto vhsaas-box__forget">
                   <a :href="forgetUrl" target="_blank">忘记密码</a>
-                </span>
+                </span> -->
               </div>
               <el-button class="vhsaas-red-button length-max vhsaas-login-btn" @click="telLogin">登录</el-button>
               <a href="javascript:void(0)" class="vhsaas-reg__link" @click="changeTagHandler(3)">立即注册</a>
@@ -63,7 +63,7 @@
               </div>
             </el-form-item>
           </el-form>
-          <!-- 账号登录 -->
+          <!-- 密码登录 -->
           <el-form v-if="tag == 1" key="loginOneForm" ref="ruleForm" :model="ruleForm" :rules="ruleFormRules"  label-width="0">
             <!-- 账户相关 -->
             <el-form-item prop="username" :class="['vhsaas-box__name', {'vhsaas-box__msg__error' : accError}]">
@@ -80,8 +80,8 @@
               <PwdInput
                 v-model.trim="ruleForm.password"
                 clearable
-                :placeholder="!isLoginPwdFocus ? '请设置登录密码' : ''"
-                :maxlength="20"
+                :placeholder="!isLoginPwdFocus ? '请输入登录密码' : ''"
+                :maxlength="30"
                 auto-complete="off"
                 onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]/g,'')"
                 style="ime-mode:disabled"
@@ -132,7 +132,7 @@
         <!-- 注册 -->
         <div v-else class="vhsaas-reg-box">
           <p class="vhsaas-box-title reg">
-            <span class="active no-border">{{ $t('欢迎注册微吼直播')}}</span>
+            <span class="active no-border">{{ $t('注册新用户')}}</span>
           </p>
           <el-form  key="regForm" ref="regForm" :model="regForm" :rules="regFormRules">
             <el-form-item prop="phone" :class="['vhsaas-box__phone', {'vhsaas-box__msg__error' : regPhoneFlag}]">
@@ -155,8 +155,8 @@
               <PwdInput
                 v-model.trim="regForm.password"
                 clearable
-                :placeholder="!isPasswordFocus ? '请设置登录密码' : ''"
-                :maxlength="20"
+                :placeholder="!isPasswordFocus ? '设置密码（选填，6-30个字符）' : ''"
+                :maxlength="30"
                 auto-complete="off"
                 onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]/g,'')"
                 style="ime-mode:disabled"
@@ -230,6 +230,10 @@
         border-radius: 1px;
         &.no-border {
           border-bottom: 0;
+          font-size: 22px;
+          font-weight: 400;
+          color: #333333;
+          line-height: 30px;
         }
       }
     }
@@ -242,6 +246,34 @@
       color: @font-color-title;
       line-height: 22px;
       margin-top: 4px;
+    }
+  }
+  .vhsaas-box-type {
+    width: 196px;
+    height: 36px;
+    background: #F0F0F0;
+    border-radius: 4px;
+    margin: 0 auto 20px auto;
+    span {
+      cursor: pointer;
+      display: inline-block;
+      vertical-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      padding: 6px 16px;
+      height: 20px;
+      border-radius: 4px;
+      margin: 2px 2px;
+      color: #1A1A1A;
+      background: #F0F0F0;
+      &:last-child {
+        margin: 2px 2px 2px 0;
+      }
+      &.active {
+        color: #FB3A32;
+        background: #ffffff;
+      }
     }
   }
   /deep/div.vhsaas-reg-login-dialog {

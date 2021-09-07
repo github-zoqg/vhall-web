@@ -19,18 +19,26 @@ export default {
     }
     const validPwd = (rule, value, callback) => {
       console.log(rule)
-      this.mailError = value === ''
+      const pattern = /^(\w){6,30}$/
+      this.mailError = value === '' || !pattern.exec(value)
       if (value === '') {
         callback(new Error('请输入登录密码'))
+      } else if (!pattern.exec(value)) {
+        // callback(new Error('6-30位不包含空格及特殊符号的密码！'))
+        callback(new Error('账号密码错误'))
       } else {
         callback()
       }
     }
     const validRegPwd = (rule, value, callback) => {
-      console.log(rule)
-      this.mailError = value === ''
+      // const pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/
+      const pattern = /^(\w){6,30}$/
       if (value === '') {
-        callback(new Error('请设置登录密码'))
+        // callback(new Error('请设置登录密码'))
+        callback() // 允许为空
+      } else if (!pattern.exec(value)) {
+        // callback(new Error('6-30位不包含空格及特殊符号的密码！'))
+        callback(new Error('请设置登录密码（6-30位字符）'))
       } else {
         callback()
       }
@@ -68,9 +76,7 @@ export default {
           callback(new Error('请输入正确的手机号'))
         } else {
           try {
-            const result = await this.$vhallapi.nav.loginCheck({
-              account: this.regForm.phone
-            })
+            const result = await this.$fetch('loginCheck', {account: this.regForm.phone})
             if (result && result.code === 200) {
               // 检测结果：check_result 0账号未锁定 1账号锁定; account_exist 账号是否存在：1存在 0不存在
               if (result.data.account_exist > 0) {
@@ -139,7 +145,6 @@ export default {
       buttonControl: 'disabled', // 按钮的置灰 disabled - 禁用；start - 待发送；pending - 发送中
       loginPwdShow: true, // 登录-密码框的显示
       accountChecked: false, // 账户的自动登录
-      forgetUrl: 'https://t.e.vhall.com/v3/forgetPassword',
       qqPath: '',
       wxPath: '',
       smsLoginErrMsg: '', // 登录 - 动态验证码
@@ -177,6 +182,11 @@ export default {
       isShowPhoneErr: false,
       isPasswordFocus: false,
       isLoginPwdFocus: false
+    }
+  },
+  computed: {
+    forgetUrl() {
+      return `${process.env.VUE_APP_WAP_WATCH}/forgetPwd`
     }
   },
   created() {
@@ -218,7 +228,10 @@ export default {
         this.regForm.code = ''
         // 注册
         this.callCaptcha('#regCaptcha')
-        if (this.regTimer) clearInterval(this.regTimer)
+        if (this.regTimer) {
+          clearInterval(this.regTimer)
+          this.regTimer = null
+        }
         this.$nextTick(function() {
           this.sendRegMsgDisabled = false
           this.regBtnControl = 'disabled'
@@ -233,7 +246,10 @@ export default {
         this.bottomLoginInfo = false
         this.smsErrorMessage = ''
         this.callCaptcha('#captcha')
-        if (this.timeinterval) clearInterval(this.timeinterval)
+        if (this.timeinterval) {
+          clearInterval(this.timeinterval)
+          this.timeinterval = null
+        }
         this.$nextTick(function() {
           this.buttonControl = 'disabled'
           this.sendLoginMsgDisabled = false
@@ -468,7 +484,7 @@ export default {
     },
     // 快捷登录 获取动态验证码
     getCaptha() {
-      if (this.buttonControl === 'disabled') {
+      if (this.buttonControl === 'disabled' || this.buttonControl === 'pending') {
         return
       }
       const mobileReg = /^1[3|4|5|6|7|8|9][0-9]\d{8}$/
@@ -499,12 +515,18 @@ export default {
         console.log(res)
         this.buttonControl = 'pending'
         this.sendLoginMsgDisabled = true
-        if (this.timeinterval) clearInterval(this.timeinterval)
+        if (this.timeinterval) {
+          clearInterval(this.timeinterval)
+          this.timeinterval = null
+        }
         this.timeinterval = setInterval(() => {
           if (this.time > 0) {
             this.time--
           } else {
-            clearInterval(this.timeinterval)
+            if (this.timeinterval) {
+              clearInterval(this.timeinterval)
+              this.timeinterval = null
+            }
             this.sendLoginMsgDisabled = false
             this.time = 60
             this.buttonControl = 'start'
@@ -557,7 +579,7 @@ export default {
     },
     // 注册 获取验证码
     getRegCaptha() {
-      if (this.regBtnControl === 'disabled') {
+      if (this.regBtnControl === 'disabled' || this.regBtnControl === 'pending') {
         return
       }
       const mobileReg = /^1[3|4|5|6|7|8|9][0-9]\d{8}$/
@@ -569,6 +591,10 @@ export default {
         return
       } else {
         this.smsRegErrMsg = ''
+      }
+      if (this.regTimer) {
+        clearInterval(this.regTimer)
+        this.regTimer = null
       }
       if (!this.regTimer) {
         this.$fetch('sendCodeC', {
@@ -583,12 +609,18 @@ export default {
           console.log(res)
           this.regBtnControl = 'pending'
           this.sendRegMsgDisabled = true
-          if (this.regTimer) clearInterval(this.regTimer)
+          if (this.regTimer) {
+            clearInterval(this.regTimer)
+            this.regTimer = null
+          }
           this.regTimer = setInterval(() => {
             if (this.regTime > 0) {
               this.regTime--
             } else {
-              clearInterval(this.regTimer)
+              if (this.regTimer) {
+                clearInterval(this.regTimer)
+                this.regTimer = null
+              }
               this.sendRegMsgDisabled = false
               this.regTime = 60
               this.regBtnControl = 'start'
