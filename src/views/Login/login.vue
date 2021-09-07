@@ -256,6 +256,30 @@ export default {
         callback();
       }
     };
+
+    const validateRegPwd = (rule, value, callback) => {
+      // const pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/
+      /*const pattern = /^(\w){6,30}$/
+      if (value === '') {
+        // callback(new Error('请设置登录密码'))
+        callback() // 允许为空
+      } else if (!pattern.exec(value)) {
+        // callback(new Error('6-30位不包含空格及特殊符号的密码！'))
+        callback(new Error('请设置登录密码（6-30位字符）'))
+      } else {
+        callback()
+      }*/
+      if (value === '') {
+        if (this.registerText) {
+          callback();
+        } else {
+          callback(new Error('请输入密码'));
+        }
+      } else {
+        callback();
+      }
+    }
+
     var validateLoginPhone = (rule, value, callback) => {
       this.errorMsgShow = '';
       this.isValidaLoginPhone = false;
@@ -278,6 +302,7 @@ export default {
         }
       }
     };
+    
     return {
       isPhoneFocus: false,
       isCodeFocus: false,
@@ -308,7 +333,7 @@ export default {
           { validator: validatePhone, trigger: 'blur' }
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
+          { validator: validateRegPwd, trigger: 'blur' }
         ],
         code: [
           { required: true, message: '请输入短信验证码', trigger: 'blur' }
@@ -576,14 +601,32 @@ export default {
       if (this.checkMobile(this.registerForm.phone)) {
          this.$fetch('loginCheck', {account: this.registerForm.phone}).then(res => {
           if (res.data.account_exist) {
+            // 清除密码验证
+            try {
+              if (this.$refs.registerForm) {
+                this.$refs.registerForm.clearValidate('password');
+              }
+            } catch(e) {}
             this.registerText = '该手机号已注册';
-             this.isValidaregisterPhone = false;
+            this.isValidaregisterPhone = false;
           } else {
             this.registerText = '';
-             this.isValidaregisterPhone = true;
+            this.isValidaregisterPhone = true;
+            // 开启密码验证
+            try {
+              if (this.$refs.registerForm) {
+                this.$refs.registerForm.validateField('password');
+              }
+            } catch(e) {}
           }
         }).catch(res => {
           this.registerText = res.msg || '注册失败';
+          // 清除密码验证
+          try {
+            if (this.$refs.registerForm) {
+              this.$refs.registerForm.clearValidate('password');
+            }
+          } catch(e) {}
       });
       }
     },
@@ -682,13 +725,24 @@ export default {
             that.errorMsgShow = '';
             that.errorText = '';
             that.registerText = '';
+            /*// 开启密码验证
+            try {
+              if (that.$refs.registerForm) {
+                that.$refs.registerForm.validateField('password');
+              }
+            } catch(e) {}*/
           } else {
             that.loginForm.captcha = '';
             that.dynamicForm.captcha = '';
             that.errorMsgShow = '图形验证码错误';
             that.errorText = '图形验证码错误';
+            // 清除密码验证
+            try {
+              if (that.$refs.registerForm) {
+                that.$refs.registerForm.clearValidate('password');
+              }
+            } catch(e) {}
             that.registerText = '图形验证码错误';
-            // that.callCaptcha();
           }
         },
         onload(instance) {
