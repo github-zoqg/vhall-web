@@ -248,7 +248,7 @@ export default {
         callback();
       }
     };
-    var validpassword = (rule, value, callback) => {
+    /*var validpassword = (rule, value, callback) => {
       this.errorText = '';
       if (value === '') {
         callback(new Error('请输入密码'));
@@ -256,6 +256,20 @@ export default {
         callback();
       }
     };
+*/
+    const validpassword = (rule, value, callback) => {
+      console.log(rule)
+      const pattern = /^(\w){6,30}$/
+      this.errorText = ''
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else if (!pattern.exec(value)) {
+        // callback(new Error('6-30位不包含空格及特殊符号的密码！'))
+        callback(new Error('账号密码错误'))
+      } else {
+        callback()
+      }
+    }
 
     const validateRegPwd = (rule, value, callback) => {
       // const pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/
