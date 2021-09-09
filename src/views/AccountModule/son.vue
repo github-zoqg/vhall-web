@@ -3,7 +3,7 @@
     <pageTitle pageTitle="子账号管理"></pageTitle>
     <!-- 子账号管理头部 -->
     <div class="title--flex--top">
-      <div class="top-item">
+      <div class="top-item" v-show="userInfo.user_extends.extends_remark == 0">
         <p>{{sonInfo && sonInfo.vip_info && sonInfo.vip_info.type > 0 ? '总流量（GB）' : '总并发（方）'}}</p>
         <p class="custom-font-barlow">
           <count-to :startVal="0"
@@ -13,14 +13,14 @@
           <span v-else>0</span>
         </p>
       </div>
-      <div class="top-item">
+      <div class="top-item" :class="userInfo.user_extends.extends_remark == 1 ? 'top-item-lg' : ''">
         <p>子账号（个）</p>
         <p class="custom-font-barlow">
           <count-to :startVal="0" :endVal="sonInfo.child_count" :duration="1500" v-if="sonInfo && sonInfo.child_count > 0"></count-to>
           <span v-else>0</span>
         </p>
       </div>
-      <div class="top-item">
+      <div class="top-item" :class="userInfo.user_extends.extends_remark == 1 ? 'top-item-lg' : ''">
         <p>活动数量（个）</p>
         <p class="custom-font-barlow">
           <count-to :startVal="0" :endVal="sonInfo.webinar_count" :duration="1500" v-if="sonInfo && sonInfo.webinar_count > 0"></count-to>
@@ -64,6 +64,11 @@ export default {
       userId: JSON.parse(sessionOrLocal.get("userId")),
       sonInfo: {
         vip_info: null
+      },
+      userInfo: {
+        user_extends: {
+          extends_remark: 0
+        }
       }
     };
   },
@@ -113,6 +118,7 @@ export default {
   },
   created() {
     this.initPage();
+    this.userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
   }
 };
 </script>
@@ -136,6 +142,9 @@ export default {
     background: #ffffff;
     padding: 32px 40px;
     border-radius: 4px;
+    &-lg {
+      width: calc((100% - 32px) / 2);
+    }
   }
   p {
     font-size: @font_size_14;
