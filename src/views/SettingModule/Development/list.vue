@@ -175,7 +175,7 @@ export default {
           customClass: 'zdy-message-box',
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel-hide'
-        }).then(() => {
+        }).then((active) => {
           this.search();
         }).catch(action => {
           // 关闭弹框，调用查询接口
