@@ -19,8 +19,8 @@
       <div class="viewer-rules-content">
         <!-- 免费 0 -->
         <div v-show="Number(form.verify) === 0" class="viewer-rules-ctx--0">
-          <span>预约按钮：</span>
-          <el-switch class="pl10 address" v-model="hide_subscribe" active-color="#FB3A32" inactive-color="#999"></el-switch><span class="pl10 fontStyle">已开启，预告状态下且未设置报名表单时显示&lt;立即预约>按钮</span>
+          <span class="color1a1a1a">预约按钮：</span>
+          <el-switch class="pl10 address" v-model="hide_subscribe" v-if='webinarState != 4' active-color="#FB3A32" inactive-color="#cecece"></el-switch><span class="pl10 fontStyle">已开启，预告状态下且未设置报名表单时显示&lt;立即预约>按钮</span>
           <p class="mt30">观看无需任何验证，即可观看直播</p>
         </div>
         <!-- 付费 3 -->
@@ -73,7 +73,8 @@
               </div>
             </el-form-item>
             <el-form-item label="设置提示" prop="">
-              <el-input type="text" placeholder="请输入邀请码" v-model="fCodeForm.fcode_verify" maxlength="30" show-word-limit></el-input>
+              <VhallInput v-model.trim="fCodeForm.fcode_verify" autocomplete="off" placeholder="请输入邀请码" :maxlength="30" show-word-limit></VhallInput>
+              <!-- <el-input type="text" placeholder="请输入邀请码" v-model="fCodeForm.fcode_verify" maxlength="30" show-word-limit></el-input> -->
               <span class="pl10 color-3562FA cursor" @click="openDialog(fCodeForm.fcode_verify|| '请输入邀请码')">查看效果</span>
             </el-form-item>
             <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
@@ -118,7 +119,8 @@
               </div>
             </el-form-item>
             <el-form-item label="设置提示" prop="">
-              <el-input type="text" placeholder="请输入邀请码" v-model="fCodePayForm.fee_verify" maxlength="30" show-word-limit ></el-input>
+              <VhallInput v-model.trim="fCodePayForm.fee_verify" autocomplete="off" placeholder="请输入邀请码" :maxlength="30" show-word-limit></VhallInput>
+              <!-- <el-input type="text" placeholder="请输入邀请码" v-model="fCodePayForm.fee_verify" maxlength="30" show-word-limit ></el-input> -->
               <span class="pl10 color-3562FA cursor" @click="openDialog(fCodePayForm.fee_verify || '请输入邀请码')">查看效果</span>
             </el-form-item>
             <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
@@ -152,7 +154,8 @@
               <VhallInput v-model.trim="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></VhallInput>
             </el-form-item>
             <el-form-item label="设置提示" prop="">
-              <el-input type="text" placeholder="请输入密码" v-model="pwdForm.password_verify" maxlength="30" show-word-limit ></el-input>
+              <VhallInput v-model.trim="pwdForm.password_verify" autocomplete="off" placeholder="请输入密码" :maxlength="30" show-word-limit></VhallInput>
+              <!-- <el-input type="text" placeholder="请输入密码" v-model="pwdForm.password_verify" maxlength="30" show-word-limit ></el-input> -->
               <span class="pl10 color-3562FA cursor" @click="openDialog(pwdForm.password_verify || '请输入密码')">查看效果</span>
             </el-form-item>
             <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
@@ -183,7 +186,8 @@
         <div v-show="Number(form.verify) === 2" class="viewer-rules-ctx--2">
           <el-form label-width="82px">
             <el-form-item label="设置提示" prop="">
-              <el-input type="text" placeholder="请输入手机号/邮箱/工号" v-model="white_verify" maxlength="30" show-word-limit ></el-input>
+              <VhallInput v-model.trim="white_verify" autocomplete="off" placeholder="请输入手机号/邮箱/工号" :maxlength="30" show-word-limit></VhallInput>
+              <!-- <el-input type="text" placeholder="请输入手机号/邮箱/工号" v-model="white_verify" maxlength="30" show-word-limit ></el-input> -->
               <span class="pl10 color-3562FA cursor" @click="openDialog(white_verify || '请输入手机号/邮箱/工号')">查看效果</span>
             </el-form-item>
             <el-form-item label="选择观众组">
@@ -718,6 +722,7 @@ export default {
     getLiveDetail(id) {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         this.liveDetailInfo = res.data;
+        console.log(this.liveDetailInfo)
       }).catch(res=>{
         console.log(res);
         this.liveDetailInfo = {};
@@ -764,6 +769,20 @@ export default {
 .address{
   position: relative;
   top: -1px;
+  /deep/ span.el-switch__core{
+    width: 28px!important;
+    height: 16px!important;
+    border-radius: 10px!important;
+  }
+  /deep/ span.el-switch__core:after {
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    box-shadow: 1px 1px 4px 0 rgb(0 0 0 / 20%);
+  }
+}
+/deep/ .el-switch.is-checked .el-switch__core::after {
+  margin-left: -13px !important;
 }
 .pr{
   position: relative;
@@ -1066,5 +1085,9 @@ export default {
 
 /deep/.el-select-dropdown__list .el-select-dropdown__item {
   max-width: 100%;
+}
+.color1a1a1a{
+  color: #1A1A1A;
+  font-size: 14px;
 }
 </style>
