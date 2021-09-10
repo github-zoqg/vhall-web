@@ -778,7 +778,6 @@ export default {
     width: 12px;
     height: 12px;
     background: #fff;
-    box-shadow: 1px 1px 4px 0 rgb(0 0 0 / 20%);
   }
 }
 /deep/ .el-switch.is-checked .el-switch__core::after {
