@@ -303,7 +303,7 @@ export default {
         if (!(/^1[0-9]{10}$/.test(value))) {
           callback(new Error('请输入正确的手机号'));
         } else {
-          this.$fetch('loginCheck', {account: value}).then(res => {
+          this.$fetch('loginCheck', {account: value, channel: 'B'}).then(res => {
             if (!res.data.account_exist) {
               callback(new Error('该手机号未注册，请先注册'));
             } else {
@@ -316,7 +316,7 @@ export default {
         }
       }
     };
-    
+
     return {
       isPhoneFocus: false,
       isCodeFocus: false,
@@ -486,7 +486,7 @@ export default {
     // 登录账号锁定检测
     checkedAccount() {
       let account = this.isActive == 1 ? this.loginForm.account : this.dynamicForm.phoneNumber;
-      this.$fetch('loginCheck', {account: account}).then(res => {
+      this.$fetch('loginCheck', {account: account, channel: 'B'}).then(res => {
         //检测结果check_result  : 1 锁定    0未锁定
         if (this.isActive == 1) {
           if (res.data.check_result && !this.mobileKey) {
@@ -613,7 +613,7 @@ export default {
     // 注册判断手机号是否已经注册
     checkPhone() {
       if (this.checkMobile(this.registerForm.phone)) {
-         this.$fetch('loginCheck', {account: this.registerForm.phone}).then(res => {
+         this.$fetch('loginCheck', {account: this.registerForm.phone, channel: 'B'}).then(res => {
           if (res.data.account_exist) {
             // 清除密码验证
             try {
