@@ -426,6 +426,7 @@ export default {
       this.$fetch('viewerSetGet', {
         webinar_id: this.$route.params.str
       }).then(res => {
+        console.log(res.data,'7777777777777777')
          this.viewerDao = res.data;
         // 预约按钮是否展示
         this.hide_subscribe = res.data.hide_subscribe?true:false;
@@ -605,6 +606,13 @@ export default {
       }
     },
     sendViewerSetSave(params) {
+      Object.assign(params,{
+        password_verify: this.pwdForm.password_verify,
+        fee_verify: this.fCodePayForm.fee_verify,
+        fcode_verify: this.fCodeForm.fcode_verify,
+        white_verify: this.white_verify,
+        hide_subscribe: this.hide_subscribe?1:0,
+      })
       this.$fetch('viewerSetSave', this.$params(params)).then(res => {
         console.log(res);
         this.getReportData();
