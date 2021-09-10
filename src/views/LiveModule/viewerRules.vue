@@ -22,7 +22,7 @@
           <span v-if='webinarState != 4'>
             <span class="color1a1a1a">预约按钮：</span>
             <el-switch class="pl10 address" v-model="hide_subscribe" active-color="#FB3A32" inactive-color="#cecece"></el-switch>
-            <span class="pl10 fontStyle">已开启，预告状态下且未设置报名表单时显示&lt;立即预约>按钮</span>
+            <span class="pl10 fontStyle">{{hide_subscribe?'已开启':'开启后'}}，预告状态下且未设置报名表单时显示&lt;立即预约>按钮</span>
           </span>
           <p class="mt30">观看无需任何验证，即可观看直播</p>
         </div>
