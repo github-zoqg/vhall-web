@@ -567,8 +567,9 @@ export default {
     },
     // 校验登录次数
     checkLoginAccount() {
-      this.$fetch('loginCheck', {
-        account: this.ruleForm.username
+      this.$fetch('loginCheckC', {
+        account: this.ruleForm.username,
+        channel: 'C'
       })
         .then(res => {
           if (res.code == 200) {

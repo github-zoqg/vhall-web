@@ -278,10 +278,11 @@ export default {
       this.tag = 2  // 默认快捷登录展示在第一位
       this.resetForm() // 表单重置
     },
-    // 校验登录次数
+    // 校验登录次数 - 专题登录
     checkLoginAccount() {
       this.$fetch('loginCheckC', {
-        account: this.ruleForm.username
+        account: this.ruleForm.username,
+        channel: 'C'
       }, {
         token: '',
         platform: 7,
