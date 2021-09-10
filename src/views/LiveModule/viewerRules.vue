@@ -19,8 +19,11 @@
       <div class="viewer-rules-content">
         <!-- 免费 0 -->
         <div v-show="Number(form.verify) === 0" class="viewer-rules-ctx--0">
-          <span class="color1a1a1a">预约按钮：</span>
-          <el-switch class="pl10 address" v-model="hide_subscribe" v-if='webinarState != 4' active-color="#FB3A32" inactive-color="#cecece"></el-switch><span class="pl10 fontStyle">已开启，预告状态下且未设置报名表单时显示&lt;立即预约>按钮</span>
+          <span v-if='webinarState != 4'>
+            <span class="color1a1a1a">预约按钮：</span>
+            <el-switch class="pl10 address" v-model="hide_subscribe" active-color="#FB3A32" inactive-color="#cecece"></el-switch>
+            <span class="pl10 fontStyle">已开启，预告状态下且未设置报名表单时显示&lt;立即预约>按钮</span>
+          </span>
           <p class="mt30">观看无需任何验证，即可观看直播</p>
         </div>
         <!-- 付费 3 -->
@@ -196,7 +199,7 @@
                   <span>{{item.subject}}</span>
                 </li>
                 <li class="">
-                  <router-link :to="{path:'/material/viewer'}"><el-button type="white-primary" size="small" round><i class="el-icon-plus"></i>添加观众组</el-button></router-link>
+                  <router-link :to="{path:'/material/viewer'}"><el-button type="white-primary" class="changeIconCol" size="small" round><i class="el-icon-plus"></i>添加观众组</el-button></router-link>
                 </li>
               </ul>
             </el-form-item>
@@ -243,7 +246,7 @@
         <span class="iconfont-v3 saasicon-eye inputIcon cursor" @click='showPwd = false'></span>
       </span>
       <div slot='footer'>
-        <el-button type="primary" round @click="visible = false;">确定</el-button>
+        <el-button type="primary" round @click="visible = false;" class="button_size">确定</el-button>
       </div>
     </VhallDialog>
   </div>
@@ -787,9 +790,14 @@ export default {
   position: relative;
 }
 .inputIcon{
- position: absolute;
- right: 10px;
- top: 0px;
+  position: absolute;
+  right: 10px;
+  top: 0px;
+  display: inline-block;
+  height: 16px;
+  background: #fff;
+  width: 45px;
+  text-align: right;
 }
 .viewer-rules {
   /deep/.el-radio__inner{
@@ -1024,6 +1032,8 @@ export default {
   }
   i.el-icon-plus {
     margin-right: 3px;
+    padding: 0;
+    color: #FB3A32;
   }
   /* .tab__btn--dashed {
     border-radius: 16px;
@@ -1088,5 +1098,15 @@ export default {
 .color1a1a1a{
   color: #1A1A1A;
   font-size: 14px;
+}
+.button_size{
+  padding: 0 !important;
+  width: 60px;
+  height: 32px;
+}
+.changeIconCol:hover{
+  .el-icon-plus{
+    color: white;
+  }
 }
 </style>
