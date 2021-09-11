@@ -311,6 +311,9 @@
     &.vhsaas-box__msg__error {
       margin-bottom: 24px;
     }
+    &.is-success.vhsaas-box__msg__error {
+      margin-bottom: 16px;
+    }
     &:last-child {
       margin-bottom: 0;
     }
