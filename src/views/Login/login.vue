@@ -273,24 +273,23 @@ export default {
 
     const validateRegPwd = (rule, value, callback) => {
       // const pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/
-      /*const pattern = /^(\w){6,30}$/
+      const pattern = /^(\w){6,30}$/
       if (value === '') {
         // callback(new Error('请设置登录密码'))
-        callback() // 允许为空
-      } else if (!pattern.exec(value)) {
-        // callback(new Error('6-30位不包含空格及特殊符号的密码！'))
-        callback(new Error('请设置登录密码（6-30位字符）'))
-      } else {
-        callback()
-      }*/
-      if (value === '') {
         if (this.registerText) {
           callback();
         } else {
           callback(new Error('请输入密码'));
         }
+      } else if (!pattern.exec(value)) {
+        // callback(new Error('6-30位不包含空格及特殊符号的密码！'))
+        if (this.registerText) {
+          callback();
+        } else {
+          callback(new Error('请设置登录密码（6-30位字符）'))
+        }
       } else {
-        callback();
+        callback()
       }
     }
 

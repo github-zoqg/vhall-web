@@ -46,7 +46,9 @@
               </div>
               <el-button class="vhsaas-red-button length-max vhsaas-login-btn" @click="telLogin">登录</el-button>
               <a href="javascript:void(0)" class="vhsaas-reg__link" @click="changeTagHandler(3)">立即注册</a>
-              <!-- 第三方登录 -->
+            </el-form-item>
+            <!-- 第三方登录 -->
+            <div class="vhsaas-third-layout">
               <p class="vhsaas-third-remark">其他登录方式</p>
               <div class="vhsaas-login__way">
                 <div class="vhsaas-login__third">
@@ -62,7 +64,7 @@
                   ></a>
                 </div>
               </div>
-            </el-form-item>
+            </div>
           </el-form>
           <!-- 密码登录 -->
           <el-form v-if="tag == 1" key="loginOneForm" ref="ruleForm" :model="ruleForm" :rules="ruleFormRules"  label-width="0">
@@ -112,7 +114,9 @@
               </div>
               <el-button class="vhsaas-red-button length-max vhsaas-login-btn" @click="checkLoginAccount">登录</el-button>
               <a href="javascript:void(0)" :class="['vhsaas-reg__link', {'vhsaas-default': !photoCpathaShow}]" @click="changeTagHandler(3)">立即注册</a>
-              <!-- 第三方登录 -->
+            </el-form-item>
+            <!-- 第三方登录 -->
+            <div class="vhsaas-third-layout">
               <p class="vhsaas-third-remark">其他登录方式</p>
               <div class="vhsaas-login__way">
                 <div class="vhsaas-login__third">
@@ -128,7 +132,7 @@
                   ></a>
                 </div>
               </div>
-            </el-form-item>
+            </div>
           </el-form>
         </div>
         <!-- 注册 -->
@@ -147,7 +151,7 @@
             <!-- 短信密码 -->
             <el-form-item prop="code" :class="['vhsaas-wrap-code', {'vhsaas-box__msg__error' : captchaError || smsRegErrMsg}]">
               <el-input v-model.trim="regForm.code"  clearable type="captcha" :maxlength="6" placeholder="动态验证码"></el-input>
-              <span type="danger" :disabled="regBtnControl == 'disabled'" :class="['vhsaas-code-btn', regBtnControl]" @click.stop.prevent="getRegCaptha">
+              <span type="danger" :disabled="regBtnControl == 'disabled'" :class="['vhsaas-code-btn show-border', regBtnControl]" @click.stop.prevent="getRegCaptha">
                 {{sendRegMsgDisabled ? (regTime + '秒后重发') : '获取验证码'}}
               </span>
               <!-- <div v-if="smsRegErrMsg != ''" class="vhsaas-form-error">{{smsRegErrMsg}}</div> -->
@@ -221,6 +225,7 @@
       cursor: pointer;
       display: inline-block;
       vertical-align: top;
+      height: 30px;
       font-size: 22px;
       font-weight: @font-weight-normal;
       color: @font-color-title;
@@ -279,14 +284,24 @@
     }
   }
   /deep/div.vhsaas-reg-login-dialog {
-    max-height: 480px;
+    max-height: 526px;
     height: auto;
     padding-bottom: 24px;
     border-radius: 4px;
     .el-dialog__body {
       padding: 16px 40px 0 40px;
-      height: 396px;
+      /*height: 442px;*/
     }
+  }
+  .vhsaas-reg-login__main {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .el-form {
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 56px);
   }
   /deep/div.el-form-item {
     margin-bottom: 16px;
@@ -295,6 +310,12 @@
     }
     &.vhsaas-box__msg__error {
       margin-bottom: 24px;
+    }
+    &.is-success.vhsaas-box__msg__error {
+      margin-bottom: 16px;
+    }
+    &:last-child {
+      margin-bottom: 0;
     }
   }
   /deep/div.el-form-item__error {
@@ -305,8 +326,6 @@
   }
   /deep/input.el-input__inner {
     padding: 0 11px;
-    height: 40px;
-    line-height: 40px;
   }
   .vhsaas-form-error {
     font-size: 12px;
@@ -361,7 +380,7 @@
       margin-top: 24px;
     }
     &.vhsaas-box__msg__error {
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
     .vhsaas-box__auto {
       font-size: 14px;
@@ -389,7 +408,7 @@
     text-align: center;
     font-size: 14px;
     font-weight: 400;
-    color: #999999;
+    color: #3562FA;
     line-height: 20px;
   }
   .vhsaas-wrap-code {
@@ -420,16 +439,39 @@
     }
     &.pending {
       cursor: not-allowed;
-      color: #fb3a32;
+      color: #999999;
+    }
+    &.show-border {
+      width: 103px;
+      height: 34px;
+      background: #F0F0F0;
+      border-radius: 4px;
+      text-align: center;
+      line-height: 34px;
+      right: 0;
+      &.disabled {
+        color: #1A1A1A;
+      }
+      &.start {
+        background: #FB3A32;
+        color: #ffffff;
+      }
+      &.pending {
+        color: #1A1A1A;
+      }
     }
   }
   /* 登录 */
   .vhsaas-login-box {
+    height: 100%;
     .vhsaas-wrap-code {
      margin-bottom: 0;
     }
     .vhsaas-box__pwd {
       margin-bottom: 0;
+    }
+    .vhsaas-third-layout {
+      margin-top: auto;
     }
     .vhsaas-third-remark {
       margin-top: 8px;
@@ -441,7 +483,7 @@
       line-height: 17px;
     }
     .vhsaas-login__way {
-      margin-top: 6px;
+      margin-top: 8px;
     }
     .vhsaas-login__third {
       text-align: center;
@@ -482,7 +524,7 @@
       line-height: 20px;
     }
     a {
-      color: #3562fa;
+      color: #5CB8FF;
     }
     .vhsaas-reg__login {
       position: absolute;
@@ -490,7 +532,7 @@
       top: 46px;
       font-size: 14px;
       font-weight: 400;
-      color: #999999;
+      color: #3562FA;
       &:hover {
         color: #3562fa;
       }

@@ -76,7 +76,7 @@ export default {
           callback(new Error('请输入正确的手机号'))
         } else {
           try {
-            const result = await this.$fetch('loginCheck', {account: this.regForm.phone})
+            const result = await this.$fetch('loginCheck', {account: this.regForm.phone, channel: 'C'})
             if (result && result.code === 200) {
               // 检测结果：check_result 0账号未锁定 1账号锁定; account_exist 账号是否存在：1存在 0不存在
               if (result.data.account_exist > 0) {
@@ -165,7 +165,7 @@ export default {
           { required: true, validator: validateCaptchas, trigger: 'blur' }
         ],
         password: [
-          { required: true, validator: validRegPwd, trigger: 'blur' }
+          { required: false, validator: validRegPwd, trigger: 'blur' }
         ]
       },
       regTime: 60,
