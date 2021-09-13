@@ -717,6 +717,7 @@ export default {
           this.formData.limitCapacitySwtich = false;
         }
         this.formData.capacity = Boolean(this.liveDetailInfo.is_capacity);
+        this.formData.zdy_inav_num = `1v${Number(this.liveDetailInfo.inav_num) - 1}`;
         if (this.liveDetailInfo.paas_record_id) {
           this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
           this.selectMedia.id = this.liveDetailInfo.record_id;
