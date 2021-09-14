@@ -68,7 +68,7 @@
           <el-form :model="fCodeForm" ref="fCodeForm" :rules="fCodeFormRules"  label-width="82px">
             <el-form-item label="生成邀请码" prop="nums">
               <div class="fCode__flex">
-                <VhallInput v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two"   @input="formatInputs($event, 'fCodeForm', 'nums')">
+                <VhallInput v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two" @input="formatInputs($event, 'fCodeForm', 'nums')">
                   <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
                 </VhallInput>
                 <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
@@ -76,7 +76,7 @@
               </div>
             </el-form-item>
             <el-form-item label="设置提示" prop="">
-              <VhallInput v-model.trim="fCodeForm.fcode_verify" autocomplete="off" placeholder="请输入邀请码" :maxlength="30" show-word-limit></VhallInput>
+              <VhallInput v-model.trim="fCodeForm.fcode_verify" class="pr60" autocomplete="off" placeholder="请输入邀请码" :maxlength="30" show-word-limit></VhallInput>
               <!-- <el-input type="text" placeholder="请输入邀请码" v-model="fCodeForm.fcode_verify" maxlength="30" show-word-limit></el-input> -->
               <span class="pl10 color-3562FA cursor" @click="openDialog(fCodeForm.fcode_verify|| '请输入邀请码')">查看效果</span>
             </el-form-item>
@@ -122,7 +122,7 @@
               </div>
             </el-form-item>
             <el-form-item label="设置提示" prop="">
-              <VhallInput v-model.trim="fCodePayForm.fee_verify" autocomplete="off" placeholder="请输入邀请码" :maxlength="30" show-word-limit></VhallInput>
+              <VhallInput v-model.trim="fCodePayForm.fee_verify" class="pr60" autocomplete="off" placeholder="请输入邀请码" :maxlength="30" show-word-limit></VhallInput>
               <!-- <el-input type="text" placeholder="请输入邀请码" v-model="fCodePayForm.fee_verify" maxlength="30" show-word-limit ></el-input> -->
               <span class="pl10 color-3562FA cursor" @click="openDialog(fCodePayForm.fee_verify || '请输入邀请码')">查看效果</span>
             </el-form-item>
@@ -157,7 +157,7 @@
               <VhallInput v-model.trim="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></VhallInput>
             </el-form-item>
             <el-form-item label="设置提示" prop="">
-              <VhallInput v-model.trim="pwdForm.password_verify" autocomplete="off" placeholder="请输入密码" :maxlength="30" show-word-limit></VhallInput>
+              <VhallInput v-model.trim="pwdForm.password_verify" class="pr60" autocomplete="off" placeholder="请输入密码" :maxlength="30" show-word-limit></VhallInput>
               <!-- <el-input type="text" placeholder="请输入密码" v-model="pwdForm.password_verify" maxlength="30" show-word-limit ></el-input> -->
               <span class="pl10 color-3562FA cursor" @click="openDialog(pwdForm.password_verify || '请输入密码')">查看效果</span>
             </el-form-item>
@@ -189,7 +189,7 @@
         <div v-show="Number(form.verify) === 2" class="viewer-rules-ctx--2">
           <el-form label-width="82px">
             <el-form-item label="设置提示" prop="">
-              <VhallInput v-model.trim="white_verify" autocomplete="off" placeholder="请输入手机号/邮箱/工号" :maxlength="30" show-word-limit></VhallInput>
+              <VhallInput v-model.trim="white_verify" class="pr60" autocomplete="off" placeholder="请输入手机号/邮箱/工号" :maxlength="30" show-word-limit></VhallInput>
               <!-- <el-input type="text" placeholder="请输入手机号/邮箱/工号" v-model="white_verify" maxlength="30" show-word-limit ></el-input> -->
               <span class="pl10 color-3562FA cursor" @click="openDialog(white_verify || '请输入手机号/邮箱/工号')">查看效果</span>
             </el-form-item>
@@ -1116,5 +1116,8 @@ export default {
   .el-icon-plus{
     color: white;
   }
+}
+.pr60 /deep/.el-input__inner{
+  padding-right: 65px !important;
 }
 </style>
