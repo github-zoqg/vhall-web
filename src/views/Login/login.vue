@@ -248,7 +248,7 @@ export default {
         callback();
       }
     };
-    var validpassword = (rule, value, callback) => {
+    /*var validpassword = (rule, value, callback) => {
       this.errorText = '';
       if (value === '') {
         callback(new Error('请输入密码'));
@@ -256,6 +256,43 @@ export default {
         callback();
       }
     };
+*/
+    const validpassword = (rule, value, callback) => {
+      console.log(rule)
+      const pattern = /^(\w){6,30}$/
+      this.errorText = ''
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else if (!pattern.exec(value)) {
+        // callback(new Error('6-30位不包含空格及特殊符号的密码！'))
+        callback(new Error('账号密码错误'))
+      } else {
+        callback()
+      }
+    }
+
+    const validateRegPwd = (rule, value, callback) => {
+      // const pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/
+      const pattern = /^(\w){6,30}$/
+      if (value === '') {
+        // callback(new Error('请设置登录密码'))
+        if (this.registerText) {
+          callback();
+        } else {
+          callback(new Error('请输入密码'));
+        }
+      } else if (!pattern.exec(value)) {
+        // callback(new Error('6-30位不包含空格及特殊符号的密码！'))
+        if (this.registerText) {
+          callback();
+        } else {
+          callback(new Error('请设置登录密码（6-30位字符）'))
+        }
+      } else {
+        callback()
+      }
+    }
+
     var validateLoginPhone = (rule, value, callback) => {
       this.errorMsgShow = '';
       this.isValidaLoginPhone = false;
@@ -265,7 +302,7 @@ export default {
         if (!(/^1[0-9]{10}$/.test(value))) {
           callback(new Error('请输入正确的手机号'));
         } else {
-          this.$fetch('loginCheck', {account: value}).then(res => {
+          this.$fetch('loginCheck', {account: value, channel: 'B'}).then(res => {
             if (!res.data.account_exist) {
               callback(new Error('该手机号未注册，请先注册'));
             } else {
@@ -278,6 +315,7 @@ export default {
         }
       }
     };
+
     return {
       isPhoneFocus: false,
       isCodeFocus: false,
@@ -308,7 +346,7 @@ export default {
           { validator: validatePhone, trigger: 'blur' }
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
+          { validator: validateRegPwd, trigger: 'blur' }
         ],
         code: [
           { required: true, message: '请输入短信验证码', trigger: 'blur' }
@@ -389,7 +427,7 @@ export default {
     },
      // 第三方登录
     thirdLogin(url) {
-      window.location.href = `${process.env.VUE_APP_BASE_URL}${url}${process.env.VUE_APP_WEB_URL}`;
+      window.location.href = `${process.env.VUE_APP_BIND_BASE_URL}${url}${process.env.VUE_APP_WEB_URL}`;
     },
     passWordType() {
       this.isPassWordType = !this.isPassWordType;
@@ -415,6 +453,8 @@ export default {
           data: this.dynamicForm.phoneNumber,
           validate: this.mobileKey,
           scene_id: 7
+        }, {
+          token: ''
         }).then(() => {
           this.countDown();
         });
@@ -445,7 +485,7 @@ export default {
     // 登录账号锁定检测
     checkedAccount() {
       let account = this.isActive == 1 ? this.loginForm.account : this.dynamicForm.phoneNumber;
-      this.$fetch('loginCheck', {account: account}).then(res => {
+      this.$fetch('loginCheck', {account: account, channel: 'B'}).then(res => {
         //检测结果check_result  : 1 锁定    0未锁定
         if (this.isActive == 1) {
           if (res.data.check_result && !this.mobileKey) {
@@ -474,7 +514,9 @@ export default {
     },
     getLoginKey() {
       return new Promise((resolove, reject) => {
-        this.$fetch('getLoginKey').then(res => {
+        this.$fetch('getLoginKey', {}, {
+          token: ''
+        }).then(res => {
           console.log(res)
           if (res.code === 200) {
             this.loginKey = res.data
@@ -509,6 +551,8 @@ export default {
       let retParams = this.$params(params)
       this.$fetch('loginInfo', {
         ...retParams,
+      }, {
+        token: ''
       }).then(res => {
         this.mobileKey = '';
         this.errorText = '';
@@ -568,16 +612,34 @@ export default {
     // 注册判断手机号是否已经注册
     checkPhone() {
       if (this.checkMobile(this.registerForm.phone)) {
-         this.$fetch('loginCheck', {account: this.registerForm.phone}).then(res => {
+         this.$fetch('loginCheck', {account: this.registerForm.phone, channel: 'B'}).then(res => {
           if (res.data.account_exist) {
+            // 清除密码验证
+            try {
+              if (this.$refs.registerForm) {
+                this.$refs.registerForm.clearValidate('password');
+              }
+            } catch(e) {}
             this.registerText = '该手机号已注册';
-             this.isValidaregisterPhone = false;
+            this.isValidaregisterPhone = false;
           } else {
             this.registerText = '';
-             this.isValidaregisterPhone = true;
+            this.isValidaregisterPhone = true;
+            // 开启密码验证
+            try {
+              if (this.$refs.registerForm) {
+                this.$refs.registerForm.validateField('password');
+              }
+            } catch(e) {}
           }
         }).catch(res => {
           this.registerText = res.msg || '注册失败';
+          // 清除密码验证
+          try {
+            if (this.$refs.registerForm) {
+              this.$refs.registerForm.clearValidate('password');
+            }
+          } catch(e) {}
       });
       }
     },
@@ -588,42 +650,48 @@ export default {
           data: this.registerForm.phone,
           validate: this.mobileKey,
           scene_id: 8
+        }, {
+          token: ''
         }).then(() => {
           this.countDown();
         });
       }
     },
     registerAccount() {
-      this.$refs.registerForm.validate(async (valid) => {
-        if (valid) {
-          let params = JSON.parse(JSON.stringify(this.registerForm))
-          await this.getLoginKey()
-          params.password = this.handleEncryptPassword(params.password)
-          params.captcha = this.mobileKey;
-          params.source = this.$route.query.source || 1;
-          params.uuid = this.loginKey.uuid
-          this.$fetch('register', params).then(res => {
-            this.$message({
-              message:  `注册成功`,
-              showClose: true,
-              // duration: 0,
-              type: 'success',
-              customClass: 'zdy-info-box'
+      if (!this.registerText) {
+        this.$refs.registerForm.validate(async (valid) => {
+          if (valid) {
+            let params = JSON.parse(JSON.stringify(this.registerForm))
+            await this.getLoginKey()
+            params.password = this.handleEncryptPassword(params.password)
+            params.captcha = this.mobileKey;
+            params.source = this.$route.query.source || 1;
+            params.uuid = this.loginKey.uuid
+            this.$fetch('register', params, {
+              token: ''
+            }).then(res => {
+              this.$message({
+                message:  `注册成功`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
+              this.mobileKey = '';
+              setTimeout(() => {
+                this.$router.push({path:'/login'})
+              }, 1000)
+            }).catch(res => {
+              console.log(res);
+              this.callCaptcha();
+              this.mobileKey = '';
+              this.registerText = res.msg || '注册失败';
             });
-            this.mobileKey = '';
-            setTimeout(() => {
-              this.$router.push({path:'/login'})
-            }, 1000)
-          }).catch(res => {
-            console.log(res);
-            this.callCaptcha();
-            this.mobileKey = '';
-            this.registerText = res.msg || '注册失败';
-          });
-        } else {
-          return false;
-        }
-      });
+          } else {
+            return false;
+          }
+        });
+      }
     },
     /**
      * 倒计时函数
@@ -670,13 +738,24 @@ export default {
             that.errorMsgShow = '';
             that.errorText = '';
             that.registerText = '';
+            /*// 开启密码验证
+            try {
+              if (that.$refs.registerForm) {
+                that.$refs.registerForm.validateField('password');
+              }
+            } catch(e) {}*/
           } else {
             that.loginForm.captcha = '';
             that.dynamicForm.captcha = '';
             that.errorMsgShow = '图形验证码错误';
             that.errorText = '图形验证码错误';
+            // 清除密码验证
+            try {
+              if (that.$refs.registerForm) {
+                that.$refs.registerForm.clearValidate('password');
+              }
+            } catch(e) {}
             that.registerText = '图形验证码错误';
-            // that.callCaptcha();
           }
         },
         onload(instance) {

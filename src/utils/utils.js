@@ -271,7 +271,9 @@ export function checkAuth(to, from, next, that) {
     to.path.indexOf('/register') !== -1 ||
     to.path.indexOf('/live/room') !== -1 ||
     to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'))
-    || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) || to.path.indexOf('/upgrading') !== -1 || to.path.indexOf('/warning/') !== -1) {
+    || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) || to.path.indexOf('/upgrading') !== -1 || to.path.indexOf('/warning/') !== -1
+    || to.path.indexOf('/special/detail') != -1
+    ) {
     // 不验证直接进入
     next();
     NProgress.done();

@@ -262,6 +262,8 @@ export default {
             data: this.isType === 'phone' ? this.dynamicForm.phone : this.dynamicForm.email,
             validate: this.mobileKey,
             scene_id: this.isType === 'phone' ? 5 : 4
+          }, {
+            token: ''
           }).then(() => {
             this.countDown();
           }).catch(res => {
@@ -290,6 +292,8 @@ export default {
           data: this.isType === 'phone' ? this.dynamicForm.phone : this.dynamicForm.email,
           validate: this.mobileKey,
           scene_id: this.isType === 'phone' ? 5 : 4
+        }, {
+          token: ''
         }).then(() => {
             this.countDown();
         }).catch(res => {
@@ -357,7 +361,9 @@ export default {
               scene_id: this.isType === 'phone' ? 5 : 4,
               key: this.codeKey
             };
-            this.$fetch('resetPassword', params).then(res => {
+            this.$fetch('resetPassword', params, {
+              token: ''
+            }).then(res => {
               this.findStep = 4;
               let that = this;
               let linkTimer = setInterval(function() {
