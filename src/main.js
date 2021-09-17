@@ -112,6 +112,8 @@ Vue.directive('preventReClick', {    // 限制按钮重复点击
 });
 // 国际化
 import VueI18n from 'vue-i18n';
+import Cookies from 'js-cookie'
+
 Vue.use(VueI18n);
 Vue.use(loadMore)
 Vue.use(tooltipMove)
@@ -134,8 +136,6 @@ window.i18n = i18n;
 // Vue.prototype.$tinymce = tinymce;
 // Vue.use(VueTinymce);
 
-
-
 function clientToken(param) {
   let reg = new RegExp('[?&]' + param + '=([^&]*)[&$]*');
   let ret = (window.location.hash || window.location.search).match(reg);
@@ -144,6 +144,15 @@ function clientToken(param) {
   }
   return ret || '';
 }
+
+let pageGrayTag = clientToken('vhall_gray')
+let userGrayId = Cookies.get('gray-id')
+if (!userGrayId && pageGrayTag) {
+  // 若当前未存储过gray-id，并且vhall_gray有标记页面需存储假gray，存储gray-id
+  Cookies.set('gray-id', pageGrayTag)
+  window.location.reload()
+}
+
 let clientTokenVal = clientToken('token');
 if(clientTokenVal) {
   sessionOrLocal.set('token', clientTokenVal , 'localStorage');
