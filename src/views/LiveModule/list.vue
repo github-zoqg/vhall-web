@@ -47,7 +47,7 @@
       </div>
     <!-- 操作栏 -->
     <div v-if="totalElement">
-      <el-row :gutter="40" class="lives">
+      <el-row :gutter="24" class="lives">
           <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
             <!-- :xs="24" :sm="12" :md="12" :lg="8" :xl="6" -->
             <div @click="toLiveDetail(item.webinar_id)" class="inner">
