@@ -107,7 +107,7 @@
         <div class="titleBox">
           <span class="pageTitle">
             <span>直播中请勿修改连麦人数！无延迟最大支持1v5连麦，常规直播最大支持1v15连麦，开通更多连麦人数<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a></span>
-          </span></span>
+          </span>
         </div>
         <el-select filterable v-model="formData.zdy_inav_num" style="width: 312px">
           <template  v-for="(opt, optIndex) in inavNumOptions">
@@ -677,7 +677,7 @@ export default {
       });
     },
     covertMaxNum(keyNum) {
-      return 
+      return
     },
     handleSelectDelayMode(mode) {
       if (this.title === '编辑') return
@@ -1641,6 +1641,12 @@ export default {
           cursor: pointer;
         }
       }
+    }
+  }
+  li.el-select-dropdown__item.is-disabled {
+    color: #BFBFBF;
+    &:hover {
+      background: #ffffff;
     }
   }
 </style>
