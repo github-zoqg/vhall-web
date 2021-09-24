@@ -1,6 +1,10 @@
 <template>
   <div class="listBox">
-    <pageTitle :pageTitle="title"></pageTitle>
+    <pageTitle :pageTitle="title">
+      <div slot>
+        视频加密后，仅部分浏览器支持播放，具体内容请查看<span class="msgBlue" @click="openTip">《视频加密介绍》</span>
+      </div>
+    </pageTitle>
     <div class="noData" v-if="no_show === true">
       <null-page text="暂未创建回放" nullType="noAuth">
         <el-button class="length152" round type="primary" @click="toCreate">创建回放</el-button>
@@ -58,6 +62,9 @@
                   </div>
                   <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
                   <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
+                  <!-- 联调后删除 2021.09.23 -->
+                  <div v-if="scope.row.encrypt_status == 2" class="ps jiami">加密</div>
+                  <div v-if="scope.row.encrypt_status == 1" class="ps jiamizhong">加密中...</div>
                 </div>
                 <div class="info">
                   <p class="name">{{ scope.row.name }}</p>
@@ -117,12 +124,14 @@
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
               <el-button v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
               <el-button v-if="WEBINAR_PES['ui.record_chapter']" type="text" @click="toChapter(scope.row)">章节</el-button>
+              <el-button type="text" v-if="scope.row.source == 2" @click="encryption(scope.row)">加密</el-button>
               <el-dropdown v-if="!isDemand" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
                   <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
                   <el-dropdown-item v-if="!scope.row.layout" :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
                   <el-dropdown-item v-if="WEBINAR_PES['publish_record'] && !scope.row.layout" :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
+                  <el-dropdown-item v-if="WEBINAR_PES['record.encrypt'] && !scope.row.layout" :command="{command: 'record.encrypt', data: scope.row}">加密</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'delete', data: scope.row}">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -400,6 +409,12 @@ export default {
       this.getList()
     },
     setDefault(row) {
+      // 判断视频是否为加密中
+      if(row.type == 'jiamizhong'){
+        let msg = '视频加密中，请加密完成后使用此功能';
+        this.$message.warning(msg);
+        return;
+      }
       const confirmTitle = row.type === 6 ? '取消默认回放后，回放将不能观看' : '设置为默认回放后，将无法进行预约'
       this.$confirm(confirmTitle, '提示', {
         confirmButtonText: '确定',
@@ -423,6 +438,24 @@ export default {
       this.selectDatas = val;
     },
     handleCommand(param){
+      // 判断是否为加密视频
+      if(param.data.encrypt_status == '2' && param.command != 'delete' && param.command != 'record.encrypt'){
+        let msg = '加密视频不支持使用此功能';
+        this.$message.warning(msg);
+        return;
+      }
+      // 判断视频是否为加密中
+      if(param.data.type == '1'){
+        let msg = '视频加密中，请加密完成后使用此功能';
+        this.$message.warning(msg);
+        return;
+      }
+      // 判断视频是否为转码中
+      if(!param.data.transcode_status){
+        let msg = '视频转码中，不支持使用加密功能';
+        this.$message.warning(msg);
+        return;
+      }
       if(param.command == 'delete'){
         this.deletePlayBack(param.data.id, 2);
       }else if(param.command == 'tailoring'){
@@ -443,6 +476,10 @@ export default {
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
         })
         this.toVodreset(param.data)
+      }
+      // 加密按钮
+      if(param.command == 'record.encrypt'){
+        this.encryption(param.data)
       }
     },
     currentChangeHandler(num){
@@ -512,6 +549,12 @@ export default {
     },
     // 下载回放
     downPlayBack(data) {
+      // 判断视频是否为加密中
+      if(data.encrypt_status == '1'){
+        let msg = '视频加密中，请加密完成后使用此功能';
+        this.$message.warning(msg);
+        return;
+      }
       if (this.versionExpired) {
         this.$confirm('尊敬的用户，您的账号已到期。为了保证正常使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询', '提示', {
           confirmButtonText: '我知道了',
@@ -699,6 +742,12 @@ export default {
       })
     },
     async toChapter(row){
+      // 判断视频是否为加密中
+      if(row.encrypt_status == '1'){
+        let msg = '视频加密中，请加密完成后使用此功能';
+        this.$message.warning(msg);
+        return;
+      }
       this.$vhall_paas_port({
         k: 100410,
         data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, s: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
@@ -779,6 +828,62 @@ export default {
         })
       }
       this.checkTransStatus(recordData.id, routerPush)
+    },
+    // 加密
+    encryption(data){
+      // 判断是否有加密权限
+      if (this.WEBINAR_PES['record.encrypt']) {
+        this.$confirm('尊敬的用户：您的账号未开通视频加密功能，请联系您的专属售后或拨打400-888-9970转2咨询', '提示', {
+          confirmButtonText: '我知道了',
+          showCancelButton: false,
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {}).catch(() => {});
+        return false;
+      }
+      // 判断视频是否已加密
+      if(data.encrypt_status == '2'){
+        let msg = '当前视频已是加密视频';
+        this.$message.warning(msg);
+        return;
+      }
+      // 判断视频是否为加密中
+      if(data.encrypt_status == '1'){
+        let msg = '视频加密中，请加密完成后使用此功能';
+        this.$message.warning(msg);
+        return;
+      }
+      this.$confirm('视频一旦加密不支持取消加密，且不支持使用重制、剪辑、发布等功能，确定生成加密视频？', '提示', {
+        confirmButtonText: '确定',
+        cancelButton: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(() => {
+
+        this.$fetch('checkChapterSave', {
+          record_id: recordId
+        }).then(res => {
+          if (res.data && res.data.chatper_callbanck_status == 0) {
+            this.$message({
+              message:  '当前视频与文档正在关联中，请稍后再试',
+              showClose: true, // 是否展示关闭按钮
+              type: 'warning', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
+          } else {
+            this.$router.push({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+            // const routeData = this.$router.resolve({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
+            // window.open(routeData.href, '_blank');
+          }
+        })
+
+      }).catch(() => {});
+    },
+    // 加密介绍
+    openTip(){
+      window.open('https://saas-doc.vhall.com/docs/show/1417')
     }
   },
   filters: {
@@ -1061,6 +1166,32 @@ export default {
         color: #FFFFFF;
       }
     }
+  }
+  .ps{
+    position: absolute;
+  }
+  .jiami{
+    text-align: center;
+    font-size: 12px;
+    color: white;
+    width: 40px;
+    height: 22px;
+    background: #FB3A32;
+    border-radius: 4px 0px 12px 2px;
+    top: 0;
+    left: 0;
+  }
+  .jiamizhong{
+    text-align: center;
+    // font-size: 12px;
+    color: white;
+    width: 72px;
+    height: 23px;
+    background: #FB3A32;
+    border-radius: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
   }
 </style>
 <style lang="less">
