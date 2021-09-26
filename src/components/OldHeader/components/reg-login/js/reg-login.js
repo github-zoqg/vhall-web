@@ -691,14 +691,23 @@ export default {
         }
       })
     },
+    // 获取路径参数
+    getQueryString(name) {
+      const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)')
+      const r = window.location.search.substr(1).match(reg)
+      return r != null ? unescape(r[2]) : null
+    },
     // 初始化第三方链接
     handleBindPath() {
-      const hostPath = process.env.VUE_APP_BASE_URL + process.env.VUE_APP_WEB_KEY
+      const hostPath = process.env.VUE_APP_BIND_BASE_URL + process.env.VUE_APP_WEB_KEY
       // 前端回传地址
-      const jumpUrlPath = `${process.env.VUE_APP_WEB_URL}${window.location.pathname}${window.location.search}`
+      const specialId = this.getQueryString('id')
+      const delay = this.getQueryString('delay')
+      const jumpUrlPath = `${process.env.VUE_APP_WAP_WATCH}/cMiddle/${specialId}${delay ? '?delay=' + delay : ''}`
+      console.log('jumpUrlPath', jumpUrlPath)
       // 第三方登录地址
-      this.wxPath = `${hostPath}/commons/auth/weixin?source=pc&jump_url=${jumpUrlPath}`
-      this.qqPath = `${hostPath}/commons/auth/qq?source=pc&jump_url=${jumpUrlPath}`
+      this.wxPath = `${process.env.VUE_APP_BIND_BASE_URL}/v3/commons/auth/weixin?source=pc&jump_url=${encodeURIComponent(jumpUrlPath)}`
+      this.qqPath = `${process.env.VUE_APP_BIND_BASE_URL}/v3/commons/auth/qq?jump_url=${encodeURIComponent(jumpUrlPath)}`
     }
   },
   destroyed() {
