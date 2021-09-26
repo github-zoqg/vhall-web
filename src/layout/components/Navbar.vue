@@ -267,6 +267,9 @@ export default {
         if (msg.data.type == "record_download" && msg.data.user_id == sessionOrLocal.get('userId')) {
           EventBus.$emit('record_download', msg.data);
         }
+        if (msg.data.type == "entry_trans" && msg.data.user_id == sessionOrLocal.get('userId')) {
+          EventBus.$emit('encrypt_complete', msg.data);
+        }
         if (msg.data.type === 'waiting_sign_trans_code') {
           EventBus.$emit('waiting_sign_trans_code', msg.data);
         }

@@ -215,6 +215,7 @@ export default {
       editLoading: false,
       selectDatas: [],
       transcodingArr: [],
+      encryptingArr: [],
       recordType: '-1',
       liveDetailInfo: {},
       isDemand: '',
@@ -256,6 +257,7 @@ export default {
     this.getList();
     this.getLiveDetail();
     EventBus.$on('record_download', this.handleDownload)
+    EventBus.$on('encrypt_complete', this.handleEncryptCallback)
     this.getPermission(this.$route.params.str)
     this.getVersion()
   },
@@ -271,6 +273,7 @@ export default {
       this.chatSDK = null
     }
     EventBus.$off('record_download', this.handleDownload)
+    EventBus.$off('encrypt_complete', this.handleEncryptCallback)
     window.removeEventListener('resize', this.calcScreenWidth)
   },
   methods: {
@@ -445,7 +448,7 @@ export default {
         return;
       }
       // 判断视频是否为加密中
-      if(param.data.type == '1'){
+      if(param.data.encrypt_status == '1'){
         let msg = '视频加密中，请加密完成后使用此功能';
         this.$message.warning(msg);
         return;
@@ -507,7 +510,9 @@ export default {
       this.keyWords && (param.name = this.keyWords)
       this.loading = true;
       this.$fetch('playBackList', param).then(res=>{
-        res.data.list.forEach(item => (item.transcoding = false))
+        res.data.list.forEach(item => {
+          item.transcoding = false
+        })
         this.tableData = res.data.list;
         this.totalElement = res.data.total;
         if(this.no_show === '') {
@@ -530,6 +535,20 @@ export default {
       this.titleEdit = data.name;
       this.editDialogVisible = true;
       this.editRecord = data;
+    },
+    handleEncryptCallback(data) {
+      // data
+      // 'type'      => 'entry_trans',
+      // 'user_id'   => 视频资源对应用户id,
+      // 'status'    => 1 成功 2:失败,
+      // 'record_id' => 视频资源id
+      console.log('视频加密完成')
+      this.encryptingArr = this.encryptingArr.filter(item => {
+        if(item.id == data.record_id) {
+          item.encrypt_status = '2';
+          return false
+        }
+      })
     },
     handleDownload(data) {
       console.log('视频转码完成了')
@@ -832,7 +851,7 @@ export default {
     // 加密
     encryption(data){
       // 判断是否有加密权限
-      if (this.WEBINAR_PES['record.encrypt']) {
+      if (!this.WEBINAR_PES['record.encrypt']) {
         this.$confirm('尊敬的用户：您的账号未开通视频加密功能，请联系您的专属售后或拨打400-888-9970转2咨询', '提示', {
           confirmButtonText: '我知道了',
           showCancelButton: false,
@@ -861,9 +880,8 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-
         this.$fetch('checkChapterSave', {
-          record_id: recordId
+          record_id: data.id
         }).then(res => {
           if (res.data && res.data.chatper_callbanck_status == 0) {
             this.$message({
@@ -873,13 +891,21 @@ export default {
               customClass: 'zdy-info-box' // 样式处理
             });
           } else {
-            this.$router.push({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
-            // const routeData = this.$router.resolve({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
-            // window.open(routeData.href, '_blank');
+            this.encrypyStart(data)
           }
         })
 
       }).catch(() => {});
+    },
+    encrypyStart(data) {
+      this.$fetch('recordEncrypt', {
+        paas_record_id: data.paas_record_id
+      }).then(res => {
+        if(res.code == 200) {
+          data.encrypt_status = '1';
+          this.encryptingArr.push(data);
+        }
+      })
     },
     // 加密介绍
     openTip(){
