@@ -52,7 +52,7 @@ export default {
     return {
       dialogVisible: false,
       wxDialogVisible: false,
-      pcLink: `${process.env.VUE_APP_WEB_URL}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}`,
+      pcLink: `${process.env.VUE_APP_WAP_WATCH}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}`,
       link: `${process.env.VUE_APP_WAP_WATCH}/user/home/${this.$route.params.str || sessionOrLocal.get('userId')}`,
       wxUrl: `${Env.staticLinkVo.aliQr}`
     };

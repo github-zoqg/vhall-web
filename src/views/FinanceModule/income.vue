@@ -350,16 +350,29 @@ export default {
         return false;
       }
       // let flag = this.isBangWeixin();
-      let flag = this.userInfo.user_extends.is_bind_wechat;
-      // 0未绑定微信   绑定微信1
-      if (flag == 1) {
+      this.checkWithdrawalToB(title)
+    },
+    checkWithdrawalToB(title) {
+      this.$fetch('checkWithdrawalToB', {}).then(res => {
+        if (res && res.code == 200 && res.data) {
+          if (res.data.is_oauth == 1) {
+            sessionOrLocal.set('cashWechat', JSON.stringify(res.data));
+            // 已绑定，且有微信昵称 + 头像，不需要授权
         this.$refs.cashBox.dialogCashVisible = true;
         this.phone = this.userInfo.phone;
         this.money = title === '直播' ? this.incomeInfo.live_balance : this.incomeInfo.red_packet_balance;
         this.type = title === '直播' ? 0 : 1;
       } else {
+            // 未绑定 或者 微信昵称 和 头像任一一个未拿取到数据，需要授权
         this.$refs.cashBox.dialogVisible = true;
       }
+        } else {
+          this.$message.error(res.msg || '检测用户是否登录微信失败');
+        }
+      }).catch(res => {
+        console.log(title)
+        this.$message.error(res.msg || '检测用户是否登录微信失败');
+      })
     },
     onreload() {
       this.getIncomeInfo();

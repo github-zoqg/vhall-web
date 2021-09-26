@@ -82,14 +82,18 @@ export default {
   methods: {
     isShow(route) {
       if (this.childPremission && Number(this.childPremission.permission_data) === 0) {
-        // 子账号有设置权限
-        return !(route && route.meta && route.meta.name === 'dataMgr').filter(item => {
-          if (this.vsQuanxian[item.meta.auth_key] > 0) {
-            return true
-          } else {
-            return false
-          }
-        });
+        // 子账号有设置权限，数据不展示，碰到name=dataMgr的数据，不展示整个模块。其它模块正常处理
+        if (route && route.meta && route.meta.name === 'dataMgr') {
+          return false
+        } else {
+          return route && route.children && route.children.length > 0 && route.children.filter(item => {
+            if (this.vsQuanxian[item.meta.auth_key] > 0) {
+              return true
+            } else {
+              return false
+            }
+          })
+        }
       } else {
         // TODO 左侧导航菜单
         if (route.meta && route.meta.auth_key && this.vsQuanxian) {
@@ -245,7 +249,8 @@ export default {
       }
     });
     let _this = this;//赋值vue的this
-    window.onresize = () => { // 调用methods中的事件
+    window.onresize = () => {
+  　　// 调用methods中的事件
       _this.pageResize();
     }
   },

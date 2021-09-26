@@ -169,14 +169,20 @@ export default {
       this.$fetch('createApp', {}).then(res => {
         console.log('getAppList', res);
         this.$confirm(`添加成功，请手动添加包名签名信息`, '提示', {
+          distinguishCancelAndClose: true,
           confirmButtonText: '我知道了',
           cancelButtonText: '',
           customClass: 'zdy-message-box',
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel-hide'
-        }).then(() => {
+        }).then((active) => {
           this.search();
-        }).catch(() => {});
+        }).catch(action => {
+          // 关闭弹框，调用查询接口
+          if (action == 'close') {
+            this.search();
+          }
+        });
       }).catch(res =>{
         this.$message({
           message:  res.msg || '创建失败',

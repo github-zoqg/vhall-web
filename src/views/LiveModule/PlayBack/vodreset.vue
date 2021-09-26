@@ -186,7 +186,7 @@
           }
         }).catch(err => {
           this.$message({
-            message: `保存失败`,
+            message: err.msg || `保存失败`,
             showClose: true,
             type: 'error',
             customClass: 'zdy-info-box'

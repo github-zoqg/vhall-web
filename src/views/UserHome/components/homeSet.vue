@@ -319,6 +319,10 @@ export default {
         console.log(res);
         if (res && res.code === 200) {
           let { homepage_info } = res.data;
+          // 特殊干预，不然0字符串，会反显一张不存在的图。
+          if (homepage_info && homepage_info.img_url === '0') {
+            homepage_info.img_url = ''
+          }
           // homepage_info.homepage_avatar = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.homepage_avatar || '');
           // homepage_info.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, homepage_info.img_url || '');
           // console.log(homepage_info.imgShowUrl );
