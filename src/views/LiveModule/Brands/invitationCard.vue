@@ -537,8 +537,9 @@ export default {
               width: 332,
               height: 622,
               scrollY: 0,
-              scrollX: 0,
+              // scrollX: 0,
               // scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 12: 10,
+              scrollX: browerType === 'safari' ? 115 : 12,
               backgroundColor: null
             }).then(canvas => {
               _this.downloadImg = canvas.toDataURL('image/png', 1.0);
