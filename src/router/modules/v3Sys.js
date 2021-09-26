@@ -80,6 +80,12 @@ const router = [
     meta: { auth: false, name: 'common'},
     hidden: true
   },
+  {
+    path: '/cMiddle/:str(\\d+)',
+    meta: { auth: false, name: 'cMiddle', title: 'C端第三方登录授权' },
+    component: () => import('@/views/Login/thirdLogin'),
+    hidden: true
+  },
   { path: '*', redirect: '/warning/404', hidden: true }
 ];
 export default router;

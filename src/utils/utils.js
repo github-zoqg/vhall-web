@@ -272,7 +272,7 @@ export function checkAuth(to, from, next, that) {
     to.path.indexOf('/live/room') !== -1 ||
     to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'))
     || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) || to.path.indexOf('/upgrading') !== -1 || to.path.indexOf('/warning/') !== -1
-    || to.path.indexOf('/special/detail') != -1
+    || to.path.indexOf('/special/detail') != -1 || to.path.indexOf('/cMiddle') != -1
     ) {
     // 不验证直接进入
     next();
@@ -523,13 +523,14 @@ export const getStyle = ieVersion < 9 ? function(element, styleName) {
 
 // 刷新 token
 export const refreshToken = () => {
-  if (sessionOrLocal.get('token', 'localStorage')) {
+  const token = sessionOrLocal.get('token', 'localStorage')
+  if (token !== undefined && token !== 'undefined' && token !== '' && token !== null && token !== 'null') {
     return fetchData('refreshToken').then(res => {
       sessionOrLocal.set('token', res.data.token || '', 'localStorage');
       sessionOrLocal.set('tokenExpiredTime', res.data.exp_time, 'localStorage')
     }).catch(error => {
       // token 失效
-      if (error.code == 511006 || error.code == 511007) {
+      if (error.code == 511006 || error.code == 511007 || error.code == 511004) {
         sessionOrLocal.removeItem('token');
         sessionOrLocal.removeItem('tokenExpiredTime');
       }
