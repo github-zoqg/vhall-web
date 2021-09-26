@@ -438,9 +438,6 @@ export default {
         this.imgUrl = this.formInvitation.img || '';
         this.invitation = Boolean(res.data.status);
         // this.formInvitation.is_show_watermark = Boolean(this.formInvitation.is_show_watermark);
-        // if (this.invitation) {
-        //   this.getCanvasImg()
-        // }
       });
     },
     changeImg() {
@@ -540,8 +537,8 @@ export default {
               width: 332,
               height: 622,
               scrollY: 0,
-              // scrollX: 0,
-              scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 12: 0,
+              scrollX: 0,
+              // scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 12: 10,
               backgroundColor: null
             }).then(canvas => {
               _this.downloadImg = canvas.toDataURL('image/png', 1.0);
