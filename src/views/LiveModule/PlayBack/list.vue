@@ -60,13 +60,13 @@
                     <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">生成失败</p>
                     <p v-else class="statusDesc disabled">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
                   </div>
-                  <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
-                  <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
                   <!-- 联调后删除 2021.09.23 -->
                   <div v-if="scope.row.encrypt_status == 2" class="ps jiami">加密</div>
                   <div class="ps jiami_zhezhao" v-if="scope.row.encrypt_status == 1">
                     <div class="ps jiamizhong">加密中...</div>
                   </div>
+                  <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
+                  <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
                 </div>
                 <div class="info">
                   <p class="name">{{ scope.row.name }}</p>
@@ -414,8 +414,9 @@ export default {
       this.getList()
     },
     setDefault(row) {
+      console.log(row)
       // 判断视频是否为加密中
-      if(row.type == 'jiamizhong'){
+      if(row.encrypt_status == '1'){
         let msg = '视频加密中，请加密完成后使用此功能';
         this.$message.warning(msg);
         return;
@@ -450,13 +451,13 @@ export default {
         return;
       }
       // 判断视频是否为加密中
-      if(param.data.encrypt_status == '1'){
+      if(param.data.encrypt_status == '1' && param.command != 'delete'){
         let msg = '视频加密中，请加密完成后使用此功能';
         this.$message.warning(msg);
         return;
       }
       // 判断视频是否为转码中
-      if(!param.data.transcode_status){
+      if(!param.data.transcode_status && param.command != 'delete'){
         let msg = '视频转码中，不支持使用加密功能';
         this.$message.warning(msg);
         return;
