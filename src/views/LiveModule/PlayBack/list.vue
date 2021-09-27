@@ -133,7 +133,7 @@
                   <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
                   <el-dropdown-item v-if="!scope.row.layout" :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
                   <el-dropdown-item v-if="WEBINAR_PES['publish_record'] && !scope.row.layout" :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
-                  <el-dropdown-item v-if="WEBINAR_PES['record.encrypt'] && !scope.row.layout" :command="{command: 'record.encrypt', data: scope.row}">加密</el-dropdown-item>
+                  <el-dropdown-item v-if="!scope.row.layout" :command="{command: 'record.encrypt', data: scope.row}">加密</el-dropdown-item>
                   <el-dropdown-item :command="{command: 'delete', data: scope.row}">删除</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
