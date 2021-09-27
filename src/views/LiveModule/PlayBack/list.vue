@@ -851,7 +851,7 @@ export default {
     // 加密
     encryption(data){
       // 判断是否有加密权限
-      if (WEBINAR_PES['record.encrypt'] != 1) {
+      if (this.WEBINAR_PES['record.encrypt'] != 1) {
         this.$confirm('尊敬的用户：您的账号未开通视频加密功能，请联系您的专属售后或拨打400-888-9970转2咨询', '提示', {
           confirmButtonText: '我知道了',
           showCancelButton: false,
