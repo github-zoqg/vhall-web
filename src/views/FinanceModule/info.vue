@@ -298,7 +298,7 @@ export default {
   },
   methods: {
     dealDisabledData(time) {
-      return time.getTime() > Date.now() - 8.64e7; //设置选择今天以及今天以前的日期
+      return time.getTime() > Date.now() - 8.64e7; //设置选择今天以前的日期
     },
     initPage() {
       // 初始化设置日期为最近一周
