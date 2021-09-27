@@ -1,8 +1,8 @@
 <template>
   <div class="listBox">
     <pageTitle :pageTitle="title">
-      <div slot>
-        视频加密后，仅部分浏览器支持播放，具体内容请查看<span class="msgBlue" @click="openTip">《视频加密介绍》</span>
+      <div slot class="color999">
+        视频加密后，观看端播放加密视频，详情介绍请查看<span class="msgBlue" @click="openTip">《视频加密介绍》</span>
       </div>
     </pageTitle>
     <div class="noData" v-if="no_show === true">
@@ -64,7 +64,9 @@
                   <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
                   <!-- 联调后删除 2021.09.23 -->
                   <div v-if="scope.row.encrypt_status == 2" class="ps jiami">加密</div>
-                  <div v-if="scope.row.encrypt_status == 1" class="ps jiamizhong">加密中...</div>
+                  <div class="ps jiami_zhezhao" v-if="scope.row.encrypt_status == 1">
+                    <div class="ps jiamizhong">加密中...</div>
+                  </div>
                 </div>
                 <div class="info">
                   <p class="name">{{ scope.row.name }}</p>
@@ -1218,6 +1220,17 @@ export default {
     top: 50%;
     left: 50%;
     transform: translate(-50%,-50%);
+  }
+  .color999{
+    color: #999;
+    font-size: 14px;
+  }
+  .jiami_zhezhao{
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+
   }
 </style>
 <style lang="less">
