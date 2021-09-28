@@ -2,7 +2,7 @@
   <div class="listBox">
     <pageTitle :pageTitle="title">
       <div slot class="color999">
-        视频加密后，观看端播放加密视频，详情介绍请查看<span class="msgBlue" @click="openTip">《视频加密介绍》</span>
+        视频加密后，观看端播放加密视频，详细介绍请查看<span class="msgBlue" @click="openTip">《视频加密介绍》</span>
       </div>
     </pageTitle>
     <div class="noData" v-if="no_show === true">
@@ -1231,7 +1231,7 @@ export default {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.6);
-
+    border-radius: 4px;
   }
 </style>
 <style lang="less">
