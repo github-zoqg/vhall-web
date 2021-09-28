@@ -19,7 +19,8 @@ export default {
     }
     const validPwd = (rule, value, callback) => {
       console.log(rule)
-      const pattern = /^(\w){6,30}$/
+      // const pattern = /^(\w){6,30}$/
+      const pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/
       this.mailError = value === '' || !pattern.exec(value)
       if (value === '') {
         callback(new Error('请输入登录密码'))
@@ -31,8 +32,8 @@ export default {
       }
     }
     const validRegPwd = (rule, value, callback) => {
-      // const pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/
-      const pattern = /^(\w){6,30}$/
+      const pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/
+      // const pattern = /^(\w){6,30}$/
       if (value === '') {
         // callback(new Error('请设置登录密码'))
         callback() // 允许为空
