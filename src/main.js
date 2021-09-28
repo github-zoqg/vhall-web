@@ -51,6 +51,22 @@ import 'moment/locale/zh-cn';
 
 import { getParams } from './utils/general';
 import fetchData from './api/fetch';
+import * as Sentry from '@sentry/browser'
+import * as Integrations from '@sentry/integrations'
+
+if(process.env.NODE_ENV == 'production') {
+  Sentry.init({
+    dsn: 'http://f283305b06764042a899319546d60581@fe-log.vhall.com/29',
+    logErrors: true,
+    integrations: [new Integrations.Vue({ Vue, attachProps: true })]
+  })
+} else {
+  Sentry.init({
+    dsn: 'http://40c39d3d012e41f3a20e9765545d28c2@test-sentry.vhall.com/22',
+    logErrors: true,
+    integrations: [new Integrations.Vue({ Vue, attachProps: true })]
+  })
+}
 window.test = sessionOrLocal
 Vue.prototype.$fetch = fetchData;
 Vue.prototype.$moment = moment;
