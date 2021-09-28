@@ -264,7 +264,8 @@ export default {
       })
       // this.dialogShareVisible = true;
       this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${id}`;
-      this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail?id=${id}`;
+      // this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail?id=${id}`;
+      this.shareVo.pcUrl = `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${id}`;
     },
     // 预览页面
     specialDetail(item) {
@@ -272,8 +273,9 @@ export default {
         k:100494,
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-      let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id, delay: this.hasDelayPermission} });
-      window.open(routeData.href, '_blank');
+      // let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id, delay: this.hasDelayPermission} });
+      // window.open(routeData.href, '_blank');
+      window.open(`${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${item.id}&delay=${this.hasDelayPermission}`, '_blank')
     },
     introduceDetail() {
       this.$vhall_paas_port({

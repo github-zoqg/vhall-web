@@ -850,10 +850,10 @@ export default {
   },
   computed: {
     qqLink() {
-      return `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/qq?source=pc&jump_url=${this.location}/watch/${this.roomData.webinar.id}`
+      return `${process.env.VUE_APP_BIND_BASE_URL}/v3/commons/auth/qq?source=pc&jump_url=${this.location}/watch/${this.roomData.webinar.id}`
     },
     wxLink() {
-      return `${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=pc&jump_url=${this.location}/watch/${this.roomData.webinar.id}`
+      return `${process.env.VUE_APP_BIND_BASE_URL}/v3/commons/auth/weixin?source=pc&jump_url=${this.location}/watch/${this.roomData.webinar.id}`
     }
   },
   methods: {
@@ -1166,8 +1166,9 @@ export default {
     },
     // 校验登录次数
     checkLoginAccount() {
-      this.$fetch('loginCheck', {
-        account: this.ruleForm.username
+      this.$fetch('loginCheckC', {
+        account: this.ruleForm.username,
+        channel: 'C'
       }).then(res => {
         if (res.data.check_result == 1) { // 账号被锁定 再次登录需要图片验证
           this.photoCpathaShow = true;

@@ -1091,15 +1091,17 @@ export default {
       const innitDom = () => {
         dom.onmouseover = e => {
           console.log('dom over', e);
-          this.TimesShow = true;
           const totalWidth = dom.offsetWidth;
           this.ContorlWidth = dom.offsetWidth;
           const lef = e.layerX;
           this.hoverTime = (lef / totalWidth) * this.totalTime;
+           console.log('当前hoverTime时间', this.hoverTime)
           this.hoverLeft = lef;
+          this.TimesShow = this.hoverTime > 0 ? true : false
           dom.onmousemove = event => {
             const lef = event.layerX;
             this.hoverTime = (lef / totalWidth) * this.totalTime;
+            this.TimesShow = this.hoverTime > 0 ? true : false
             this.hoverLeft = lef;
           };
         };

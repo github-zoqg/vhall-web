@@ -235,8 +235,9 @@ export default {
         routerStr = `/lives/watch/${item.webinar_id}`;
       }
       if (this.tabType !== 'live') {
-        let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id, delay: this.hasDelayPermission } });
-        return routeData.href;
+        // let routeData = this.$router.resolve({ path: '/special/detail', query: {id: item.id, delay: this.hasDelayPermission } });
+        // return routeData.href;
+        return `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${item.id}&delay=${this.hasDelayPermission}`
         // window.open(routeData.href, '_blank');
       } else {
        /*  let routeData = this.$router.resolve({

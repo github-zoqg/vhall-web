@@ -67,7 +67,7 @@ export default {
         data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       sessionOrLocal.set('tag', 'bindWx', 'localStorage');
-      window.open(`${process.env.VUE_APP_BASE_URL}/v3/commons/auth/weixin?source=pc&jump_url=${process.env.VUE_APP_WEB_URL}`, '_blank');
+      window.open(`${process.env.VUE_APP_BIND_BASE_URL}/v3/commons/auth/weixin?source=pc&jump_url=${process.env.VUE_APP_WEB_URL}`, '_blank');
     },
     bindQQ() {
       this.$vhall_paas_port({
@@ -75,7 +75,7 @@ export default {
         data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       sessionOrLocal.set('tag', 'bindQQ', 'localStorage');
-      window.open(`${process.env.VUE_APP_BASE_URL}/v3/commons/auth/qq?jump_url=${process.env.VUE_APP_WEB_URL}`);
+      window.open(`${process.env.VUE_APP_BIND_BASE_URL}/v3/commons/auth/qq?jump_url=${process.env.VUE_APP_WEB_URL}`);
     },
     unBindQQ() {
       this.$confirm('解绑 QQ 后你将无法使用 QQ 登录，你确定要解绑吗？', '提示', {
@@ -102,7 +102,7 @@ export default {
     },
     unBindSend(type) {
       this.$fetch('unBindInfo', {
-        platform: type
+        type: type
       }).then(res => {
         this.$message({
           message:  `解绑成功`,

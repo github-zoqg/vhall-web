@@ -66,7 +66,10 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
     origin: window.location.origin,
     'request-id': uuidV1()
   };
-
+  // header 可能传gray-id，可能传递token，可能传递Content-Type
+  if (header['token'] !== null && header['token'] !== undefined) {
+    headers['token'] = header['token']
+  }
   // 若head里面存在，以head传入的灰度ID为准
   if (header['gray-id'] > 0) {
     headers['gray-id'] = header['gray-id']
@@ -81,7 +84,9 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
     headers.platform = header.platform || sessionOrLocal.get('platform', 'localStorage') || 17;
   }
   // interact_token && (headers['interact-token'] = interact_token)
-  if(window.location.hash.indexOf('/live/watch/') !== -1) {
+  if(window.location.hash.indexOf('/live/watch/') !== -1
+     || window.location.pathname.indexOf('/cMiddle/') !== -1
+     || window.location.pathname.indexOf('/special/detail') !== -1) {
     // pc观看等
     headers.platform = 7;
   }

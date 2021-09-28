@@ -43,21 +43,24 @@
               </el-dropdown> -->
               <el-dropdown class="avatar-container">
                 <div class="avatar-wrapper">
-                  <img :src="avatarImgUrl" class="user-avatar" alt="" />
+                  <div class="user-avatar">
+                    <img :src="avatarImgUrl" alt=""/>
+                  </div>
                   <span>{{show_name}}</span>
                 </div>
                 <el-dropdown-menu slot="dropdown" class="user-dropdown">
-                  <el-dropdown-item divided @click.native="toLive"><i class="iconfont-v3 saasicon_lives1"></i> 我的直播</el-dropdown-item>
+                  <!-- <el-dropdown-item divided @click.native="toLive"><i class="iconfont-v3 saasicon_lives1"></i> 我的直播</el-dropdown-item>
                   <el-dropdown-item divided @click.native="toFinance"><i class="iconfont-v3 saasicon_account1"></i> 账户中心</el-dropdown-item>
                   <el-dropdown-item divided @click.native="toMyHome"><i class="iconfont-v3 saasicon_home1"></i> 我的主页</el-dropdown-item>
-                  <el-dropdown-item divided @click.native="toAccount"><i class="iconfont-v3 saasicon_Settings1"></i> 账户设置</el-dropdown-item>
-                  <el-dropdown-item divided @click.native="loginOut"><i class="iconfont-v3 saasicon_exit"></i> 退出</el-dropdown-item>
+                  <el-dropdown-item divided @click.native="toAccount"><i class="iconfont-v3 saasicon_Settings1"></i> 账户设置</el-dropdown-item> -->
+                  <el-dropdown-item divided @click.native="loginOut"><i class="iconfont-v3 saasicon_exit"></i> 退出登录</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
             <div class="unlogin"  v-if="!isLogin">
               <span><img src="../../common/images/sys/my-light@2x.png" alt=""></span>
-              <label @click="toLoginPageHandle">登录</label>
+              <!-- <label @click="toLoginPageHandle">登录</label> -->
+              <label @click="openLoginHandler">登录</label>
               <!-- <el-button size="small" round @click="toLoginPageHandle">登录</el-button>
               <el-button type="primary" size="small" round @click="toRegisterHandle">注册</el-button> -->
             </div>
@@ -65,15 +68,22 @@
         </div>
       </nav>
     </header>
+    <!-- 登录与注册 -->
+    <RegLogin ref="regLogin"></RegLogin>
   </div>
 </template>
 
 <script>
 import {sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
+import RegLogin from './components/reg-login/index'
+
 
 export default {
   name: "index.vue",
+  components: {
+    RegLogin
+  },
   props: {
     isShowLogin: {
       require: false,
@@ -128,6 +138,13 @@ export default {
         path: '/login'
       });
     },
+    // 打开登录弹出框
+    openLoginHandler() {
+      this.$refs.regLogin.dialogVisible = true
+      this.$nextTick(() => {
+        this.$refs.regLogin && this.$refs.regLogin.changeTagHandler(2)
+      })
+    },
     toRegisterHandle() {
       this.$router.push({
         path: '/register'
@@ -155,15 +172,24 @@ export default {
     },
     handleCommand(command) {
       if(command === 'loginOut') {
+
         this.loginOut();
       }
     },
     userLogoGet(id) {
+      let headers = {
+        'gray-id': id
+      }
+      if (this.$route.path.indexOf('/special/detail') != -1) {
+        let vhsaas_token = sessionOrLocal.get('vhsaas_token', 'localStorage')
+        if (vhsaas_token == null || vhsaas_token == undefined) {
+          vhsaas_token = ''
+        }
+        headers.token = vhsaas_token
+      }
       this.$fetch('userLogoGet', {
         webinar_user_id: id
-      }, {
-        'gray-id': id
-      }).then(res => {
+      }, headers).then(res => {
         console.log('用户控制台标识图：', res);
         this.logo = res.data.logo || '';
         this.logo_jump_url = res.data.logo_jump_url ? res.data.logo_jump_url : process.env.VUE_APP_COMPANY_URL;
@@ -206,22 +232,34 @@ export default {
       this.userInfo = JSON.parse(userInfo);
       this.avatarImgUrl = this.userInfo ? this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     }
-    this.isLogin = userInfo !== null && userInfo !== undefined && userInfo !== '' && userInfo !== 'null';
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
     this.$EventBus.$on('saas_vs_login_out', this.loginOut);
     if (this.$route.path.indexOf('/user/home') !== -1) {
+      this.isLogin = userInfo !== null && userInfo !== undefined && userInfo !== '' && userInfo !== 'null';
       if(this.$route.meta.type !== 'owner') {
         // 非控制台查看
         this.userLogoGet(this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str);
       }
     } else if (this.$route.path.indexOf('/chooseWay/') !== -1 && this.$route.path.indexOf('/live/chooseWay/') === -1) {
+      this.isLogin = userInfo !== null && userInfo !== undefined && userInfo !== '' && userInfo !== 'null';
       let _data = this.$route.params
       this.arr = [_data.str, _data.role]; // 活动ID，角色
       this.getSignInfo(this.arr[0]);
     } else if (this.$route.path.indexOf('/special/detai') !== -1 && this.user_id) {
+      userInfo  = sessionOrLocal.get('vhsaas_userInfo', 'localStorage');
+      if(userInfo !== null && userInfo !== 'null') {
+        this.userInfo = JSON.parse(userInfo);
+        this.avatarImgUrl = this.userInfo ? this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      }
+      this.isLogin = userInfo !== null && userInfo !== undefined && userInfo !== '' && userInfo !== 'null';
       // 根据专题得创建者Id，得到其头像数据
       this.userLogoGet(this.user_id);
     }
+    this.$EventBus.$on('saas_vs_login_success', data => {
+      this.isLogin = true
+      this.userInfo = data || {}
+      this.avatarImgUrl = data ? data.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+    })
   }
 };
 </script>
@@ -414,6 +452,13 @@ header.commen-header {
     display: inline-block;
     vertical-align: middle;
     border-radius: 100%;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: 100%;
+      -o-object-fit: cover;
+      object-fit: cover;
+    }
   }
   span {
     font-size: 14px;
