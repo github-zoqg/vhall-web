@@ -60,13 +60,13 @@
                     <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">生成失败</p>
                     <p v-else class="statusDesc disabled">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
                   </div>
+                  <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
+                  <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
                   <!-- 联调后删除 2021.09.23 -->
                   <div v-if="scope.row.encrypt_status == 2" class="ps jiami">加密</div>
                   <div class="ps jiami_zhezhao" v-if="scope.row.encrypt_status == 1">
                     <div class="ps jiamizhong">加密中...</div>
                   </div>
-                  <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
-                  <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
                 </div>
                 <div class="info">
                   <p class="name">{{ scope.row.name }}</p>
