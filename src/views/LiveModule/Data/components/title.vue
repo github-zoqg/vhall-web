@@ -5,7 +5,7 @@
        <img :src="liveDetailInfo.img_url" alt="">
       </div>
       <div class="box-title">
-        <div class="title-status" v-if="liveDetailInfo.webinar_state == 1">
+        <div class="title-status padlr8" v-if="liveDetailInfo.webinar_state == 1">
           <img src="../../../../common/images/live/lives.gif" alt="">
           <b>直播 <span v-if="hasDelayPermission && liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
         </div>
@@ -117,5 +117,8 @@ export default {
     color: #555;
     line-height: 20px;
   }
+}
+.padlr8{
+  padding: 0 8px;
 }
 </style>
