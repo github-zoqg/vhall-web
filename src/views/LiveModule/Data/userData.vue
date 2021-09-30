@@ -328,9 +328,9 @@ export default {
     getBaseUserInfo(params) {
       this.$fetch('getUserBaseinfo', this.$params(params)).then(res => {
         this.tableList = res.data.list;
-        // this.tableList.map(item => {
-        //   item.userName = `${item.nick_name == null ? '' : item.nick_name}${item.w_name == null ? '' : item.w_name}`;
-        // })
+        this.tableList.map(item => {
+          item.watch_provice = `${item.watch_provice}+${item.watch_city}`;
+        })
         this.totalNum = res.data.total;
       });
     },
