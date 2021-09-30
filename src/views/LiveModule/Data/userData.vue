@@ -329,7 +329,7 @@ export default {
       this.$fetch('getUserBaseinfo', this.$params(params)).then(res => {
         this.tableList = res.data.list;
         this.tableList.map(item => {
-          item.watch_provice = `${item.watch_provice}+${item.watch_city}`;
+          item.watch_provice = `${item.watch_provice}-${item.watch_city}`;
         })
         this.totalNum = res.data.total;
       });
