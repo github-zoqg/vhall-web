@@ -62,7 +62,6 @@
                   </div>
                   <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
                   <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
-                  <!-- 联调后删除 2021.09.23 -->
                   <div v-if="scope.row.encrypt_status == 2" class="ps jiami">加密</div>
                   <div class="ps jiami_zhezhao" v-if="scope.row.encrypt_status == 1">
                     <div class="ps jiamizhong">加密中...</div>
@@ -853,6 +852,12 @@ export default {
     },
     // 加密
     encryption(data){
+      // 判断视频是否为转码失败
+      if(data.transcode_status == '2'){
+        let msg = '视频转码失败，不支持使用加密功能';
+        this.$message.warning(msg);
+        return;
+      }
       // 判断是否有加密权限
       if (this.WEBINAR_PES['record.encrypt'] != 1) {
         this.$confirm('尊敬的用户：您的账号未开通视频加密功能，请联系您的专属售后或拨打400-888-9970转2咨询', '提示', {
