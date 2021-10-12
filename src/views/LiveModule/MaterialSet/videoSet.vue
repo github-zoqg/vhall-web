@@ -3,7 +3,7 @@
     <pageTitle pageTitle="插播文件">
       <!-- <span class="video-text">音视频中的文件内容应用于暖场视频和点播</span> -->
       <div slot="content">
-        1.上传单个文件最大2G
+        1.上传单个文件最大5G
         <br>
         2.上传视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV
         <br>
@@ -340,9 +340,10 @@ export default {
         });
         return false;
       }
-      if (file.size > 2147483648) {
+      if (file.size > 5.3638709e9) {
+        // 2147483648
         this.$message({
-          message: `您上传的文件不能大于2G`,
+          message: `您上传的文件不能大于5G`,
           showClose: true,
           // duration: 0,
           type: 'error',

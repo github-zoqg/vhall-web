@@ -29,7 +29,7 @@
               <span class="tag" v-if="isForm">报名表单</span>
             </p>
             <div class="action-look">
-              <el-button round size="small" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:8px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
+              <el-button round size="small" v-if="[3, 5].includes(liveDetailInfo.webinar_state) && liveDetailInfo.webinar_type != 5" style="margin-right:8px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
               <el-popover
                 placement="bottom"
                 trigger="hover"
@@ -76,7 +76,8 @@
             <i>秒</i>
           </p>
           <p v-else><span>{{ liveDetailInfo.webinar_state | liveText }}</span></p>
-          <el-button round type="primary" @click="toRoom" :disabled="isAnginOpen">发起直播</el-button>
+          <el-button round type="primary" @click="toEndLive" v-if="liveDetailInfo.webinar_type == 5">结束 直播</el-button>
+          <el-button round type="primary" @click="toRoom" :disabled="isAnginOpen" v-else>发起直播</el-button>
         </div>
         <div class="inner liveTime" v-if="outLiveTime && liveDetailInfo.webinar_state == 2">
           <p class="subColor">直播即将开始</p>
@@ -297,6 +298,10 @@ export default {
           })
           clipboard.destroy();
         });
+    },
+    // 结束直播
+    toEndLive() {
+      //强制结束直播
     },
     // 打开页面
     openLink() {

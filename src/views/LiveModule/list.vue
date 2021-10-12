@@ -5,13 +5,15 @@
         1.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
         <br/>
         2.控制台数据为真实数据，不统计虚拟数据
+        <br/>
+        3.定时直播不支持发起直播，不支持在微吼直播App的活动列表展示
       </div>
     </pageTitle>
     <!-- 操作栏 -->
       <div class="operaBox" v-if="totalElement || isSearch">
         <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
         <el-button size="medium"  round @click="createLiveAction('2')" v-if="vodPerssion == 1" class="transparent-btn" v-preventReClick>创建点播</el-button>
-        <!--  v-if="vodPerssion == 1"  -->
+        <el-button size="medium"  round @click="createLiveAction('3')" class="transparent-btn" v-preventReClick>创建定时直播</el-button>
         <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="liveHandler">
             <el-option
@@ -69,7 +71,7 @@
                   <p class="liveTime">{{item.start_time}}</p>
                 </div>
                 <p class="liveOpera" @click.stop="nullFunc">
-                  <el-tooltip class="item" effect="dark" content="开播" placement="top" v-if="item.webinar_state!=4" v-tooltipMove>
+                  <el-tooltip class="item" effect="dark" content="开播" placement="top" v-if="!(item.webinar_state==4 && item.webinar_type== 5)" v-tooltipMove>
                     <i class="iconfont-v3 saasicon_kaibo" @click.prevent.stop="goLivePlay(item)"></i>
                     <!-- <router-link :to="`chooseWay/${item.webinar_id}/1`" target="_blank"><i class="el-icon-video-camera"></i></router-link> -->
                   </el-tooltip>
@@ -79,7 +81,7 @@
                   <el-tooltip v-tooltipMove class="item" effect="dark" content="详情" placement="top">
                     <i class="iconfont-v3 saasicon_xiangqing" @click.prevent.stop="toDetail(item.webinar_id)"></i>
                   </el-tooltip>
-                  <el-tooltip v-tooltipMove class="item" effect="dark" content="复制" placement="top" v-if="item.webinar_state!=4">
+                  <el-tooltip v-tooltipMove class="item" effect="dark" content="复制" placement="top" v-if="!(item.webinar_state==4 && item.webinar_type== 5)">
                     <i class="iconfont-v3 saasicon_copy1" @click.prevent.stop="toCopy(item.webinar_id)"></i>
                   </el-tooltip>
                   <span @click.prevent.stop>

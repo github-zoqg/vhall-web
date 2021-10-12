@@ -769,7 +769,7 @@ export default {
     toCreateDemand(recordData) {
       const routerPush = () => {
         this.$router.push({
-          path: `/live/vodEdit`,
+          path: `/live/publishPlayback/${this.webinar_id}`,
           query: {
             record_id: recordData.id,
             paas_record_id: recordData.paas_record_id,

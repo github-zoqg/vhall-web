@@ -67,6 +67,17 @@ const router = [
         meta: { auth: true, title: '创建点播', name: 'vodCreate', webniarType: 'vod', activeMenu: '/live/vodEdit', auth_key: 'ui.upload_video_as_demand'},
       },
       {
+        path: 'timeEdit',
+        component: () => import('@/views/LiveModule/edit'),
+        meta: { auth: true, title: '定时直播', level: 2 , name: 'liveTimeCreate', webniarType: 'live', activeMenu: '/live/edit'},
+      },
+      {
+        path: 'timeEdit/:id',
+        component: () => import('@/views/LiveModule/edit'),
+        meta: { auth: true, title: '编辑定时直播', level: 2 , name: 'liveTimeEdit', webniarType: 'live', activeMenu: '/live/edit'},
+        hidden: true
+      },
+      {
         path: 'detail/:str(\\d+)',
         component: Detail,
         meta: { auth: true, title: '直播详情', name: 'liveDetail', activeMenu: '/live/list'},
@@ -239,6 +250,12 @@ const router = [
         path: 'recordplayback/:str(\\d+)',
         component: () => import('@/views/LiveModule/PlayBack/list'),
         meta:{ auth: true, title: '点播管理', name: 'recordplayback', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'publishPlayback/:str(\\d+)',
+        component: () => import('@/views/LiveModule/publishPlayback.vue'),
+        meta:{ auth: true, title: '发布回放', name: 'publishPlayback', activeMenu: '/live/list'},
         hidden: true
       },
       {

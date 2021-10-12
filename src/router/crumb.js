@@ -127,6 +127,22 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
+  else if (metaName === 'liveTimeCreate') {// 创建定时直播
+    return [
+      {
+        title: '直播管理',
+        path: '/live',
+        isClick: false,
+        redirect: 'noRedirect'
+      },
+      {
+        title: '创建定时直播',
+        path: '/live/timeEdit',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
   else if (metaName === 'liveDetail') {// 直播详情
     return [
       ...CrumbLiveList('liveList'),
@@ -164,6 +180,37 @@ export function CrumbSet(metaName, that) {
       },{
         title: '编辑信息',
         path: `/live/vodEdit/${that.$route.params.id}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
+  else if (metaName === 'liveTimeEdit') {// 编辑定时直播
+    return [
+     ...CrumbLiveList('liveList'),
+      {
+        title: '活动详情',
+        path: `/live/detail/${that.$route.params.id}`,
+        query: that.$route.query,
+        isClick: true
+      },{
+        title: '编辑信息',
+        path: `/live/timeEdit/${that.$route.params.id}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
+  else if (metaName === 'publishPlayback') {// 发布点播
+    return [
+     ...CrumbLiveList('liveList'),
+      {
+        title: '活动详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },{
+        title: '发布点播',
+        path: `/live/publishPlayback/${that.$route.params.id}`,
         isClick: false,
         redirect: 'noRedirect'
       }
