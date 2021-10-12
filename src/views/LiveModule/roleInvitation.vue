@@ -67,7 +67,7 @@
                   1、嘉宾可凭口令进入直播间；<br/>
                   2、互动直播中，通过网页端和客户端登录的主持人和<br/>
                   <span style="padding-left:20px;">嘉宾，都可以进行连麦；</span><br />
-                  3、每个直播间最多可以登录10位嘉宾；<br/>
+                  3、每个直播间最多可以登录20位嘉宾；<br/>
                   4、直播中无法修改嘉宾权限。
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
@@ -113,7 +113,7 @@
               <el-tooltip v-tooltipMove>
                 <div slot="content">
                   1、助理可凭口令进入直播间；<br />
-                  2、每个直播间最多可以登录10位助理；<br />
+                  2、每个直播间最多可以登录20位助理；<br />
                   3、直播中无法修改助理权限。
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>

@@ -245,6 +245,7 @@ const apis = {
   getDefaultStartTime: ['/v3/webinars/record/get-record-time', 'POST'], // 获取创建回放初始时间-预览场景 xiaodong.ding
   recordReTranscode: ['/v3/webinars/record/record-trans-code', 'POST'], // 回放重新生成
   recordRemark: ['/v3/webinars/record/record-remake', 'POST'], // 课件重制
+  recordEncrypt: ['/v3/webinars/record/push-entry-video', 'POST'], // 视频加密
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
