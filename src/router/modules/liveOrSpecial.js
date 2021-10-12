@@ -69,12 +69,12 @@ const router = [
       {
         path: 'timeEdit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '定时直播', level: 2 , name: 'liveTimeCreate', webniarType: 'live', activeMenu: '/live/edit'},
+        meta: { auth: true, title: '定时直播', level: 2 , name: 'liveTimeCreate', webniarType: 'time', activeMenu: '/live/timeEdit',auth_key: 'webinar.timing'},
       },
       {
         path: 'timeEdit/:id',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '编辑定时直播', level: 2 , name: 'liveTimeEdit', webniarType: 'live', activeMenu: '/live/edit'},
+        meta: { auth: true, title: '编辑定时直播', level: 2 , name: 'liveTimeEdit', webniarType: 'time', activeMenu: '/live/timeEdit'},
         hidden: true
       },
       {

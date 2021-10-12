@@ -88,7 +88,7 @@
       </el-col>
     </el-row>
     <item-card :type='liveDetailInfo.webinar_state' :webinarType="liveDetailInfo.webinar_type"  :isTrue="isTrue" :perssionInfo="perssionInfo" :childPremission="childPremission" @blockHandler="blockHandler" v-if="isShow"></item-card>
-    <begin-play :webinarType="liveDetailInfo.webinar_type" :webinarId="$route.params.str" v-if="liveDetailInfo.webinar_state!=4"></begin-play>
+    <begin-play :webinarType="liveDetailInfo.webinar_type" :webinarId="$route.params.str" v-if="liveDetailInfo.webinar_state!=4 || liveDetailInfo.webinar_type!=5"></begin-play>
   </div>
 </template>
 
@@ -191,6 +191,7 @@ export default {
         if(res.data.permissions) {
           sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
           this.perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+          console.log(this.perssionInfo, '>>>>>>1231<<<')
           this.isShow = true;
           this.isTrue = arr.some(item => {
             // eslint-disable-next-line no-prototype-builtins
@@ -216,7 +217,12 @@ export default {
         if (res.data.webinar_state == 4) {
           this.$route.meta.title = '点播详情';
         } else {
-          this.$route.meta.title = '直播详情';
+          if (res.data.webinar_type == 5) {
+            this.$route.meta.title = '定时直播详情';
+          } else {
+            this.$route.meta.title = '直播详情';
+          }
+          
         }
         this.getFormInfo(id);
         if (res.data.webinar_state == 1) {
@@ -378,7 +384,12 @@ export default {
           if (this.liveDetailInfo.webinar_state == 4) {
             this.$router.push({path: `/live/vodEdit/${this.$route.params.str}`, query: {type: 2 }});
           } else {
-            this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {type: 2 }});
+            if (this.liveDetailInfo.webinar_type == 5) {
+              this.$router.push({path: `/live/timeEdit/${this.$route.params.str}`, query: {type: 2 }});
+            } else {
+              this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {type: 2 }});
+            }
+            
           }
         } else if (item.path === '/live/question') {
           // 问卷

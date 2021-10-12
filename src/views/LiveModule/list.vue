@@ -13,7 +13,7 @@
       <div class="operaBox" v-if="totalElement || isSearch">
         <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
         <el-button size="medium"  round @click="createLiveAction('2')" v-if="vodPerssion == 1" class="transparent-btn" v-preventReClick>创建点播</el-button>
-        <el-button size="medium"  round @click="createLiveAction('3')" class="transparent-btn" v-preventReClick>创建定时直播</el-button>
+        <el-button v-if="isTiming == 1" size="medium"  round @click="createLiveAction('3')" class="transparent-btn" v-preventReClick>创建定时直播</el-button>
         <div class="searchBox search-tag-box">
           <el-select v-model="liveStatus" placeholder="全部" @change="liveHandler">
             <el-option
@@ -110,6 +110,7 @@
       <noData :nullType="nullText" :text="text">
         <el-button type="primary" v-if="nullText == 'nullData'" round @click="createLiveAction('1')" v-preventReClick  class="length152">创建直播</el-button>
         <el-button round v-if="nullText == 'nullData' && vodPerssion == 1" class="transparent-btn length152"  @click="createLiveAction('2')" v-preventReClick >创建点播</el-button>
+        <el-button v-if="isTiming == 1" size="medium"  round @click="createLiveAction('3')" class="transparent-btn" v-preventReClick>创建定时直播</el-button>
       </noData>
     </div>
   </div>
@@ -152,6 +153,7 @@ export default {
       ],
       loading: true,
       liveList: [],
+      isTiming: 0  //是否有定时直播权限
     };
   },
   computed: {
@@ -166,10 +168,11 @@ export default {
   created() {
     // 创建点播是否可用(全局)
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
-    this.vodPerssion = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['ui.upload_video_as_demand'];
+    const SAAS_VS_PES = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))
+    this.vodPerssion = SAAS_VS_PES['ui.upload_video_as_demand'];
+    this.isTiming = SAAS_VS_PES['webinar.timing']
     this.getLiveList();
-    const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
-    const permission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] : 0
+    const permission = SAAS_VS_PES ? SAAS_VS_PES['no.delay.webinar'] : 0
     this.isDelay = permission == 1 ? true : false
     console.log('>>>>>>>10', this.isDelay)
   },
@@ -433,7 +436,8 @@ export default {
           }
         });
       } else {
-        index === '1' ? this.$router.push({path:'/live/edit', query: {refer: 3}}) : this.$router.push({path:'/live/vodEdit', query: {refer: 3}});
+        let url = index == 1 ? '/live/edit' : index == 2 ? '/live/vodEdit' : '/live/timeEdit'
+        this.$router.push({path: url, query: {refer: 3}});
       }
     },
     toDetail(id, state) {
