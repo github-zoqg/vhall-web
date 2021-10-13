@@ -87,7 +87,7 @@
         </div>
       </el-col>
     </el-row>
-    <item-card :type='liveDetailInfo.webinar_state' :webinarType="liveDetailInfo.webinar_type"  :isTrue="isTrue" :perssionInfo="perssionInfo" :childPremission="childPremission" @blockHandler="blockHandler" v-if="isShow"></item-card>
+    <item-card :type='liveDetailInfo.webinar_state' :webinarType="liveDetailInfo.webinar_type"  :isTrue="isTrue" :perssionInfo="perssionInfo" :childPremission="childPremission" :videoType="videoType" @blockHandler="blockHandler" v-if="isShow"></item-card>
     <begin-play :webinarType="liveDetailInfo.webinar_type" :webinarId="$route.params.str" v-if="liveDetailInfo.webinar_state!=4 &&liveDetailInfo.webinar_type!=5"></begin-play>
   </div>
 </template>
@@ -145,6 +145,9 @@ export default {
     },
     childPremission: function(){
       return sessionOrLocal.get('SAAS_V3_SON_PS') ? JSON.parse(sessionOrLocal.get('SAAS_V3_SON_PS')) : {};
+    },
+    videoType() {  //定时直播视频格式 用来确定是否有暖场视频
+      return this.liveDetailInfo.webinar_type == 5 && (this.liveDetailInfo.msg_url == '.MP3' || this.liveDetailInfo.msg_url == '.MAV')
     }
   },
   created(){
@@ -219,6 +222,7 @@ export default {
         } else {
           if (res.data.webinar_type == 5) {
             this.$route.meta.title = '定时直播详情';
+            this.videoType = res.data.msg_url
           } else {
             this.$route.meta.title = '直播详情';
           }
@@ -309,6 +313,26 @@ export default {
     // 结束直播
     toEndLive() {
       //强制结束直播
+      this.$confirm('正在直播中，确定结束直播？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {
+          this.timingliveEnd();
+        }).catch(() => {});
+    },
+    timingliveEnd() {
+      this.$fetch('liveEnd', this.$params({
+        webinar_id: this.$route.params.str,
+        end_type: 1
+      })).then((res) => {
+        if(res && res.code === 200) {
+          this.getLiveDetail(this.$route.params.str);
+        } 
+      }).catch(e => {
+      });
     },
     // 打开页面
     openLink() {

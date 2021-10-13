@@ -58,10 +58,11 @@
     <section v-if="!(childPremission && Number(childPremission.permission_content) === 0)">
       <p class="subject">{{ webinarType == 5 ? '视频' : type == 4 ? '点播' : '回放'}}</p>
       <div class="subjectOuter">
-        <div class="sunjectInner" @click="goHandler(type == 4 ? `/live/recordplayback/${$route.params.str}` : `/live/playback/${$route.params.str}`, type)">
-          <!-- <icon class="icon" icon-class="saasicon_huifangguanli"></icon> -->
-          <span><img src="../../common/images/icon/icon_review.png" alt=""></span>
-
+        <div class="sunjectInner" @click="goHandler(webinarType == 5 ? `/live/publishplayback/${$route.params.str}` : (type == 4 ? `/live/recordplayback/${$route.params.str}` : `/live/playback/${$route.params.str}`), type)">
+          <span>
+            <img src="../../common/images/icon/icon_timing@2x.png" alt="" v-if="webinarType == 5">
+            <img src="../../common/images/icon/icon_review.png" alt="" v-else>
+          </span>
           <div class="desc">
             <p class="mainText">{{ webinarType == 5 ? '视频管理' : type == 4 ? '点播管理' : '回放管理'}}</p>
             <p class="subText">{{ webinarType == 5 ? '管理视频内容' : type == 4 ? '管理点播内容' : '管理直播回放内容'}}</p>
@@ -111,6 +112,10 @@ export default {
     isTrue: {
       type:Boolean,
       default: true
+    },
+    videoType: {
+      type:Boolean,
+      default: false
     }
   },
   created() {
@@ -124,7 +129,7 @@ export default {
         { icon: 'icon_Functional@2x', id: 2, title: '功能配置', subText: `设置观看页功能是否展示`, type: 100059, path: `/live/planFunction/${this.$route.params.str}`,isShow: true},
         { icon: 'icon_watch@2x', id: 3, title: '观看限制', subText: `设置${this.type == 4 ? '点播' :'直播'}观看限制`, type: 100060, path: `/live/viewerRules/${this.$route.params.str}`, isShow: true},
         { icon: 'icon_role@2x', id: 4, title: '角色邀请', subText: '设置不同角色参与直播的权限', index: 4, type: 100061, path: `/live/roleInvitation/${this.$route.params.str}`, isShow: this.type != 4},
-        { icon: 'icon_video@2x', id: 5, title: '暖场视频', subText: '开启后设置暖场视频',index: 4, type: 100062, path: `/live/warm/${this.$route.params.str}`, isShow: this.type != 4 && this.webinarType!=1},
+        { icon: 'icon_video@2x', id: 5, title: '暖场视频', subText: '开启后设置暖场视频',index: 4, type: 100062, path: `/live/warm/${this.$route.params.str}`, isShow: this.type != 4 && this.webinarType!=1 && !this.videoType},
         { icon: 'icon_virtual@2x', id: 6, title: '虚拟人数', subText: `添加${this.type == 4 ? '点播' :'直播'}的虚拟人数`, type: 100063, path: `/live/virtual/${this.$route.params.str}`, isShow: this.perssionInfo.virtual_user==1},
         { icon: 'icon_registration form@2x', id: 7, title: '报名表单', subText: '开启后收集目标观众信息', type: 100064, path: `/live/signup/${this.$route.params.str}`, isShow: this.perssionInfo.join_check==1},
         { icon: 'icon_embedded@2x', id: 8, title: '推广嵌入', subText: `获取活动推广嵌入的方法`, type: 100065, path: `/live/embedCard/${this.$route.params.str}`, isShow: true}

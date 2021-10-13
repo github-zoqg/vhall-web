@@ -14,7 +14,7 @@
             <!-- <label class="live-status" v-if="item.webinar_state == 1">
               <img src="../../../../../common/images/live.gif" alt="">
             </label> -->
-            {{item | liveTag}}
+            {{item | actionTag}}
             <span v-if="item.no_delay_webinar == 1"> | 无延迟</span>
           </span>
         </div>

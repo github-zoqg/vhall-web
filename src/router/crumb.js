@@ -201,21 +201,6 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
-  else if (metaName === 'publishPlayback') {// 发布点播
-    return [
-     ...CrumbLiveList('liveList'),
-      {
-        title: '活动详情',
-        path: `/live/detail/${that.$route.params.str}`,
-        isClick: true
-      },{
-        title: '发布点播',
-        path: `/live/publishPlayback/${that.$route.params.id}`,
-        isClick: false,
-        redirect: 'noRedirect'
-      }
-    ];
-  }
   else if (metaName === 'chooseWay') {// 选择发起方式
     return [
      ...CrumbLiveList('liveList'),
@@ -725,6 +710,21 @@ export function CrumbSet(metaName, that) {
       },{
         title: '点播管理',
         path: `/live/recordplayback/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
+  else if (metaName === 'publishplayback') {// 定时直播管理
+    return [
+     ...CrumbLiveList('liveList'),
+      {
+        title: '活动详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },{
+        title: '视频管理',
+        path: `/live/publishplayback/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'
       }

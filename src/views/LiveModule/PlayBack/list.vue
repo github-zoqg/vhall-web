@@ -1,7 +1,7 @@
 <template>
   <div class="listBox">
     <pageTitle :pageTitle="title">
-      <div slot class="color999">
+      <div slot class="color999" v-if="liveDetailInfo.webinar_type != 5">
         视频加密后，观看端播放加密视频，详细介绍请查看<span class="msgBlue" @click="openTip">《视频加密介绍》</span>
       </div>
     </pageTitle>
@@ -61,7 +61,7 @@
                     <p v-else class="statusDesc disabled">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
                   </div>
                   <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
-                  <span v-if="!isDemand" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
+                  <span v-if="!isDemand || liveDetailInfo.webinar_type == 5" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
                   <div v-if="scope.row.encrypt_status == 2" class="ps jiami">加密</div>
                   <div class="ps jiami_zhezhao" v-if="scope.row.encrypt_status == 1">
                     <div class="ps jiamizhong">加密中...</div>
@@ -125,7 +125,7 @@
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
               <el-button v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
               <el-button v-if="WEBINAR_PES['ui.record_chapter']" type="text" @click="toChapter(scope.row)">章节</el-button>
-              <el-button type="text" v-if="$route.meta.name == 'recordplayback'" @click="encryption(scope.row)">加密</el-button>
+              <el-button type="text" v-if="$route.meta.name == 'recordplayback' || $route.meta.name == 'publishplayback'" @click="encryption(scope.row)">加密</el-button>
               <el-dropdown v-if="!isDemand" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
@@ -185,10 +185,25 @@
       :close-on-click-modal=false
       :close-on-press-escape=false
       width="580px">
-      <div class="publish-container"></div>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" round size="medium">立即发布</el-button>
-      </span>
+      <div class="publish-container">
+        <div class="item" :class="activeIndex == 1 ? 'active' : 'unactive'" @click="activeIndex=1">
+          <p class="item-img"><img src="./images/vod@2x.png" alt=""></p>
+          <div class="item-text">
+            <p>发布为点播</p>
+            <span>不支持定时直播和不支持助理的管理权限</span>
+          </div>
+        </div>
+        <div class="item" :class="activeIndex == 2 ? 'active' : 'unactive'" @click="activeIndex=2">
+          <p class="item-img"><img src="./images/timing@2x.png" alt=""></p>
+          <div class="item-text">
+            <p>发布为定时直播</p>
+            <span>支持定时直播和助理的管理权限</span>
+          </div>
+        </div>
+      </div>
+      <div class="dialog-publish-footer">
+        <el-button type="primary" round size="medium" @click="publishVideo">立即发布</el-button>
+      </div>
     </el-dialog>
     <!-- 预览功能 -->
     <template v-if="showDialog">
@@ -247,7 +262,9 @@ export default {
       WEBINAR_PES: {},
       isBidScreen: true,
       versionExpired: false, // 用户套餐是否过期
-      publishDialogVisible: true
+      publishDialogVisible: false,
+      activeIndex: 1,  //默认激活点播
+      recordData: {}  //发布时数据
       // WEBINAR_PES: sessionOrLocal.get('WEBINAR_PES', 'localStorage') && JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')) || {},
     };
   },
@@ -262,7 +279,7 @@ export default {
       if (this.isDemand === '') {
         return ''
       } else if (this.isDemand) {
-        return '点播管理'
+        return this.liveDetailInfo.webinar_type == 5 ? '视频管理' : '点播管理'
       } else {
         return '回放管理'
       }
@@ -345,7 +362,7 @@ export default {
           if(res.data.permissions) {
             sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
             this.WEBINAR_PES = JSON.parse(res.data.permissions)
-            this.handleTipMsgVisible()
+            // this.handleTipMsgVisible()
           } else {
             sessionOrLocal.removeItem('WEBINAR_PES');
           }
@@ -395,7 +412,12 @@ export default {
     getLiveDetail() {
       this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
         this.liveDetailInfo = res.data;
-        this.isDemand = this.liveDetailInfo.is_demand == 1;
+        if (this.liveDetailInfo.webinar_type == 5 && !this.liveDetailInfo.is_demand) {
+          this.isDemand = true
+        } else {
+          this.isDemand = this.liveDetailInfo.is_demand == 1;
+        }
+        
         this.calcScreenWidth()
         if (this.isDemand) {
           this.recordType = '上传'
@@ -409,6 +431,7 @@ export default {
             { label: '录制', value: '1' },
             { label: '打点录制', value: '3' }
           ]
+          this.handleTipMsgVisible()
         }
       }).catch(res=>{
         this.$message({
@@ -851,9 +874,20 @@ export default {
     },
     // 发布
     toCreateDemand(recordData) {
+      this.recordData = recordData
+      if (this.WEBINAR_PES['webinar.timing'] == 1) {
+        this.publishDialogVisible = true
+      } else {
+        this.publishVodTiming(recordData, 1)
+      }
+    },
+    
+    // 发布为点播或定时直播
+    publishVodTiming(recordData, index) {
+      const url = index == 1 ? '/live/vodEdit' : '/live/timeEdit'
       const routerPush = () => {
         this.$router.push({
-          path: `/live/publishPlayback/${this.webinar_id}`,
+          path: url,
           query: {
             record_id: recordData.id,
             paas_record_id: recordData.paas_record_id,
@@ -863,6 +897,10 @@ export default {
         })
       }
       this.checkTransStatus(recordData.id, routerPush)
+    },
+    publishVideo() {
+      this.publishDialogVisible = false
+      this.publishVodTiming(this.recordData, this.activeIndex)
     },
     // 加密
     encryption(data){
@@ -1251,6 +1289,56 @@ export default {
     height: 100%;
     background: rgba(0, 0, 0, 0.6);
     border-radius: 4px;
+  }
+  .publish-container{
+    padding: 0 40px;
+    display: flex;
+    flex-direction: column;
+    .item{
+      display: flex;
+      padding: 28px 32px;
+      border-radius: 4px;
+      align-items: center;
+      border: 1px solid transparent;
+      &-img{
+        width: 42px;
+        height: 36px;
+        img{
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
+        }
+      }
+      &-text{
+        padding-left: 10px;
+        p{
+          color: #1A1A1A;
+          font-size: 16px;
+          line-height: 25px;
+        }
+        span{
+          color: #666;
+          font-size: 14px;
+          line-height: 20px;
+        }
+      }
+      &:first-child{
+        margin-bottom: 24px;
+      }
+      &.active{
+        border: 1px solid #FB3A32;
+      }
+      &.unactive {
+        box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
+      }
+      &:hover{
+        box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+  .dialog-publish-footer{
+    padding:  32px 0;
+    text-align: center;
   }
 </style>
 <style lang="less">

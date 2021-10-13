@@ -253,9 +253,9 @@ const router = [
         hidden: true
       },
       {
-        path: 'publishPlayback/:str(\\d+)',
-        component: () => import('@/views/LiveModule/publishPlayback.vue'),
-        meta:{ auth: true, title: '发布回放', name: 'publishPlayback', activeMenu: '/live/list'},
+        path: 'publishplayback/:str(\\d+)',
+        component: () => import('@/views/LiveModule/PlayBack/list'),
+        meta:{ auth: true, title: '视频管理', name: 'publishplayback', activeMenu: '/live/list'},
         hidden: true
       },
       {

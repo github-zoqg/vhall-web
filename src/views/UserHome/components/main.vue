@@ -39,7 +39,7 @@
                 <label class="live-status" v-if="item.webinar_state == 1">
                   <!-- @click="toPageHandle(item)" -->
                   <img src="../../../common/images/live.gif" alt="" />
-                </label>{{item | liveTag}}
+                </label>{{item | actionTag}}
                 <span v-if='hasDelayPermission && item.no_delay_webinar == 1'> | 无延迟</span>
               </span>
               <span class="hot" v-if="item.hide_pv > 0">

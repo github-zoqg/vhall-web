@@ -431,7 +431,7 @@ export default {
       }
     },
     isEditTime() {
-      return this.$route.query.type == 2 && this.liveDetailInfo.webinar_type == 5
+      return this.liveDetailInfo.webinar_state == 1 && this.liveDetailInfo.webinar_type == 5
     },
     // admin无延迟活动权限
     webinarDelay() {
