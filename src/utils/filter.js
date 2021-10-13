@@ -40,6 +40,13 @@ export const liveTag = (val) => {
     }
     return str;
 };
+export const actionTextTag = (val) => {
+  // webinar_state  1直播 2预约 3结束 4点播 5回放
+  // webinar_type  1音频直播 2视频直播 3互动直播 5定时直播
+  const liveTypeStr = ['', '直播', '预告', '结束', '点播', '回放'];
+  let str = val.webinar_type == 5 ? `${liveTypeStr[val.webinar_state]}| 定时直播` : liveTypeStr[val.webinar_state];
+  return str;
+};
 export const actionText = (val) => {
   // webinar_state  1直播 2预约 3结束 4点播 5回放
   const liveTypeStr = ['', '直播', '预告', '结束', '点播', '回放'];

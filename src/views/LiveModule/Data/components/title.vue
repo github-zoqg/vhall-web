@@ -10,7 +10,7 @@
           <b>直播 <span v-if="hasDelayPermission && liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
         </div>
         <div class="title-status grayColor" v-else>
-          <b>{{ liveDetailInfo | liveTag }} <span v-if="hasDelayPermission && liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
+          <b>{{ liveDetailInfo | actionTextTag }} <span v-if="hasDelayPermission && liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
         </div>
         <div class="title-text">
           <p>

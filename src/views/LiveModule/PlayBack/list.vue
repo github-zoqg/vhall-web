@@ -177,6 +177,19 @@
         <el-button @click="editDialogVisible = false" :disabled="editLoading" round size="medium">取消</el-button>
       </span>
     </el-dialog>
+
+    <!-- 发布弹窗 -->
+    <el-dialog
+      title="发布回放"
+      :visible.sync="publishDialogVisible"
+      :close-on-click-modal=false
+      :close-on-press-escape=false
+      width="580px">
+      <div class="publish-container"></div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" round size="medium">立即发布</el-button>
+      </span>
+    </el-dialog>
     <!-- 预览功能 -->
     <template v-if="showDialog">
       <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center
@@ -234,6 +247,7 @@ export default {
       WEBINAR_PES: {},
       isBidScreen: true,
       versionExpired: false, // 用户套餐是否过期
+      publishDialogVisible: true
       // WEBINAR_PES: sessionOrLocal.get('WEBINAR_PES', 'localStorage') && JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')) || {},
     };
   },

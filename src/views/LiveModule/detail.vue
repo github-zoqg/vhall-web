@@ -77,8 +77,8 @@
             <i>秒</i>
           </p>
           <p v-else><span>{{ liveDetailInfo.webinar_state | liveText }}</span></p>
-          <el-button round type="primary" @click="toEndLive" v-if="liveDetailInfo.webinar_type == 5">结束 直播</el-button>
-          <el-button round type="primary" @click="toRoom" :disabled="isAnginOpen" v-else>发起直播</el-button>
+          <el-button round type="primary" @click="toEndLive" v-if="liveDetailInfo.webinar_type == 5 && liveDetailInfo.webinar_state == 1">结束直播</el-button>
+          <el-button round type="primary" @click="toRoom" :disabled="isAnginOpen" v-if="liveDetailInfo.webinar_type != 5">发起直播</el-button>
         </div>
         <div class="inner liveTime" v-if="outLiveTime && liveDetailInfo.webinar_state == 2">
           <p class="subColor">直播即将开始</p>
@@ -88,7 +88,7 @@
       </el-col>
     </el-row>
     <item-card :type='liveDetailInfo.webinar_state' :webinarType="liveDetailInfo.webinar_type"  :isTrue="isTrue" :perssionInfo="perssionInfo" :childPremission="childPremission" @blockHandler="blockHandler" v-if="isShow"></item-card>
-    <begin-play :webinarType="liveDetailInfo.webinar_type" :webinarId="$route.params.str" v-if="liveDetailInfo.webinar_state!=4 || liveDetailInfo.webinar_type!=5"></begin-play>
+    <begin-play :webinarType="liveDetailInfo.webinar_type" :webinarId="$route.params.str" v-if="liveDetailInfo.webinar_state!=4 &&liveDetailInfo.webinar_type!=5"></begin-play>
   </div>
 </template>
 
@@ -393,17 +393,17 @@ export default {
           }
         } else if (item.path === '/live/question') {
           // 问卷
-          this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {roomId: this.liveDetailInfo.vss_room_id }});
+          this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {roomId: this.liveDetailInfo.vss_room_id,query: {type:this.liveDetailInfo.webinar_type } }});
         } else if(item.path === `/live/prizeSet/${this.$route.params.str}` || item.path === `/live/gift/${this.$route.params.str}`) {
           // 奖品
-          this.$router.push({path: item.path, query: {roomId:this.liveDetailInfo.vss_room_id }});
+          this.$router.push({path: item.path, query: {roomId:this.liveDetailInfo.vss_room_id, type:this.liveDetailInfo.webinar_type }});
         } else if (item.path === `/live/interactionData/${this.$route.params.str}`) {
           // 互动统计
           this.$router.push({path: item.path, query: {roomId:this.liveDetailInfo.vss_room_id }});
         } else if (item.path == `/live/embedCard/${this.$route.params.str}`) {
           this.$router.push({path: item.path, query: {type:this.liveDetailInfo.webinar_type }});
         } else {
-          this.$router.push({path: item.path});
+          this.$router.push({path: item.path, query: {type:this.liveDetailInfo.webinar_type }});
         }
       }else{
         console.log(item);

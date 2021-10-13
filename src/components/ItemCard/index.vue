@@ -195,7 +195,7 @@ export default {
         k: type === 4 ? 100079 : 100078,
         data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-      this.$router.push({path: path});
+      this.$router.push({path: path, query:{type: this.webinarType}});
     }
   }
 };
