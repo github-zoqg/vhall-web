@@ -110,7 +110,7 @@
             <span>直播中请勿修改连麦人数！无延迟最大支持1v5连麦，常规直播最大支持1v15连麦，开通更多连麦人数<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a></span>
           </span>
         </div>
-        <el-select filterable v-model="formData.zdy_inav_num" style="width: 312px">
+        <el-select filterable v-model="zdy_inav_num" style="width: 312px">
           <template  v-for="(opt, optIndex) in inavNumOptions">
             <el-option :key="optIndex" :label="opt.label" :value="opt.label" :disabled="selectDelayMode == 'delay' ? opt.value > 6 : opt.value > speakerMaxNum"/>
           </template>
@@ -502,9 +502,9 @@ export default {
         limitCapacity: '',
         limitCapacitySwtich: false,
         imageUrl: '',
-        domain_url: '',
-        zdy_inav_num: ''
+        domain_url: ''
       },
+      zdy_inav_num: '',
       liveMode: 2,
       liveDetailInfo: {},
       showChecked: false,
@@ -685,7 +685,7 @@ export default {
           this.speakerMaxNum = data['speaker_max_num'] || ''
           if (Number(this.$route.query.type) !== 2) {
             // 不是编辑，默认设置值如此
-            this.formData.zdy_inav_num = `1v${Number(data['speaker_max_num'])-1}`
+            this.zdy_inav_num = `1v${Number(data['speaker_max_num'])-1}`
           }
         }
       }).catch(res =>{
@@ -699,9 +699,9 @@ export default {
       if (this.title === '编辑') return
       this.selectDelayMode = mode
       // 切换直播延迟方式后，直播模式限制更新
-      let inav_num = Number(this.formData.zdy_inav_num.replace('1v', '')) + 1
+      let inav_num = Number(this.zdy_inav_num.replace('1v', '')) + 1
       if (mode === 'delay' && inav_num > 6) {
-        this.formData.zdy_inav_num = '1v5'
+        this.zdy_inav_num = '1v5'
       }
     },
     getLiveBaseInfo(id, flag) {
@@ -733,7 +733,8 @@ export default {
           this.formData.limitCapacitySwtich = false;
         }
         this.formData.capacity = Boolean(this.liveDetailInfo.is_capacity);
-        this.formData.zdy_inav_num = `1v${Number(this.liveDetailInfo.inav_num) - 1}`;
+        // this.formData.zdy_inav_num = `1v${Number(this.liveDetailInfo.inav_num) - 1}`;
+        this.zdy_inav_num = `1v${Number(this.liveDetailInfo.inav_num) - 1}`;
         if (this.liveDetailInfo.paas_record_id) {
           this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
           this.selectMedia.id = this.liveDetailInfo.record_id;
@@ -887,10 +888,10 @@ export default {
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
         no_delay_webinar: this.selectDelayMode == 'delay' ? 1 : 0,
         is_timing: this.webinarVideo ? (this.$route.meta.webniarType == 'vod' ? 0 : 1) : '',
-        inav_num: Number(this.formData.zdy_inav_num.replace("1v","")) + 1
+        inav_num: Number(this.zdy_inav_num.replace("1v","")) + 1
       };
       console.log('>>>>>>>>>>111', data)
-     
+
 
       if(this.$route.query.type != 2 ) {
         data = this.$params(data)
@@ -1133,7 +1134,7 @@ export default {
       margin-bottom: 0px;
     }
   }
-  
+
 
   /deep/.el-upload--picture-card i.saasicon_shangchuan{
     font-size: 40px;
