@@ -18,7 +18,7 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="1">-</el-col>
+          <el-col class="line" :span="1">&nbsp;</el-col>
           <el-col :span="11.5">
             <el-form-item prop="date2" style="width:284px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
@@ -1169,7 +1169,7 @@ export default {
   }
   .line{
     text-align: center;
-    width: 20px;
+    width: 16px;
   }
   .pageTitle {
     font-size: 14px;
