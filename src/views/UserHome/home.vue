@@ -114,6 +114,9 @@ export default {
             homepage_info.img_url = ''
           }
           this.userHomeVo = homepage_info;
+          if(this.$route.meta.type == 'new') {
+            document.title = this.userHomeVo.title;
+          }
           this.attentioned_count = attentioned_count;
           this.follow = follow;
           this.content = homepage_info.content;
