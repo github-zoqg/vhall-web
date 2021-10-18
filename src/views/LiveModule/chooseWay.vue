@@ -18,10 +18,14 @@
             <p>可进行多人连麦</p>
             <p>需要使用chrome浏览器</p>
           </div> -->
-          <div class="choose-p choose-a-way" :class="[chooseType === 'client' ? 'client active' : 'choose-a-way', hasDelayPermission && delayStatus == 1 ? 'no-hover' : '']" @click.prevent.stop="changeChoose('client')">
+          <div class="choose-p choose-a-way" :class="[
+            chooseType === 'client' ? 'client active' : 'choose-a-way'
+          ]" @click.prevent.stop="changeChoose('client')">
+            <!-- class设置包含：hasDelayPermission && delayStatus == 1 ? 'no-hover' : ''
             <div v-if="hasDelayPermission && delayStatus == 1" class="delay-mask">
               无延迟直播暂不支持此方式发起
             </div>
+            -->
             <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
             <p class="f-20">客户端发起</p>
             <p>需安装客户端、支持多种视频采集卡、插入视频等功能</p>
@@ -105,7 +109,7 @@ export default {
       })
     },
     changeChoose(type) {
-      if (this.hasDelayPermission && this.delayStatus == 1) return
+      // if (this.hasDelayPermission && this.delayStatus == 1) return
       this.chooseType = type;
     },
     goLive(){
@@ -200,7 +204,7 @@ export default {
     const perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
     if (perssionInfo) {
       this.hasDelayPermission = perssionInfo['no.delay.webinar'] && perssionInfo['no.delay.webinar'] == 1 ? true : false
-    } 
+    }
   }
 };
 </script>
@@ -283,7 +287,7 @@ export default {
     // background-size: 200px;
     // position: relative;
     position:relative;
-    
+
   }
   &:hover{
     box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
