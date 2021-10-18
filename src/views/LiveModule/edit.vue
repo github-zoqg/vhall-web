@@ -873,7 +873,7 @@ export default {
         record_id: this.webinarVideo ? this.selectMedia.id : '',
         subject: this.formData.title, // 标题
         introduction: this.unescapeHTML(this.formData.content.replace("&lt;p&gt;","")) || '<p></p>', // 简介
-        start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
+        start_time: this.webniarTypeToZH == '点播' ? '' : `${this.formData.date1} ${this.formData.date2}`, // 创建时间
         webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
         is_private: this.formData.home ? 0 : 1 , // 是否在个人主页显示
@@ -890,12 +890,12 @@ export default {
         is_timing: this.webinarVideo ? (this.$route.meta.webniarType == 'vod' ? 0 : 1) : '',
         inav_num: Number(this.zdy_inav_num.replace("1v","")) + 1
       };
-      console.log('>>>>>>>>>>111', data)
 
 
       if(this.$route.query.type != 2 ) {
         data = this.$params(data)
       }
+      console.log('>>>>>>>>>>111', this.webniarTypeToZH, this.$params(data))
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.loading = true;
