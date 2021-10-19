@@ -25,6 +25,7 @@ const controle = {
     setVideo(){
       let _seekTime = 0;
       _seekTime = (this.sliderVal / 100) * this.totalTime;
+      this.statePaly = true
       this.$Vhallplayer.setCurrentTime(_seekTime, () => {
         console.log('调整播放时间失败');
       });
