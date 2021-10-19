@@ -339,7 +339,7 @@ export default {
           duration: 0
         });
         let open = document.querySelector('#msgBlue');
-        open.addEventListener('click', function(e){
+        open && open.addEventListener('click', function(e){
           let url = 'https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038'
           that.$vhall_paas_port({
             k: 100017,
@@ -362,7 +362,6 @@ export default {
           if(res.data.permissions) {
             sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
             this.WEBINAR_PES = JSON.parse(res.data.permissions)
-            this.handleTipMsgVisible()
           } else {
             sessionOrLocal.removeItem('WEBINAR_PES');
           }
@@ -425,6 +424,7 @@ export default {
             { label: '上传', value: '2' }
           ]
         } else {
+          this.handleTipMsgVisible()
           this.typeOptions = [
             { label: '全部来源', value: '-1' },
             { label: '回放', value: '0' },
@@ -433,7 +433,6 @@ export default {
           ]
         }
       }).catch(res=>{
-        console.log(res, '??????12313')
         this.$message({
           message: res.msg,
           showClose: true,
@@ -441,7 +440,6 @@ export default {
           type: 'error',
           customClass: 'zdy-info-box'
         });
-        console.log(error);
       }).finally(()=>{
         this.loading = false;
       });
