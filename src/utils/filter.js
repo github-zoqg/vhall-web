@@ -52,7 +52,7 @@ export const actionTag = (val) => {
   // webinar_type  1音频直播 2视频直播 3互动直播 5定时直播
   const liveTypeStr = ['', '直播', '预告', '结束', '点播', '回放'];
   const liveStatusStr = ['', '音频直播', '视频直播', '互动直播'];
-  let str = val.webinar_type == 5 ? `${liveTypeStr[val.webinar_state]}` : liveTypeStr[val.webinar_state] + ' | ' + liveStatusStr[val.webinar_type];
+  let str = val.webinar_type == 5 || val.webinar_state == 4 ? `${liveTypeStr[val.webinar_state]}` : liveTypeStr[val.webinar_state] + ' | ' + liveStatusStr[val.webinar_type];
   return str;
 };
 export const actionText = (val) => {

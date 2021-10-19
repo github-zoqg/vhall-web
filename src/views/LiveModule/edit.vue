@@ -10,7 +10,7 @@
       </el-form-item>
       <el-form-item label="直播时间" required v-if="webniarType=='live' || webniarType=='time'" class="item-time">
           <p v-if="webniarTypeToZHTitle == '定时直播'">直播过程中，定时直播活动的直播时间将不可修改</p>
-          <el-col :span="11.5">
+          <el-col :span="11.5" class="line">
             <el-form-item prop="date1" style="width:283px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
             ]">
@@ -18,7 +18,6 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="1">&nbsp;&nbsp;</el-col>
           <el-col :span="11.5">
             <el-form-item prop="date2" style="width:284px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
@@ -156,7 +155,7 @@
           <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
             <div class="picInco"><i class="iconfont-v3 saasicon_shangchuan"></i></div>
             <!-- <i class="iconfont-v3 saasicon_shangchuan"></i> -->
-            <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；<br/>音频格式支持mp3、wav 文件大小不超过2G</p>
+            <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；<br/>音频格式支持mp3、wav 文件大小不超过5G</p>
           </div>
           <div class="mediaSlot" v-else>
             <icon icon-class="saasshipinwenjian"></icon>
@@ -1169,9 +1168,7 @@ export default {
     }
   }
   .line{
-    text-align: center;
-    display: inline-block;
-    width: 16px;
+    margin-right: 16px;
   }
   .pageTitle {
     font-size: 14px;
