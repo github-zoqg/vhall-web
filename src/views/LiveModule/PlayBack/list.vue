@@ -362,7 +362,7 @@ export default {
           if(res.data.permissions) {
             sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
             this.WEBINAR_PES = JSON.parse(res.data.permissions)
-            // this.handleTipMsgVisible()
+            this.handleTipMsgVisible()
           } else {
             sessionOrLocal.removeItem('WEBINAR_PES');
           }
@@ -431,11 +431,11 @@ export default {
             { label: '录制', value: '1' },
             { label: '打点录制', value: '3' }
           ]
-          this.handleTipMsgVisible()
         }
       }).catch(res=>{
+        console.log(res, '??????12313')
         this.$message({
-          message: res.msg || `获取活动信息失败`,
+          message: res.msg,
           showClose: true,
           // duration: 0,
           type: 'error',
