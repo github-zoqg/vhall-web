@@ -9,7 +9,7 @@
         <VhallInput v-model="formData.title" v-clearEmoij :maxlength="100" class="title-inform" autocomplete="off" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
       </el-form-item>
       <el-form-item label="直播时间" required v-if="webniarType=='live' || webniarType=='time'" class="item-time">
-          <p>直播过程中，定时直播活动的直播时间将不可修改</p>
+          <p v-if="webniarTypeToZHTitle == '定时直播'">直播过程中，定时直播活动的直播时间将不可修改</p>
           <el-col :span="11.5">
             <el-form-item prop="date1" style="width:283px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
@@ -18,7 +18,7 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="1">&nbsp;</el-col>
+          <el-col class="line" :span="1">&nbsp;&nbsp;</el-col>
           <el-col :span="11.5">
             <el-form-item prop="date2" style="width:284px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
@@ -888,7 +888,7 @@ export default {
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
         no_delay_webinar: this.selectDelayMode == 'delay' ? 1 : 0,
         is_timing: this.webinarVideo ? (this.$route.meta.webniarType == 'vod' ? 0 : 1) : '',
-        inav_num: Number(this.zdy_inav_num.replace("1v","")) + 1
+        inav_num: this.webniarTypeToZHTitle == '直播' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
       };
 
 
@@ -1170,6 +1170,7 @@ export default {
   }
   .line{
     text-align: center;
+    display: inline-block;
     width: 16px;
   }
   .pageTitle {
