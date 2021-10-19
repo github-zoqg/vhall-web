@@ -271,7 +271,7 @@
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
       </el-dialog>
     </template>
-    <begin-play :webinarId="$route.params.id" v-if="liveDetailInfo.webinar_state!=4&&title!=='创建'"></begin-play>
+    <begin-play :webinarId="$route.params.id" v-if="webniarTypeToZHTitle!='定时直播'&&liveDetailInfo.webinar_state!=4&&title!=='创建'"></begin-play>
     <div class="delay-mask" v-if="showDelayMask">
       <div class="delay-intro">
         <span class="close iconfont-v3 saasclose" @click.stop="showDelayMask = false"></span>

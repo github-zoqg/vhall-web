@@ -175,7 +175,7 @@
         <el-button @click="visible = false" round size="medium">取 消</el-button>
       </span>
     </VhallDialog>
-    <begin-play :webinarId="$route.params.str" v-if="webinarVo.webinar_type!=5"></begin-play>
+    <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5"></begin-play>
   </div>
 </template>
 
