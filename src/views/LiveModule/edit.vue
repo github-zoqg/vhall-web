@@ -888,7 +888,7 @@ export default {
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
         no_delay_webinar: this.selectDelayMode == 'delay' ? 1 : 0,
         is_timing: this.webinarVideo ? (this.$route.meta.webniarType == 'vod' ? 0 : 1) : '',
-        inav_num: this.webniarTypeToZHTitle == '直播' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
+        inav_num: this.liveMode == 3 && this.webniarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
       };
 
 
