@@ -7,7 +7,7 @@
       <div class="box-title">
         <div class="title-status padlr8" v-if="liveDetailInfo.webinar_state == 1">
           <img src="../../../../common/images/live/lives.gif" alt="">
-          <b>直播 <span v-if="hasDelayPermission && liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
+          <b>直播 <span v-if="liveDetailInfo.webinar_type == 5">| 定时直播</span> <span v-if="hasDelayPermission && liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
         </div>
         <div class="title-status grayColor" v-else>
           <b>{{ liveDetailInfo | actionTextTag }} <span v-if="hasDelayPermission && liveDetailInfo.no_delay_webinar">| 无延迟</span></b>
