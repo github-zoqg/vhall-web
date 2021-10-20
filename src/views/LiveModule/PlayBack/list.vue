@@ -212,7 +212,7 @@
       <video-preview ref="videoPreview" :recordId='videoParamId' :webinarId="webinar_id"></video-preview>
       </el-dialog>
     </template>
-    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
+    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4 && $route.query.type!=5"></begin-play>
   </div>
 </template>
 
