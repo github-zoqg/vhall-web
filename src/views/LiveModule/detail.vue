@@ -80,7 +80,7 @@
           <el-button round type="primary" @click="toEndLive" v-if="liveDetailInfo.webinar_type == 5 && liveDetailInfo.webinar_state == 1">结束直播</el-button>
           <el-button round type="primary" @click="toRoom" :disabled="isAnginOpen" v-if="liveDetailInfo.webinar_type != 5">发起直播</el-button>
         </div>
-        <div class="inner liveTime" v-if="outLiveTime && liveDetailInfo.webinar_state == 2">
+        <div class="inner liveTime" v-if="outLiveTime && liveDetailInfo.webinar_state == 2 && liveDetailInfo.webinar_type != 5">
           <p class="subColor">直播即将开始</p>
           <p><span>观众等待中</span></p>
           <el-button round type="primary" @click="toRoom">发起直播</el-button>
