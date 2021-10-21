@@ -11,7 +11,7 @@
       <el-form-item label="直播时间" required v-if="webniarType=='live' || webniarType=='time'" class="item-time">
           <p v-if="webniarTypeToZHTitle == '定时直播'">直播过程中，定时直播活动的直播时间将不可修改</p>
           <el-col :span="11.5" class="line">
-            <el-form-item prop="date1" style="width:283px;" :rules="[
+            <el-form-item prop="date1" style="width:286px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
             ]">
               <el-date-picker type="date" class="date" :disabled="isEditTime" prefix-icon="iconfont-v3 saasicon_date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%">
@@ -19,7 +19,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="11.5">
-            <el-form-item prop="date2" style="width:284px;" :rules="[
+            <el-form-item prop="date2" style="width:286px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
             <el-time-picker placeholder="选择时间" :default-value="dafaultTime" :disabled="!formData.date1 || isEditTime" type="datetime" :picker-options="{
