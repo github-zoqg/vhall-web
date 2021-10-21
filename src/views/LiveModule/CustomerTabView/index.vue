@@ -7,7 +7,7 @@
       <div slot="content">所有设置对电脑端和移动浏览器同时生效</div>
       <div class="vh-customer-menu-btns">
         <span @click="workHelp" class="link__left">使用帮助</span>
-        <el-button type="primary" style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab">保存</el-button>
+        <el-button type="primary" :disabled = 'buttonDis' style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab">保存</el-button>
       </div>
     </page-title>
     <div class="vh-customer-menu-contentBox">
@@ -92,7 +92,8 @@ export default {
       qrCode: '',
       link:  '',
       userId: '',
-      showWatch: false
+      showWatch: false,
+      buttonDis: false
     }
   },
 
@@ -167,9 +168,10 @@ export default {
     },
 
     saveCustomTab() {
-
+      this.buttonDis = true;
       const checkResult = this.validationMenus()
       if(!checkResult) {
+        this.buttonDis = false;
         return false
       }
       const saveMenus = Array.from(this.customMenus)
@@ -183,6 +185,7 @@ export default {
       }).then(res =>{
         if(res.code === 200) {
           this.setReportData(saveMenus)
+          this.buttonDis = false;
           this.$message({
             message: `保存成功`,
             showClose: true,
@@ -195,6 +198,7 @@ export default {
           this.showWatch = true
         }
       }).catch(res=>{
+        this.buttonDis = false;
         this.$message({
           message: res.msg || '保存失败',
           showClose: true,
