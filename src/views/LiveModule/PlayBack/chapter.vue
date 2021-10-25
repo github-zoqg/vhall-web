@@ -473,9 +473,18 @@ export default {
   },
   methods: {
     toPlaybackList() {
-      this.$router.push({
-        path: `/live/playback/${this.webinar_id}`
-      })
+      let path = ''
+      if (this.$route.query.pageKey && this.$route.query.type) {
+        path = `/live/${this.$route.query.pageKey}/${this.webinar_id}?type=${this.$route.query.type}`
+        this.$router.push({
+          path: path
+        })
+      } else {
+        console.log('进入界面的方式不正确')
+        this.$router.push({
+          path: `/live/playback/${this.webinar_id}`
+        })
+      }
     },
     startTutorial() {
       this.$vhall_paas_port({
