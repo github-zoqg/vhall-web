@@ -1089,6 +1089,7 @@ export default {
     background: #ffffff;
     padding: 48px 20px 50px 48px;
     margin-top: 32px;
+    border-radius: 4px;
     /deep/ .el-switch__label--left{
       color: #1A1A1A;
       pointer-events: none;
@@ -1552,6 +1553,9 @@ export default {
   /deep/.saasicon_help_m {
     color: #999999;
     vertical-align: bottom;
+    &:hover{
+      color: #666;
+    }
   }
   .delay-mask{
     position: fixed;
