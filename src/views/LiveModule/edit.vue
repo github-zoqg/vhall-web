@@ -1163,6 +1163,9 @@ export default {
     /deep/.el-upload--picture-card {
       height: 180px;
       border: 1px solid #CCCCCC;
+      &:hover{
+        border: 1px solid #999;
+      }
     }
     /deep/.box > div {
       height: 180px;

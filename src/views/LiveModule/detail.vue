@@ -786,12 +786,12 @@ export default {
       i{
         margin: 0 2px;
       }
-      margin-bottom: 18px;
+      // margin-bottom: 18px;
     }
   }
   .el-button{
     width: 160px;
-    margin: 0 auto;
+    margin: 22px auto 0;
   }
 }
 /*.detailBox {

@@ -9,7 +9,7 @@
         3.定时直播不支持发起直播，不支持在微吼直播App的活动列表展示
       </div>
     </pageTitle>
-    <!-- 操作栏 -->
+    <!-- 操作栏  -->
       <div class="operaBox" v-if="totalElement || isSearch">
         <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
         <el-button size="medium"  round @click="createLiveAction('2')" v-if="vodPerssion == 1" class="transparent-btn" v-preventReClick>创建点播</el-button>
@@ -110,7 +110,7 @@
       <noData :nullType="nullText" :text="text">
         <el-button type="primary" v-if="nullText == 'nullData'" round @click="createLiveAction('1')" v-preventReClick  class="length152">创建直播</el-button>
         <el-button round v-if="nullText == 'nullData' && vodPerssion == 1" class="transparent-btn length152"  @click="createLiveAction('2')" v-preventReClick >创建点播</el-button>
-        <el-button v-if="isTiming == 1" size="medium"  round @click="createLiveAction('3')" class="transparent-btn" v-preventReClick>创建定时直播</el-button>
+        <el-button v-if="isTiming == 1" round @click="createLiveAction('3')" class="transparent-btn length152" v-preventReClick>创建定时直播</el-button>
       </noData>
     </div>
   </div>
