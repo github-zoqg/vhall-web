@@ -76,7 +76,7 @@ export default {
 .btn-list {
   margin-top: 32px;
   .el-button {
-    margin-right: 16px;
+    margin-right: 6px;
     &:last-child {
       margin-right: 0;
     }

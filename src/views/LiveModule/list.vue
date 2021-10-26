@@ -543,6 +543,12 @@ export default {
         line-height: 36px;
       }
     }
+    .el-button {
+      margin-right: 2px;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
     /deep/.is_medium.el-button.el-button--medium{
       background: transparent;
       &:hover{
