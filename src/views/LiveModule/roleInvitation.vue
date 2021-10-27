@@ -58,7 +58,7 @@
           </div>
         </div>
         <!-- 嘉宾 -->
-        <div class="role-card" v-if="privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.guest && isInteract==1">
+        <div class="role-card" v-if="webinarVo && webinarVo.webinar_type != 6 && (privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.guest && isInteract == 1)">
           <div class="role-card-head">
             <div class="title--box">
               <label class="title--label role2">嘉宾</label>
@@ -286,6 +286,7 @@ export default {
         webinar_id: this.$route.params.str,
       })
       if (result.data) {
+         result.data.webinar_type = 6
         this.webinarVo = result.data;
       }
       if(this.webinarVo.webinar_state === 1) {
@@ -543,6 +544,7 @@ export default {
         webinar_id: this.$route.params.str,
       }).then(res => {
         if(res.data) {
+           res.data.webinar_type = 6
           this.webinarVo = res.data || {};
         } else {
           this.webinarVo = {};

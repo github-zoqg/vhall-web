@@ -284,18 +284,18 @@
             <span>1.移动端全屏播放时，跑马灯会失效；</span>
             <span>2.安卓手机浏览器劫持可能导致跑马灯失效；</span>
             <span>3.因浏览器自身策略，开启自动播放也会出现无法自动播放情况;</span>
-            <span>4.无延迟直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能。</span>
+            <span>4.无延迟直播/分组直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能。</span>
           </p>
       </div>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
-    <div v-if="hasDelayPremission && showDelay" class="delay-mask">
+    <div v-if="(hasDelayPremission && showDelay && webinar_type != 6) || (webinar_type == 6 && showGroupLive)" class="delay-mask">
       <div class="tip">
-        <div class="head"><span class="title">提示</span><span class="iconfont-v3 saasclose" @click.stop="showDelay = false"></span></div>
+        <div class="head"><span class="title">提示</span><span class="iconfont-v3 saasclose" @click.stop="closeDialog"></span></div>
         <div class="delay-content">
-          当前模式为无延迟模式，暂不支持设置跑马灯、水印、弹幕功能。以上功能仅生效于回放状态。
+          {{webinar_type == 6 ? '当前直播活动为分组直播，暂不支持设置跑马灯、水印、弹幕功能。以上功能仅生效于回放状态。' : '当前模式为无延迟模式，暂不支持设置跑马灯、水印、弹幕功能。以上功能仅生效于回放状态。'}}
         </div>
-        <div class="btn" @click.stop="showDelay = false">
+        <div class="btn" @click.stop="closeDialog">
           我知道了
         </div>
       </div>
@@ -330,6 +330,7 @@ export default {
     this.$Vhallplayer = null;
     return {
       showDelay: false,
+      showGroupLive: false,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       perssionWebInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
       activeName: 'first',
@@ -511,12 +512,21 @@ export default {
     }
   },
   methods: {
+    closeDialog() {
+      if (this.webinar_type == 6) {
+        this.showGroupLive = false
+      } else {
+        this.showDelay = false
+      }
+    },
     getLiveBaseInfo() {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         if( res.code != 200 ){
           return this.$message.warning(res.msg)
         }
+        this.webinar_type = res.data.webinar_type
         this.showDelay = res.data.no_delay_webinar == 1 ? true : false
+        this.showGroupLive = res.data.webinar_type == 6 ? true : false
       }).catch(res=>{
         this.$message({
           message: res.msg || "获取信息失败",
