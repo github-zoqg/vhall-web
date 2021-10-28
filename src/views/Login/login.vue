@@ -259,7 +259,8 @@ export default {
 */
     const validpassword = (rule, value, callback) => {
       console.log(rule)
-      const pattern = /^(\w){6,30}$/
+      // const pattern = /^(\w){6,30}$/
+      const pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/
       this.errorText = ''
       if (value === '') {
         callback(new Error('请输入密码'))
@@ -272,8 +273,8 @@ export default {
     }
 
     const validateRegPwd = (rule, value, callback) => {
-      // const pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/
-      const pattern = /^(\w){6,30}$/
+      const pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/
+      // const pattern = /^(\w){6,30}$/
       if (value === '') {
         // callback(new Error('请设置登录密码'))
         if (this.registerText) {

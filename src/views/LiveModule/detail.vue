@@ -8,7 +8,8 @@
           <div class="thumb">
             <img :src="liveDetailInfo.img_url" alt="">
             <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>
-              {{ liveDetailInfo | liveTag }}<span v-if="hasDelayPermission && isDelay"> | 无延迟</span>
+              {{ liveDetailInfo | liveTag }}<span v-if="liveDetailInfo.is_new_version == 3 && liveDetailInfo.webinar_type == 3 && liveDetailInfo.inav_num > 1
+              "> | 1v{{Number(liveDetailInfo.inav_num)-1}}</span><span v-if="hasDelayPermission && isDelay"> | 无延迟</span>
             </span>
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"> {{ liveDetailInfo.pv | unitCovert }}</i>

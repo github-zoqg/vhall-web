@@ -32,11 +32,11 @@
           </li>
           <li>
             <label>电话</label>
-            <p>{{userInfo && userInfo.phone ? `${userInfo.phone.replace(/(\d{4})\d*(\d{4})/, '$1****$2')}` : '--'}}</p>
+            <p>{{userInfo && userInfo.phone || '--'}}</p>
           </li>
           <li>
             <label>邮箱</label>
-            <p>{{userInfo && userInfo.email ? `${userInfo.email.replace(/(?<=.{2})[^@]+(?=.{2}@)/,"*****")}`: '--'}}</p>
+            <p>{{userInfo && userInfo.email || '--'}}</p>
           </li>
         </ul>
       </div>

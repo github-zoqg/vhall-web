@@ -28,19 +28,21 @@
             </el-form-item>
           </el-col>
       </el-form-item>
-      <el-form-item label="直播模式" required v-if="webniarType=='live'">
+      <el-form-item label="直播模式" required v-if="webniarType=='live'" class="max-column">
         <div class="titleBox">
           <span class="pageTitle">直播创建成功后，直播模式将不可修改</span>
           <el-tooltip v-tooltipMove>
             <div slot="content">
               <p>1.视频直播：音频+视频直播，需要保证摄像头和麦克风正常</p>
-              <p>2.互动直播：音视频互动连麦，最多支持6人连麦直播</p>
+              <p>2.互动直播：音视频互动连麦，最多支持16人连麦直播</p>
               <p>3.音频直播：音频直播，需要保证麦克风正常</p>
+              <p>4.分组直播：一种特殊的无延迟互动直播，最高可容纳2000人，支持分组讨论功能，每组最多支持16人连麦讨论</p>
             </div>
             <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
           </el-tooltip>
           <slot name="default"></slot>
         </div>
+        <!-- card 视频直播 -->
         <div class="modeBox">
           <div>
             <img src="../../common/images/live/mode-video_check@2x.png" :class="{active: liveMode== 2}" @click='liveModeChange(2)' v-if="liveMode== 2">
@@ -57,6 +59,7 @@
               </el-container> -->
             <!-- </el-container> -->
           </div>
+          <!-- card 互动直播 -->
           <div>
             <template v-if="webniarIntact">
               <img src="../../common/images/live/mode-active_disabled@2x.png" alt="" style="cursor: default;">
@@ -85,6 +88,7 @@
             <p class="desc">互动直播</p>
             <!-- <span class="notAllow" v-if="webniarIntact">未开通</span> -->
           </div>
+          <!-- card 音频直播 -->
           <div>
             <img src="../../common/images/live/mode-media_check@2x.png" :class="{active: liveMode == 1}" alt=""  @click='liveModeChange(1)' v-if="liveMode== 1">
             <img src="../../common/images/live/mode-media@2x.png" alt=""  @click='liveModeChange(1)' v-else>
@@ -100,10 +104,46 @@
             </el-container> -->
             <p class="desc">音频直播</p>
           </div>
+          <!-- card 分组直播 -->
+          <div>
+            <template v-if="webinarGroup">
+              <img src="../../common/images/live/mode-group_disabled@2x.png" alt="" style="cursor: default;">
+            </template>
+            <template v-else>
+             <img src="../../common/images/live/mode-group_check@2x.png" alt="" :class="{active: liveMode == 6}" @click='!webinarGroup && liveModeChange(6)' v-if="liveMode == 6">
+              <img src="../../common/images/live/mode-group@2x.png" alt="" @click='!webinarGroup && liveModeChange(6)' v-else>
+            </template>
+            <!-- <el-container class='model'>
+              <img src="../../common/images/live/mode-media.png" alt="">
+              <el-aside width="80px" class="block">
+                <i class="el-icon-microphone icon"></i>
+              </el-aside>
+              <el-container>
+                <el-header height='13px' class="block"></el-header>
+                <el-main class="block"></el-main>
+              </el-container>
+            </el-container> -->
+            <p class="desc">分组直播</p>
+          </div>
         </div>
         <div class="modeHide" v-if="$route.query.type==2"></div>
       </el-form-item>
-      <el-form-item v-if="showDelayTag" label="直播延迟" required>
+      <el-form-item class="group-notice" >
+        <p v-if="liveMode == 6">注：分组直播不支持免费观看，观看限制默认为“密码”，创建直播后请前往【观看限制】页面更改密码或观看限制条件</p>
+      </el-form-item>
+      <el-form-item v-if="(liveMode == 3 || liveMode == 6) && webniarType == 'live'" label="连麦人数" required class="invd-number">
+        <div class="titleBox">
+          <span class="pageTitle">
+            <span>{{liveMode == 6 ? '直播中请勿修改连麦人数！最大支持1v15连麦，开通更多连麦人数' : '直播中请勿修改连麦人数！无延迟最大支持1v5连麦，常规直播最大支持1v15连麦，开通更多连麦人数'}}<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a></span>
+          </span>
+        </div>
+        <el-select filterable v-model="formData.zdy_inav_num" style="width: 312px">
+          <template  v-for="(opt, optIndex) in inavNumOptions">
+            <el-option :key="optIndex" :label="opt.label" :value="opt.label" :disabled="selectDelayMode == 'delay' ? opt.value > 6 : opt.value > speakerMaxNum"/>
+          </template>
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="showDelayTag && liveMode != 6" label="直播延迟" required>
         <div class="titleBox">
           <span class="pageTitle">
             <span v-if="!hasDelayPermission">无延迟直播为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span></span>
@@ -177,6 +217,16 @@
       <!-- <el-form-item :label="`${webniarTypeToZH}类别`" >
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>
       </el-form-item> -->
+      <p class="switch__box" v-if="webniarType=='live' && liveMode == 6">
+        <el-switch
+          v-model="speakSwitch"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          inactive-text="自动上麦"
+          :active-text="speakSwitchDesc"
+          >
+        </el-switch>
+      </p>
       <p class="switch__box" v-if="webniarType=='live'">
         <el-switch
           v-model="formData.docSwtich"
@@ -327,6 +377,13 @@ export default {
     pathUrl: function() {
       return `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
     },
+    speakSwitchDesc(){
+      if(this.speakSwitch){
+        return '已开启，按照观众进入直播间的先后顺序自动上麦，直到上麦人数达到上限';
+      }else{
+        return "开启后，按照观众进入直播间的先后顺序自动上麦，直到上麦人数达到上限";
+      }
+    },
     docSwtichDesc(){
       if(this.formData.docSwtich){
         return '已开启，直播中观众可以提前预览文档，进行文档翻页';
@@ -405,6 +462,15 @@ export default {
         return true;
       }
     },
+    webinarGroup() {
+      // webinar.group 1:有分组直播权限  0:无权限
+     /*  if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.group'] == '1') {
+        return false;
+      } else {
+        return true;
+      } */
+      return false;
+    },
     // admin无延迟活动权限
     webinarDelay() {
       // no.delay.webinar 1:有无延迟权限  0:无权限
@@ -475,7 +541,9 @@ export default {
         limitCapacitySwtich: false,
         imageUrl: '',
         domain_url: '',
+        zdy_inav_num: ''
       },
+      speakSwitch: false, // 是否自动上麦
       liveMode: 2,
       liveDetailInfo: {},
       showChecked: false,
@@ -500,7 +568,70 @@ export default {
           // return this.formData.date1.getTime() < Date.now() - 24 * 60 * 60 * 1000
           // return time.getTime() < Date.now()
         }
-      }
+      },
+      inavNumOptions: [
+          {
+            value: 2,
+            label: '1v1'
+          },
+          {
+            value: 3,
+            label: '1v2'
+          },
+          {
+            value: 4,
+            label: '1v3'
+          },
+          {
+            value: 5,
+            label: '1v4'
+          },
+          {
+            value: 6,
+            label: '1v5'
+          },
+          {
+            value: 7,
+            label: '1v6'
+          },
+          {
+            value: 8,
+            label: '1v7'
+          },
+          {
+            value: 9,
+            label: '1v8'
+          },
+          {
+            value: 10,
+            label: '1v9'
+          },
+          {
+            value: 11,
+            label: '1v10'
+          },
+          {
+            value: 12,
+            label: '1v11'
+          },
+          {
+            value: 13,
+            label: '1v12'
+          },
+          {
+            value: 14,
+            label: '1v13'
+          },
+          {
+            value: 15,
+            label: '1v14'
+          },
+          {
+            value: 16,
+            label: '1v15'
+          }
+        ],
+        speakerMaxNum: ''
     };
   },
   beforeRouteEnter (to, from, next) {
@@ -590,14 +721,27 @@ export default {
           if (!this.hasDelayPermission) {
             this.selectDelayMode = 'common'
           }
+          this.speakerMaxNum = data['speaker_max_num'] || ''
+          if (Number(this.$route.query.type) !== 2) {
+            // 不是编辑，默认设置值如此
+            this.formData.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
+          }
         }
       }).catch(res =>{
         console.log(res);
       });
     },
+    covertMaxNum(keyNum) {
+      return
+    },
     handleSelectDelayMode(mode) {
       if (this.title === '编辑') return
       this.selectDelayMode = mode
+      // 切换直播延迟方式后，直播模式限制更新
+      let inav_num = Number(this.formData.zdy_inav_num.replace('1v', '')) + 1
+      if (mode === 'delay' && inav_num > 6) {
+        this.formData.zdy_inav_num = '1v5'
+      }
     },
     getLiveBaseInfo(id, flag) {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
@@ -628,6 +772,7 @@ export default {
           this.formData.limitCapacitySwtich = false;
         }
         this.formData.capacity = Boolean(this.liveDetailInfo.is_capacity);
+        this.formData.zdy_inav_num = `1v${Number(this.liveDetailInfo.inav_num) - 1}`;
         if (this.liveDetailInfo.paas_record_id) {
           this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
           this.selectMedia.id = this.liveDetailInfo.record_id;
@@ -717,14 +862,14 @@ export default {
     },
     submitForm(formName) {
       if (this.formData.limitCapacitySwtich && this.formData.limitCapacity < 1) {
-          this.$message({
-            message: '最高并发请输入大于1的数值',
-            showClose: true,
-            // duration: 0,
-            type: 'error',
-            customClass: 'zdy-info-box'
-          });
-          return;
+        this.$message({
+          message: '最高并发请输入大于1的数值',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return;
       }
       if (!this.versionType && this.formData.limitCapacitySwtich) {
         if (this.formData.capacity) {
@@ -762,12 +907,12 @@ export default {
         return;
       }
       let data = {
-        webinar_id: this.webinarId || '',
+        webinar_id: this.webinarId || '', // 有值为编辑，无值为创建
         record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
         subject: this.formData.title, // 标题
         introduction: this.unescapeHTML(this.formData.content.replace("&lt;p&gt;","")) || '<p></p>', // 简介
         start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
-        webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
+        webinar_type: this.liveMode, // 1 音频 2 视频 3 互动 6 分组讨论
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
         is_private: this.formData.home ? 0 : 1 , // 是否在个人主页显示
         // is_open: Number(this.home),  // 是否公开活动 默认0为公开，1为不公开
@@ -779,9 +924,13 @@ export default {
         is_capacity: Number(this.formData.capacity),// 是否扩容 1 是 0 否
         img_url: this.$parseURL(this.formData.imageUrl).path, // 封面图
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
-        no_delay_webinar: this.selectDelayMode == 'delay' ? 1 : 0
+        no_delay_webinar: this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status
+        inav_num: Number(this.formData.zdy_inav_num.replace("1v","")) + 1
       };
-      console.log('>>>>>>>>>>111', data)
+      if (this.liveMode == 6) {
+        data.auto_speak = Number(this.speakSwitch)
+      }
+      console.log('>>>>>>>>>>创建直播最终保存', data)
 
       if(this.$route.query.type != 2 ) {
          data = this.$params(data)
@@ -797,19 +946,35 @@ export default {
           }
           this.$fetch(url, this.$params(data)).then(res=>{
             if (res.code == 200) {
-              this.$message({
-                message: `${this.title}成功`,
-                showClose: true,
-                // duration: 0,
-                type: 'success',
-                customClass: 'zdy-info-box'
-              });
-              this.$route.query.record_id ? this.reVodEditReportData() : this.reportData();
-              this.isChange = false;
               console.log(res);
-              setTimeout(()=>{
-                this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
-              }, 500);
+              if (data.webinar_type == 6) {
+                // 创建分组直播成功
+                this.isChange = false;
+                this.$alert(`创建成功，观看密码默认为666666，请前往 <a href="${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}">【观看限制】</a>更改密码或观看限制`, '提示', {
+                  confirmButtonText: '我知道了',
+                  customClass: 'zdy-alert-box',
+                  dangerouslyUseHTMLString: true,
+                  // center: true,
+                  lockScroll: false,
+                  callback: action => {
+                    location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}`
+                  }
+                })
+              } else {
+                // 创建其它直播成功
+                this.$message({
+                  message: `${this.title}成功`,
+                  showClose: true,
+                  // duration: 0,
+                  type: 'success',
+                  customClass: 'zdy-info-box'
+                });
+                this.$route.query.record_id ? this.reVodEditReportData() : this.reportData();
+                this.isChange = false;
+                setTimeout(()=>{
+                  this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
+                }, 500);
+              }
             } else {
               this.$message({
                 message: res.msg || `操作失败`,
@@ -1026,6 +1191,20 @@ export default {
     // width: 100%;
     max-width: 668px;
     margin-bottom: 26px;
+    &.max-column {
+      max-width: 868px;
+      margin-bottom: 17px;
+    }
+    &.group-notice {
+      max-width: 868px;
+      margin-bottom: 24px;
+      p {
+        font-size: 14px;
+        font-weight: 400;
+        color: #FB4841;
+        line-height: 20px;
+      }
+    }
   }
   /deep/.el-col-11{
     height: 40px;
@@ -1064,6 +1243,9 @@ export default {
       }
     }
     // padding-bottom: 5px;
+  }
+  .el-form-item.invd-number {
+    max-width: 800px;
   }
   .delay-select{
     min-width: 200px;
@@ -1547,6 +1729,12 @@ export default {
           cursor: pointer;
         }
       }
+    }
+  }
+  li.el-select-dropdown__item.is-disabled {
+    color: #BFBFBF;
+    &:hover {
+      background: #ffffff;
     }
   }
 </style>

@@ -13,7 +13,7 @@
       <!-- 搜索 -->
       <div class="list--search">
         <el-button size="medium" type="primary" :disabled="isForbidCreate" round @click.prevent.stop="addSonShow(null)">创建</el-button>
-        <el-button size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
+        <el-button v-show="userInfo.user_extends.extends_remark == 0" size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
         <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="!(this.ids && this.ids.length > 0)">批量删除</el-button>
         <el-button size="medium" round @click="downloadHandle">导出</el-button>
         <VhallInput placeholder="搜索账号/昵称/手机号码" v-model="query.keyword"
@@ -158,6 +158,13 @@ export default {
       default: 0
     }
   },
+  created() {
+    this.userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+    // 知学云不显示用量分配列
+    if (this.userInfo.user_extends && this.userInfo.user_extends.extends_remark == 1) {
+      this.sonTableColumn.pop()
+    }
+  },
   data() {
     /*let validNums = (rule, value, callback) => {
       if (value === '') {
@@ -190,6 +197,7 @@ export default {
       }
     };
     return {
+      userInfo: {},
       pwdType: 'text',
       loading: false,
       query: {

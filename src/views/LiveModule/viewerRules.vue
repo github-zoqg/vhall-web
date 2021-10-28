@@ -8,7 +8,7 @@
     <!-- 内容区域 -->
     <div class="viewer-rules">
       <el-radio-group v-model="form.verify" @change="handleClick">
-        <el-radio :label="0">免费</el-radio>
+        <el-radio :label="0" v-if="liveDetailInfo && liveDetailInfo.webinar_type != 6">免费</el-radio>
         <el-radio :label="3">付费</el-radio>
         <el-radio :label="4" v-if="perssionInfo.f_code">邀请码（原F码）</el-radio>
         <el-radio :label="6" v-if="perssionInfo.f_code">付费/邀请码</el-radio>
@@ -17,10 +17,17 @@
       </el-radio-group>
       <!-- 选值区域 -->
       <div class="viewer-rules-content">
-        <!-- 免费 0 -->
-        <div v-show="Number(form.verify) === 0" class="viewer-rules-ctx--0">
-          <p>观看无需任何验证，即可观看直播</p>
-        </div>
+        <template v-if="liveDetailInfo && liveDetailInfo.webinar_type != 6">
+          <!-- 免费 0 -->
+          <div v-show="Number(form.verify) === 0" class="viewer-rules-ctx--0">
+            <span v-if='webinarState != 4'>
+              <span class="color1a1a1a">预约按钮：</span>
+              <el-switch class="pl10 address" v-model="hide_subscribe" active-color="#FB3A32" inactive-color="#cecece"></el-switch>
+              <span class="pl10 fontStyle">{{hide_subscribe?'已开启':'开启后'}}，预告状态下且未设置报名表单时显示&lt;立即预约>按钮；使用【暖场视频】功能请勿关闭预约按钮</span>
+            </span>
+            <p class="mt30">观看无需任何验证，即可观看直播</p>
+          </div>
+        </template>
         <!-- 付费 3 -->
         <div v-show="Number(form.verify) === 3" class="viewer-rules-ctx--3">
           <el-form :model="payForm" ref="payForm" :rules="payFormRules"  label-width="70px">
@@ -63,12 +70,17 @@
           <el-form :model="fCodeForm" ref="fCodeForm" :rules="fCodeFormRules"  label-width="82px">
             <el-form-item label="生成邀请码" prop="nums">
               <div class="fCode__flex">
-                <VhallInput v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two"   @input="formatInputs($event, 'fCodeForm', 'nums')">
+                <VhallInput v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two" @input="formatInputs($event, 'fCodeForm', 'nums')">
                   <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
                 </VhallInput>
                 <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
                 <el-button class="down-btn" size="medium" type="white-primary" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
               </div>
+            </el-form-item>
+            <el-form-item label="设置提示" prop="">
+              <VhallInput v-model.trim="fCodeForm.fcode_verify" class="pr60" autocomplete="off" placeholder="请输入邀请码" :maxlength="30" show-word-limit></VhallInput>
+              <!-- <el-input type="text" placeholder="请输入邀请码" v-model="fCodeForm.fcode_verify" maxlength="30" show-word-limit></el-input> -->
+              <span class="pl10 color-3562FA cursor" @click="openDialog(fCodeForm.fcode_verify|| '请输入邀请码')">查看效果</span>
             </el-form-item>
             <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
               <div class="switch__box">
@@ -111,6 +123,11 @@
                 <el-button class="down-btn" size="medium" type="white-primary" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
               </div>
             </el-form-item>
+            <el-form-item label="设置提示" prop="">
+              <VhallInput v-model.trim="fCodePayForm.fee_verify" class="pr60" autocomplete="off" placeholder="请输入邀请码" :maxlength="30" show-word-limit></VhallInput>
+              <!-- <el-input type="text" placeholder="请输入邀请码" v-model="fCodePayForm.fee_verify" maxlength="30" show-word-limit ></el-input> -->
+              <span class="pl10 color-3562FA cursor" @click="openDialog(fCodePayForm.fee_verify || '请输入邀请码')">查看效果</span>
+            </el-form-item>
             <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
               <div class="switch__box">
                 <el-switch
@@ -141,6 +158,11 @@
             <el-form-item label="观看密码" prop="password">
               <VhallInput v-model.trim="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></VhallInput>
             </el-form-item>
+            <el-form-item label="设置提示" prop="">
+              <VhallInput v-model.trim="pwdForm.password_verify" class="pr60" autocomplete="off" placeholder="请输入密码" :maxlength="30" show-word-limit></VhallInput>
+              <!-- <el-input type="text" placeholder="请输入密码" v-model="pwdForm.password_verify" maxlength="30" show-word-limit ></el-input> -->
+              <span class="pl10 color-3562FA cursor" @click="openDialog(pwdForm.password_verify || '请输入密码')">查看效果</span>
+            </el-form-item>
             <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
               <div class="switch__box">
                 <el-switch
@@ -168,13 +190,18 @@
         <!-- 白名单 2 -->
         <div v-show="Number(form.verify) === 2" class="viewer-rules-ctx--2">
           <el-form label-width="82px">
+            <el-form-item label="设置提示" prop="">
+              <VhallInput v-model.trim="white_verify" class="pr60" autocomplete="off" placeholder="请输入手机号/邮箱/工号" :maxlength="30" show-word-limit></VhallInput>
+              <!-- <el-input type="text" placeholder="请输入手机号/邮箱/工号" v-model="white_verify" maxlength="30" show-word-limit ></el-input> -->
+              <span class="pl10 color-3562FA cursor" @click="openDialog(white_verify || '请输入手机号/邮箱/工号')">查看效果</span>
+            </el-form-item>
             <el-form-item label="选择观众组">
               <ul class="tab__white tab__white__group">
                 <li :class="['tab__btn--solid', {'active': whiteId === item.id }]"  v-for="(item, ins) in groupList" :key="`group${ins}`" @click.prevent.stop="selectGroup(item)">
                   <span>{{item.subject}}</span>
                 </li>
                 <li class="">
-                  <router-link :to="{path:'/material/viewer'}"><el-button type="white-primary" size="small" round><i class="el-icon-plus"></i>添加观众组</el-button></router-link>
+                  <router-link :to="{path:'/material/viewer'}"><el-button type="white-primary" class="changeIconCol" size="small" round><i class="el-icon-plus"></i>添加观众组</el-button></router-link>
                 </li>
               </ul>
             </el-form-item>
@@ -211,6 +238,19 @@
       </div>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
+    <VhallDialog :visible='visible' title="权限验证" width='400px' @close="visible = false;">
+      <span class="pr" v-if='!showPwd'>
+        <el-input :placeholder="showText" v-model="stash" type="password"></el-input>
+        <span class="iconfont-v3 saaseyeclose_huaban1 inputIcon cursor" @click='showPwd = true'></span>
+      </span>
+      <span class="pr" v-else>
+        <el-input :placeholder="showText" v-model="stash"></el-input>
+        <span class="iconfont-v3 saasicon-eye inputIcon cursor" @click='showPwd = false'></span>
+      </span>
+      <div slot='footer'>
+        <el-button type="primary" round @click="visible = false;" class="button_size">确定</el-button>
+      </div>
+    </VhallDialog>
   </div>
 </template>
 
@@ -296,7 +336,7 @@ export default {
       whiteIds: [],
       whiteId: null, // 观众组只可选择一个
       groupList: [],
-      payForm: {
+      payForm: { // 付费表单
         fee: ''
       },
       payFormRules: {
@@ -306,8 +346,9 @@ export default {
           { validator: checkFee, trigger: 'blur' }
         ]
       },
-      fCodeForm: {
-        nums: ''
+      fCodeForm: {  // 邀请码表单
+        nums: '',
+        fcode_verify: ''// placeholder
       },
       fCodeFormRules: {
         nums: [
@@ -316,9 +357,10 @@ export default {
           { validator: checkNums, trigger: 'blur' }
         ]
       },
-      fCodePayForm: {
+      fCodePayForm: { // 付费/邀请码
         nums: '',
-        fee: null
+        fee: null,
+        fee_verify: '' // placeholder
       },
       fCodePayFormRules: {
         nums: [
@@ -332,8 +374,9 @@ export default {
           { validator: checkFee, trigger: 'blur' }
         ]
       },
-      pwdForm: {
-        password: ''
+      pwdForm: { // 密码
+        password: '',
+        password_verify: '' // placeholder
       },
       pwdFormRules: {
         password: [
@@ -341,7 +384,13 @@ export default {
           { pattern: /^[0-9a-zA-Z]{1,12}$/, message: '密码只能由1-12位数字或字母组成' , trigger: 'blur'},
           { validator: checkPwd, trigger: 'blur' }
         ]
-      }
+      },
+      showText: '123',   //placeholder自定义
+      visible: false,
+      white_verify: '', // 白名单placeholder
+      hide_subscribe: true,  // 预约状态
+      showPwd: false,
+      stash:'',               // 仅占位用
     };
   },
   methods: {
@@ -379,7 +428,15 @@ export default {
       this.$fetch('viewerSetGet', {
         webinar_id: this.$route.params.str
       }).then(res => {
+        console.log(res.data,'7777777777777777')
          this.viewerDao = res.data;
+        // 预约按钮是否展示
+        this.hide_subscribe = res.data.hide_subscribe?true:false;
+        // 密码、付费、f码、白名单提示语
+        this.pwdForm.password_verify = res.data.password_verify;
+        this.fCodePayForm.fee_verify = res.data.fee_verify;
+        this.fCodeForm.fcode_verify = res.data.fcode_verify;
+        this.white_verify = res.data.white_verify;
         // 数据初始化渲染（verify字段控制类别=> 0 无验证，1 密码，2 白名单，3 付费活动, 4 F码 ,6 付费+F码）
         let { webinar_id, verify, password, white_id, fee, is_preview, preview_time} = res.data;
         this.$nextTick(() => {
@@ -472,13 +529,15 @@ export default {
           verify: this.form.verify,
           white_id: this.whiteId,
           is_preview: this.form.is_preview,
-          preview_time: this.form.preview_time
+          preview_time: this.form.preview_time,
+          white_verify: this.white_verify
         }
       } else if (formName === '') {
         flag = true; // 免费不验证
         params = {
           webinar_id: this.$route.params.str,
-          verify: 0
+          verify: 0,
+          hide_subscribe: this.hide_subscribe?1:0
         }
       }
       // 若是邀请码 和 付费/邀请码里面
@@ -549,6 +608,13 @@ export default {
       }
     },
     sendViewerSetSave(params) {
+      Object.assign(params,{
+        password_verify: this.pwdForm.password_verify,
+        fee_verify: this.fCodePayForm.fee_verify,
+        fcode_verify: this.fCodeForm.fcode_verify,
+        white_verify: this.white_verify,
+        hide_subscribe: this.hide_subscribe?1:0,
+      })
       this.$fetch('viewerSetSave', this.$params(params)).then(res => {
         console.log(res);
         this.getReportData();
@@ -669,6 +735,7 @@ export default {
     getLiveDetail(id) {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         this.liveDetailInfo = res.data;
+        console.log(this.liveDetailInfo)
       }).catch(res=>{
         console.log(res);
         this.liveDetailInfo = {};
@@ -682,6 +749,13 @@ export default {
       }).finally(()=>{
       });
     },
+    // 打开弹框
+    openDialog(data){
+      this.visible = true;
+      this.showText = data;
+      this.stash = '';
+      this.showPwd = false;
+    }
   },
   created() {
     this.getLiveDetail(); // 获取活动信息，知晓是否设置过报名表单
@@ -692,6 +766,49 @@ export default {
 
 <style lang="less" scoped>
 @import '../../common/css/common.less';
+.pl10{
+  padding-left: 10px;
+}
+.cursor{
+  cursor: pointer;
+}
+.mt30{
+  margin-top: 30px;
+}
+.fontStyle{
+  font-size: 14px;
+  color: #999999;
+}
+.address{
+  position: relative;
+  top: -1px;
+  /deep/ span.el-switch__core{
+    width: 28px!important;
+    height: 16px!important;
+    border-radius: 10px!important;
+  }
+  /deep/ span.el-switch__core:after {
+    width: 12px;
+    height: 12px;
+    background: #fff;
+  }
+}
+/deep/ .el-switch.is-checked .el-switch__core::after {
+  margin-left: -13px !important;
+}
+.pr{
+  position: relative;
+}
+.inputIcon{
+  position: absolute;
+  right: 10px;
+  top: 0px;
+  display: inline-block;
+  height: 16px;
+  background: #fff;
+  width: 45px;
+  text-align: right;
+}
 .viewer-rules {
   /deep/.el-radio__inner{
     width: 16px;
@@ -925,6 +1042,8 @@ export default {
   }
   i.el-icon-plus {
     margin-right: 3px;
+    padding: 0;
+    color: #FB3A32;
   }
   /* .tab__btn--dashed {
     border-radius: 16px;
@@ -985,5 +1104,22 @@ export default {
 
 /deep/.el-select-dropdown__list .el-select-dropdown__item {
   max-width: 100%;
+}
+.color1a1a1a{
+  color: #1A1A1A;
+  font-size: 14px;
+}
+.button_size{
+  padding: 0 !important;
+  width: 60px;
+  height: 32px;
+}
+.changeIconCol:hover{
+  .el-icon-plus{
+    color: white;
+  }
+}
+.pr60 /deep/.el-input__inner{
+  padding-right: 65px !important;
 }
 </style>

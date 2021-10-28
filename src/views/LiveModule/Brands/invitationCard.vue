@@ -358,7 +358,9 @@ export default {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar || require('../../../common/images/avatar.png');
     let token = sessionOrLocal.get('token', 'localStorage');
-    this.showCode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?token=${token}`;
+    // this.showCode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?token=${token}`;
+    const lookUrl = `${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?invite_id=&type=1`
+    this.showCode = `${Env.staticLinkVo.aliQr}${encodeURIComponent(lookUrl)}` ;
     this.getInviteCardInfo();
     this.initImage();
   },
@@ -438,9 +440,6 @@ export default {
         this.imgUrl = this.formInvitation.img || '';
         this.invitation = Boolean(res.data.status);
         // this.formInvitation.is_show_watermark = Boolean(this.formInvitation.is_show_watermark);
-        // if (this.invitation) {
-        //   this.getCanvasImg()
-        // }
       });
     },
     changeImg() {
@@ -541,7 +540,8 @@ export default {
               height: 622,
               scrollY: 0,
               // scrollX: 0,
-              scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 12: 0,
+              // scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 12: 10,
+              scrollX: browerType === 'safari' ? 115 : 12,
               backgroundColor: null
             }).then(canvas => {
               _this.downloadImg = canvas.toDataURL('image/png', 1.0);

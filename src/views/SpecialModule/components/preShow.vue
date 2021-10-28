@@ -30,7 +30,7 @@
             </div>
           </div>
           <div class="special-list">
-            <el-row :gutter="40" class="lives">
+            <el-row :gutter="24" class="lives">
                 <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-for="(item, index) in liveList" :key="index"  @click.prevent.stop="toDetail(item.webinar_id)">
                   <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
                     <div class="top">
@@ -85,7 +85,8 @@ export default {
       processEnv: process.env.VUE_APP_WEB_URL,
       shareVo: {
         url: `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.query.id}`,
-        pcUrl:`${process.env.VUE_APP_WEB_URL}/special/detail?id=${this.$route.query.id}`
+        pcUrl:`${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.query.id}`
+        // pcUrl:`${process.env.VUE_APP_WEB_URL}/special/detail?id=${this.$route.query.id}`
       },
       totalList: [], //总数
       liveList: [],

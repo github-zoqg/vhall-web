@@ -15,7 +15,7 @@
            1.数据更新频率：直播使用流量1小时更新，回放/点播使用流量1小时更新<br>2.删除活动或者删除子账号，不影响已统计的历史数据
           </div>
           <div slot="content" v-else>
-           1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据<br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发<br>3.删除活动或者删除子账号，不影响已统计的历史数据
+           1.数据更新频率：天，不支持查看当日数据<br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发<br>3.删除活动或者删除子账号，不影响已统计的历史数据
           </div>
           <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>
@@ -298,7 +298,7 @@ export default {
   },
   methods: {
     dealDisabledData(time) {
-      return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
+      return time.getTime() > Date.now() - 8.64e7; //设置选择今天以前的日期
     },
     initPage() {
       // 初始化设置日期为最近一周

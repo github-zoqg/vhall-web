@@ -5,6 +5,10 @@
         1.热度：创建至今，进入观看页面（直播和回放、点播）的浏览量
         <br/>
         2.控制台数据为真实数据，不统计虚拟数据
+        <br/>
+        3.定时直播不支持发起直播，不支持在微吼直播APP的活动列表展示
+        <br/>
+        4.分组直播不支持客户端及APP端发起直播，不支持在微吼直播APP的活动列表展示
       </div>
     </pageTitle>
     <!-- 操作栏 -->
@@ -47,14 +51,14 @@
       </div>
     <!-- 操作栏 -->
     <div v-if="totalElement">
-      <el-row :gutter="40" class="lives">
+      <el-row :gutter="24" class="lives">
           <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
             <!-- :xs="24" :sm="12" :md="12" :lg="8" :xl="6" -->
             <div @click="toLiveDetail(item.webinar_id)" class="inner">
               <!--  @click.prevent.stop="toDetail(item.webinar_id)" -->
               <div class="top">
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
-                  <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}<span v-if="isDelay && item.no_delay_webinar == 1"> | 无延迟</span></span>
+                  <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}<span v-if="item.is_new_version == 3 && item.webinar_type == 3 && item.zdy_inav_num > 1"> | 1v{{Number(item.inav_num)-1}}</span><span v-if="isDelay && item.no_delay_webinar == 1"> | 无延迟</span></span>
                 <span class="hot">
                   <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
                 </span>
@@ -266,7 +270,12 @@ export default {
       };
       this.loading = true;
       this.$fetch('liveList', this.$params(data)).then(res=>{
-        this.liveList = res.data.list;
+        const liveList = res.data.list
+        liveList.map(item => {
+          // 非化蝶活动，若超过1v5，默认展示1v5
+          item.zdy_inav_num = item.is_new_version != 3 && item.inav_num > 6 ? 6 : item.inav_num
+        })
+        this.liveList = liveList;
         this.totalElement = res.data.total;
         if (!this.liveStatus && this.orderBy == 1 && !this.keyWords) {
           // 默认状态
