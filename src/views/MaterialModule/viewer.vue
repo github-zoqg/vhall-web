@@ -20,13 +20,13 @@
               clearable
               autocomplete="off"
               v-clearEmoij
-              @keyup.enter.native="queryList"
+              @keyup.enter.native="queryList(1)"
               class="resetRightBrn"
-              @clear="queryList">
+              @clear="queryList(1)">
               <i
                 class="el-icon-search el-input__icon"
                 slot="prefix"
-                @click="queryList">
+                @click="queryList(1)">
               </i>
             </VhallInput>
           </div>
@@ -463,7 +463,7 @@ export default {
     currentChangeHandler(current) {
       this.pageInfo.pageNum = current;
       this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit);
-      this.queryList();
+      this.queryList(current);
     },
     // 复选
     handleSelectionChange(item) {
@@ -509,7 +509,7 @@ export default {
         if (this.groupList.length > 0) {
           this.query.group_id = this.groupList[0].id;
           this.activeGroupIndex = 0;
-          this.queryList();
+          this.queryList(1);
         } else {
           // 若无分组，默认清空列表
           this.query.group_id = null;
@@ -601,18 +601,23 @@ export default {
       }).catch(() => {
       });
     },
-    queryList() {
+    queryList(pageSize) {
+      this.query.limit = 10
       if (this.query.keyword) {
-        this.query.pos = 0;
-        this.pageInfo.pageNum = 1;
+        this.pageInfo.pageNum = pageSize;
+        const pos = parseInt((pageSize - 1) * this.query.limit);
+        this.pageInfo.pos = pos
+        this.query.pos = pos
         this.$vhall_paas_port({
           k: 100549,
           data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
       } else {
-        this.query.pos = this.pageInfo.pos;
+        this.pageInfo.pageNum = pageSize
+        const pos = parseInt((pageSize - 1) * this.query.limit);
+        this.pageInfo.pos = pos
+        this.query.pos = pos
       }
-      this.query.limit = 10
       // this.query.pos = 0;
       // this.query.pageNumber = 0;
       // this.query.limit = 10;
@@ -731,7 +736,7 @@ export default {
             });
             this.viewerDialog.visible = false;
             // 重查当前分组下观众信息
-            this.queryList();
+            this.queryList(1);
           }).catch(res => {
            console.log(res);
            this.$message({
@@ -776,7 +781,7 @@ export default {
           // this.$refs.viewerTable.clearSelect();
           this.pageInfo.pageNum = 1;
           this.pageInfo.pos = 0;
-          this.queryList();
+          this.queryList(1);
         } else {
           this.$message({
             message:  res.msg || `删除观众-操作失败`,
@@ -829,7 +834,7 @@ export default {
       this.activeGroupIndex = index;
       this.query.group_id = item.id;
       this.query.keyword = '';
-      this.queryList();
+      this.queryList(1);
     },
     // 文件上传成功
     uploadSuccess(res, file){
@@ -963,7 +968,7 @@ export default {
           text: '请上传文件'
         }
         // 刷新列表数据
-        this.queryList();
+        this.queryList(1);
       }).catch(res => {
         this.$message({
           message:res.msg || '导入观众信息失败',

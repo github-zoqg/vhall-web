@@ -15,7 +15,7 @@
             <label class="live-status" v-if="item.webinar_state == 1">
               <img src="../../../../../common/images/live.gif" alt="">
             </label>
-            {{item | liveTag}}
+            {{item | actionTag}}
           </span>
         </div>
         <div class="vh-chose-active-item__cover-hots">

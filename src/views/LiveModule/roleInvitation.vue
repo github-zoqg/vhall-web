@@ -25,7 +25,7 @@
       <div class="pre--full-cover" v-show="!roleSwitch"></div>
       <div>
         <!-- 主持人 -->
-        <div class="role-card">
+        <div class="role-card" v-if="webinarVo.webinar_type!=5">
           <div class="role-card-head">
             <div class="title--box">
               <label class="title--label role1">主持人</label>
@@ -55,6 +55,12 @@
           </div>
           <div>
             <el-button type="primary" round v-preventReClick @click.prevent="copy(urlText1, 1)" class="copy-text">邀请</el-button>
+          </div>
+        </div>
+        <div v-else class="role-card">
+          <div class="no-timing">
+            <img src="../../common/images/roleTime@2x.png" alt="">
+            <p>定时直播不支持发起直播，不支持主持人权限</p>
           </div>
         </div>
         <!-- 嘉宾 -->
@@ -169,7 +175,7 @@
         <el-button @click="visible = false" round size="medium">取 消</el-button>
       </span>
     </VhallDialog>
-    <begin-play :webinarId="$route.params.str"></begin-play>
+    <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5"></begin-play>
   </div>
 </template>
 
@@ -626,6 +632,20 @@ export default {
     color: #FA9A32;
   }
 }
+.no-timing{
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 120px;
+  img{
+    width: 104px;
+    height: 108px;
+  }
+  p{
+   color: #666;
+   font-size: 12px;
+   margin-top: 20px;
+  }
+}
 .role-remark {
   font-size: 12px;
   font-family: @fontRegular;
@@ -746,7 +766,7 @@ export default {
   overflow-y: auto;
   margin-bottom: 24px;
   /deep/.el-checkbox {
-    width: 25%;
+    width: 20%;
     margin-right: 0;
     margin-top: 16px;
     min-width: 110px;

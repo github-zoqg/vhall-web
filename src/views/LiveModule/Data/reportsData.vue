@@ -322,7 +322,8 @@ export default {
         if (this.liveDetailInfo.webinar_state == 4) {
           this.lineDataList = this.allDataList.record;
         } else {
-          this.lineDataList = this.allDataList.live;
+          const lines = this.isActive ? 'live' : 'record'
+          this.lineDataList = this.allDataList[lines];
         }
       });
       // 获取并发趋势图
