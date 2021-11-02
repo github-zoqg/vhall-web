@@ -312,9 +312,10 @@ export default {
   font-weight: 400;
   color: #666666;
   line-height: 20px;
-  position: fixed;
-  bottom: 24px;
-  left: calc(50% - 220px);
+  margin-top: calc(100% - 450px);
+  // position: fixed;
+  // bottom: 24px;
+  // left: calc(50% - 220px);
   a {
     color: @default--normal;
     cursor: pointer;
