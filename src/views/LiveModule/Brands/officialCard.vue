@@ -121,7 +121,7 @@
         </div>
       </div>
    </div>
-   <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
+   <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
   </div>
 </template>
 <script>

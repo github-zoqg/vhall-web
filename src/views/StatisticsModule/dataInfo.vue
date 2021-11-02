@@ -257,11 +257,12 @@ export default {
     },
     // 获取总数据
     getAllCenterData(params) {
+      const lines = this.isActive ? 'live' : 'record'
       this.$fetch('getDataCenterInfo', this.$params(params)).then(res =>{
         this.allDataList = res.data;
         console.log(this.allDataList);
         this.mainKeyData = this.allDataList.key_data;
-        this.lineDataList = this.allDataList.trend.live;
+        this.lineDataList = this.allDataList.trend[lines];
         this.browerDataList = this.allDataList.browser.list;
         this.areaDataList = this.allDataList.area;
         this.deviceDataList = this.allDataList.device.list;

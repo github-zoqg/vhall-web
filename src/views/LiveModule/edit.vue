@@ -1,6 +1,6 @@
 <template>
   <div class="editBox">
-    <pageTitle :pageTitle="Number($route.query.type) === 2 ? '编辑信息' : `${title}${webniarTypeToZH}`"></pageTitle>
+    <pageTitle :pageTitle="Number($route.query.type) === 2 ? '编辑信息' : `${title}${webniarTypeToZHTitle}`"></pageTitle>
     <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="80px">
       <el-form-item :label="`${webniarTypeToZH}标题`" prop="title"
       :rules="[
@@ -8,21 +8,21 @@
       ]">
         <VhallInput v-model="formData.title" v-clearEmoij :maxlength="100" class="title-inform" autocomplete="off" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
       </el-form-item>
-      <el-form-item label="直播时间" required v-if="webniarType=='live'" class="item-time">
-          <el-col :span="11.5">
-            <el-form-item prop="date1" style="width:283px;" :rules="[
+      <el-form-item label="直播时间" required v-if="webniarType=='live' || webniarType=='time'" class="item-time">
+          <p v-if="webniarTypeToZHTitle == '定时直播'">直播过程中，定时直播活动的直播时间将不可修改</p>
+          <el-col :span="11.5" class="line">
+            <el-form-item prop="date1" style="width:286px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
             ]">
-              <el-date-picker type="date" class="date" prefix-icon="iconfont-v3 saasicon_date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%">
+              <el-date-picker type="date" class="date" :disabled="isEditTime" prefix-icon="iconfont-v3 saasicon_date" :picker-options="pickerOptions" placeholder="选择日期" value-format="yyyy-MM-dd" v-model="formData.date1" style="width: 100%">
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col class="line" :span="1">-</el-col>
           <el-col :span="11.5">
-            <el-form-item prop="date2" style="width:284px;" :rules="[
+            <el-form-item prop="date2" style="width:286px;" :rules="[
               { required: true, message: `请选择直播开始时间`, trigger: 'blur' }
             ]">
-            <el-time-picker placeholder="选择时间" :default-value="dafaultTime" :disabled="!formData.date1" type="datetime" :picker-options="{
+            <el-time-picker placeholder="选择时间" :default-value="dafaultTime" :disabled="!formData.date1 || isEditTime" type="datetime" :picker-options="{
               selectableRange: rangHourMins
             }" format="HH:mm" value-format="HH:mm" v-model="formData.date2" style="width: 100%"></el-time-picker>
             </el-form-item>
@@ -137,9 +137,9 @@
             <span>{{liveMode == 6 ? '直播中请勿修改连麦人数！最大支持1v15连麦，开通更多连麦人数' : '直播中请勿修改连麦人数！无延迟最大支持1v5连麦，常规直播最大支持1v15连麦，开通更多连麦人数'}}<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a></span>
           </span>
         </div>
-        <el-select filterable v-model="formData.zdy_inav_num" style="width: 312px">
+        <el-select filterable v-model="zdy_inav_num" style="width: 312px">
           <template  v-for="(opt, optIndex) in inavNumOptions">
-            <el-option :key="optIndex" :label="opt.label" :value="opt.label" :disabled="selectDelayMode == 'delay' ? opt.value > 6 : opt.value > speakerMaxNum"/>
+            <el-option :key="optIndex" :label="opt.label" :value="opt.label" :disabled="selectDelayMode == 'delay' ? (speakerMaxNum < 6 ? opt.value > speakerMaxNum : opt.value > 6) : opt.value > speakerMaxNum"/>
           </template>
         </el-select>
       </el-form-item>
@@ -178,12 +178,12 @@
           </div>
         </upload>
       </el-form-item>
-      <el-form-item label="选择视频"  v-if="webniarType=='vod'" required>
+      <el-form-item label="选择视频"  v-if="webniarType=='vod' || webniarType=='time'" required>
         <div class="mediaBox" @mouseenter="showMenu" @mouseleave="hiddenMenu">
           <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
             <div class="picInco"><i class="iconfont-v3 saasicon_shangchuan"></i></div>
             <!-- <i class="iconfont-v3 saasicon_shangchuan"></i> -->
-            <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；<br/>音频格式支持mp3、wav 文件大小不超过2G</p>
+            <p>视频格式支持：rmvb、mp4、avi、wmv、mkv、flv、mov；<br/>音频格式支持mp3、wav 文件大小不超过5G</p>
           </div>
           <div class="mediaSlot" v-else>
             <icon icon-class="saasshipinwenjian"></icon>
@@ -194,14 +194,14 @@
               <i class="iconfont-v3 saasicon-eye"></i>
               <el-button type="text" class="operaBtn" >预览</el-button>
             </div>
-            <div class="tool" @click.stop="deleteSelectMedia">
+            <div class="tool" v-if="!isEditTime" @click.stop="deleteSelectMedia">
               <i class="iconfont-v3 saasicon_shanchu"></i>
               <el-button type="text" class="operaBtn" >删除</el-button>
             </div>
           </div>
           <el-tooltip v-if="!$route.query.record_id" v-tooltipMove>
             <div slot="content">
-              1.上传单个文件最大2G，文件标题不能带有特殊字符和空格<br/>
+              1.上传单个文件最大5G<br/>
               2.视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV<br/>
               3.上传的视频，不支持剪辑和下载
             </div>
@@ -211,7 +211,7 @@
         <!-- <div class="vod-hover"> -->
         <!-- </div> -->
       </el-form-item>
-      <el-form-item :label="`${webniarTypeToZH}简介`">
+      <el-form-item :label="`${webniarTypeToZH}简介`" class="item-last">
         <v-editor class="editor-wrap" save-type='live' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
       </el-form-item>
       <!-- <el-form-item :label="`${webniarTypeToZH}类别`" >
@@ -227,7 +227,7 @@
           >
         </el-switch>
       </p>
-      <p class="switch__box" v-if="webniarType=='live'">
+      <p class="switch__box" v-if="webniarType=='live' || webniarType=='time'">
         <el-switch
           v-model="formData.docSwtich"
           active-color="#FB3A32"
@@ -237,7 +237,7 @@
           >
         </el-switch>
       </p>
-      <p class="switch__box" v-if="webniarType=='live'">
+      <p class="switch__box" v-if="webniarType=='live' || webniarType=='time'">
         <el-switch
           v-model="formData.reservation"
           active-color="#FB3A32"
@@ -246,7 +246,7 @@
           :active-text="reservationDesc">
         </el-switch>
       </p>
-      <p class="switch__box" v-if="webniarType=='live'">
+      <p class="switch__box" v-if="webniarType=='live' || webniarType=='time'">
         <el-switch
           v-model="formData.online"
           active-color="#FB3A32"
@@ -273,7 +273,7 @@
           :active-text="homeDesc">
         </el-switch>
         </p>
-      <p class="switch__box" v-if="webniarType=='live' && !versionType">
+      <p class="switch__box" v-if="(webniarType=='live' || webniarType=='time') && !versionType">
          <el-switch
           v-model="formData.capacity"
           active-color="#FB3A32"
@@ -309,7 +309,7 @@
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
       </el-dialog>
     </template>
-    <begin-play :webinarId="$route.params.id" v-if="liveDetailInfo.webinar_state!=4&&title!=='创建'"></begin-play>
+    <begin-play :webinarId="$route.params.id" v-if="webniarTypeToZHTitle!='定时直播'&&liveDetailInfo.webinar_state!=4&&title!=='创建'"></begin-play>
     <div class="delay-mask" v-if="showDelayMask">
       <div class="delay-intro">
         <span class="close iconfont-v3 saasclose" @click.stop="showDelayMask = false"></span>
@@ -450,7 +450,19 @@ export default {
     webniarTypeToZH(){
       const zh ={
         vod: '点播',
-        live: '直播'
+        live: '直播',
+        time: '直播'
+      };
+      return zh[this.$route.meta.webniarType];
+    },
+    webinarVideo() {
+      return this.$route.meta.webniarType == 'live' ? false : true
+    },
+    webniarTypeToZHTitle() {
+       const zh ={
+        vod: '点播',
+        live: '直播',
+        time: '定时直播'
       };
       return zh[this.$route.meta.webniarType];
     },
@@ -464,12 +476,14 @@ export default {
     },
     webinarGroup() {
       // webinar.group 1:有分组直播权限  0:无权限
-     /*  if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.group'] == '1') {
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.group'] == '1') {
         return false;
       } else {
         return true;
-      } */
-      return false;
+      }
+    },
+    isEditTime() {
+      return this.liveDetailInfo.webinar_state == 1 && this.liveDetailInfo.webinar_type == 5
     },
     // admin无延迟活动权限
     webinarDelay() {
@@ -540,10 +554,10 @@ export default {
         limitCapacity: '',
         limitCapacitySwtich: false,
         imageUrl: '',
-        domain_url: '',
-        zdy_inav_num: ''
+        domain_url: ''
       },
       speakSwitch: false, // 是否自动上麦
+      zdy_inav_num: '',
       liveMode: 2,
       liveDetailInfo: {},
       showChecked: false,
@@ -672,7 +686,7 @@ export default {
   created(){
     const path = this.$route.path
     console.log('>>>>>>>>11111', path)
-    if (path.indexOf('/live/vodEdit') != -1) {
+    if (path.indexOf('/live/vodEdit') != -1 ||path.indexOf('/live/timeEdit') != -1  ) {
       this.showDelayTag = false
     }
     window.scrollTo(0,0);
@@ -724,7 +738,8 @@ export default {
           this.speakerMaxNum = data['speaker_max_num'] || ''
           if (Number(this.$route.query.type) !== 2) {
             // 不是编辑，默认设置值如此
-            this.formData.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
+            // this.formData.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
+            this.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
           }
         }
       }).catch(res =>{
@@ -738,9 +753,9 @@ export default {
       if (this.title === '编辑') return
       this.selectDelayMode = mode
       // 切换直播延迟方式后，直播模式限制更新
-      let inav_num = Number(this.formData.zdy_inav_num.replace('1v', '')) + 1
+      let inav_num = Number(this.zdy_inav_num.replace('1v', '')) + 1
       if (mode === 'delay' && inav_num > 6) {
-        this.formData.zdy_inav_num = '1v5'
+        this.zdy_inav_num = '1v5'
       }
     },
     getLiveBaseInfo(id, flag) {
@@ -772,7 +787,8 @@ export default {
           this.formData.limitCapacitySwtich = false;
         }
         this.formData.capacity = Boolean(this.liveDetailInfo.is_capacity);
-        this.formData.zdy_inav_num = `1v${Number(this.liveDetailInfo.inav_num) - 1}`;
+        // this.formData.zdy_inav_num = `1v${Number(this.liveDetailInfo.inav_num) - 1}`;
+        this.zdy_inav_num = `1v${Number(this.liveDetailInfo.inav_num) - 1}`;
         if (this.liveDetailInfo.paas_record_id) {
           this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
           this.selectMedia.id = this.liveDetailInfo.record_id;
@@ -896,7 +912,7 @@ export default {
           }
         }
       }
-      if (this.webniarTypeToZH == '点播' && !this.selectMedia.id) {
+      if (this.webinarVideo && !this.selectMedia.id) {
         this.$message({
           message: '请先上传视频',
           showClose: true,
@@ -907,12 +923,12 @@ export default {
         return;
       }
       let data = {
-        webinar_id: this.webinarId || '', // 有值为编辑，无值为创建
-        record_id: this.webniarTypeToZH === '点播' ? this.selectMedia.id : '',
+        webinar_id: this.webinarId || '',
+        record_id: this.webinarVideo ? this.selectMedia.id : '',
         subject: this.formData.title, // 标题
         introduction: this.unescapeHTML(this.formData.content.replace("&lt;p&gt;","")) || '<p></p>', // 简介
-        start_time: `${this.formData.date1} ${this.formData.date2}`, // 创建时间
-        webinar_type: this.liveMode, // 1 音频 2 视频 3 互动 6 分组讨论
+        start_time: this.webniarTypeToZH == '点播' ? '' : `${this.formData.date1} ${this.formData.date2}`, // 创建时间
+        webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
         is_private: this.formData.home ? 0 : 1 , // 是否在个人主页显示
         // is_open: Number(this.home),  // 是否公开活动 默认0为公开，1为不公开
@@ -925,7 +941,8 @@ export default {
         img_url: this.$parseURL(this.formData.imageUrl).path, // 封面图
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
         no_delay_webinar: this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status
-        inav_num: Number(this.formData.zdy_inav_num.replace("1v","")) + 1
+        is_timing: this.webinarVideo ? (this.$route.meta.webniarType == 'vod' ? 0 : 1) : '',
+        inav_num: this.liveMode == 3 && this.webniarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
       };
       if (this.liveMode == 6) {
         data.auto_speak = Number(this.speakSwitch)
@@ -933,13 +950,14 @@ export default {
       console.log('>>>>>>>>>>创建直播最终保存', data)
 
       if(this.$route.query.type != 2 ) {
-         data = this.$params(data)
+        data = this.$params(data)
       }
+      console.log('>>>>>>>>>>111', this.webniarTypeToZH, this.$params(data))
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.loading = true;
           let url;
-          if (this.webniarTypeToZH === '点播') {
+          if (this.webinarVideo) {
             url = this.title === '编辑' ? 'liveEdit' : 'demandCreate';
           } else {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
@@ -1020,7 +1038,7 @@ export default {
             data: {business_uid: userId, user_id: '', webinar_id: '', refer: refer, s: '', report_extra: {}, ref_url: '', req_url: ''}
           })
         }
-        if (this.webniarTypeToZH === '直播') {
+        if (this.webniarTypeToZHTitle === '直播') {
           this.$vhall_paas_port({
             k: 100018,
             data: {business_uid: userId, user_id: '', webinar_id: '', refer: refer, s: '', report_extra: {}, ref_url: '', req_url: ''}
@@ -1031,7 +1049,7 @@ export default {
           })
         }
       }
-      if (this.webniarTypeToZH === '直播') {
+      if (this.webniarTypeToZHTitle === '直播') {
         // 文档
         this.$vhall_paas_port({
           k: this.formData.docSwtich ? 100023 : 100024,
@@ -1145,6 +1163,7 @@ export default {
     background: #ffffff;
     padding: 48px 20px 50px 48px;
     margin-top: 32px;
+    border-radius: 4px;
     /deep/ .el-switch__label--left{
       color: #1A1A1A;
       pointer-events: none;
@@ -1168,16 +1187,28 @@ export default {
     //   }
     // }
   }
-  .item-time .el-form-item {
-    margin-bottom: 0px;
-    /deep/.iconfont-v3{
-      color: #999;
+  .item-time {
+    p{
+      color: #666;
       font-size: 14px;
     }
-    /deep/.el-input__icon{
-      color: #999;
+    .el-form-item {
+      margin-bottom: 0px;
+      /deep/.iconfont-v3{
+        color: #999;
+        font-size: 14px;
+      }
+      /deep/.el-input__icon{
+        color: #999;
+      }
     }
   }
+  .item-last{
+    &.el-form-item {
+      margin-bottom: 0px;
+    }
+  }
+
 
   /deep/.el-upload--picture-card i.saasicon_shangchuan{
     font-size: 40px;
@@ -1220,14 +1251,16 @@ export default {
     /deep/.el-upload--picture-card {
       height: 180px;
       border: 1px solid #CCCCCC;
+      &:hover{
+        border: 1px solid #999;
+      }
     }
     /deep/.box > div {
       height: 180px;
     }
   }
   .line{
-    text-align: center;
-    width: 20px;
+    margin-right: 16px;
   }
   .pageTitle {
     font-size: 14px;
@@ -1611,6 +1644,9 @@ export default {
   /deep/.saasicon_help_m {
     color: #999999;
     vertical-align: bottom;
+    &:hover{
+      color: #666;
+    }
   }
   .delay-mask{
     position: fixed;

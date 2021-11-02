@@ -31,7 +31,7 @@
           <el-button type="primary" round class="length152"  @click="addProduct" v-preventReClick>创建</el-button>
         </noData>
       </div>
-      <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
+      <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
   </div>
 </template>
 

@@ -30,7 +30,7 @@
               <span class="tag" v-if="isForm">报名表单</span>
             </p>
             <div class="action-look">
-              <el-button round size="small" v-if="[3, 5].includes(liveDetailInfo.webinar_state)" style="margin-right:8px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
+              <el-button round size="small" v-if="[3, 5].includes(liveDetailInfo.webinar_state) && liveDetailInfo.webinar_type != 5" style="margin-right:8px;" @click="resetResume(liveDetailInfo.webinar_state)">恢复预告</el-button>
               <el-popover
                 placement="bottom"
                 trigger="hover"
@@ -77,17 +77,18 @@
             <i>秒</i>
           </p>
           <p v-else><span>{{ liveDetailInfo.webinar_state | liveText }}</span></p>
-          <el-button round type="primary" @click="toRoom" :disabled="isAnginOpen">发起直播</el-button>
+          <el-button round type="primary" @click="toEndLive" v-if="liveDetailInfo.webinar_type == 5 && liveDetailInfo.webinar_state == 1">结束直播</el-button>
+          <el-button round type="primary" @click="toRoom" :disabled="isAnginOpen" v-if="liveDetailInfo.webinar_type != 5">发起直播</el-button>
         </div>
         <div class="inner liveTime" v-if="outLiveTime && liveDetailInfo.webinar_state == 2">
           <p class="subColor">直播即将开始</p>
           <p><span>观众等待中</span></p>
-          <el-button round type="primary" @click="toRoom">发起直播</el-button>
+          <el-button v-if="liveDetailInfo.webinar_type != 5" round type="primary" @click="toRoom">发起直播</el-button>
         </div>
       </el-col>
     </el-row>
-    <item-card :type='liveDetailInfo.webinar_state' :webinarType="liveDetailInfo.webinar_type"  :isTrue="isTrue" :perssionInfo="perssionInfo" :childPremission="childPremission" @blockHandler="blockHandler" v-if="isShow"></item-card>
-    <begin-play :webinarType="liveDetailInfo.webinar_type" :webinarId="$route.params.str" v-if="liveDetailInfo.webinar_state!=4"></begin-play>
+    <item-card :type='liveDetailInfo.webinar_state' :webinarType="liveDetailInfo.webinar_type"  :isTrue="isTrue" :perssionInfo="perssionInfo" :childPremission="childPremission" :videoType="videoType" @blockHandler="blockHandler" v-if="isShow"></item-card>
+    <begin-play :webinarType="liveDetailInfo.webinar_type" :webinarId="$route.params.str" v-if="liveDetailInfo.webinar_state!=4 &&liveDetailInfo.webinar_type!=5"></begin-play>
   </div>
 </template>
 
@@ -144,6 +145,9 @@ export default {
     },
     childPremission: function(){
       return sessionOrLocal.get('SAAS_V3_SON_PS') ? JSON.parse(sessionOrLocal.get('SAAS_V3_SON_PS')) : {};
+    },
+    videoType() {  //定时直播视频格式 用来确定是否有暖场视频
+      return this.liveDetailInfo.webinar_type == 5 && (this.liveDetailInfo.msg_url == '.MP3' || this.liveDetailInfo.msg_url == '.MAV')
     }
   },
   created(){
@@ -190,6 +194,7 @@ export default {
         if(res.data.permissions) {
           sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
           this.perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+          console.log(this.perssionInfo, '>>>>>>1231<<<')
           this.isShow = true;
           this.isTrue = arr.some(item => {
             // eslint-disable-next-line no-prototype-builtins
@@ -215,7 +220,13 @@ export default {
         if (res.data.webinar_state == 4) {
           this.$route.meta.title = '点播详情';
         } else {
-          this.$route.meta.title = '直播详情';
+          if (res.data.webinar_type == 5) {
+            this.$route.meta.title = '定时直播详情';
+            this.videoType = res.data.msg_url
+          } else {
+            this.$route.meta.title = '直播详情';
+          }
+          
         }
         this.getFormInfo(id);
         if (res.data.webinar_state == 1) {
@@ -299,6 +310,30 @@ export default {
           clipboard.destroy();
         });
     },
+    // 结束直播
+    toEndLive() {
+      //强制结束直播
+      this.$confirm('正在直播中，确定结束直播？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {
+          this.timingliveEnd();
+        }).catch(() => {});
+    },
+    timingliveEnd() {
+      this.$fetch('liveEnd', this.$params({
+        webinar_id: this.$route.params.str,
+        end_type: 1
+      })).then((res) => {
+        if(res && res.code === 200) {
+          this.getLiveDetail(this.$route.params.str);
+        } 
+      }).catch(e => {
+      });
+    },
     // 打开页面
     openLink() {
       this.$vhall_paas_port({
@@ -373,21 +408,26 @@ export default {
           if (this.liveDetailInfo.webinar_state == 4) {
             this.$router.push({path: `/live/vodEdit/${this.$route.params.str}`, query: {type: 2 }});
           } else {
-            this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {type: 2 }});
+            if (this.liveDetailInfo.webinar_type == 5) {
+              this.$router.push({path: `/live/timeEdit/${this.$route.params.str}`, query: {type: 2 }});
+            } else {
+              this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {type: 2 }});
+            }
+            
           }
         } else if (item.path === '/live/question') {
           // 问卷
-          this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {roomId: this.liveDetailInfo.vss_room_id }});
+          this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {roomId: this.liveDetailInfo.vss_room_id,query: {type:this.liveDetailInfo.webinar_type } }});
         } else if(item.path === `/live/prizeSet/${this.$route.params.str}` || item.path === `/live/gift/${this.$route.params.str}`) {
           // 奖品
-          this.$router.push({path: item.path, query: {roomId:this.liveDetailInfo.vss_room_id }});
+          this.$router.push({path: item.path, query: {roomId:this.liveDetailInfo.vss_room_id, type:this.liveDetailInfo.webinar_type }});
         } else if (item.path === `/live/interactionData/${this.$route.params.str}`) {
           // 互动统计
           this.$router.push({path: item.path, query: {roomId:this.liveDetailInfo.vss_room_id }});
         } else if (item.path == `/live/embedCard/${this.$route.params.str}`) {
           this.$router.push({path: item.path, query: {type:this.liveDetailInfo.webinar_type }});
         } else {
-          this.$router.push({path: item.path});
+          this.$router.push({path: item.path, query: {type:this.liveDetailInfo.webinar_type }});
         }
       }else{
         console.log(item);
@@ -746,12 +786,12 @@ export default {
       i{
         margin: 0 2px;
       }
-      margin-bottom: 18px;
+      // margin-bottom: 18px;
     }
   }
   .el-button{
     width: 160px;
-    margin: 0 auto;
+    margin: 22px auto 0;
   }
 }
 /*.detailBox {
