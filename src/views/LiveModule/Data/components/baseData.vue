@@ -170,7 +170,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4" @click="lookOption('签到', 100449)">
+         <div class="base-item" v-if="isStatus!=4&&webinarType!=5" @click="lookOption('签到', 100449)">
           <p>查看</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_Sign@2x.png" alt=""></label>
@@ -188,7 +188,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4"  @click="lookOption('问卷', 100450)">
+         <div class="base-item" v-if="isStatus!=4&&webinarType!=5"  @click="lookOption('问卷', 100450)">
           <p>查看</p>
          <div class="base-main">
            <label><img src="../../../../common/images/icon/icon_questionnaire@2x.png" alt=""></label>
@@ -206,7 +206,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4" @click="lookOption('抽奖', 100451)">
+         <div class="base-item" v-if="isStatus!=4&&webinarType!=5" @click="lookOption('抽奖', 100451)">
           <p>查看</p>
           <div class="base-main">
             <!-- <icon icon-class="saasicon_choujiang"></icon> -->
@@ -224,7 +224,7 @@
             </div>
           </div>
         </div>
-        <div class="base-item" v-if="isStatus!=4" @click="lookOption('发群红包', 100452)">
+        <div class="base-item" v-if="isStatus!=4&&webinarType!=5" @click="lookOption('发群红包', 100452)">
           <p>查看</p>
          <div class="base-main">
            <label><img src="../../../../common/images/icon/icon_envelope@2x.png" alt=""></label>
@@ -262,7 +262,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4&&webinarType==3" @click="exportSpeak">
+         <div class="base-item" v-if="isStatus!=4&&webinarType==3&&webinarType!=5" @click="exportSpeak">
           <p>导出</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_whea@2x.png" alt=""></label>

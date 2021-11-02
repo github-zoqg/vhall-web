@@ -83,7 +83,7 @@
         </el-dialog>
       </div>
     </template>
-    <begin-play :webinarId="$route.params.str"></begin-play>
+    <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5"></begin-play>
   </div>
 </template>
 <script>

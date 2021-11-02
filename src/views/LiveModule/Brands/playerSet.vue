@@ -288,7 +288,7 @@
           </p>
       </div>
     </div>
-    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
+    <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
     <div v-if="(hasDelayPremission && showDelay && webinar_type != 6) || (webinar_type == 6 && showGroupLive)" class="delay-mask">
       <div class="tip">
         <div class="head"><span class="title">提示</span><span class="iconfont-v3 saasclose" @click.stop="closeDialog"></span></div>

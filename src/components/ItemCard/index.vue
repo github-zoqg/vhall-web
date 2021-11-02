@@ -56,15 +56,16 @@
       </div>
     </section>
     <section v-if="!(childPremission && Number(childPremission.permission_content) === 0)">
-      <p class="subject">{{ type == 4 ? '点播' : '回放'}}</p>
+      <p class="subject">{{ webinarType == 5 ? '视频' : type == 4 ? '点播' : '回放'}}</p>
       <div class="subjectOuter">
-        <div class="sunjectInner" @click="goHandler(type == 4 ? `/live/recordplayback/${$route.params.str}` : `/live/playback/${$route.params.str}`, type)">
-          <!-- <icon class="icon" icon-class="saasicon_huifangguanli"></icon> -->
-          <span><img src="../../common/images/icon/icon_review.png" alt=""></span>
-
+        <div class="sunjectInner" @click="goHandler(webinarType == 5 ? `/live/publishplayback/${$route.params.str}` : (type == 4 ? `/live/recordplayback/${$route.params.str}` : `/live/playback/${$route.params.str}`), type)">
+          <span>
+            <img src="../../common/images/icon/icon_timing@2x.png" alt="" v-if="webinarType == 5">
+            <img src="../../common/images/icon/icon_review.png" alt="" v-else>
+          </span>
           <div class="desc">
-            <p class="mainText">{{ type == 4 ? '点播管理' : '回放管理'}}</p>
-            <p class="subText">{{ type == 4 ? '管理点播内容' : '管理直播回放内容'}}</p>
+            <p class="mainText">{{ webinarType == 5 ? '视频管理' : type == 4 ? '点播管理' : '回放管理'}}</p>
+            <p class="subText">{{ webinarType == 5 ? '管理视频内容' : type == 4 ? '管理点播内容' : '管理直播回放内容'}}</p>
           </div>
         </div>
       </div>
@@ -111,6 +112,10 @@ export default {
     isTrue: {
       type:Boolean,
       default: true
+    },
+    videoType: {
+      type:Boolean,
+      default: false
     }
   },
   created() {
@@ -124,9 +129,9 @@ export default {
         { icon: 'icon_Functional@2x', id: 2, title: '功能配置', subText: `设置观看页功能是否展示`, type: 100059, path: `/live/planFunction/${this.$route.params.str}`,isShow: true},
         { icon: 'icon_watch@2x', id: 3, title: '观看限制', subText: `设置${this.type == 4 ? '点播' :'直播'}观看限制`, type: 100060, path: `/live/viewerRules/${this.$route.params.str}`, isShow: true},
         { icon: 'icon_role@2x', id: 4, title: '角色邀请', subText: '设置不同角色参与直播的权限', index: 4, type: 100061, path: `/live/roleInvitation/${this.$route.params.str}`, isShow: this.type != 4},
-        { icon: 'icon_video@2x', id: 5, title: '暖场视频', subText: '开启后设置暖场视频',index: 4, type: 100062, path: `/live/warm/${this.$route.params.str}`, isShow: this.type != 4 && this.webinarType!= 1},
+        { icon: 'icon_video@2x', id: 5, title: '暖场视频', subText: '开启后设置暖场视频',index: 4, type: 100062, path: `/live/warm/${this.$route.params.str}`, isShow: this.type != 4 && this.webinarType!=1 && !this.videoType},
         { icon: 'icon_virtual@2x', id: 6, title: '虚拟人数', subText: `添加${this.type == 4 ? '点播' :'直播'}的虚拟人数`, type: 100063, path: `/live/virtual/${this.$route.params.str}`, isShow: this.webinarType == 6 ? false : this.perssionInfo.virtual_user == 1},
-        { icon: 'icon_registration form@2x', id: 7, title: '报名表单', subText: '开启后收集目标观众信息', type: 100064, path: `/live/signup/${this.$route.params.str}`, isShow: this.perssionInfo.join_check == 1},
+        { icon: 'icon_registration form@2x', id: 7, title: '报名表单', subText: '开启后收集目标观众信息', type: 100064, path: `/live/signup/${this.$route.params.str}`, isShow: this.perssionInfo.join_check==1},
         { icon: 'icon_embedded@2x', id: 8, title: '推广嵌入', subText: `获取活动推广嵌入的方法`, type: 100065, path: `/live/embedCard/${this.$route.params.str}`, isShow: true}
       ],
       brandList: [
@@ -140,10 +145,10 @@ export default {
         { icon: 'icon_shareSetting@2x', id: 8, title: '分享设置', subText: '设置活动分享到微信中的效果', path: `/live/shareSetting/${this.$route.params.str}`,isShow: this.perssionInfo.share_set == 1},
       ],
       liveDataList: [
-        { icon: 'icon_document@2x', id: 1, title: '文档', subText: '直播中使用文档演示', type: 100073, path: `/live/word/${this.$route.params.str}`,isShow: this.type != 4},
-        { icon: 'icon_videoSet@2x', id: 1, title: '插播文件', subText: '直播中使用音视频文件演示', type: '000000', path: `/live/videoSet/${this.$route.params.str}`, isShow: this.perssionInfo['waiting.video.file']==1 && this.type != 4},
-        { icon: 'icon_Lucky draw@2x', id: 2, title: '抽奖', subText: '直播中发起抽奖活跃气氛', type: 100074, path: `/live/prizeSet/${this.$route.params.str}`, isShow: this.perssionInfo['ui.hide_lottery']==1 && this.type != 4},
-        { icon: 'icon_questionnaire@2x', id: 3,title: '问卷', subText: '创建问卷收集信息', type: 100075, path: '/live/question',isShow: this.perssionInfo['ui.hide_survey']==1 && this.type != 4 },
+        { icon: 'icon_document@2x', id: 1, title: '文档', subText: '直播中使用文档演示', type: 100073, path: `/live/word/${this.$route.params.str}`,isShow: this.type != 4 && this.webinarType != 5},
+        { icon: 'icon_videoSet@2x', id: 1, title: '插播文件', subText: '直播中使用音视频文件演示', type: '000000', path: `/live/videoSet/${this.$route.params.str}`, isShow:  this.webinarType != 5 && this.perssionInfo['waiting.video.file']==1 && this.type != 4}, 
+        { icon: 'icon_Lucky draw@2x', id: 2, title: '抽奖', subText: '直播中发起抽奖活跃气氛', type: 100074, path: `/live/prizeSet/${this.$route.params.str}`, isShow: this.webinarType != 5 && this.perssionInfo['ui.hide_lottery']==1 && this.type != 4},
+        { icon: 'icon_questionnaire@2x', id: 3,title: '问卷', subText: '创建问卷收集信息', type: 100075, path: '/live/question',isShow: this.webinarType != 5 && this.perssionInfo['ui.hide_survey']==1 && this.type != 4 },
         { icon: 'icon_goods@2x', id: 4, title: '商品', subText: '设置展示给观众的商品', type: 100076, path: `/live/productSet/${this.$route.params.str}`,isShow: this.perssionInfo.product_show==1},
         { icon: 'icon_gift@2x', id: 5, title: '礼物', subText: '设置观众发送的礼物信息', type: 100077, path: `/live/gift/${this.$route.params.str}`,isShow: this.perssionInfo['ui.show_gift']==1},
       ],
@@ -195,7 +200,7 @@ export default {
         k: type === 4 ? 100079 : 100078,
         data: {business_uid: userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-      this.$router.push({path: path});
+      this.$router.push({path: path, query:{type: this.webinarType}});
     }
   }
 };

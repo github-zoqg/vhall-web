@@ -237,7 +237,7 @@
         </el-form>
       </div>
     </div>
-    <begin-play :webinarId="$route.params.str" v-if="webinarState!=4"></begin-play>
+    <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
     <VhallDialog :visible='visible' title="权限验证" width='400px' @close="visible = false;">
       <span class="pr" v-if='!showPwd'>
         <el-input :placeholder="showText" v-model="stash" type="password"></el-input>
