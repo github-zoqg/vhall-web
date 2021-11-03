@@ -221,7 +221,7 @@ export default {
 }
 .choose__way__main {
   width: 850px;
-  margin: 122px auto;
+  margin: 60px auto 122px;
 }
 .old-header {
   margin-bottom: 40px;
@@ -312,10 +312,10 @@ export default {
   font-weight: 400;
   color: #666666;
   line-height: 20px;
-  margin-top: calc(100% - 450px);
-  // position: fixed;
-  // bottom: 24px;
-  // left: calc(50% - 220px);
+  // margin-top: calc(100% - 450px);
+  position: fixed;
+  bottom: 24px;
+  left: calc(50% - 220px);
   a {
     color: @default--normal;
     cursor: pointer;
