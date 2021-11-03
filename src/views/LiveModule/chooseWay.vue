@@ -221,7 +221,12 @@ export default {
 }
 .choose__way__main {
   width: 850px;
-  margin: 60px auto 122px;
+  margin: 122px auto;
+}
+@media (max-width: 1366px) {
+  .choose__way__main {
+    margin: 60px auto 122px;
+  }
 }
 .old-header {
   margin-bottom: 40px;
@@ -259,9 +264,9 @@ export default {
     color: #666666;
     line-height: 20px;
     &.f-20 {
-      padding-top: 13px;
+      padding-top: 6px;
       text-align: center;
-      padding-bottom: 10px;
+      padding-bottom: 12px;
       color: #1A1A1A;
     }
   }
