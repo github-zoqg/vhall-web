@@ -878,6 +878,7 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
+      var that = this
       if (this.formData.limitCapacitySwtich && this.formData.limitCapacity < 1) {
         this.$message({
           message: '最高并发请输入大于1的数值',
@@ -969,6 +970,7 @@ export default {
               if (data.webinar_type == 6) {
                 // 创建分组直播成功
                 this.isChange = false;
+                
                 this.$alert(`创建成功，观看密码默认为666666，请前往 <a href="${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}">【观看限制】</a>更改密码或观看限制`, '提示', {
                   confirmButtonText: '我知道了',
                   customClass: 'zdy-alert-box',
@@ -976,7 +978,8 @@ export default {
                   // center: true,
                   lockScroll: false,
                   callback: action => {
-                    location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}`
+                    that.$router.push({path:`/live/viewerRules/${res.data.webinar_id}`,query: {type: data.webinar_type}})
+                    //location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}`
                   }
                 })
               } else {
