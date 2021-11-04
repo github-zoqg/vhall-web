@@ -476,11 +476,12 @@ export default {
     },
     webinarGroup() {
       // webinar.group 1:有分组直播权限  0:无权限
-      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.group'] == '1') {
-        return false;
-      } else {
-        return true;
-      }
+      // if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.group'] == '1') {
+      //   return false;
+      // } else {
+      //   return true;
+      // }
+      return false;
     },
     isEditTime() {
       return this.liveDetailInfo.webinar_state == 1 && this.liveDetailInfo.webinar_type == 5
@@ -928,7 +929,7 @@ export default {
         subject: this.formData.title, // 标题
         introduction: this.unescapeHTML(this.formData.content.replace("&lt;p&gt;","")) || '<p></p>', // 简介
         start_time: this.webniarTypeToZH == '点播' ? '' : `${this.formData.date1} ${this.formData.date2}`, // 创建时间
-        webinar_type: this.liveMode, // 1 音频 2 视频 3 互动
+        webinar_type: this.liveMode, // 1 音频 2 视频 3 互动 6 分组
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
         is_private: this.formData.home ? 0 : 1 , // 是否在个人主页显示
         // is_open: Number(this.home),  // 是否公开活动 默认0为公开，1为不公开
