@@ -136,7 +136,7 @@ export default {
           callback(new Error('提现金额最少1元'))
         } else if (value - 800 > 0) {
           if (value > 800) {
-            _that.cashForm.money = 800
+            _that.withdrawForm.money = 800
           }
           this.isTrue = true;
           callback()
