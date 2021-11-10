@@ -114,12 +114,13 @@ import { sessionOrLocal } from '@/utils/utils';
 export default {
   props: ['money', 'type'],
   data() {
+    const _that = this
     let validateMoney = (rule, value, callback) => {
       if (!(/^\d+$|^\d*\.\d+$/g.test(value))) {
         this.isTrue = false;
         callback(new Error('请输入数字值'));
       } else {
-        if (1 - value > 0 || value - 800 > 0) {
+        /*if (1 - value > 0 || value - 800 > 0) {
           this.isTrue = false;
           callback(new Error('请输入大于等于1且小于等于800的数字'));
         } else if (value - this.money > 0) {
@@ -128,6 +129,26 @@ export default {
         } else {
           this.isTrue = true;
           callback();
+        }*/
+        if (value < 1) {
+          this.handleInputChange(value)
+          this.isTrue = false;
+          callback(new Error('提现金额最少1元'))
+        } else if (value - 800 > 0) {
+          if (value > 800) {
+            _that.withdrawForm.money = 800
+          }
+          this.isTrue = true;
+          callback()
+          // callback(new Error('请输入大于等于1且小于等于800的数字'))
+        } else if (value - this.money > 0) {
+          this.handleInputChange(value)
+          this.isTrue = false;
+          callback(new Error('提现值必须小于可用金额'))
+        } else {
+          this.handleInputChange(value)
+          this.isTrue = true;
+          callback()
         }
       }
     };
@@ -219,6 +240,52 @@ export default {
     // this.nickName = this.userInfo.user_extends.wechat_name_wap || '微吼直播';
   },
   methods: {
+    /**
+     * 价格格式限制
+     * 只能输入数字和小数点；
+     * 小数点只能有1个
+     * 第一位不能是小数点
+     * 第一位如果输入0，且第二位不是小数点，则去掉第一位的0
+     * 小数点后保留2位
+     */
+     handleInputChange(value) {
+      if (value != '') {
+        // this.editParams.price = value.replace(/^[0-9]*$/,'')
+        // this.editParams.price = value.replace(/[^\d]/g,'')
+        let str = value;
+        let len1 = str.substr(0, 1)
+        let len2 = str.substr(1, 1)
+        //如果第一位是0，第二位不是点，就用数字把点替换掉
+        if (str.length > 1 && len1 == 0 && len2 != '.') {
+          str = str.substr(1, 1)
+        }
+        //第一位不能是.
+        if (len1 == '.') {
+          str = ''
+        }
+        //限制只能输入一个小数点
+        if (str.indexOf('.') != -1) {
+          let str_ = str.substr(str.indexOf('.') + 1)
+          if (str_.indexOf('.') != -1) {
+            str = str.substr(0, str.indexOf('.') + str_.indexOf('.') + 1)
+          }
+        }
+        //正则替换，保留数字和小数点
+        str = str.replace(/[^\d^\.]+/g,'')
+        //如果需要保留小数点后两位，则用下面公式
+        if (str.indexOf('.') > -1 && str.length - str.indexOf('.') > 3) {
+          str = str.slice(0, str.indexOf('.') + 3)
+          this.$message({
+            message: '金额最多支持两位小数',
+            showClose: true,
+            // duration: 0,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          })
+        }
+        this.withdrawForm.money =  str
+      }
+    },
     // 获取用户微信昵称
     // getWeinName() {
     //   this.userInfo.user_thirds.map(item => {

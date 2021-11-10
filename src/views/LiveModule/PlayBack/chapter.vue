@@ -185,7 +185,7 @@
             width="126"
             show-overflow-tooltip>
             <template slot-scope="scope">
-              <el-input :disabled="isDemand == 'false'" v-model="scope.row.userCreateTime" @change="scope.row.isChange = true" placeholder="请输入章节时间"></el-input>
+              <el-input :disabled="isDemand == 'false'" @blur="handleTimer(scope.row)" v-model="scope.row.userCreateTime" @change="scope.row.isChange = true" placeholder="请输入章节时间"></el-input>
             </template>
           </el-table-column>
 
@@ -500,6 +500,19 @@ export default {
         value.slideIndex = value.slideIndex.slice(0, value.slideIndex.length - 1)
         this.$message({
           message:  '页码只能是整数',
+          showClose: true, // 是否展示关闭按钮
+          type: 'warning', //  提示类型
+          customClass: 'zdy-info-box' // 样式处理
+        });
+      }
+    },
+    handleTimer(value) {
+      if (value.userCreateTime.length == 0) return;
+      const pattern = /^(([0-9]{1,2}[:]){2}[0-9]{1,2})*$/ // 时间00:00:00
+      if(!pattern.test(value.userCreateTime)) {
+        value.userCreateTime = ''
+        this.$message({
+          message:  '章节时间格式建议00:00:00',
           showClose: true, // 是否展示关闭按钮
           type: 'warning', //  提示类型
           customClass: 'zdy-info-box' // 样式处理
