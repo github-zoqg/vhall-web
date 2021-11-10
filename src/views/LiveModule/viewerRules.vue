@@ -6,7 +6,7 @@
       </div> -->
     </pageTitle>
     <!-- 内容区域 -->
-    <div class="viewer-rules">
+    <div class="viewer-rules" v-show="liveDetailInfo">
       <el-radio-group v-model="form.verify" @change="handleClick">
         <el-radio :label="0" v-if="liveDetailInfo && liveDetailInfo.webinar_type != 6">免费</el-radio>
         <el-radio :label="3">付费</el-radio>
@@ -391,6 +391,7 @@ export default {
       hide_subscribe: true,  // 预约状态
       showPwd: false,
       stash:'',               // 仅占位用
+      liveDetailInfo: null
     };
   },
   methods: {
