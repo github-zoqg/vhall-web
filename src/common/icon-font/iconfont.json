@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "21989332",
+      "name": "播放器_缩小",
+      "font_class": "bofangqi_suoxiao",
+      "unicode": "e7b4",
+      "unicode_decimal": 59316
+    },
+    {
+      "icon_id": "21989333",
+      "name": "播放器_放大",
+      "font_class": "bofangqi_fangda",
+      "unicode": "e7b5",
+      "unicode_decimal": 59317
+    },
+    {
+      "icon_id": "21989335",
+      "name": "最大化_icon",
+      "font_class": "zuidahua_icon1",
+      "unicode": "e7b6",
+      "unicode_decimal": 59318
+    },
+    {
+      "icon_id": "21989336",
+      "name": "播放器_1:1",
+      "font_class": "bofangqi_11",
+      "unicode": "e7b7",
+      "unicode_decimal": 59319
+    },
+    {
+      "icon_id": "25584063",
+      "name": "icon_举手@2x",
+      "font_class": "a-icon_jushou2x",
+      "unicode": "e798",
+      "unicode_decimal": 59288
+    },
+    {
       "icon_id": "23832737",
       "name": "icon-无延迟",
       "font_class": "icon-wuyanchi",
@@ -207,13 +242,6 @@
       "font_class": "set",
       "unicode": "e602",
       "unicode_decimal": 58882
-    },
-    {
-      "icon_id": "19599714",
-      "name": "loops_icon",
-      "font_class": "loops_icon",
-      "unicode": "e798",
-      "unicode_decimal": 59288
     },
     {
       "icon_id": "19596602",

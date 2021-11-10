@@ -16,31 +16,31 @@
     ></div>
     <div class="vhall-doc-pager" id="doc-pager" v-if="!isMini && currentCid && !notControlVisible">
       <div
-        class="iconfont iconfangda"
+        class="iconfont iconfont-v3 saasbofangqi_fangda"
         title="放大"
         :class="{active:activeTool == 'zoomIn'}"
         @click="docControl('zoomIn')"
       ></div>
       <div
-        class="iconfont iconsuoxiao"
+        class="iconfont iconfont-v3 saasbofangqi_suoxiao"
         title="缩小"
         :class="{active:activeTool == 'zoomOut'}"
         @click="docControl('zoomOut')"
       ></div>
       <div
-        class="iconfont iconhuanyuan"
+        class="iconfont iconfont-v3 saasbofangqi_11"
         title="还原"
         :class="{active:activeTool == 'zoomReset'}"
         @click="docControl('zoomReset')"
       ></div>
       <div
-        class="iconfont iconyidong"
+        class="iconfont iconfont-v3 saasa-icon_jushou2x"
         title="移动"
         :class="{active:activeTool == 'move'}"
         @click="docControl('move')"
       ></div>
       <div
-        :class="isFullscreen ? 'iconfont iconquanpingguanbi active' : 'iconfont iconquanping'"
+        :class="isFullscreen ? 'iconfont iconfont-v3 saastuichuquanping_wendangbeifen active' : 'iconfont iconfont-v3 saasquanping_wendang'"
         :title="isFullscreen ? '退出全屏' : '全屏'"
         @click="docControl('fullscreen')"
       ></div>
@@ -764,6 +764,10 @@ export default {
     }
     .iconfont {
       cursor: pointer;
+      padding: 0 18px 0 0;
+      &:last-child {
+        padding: 0 0;
+      }
       &:hover {
         color: #fc5659;
       }
