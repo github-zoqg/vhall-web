@@ -15,14 +15,16 @@ const tooltipMove = (Vue) => {
   //让tooltip快速消失
   Vue.directive('tooltipMove',{
     inserted: (el, binding) => {
-    el.addEventListener('mouseout', () => {
-    let toolTipAll=document.getElementsByClassName('el-tooltip__popper')
-      toolTipAll.forEach((item)=>{
-        item.style.display='none'
-        })
+      el.addEventListener('mouseout', () => {
+        let toolTipAll = document.getElementsByClassName('el-tooltip__popper')
+        if (toolTipAll && toolTipAll.length > 0) {
+          toolTipAll.forEach((item)=>{
+              item.style.display='none'
+          })
+        }
       });
     }
-  });
+  })
 }
 
 const clearEmoij = (Vue) => {

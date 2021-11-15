@@ -288,9 +288,9 @@
               <span>分组(次)</span>
               <h1 class="custom-font-barlow">
                 <count-to :startVal="0"
-                  :endVal="dataInfo.groupNum"
+                  :endVal="dataInfo.groupSwitchCount"
                   :duration="1500"
-                  v-if="dataInfo.groupNum >= 0">
+                  v-if="dataInfo.groupSwitchCount >= 0">
                 </count-to>
               </h1>
             </div>
@@ -324,6 +324,7 @@ export default {
         signNum: 0,
         submitNum: 0,
         speakNum: 0,
+        groupSwitchCount: 0
       }
     };
   },
@@ -345,7 +346,7 @@ export default {
       if (this.webinarType == 3) {
         this.speakContactInfo();
       } else if (this.webinarType == 6) {
-        this.getGroupStatis();
+        this.getGroupStatics();
       }
     }
   },
@@ -429,9 +430,9 @@ export default {
       });
     },
     // 分组（次）
-    getGroupStatis() {
-      this.$fetch('getGroupStatis', {room_id: this.roomId, type: 1}).then(res => {
-        this.dataInfo.groupNum = res.data.group_count || 0;
+    getGroupStatics() {
+      this.$fetch('getGroupStatics', {room_id: this.roomId}).then(res => {
+        this.dataInfo.groupSwitchCount = res.data.group_switch_count || 0;
       });
     },
     // 预约-导出
@@ -536,7 +537,7 @@ export default {
     },
     // 分组直播 --- 导出
     exportGroup() {
-       this.$fetch('exportGroupInfo',{room_id: this.roomId}).then(res => {
+       this.$fetch('exportGroupList',{room_id: this.roomId}).then(res => {
         // this.$vhall_paas_port({
         //   k: 100455,
         //   data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}

@@ -18,9 +18,9 @@
             <p>可进行多人连麦</p>
             <p>需要使用chrome浏览器</p>
           </div> -->
-          <div class="choose-p choose-a-way" :class="[chooseType === 'client' ? 'client active' : 'choose-a-way', (hasDelayPermission && delayStatus == 1) || (groupLiveStatus) ? 'no-hover' : '']" @click.prevent.stop="changeChoose('client')">
-            <div v-if="hasDelayPermission && delayStatus == 1 || groupLiveStatus" class="delay-mask">
-              {{groupLiveStatus ? '分组直播暂不支持此方式发起' : '无延迟直播暂不支持此方式发起'}}
+          <div class="choose-p choose-a-way" :class="[chooseType === 'client' ? 'client active' : 'choose-a-way', groupLiveStatus ? 'no-hover' : '']" @click.prevent.stop="changeChoose('client')">
+            <div v-if="groupLiveStatus" class="delay-mask">
+              {{groupLiveStatus ? '分组直播暂不支持此方式发起' : ''}}
             </div>
             <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
             <p class="f-20">客户端发起</p>
@@ -91,7 +91,8 @@ export default {
       this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         if( res.code == 200 ){
           this.delayStatus = res.data.no_delay_webinar
-          this.groupLiveStatus = res.data.type == 6
+          // 是否分组直播
+          this.groupLiveStatus = res.data.webinar_type == 6
         }
       }).catch(res=>{
         console.log(res);
@@ -107,7 +108,6 @@ export default {
       })
     },
     changeChoose(type) {
-      if (this.hasDelayPermission && this.delayStatus == 1) return
       if (this.groupLiveStatus) return
       this.chooseType = type;
     },
