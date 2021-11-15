@@ -557,7 +557,7 @@ export default {
         imageUrl: '',
         domain_url: ''
       },
-      speakSwitch: false, // 是否自动上麦
+      speakSwitch: true, // 是否自动上麦，默认是开启状态
       zdy_inav_num: '',
       liveMode: 2,
       liveDetailInfo: {},
@@ -970,7 +970,7 @@ export default {
               if (data.webinar_type == 6) {
                 // 创建分组直播成功
                 this.isChange = false;
-                
+
                 this.$alert(`创建成功，观看密码默认为666666，请前往 <a href="${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}">【观看限制】</a>更改密码或观看限制`, '提示', {
                   confirmButtonText: '我知道了',
                   customClass: 'zdy-alert-box',
