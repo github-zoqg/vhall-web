@@ -30,7 +30,7 @@
       </el-form-item>
       <el-form-item label="直播模式" required v-if="webniarType=='live'" class="max-column">
         <div class="titleBox">
-          <span class="pageTitle">直播创建成功后，直播模式将不可修改</span>
+          <span class="pageTitle">直播创建成功后，直播模式将不可修改，分组直播不支持免费观看，观看限制默认为“密码”</span>
           <el-tooltip v-tooltipMove>
             <div slot="content">
               <p>1.视频直播：音频+视频直播，需要保证摄像头和麦克风正常</p>
@@ -127,9 +127,6 @@
           </div>
         </div>
         <div class="modeHide" v-if="$route.query.type==2"></div>
-      </el-form-item>
-      <el-form-item class="group-notice" >
-        <p v-if="liveMode == 6">注：分组直播不支持免费观看，观看限制默认为“密码”，创建直播后请前往【观看限制】页面更改密码或观看限制条件</p>
       </el-form-item>
       <el-form-item v-if="(liveMode == 3 || liveMode == 6) && webniarType == 'live'" label="连麦人数" required class="invd-number">
         <div class="titleBox">
@@ -1229,16 +1226,6 @@ export default {
     &.max-column {
       max-width: 868px;
       margin-bottom: 17px;
-    }
-    &.group-notice {
-      max-width: 868px;
-      margin-bottom: 24px;
-      p {
-        font-size: 14px;
-        font-weight: 400;
-        color: #FB4841;
-        line-height: 20px;
-      }
     }
   }
   /deep/.el-col-11{
