@@ -473,12 +473,11 @@ export default {
     },
     webinarGroup() {
       // webinar.group 1:有分组直播权限  0:无权限
-      // if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.group'] == '1') {
-      //   return false;
-      // } else {
-      //   return true;
-      // }
-      return false;
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.group'] == '1') {
+        return false;
+      } else {
+        return true;
+      }
     },
     isEditTime() {
       return this.liveDetailInfo.webinar_state == 1 && this.liveDetailInfo.webinar_type == 5
