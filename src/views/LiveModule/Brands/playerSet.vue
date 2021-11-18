@@ -1208,6 +1208,9 @@ export default {
 /deep/.div__sketch{
   right: 0;
 }
+/deep/.el-slider__button-wrapper {
+  z-index: 500;
+}
 .saasclose{
   cursor: pointer;
   color: #666;
