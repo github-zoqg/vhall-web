@@ -58,7 +58,7 @@
               <!--  @click.prevent.stop="toDetail(item.webinar_id)" -->
               <div class="top">
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
-                  <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}<span v-if="item.is_new_version == 3 && item.webinar_type == 3 && item.zdy_inav_num > 1"> | 1v{{Number(item.inav_num)-1}}</span><span v-if="isDelay && item.no_delay_webinar == 1"> | 无延迟</span></span>
+                  <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}<span v-if="item.is_new_version == 3 && (item.webinar_type == 3 || item.webinar_type == 6) && item.zdy_inav_num > 1"> | 1v{{Number(item.inav_num)-1}}</span><span v-if="isDelay && item.no_delay_webinar == 1"> | 无延迟</span></span>
                 <span class="hot">
                   <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
                 </span>

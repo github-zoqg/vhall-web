@@ -8,7 +8,7 @@
           <div class="thumb">
             <img :src="liveDetailInfo.img_url" alt="">
             <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>
-              {{ liveDetailInfo | liveTag }}<span v-if="liveDetailInfo.is_new_version == 3 && liveDetailInfo.webinar_type == 3 && liveDetailInfo.inav_num > 1
+              {{ liveDetailInfo | liveTag }}<span v-if="liveDetailInfo.is_new_version == 3 && (liveDetailInfo.webinar_type == 3 || liveDetailInfo.webinar_type == 6) && liveDetailInfo.inav_num > 1
               "> | 1v{{Number(liveDetailInfo.inav_num)-1}}</span><span v-if="hasDelayPermission && isDelay"> | 无延迟</span>
             </span>
             <span class="hot">
@@ -226,7 +226,7 @@ export default {
           } else {
             this.$route.meta.title = '直播详情';
           }
-          
+
         }
         this.getFormInfo(id);
         if (res.data.webinar_state == 1) {
@@ -330,7 +330,7 @@ export default {
       })).then((res) => {
         if(res && res.code === 200) {
           this.getLiveDetail(this.$route.params.str);
-        } 
+        }
       }).catch(e => {
       });
     },
@@ -413,7 +413,7 @@ export default {
             } else {
               this.$router.push({path: `${item.path}/${this.$route.params.str}`, query: {type: 2 }});
             }
-            
+
           }
         } else if (item.path === '/live/question') {
           // 问卷
