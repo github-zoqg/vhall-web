@@ -132,7 +132,7 @@ export default {
         { icon: 'icon_video@2x', id: 5, title: '暖场视频', subText: '开启后设置暖场视频',index: 4, type: 100062, path: `/live/warm/${this.$route.params.str}`, isShow: this.type != 4 && this.webinarType!=1 && !this.videoType},
         { icon: 'icon_virtual@2x', id: 6, title: '虚拟人数', subText: `添加${this.type == 4 ? '点播' :'直播'}的虚拟人数`, type: 100063, path: `/live/virtual/${this.$route.params.str}`, isShow: this.webinarType == 6 ? false : this.perssionInfo.virtual_user == 1},
         { icon: 'icon_registration form@2x', id: 7, title: '报名表单', subText: '开启后收集目标观众信息', type: 100064, path: `/live/signup/${this.$route.params.str}`, isShow: this.perssionInfo.join_check==1},
-        { icon: 'icon_embedded@2x', id: 8, title: '推广嵌入', subText: `获取活动推广嵌入的方法`, type: 100065, path: `/live/embedCard/${this.$route.params.str}`, isShow: true}
+        { icon: 'icon_embedded@2x', id: 8, title: '推广嵌入', subText: `获取活动推广嵌入的方法`, type: 100065, path: `/live/embedCard/${this.$route.params.str}`, isShow: this.webinarType != 6}
       ],
       brandList: [
         { icon: 'icon_brand@2x', id: 1, title: '品牌设置', subText: '设置观看页品牌信息', path: `/live/brandSet/${this.$route.params.str}`,isShow: this.perssionInfo['ui.brand_setting'] > 0 || this.perssionInfo.webinar_skins > 0},

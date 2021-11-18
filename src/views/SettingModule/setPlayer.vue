@@ -1018,6 +1018,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+/deep/.el-slider__button-wrapper {
+  z-index: 500;
+}
 #videoDom {
   width: 100%;
   height: 100%;
