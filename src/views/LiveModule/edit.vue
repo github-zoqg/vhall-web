@@ -966,15 +966,14 @@ export default {
               if (data.webinar_type == 6) {
                 // 创建分组直播成功
                 this.isChange = false;
-
                 this.$alert(`创建成功，观看密码默认为666666，请前往 <a href="${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}">【观看限制】</a>更改密码或观看限制`, '提示', {
                   confirmButtonText: '我知道了',
-                  customClass: 'zdy-alert-box',
+                  customClass: 'zdy-alert-box zdy-padding',
                   dangerouslyUseHTMLString: true,
                   // center: true,
                   lockScroll: false,
                   callback: action => {
-                    that.$router.push({path:`/live/viewerRules/${res.data.webinar_id}`,query: {type: data.webinar_type}})
+                    that.$router.push({path: `/live/detail/${res.data.webinar_id}`})
                     //location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}`
                   }
                 })
@@ -1775,5 +1774,8 @@ export default {
     .tox-statusbar{
       display: none;
     }
+  }
+  .zdy-alert-box.zdy-padding {
+    padding-bottom: 0!important;
   }
 </style>
