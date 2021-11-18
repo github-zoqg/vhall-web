@@ -940,7 +940,7 @@ export default {
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
         no_delay_webinar: this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status
         is_timing: this.webinarVideo ? (this.$route.meta.webniarType == 'vod' ? 0 : 1) : '',
-        inav_num: this.liveMode == 3 && this.webniarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
+        inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webniarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
       };
       if (this.liveMode == 6) {
         data.auto_speak = Number(this.speakSwitch)
