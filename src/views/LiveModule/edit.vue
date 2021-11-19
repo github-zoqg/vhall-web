@@ -777,6 +777,7 @@ export default {
         this.formData.reservation = Boolean(this.liveDetailInfo.hide_appointment);
         this.formData.content = this.liveDetailInfo.introduction;
         this.formData.hot = Boolean(this.liveDetailInfo.hide_pv);
+        this.speakSwitch = Boolean(res.data.auto_speak);
         if (this.liveDetailInfo.webinar_curr_num) {
           this.formData.limitCapacity = this.liveDetailInfo.webinar_curr_num;
           this.formData.limitCapacitySwtich = true;
@@ -940,7 +941,7 @@ export default {
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
         no_delay_webinar: this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status
         is_timing: this.webinarVideo ? (this.$route.meta.webniarType == 'vod' ? 0 : 1) : '',
-        inav_num: this.liveMode == 3 && this.webniarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
+        inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webniarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
       };
       if (this.liveMode == 6) {
         data.auto_speak = Number(this.speakSwitch)
@@ -966,17 +967,31 @@ export default {
               if (data.webinar_type == 6) {
                 // 创建分组直播成功
                 this.isChange = false;
-                this.$alert(`创建成功，观看密码默认为666666，请前往 <a href="${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}">【观看限制】</a>更改密码或观看限制`, '提示', {
-                  confirmButtonText: '我知道了',
-                  customClass: 'zdy-alert-box zdy-padding',
-                  dangerouslyUseHTMLString: true,
-                  // center: true,
-                  lockScroll: false,
-                  callback: action => {
-                    that.$router.push({path: `/live/detail/${res.data.webinar_id}`})
-                    //location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}`
-                  }
-                })
+                if (this.title == '创建') {
+                  this.$alert(`创建成功，观看密码默认为666666，请前往 <a href="${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}">【观看限制】</a>更改密码或观看限制`, '提示', {
+                    confirmButtonText: '我知道了',
+                    customClass: 'zdy-alert-box zdy-padding',
+                    dangerouslyUseHTMLString: true,
+                    // center: true,
+                    lockScroll: false,
+                    callback: action => {
+                      that.$router.push({path: `/live/detail/${res.data.webinar_id}`})
+                      //location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}`
+                    }
+                  })
+                } else {
+                  // 创建其它直播成功
+                  this.$message({
+                    message: `${this.title}成功`,
+                    showClose: true,
+                    // duration: 0,
+                    type: 'success',
+                    customClass: 'zdy-info-box'
+                  });
+                  setTimeout(()=>{
+                    this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
+                  }, 500);
+                }
               } else {
                 // 创建其它直播成功
                 this.$message({
