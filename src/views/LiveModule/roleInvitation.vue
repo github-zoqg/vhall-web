@@ -64,7 +64,7 @@
           </div>
         </div>
         <!-- 嘉宾 -->
-        <div class="role-card" v-if="webinarVo && webinarVo.webinar_type != 6 && (privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.guest && isInteract == 1)">
+        <div class="role-card" v-if="webinarVo && webinarVo.webinar_type != 6 && (privilegeVo && privilegeVo.permission_data && guestSortPermission && isInteract == 1)">
           <div class="role-card-head">
             <div class="title--box">
               <label class="title--label role2">嘉宾</label>
@@ -96,13 +96,13 @@
               <label>嘉宾权限</label>
               <el-button size="mini" round @click="savePremHandle('guest')">保存权限</el-button>
             </div>
-            <div class="role-qx-list" v-if="privilegeVo.permission_data.guest">
+            <div class="role-qx-list" v-if="guestSortPermission">
               <!-- <el-checkbox  :value="true" disabled>文档白板</el-checkbox> -->
-              <template v-for="(item, key, ins) in privilegeVo.permission_data.guest || {}">
+              <template v-for="(item, key, ins) in guestSortPermission || {}">
                 <el-checkbox v-model="item.check"
                              :true-label="1"
                              :false-label="0"
-                            :disabled="key == 'white_board'"
+                             :disabled="key == 'white_board'"
                              :key="`guest_${key + ins}`">{{ item.label }}</el-checkbox>
               </template>
             </div>
@@ -112,7 +112,7 @@
           </div>
         </div>
         <!-- 助理 -->
-        <div class="role-card" v-if="privilegeVo && privilegeVo.permission_data && privilegeVo.permission_data.assistant">
+        <div class="role-card" v-if="privilegeVo && privilegeVo.permission_data && assistantSortPermission">
           <div class="role-card-head">
             <div class="title--box">
               <label class="title--label role3">助理</label>
@@ -142,9 +142,9 @@
               <label>助理权限</label>
               <el-button size="mini" round @click="savePremHandle('assistant')">保存权限</el-button>
             </div>
-            <div class="role-qx-list" v-if="privilegeVo.permission_data.assistant">
+            <div class="role-qx-list" v-if="assistantSortPermission">
               <!-- <el-checkbox  :value="true" disabled>文档翻页</el-checkbox> -->
-              <template v-for="(item, key, ins) in privilegeVo.permission_data.assistant || {}">
+              <template v-for="(item, key, ins) in assistantSortPermission || {}">
                 <el-checkbox v-model="item.check"
                              :true-label="1"
                              :false-label="0"
@@ -276,6 +276,14 @@ export default {
     // 助理
     assistant_join_link: function() {
       return `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/lives/keylogin/${this.privilegeVo.webinar_id}/3`;
+    },
+    // 嘉宾权限
+    guestSortPermission() {
+      return this.privilegeVo.permission_data.guest ? this.sortPermission(this.privilegeVo.permission_data.guest) : null
+    },
+    // 助理权限
+    assistantSortPermission() {
+      return this.privilegeVo.permission_data.assistant ? this.sortPermission(this.privilegeVo.permission_data.assistant) : null
     }
   },
   created() {
@@ -285,6 +293,31 @@ export default {
     this.getWebinarInfo();
   },
   methods: {
+    sortPermission(params) {
+      const sortKeys = Object.keys(params)
+      const defaultSortArr = [
+        'white_board', // 文档翻页
+        'waiting_video_file', // 插播文件
+        'webinar_award', // 抽奖
+        'survey', // 问卷
+        'personal_chat', // 问答
+        'sign_in', // 签到
+        'timer', // 计时器
+        'members_manager', // 成员管理
+        'webinar_group', // 分组讨论
+        'comment_check', // 聊天过滤
+        'webinar_notice', // 公告
+        'disable_msg', // 全员禁言
+        'share', // 分享
+      ]
+      const obj = {}
+      defaultSortArr.forEach((item) => {
+        if (sortKeys.includes(item)) {
+          obj[item] = params[item]
+        }
+      })
+      return obj
+    },
     async updateSwitch() {
       let roleSwitch = this.roleSwitch; // 目标
       this.roleSwitch = Number(!roleSwitch);
