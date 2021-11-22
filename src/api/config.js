@@ -644,6 +644,8 @@ const apis = {
   codeCheckC: ['/v3/users/code-consumer/check', 'POST'],
   sendCodeC: ['/v3/users/code-consumer/send', 'POST'],
   loginCheckC: ['/v3/users/user/login-check', 'POST'],  //登录账号锁定检测接口
+  // 专题专用 - 灰度接口
+  initSubjectGrayBefore: ['/v3/webinars/subject/init-before', 'POST']
 };
 
 const getApi = api => {

@@ -69,7 +69,7 @@
       </nav>
     </header>
     <!-- 登录与注册 -->
-    <RegLogin ref="regLogin"></RegLogin>
+    <RegLogin ref="regLogin" :gray_id="gray_id"></RegLogin>
   </div>
 </template>
 
@@ -108,6 +108,10 @@ export default {
     specialInfo: {
       require: false,
       default: false
+    },
+    gray_id: {
+      require: false,
+      default: null
     }
   },
   data() {
