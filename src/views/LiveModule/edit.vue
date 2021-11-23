@@ -939,7 +939,7 @@ export default {
         is_capacity: Number(this.formData.capacity),// 是否扩容 1 是 0 否
         img_url: this.$parseURL(this.formData.imageUrl).path, // 封面图
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
-        no_delay_webinar: this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status
+        no_delay_webinar: this.liveMode == 6 ? 1 : this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status [分组直播默认无延迟]
         is_timing: this.webinarVideo ? (this.$route.meta.webniarType == 'vod' ? 0 : 1) : '',
         inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webniarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
       };
