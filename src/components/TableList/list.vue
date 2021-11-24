@@ -94,6 +94,14 @@
                 {{ scope.row.file_name }}
               </p>
             </div>
+            <!-- 文档，文件名 -->
+            <div v-else-if="scene === 'word' && item.key === 'file_name'">
+              <!-- <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0 && Number(scope.row.file_status) === 1"></i> -->
+              <p class="text">
+                <icon class="word-status" :icon-class="scope.row.ext | wordStatusCss"></icon>
+                {{ scope.row.file_name }}
+              </p>
+            </div>
             <!-- 下载中心，生成状态 -->
             <div class="progressBox" v-else-if="scene === 'downloadList' && item.key === 'fileStatusStr'">
               <el-progress :percentage="scope.row.percentage" v-if="Number(scope.row.file_status) === 0"></el-progress>
