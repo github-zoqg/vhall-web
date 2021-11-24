@@ -35,7 +35,7 @@
               <label class="live-status" v-if="item.webinar_state == 1">
                 <img src="../../../../../common/images/live.gif" alt="">
               </label>
-              {{item | actionTag}}<span v-if="hasDelayPermission && item.no_delay_webinar == 1">| 无延迟</span>
+              {{item | actionTag}}<span v-if="item.webinar_type != 6 && hasDelayPermission && item.no_delay_webinar == 1">| 无延迟</span>
             </span>
           </div>
           <div class="vh-chose-active-item__cover-hots">
@@ -100,7 +100,7 @@ export default {
     const perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
     if (perssionInfo) {
       this.hasDelayPermission = perssionInfo['no.delay.webinar'] && perssionInfo['no.delay.webinar'] == 1 ? true : false
-    } 
+    }
   },
 
   methods: {
