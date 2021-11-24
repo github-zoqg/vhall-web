@@ -15,7 +15,7 @@
               <img src="../../../../../common/images/live.gif" alt="">
             </label> -->
             {{item | actionTag}}
-            <span v-if="item.no_delay_webinar == 1"> | 无延迟</span>
+            <span v-if="item.webinar_type != 6 && item.no_delay_webinar == 1"> | 无延迟</span>
           </span>
         </div>
         <div class="vh-chose-active-item__cover-hots">
