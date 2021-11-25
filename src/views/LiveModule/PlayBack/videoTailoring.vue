@@ -346,14 +346,14 @@ export default {
             this.editLoading = false;
           }
         }).catch(err => {
-          if (err.code == 12005) {
+          if (err.code == 512005) {
             this.$message({
               message:  '所选时间范围内没有搜索到回放视频',
               showClose: true, // 是否展示关闭按钮
               type: 'error', //  提示类型
               customClass: 'zdy-info-box' // 样式处理
             });
-          } else if (err.code == 12908) {
+          } else if (err.code == 512908) {
             this.$message({
               message:  '所选时间范围不能超过7天',
               showClose: true, // 是否展示关闭按钮

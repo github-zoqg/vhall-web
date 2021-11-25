@@ -103,7 +103,7 @@
                 autocomplete="off"
                 :type="node.key == 'url'? 'textarea' : 'text'"
                 :autosize="node.key == 'url' ? { minRows: 2 } : ''"
-                :maxlength="node.key == 'url'? '200' : '60'"
+                :maxlength="node.key == 'url'? '200' : item.privacy ? '100' : '60'"
                 :key='`${index}-${nodeIndex}`'
                 @change="selectOptChange(item, node, item.type=='select', item.privacy)"
               >
@@ -1214,6 +1214,10 @@ export default {
   }
   p{
     margin: 16px 0 8px 0;
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    white-space: normal;
     /deep/ a{
       color: #3562FA;
       &:link{
