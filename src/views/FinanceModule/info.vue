@@ -77,7 +77,7 @@
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
-          :picker-options="pickerOptions"
+          :picker-options="pickerOptionsTwo"
           style="width: 240px"
         />
         <VhallInput v-model="subject"  placeholder="请输入活动名称" class="search-tag" style="width: 220px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" v-clearEmoij clearable>
@@ -272,6 +272,12 @@ export default {
         disabledDate: (time) => {
           return this.dealDisabledData(time);
         }
+      },
+      pickerOptionsTwo: {
+        // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
+        disabledDate: (time) => {
+          return this.dealDisabledDataTwo(time);
+        }
       }
     };
   },
@@ -298,7 +304,10 @@ export default {
   },
   methods: {
     dealDisabledData(time) {
-      return time.getTime() > Date.now() - 8.64e7; //设置选择今天以前的日期
+      return time.getTime() > Date.now() - 8.64e7 //设置选择今天之前的日期（不能选择当天）
+    },
+    dealDisabledDataTwo(time) {
+      return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
     },
     initPage() {
       // 初始化设置日期为最近一周
