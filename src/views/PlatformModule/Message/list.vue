@@ -142,6 +142,15 @@ export default {
     },
     // 获取消息中心列表数据
     getMsgList(pageInfo = {pageNum: 1,pos: 0, limit: 10}) {
+      if (pageInfo.pos == 0) {
+        // 表格切换到第一页
+        try {
+          this.$refs.msgTable.pageInfo.pageNum = 1;
+          this.$refs.msgTable.pageInfo.pos = 0;
+        } catch (e) {
+          console.log(e);
+        }
+      }
       this.$fetch('getMsgList', {
         pos: pageInfo.pos,
         limit: pageInfo.limit
@@ -155,8 +164,6 @@ export default {
           item.msgStatusStr = ['未读', '已读'][item['msg_status']]; // 消息状态0未读1已读
         });
         this.msgDao = dao;
-        // 通知右上角导航，需要更新未度消息
-        this.$EventBus.$emit('saas_vs_msg_count', true);
       }).catch(e=>{
         console.log(e);
         this.msgDao = {
@@ -263,7 +270,6 @@ export default {
   }
 };
 </script>
-
 <style lang="less" scoped>
 .message-list {
   .layout--right--main();
