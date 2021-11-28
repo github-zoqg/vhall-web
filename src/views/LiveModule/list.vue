@@ -777,7 +777,11 @@ export default {
   //   }
   // }
 </style>
-
+<style lang="less">
+ .el-tooltip__popper {
+    max-width: 100%;
+  }
+</style>
 <style lang="css">
   html{
     background: #F7F7F7;

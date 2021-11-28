@@ -367,6 +367,7 @@ export default {
   font-weight: 400;
   color: #FFFFFF;
   line-height: 220px;
+  border-radius: 4px;
   &:hover{
     cursor: unset;
   }
