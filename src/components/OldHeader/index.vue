@@ -57,10 +57,10 @@
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
-            <div class="unlogin"  v-if="!isLogin">
+            <div class="unlogin"  v-if="!isLogin"  @click="openLoginHandler">
               <span><img src="../../common/images/sys/my-light@2x.png" alt=""></span>
               <!-- <label @click="toLoginPageHandle">登录</label> -->
-              <label @click="openLoginHandler">登录</label>
+              <label>登录</label>
               <!-- <el-button size="small" round @click="toLoginPageHandle">登录</el-button>
               <el-button type="primary" size="small" round @click="toRegisterHandle">注册</el-button> -->
             </div>

@@ -645,7 +645,8 @@ const apis = {
   sendCodeC: ['/v3/users/code-consumer/send', 'POST'],
   loginCheckC: ['/v3/users/user/login-check', 'POST'],  //登录账号锁定检测接口
   // 专题专用 - 灰度接口
-  initSubjectGrayBefore: ['/v3/webinars/subject/init-before', 'POST']
+  initSubjectGrayBefore: ['/v3/webinars/subject/init-before', 'POST'],
+  initGrayBefore: ['/v3/webinars/webinar/init-before', 'POST'], // 通过活动id获取活动拥有者用户id - 用于灰度存储
 };
 
 const getApi = api => {

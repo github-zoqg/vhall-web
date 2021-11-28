@@ -140,20 +140,22 @@
           </template>
         </el-select>
       </el-form-item>
-      <el-form-item v-if="showDelayTag && liveMode != 6" label="直播延迟" required>
-        <div class="titleBox">
-          <span class="pageTitle">
-            <span v-if="!hasDelayPermission">无延迟直播为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span></span>
-            <span v-else>直播创建成功后，直播延迟类型将不可修改，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span>
-            </span></span>
-        </div>
-        <div class="delay-select">
-          <div class="mode-common" :class="{delayActive: selectDelayMode == 'common',noDelay:$route.params.id}" @click.stop="handleSelectDelayMode('common')"><i class="iconfont-v3 saasicon-changgui ft20"></i>
-常规延迟≈5S</div>
-          <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay',noDelay:$route.params.id}" @click.stop="handleSelectDelayMode('delay')"><i class="iconfont-v3 saasicon-wuyanchi ft20"></i> 无延迟&lt;0.4S</div>
-          <div v-if="!webinarDelay" class="mode-delay noDelay"><i class="iconfont-v3 saasjishiqi ft20"></i> 无延迟&lt;0.4S<span class="no-open">未开通</span></div>
-        </div>
-      </el-form-item>
+      <template  v-if="showDelayTag && liveMode != 6">
+        <el-form-item label="直播延迟" required style="display: none;" :style="{'display' : liveMode != 6 ? 'block' : 'nonelay'}">
+          <div class="titleBox">
+            <span class="pageTitle">
+              <span v-if="!hasDelayPermission">无延迟直播为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span></span>
+              <span v-else>直播创建成功后，直播延迟类型将不可修改，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span>
+              </span></span>
+          </div>
+          <div class="delay-select">
+            <div class="mode-common" :class="{delayActive: selectDelayMode == 'common',noDelay:$route.params.id}" @click.stop="handleSelectDelayMode('common')"><i class="iconfont-v3 saasicon-changgui ft20"></i>
+  常规延迟≈5S</div>
+            <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay',noDelay:$route.params.id}" @click.stop="handleSelectDelayMode('delay')"><i class="iconfont-v3 saasicon-wuyanchi ft20"></i> 无延迟&lt;0.4S</div>
+            <div v-if="!webinarDelay" class="mode-delay noDelay"><i class="iconfont-v3 saasjishiqi ft20"></i> 无延迟&lt;0.4S<span class="no-open">未开通</span></div>
+          </div>
+        </el-form-item>
+      </template>
       <el-form-item :label="`${webniarTypeToZH}封面`">
         <upload
           class="upload__avatar"
@@ -555,7 +557,7 @@ export default {
       },
       speakSwitch: true, // 是否自动上麦，默认是开启状态
       zdy_inav_num: '',
-      liveMode: 2,
+      liveMode: null,
       liveDetailInfo: {},
       showChecked: false,
       isChange: false,
@@ -698,6 +700,7 @@ export default {
       this.getLiveBaseInfo(this.webinarId, false);
     } else {
       this.title = '创建';
+      this.liveMode = 2;
       this.webinarId = '';
     }
     // 发布为点播
@@ -939,7 +942,7 @@ export default {
         is_capacity: Number(this.formData.capacity),// 是否扩容 1 是 0 否
         img_url: this.$parseURL(this.formData.imageUrl).path, // 封面图
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
-        no_delay_webinar: this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status
+        no_delay_webinar: this.liveMode == 6 ? 1 : this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status [分组直播默认无延迟]
         is_timing: this.webinarVideo ? (this.$route.meta.webniarType == 'vod' ? 0 : 1) : '',
         inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webniarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
       };
