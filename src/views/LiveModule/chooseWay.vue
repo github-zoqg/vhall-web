@@ -22,6 +22,7 @@
             <div v-if="groupLiveStatus" class="delay-mask">
               {{groupLiveStatus ? '分组直播暂不支持此方式发起' : ''}}
             </div>
+            -->
             <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
             <p class="f-20">客户端发起</p>
             <p>需安装客户端、支持多种视频采集卡、插入视频等功能</p>
@@ -252,6 +253,11 @@ export default {
   width: 850px;
   margin: 122px auto;
 }
+@media (max-width: 1366px) {
+  .choose__way__main {
+    margin: 60px auto 122px;
+  }
+}
 .old-header {
   margin-bottom: 40px;
 }
@@ -288,9 +294,9 @@ export default {
     color: #666666;
     line-height: 20px;
     &.f-20 {
-      padding-top: 13px;
+      padding-top: 6px;
       text-align: center;
-      padding-bottom: 10px;
+      padding-bottom: 12px;
       color: #1A1A1A;
     }
   }
@@ -341,6 +347,7 @@ export default {
   font-weight: 400;
   color: #666666;
   line-height: 20px;
+  // margin-top: calc(100% - 450px);
   position: fixed;
   bottom: 24px;
   left: calc(50% - 220px);
