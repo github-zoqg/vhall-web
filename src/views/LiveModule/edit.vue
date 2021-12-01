@@ -1,15 +1,38 @@
 <template>
   <div class="editBox">
-    <pageTitle :pageTitle="Number($route.query.type) === 2 ? '编辑信息' : `${title}${webniarTypeToZHTitle}`"></pageTitle>
+    <pageTitle :pageTitle="Number($route.query.type) === 2 ? '编辑信息' : `${title}${webinarTypeToZHTitle}`"></pageTitle>
     <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="80px">
-      <el-form-item :label="`${webniarTypeToZH}标题`" prop="title"
-      :rules="[
-        { required: true, max: 100,  message: `请输入${webniarTypeToZH}标题`, trigger: 'blur' },
-      ]">
-        <VhallInput v-model="formData.title" v-clearEmoij :maxlength="100" class="title-inform" autocomplete="off" :placeholder="`请输入${webniarTypeToZH}标题`"  show-word-limit></VhallInput>
+      <!-- 观看语种 -->
+      <el-form-item label="观看语种" prop="languageVa">
+        <div class="titleBox">
+          <span class="pageTitle">
+            <!-- 未开通权限 -->
+            <span v-if="multilingual">分组直播暂不支持多语言！观看语种为收费功能，需要开通请  <a href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038" target="_blank">联系客服</a> <a href="" target="_blank">功能介绍</a></span>
+            <span v-else>分组直播暂不支持多语言！仅生效网页观看端，不生效JS-SDK和移动SDK观看端 <a href="" target="_blank">功能介绍</a></span>
+          </span>
+        </div>
+        <div class="delay-select">
+          <el-checkbox-group v-model="languageVa" @change="addLangList">
+            <template v-for="(item, key) in languageOps">
+              <el-checkbox :label="item.value" :key="'lang_' + key" :disabled="multilingual">{{item.label}}</el-checkbox>
+            </template>
+          </el-checkbox-group>
+        </div>
       </el-form-item>
-      <el-form-item label="直播时间" required v-if="webniarType=='live' || webniarType=='time'" class="item-time">
-          <p v-if="webniarTypeToZHTitle == '定时直播'">直播过程中，定时直播活动的直播时间将不可修改</p>
+      <!-- 直播标题 -->
+      <el-form-item
+        v-for="(domain, index) in formData.titleList"
+        :label="index == 0 ? `${webinarTypeToZH}标题` : ''"
+        :key="'title_' + domain.lang"
+        :prop="'titleList.' + index + '.value'"
+      :rules="[
+          { required: true, max: 100,  message: `请输入${domain.label}${webinarTypeToZH}标题`, trigger: 'blur' }
+        ]"
+      >
+        <VhallInput v-model="domain.value" v-clearEmoij :maxlength="100" class="title-inform" autocomplete="off" :placeholder="`请输入${domain.label}${webinarTypeToZH}标题`"  show-word-limit></VhallInput>
+      </el-form-item>
+      <el-form-item label="直播时间" required v-if="webinarType=='live' || webinarType=='time'" class="item-time">
+          <p v-if="webinarTypeToZHTitle == '定时直播'">直播过程中，定时直播活动的直播时间将不可修改</p>
           <el-col :span="11.5" class="line">
             <el-form-item prop="date1" style="width:286px;" :rules="[
               { required: true, message: `请选择直播开始日期`, trigger: 'blur' }
@@ -28,7 +51,7 @@
             </el-form-item>
           </el-col>
       </el-form-item>
-      <el-form-item label="直播模式" required v-if="webniarType=='live'" class="max-column">
+      <el-form-item label="直播模式" required v-if="webinarType=='live'" class="max-column">
         <div class="titleBox">
           <span class="pageTitle">直播创建成功后，直播模式将不可修改，分组直播不支持免费观看，观看限制默认为“密码”</span>
           <el-tooltip v-tooltipMove>
@@ -128,7 +151,7 @@
         </div>
         <div class="modeHide" v-if="$route.query.type==2"></div>
       </el-form-item>
-      <el-form-item v-if="(liveMode == 3 || liveMode == 6) && webniarType == 'live'" label="连麦人数" required class="invd-number">
+      <el-form-item v-if="(liveMode == 3 || liveMode == 6) && webinarType == 'live'" label="连麦人数" required class="invd-number">
         <div class="titleBox">
           <span class="pageTitle">
             <span>{{liveMode == 6 ? '直播中请勿修改连麦人数！最大支持1v15连麦，开通更多连麦人数' : '直播中请勿修改连麦人数！无延迟最大支持1v5连麦，常规直播最大支持1v15连麦，开通更多连麦人数'}}<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a></span>
@@ -136,7 +159,7 @@
         </div>
         <el-select filterable v-model="zdy_inav_num" style="width: 312px">
           <template  v-for="(opt, optIndex) in inavNumOptions">
-            <el-option :key="optIndex" :label="opt.label" :value="opt.label" :disabled="selectDelayMode == 'delay' ? (speakerMaxNum < 6 ? opt.value > speakerMaxNum : opt.value > 6) : opt.value > speakerMaxNum"/>
+            <el-option :key="optIndex" :label="opt.label" :value="opt.label" :disabled="selectDelayMode == 'delay' && liveMode != 6 ? (speakerMaxNum < 6 ? opt.value > speakerMaxNum : opt.value > 6) : opt.value > speakerMaxNum"/>
           </template>
         </el-select>
       </el-form-item>
@@ -156,7 +179,7 @@
           </div>
         </el-form-item>
       </template>
-      <el-form-item :label="`${webniarTypeToZH}封面`">
+      <el-form-item :label="`${webinarTypeToZH}封面`">
         <upload
           class="upload__avatar"
           v-model="formData.imageUrl"
@@ -177,7 +200,7 @@
           </div>
         </upload>
       </el-form-item>
-      <el-form-item label="选择视频"  v-if="webniarType=='vod' || webniarType=='time'" required>
+      <el-form-item label="选择视频"  v-if="webinarType=='vod' || webinarType=='time'" required>
         <div class="mediaBox" @mouseenter="showMenu" @mouseleave="hiddenMenu">
           <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
             <div class="picInco"><i class="iconfont-v3 saasicon_shangchuan"></i></div>
@@ -210,13 +233,29 @@
         <!-- <div class="vod-hover"> -->
         <!-- </div> -->
       </el-form-item>
-      <el-form-item :label="`${webniarTypeToZH}简介`" class="item-last">
-        <v-editor class="editor-wrap" save-type='live' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
+      <!-- 直播简介 -->
+     <!--  <el-form-item
+        v-for="(domain, index) in formData.contentList"
+        :label="index == 0 ? `${webinarTypeToZH}简介` : ''"
+        :key="'introduction_' + domain.lang"
+        :prop="'contentList.' + index + '.value'"
+        class="item-last"
+      >
+        <v-editor class="editor-wrap" save-type='live' :placeholderText="`请输入${domain.label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="domain.value"></v-editor>
+      </el-form-item> -->
+      <el-form-item  v-if="formData.contentList[0]" :label="`${webinarTypeToZH}简介`">
+        <v-editor class="editor-wrap" save-type='live' :placeholderText="`请输入${formData.contentList[0].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[0].value"></v-editor>
       </el-form-item>
-      <!-- <el-form-item :label="`${webniarTypeToZH}类别`" >
+      <el-form-item  v-if="formData.contentList[1]">
+        <v-editor class="editor-wrap" save-type='live' :placeholderText="`请输入${formData.contentList[1].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[1].value"></v-editor>
+      </el-form-item>
+      <el-form-item  v-if="formData.contentList[2]">
+        <v-editor class="editor-wrap" save-type='live' :placeholderText="`请输入${formData.contentList[2].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[2].value"></v-editor>
+      </el-form-item>
+      <!-- <el-form-item :label="`${webinarTypeToZH}类别`" >
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>
       </el-form-item> -->
-      <p class="switch__box" v-if="webniarType=='live' && liveMode == 6">
+      <p class="switch__box" v-if="webinarType=='live' && liveMode == 6">
         <el-switch
           v-model="speakSwitch"
           active-color="#FB3A32"
@@ -226,7 +265,7 @@
           >
         </el-switch>
       </p>
-      <p class="switch__box" v-if="webniarType=='live' || webniarType=='time'">
+      <p class="switch__box" v-if="webinarType=='live' || webinarType=='time'">
         <el-switch
           v-model="formData.docSwtich"
           active-color="#FB3A32"
@@ -236,7 +275,7 @@
           >
         </el-switch>
       </p>
-      <p class="switch__box" v-if="webniarType=='live' || webniarType=='time'">
+      <p class="switch__box" v-if="webinarType=='live' || webinarType=='time'">
         <el-switch
           v-model="formData.reservation"
           active-color="#FB3A32"
@@ -245,7 +284,7 @@
           :active-text="reservationDesc">
         </el-switch>
       </p>
-      <p class="switch__box" v-if="webniarType=='live' || webniarType=='time'">
+      <p class="switch__box" v-if="webinarType=='live' || webinarType=='time'">
         <el-switch
           v-model="formData.online"
           active-color="#FB3A32"
@@ -272,7 +311,7 @@
           :active-text="homeDesc">
         </el-switch>
         </p>
-      <p class="switch__box" v-if="(webniarType=='live' || webniarType=='time') && !versionType">
+      <p class="switch__box" v-if="(webinarType=='live' || webinarType=='time') && !versionType">
          <el-switch
           v-model="formData.capacity"
           active-color="#FB3A32"
@@ -294,7 +333,7 @@
         <VhallInput :placeholder="placeholder" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')" style="display: block"></VhallInput>
       </p>
       <el-form-item class="btnGroup">
-        <el-button type="primary" class="common-button length152" :disabled="!formData.title" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
+        <el-button type="primary" class="common-button length152" :disabled="isBtnDisabled" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
         <el-button class="length152" @click="resetForm('ruleForm')" round>取消</el-button>
       </el-form-item>
       <!-- <p class="btnGroup">
@@ -308,7 +347,7 @@
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
       </el-dialog>
     </template>
-    <begin-play :webinarId="$route.params.id" v-if="webniarTypeToZHTitle!='定时直播'&&liveDetailInfo.webinar_state!=4&&title!=='创建'"></begin-play>
+    <begin-play :webinarId="$route.params.id" v-if="webinarTypeToZHTitle!='定时直播'&&liveDetailInfo.webinar_state!=4&&title!=='创建'"></begin-play>
     <div class="delay-mask" v-if="showDelayMask">
       <div class="delay-intro">
         <span class="close iconfont-v3 saasclose" @click.stop="showDelayMask = false"></span>
@@ -322,10 +361,10 @@
             </div>
             <div class="sub-title">注意事项</div>
             <div class="sub-content">
-              1、支持使用PC网页、PC客户端、移动APP、移动SDK发起无延迟直播<br/>
-              2、使用PC标准网页、手机wap端网页、网页完全嵌入、移动SDK、JS-SDK方式观看时支持无延迟直播<br/>
+              1、使用PC客户端、移动APP、移动SDK发起直播时，目前暂不支持无延迟直播，后续进行迭代支持，敬请期待；<br/>
+              2、使用PC标准网页、手机wap端网页、网页完全嵌入方式观看时支持无延迟直播；<br/>
               3、以下情况不支持无延迟观看：<br/>
-              （1）使用单视频嵌入的观看形式，不支持无延迟观看，后续进行迭代支持，敬请期待；<br/>
+              （1）使用JS-SDK、移动SDK、单视频嵌入的观看形式，不支持无延迟观看，后续进行迭代支持，敬请期待；<br/>
               （2）将观看页直接嵌入到客户的小程序进行观看，不支持无延迟观看，因为小程序环境采用的方式不是webrtc技术，无法支持<br/>
               4、无延迟直播不支持第三方推流、转播功能；目前暂不支持设置跑马灯、水印、弹幕，和清晰度，弹幕功能直播时默认进行隐藏，回放不受影响。
             </div>
@@ -443,27 +482,27 @@ export default {
         return `请输入1-9999999的并发数`
       }
     },
-    webniarType(){
-      return this.$route.meta.webniarType;
+    webinarType(){
+      return this.$route.meta.webinarType;
     },
-    webniarTypeToZH(){
+    webinarTypeToZH(){
       const zh ={
         vod: '点播',
         live: '直播',
         time: '直播'
       };
-      return zh[this.$route.meta.webniarType];
+      return zh[this.$route.meta.webinarType];
     },
     webinarVideo() {
-      return this.$route.meta.webniarType == 'live' ? false : true
+      return this.$route.meta.webinarType == 'live' ? false : true
     },
-    webniarTypeToZHTitle() {
+    webinarTypeToZHTitle() {
        const zh ={
         vod: '点播',
         live: '直播',
         time: '定时直播'
       };
-      return zh[this.$route.meta.webniarType];
+      return zh[this.$route.meta.webinarType];
     },
     webniarIntact() {
       // new_interact 1:有互动权限  0:无权限
@@ -480,6 +519,15 @@ export default {
       } else {
         return true;
       }
+    },
+    multilingual() {
+      // multilingual 1:化蝶观看端多语言权限  0:无权限
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['multilingual'] == '1') {
+        return false;
+      } else {
+        return true;
+      }
+      return false
     },
     isEditTime() {
       return this.liveDetailInfo.webinar_state == 1 && this.liveDetailInfo.webinar_type == 5
@@ -505,6 +553,16 @@ export default {
         minutes = `0${minutes}`
       }
       return `${hours}:${minutes}`;
+    },
+    // 判断保存按钮是否可点击
+    isBtnDisabled: function() {
+      let count = 0
+      for (let i = 0; i<this.formData.titleList.length; i++) {
+        if (this.formData.titleList[i].value == '') {
+          count++
+        }
+      }
+      return count > 0
     }
   },
   filters: {
@@ -553,7 +611,9 @@ export default {
         limitCapacity: '',
         limitCapacitySwtich: false,
         imageUrl: '',
-        domain_url: ''
+        domain_url: '',
+        titleList: [],
+        contentList: []
       },
       speakSwitch: true, // 是否自动上麦，默认是开启状态
       zdy_inav_num: '',
@@ -644,7 +704,23 @@ export default {
             label: '1v15'
           }
         ],
-        speakerMaxNum: ''
+      speakerMaxNum: '',
+      languageOps: [
+        {
+          label: '简体中文',
+          value: 1
+        },
+        {
+          label: '英文',
+          value: 2
+        },
+        {
+          label: '西班牙语',
+          value: 3
+        }
+      ],
+      oldLanguageVa: [], // 当前活动，默认没有设置过语言
+      languageVa: [] // 当前已勾选的语言
     };
   },
   beforeRouteEnter (to, from, next) {
@@ -671,7 +747,7 @@ export default {
       next()
       return false;
     }
-    this.$confirm(`是否取消${this.title}的${this.webniarTypeToZH}内容？`, '提示', {
+    this.$confirm(`是否取消${this.title}的${this.webinarTypeToZH}内容？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       customClass: 'zdy-message-box',
@@ -702,6 +778,23 @@ export default {
       this.title = '创建';
       this.liveMode = 2;
       this.webinarId = '';
+      // 默认中文选中
+      this.languageVa = [1]
+      this.formData.titleList = []
+      this.formData.titleList.push({
+        value: '',
+        key: 'titleList_1',
+        lang: 1,
+        label: this.getLangLabel(1)
+      })
+      // 默认中文简介
+      this.formData.contentList = []
+      this.formData.contentList.push({
+        value: '',
+        key: 'contentList_1',
+        lang: 1,
+        label: this.getLangLabel(1)
+      })
     }
     // 发布为点播
     if (this.$route.query.record_id) {
@@ -719,6 +812,40 @@ export default {
 
   },
   methods: {
+    getLangLabel(val) {
+      let label = ''
+      for (let i = 0; i<this.languageOps.length; i++) {
+        if (this.languageOps[i].value == val) {
+          label = this.languageOps[i].label
+          break;
+        }
+      }
+      // console.log('当前label结果', label)
+      return label
+    },
+    addLangList(val) {
+      // 默认选择排序，永远简体中文 > 英文 > 西班牙语
+      const newVal = val.sort()
+      this.languageVa = newVal
+      this.setTitleOrContentList(newVal, 'titleList')
+      this.setTitleOrContentList(newVal, 'contentList')
+    },
+    setTitleOrContentList(val, key) {
+      const oldList = this.formData[key]
+      const oldLang = oldList.map(item => item.lang)
+      // console.log('当前选中值', val)
+      // 若是已经勾选过，进行更新
+      this.formData[key] = []
+      for (let i = 0; i < val.length; i++) {
+        const findList = oldList.filter(item => item.lang == val[i])
+        this.formData[key].push({
+          value: findList && findList.length > 0 ? findList[0].value : '',
+          key: key + '_' + val[i],
+          lang: val[i],
+          label: this.getLangLabel(val[i])
+        });
+      }
+    },
     // 获取可配置选项
     planFunctionGet() {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -759,7 +886,7 @@ export default {
       }
     },
     getLiveBaseInfo(id, flag) {
-      this.$fetch('getWebinarInfo', {webinar_id: id}).then(res=>{
+      this.$fetch('getWebinarInfo', {webinar_id: id}).then(async res=>{
         if( res.code != 200 ){
           return this.$message.warning(res.msg)
         }
@@ -781,6 +908,8 @@ export default {
         this.formData.content = this.liveDetailInfo.introduction;
         this.formData.hot = Boolean(this.liveDetailInfo.hide_pv);
         this.speakSwitch = Boolean(res.data.auto_speak);
+        // 当前还有其它语种
+        await this.getLanguageList(id)
         if (this.liveDetailInfo.webinar_curr_num) {
           this.formData.limitCapacity = this.liveDetailInfo.webinar_curr_num;
           this.formData.limitCapacitySwtich = true;
@@ -816,6 +945,59 @@ export default {
       }).finally(()=>{
         this.loading = false;
       });
+    },
+    setQueryLang(text, lang, type) {
+      // 当前只有默认语种
+      this.formData[type].push({
+        value: text,
+        key: `${type}_${lang}`, // 组装格式，titleList_语言lang值
+        lang: lang,
+        label: this.getLangLabel(lang)
+      })
+      console.log('语种设置......', this.formData.titleList, this.formData.contentList)
+    },
+    // 查询其它非默认语种集合
+    getLanguageList(webinar_id) {
+      this.$fetch('languageList', {webinar_id: webinar_id}).then(langRes => {
+        if (langRes.code == 200) {
+          const list = langRes && langRes.data && langRes.data.list ? langRes.data.list || [] : []// 多语言包，若无设定，默认中文
+          if (list.length > 0) {
+            // 多语言包，若无设定，默认中文
+            const langList = list.map(item => {return item.language_type}).sort() || []
+            this.oldLanguageVa = langList // 已勾选的语言 - 参考值
+            this.languageVa = !this.multilingual ? langList : [1]
+            console.log('获取当前语言值', langList)
+            this.formData.titleList = []
+            this.formData.contentList = []
+            for (let i = 0; i < langList.length; i++) {
+              console.log('当前语种情况', langList[i])
+              if (this.multilingual && langList[i] != 1) {
+                // 若当前多语言未开启，重置为中文，并且直接跳出循环，只配置了一个
+                this.setQueryLang('', 1, 'titleList')
+                this.setQueryLang('', 1, 'contentList')
+                break
+              } else {
+                const vo = list.filter(item => {return item.language_type == langList[i]})
+                if (vo && vo.length > 0) {
+                  this.setQueryLang(vo[0].subject, langList[i], 'titleList')
+                  this.setQueryLang(vo[0].introduction, langList[i], 'contentList')
+                }
+              }
+            }
+          } else {
+            // 默认语言 - 简体中文
+            this.languageVa = [1]
+            this.setQueryLang(this.liveDetailInfo.subject || '', 1, 'titleList')
+            this.setQueryLang(this.liveDetailInfo.introduction || '', 1, 'contentList')
+          }
+        }
+      }).catch(error => {
+        console.log('获取其它语种集合', error)
+        // 默认语言 - 简体中文
+        this.languageVa = [1]
+        this.setQueryLang(this.liveDetailInfo.subject || '', 1, 'titleList')
+        this.setQueryLang(this.liveDetailInfo.introduction || '', 1, 'contentList')
+      })
     },
     sendData(content) {
       this.formData.content = content;
@@ -924,12 +1106,17 @@ export default {
         });
         return;
       }
+      // 特殊逻辑处理
+      const defaultVo = {
+        title: this.formData.titleList[0].value || '',
+        introduction: this.unescapeHTML((this.formData.contentList[0].value || '').replace("&lt;p&gt;","")) || '<p></p>'
+      }
       let data = {
         webinar_id: this.webinarId || '',
         record_id: this.webinarVideo ? this.selectMedia.id : '',
-        subject: this.formData.title, // 标题
-        introduction: this.unescapeHTML(this.formData.content.replace("&lt;p&gt;","")) || '<p></p>', // 简介
-        start_time: this.webniarTypeToZH == '点播' ? '' : `${this.formData.date1} ${this.formData.date2}`, // 创建时间
+        subject: defaultVo.title, // 标题
+        introduction: defaultVo.introduction, // 简介
+        start_time: this.webinarTypeToZH == '点播' ? '' : `${this.formData.date1} ${this.formData.date2}`, // 创建时间
         webinar_type: this.liveMode, // 1 音频 2 视频 3 互动 6 分组
         category: this.tagIndex+1, // 类别 1 金融 2 互联网 3 汽车 4 教育 5 医疗 6 其他
         is_private: this.formData.home ? 0 : 1 , // 是否在个人主页显示
@@ -943,8 +1130,8 @@ export default {
         img_url: this.$parseURL(this.formData.imageUrl).path, // 封面图
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
         no_delay_webinar: this.liveMode == 6 ? 1 : this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status [分组直播默认无延迟]
-        is_timing: this.webinarVideo ? (this.$route.meta.webniarType == 'vod' ? 0 : 1) : '',
-        inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webniarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
+        is_timing: this.webinarVideo ? (this.$route.meta.webinarType == 'vod' ? 0 : 1) : '',
+        inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webinarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
       };
       if (this.liveMode == 6) {
         data.auto_speak = Number(this.speakSwitch)
@@ -954,7 +1141,7 @@ export default {
       if(this.$route.query.type != 2 ) {
         data = this.$params(data)
       }
-      console.log('>>>>>>>>>>111', this.webniarTypeToZH, this.$params(data))
+      console.log('>>>>>>>>>>111', this.webinarTypeToZH, this.$params(data))
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.loading = true;
@@ -964,14 +1151,64 @@ export default {
           } else {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
-          this.$fetch(url, this.$params(data)).then(res=>{
+          this.$fetch(url, this.$params(data)).then(async res=>{
             if (res.code == 200) {
-              console.log(res);
-              if (data.webinar_type == 6) {
+              // 若是开启了 - 多语言权限，调用创建多语言接口。否则不调用
+              await this.sendLanguage(res.data.webinar_id).then((result) => {
+                console.log('Promise.all --- success', result)       // 返回的是个结果数据 [ '3秒后醒来', '2秒后醒来' ]
+                this.loading = false
+                this.renderSave(res)
+              }).catch((error) => {
+                console.log('Promise.all --- error', error)
+                this.loading = false
+                this.$message({
+                  message: error.msg || '操作失败',
+                  showClose: true,
+                  // duration: 0,
+                  type: 'error',
+                  customClass: 'zdy-info-box'
+                });
+              })
+            } else {
+              this.$message({
+                message: res.msg || '操作失败',
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
+            }
+          }).catch(res=>{
+            this.$message({
+              message: res.msg || `操作失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+          }).finally(()=>{
+            this.loading = false;
+          });
+          console.log(data);
+        } else {
+          this.$message({
+            message: '请完善必填字段',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+          document.documentElement.scrollTop = 0;
+          return false;
+        }
+      });
+    },
+    renderSave(res) {
+      if (res.data.webinar_type == 6) {
                 // 创建分组直播成功
                 this.isChange = false;
                 if (this.title == '创建') {
-                  this.$alert(`创建成功，观看密码默认为666666，请前往 <a href="${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}">【观看限制】</a>更改密码或观看限制`, '提示', {
+          this.$alert(`创建成功，观看密码默认为666666，请前往 <a href="${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${res.data.webinar_type}">【观看限制】</a>更改密码或观看限制`, '提示', {
                     confirmButtonText: '我知道了',
                     customClass: 'zdy-alert-box zdy-padding',
                     dangerouslyUseHTMLString: true,
@@ -1010,52 +1247,80 @@ export default {
                   this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
                 }, 500);
               }
-            } else {
-              this.$message({
-                message: res.msg || `操作失败`,
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box'
-              });
+    },
+    languageCreate(params) {
+      return this.$fetch('languageCreate', this.$params({
+        ...params
+      }))
+    },
+    languageEdit(params) {
+      return this.$fetch('languageEdit', this.$params({
+        ...params
+      }))
+    },
+    languageDel(params) {
+      return this.$fetch('languageDel', this.$params({
+        ...params
+      }))
+    },
+    sendLanguage(webinar_id) {
+      const arrList = []
+      const concatLang = Array.from(new Set(this.oldLanguageVa.concat(this.languageVa)))
+      const demo = this.languageVa[0]
+      for (let i = 0; i < concatLang.length; i++) {
+        const langTitle = this.formData.titleList.filter(item => {return item.lang == concatLang[i]})
+        const langIntroduce = this.formData.contentList.filter(item => {return item.lang  == concatLang[i]})
+        console.log('当前保存结果oldLanguageVa=',this.oldLanguageVa)
+        console.log('当前保存结果newLanguageVa=',this.languageVa)
+        console.log('当前保存结果合集', concatLang)
+        console.log('当前匹配old', this.oldLanguageVa.includes(concatLang[i]))
+        console.log('当前匹配new', this.languageVa.includes(concatLang[i]))
+        if (this.oldLanguageVa.includes(concatLang[i]) && this.languageVa.includes(concatLang[i])) {
+          console.log('当前语言为修改', concatLang[i])
+          // 当前语言为修改
+          arrList.push(this.languageEdit({
+            webinar_id: webinar_id,
+            language_type: concatLang[i],
+            subject: langTitle && langTitle.length > 0 ? langTitle[0].value : '',
+            introduction: langIntroduce && langIntroduce.length > 0 ? langIntroduce[0].value : '',
+            status: concatLang[i] == demo ? 1 : 0 // 0:非默认语种 1：默认语种
+          }))
+        } else if (!this.oldLanguageVa.includes(concatLang[i]) && this.languageVa.includes(concatLang[i])) {
+          console.log('当前语言为新增', concatLang[i])
+          // 当前语言为新增
+          arrList.push(this.languageCreate({
+            webinar_id: webinar_id,
+            language_type: concatLang[i],
+            subject: langTitle && langTitle.length > 0 ? langTitle[0].value : '',
+            introduction: langIntroduce && langIntroduce.length > 0 ? langIntroduce[0].value : '',
+            status: concatLang[i] == demo ? 1 : 0 // 0:非默认语种 1：默认语种
+          }))
+        } else if (this.oldLanguageVa.includes(concatLang[i]) && !this.languageVa.includes(concatLang[i])) {
+          console.log('当前语言为删除', concatLang[i])
+          if (!this.multilingual) {
+            // 若是没有多语言权限，不删除历史数据。!this.multilingual表示有权限，需删除历史数据。
+            arrList.push(this.languageDel({
+              webinar_id: webinar_id,
+              language_type: concatLang[i]
+            }))
             }
-          }).catch(res=>{
-            this.$message({
-              message: res.msg || `操作失败`,
-              showClose: true,
-              // duration: 0,
-              type: 'error',
-              customClass: 'zdy-info-box'
-            });
-          }).finally(()=>{
-            this.loading = false;
-          });
-          console.log(data);
-        } else {
-          this.$message({
-            message: '请完善必填字段',
-            showClose: true,
-            // duration: 0,
-            type: 'error',
-            customClass: 'zdy-info-box'
-          });
-          document.documentElement.scrollTop = 0;
-          return false;
         }
-      });
+      }
+      console.log('当前最终发送的请求为...', arrList)
+      return arrList.length > 0 ? Promise.all(arrList) : Promise.resolve(null)
     },
     reportData() {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
       let arrType = [100022, 100020, 100021]
       if (this.title === '创建') {
         let refer = this.$route.query.refer || 2
-        if (this.webniarTypeToZH === '点播') {
+        if (this.webinarTypeToZH === '点播') {
           this.$vhall_paas_port({
             k: 100019,
             data: {business_uid: userId, user_id: '', webinar_id: '', refer: refer, s: '', report_extra: {}, ref_url: '', req_url: ''}
           })
         }
-        if (this.webniarTypeToZHTitle === '直播') {
+        if (this.webinarTypeToZHTitle === '直播') {
           this.$vhall_paas_port({
             k: 100018,
             data: {business_uid: userId, user_id: '', webinar_id: '', refer: refer, s: '', report_extra: {}, ref_url: '', req_url: ''}
@@ -1066,7 +1331,7 @@ export default {
           })
         }
       }
-      if (this.webniarTypeToZHTitle === '直播') {
+      if (this.webinarTypeToZHTitle === '直播') {
         // 文档
         this.$vhall_paas_port({
           k: this.formData.docSwtich ? 100023 : 100024,
@@ -1779,6 +2044,10 @@ export default {
     &:hover {
       background: #ffffff;
     }
+  }
+  /deep/.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+    background-color: #FB3A32;
+    border-color: #FB3A32;
   }
 </style>
 <style lang="less">
