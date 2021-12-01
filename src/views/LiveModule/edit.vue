@@ -136,7 +136,7 @@
         </div>
         <el-select filterable v-model="zdy_inav_num" style="width: 312px">
           <template  v-for="(opt, optIndex) in inavNumOptions">
-            <el-option :key="optIndex" :label="opt.label" :value="opt.label" :disabled="selectDelayMode == 'delay' ? (speakerMaxNum < 6 ? opt.value > speakerMaxNum : opt.value > 6) : opt.value > speakerMaxNum"/>
+            <el-option :key="optIndex" :label="opt.label" :value="opt.label" :disabled="selectDelayMode == 'delay' && liveMode != 6 ? (speakerMaxNum < 6 ? opt.value > speakerMaxNum : opt.value > 6) : opt.value > speakerMaxNum"/>
           </template>
         </el-select>
       </el-form-item>
