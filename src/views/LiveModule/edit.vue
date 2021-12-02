@@ -786,7 +786,7 @@ export default {
         value: '',
         key: 'titleList_1',
         lang: 1,
-        label: this.getLangLabel(1)
+        label: this.getLangKeyVal(1, 'label')
       })
       // 默认中文简介
       this.formData.contentList = []
@@ -794,7 +794,7 @@ export default {
         value: '',
         key: 'contentList_1',
         lang: 1,
-        label: this.getLangLabel(1)
+        label: this.getLangKeyVal(1, 'label')
       })
     }
     // 发布为点播
@@ -813,12 +813,21 @@ export default {
 
   },
   methods: {
-    getLangLabel(val) {
+    getLangKeyVal(lang, key) {
       let label = ''
-      for (let i = 0; i<this.languageOps.length; i++) {
-        if (this.languageOps[i].value == val) {
-          label = this.languageOps[i].label
-          break;
+      if (key == 'real') {
+        for (let i = 0; i<this.queryLangList.length; i++) {
+          if (this.queryLangList[i].language_type == lang) {
+            label = this.queryLangList[i][key]
+            break;
+          }
+        }
+      } else {
+        for (let i = 0; i<this.languageOps.length; i++) {
+          if (this.languageOps[i].value == lang) {
+            label = this.languageOps[i][key]
+            break;
+          }
         }
       }
       // console.log('当前label结果', label)
@@ -843,7 +852,7 @@ export default {
           value: findList && findList.length > 0 ? findList[0].value : '',
           key: key + '_' + val[i],
           lang: val[i],
-          label: this.getLangLabel(val[i])
+          label: this.getLangKeyVal(val[i], 'label')
         });
       }
     },
@@ -953,7 +962,7 @@ export default {
         value: text,
         key: `${type}_${lang}`, // 组装格式，titleList_语言lang值
         lang: lang,
-        label: this.getLangLabel(lang)
+        label: this.getLangKeyVal(lang, 'label')
       })
       console.log('语种设置......', this.formData.titleList, this.formData.contentList)
     },
@@ -1250,38 +1259,38 @@ export default {
                 }, 500);
               }
     },
-    languageCreate(params) {
-      return this.$fetch('languageCreate', this.$params({
+    async languageCreate(params) {
+      return await this.$fetch('languageCreate', this.$params({
         ...params
       }))
     },
-    languageEdit(params) {
-      return this.$fetch('languageEdit', this.$params({
+    async languageEdit(params) {
+      return await this.$fetch('languageEdit', this.$params({
         ...params
       }))
     },
-    languageDel(params) {
-      return this.$fetch('languageDel', this.$params({
+    async languageDel(params) {
+      return await this.$fetch('languageDel', this.$params({
         ...params
       }))
     },
     sendLanguage(webinar_id) {
       const arrList = []
+      // concatLang = （原来设置的语种集合 + 已勾选的语种集合）去除重复数据后结果
       const concatLang = Array.from(new Set(this.oldLanguageVa.concat(this.languageVa)))
+      // demo 当前默认勾选的语种
       const demo = this.languageVa[0]
       for (let i = 0; i < concatLang.length; i++) {
         const langTitle = this.formData.titleList.filter(item => {return item.lang == concatLang[i]})
         const langIntroduce = this.formData.contentList.filter(item => {return item.lang  == concatLang[i]})
-        console.log('当前保存结果oldLanguageVa=',this.oldLanguageVa)
-        console.log('当前保存结果newLanguageVa=',this.languageVa)
-        console.log('当前保存结果合集', concatLang)
-        console.log('当前匹配old', this.oldLanguageVa.includes(concatLang[i]))
-        console.log('当前匹配new', this.languageVa.includes(concatLang[i]))
         if (this.oldLanguageVa.includes(concatLang[i]) && this.languageVa.includes(concatLang[i])) {
+          // 如果当前语种在原来的语种里，也在新勾选的语种里也有。
           console.log('当前语言为修改', concatLang[i])
           console.log('当前语言为修改-判断1', this.liveDetailInfo.subject)
           console.log('当前语言为修改-判断2', this.queryLangList)
-          if (this.liveDetailInfo.subject && this.queryLangList.length > 0 && this.queryLangList[0].subject == '') {
+          // 获取循环的语种，是否真实存在与数据库标记
+          let realTag = this.getLangKeyVal(concatLang[i], 'real')
+          if (realTag == 0) {
             // 举例: 只设置了英文，然后关闭多语言权限，点击保存中文，这个时候应该是新增
             arrList.push(this.languageCreate({
               webinar_id: webinar_id,
@@ -1301,6 +1310,7 @@ export default {
             }))
           }
         } else if (!this.oldLanguageVa.includes(concatLang[i]) && this.languageVa.includes(concatLang[i])) {
+          // 如果当前语种，不在原来的语种集合里，当前为新增的数据。
           console.log('当前语言为新增', concatLang[i])
           // 当前语言为新增
           arrList.push(this.languageCreate({
@@ -1311,14 +1321,13 @@ export default {
             status: concatLang[i] == demo ? 1 : 0 // 0:非默认语种 1：默认语种
           }))
         } else if (this.oldLanguageVa.includes(concatLang[i]) && !this.languageVa.includes(concatLang[i])) {
+          // 如果当前语种，在原来的语种集合里，但是不在新勾选的语种里，当前是需要依据权限判断是否需要删除的数据
           console.log('当前语言为删除', concatLang[i])
-          if (!this.multilingual) {
-            // 若是没有多语言权限，不删除历史数据。!this.multilingual表示有权限，需删除历史数据。
-            arrList.push(this.languageDel({
-              webinar_id: webinar_id,
-              language_type: concatLang[i]
-            }))
-            }
+          // 若是没有多语言权限，不删除历史数据。!this.multilingual表示有权限，需删除历史数据。
+          arrList.push(this.languageDel({
+            webinar_id: webinar_id,
+            language_type: concatLang[i]
+          }))
         }
       }
       console.log('当前最终发送的请求为...', arrList)
