@@ -720,7 +720,8 @@ export default {
         }
       ],
       oldLanguageVa: [], // 当前活动，默认没有设置过语言
-      languageVa: [] // 当前已勾选的语言
+      languageVa: [], // 当前已勾选的语言
+      queryLangList: []
     };
   },
   beforeRouteEnter (to, from, next) {
@@ -961,6 +962,7 @@ export default {
       this.$fetch('languageList', {webinar_id: webinar_id}).then(langRes => {
         if (langRes.code == 200) {
           const list = langRes && langRes.data && langRes.data.list ? langRes.data.list || [] : []// 多语言包，若无设定，默认中文
+          this.queryLangList = list
           if (list.length > 0) {
             // 多语言包，若无设定，默认中文
             const langList = list.map(item => {return item.language_type}).sort() || []
@@ -1277,14 +1279,27 @@ export default {
         console.log('当前匹配new', this.languageVa.includes(concatLang[i]))
         if (this.oldLanguageVa.includes(concatLang[i]) && this.languageVa.includes(concatLang[i])) {
           console.log('当前语言为修改', concatLang[i])
-          // 当前语言为修改
-          arrList.push(this.languageEdit({
-            webinar_id: webinar_id,
-            language_type: concatLang[i],
-            subject: langTitle && langTitle.length > 0 ? langTitle[0].value : '',
-            introduction: langIntroduce && langIntroduce.length > 0 ? langIntroduce[0].value : '',
-            status: concatLang[i] == demo ? 1 : 0 // 0:非默认语种 1：默认语种
-          }))
+          console.log('当前语言为修改-判断1', this.liveDetailInfo.subject)
+          console.log('当前语言为修改-判断2', this.queryLangList)
+          if (this.liveDetailInfo.subject && this.queryLangList.length > 0 && this.queryLangList[0].subject == '') {
+            // 举例: 只设置了英文，然后关闭多语言权限，点击保存中文，这个时候应该是新增
+            arrList.push(this.languageCreate({
+              webinar_id: webinar_id,
+              language_type: concatLang[i],
+              subject: langTitle && langTitle.length > 0 ? langTitle[0].value : '',
+              introduction: langIntroduce && langIntroduce.length > 0 ? langIntroduce[0].value : '',
+              status: concatLang[i] == demo ? 1 : 0 // 0:非默认语种 1：默认语种
+            }))
+          } else {
+            // 当前语言为修改
+            arrList.push(this.languageEdit({
+              webinar_id: webinar_id,
+              language_type: concatLang[i],
+              subject: langTitle && langTitle.length > 0 ? langTitle[0].value : '',
+              introduction: langIntroduce && langIntroduce.length > 0 ? langIntroduce[0].value : '',
+              status: concatLang[i] == demo ? 1 : 0 // 0:非默认语种 1：默认语种
+            }))
+          }
         } else if (!this.oldLanguageVa.includes(concatLang[i]) && this.languageVa.includes(concatLang[i])) {
           console.log('当前语言为新增', concatLang[i])
           // 当前语言为新增
