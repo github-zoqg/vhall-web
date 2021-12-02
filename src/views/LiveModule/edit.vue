@@ -3,7 +3,7 @@
     <pageTitle :pageTitle="Number($route.query.type) === 2 ? '编辑信息' : `${title}${webinarTypeToZHTitle}`"></pageTitle>
     <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="80px">
       <!-- 观看语种 -->
-      <el-form-item label="观看语种" prop="languageVa">
+      <el-form-item label="观看语种" prop="languageVa" class="margin32">
         <div class="titleBox">
           <span class="pageTitle">
             <!-- 未开通权限 -->
@@ -11,7 +11,7 @@
             <span v-else>分组直播暂不支持多语言！仅生效网页观看端，不生效JS-SDK和移动SDK观看端 <a href="" target="_blank">功能介绍</a></span>
           </span>
         </div>
-        <div class="delay-select">
+        <div class="language-select">
           <el-checkbox-group v-model="languageVa" @change="addLangList">
             <template v-for="(item, key) in languageOps">
               <el-checkbox :label="item.value" :key="'lang_' + key" :disabled="multilingual">{{item.label}}</el-checkbox>
@@ -21,11 +21,12 @@
       </el-form-item>
       <!-- 直播标题 -->
       <el-form-item
+        class="margin32"
         v-for="(domain, index) in formData.titleList"
         :label="index == 0 ? `${webinarTypeToZH}标题` : ''"
         :key="'title_' + domain.lang"
         :prop="'titleList.' + index + '.value'"
-      :rules="[
+        :rules="[
           { required: true, max: 100,  message: `请输入${domain.label}${webinarTypeToZH}标题`, trigger: 'blur' }
         ]"
       >
@@ -151,7 +152,7 @@
         </div>
         <div class="modeHide" v-if="$route.query.type==2"></div>
       </el-form-item>
-      <el-form-item v-if="(liveMode == 3 || liveMode == 6) && webinarType == 'live'" label="连麦人数" required class="invd-number">
+      <el-form-item v-if="(liveMode == 3 || liveMode == 6) && webinarType == 'live'" label="连麦人数" required :class="['invd-number', {'margin32': liveMode == 6}] ">
         <div class="titleBox">
           <span class="pageTitle">
             <span>{{liveMode == 6 ? '直播中请勿修改连麦人数！最大支持1v15连麦，开通更多连麦人数' : '直播中请勿修改连麦人数！无延迟最大支持1v5连麦，常规直播最大支持1v15连麦，开通更多连麦人数'}}<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a></span>
@@ -164,7 +165,7 @@
         </el-select>
       </el-form-item>
       <template  v-if="showDelayTag && liveMode != 6">
-        <el-form-item label="直播延迟" required style="display: none;" :style="{'display' : liveMode != 6 ? 'block' : 'nonelay'}">
+        <el-form-item class="margin32" label="直播延迟" required style="display: none;" :style="{'display' : liveMode != 6 ? 'block' : 'nonelay'}">
           <div class="titleBox">
             <span class="pageTitle">
               <span v-if="!hasDelayPermission">无延迟直播为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<span class="blue" @click.stop="showDelayMask = true">无延迟直播</span></span>
@@ -179,7 +180,7 @@
           </div>
         </el-form-item>
       </template>
-      <el-form-item :label="`${webinarTypeToZH}封面`">
+      <el-form-item class="margin32" :label="`${webinarTypeToZH}封面`">
         <upload
           class="upload__avatar"
           v-model="formData.imageUrl"
@@ -243,13 +244,13 @@
       >
         <v-editor class="editor-wrap" save-type='live' :placeholderText="`请输入${domain.label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="domain.value"></v-editor>
       </el-form-item> -->
-      <el-form-item  v-if="formData.contentList[0]" :label="`${webinarTypeToZH}简介`">
+      <el-form-item class="margin32" v-if="formData.contentList[0]" :label="`${webinarTypeToZH}简介`">
         <v-editor class="editor-wrap" save-type='live' :placeholderText="`请输入${formData.contentList[0].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[0].value"></v-editor>
       </el-form-item>
-      <el-form-item  v-if="formData.contentList[1]">
+      <el-form-item  class="margin32" v-if="formData.contentList[1]">
         <v-editor class="editor-wrap" save-type='live' :placeholderText="`请输入${formData.contentList[1].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[1].value"></v-editor>
       </el-form-item>
-      <el-form-item  v-if="formData.contentList[2]">
+      <el-form-item  class="margin32" v-if="formData.contentList[2]">
         <v-editor class="editor-wrap" save-type='live' :placeholderText="`请输入${formData.contentList[2].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[2].value"></v-editor>
       </el-form-item>
       <!-- <el-form-item :label="`${webinarTypeToZH}类别`" >
@@ -321,7 +322,7 @@
           :active-text="capacityDesc">
         </el-switch>
       </p>
-      <p class="switch__box">
+      <p class="switch__box last">
         <el-switch
           v-model="formData.limitCapacitySwtich"
           active-color="#FB3A32"
@@ -527,7 +528,6 @@ export default {
       } else {
         return true;
       }
-      return false
     },
     isEditTime() {
       return this.liveDetailInfo.webinar_state == 1 && this.liveDetailInfo.webinar_type == 5
@@ -1441,6 +1441,9 @@ export default {
    position: relative;
    top: 2px;
  }
+   .titleBox {
+    padding-bottom: 4px;
+  }
   .el-form{
     background: #ffffff;
     padding: 48px 20px 50px 48px;
@@ -1503,10 +1506,13 @@ export default {
   /deep/ .el-form-item{
     // width: 100%;
     max-width: 668px;
-    margin-bottom: 26px;
+    margin-bottom: 22px;
     &.max-column {
       max-width: 868px;
-      margin-bottom: 17px;
+      margin-bottom: 26px;
+      .titleBox {
+        padding-bottom: 4px;
+      }
     }
   }
   /deep/.el-col-11{
@@ -1617,6 +1623,37 @@ export default {
       }
     }
   }
+  .margin32 {
+    margin-bottom: 32px;
+  }
+  .language-select{
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    /deep/.el-checkbox-group {
+      height: 20px;
+      line-height: 20px;
+    }
+    /deep/.el-checkbox__input.is-disabled .el-checkbox__inner {
+      background-color: #ffffff;
+      border-color: #CCCCCC;
+      cursor: not-allowed;
+    }
+    /deep/.el-checkbox__input.is-checked .el-checkbox__inner {
+      border-color: #FB3A32;
+    }
+    /deep/.el-checkbox {
+      color: #1a1a1a;
+    }
+    /deep/.el-checkbox__inner {
+      border-color: #999999;
+      &:hover, &:active {
+        border-color: #FB3A32;
+      }
+    }
+  }
   .el-icon-question {
     color: #999999;
   }
@@ -1720,6 +1757,7 @@ export default {
       font-size: 14px;
       text-align: center;
       line-height: 5px;
+      color: #666666;
     }
   }
   .modeHide{
@@ -1746,7 +1784,12 @@ export default {
     }
   }
   .el-switch{
-    margin-top: 30px;
+    margin-bottom: 32px;
+  }
+  .switch__box.last {
+    .el-switch {
+      margin-bottom: 0
+    }
   }
   .limitInput{
     margin-left: 80px;
@@ -1761,7 +1804,8 @@ export default {
   }
   .btnGroup{
     // text-align: center;
-    margin-top: 40px;
+    margin-top: 32px;
+    margin-bottom: 0;
   }
   .editBox {
     .common-button {
