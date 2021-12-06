@@ -7,8 +7,8 @@
         <div class="titleBox">
           <span class="pageTitle">
             <!-- 未开通权限 -->
-            <span v-if="multilingual">分组直播暂不支持多语言！观看语种为收费功能，需要开通请  <a href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038" target="_blank">联系客服</a> <a href="" target="_blank">功能介绍</a></span>
-            <span v-else>分组直播暂不支持多语言！仅生效网页观看端，不生效JS-SDK和移动SDK观看端 <a href="" target="_blank">功能介绍</a></span>
+            <span v-if="multilingual">分组直播暂不支持多语言！观看语种为收费功能，需要开通请  <a href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038" target="_blank">联系客服</a> <a href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">功能介绍</a></span>
+            <span v-else>分组直播暂不支持多语言！仅生效网页观看端，不生效JS-SDK和移动SDK观看端 <a href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">功能介绍</a></span>
           </span>
         </div>
         <div class="language-select">
