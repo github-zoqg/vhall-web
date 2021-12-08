@@ -22,7 +22,6 @@
             <div v-if="groupLiveStatus" class="delay-mask">
               {{groupLiveStatus ? '分组直播暂不支持此方式发起' : ''}}
             </div>
-            -->
             <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
             <p class="f-20">客户端发起</p>
             <p>需安装客户端、支持多种视频采集卡、插入视频等功能</p>
