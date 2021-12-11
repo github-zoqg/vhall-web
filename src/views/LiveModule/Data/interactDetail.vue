@@ -38,9 +38,9 @@
         />
         <el-button size="medium" round v-if="title==='聊天' || title==='问答'" :disabled="!isSeletedCheckout" @click="deleteAll(null)">批量删除</el-button>
       </div>
-      <span class="search-export" v-if="totalNum">
-        <el-button round  size="medium" @click="exportData" v-if="$route.query.wType != 6">导出数据</el-button>
-        <el-button round  size="medium" @click="exportData" v-if="$route.query.wType == 6">导出主直播间数据</el-button>
+      <span class="search-export">
+        <el-button round  size="medium" @click="exportData" v-if="$route.query.wType != 6 && totalNum">导出数据</el-button>
+        <el-button round  size="medium" @click="exportData" v-if="$route.query.wType == 6 && totalNum">导出主直播间数据</el-button>
         <el-button round  size="medium" @click="getGroupRound" v-if="$route.query.wType == 6">导出分组数据</el-button>
       </span>
     </div>
