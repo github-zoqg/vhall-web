@@ -3,7 +3,7 @@
     <pageTitle pageTitle="子账号管理"></pageTitle>
     <!-- 子账号管理头部 -->
     <div class="title--flex--top">
-      <div class="top-item" v-show="userInfo.user_extends.extends_remark == 0">
+      <div class="top-item">
         <p>{{sonInfo && sonInfo.vip_info && sonInfo.vip_info.type > 0 ? '总流量（GB）' : '总并发（方）'}}</p>
         <p class="custom-font-barlow">
           <count-to :startVal="0"
