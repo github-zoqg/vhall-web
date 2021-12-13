@@ -576,9 +576,11 @@ export default {
             sessionOrLocal.set('SAAS_VS_PES', permissions, 'localStorage');
             let isOld = localStorage.getItem('isOld')
             if(getQueryString('form') && getQueryString('form') == 1 ){
-              this.$router.push({path: '/', query:{'form': 1}});
+              location.href = `${location.origin}${process.env.VUE_APP_WEB_KEY}?form=1`
+              // this.$router.push({path: '/', query:{'form': 1}});
             }else{
-              this.$router.push({path: '/'});
+              location.href = `${location.origin}${process.env.VUE_APP_WEB_KEY}`
+              // this.$router.push({path: '/'});
             }
           } else {
             this.$message({
