@@ -719,6 +719,7 @@ export default {
           value: 3
         }
       ],
+      isPushVodLanguage: false, // 是不是发布为点播或定时直播
       oldLanguageVa: [], // 当前活动，默认没有设置过语言
       languageVa: [], // 当前已勾选的语言
       queryLangList: []
@@ -799,12 +800,16 @@ export default {
     }
     // 发布为点播
     if (this.$route.query.record_id) {
+      this.isPushVodLanguage = true
       this.selectMedia = {
         id: this.$route.query.record_id,
         paas_record_id: this.$route.query.paas_record_id,
         name: this.$route.query.name
       }
       this.getLiveBaseInfo(this.$route.query.webinar_id, true)
+    }
+    if (this.title == '复制') {
+      this.isPushVodLanguage = true
     }
     this.versionType = JSON.parse(sessionOrLocal.get('versionType'));
     if (!this.versionType) {
@@ -1290,7 +1295,7 @@ export default {
           console.log('当前语言为修改-判断2', this.queryLangList)
           // 获取循环的语种，是否真实存在与数据库标记
           let realTag = this.getLangKeyVal(concatLang[i], 'real')
-          if (realTag == 0) {
+          if (realTag == 0 || this.isPushVodLanguage) {
             // 举例: 只设置了英文，然后关闭多语言权限，点击保存中文，这个时候应该是新增
             arrList.push(this.languageCreate({
               webinar_id: webinar_id,
