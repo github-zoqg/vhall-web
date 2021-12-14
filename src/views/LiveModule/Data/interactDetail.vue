@@ -1180,10 +1180,11 @@ export default {
 }
 
 .operaBox{
-  overflow: hidden;
+  // overflow: hidden;
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
+  position: relative;
   .searchBox{
     display: flex;
     &:first-child{
@@ -1220,7 +1221,10 @@ export default {
   }
 }
 .search-export{
-  float: right;
+  position: absolute;
+  top: 0;
+  right: 0;
+  // float: right;
   // /deep/.el-button{
   //   background: transparent;
   //   &:hover{
