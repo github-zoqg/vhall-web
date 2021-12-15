@@ -156,7 +156,9 @@ export default {
         this.userInfo = res.data;
         this.versionType = res.data.edition;
         this.isOutTime = res.data.expired == 1 ? true : false;
-        if(res.data.type != 2) {
+        if (res.data.type == 2) {
+          this.buttonList = res.data.duration.buttons;
+        } else{
           this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
         }
       }).catch(e=>{

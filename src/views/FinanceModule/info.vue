@@ -318,7 +318,9 @@ export default {
     getVersion() {
       this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
         this.versionType = parseInt(res.data.type)
-        if (res.data.type != 2) {
+        if (res.data.type == 2) {
+          this.buttonList = res.data.duration.buttons;
+        } else{
           this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
         }
         this.getLineList();
@@ -481,26 +483,33 @@ export default {
       });
     },
     initPayMessage(info) {
+      if (this.versionType == 2) {
+        this.$message({
+          showClose: true,
+          duration: 0,
+          dangerouslyUseHTMLString: true,
+          message: '您的时长资源已用尽，请联系专属客服充值',
+          type: 'warning'
+        });
+        return
+      }
       let that = this;
       let flow = info.flow
       let extendFee = info.extend
       let total = flow < 0 ? `${ flow } G` : `${ extendFee } 方`
-      let text  = `您有${ this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发'}欠费${info.total_fee}元未支付(${total})`
-      let message = this.versionType == 2 ? '' : '<span id="openList" style="color:#FA9A32;cursor: pointer;padding-left:10px">请立即支付</span></p>'
+      let text  = `您有${ this.versionType == 1 ? '流量' : '并发'}欠费${info.total_fee}元未支付(${total})`
       this.vm = this.$message({
         showClose: true,
         duration: 0,
         dangerouslyUseHTMLString: true,
-        message: '<p style="color:#1A1A1A">' + text + message,
+        message: '<p style="color:#1A1A1A">' + text + '<span id="openList" style="color:#FA9A32;cursor: pointer;padding-left:10px">请立即支付</span></p>',
         type: 'warning'
       });
-      if (this.versionType != 2) {
-        let open = document.querySelector('#openList');
+      let open = document.querySelector('#openList');
         open.addEventListener('click', function(e){
           that.vm.close();
           that.getOrderArrear();
-        });
-      }
+      });
     },
     // 导出用量统计
     exportCenterData() {
