@@ -244,16 +244,16 @@
         :prop="'contentList.' + index + '.value'"
         class="item-last"
       >
-        <v-editor class="editor-wrap" save-type='live' :placeholderText="`请输入${domain.label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="domain.value"></v-editor>
+        <v-editor class="editor-wrap" save-type='live' :placeholder="`请输入${domain.label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="domain.value"></v-editor>
       </el-form-item> -->
       <el-form-item class="margin32" v-if="formData.contentList[0]" :label="`${webinarTypeToZH}简介`">
-        <v-editor class="editor-wrap" save-type='live' :placeholderText="`请输入${formData.contentList[0].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[0].value"></v-editor>
+        <v-editor class="editor-wrap" save-type='live' :placeholder="`请输入${formData.contentList[0].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[0].value"></v-editor>
       </el-form-item>
       <el-form-item  class="margin32" v-if="formData.contentList[1]">
-        <v-editor class="editor-wrap" save-type='live' :placeholderText="`请输入${formData.contentList[1].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[1].value"></v-editor>
+        <v-editor class="editor-wrap" save-type='live' :placeholder="`请输入${formData.contentList[1].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[1].value"></v-editor>
       </el-form-item>
       <el-form-item  class="margin32" v-if="formData.contentList[2]">
-        <v-editor class="editor-wrap" save-type='live' :placeholderText="`请输入${formData.contentList[2].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[2].value"></v-editor>
+        <v-editor class="editor-wrap" save-type='live' :placeholder="`请输入${formData.contentList[2].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[2].value"></v-editor>
       </el-form-item>
       <!-- <el-form-item :label="`${webinarTypeToZH}类别`" >
         <span :class="{tag: true, active: tagIndex === index}" v-for="(item, index) in liveTags" :key="item" @click="tagIndex=index">{{item}}</span>

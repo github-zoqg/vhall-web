@@ -2,6 +2,7 @@
   <div class="vh-editor-wrapbox" :style="{'height': height}">
     <vue-tinymce ref="editor" :content="value" :setting="setting" @change="sendContent">
     </vue-tinymce>
+    <span class="set-placeholder" v-if="currentCount == 0" onselectstart="return false;" unselectable="on" @click="$refs.editor.getInstance().focus()">{{placeholder}}</span>
     <div class="word-count">
       <span :class="currentCount > 0 && currentCount < (maxWord || 1000) ? 'blue' : currentCount == (maxWord || 1000)  ? 'red' : ''">{{ currentCount }}</span> / {{ maxWord || '1000' }}
     </div>
@@ -27,7 +28,6 @@ import './tinymce.less';
 
 import {sessionOrLocal} from "@/utils/utils";
 import VueTinymce from './editorPlugin'
-
 
 export default {
   name: "vhall-editor",
@@ -62,10 +62,13 @@ export default {
       required: false,
       default: 'other'
     },
-
     maxWord: {
-      requred: false,
-      defaut: () => 1000
+      required: false,
+      default: () => 1000
+    },
+    placeholder: {
+      required: false,
+      default: () => ''
     }
   },
 
@@ -266,5 +269,19 @@ export default {
   .red{
     color: #fb3a32;
   }
+}
+.set-placeholder {
+  position: absolute;
+  top: 42px;
+  left: 10px;
+  z-index: 500;
+  font-weight: 400;
+  color: #999999;
+  line-height: 20px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: text;
 }
 </style>
