@@ -7,14 +7,16 @@
         <div class="titleBox">
           <span class="pageTitle">
             <!-- 未开通权限 -->
-            <span v-if="multilingual">分组直播暂不支持多语言！观看语种为收费功能，需要开通请  <a href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038" target="_blank">联系客服</a> <a href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">功能介绍</a></span>
-            <span v-else>分组直播暂不支持多语言！仅生效网页观看端，不生效JS-SDK和移动SDK观看端 <a href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">功能介绍</a></span>
+            <span v-if="multilingual">分组直播暂不支持多语言！观看语种为收费功能，需要开通请  <a class="set-font" href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038" target="_blank">联系客服</a> <a href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">功能介绍</a></span>
+            <!-- 已开通权限 -->
+            <span v-else>分组直播暂不支持多语言！仅生效网页观看端，不生效JS-SDK和移动SDK观看端 <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">功能介绍</a></span>
           </span>
         </div>
         <div class="language-select">
           <el-checkbox-group v-model="languageVa" @change="addLangList">
             <template v-for="(item, key) in languageOps">
-              <el-checkbox :label="item.value" :key="'lang_' + key" :disabled="multilingual">{{item.label}}</el-checkbox>
+              <!-- 没有多语言权限 或者 当前选择的分组直播模式 -->
+              <el-checkbox :label="item.value" :key="'lang_' + key" :disabled="multilingual || liveMode == 6">{{item.label}}</el-checkbox>
             </template>
           </el-checkbox-group>
         </div>
@@ -562,8 +564,8 @@ export default {
           count++
         }
       }
-      return count > 0
-    }
+      return count > 0 || this.languageVa.length <= 0
+    },
   },
   filters: {
     filterLiveMode(mode) {
@@ -580,6 +582,15 @@ export default {
     formData: {
       deep: true,
       handler() {
+        for (let i = 0; i < this.formData.titleList.length; i++) {
+          // 标题勾选是必填项
+          this.historyLang['lang' + this.formData.titleList[i].lang].subject = this.formData.titleList[i].value
+        }
+        for (let i = 0; i < this.formData.contentList.length; i++) {
+          // 标题勾选是必填项
+          this.historyLang['lang' + this.formData.contentList[i].lang].introduce = this.formData.contentList[i].value
+        }
+        console.log('当前历史记录', this.historyLang)
         this.isChange = true;
       }
     },
@@ -713,16 +724,30 @@ export default {
         {
           label: '英文',
           value: 2
-        },
+        }/*,
         {
           label: '西班牙语',
           value: 3
-        }
+        }*/
       ],
       isPushVodLanguage: false, // 是不是发布为点播或定时直播
       oldLanguageVa: [], // 当前活动，默认没有设置过语言
       languageVa: [], // 当前已勾选的语言
-      queryLangList: []
+      queryLangList: [],
+      historyLang: {
+        'lang1': {
+          subject: '',
+          introduce: ''
+        }, // 1固定，表示中文
+        'lang2': {
+          subject: '',
+          introduce: ''
+        }, // 1固定，表示英文
+        'lang3': {
+          subject: '',
+          introduce: ''
+        } // 1固定，表示西班牙语
+      }
     };
   },
   beforeRouteEnter (to, from, next) {
@@ -846,15 +871,27 @@ export default {
       this.setTitleOrContentList(newVal, 'contentList')
     },
     setTitleOrContentList(val, key) {
-      const oldList = this.formData[key]
-      const oldLang = oldList.map(item => item.lang)
-      // console.log('当前选中值', val)
+      const oldList = this.formData[key] // 历史表单内容
+      console.log('勾选语言之前历史语言包情况：', JSON.stringify(oldList))
+      // console.log('当前选中值', val) // 语言情况
       // 若是已经勾选过，进行更新
       this.formData[key] = []
       for (let i = 0; i < val.length; i++) {
         const findList = oldList.filter(item => item.lang == val[i])
+        console.log('查找勾选前历史数据', JSON.stringify(findList))
+        console.log('查找勾选前历史数据-history', JSON.stringify(this.historyLang))
+        let value = ''
+        if (findList && findList.length > 0) {
+          value = findList[0].value
+        } else if (key == 'titleList' && this.historyLang[`lang${val[i]}`].subject) {
+          value = this.historyLang[`lang${val[i]}`].subject
+        } else if (key == 'contentList' && this.historyLang[`lang${val[i]}`].introduce) {
+          value = this.historyLang[`lang${val[i]}`].introduce
+        } else {
+          value = ''
+        }
         this.formData[key].push({
-          value: findList && findList.length > 0 ? findList[0].value : '',
+          value: value,
           key: key + '_' + val[i],
           lang: val[i],
           label: this.getLangKeyVal(val[i], 'label')
@@ -1020,6 +1057,7 @@ export default {
     },
     liveModeChange(index) {
       this.liveMode = index;
+      // TODO 数据处理
     },
     handleUploadSuccess(res, file) {
       console.log(res, file);
@@ -1465,6 +1503,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.set-font {
+  font-size: 14px;
+  font-weight: 400;
+  color: #3562FA;
+}
  .ft20{
    font-size: 20px;
    position: relative;
