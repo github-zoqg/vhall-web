@@ -249,10 +249,10 @@
       <el-form-item class="margin32" v-if="formData.contentList[0]" :label="`${webinarTypeToZH}简介`">
         <v-editor class="editor-wrap" save-type='live' :placeholder="`请输入${formData.contentList[0].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[0].value"></v-editor>
       </el-form-item>
-      <el-form-item  class="margin32" v-if="formData.contentList[1]">
+      <el-form-item  class="margin32" v-if="formData.contentList[1] && liveMode != 6">
         <v-editor class="editor-wrap" save-type='live' :placeholder="`请输入${formData.contentList[1].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[1].value"></v-editor>
       </el-form-item>
-      <el-form-item  class="margin32" v-if="formData.contentList[2]">
+      <el-form-item  class="margin32" v-if="formData.contentList[2] && liveMode != 6">
         <v-editor class="editor-wrap" save-type='live' :placeholder="`请输入${formData.contentList[2].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[2].value"></v-editor>
       </el-form-item>
       <!-- <el-form-item :label="`${webinarTypeToZH}类别`" >
@@ -867,8 +867,10 @@ export default {
       // 默认选择排序，永远简体中文 > 英文 > 西班牙语
       const newVal = val.sort()
       this.languageVa = newVal
-      this.setTitleOrContentList(newVal, 'titleList')
-      this.setTitleOrContentList(newVal, 'contentList')
+      this.$nextTick(() => {
+        this.setTitleOrContentList(newVal, 'titleList')
+        this.setTitleOrContentList(newVal, 'contentList')
+      })
     },
     setTitleOrContentList(val, key) {
       const oldList = this.formData[key] // 历史表单内容
@@ -1057,7 +1059,15 @@ export default {
     },
     liveModeChange(index) {
       this.liveMode = index;
-      // TODO 数据处理
+      // TODO 数据处理， 若当前是分组直播
+      if (index == 6) {
+        // 默认中文选中
+        this.languageVa = [1]
+        this.$nextTick(() => {
+          this.setTitleOrContentList([1], 'titleList')
+          this.setTitleOrContentList([1], 'contentList')
+        })
+      }
     },
     handleUploadSuccess(res, file) {
       console.log(res, file);
