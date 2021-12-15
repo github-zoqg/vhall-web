@@ -2,9 +2,9 @@
   <div class="vh-editor-wrapbox" :style="{'height': height}">
     <vue-tinymce ref="editor" :content="value" :setting="setting" @change="sendContent">
     </vue-tinymce>
-    <span class="set-placeholder" v-if="currentCount == 0" onselectstart="return false;" unselectable="on" @click="$refs.editor.getInstance().focus()">{{placeholder}}</span>
+    <span class="set-placeholder" v-if="!value || currentCount == 0" onselectstart="return false;" unselectable="on" @click="$refs.editor.getInstance().focus()">{{placeholder}}</span>
     <div class="word-count">
-      <span :class="currentCount > 0 && currentCount < (maxWord || 1000) ? 'blue' : currentCount == (maxWord || 1000)  ? 'red' : ''">{{ currentCount }}</span> / {{ maxWord || '1000' }}
+      <span :class="value && currentCount > 0 && currentCount < (maxWord || 1000) ? 'blue' : value && currentCount == (maxWord || 1000)  ? 'red' : ''">{{ value ? currentCount : 0 }}</span> / {{ maxWord || '1000' }}
     </div>
   </div>
 </template>
