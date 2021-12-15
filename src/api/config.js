@@ -361,20 +361,25 @@ const apis = {
   getVersionInfo: ['/v3/fin/account/info', 'GET'],  //获取用户版本信息 √
   getTrendLineInfo: ['/v3/data-center/business-total/user-online-trend', 'GET'],  //账户--并发--数据趋势图
   getFlowLineInfo: ['/v3/data-center/business-total/user-flow-trend', 'GET'],  // 账户---流量----数据趋势图
+  getTimeLineInfo: ['/v3/data-center/business-total/user-duration-trend', 'GET'],  // 账户---时长----数据趋势图
   getTrendHighInfo: ['/v3/data-center/business-total/user-online-pay-maxuv', 'GET'],  // 并发-消费账单-最高并发
   getFlowPayInfo: ['/v3/data-center/business-total/user-flow-pay', 'GET'],  // 流量--消费账单-活动总数
   getTrendInfo: ['/v3/data-center/business-total/user-online-trend', 'GET', 'data'],  //账户并发数据趋势图
   getFlowInfo: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取用量统计数据-流量
+  getDurationInfo: ['/v3/data-center/business-total/user-duration-pay', 'GET', 'data'],  //获取时长-消费账单
   getOnlinePay: ['/v3/data-center/business-total/user-online-pay-maxuv', 'GET', 'data'],  //获取并发-消费账单
   getFlowPay: ['/v3/data-center/business-total/user-flow-pay', 'GET', 'data'],  //获取流量-消费账单
   getAccountList: ['/v3/data-center/business-total/user-online-pay-detail', 'GET'], //获取财务总览-并发-消费账单
   getBusinessList: ['/v3/data-center/business-total/user-flow-pay-detail', 'GET'], //获取财务总览-流量-消费账单-分页明细[子账号也涉及]
+  getDurationList: ['/v3/data-center/business-total/user-duration-pay-detail', 'GET'],  //获取时长-消费账单-分页明细
 
   // 财务中心导出
   exportFlow: ['/v3/data-center/business-total/export-user-flow-trend', 'GET'], //账户流量数据趋势图__导出
   exportOnline:  ['/v3/data-center/business-total/export-user-online-trend', 'GET'], //账户并发数据趋势图_导出
-  exportFlowDetail:  ['/v3/data-center/business-total/export-user-flow-pay-detail', 'GET'], //流量明细导出
-  exportOnlineDetail:  ['/v3/data-center/business-total/export-user-online-pay-detail', 'GET'], //并发明细导出
+  exportDuration:  ['/v3/data-center/business-total/export-user-duration-trend', 'GET'], //账户时长数据趋势图_导出
+  exportFlowDetail:  ['/v3/data-center/business-total/export-user-flow-pay-detail', 'GET'], //消费账单-流量明细导出
+  exportOnlineDetail:  ['/v3/data-center/business-total/export-user-online-pay-detail', 'GET'], //消费账单-并发明细导出
+  exportDurationDetail:  ['/v3/data-center/business-total/export-user-duration-pay-detail', 'GET'], //消费账单-时长明细导出
   exporOrder: ['/v3/fin/order/export', 'GET'], //账单明细-购买明细 导出
   exportAdmin:  ['/v3/fin/admin-order/export', 'GET'], //账单明细-开通明细 导出
   exportWithdraw:  ['/v3/fin/withdraw/export', 'GET'], //提现明细 导出

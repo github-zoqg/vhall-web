@@ -188,6 +188,10 @@ export default {
         {
           label: '并发扩展包(天)',
           value: 'extend_day'
+        },
+        {
+          label: '时长包',
+          value: 'duration'
         }
       ],
       orderOptions: [
@@ -207,6 +211,10 @@ export default {
           label: '并发扩展包(天)',
           value: 'extend_day'
         },
+        {
+          label: '时长包',
+          value: 'duration'
+        }
       ],
       // 购买明细
       searchList: [

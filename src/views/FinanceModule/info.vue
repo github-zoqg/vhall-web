@@ -59,8 +59,11 @@
       <div class="serach-line">
         <span>消费账单</span>
         <el-tooltip effect="dark" placement="right" v-tooltipMove>
-          <div slot="content" v-if="versionType">
+          <div slot="content" v-if="versionType==1">
            数据更新频率：直播使用流量1小时更新，回放/点播使用流量1小时更新<br>删除活动或者删除子账号，不影响已统计的历史数据
+          </div>
+          <div slot="content" v-if="versionType==2">
+           1.时长统计每小时更新一次<br>2.时长套餐按人/分钟进行时长消耗<br>3.删除活动或者删除子账号，不影响已统计的历史数据
           </div>
           <div slot="content" v-else>
            1.数据更新频率10分钟，建议活动结束10分钟后查看完整数据<br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发<br>3.删除活动或者删除子账号，不影响已统计的历史数据
@@ -95,14 +98,6 @@
             <el-button round  size="medium" @click="exportAccount">导出数据</el-button>
           </div>
         </div>
-        <!-- <search-area
-            ref="searchDataAccount"
-            :isDate="isDate"
-            :searchAreaLayout="searchDataAccount"
-            @onExportData="exportAccount()"
-            @onSearchFun="getAccountList('search')"
-        >
-        </search-area> -->
       <div class="content-grid" v-if="!versionType">
          <div class="grid-item">
           <div class="grid-content">
@@ -129,7 +124,7 @@
             <p>累计活动（个）</p>
             <el-tooltip effect="dark" placement="right" v-tooltipMove>
               <div slot="content">
-                筛选条件内创建的活动总数，包含直播+点播活动
+                筛选条件内{{versionType == 1 ? '创建的' : ''}}活动总数，包含直播+点播活动
               </div>
              <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
@@ -138,39 +133,38 @@
         </div>
         <div class="content-item">
           <div class="grid-content">
-            <p>累计使用流量（GB）</p>
+            <p>{{ versionType == 1 ? '累计使用流量（GB）' : '累计使用时长（分钟）'}}</p>
               <el-tooltip effect="dark" placement="right" v-tooltipMove>
               <div slot="content">
-                筛选条件内的直播使用流量+回放使用流量的总和
+                {{ versionType == 1 ? '筛选条件内的直播使用流量+回放使用流量的总和' : '筛选条件内的直播使用时长+回放使用时长的总和'}}
               </div>
               <i class="iconfont-v3 saasicon_help_m"></i>
             </el-tooltip>
-
-            <h1 class="custom-font-barlow">{{ trendData.total_flow || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ versionType == 1 ? trendData.total_flow || 0 : trendData.total_duration || 0 }}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
-            <p>直播使用流量（GB）</p>
+            <p>{{ versionType == 1 ? '直播使用流量（GB）' : '直播使用时长（分钟）'}}</p>
               <el-tooltip effect="dark" placement="right" v-tooltipMove>
                 <div slot="content">
-                  筛选条件内的直播使用流量汇总，包含视频直播、互动直播、音频直播消耗的总流量
+                  {{ versionType == 1 ? '筛选条件内的直播使用流量汇总，包含视频直播、互动直播、音频直播消耗的总流量' : '筛选条件内的直播时长使用量的汇总，包含直播时长+角色观看时长+观看暖场时长'}}
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
-            <h1 class="custom-font-barlow">{{ trendData.live_flow || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ versionType == 1 ? trendData.live_flow || 0 : trendData.live_duration || 0}}</h1>
           </div>
         </div>
         <div class="content-item">
           <div class="grid-content">
-            <p>回放使用流量（GB）</p>
+            <p>{{ versionType == 1 ? '回放使用流量（GB）' : '回放使用时长（分钟）'}}</p>
               <el-tooltip effect="dark" placement="right" v-tooltipMove>
                 <div slot="content">
-                  筛选条件内的回放使用流量汇总，包含回放、点播消耗的总流量
+                  {{ versionType == 1 ? '筛选条件内的回放使用流量汇总，包含回放、点播消耗的总流量' : '筛选条件内的回放时长使用量的汇总，包含回放、点播的总时长'}}
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
-            <h1 class="custom-font-barlow">{{ trendData.vod_flow || 0 }}</h1>
+            <h1 class="custom-font-barlow">{{ versionType == 1 ? trendData.vod_flow || 0 : trendData.vod_duration || 0}}</h1>
           </div>
         </div>
       </div>
@@ -230,7 +224,10 @@ export default {
         webinar_num: 12345678,
         total_flow: 901234567,
         live_flow: 212321478,
-        vod_flow: 1231234434
+        vod_flow: 1231234434,
+        total_duration: 1232432,
+        live_duration: 1232432,
+        vod_duration: 1232432,
       },
       time: '',
       versionType: '',
@@ -320,8 +317,10 @@ export default {
     },
     getVersion() {
       this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
-        this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
         this.versionType = parseInt(res.data.type)
+        if (res.data.type != 2) {
+          this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
+        }
         this.getLineList();
         this.getAccountList();
         this.getCumlus(this.versionType)
@@ -334,16 +333,22 @@ export default {
       });
     },
     getCumlus(versionType) {
-      if (!versionType) {
+      if (versionType == 1) {
+         this.tabelColumn = this.tabelColumns.concat({
+          label: '消耗流量（GB）',
+          key: 'webinar_flow',
+          width: 150
+        })
+      } else if (versionType == 2) {
         this.tabelColumn = this.tabelColumns.concat({
-          label: '最高并发（方）',
-          key: 'webinar_max_uv',
+          label: '消耗时长（分钟）',
+          key: 'webinar_duration',
           width: 150
         })
       } else {
         this.tabelColumn = this.tabelColumns.concat({
-          label: '消耗流量（GB）',
-          key: 'webinar_flow',
+          label: '最高并发（方）',
+          key: 'webinar_max_uv',
           width: 150
         })
       }
@@ -369,7 +374,7 @@ export default {
       this.getFlowTrend(obj);
     },
     getFlowTrend(obj) {
-      let url = this.versionType == 1 ? 'getFlowLineInfo' : 'getTrendLineInfo';
+      let url = this.versionType == 1 ? 'getFlowLineInfo' : this.versionType == '2' ? 'getTimeLineInfo' : 'getTrendLineInfo';
       this.$fetch(url, obj).then(res =>{
         this.lintData = res.data.list;
       }).catch(e=>{
@@ -378,7 +383,7 @@ export default {
     },
     // 获取并发-最高  流量-活动个数
     getOnlinePay(obj) {
-      let url = this.versionType == 1 ? 'getFlowPayInfo' : 'getTrendHighInfo';
+      let url = this.versionType == 1 ? 'getFlowPayInfo' : this.versionType == '2' ? 'getDurationInfo' :  'getTrendHighInfo';
       this.$fetch(url, obj).then(res =>{
         this.trendData = res.data || {};
       }).catch(e=>{
@@ -436,14 +441,14 @@ export default {
       this.getDataList(this.$params(obj));
     },
     getDataList(obj) {
-      let url = this.versionType == 1 ? 'getBusinessList' : 'getAccountList';
+      let url = this.versionType == 1 ? 'getBusinessList' : this.versionType == 2 ? 'getDurationList' : 'getAccountList';
       this.$fetch(url, obj).then(res =>{
         let costList = res.data.list;
         this.totalNum = res.data.total;
-        costList.map(item => {
-          item.typeText = item.type == 1 ? '主账号' : '子账号';
-          item.typePay = item.pay_type == 1 ? '并发 ' : '流量';
-        });
+         costList.map(item => {
+            item.typeText = item.type == 1 ? '主账号' : '子账号';
+            item.typePay = item.pay_type == 1 ? '并发 ' : item.pay_type == 2 ? '时长' : '流量';
+          });
         this.tableList = costList;
       }).catch(e=>{
         console.log(e);
@@ -480,30 +485,33 @@ export default {
       let flow = info.flow
       let extendFee = info.extend
       let total = flow < 0 ? `${ flow } G` : `${ extendFee } 方`
-      let text  = `您有${ this.versionType == 1 ? '流量' : '并发'}欠费${info.total_fee}元未支付(${total})`
+      let text  = `您有${ this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发'}欠费${info.total_fee}元未支付(${total})`
+      let message = this.versionType == 2 ? '' : '<span id="openList" style="color:#FA9A32;cursor: pointer;padding-left:10px">请立即支付</span></p>'
       this.vm = this.$message({
         showClose: true,
         duration: 0,
         dangerouslyUseHTMLString: true,
-        message: '<p style="color:#1A1A1A">' + text + '<span id="openList" style="color:#FA9A32;cursor: pointer;padding-left:10px">请立即支付</span></p>',
+        message: '<p style="color:#1A1A1A">' + text + message,
         type: 'warning'
       });
-      let open = document.querySelector('#openList');
-      open.addEventListener('click', function(e){
-        that.vm.close();
-        that.getOrderArrear();
-      });
+      if (this.versionType != 2) {
+        let open = document.querySelector('#openList');
+        open.addEventListener('click', function(e){
+          that.vm.close();
+          that.getOrderArrear();
+        });
+      }
     },
     // 导出用量统计
     exportCenterData() {
-      let url = this.versionType == 1 ? 'exportFlow' : 'exportOnline';
+      let url = this.versionType == 1 ? 'exportFlow' :  this.versionType == 2 ? 'exportDuration' : 'exportOnline';
       this.$fetch(url, this.lineParams).then(res => {
         this.$vhall_paas_port({
           k: 100696,
           data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
         this.$message({
-          message: `${this.versionType ? '流量' : '并发'}用量统计导出申请成功，请去下载中心下载`,
+          message: `${this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发'}用量统计导出申请成功，请去下载中心下载`,
           showClose: true,
           // duration: 0,
           type: 'success',
@@ -512,7 +520,7 @@ export default {
         this.$EventBus.$emit('saas_vs_download_change');
       }).catch(res => {
         this.$message({
-          message: res.msg || `${this.versionType ? '流量' : '并发'}用量统计导出失败`,
+          message: res.msg || `${this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发'}用量统计导出失败`,
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -522,14 +530,14 @@ export default {
     },
     // 导出消费账单
     exportAccount() {
-      let url = this.versionType == 1 ? 'exportFlowDetail' : 'exportOnlineDetail';
+      let url = this.versionType == 1 ? 'exportFlowDetail' : this.versionType == 2 ? 'exportDurationDetail' : 'exportOnlineDetail';
       this.$fetch(url, this.dataParams).then(res => {
         this.$vhall_paas_port({
           k: 100702,
           data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
        this.$message({
-        message: `${this.versionType ? '流量' : '并发'}消费账单导出申请成功，请去下载中心下载`,
+        message: `${this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发'}消费账单导出申请成功，请去下载中心下载`,
         showClose: true,
         // duration: 0,
         type: 'success',
@@ -538,7 +546,7 @@ export default {
        this.$EventBus.$emit('saas_vs_download_change');
       }).catch(res => {
         this.$message({
-          message: res.msg || `${this.versionType ? '流量' : '并发'}消费账单导出失败`,
+          message: res.msg || `${this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发'}消费账单导出失败`,
           showClose: true,
           // duration: 0,
           type: 'error',

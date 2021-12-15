@@ -80,6 +80,30 @@
         </div>
       </el-col>
     </el-row>
+    <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.duration">
+      <el-col :span="typeChange ? 15 : 9">
+        <div class="top-item usage-item">
+          <p>当前版本</p>
+          <h2>{{ userInfo.edition }}</h2>
+          <p v-if="userInfo.edition_valid_time">有效期: {{ userInfo.edition_valid_time }}<span v-if="isOutTime">(已过期)</span></p>
+        </div>
+      </el-col>
+      <el-col :span="typeChange ? 15 : 9">
+        <div class="top-item usage-item">
+          <p>总时长/可用时长（分钟）
+          <el-tooltip effect="dark" placement="right" v-tooltipMove>
+              <div slot="content">
+                1.优先消耗较早购买或赠送的时长包，消耗完自动启用下一个时长包<br>
+                2.自启用之日起，赠送的时长包有效期为7天<br>
+                3.时长包到期后自动失效
+              </div>
+              <i class="iconfont-v3 saasicon_help_m"></i>
+            </el-tooltip>
+          </p>
+          <h2 class="custom-big custom-font-barlow" v-if="userInfo.duration">{{ userInfo.duration.total_duration}}/{{ userInfo.duration.duration }}</h2>
+        </div>
+      </el-col>
+    </el-row>
     <up-version ref="levelVersion" :title="title" :concurrentPrice="concurrentPrice"></up-version>
   </div>
 </template>
@@ -132,11 +156,9 @@ export default {
         this.userInfo = res.data;
         this.versionType = res.data.edition;
         this.isOutTime = res.data.expired == 1 ? true : false;
-        // this.outTime(res.data.edition_valid_time);
-        this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
-        // sessionOrLocal.set('versionType', JSON.stringify(res.data.type));
-        // sessionOrLocal.set('versionText', JSON.stringify(res.data.edition));
-        // sessionOrLocal.set('arrears', JSON.stringify(res.data.arrears));
+        if(res.data.type != 2) {
+          this.buttonList = res.data.concurrency ? res.data.concurrency.buttons : res.data.flow.buttons;
+        }
       }).catch(e=>{
         console.log(e);
       });
