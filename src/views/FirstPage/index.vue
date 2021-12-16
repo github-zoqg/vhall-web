@@ -230,6 +230,10 @@ export default {
     // sessionOrLocal.get('openSys') || false // 用户迁移完成弹窗状态
   },
   created() {
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    if (this.userId) {
+      window.sessionStorage.setItem('userId', this.userId)
+    }
     this.getUserMigrate()
     try {
       let newUserId = JSON.parse(sessionStorage.getItem('userInfo')).user_id
