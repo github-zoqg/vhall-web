@@ -7,13 +7,13 @@
         <div class="titleBox">
           <span class="pageTitle">
             <!-- 未开通权限 -->
-            <span v-if="multilingual">分组直播暂不支持多语言！观看语种为收费功能，需要开通请  <a class="set-font" href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038" target="_blank">联系客服</a> <a href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">功能介绍</a></span>
+            <span v-if="multilingual">分组直播暂不支持多语言！观看语种为收费功能，需要开通请  <a class="set-font" href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038" target="_blank">联系客服</a> <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">功能介绍</a></span>
             <!-- 已开通权限 -->
             <span v-else>分组直播暂不支持多语言！仅生效网页观看端，不生效JS-SDK和移动SDK观看端 <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">功能介绍</a></span>
           </span>
         </div>
         <div class="language-select">
-          <el-checkbox-group v-model="languageVa" @change="addLangList">
+          <el-checkbox-group :min="1" v-model="languageVa" @change="addLangList">
             <template v-for="(item, key) in languageOps">
               <!-- 没有多语言权限 或者 当前选择的分组直播模式 -->
               <el-checkbox :label="item.value" :key="'lang_' + key" :disabled="multilingual || liveMode == 6">{{item.label}}</el-checkbox>
@@ -1124,7 +1124,6 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(formName) {
-      var that = this
       if (this.formData.limitCapacitySwtich && this.formData.limitCapacity < 1) {
         this.$message({
           message: '最高并发请输入大于1的数值',
@@ -1218,7 +1217,7 @@ export default {
           this.$fetch(url, this.$params(data)).then(async res=>{
             if (res.code == 200) {
               // 若是开启了 - 多语言权限，调用创建多语言接口。否则不调用
-              await this.sendLanguage(res.data.webinar_id).then((result) => {
+              await this.sendLanguage(res.data.webinar_id, url).then((result) => {
                 console.log('Promise.all --- success', result)       // 返回的是个结果数据 [ '3秒后醒来', '2秒后醒来' ]
                 this.loading = false
                 this.renderSave(res)
@@ -1327,7 +1326,7 @@ export default {
         ...params
       }))
     },
-    sendLanguage(webinar_id) {
+    sendLanguage(webinar_id, url) {
       const arrList = []
       // concatLang = （原来设置的语种集合 + 已勾选的语种集合）去除重复数据后结果
       const concatLang = Array.from(new Set(this.oldLanguageVa.concat(this.languageVa)))
@@ -1336,15 +1335,38 @@ export default {
       for (let i = 0; i < concatLang.length; i++) {
         const langTitle = this.formData.titleList.filter(item => {return item.lang == concatLang[i]})
         const langIntroduce = this.formData.contentList.filter(item => {return item.lang  == concatLang[i]})
-        if (this.oldLanguageVa.includes(concatLang[i]) && this.languageVa.includes(concatLang[i])) {
-          // 如果当前语种在原来的语种里，也在新勾选的语种里也有。
-          console.log('当前语言为修改', concatLang[i])
-          console.log('当前语言为修改-判断1', this.liveDetailInfo.subject)
-          console.log('当前语言为修改-判断2', this.queryLangList)
-          // 获取循环的语种，是否真实存在与数据库标记
-          let realTag = this.getLangKeyVal(concatLang[i], 'real')
-          if (realTag == 0 || this.isPushVodLanguage) {
-            // 举例: 只设置了英文，然后关闭多语言权限，点击保存中文，这个时候应该是新增
+        if (url == 'liveEdit') {
+          // 如果是编辑
+          if (this.oldLanguageVa.includes(concatLang[i]) && this.languageVa.includes(concatLang[i])) {
+            // 如果当前语种在原来的语种里，也在新勾选的语种里也有。
+            console.log('当前语言为修改', concatLang[i])
+            console.log('当前语言为修改-判断1', this.liveDetailInfo.subject)
+            console.log('当前语言为修改-判断2', this.queryLangList)
+            // 获取循环的语种，是否真实存在与数据库标记
+            let realTag = this.getLangKeyVal(concatLang[i], 'real')
+            if (realTag == 0 || this.isPushVodLanguage) {
+              // 举例: 只设置了英文，然后关闭多语言权限，点击保存中文，这个时候应该是新增
+              arrList.push(this.languageCreate({
+                webinar_id: webinar_id,
+                language_type: concatLang[i],
+                subject: langTitle && langTitle.length > 0 ? langTitle[0].value : '',
+                introduction: langIntroduce && langIntroduce.length > 0 ? langIntroduce[0].value : '',
+                status: concatLang[i] == demo ? 1 : 0 // 0:非默认语种 1：默认语种
+              }))
+            } else {
+              // 当前语言为修改
+              arrList.push(this.languageEdit({
+                webinar_id: webinar_id,
+                language_type: concatLang[i],
+                subject: langTitle && langTitle.length > 0 ? langTitle[0].value : '',
+                introduction: langIntroduce && langIntroduce.length > 0 ? langIntroduce[0].value : '',
+                status: concatLang[i] == demo ? 1 : 0 // 0:非默认语种 1：默认语种
+              }))
+            }
+          } else if (!this.oldLanguageVa.includes(concatLang[i]) && this.languageVa.includes(concatLang[i])) {
+            // 如果当前语种，不在原来的语种集合里，当前为新增的数据。
+            console.log('当前语言为新增', concatLang[i])
+            // 当前语言为新增
             arrList.push(this.languageCreate({
               webinar_id: webinar_id,
               language_type: concatLang[i],
@@ -1352,34 +1374,23 @@ export default {
               introduction: langIntroduce && langIntroduce.length > 0 ? langIntroduce[0].value : '',
               status: concatLang[i] == demo ? 1 : 0 // 0:非默认语种 1：默认语种
             }))
-          } else {
-            // 当前语言为修改
-            arrList.push(this.languageEdit({
+          } else if (this.oldLanguageVa.includes(concatLang[i]) && !this.languageVa.includes(concatLang[i])) {
+            // 如果当前语种，在原来的语种集合里，但是不在新勾选的语种里，当前是需要依据权限判断是否需要删除的数据
+            console.log('当前语言为删除', concatLang[i])
+            // 若是没有多语言权限，不删除历史数据。!this.multilingual表示有权限，需删除历史数据。
+            arrList.push(this.languageDel({
               webinar_id: webinar_id,
-              language_type: concatLang[i],
-              subject: langTitle && langTitle.length > 0 ? langTitle[0].value : '',
-              introduction: langIntroduce && langIntroduce.length > 0 ? langIntroduce[0].value : '',
-              status: concatLang[i] == demo ? 1 : 0 // 0:非默认语种 1：默认语种
+              language_type: concatLang[i]
             }))
           }
-        } else if (!this.oldLanguageVa.includes(concatLang[i]) && this.languageVa.includes(concatLang[i])) {
-          // 如果当前语种，不在原来的语种集合里，当前为新增的数据。
-          console.log('当前语言为新增', concatLang[i])
-          // 当前语言为新增
+        } else {
+          // 如果当前是新增操作，所有的语言都为新增
           arrList.push(this.languageCreate({
             webinar_id: webinar_id,
             language_type: concatLang[i],
             subject: langTitle && langTitle.length > 0 ? langTitle[0].value : '',
             introduction: langIntroduce && langIntroduce.length > 0 ? langIntroduce[0].value : '',
             status: concatLang[i] == demo ? 1 : 0 // 0:非默认语种 1：默认语种
-          }))
-        } else if (this.oldLanguageVa.includes(concatLang[i]) && !this.languageVa.includes(concatLang[i])) {
-          // 如果当前语种，在原来的语种集合里，但是不在新勾选的语种里，当前是需要依据权限判断是否需要删除的数据
-          console.log('当前语言为删除', concatLang[i])
-          // 若是没有多语言权限，不删除历史数据。!this.multilingual表示有权限，需删除历史数据。
-          arrList.push(this.languageDel({
-            webinar_id: webinar_id,
-            language_type: concatLang[i]
           }))
         }
       }
