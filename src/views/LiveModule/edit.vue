@@ -7,7 +7,7 @@
         <div class="titleBox">
           <span class="pageTitle">
             <!-- 未开通权限 -->
-            <span v-if="multilingual">分组直播暂不支持多语言！观看语种为收费功能，需要开通请  <a class="set-font" href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038" target="_blank">联系客服</a> <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">功能介绍</a></span>
+            <span v-if="!hasMultilingual">分组直播暂不支持多语言！观看语种为收费功能，需要开通请  <a class="set-font" href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038" target="_blank">联系客服</a> <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">功能介绍</a></span>
             <!-- 已开通权限 -->
             <span v-else>分组直播暂不支持多语言！仅生效网页观看端，不生效JS-SDK和移动SDK观看端 <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">功能介绍</a></span>
           </span>
@@ -16,7 +16,7 @@
           <el-checkbox-group :min="1" v-model="languageVa" @change="addLangList">
             <template v-for="(item, key) in languageOps">
               <!-- 没有多语言权限 或者 当前选择的分组直播模式 -->
-              <el-checkbox :label="item.value" :key="'lang_' + key" :disabled="multilingual || liveMode == 6">{{item.label}}</el-checkbox>
+              <el-checkbox :label="item.value" :key="'lang_' + key" :disabled="!hasMultilingual || (webinarTypeToZHTitle == '直播' && liveMode == 6)">{{item.label}}</el-checkbox>
             </template>
           </el-checkbox-group>
         </div>
@@ -249,10 +249,10 @@
       <el-form-item class="margin32" v-if="formData.contentList[0]" :label="`${webinarTypeToZH}简介`">
         <v-editor class="editor-wrap" save-type='live' :placeholder="`请输入${formData.contentList[0].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[0].value"></v-editor>
       </el-form-item>
-      <el-form-item  class="margin32" v-if="formData.contentList[1] && liveMode != 6">
+      <el-form-item  class="margin32" v-if="formData.contentList[1] && !(webinarTypeToZHTitle == '直播' && liveMode == 6)">
         <v-editor class="editor-wrap" save-type='live' :placeholder="`请输入${formData.contentList[1].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[1].value"></v-editor>
       </el-form-item>
-      <el-form-item  class="margin32" v-if="formData.contentList[2] && liveMode != 6">
+      <el-form-item  class="margin32" v-if="formData.contentList[2] && !(webinarTypeToZHTitle == '直播' && liveMode == 6)">
         <v-editor class="editor-wrap" save-type='live' :placeholder="`请输入${formData.contentList[2].label}${webinarTypeToZH}简介`" :isReturn=true ref="unitImgTxtEditor" v-model="formData.contentList[2].value"></v-editor>
       </el-form-item>
       <!-- <el-form-item :label="`${webinarTypeToZH}类别`" >
@@ -523,14 +523,6 @@ export default {
         return true;
       }
     },
-    multilingual() {
-      // multilingual 1:化蝶观看端多语言权限  0:无权限
-      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['multilingual'] == '1') {
-        return false;
-      } else {
-        return true;
-      }
-    },
     isEditTime() {
       return this.liveDetailInfo.webinar_state == 1 && this.liveDetailInfo.webinar_type == 5
     },
@@ -605,6 +597,7 @@ export default {
     return {
       showDelayTag: true,
       hasDelayPermission: false, // 是否有无延迟权限
+      hasMultilingual: false, // 是否有多语种权限
       isDelay: false,
       showDelayMask: false,
       selectDelayMode: 'common',
@@ -785,14 +778,14 @@ export default {
     }).catch(() => {
     });
   },
-  created(){
+  async created(){
     const path = this.$route.path
     console.log('>>>>>>>>11111', path)
     if (path.indexOf('/live/vodEdit') != -1 ||path.indexOf('/live/timeEdit') != -1  ) {
       this.showDelayTag = false
     }
+    this.versionType = JSON.parse(sessionOrLocal.get('versionType'));
     window.scrollTo(0,0);
-    this.planFunctionGet()
     if (this.$route.query.id || this.$route.params.id) {
       this.webinarId = this.$route.query.id || this.$route.params.id;
       if(this.$route.query.id){
@@ -800,6 +793,7 @@ export default {
       }else{
         this.title = '编辑'
       }
+      await this.planFunctionGet()
       this.getLiveBaseInfo(this.webinarId, false);
     } else {
       this.title = '创建';
@@ -822,6 +816,7 @@ export default {
         lang: 1,
         label: this.getLangKeyVal(1, 'label')
       })
+      await this.planFunctionGet()
     }
     // 发布为点播
     if (this.$route.query.record_id) {
@@ -836,7 +831,6 @@ export default {
     if (this.title == '复制') {
       this.isPushVodLanguage = true
     }
-    this.versionType = JSON.parse(sessionOrLocal.get('versionType'));
     if (!this.versionType) {
       this.getHighLimit();
     }
@@ -904,11 +898,11 @@ export default {
     planFunctionGet() {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
       let params = {
-        webinar_id: this.$route.params.str || '',
+        webinar_id: this.$route.params.str || this.$route.query.webinar_id || '', // 活动ID编辑页，发布为点播 & 定时直播等
         webinar_user_id: userId,
         scene_id: 2
       }
-      this.$fetch('planFunctionGet', this.$params(params)).then(res=>{
+      return this.$fetch('planFunctionGet', this.$params(params)).then(res=>{
         // 数据渲染
         if (res.data && res.code == 200) {
           const data = JSON.parse(res.data.permissions)
@@ -922,6 +916,7 @@ export default {
             // this.formData.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
             this.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
           }
+          this.hasMultilingual = data['multilingual'] && data['multilingual'] == 1 ? true : false
         }
       }).catch(res =>{
         console.log(res);
@@ -1020,13 +1015,13 @@ export default {
             // 多语言包，若无设定，默认中文
             const langList = list.map(item => {return item.language_type}).sort() || []
             this.oldLanguageVa = langList // 已勾选的语言 - 参考值
-            this.languageVa = !this.multilingual ? langList : [1]
+            this.languageVa = this.hasMultilingual ? langList : [1]
             console.log('获取当前语言值', langList)
             this.formData.titleList = []
             this.formData.contentList = []
             for (let i = 0; i < langList.length; i++) {
               console.log('当前语种情况', langList[i])
-              if (this.multilingual && langList[i] != 1) {
+              if (!this.hasMultilingual && langList[i] != 1) {
                 // 若当前多语言未开启，重置为中文，并且直接跳出循环，只配置了一个
                 this.setQueryLang('', 1, 'titleList')
                 this.setQueryLang('', 1, 'contentList')
