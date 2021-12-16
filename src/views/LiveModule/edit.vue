@@ -898,7 +898,7 @@ export default {
     planFunctionGet() {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
       let params = {
-        webinar_id: this.$route.params.str || this.$route.query.webinar_id || '', // 活动ID编辑页，发布为点播 & 定时直播等
+        webinar_id: this.$route.params.id || this.$route.query.webinar_id || '', // 活动ID编辑页，发布为点播 & 定时直播等
         webinar_user_id: userId,
         scene_id: 2
       }
