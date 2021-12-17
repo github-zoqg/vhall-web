@@ -31,7 +31,7 @@ export default {
     // 判断是否欠费
     getAppersInfo() {
       this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
-        if (res.data.arrears.total_fee < 0) {
+        if (res.data.arrears.total_fee > 0) {
           this.$confirm(`尊敬的微吼会员，您的${res.data.type == 1 ? '流量' : res.data.type == 2 ? '时长资源' : '并发套餐'}已用尽，${ res.data.type == 2 ? '请联系客服充值' : '请充值'}`, '提示', {
             confirmButtonText: res.data.type == 2 ? '知道了' : '去充值',
             cancelButtonText: '知道了',

@@ -294,7 +294,7 @@ export default {
     this.initPage();
   },
   beforeRouteLeave(to, from, next) {
-    if (this.status) {
+    if (this.status && this.versionType != 2) {
       this.vm.close();
     }
     next();
