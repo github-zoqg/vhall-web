@@ -727,6 +727,7 @@ export default {
       oldLanguageVa: [], // 当前活动，默认没有设置过语言
       languageVa: [], // 当前已勾选的语言
       queryLangList: [],
+      delLang: [], // 编辑&无权限时，使用该待删除语种集合
       historyLang: {
         'lang1': {
           subject: '',
@@ -1011,6 +1012,8 @@ export default {
         if (langRes.code == 200) {
           const list = langRes && langRes.data && langRes.data.list ? langRes.data.list || [] : []// 多语言包，若无设定，默认中文
           this.queryLangList = list
+          this.delLang = langRes.data.language_types.split(',').filter(item => item != 1) || []
+          console.log('当前待删除语种集合', this.delLang)
           if (list.length > 0) {
             // 多语言包，若无设定，默认中文
             const langList = list.map(item => {return item.language_type}).sort() || []
@@ -1377,6 +1380,15 @@ export default {
               webinar_id: webinar_id,
               language_type: concatLang[i]
             }))
+          }
+          if (!this.hasMultilingual) {
+            // 如果是编辑，并且当前无权限
+            for (let j = 0 ; j < this.delLang.length; j++) {
+              arrList.push(this.languageDel({
+                webinar_id: webinar_id,
+                language_type: this.delLang[j]
+              }))
+            }
           }
         } else {
           // 如果当前是新增操作，所有的语言都为新增
