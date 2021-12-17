@@ -898,8 +898,12 @@ export default {
     // 获取可配置选项
     planFunctionGet() {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
+      // 发布为定时直播 或者 点播，不需要取值 this.$route.query.webinar_id，不查活动下权限
+      // 编辑活动，取值 this.$route.params.id，需要查活动下权限
+      // 复制活动，取值 this.$route.query.id，需要查活动下权限
+      // 创建，webinar_id 取值 ''，不查活动下权限
       let params = {
-        webinar_id: this.$route.params.id || this.$route.query.webinar_id || '', // 活动ID编辑页，发布为点播 & 定时直播等
+        webinar_id: this.$route.params.id || this.$route.query.id || '', // 活动ID编辑页，发布为点播 & 定时直播等
         webinar_user_id: userId,
         scene_id: 2
       }
