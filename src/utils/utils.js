@@ -392,7 +392,6 @@ export function checkAuth(to, from, next, that) {
       NProgress.done();
       return;
     }
-    // 获取配置项所有内容
     fetchData('planFunctionGet', {}).then(res => {
       if(res && res.code === 200) {
         let permissions = res.data.permissions;
@@ -434,6 +433,21 @@ export function checkAuth(to, from, next, that) {
         sessionOrLocal.set('userInfo', JSON.stringify(res.data));
         sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
         sessionOrLocal.set('currentDate', JSON.stringify(res.data.current_date));
+        // 获取配置项所有内容
+        if (to.path.indexOf('/live/') != -1 && (to.query.webinar_id || to.params.id || to.query.id)) {
+          fetchData('planFunctionGet', {
+            webinar_id: to.query.webinar_id || to.params.id || to.query.id,
+            webinar_user_id: res.data.user_id,
+            scene_id: 1,
+          }).then(res => {
+            if(res && res.code === 200 && res.data.permissions) {
+              // 设置活动全部权限
+              sessionOrLocal.set('WEBINAR_PES', permissions, 'localStorage');
+            }
+          }).catch(e => {
+            console.log('刷新等情况下获取活动下接口配置项情况，异常不做任何处理')
+          });
+        }
       } else {
         sessionOrLocal.set('userInfo', null);
       }

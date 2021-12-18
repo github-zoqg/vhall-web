@@ -535,6 +535,19 @@ export default {
         return false;
       }
     },
+    // 是否有多语种权限
+    hasMultilingual() {
+      // 发布为定时直播 或者 点播，不需要取值 this.$route.query.webinar_id
+      // 编辑活动，取值 this.$route.params.id，需要查活动下权限
+      // 复制活动，取值 this.$route.query.id，需要查活动下权限
+      // 创建，webinar_id 取值 ''，不查活动下权限
+      const webinar_id = this.$route.params.id || this.$route.query.id
+      if (webinar_id) {
+        return JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'))['multilingual'] == '1'
+      } else {
+        return JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['multilingual'] == '1'
+      }
+    },
     start_line: function() {
       // 获取当前时分
       let sysDate = new Date();
@@ -557,7 +570,7 @@ export default {
         }
       }
       return count > 0 || this.languageVa.length <= 0
-    },
+    }
   },
   filters: {
     filterLiveMode(mode) {
@@ -597,7 +610,6 @@ export default {
     return {
       showDelayTag: true,
       hasDelayPermission: false, // 是否有无延迟权限
-      hasMultilingual: false, // 是否有多语种权限
       isDelay: false,
       showDelayMask: false,
       selectDelayMode: 'common',
@@ -787,6 +799,7 @@ export default {
     }
     this.versionType = JSON.parse(sessionOrLocal.get('versionType'));
     window.scrollTo(0,0);
+    this.planFunctionGet()
     if (this.$route.query.id || this.$route.params.id) {
       this.webinarId = this.$route.query.id || this.$route.params.id;
       if(this.$route.query.id){
@@ -794,7 +807,6 @@ export default {
       }else{
         this.title = '编辑'
       }
-      await this.planFunctionGet()
       this.getLiveBaseInfo(this.webinarId, false);
     } else {
       this.title = '创建';
@@ -817,7 +829,6 @@ export default {
         lang: 1,
         label: this.getLangKeyVal(1, 'label')
       })
-      await this.planFunctionGet()
     }
     // 发布为点播
     if (this.$route.query.record_id) {
@@ -898,12 +909,8 @@ export default {
     // 获取可配置选项
     planFunctionGet() {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
-      // 发布为定时直播 或者 点播，不需要取值 this.$route.query.webinar_id，不查活动下权限
-      // 编辑活动，取值 this.$route.params.id，需要查活动下权限
-      // 复制活动，取值 this.$route.query.id，需要查活动下权限
-      // 创建，webinar_id 取值 ''，不查活动下权限
       let params = {
-        webinar_id: this.$route.params.id || this.$route.query.id || '', // 活动ID编辑页，发布为点播 & 定时直播等
+        webinar_id: this.$route.params.str || '',
         webinar_user_id: userId,
         scene_id: 2
       }
@@ -921,7 +928,6 @@ export default {
             // this.formData.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
             this.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
           }
-          this.hasMultilingual = data['multilingual'] && data['multilingual'] == 1 ? true : false
         }
       }).catch(res =>{
         console.log(res);
