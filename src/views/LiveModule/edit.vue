@@ -1337,7 +1337,17 @@ export default {
     sendLanguage(webinar_id, url) {
       const arrList = []
       // concatLang = （原来设置的语种集合 + 已勾选的语种集合）去除重复数据后结果
-      const concatLang = Array.from(new Set(this.oldLanguageVa.concat(this.languageVa)))
+      let concatLang = []
+      if (this.$route.query.id) {
+        // 当前表示复制，因为拿有oldLanguageVa的历史数据，导致保存时调用接口错误，需要去除
+        concatLang = Array.from(new Set(this.languageVa))
+      } else if (this.$route.query.webinar_id) {
+        // 当前表示发布为定时直播，因为拿有oldLanguageVa的历史数据，导致保存时调用接口错误，需要去除
+        concatLang = Array.from(new Set(this.languageVa))
+      } else {
+        concatLang = Array.from(new Set(this.oldLanguageVa.concat(this.languageVa)))
+      }
+      console.log('最终需要处理的语种有', concatLang)
       // demo 当前默认勾选的语种
       const demo = this.languageVa[0]
       for (let i = 0; i < concatLang.length; i++) {
