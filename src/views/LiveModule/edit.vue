@@ -1393,13 +1393,16 @@ export default {
               status: concatLang[i] == demo ? 1 : 0 // 0:非默认语种 1：默认语种
             }))
           } else if (this.oldLanguageVa.includes(concatLang[i]) && !this.languageVa.includes(concatLang[i])) {
-            // 如果当前语种，在原来的语种集合里，但是不在新勾选的语种里，当前是需要依据权限判断是否需要删除的数据
+            // 如果当前语种，在原来的语种集合里，但是不在新勾选的语种里，且数据库里真实存在，删除该语种记录
             console.log('当前语言为删除', concatLang[i])
-            // 若是没有多语言权限，不删除历史数据。!this.multilingual表示有权限，需删除历史数据。
-            arrList.push(this.languageDel({
-              webinar_id: webinar_id,
-              language_type: concatLang[i]
-            }))
+            console.log(this.queryLangList)
+            const isReal = this.queryLangList.filter(item => item.language_type == concatLang[i])[0].real
+            if (isReal == 1) {
+              arrList.push(this.languageDel({
+                webinar_id: webinar_id,
+                language_type: concatLang[i]
+              }))
+            }
           }
           if (!this.hasMultilingual) {
             // 如果是编辑，并且当前无权限
