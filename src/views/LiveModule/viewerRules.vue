@@ -6,9 +6,9 @@
       </div> -->
     </pageTitle>
     <!-- 内容区域 -->
-    <div class="viewer-rules">
+    <div class="viewer-rules" v-show="liveDetailInfo">
       <el-radio-group v-model="form.verify" @change="handleClick">
-        <el-radio :label="0">免费</el-radio>
+        <el-radio :label="0" v-if="liveDetailInfo && liveDetailInfo.webinar_type != 6">免费</el-radio>
         <el-radio :label="3">付费</el-radio>
         <el-radio :label="4" v-if="perssionInfo.f_code">邀请码（原F码）</el-radio>
         <el-radio :label="6" v-if="perssionInfo.f_code">付费/邀请码</el-radio>
@@ -17,15 +17,17 @@
       </el-radio-group>
       <!-- 选值区域 -->
       <div class="viewer-rules-content">
-        <!-- 免费 0 -->
-        <div v-show="Number(form.verify) === 0" class="viewer-rules-ctx--0">
-          <span v-if='webinarState != 4'>
-            <span class="color1a1a1a">预约按钮：</span>
-            <el-switch class="pl10 address" v-model="hide_subscribe" active-color="#FB3A32" inactive-color="#cecece"></el-switch>
-            <span class="pl10 fontStyle">{{hide_subscribe?'已开启':'开启后'}}，预告状态下且未设置报名表单时显示&lt;立即预约>按钮；使用【暖场视频】功能请勿关闭预约按钮</span>
-          </span>
-          <p class="mt30">观看无需任何验证，即可观看直播</p>
-        </div>
+        <template v-if="liveDetailInfo && liveDetailInfo.webinar_type != 6">
+          <!-- 免费 0 -->
+          <div v-show="Number(form.verify) === 0" class="viewer-rules-ctx--0">
+            <span v-if='webinarState != 4'>
+              <span class="color1a1a1a">预约按钮：</span>
+              <el-switch class="pl10 address" v-model="hide_subscribe" active-color="#FB3A32" inactive-color="#cecece"></el-switch>
+              <span class="pl10 fontStyle">{{hide_subscribe?'已开启':'开启后'}}，预告状态下且未设置报名表单时显示&lt;立即预约>按钮；使用【暖场视频】功能请勿关闭预约按钮</span>
+            </span>
+            <p class="mt30">观看无需任何验证，即可观看直播</p>
+          </div>
+        </template>
         <!-- 付费 3 -->
         <div v-show="Number(form.verify) === 3" class="viewer-rules-ctx--3">
           <el-form :model="payForm" ref="payForm" :rules="payFormRules"  label-width="70px">
@@ -389,6 +391,7 @@ export default {
       hide_subscribe: true,  // 预约状态
       showPwd: false,
       stash:'',               // 仅占位用
+      liveDetailInfo: null
     };
   },
   methods: {

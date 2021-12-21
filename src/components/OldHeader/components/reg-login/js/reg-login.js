@@ -7,6 +7,12 @@ export default {
   components: {
     PwdInput
   },
+  props: {
+    gray_id: {
+      require: false,
+      default: null
+    }
+  },
   data() {
     const validAccount = (rule, value, callback) => {
       console.log(rule)
@@ -77,7 +83,9 @@ export default {
           callback(new Error('请输入正确的手机号'))
         } else {
           try {
-            const result = await this.$fetch('loginCheck', {account: this.regForm.phone, channel: 'C'})
+            const result = await this.$fetch('loginCheck', {account: this.regForm.phone, channel: 'C'}, {
+              'gray_id': this.gray_id
+            })
             if (result && result.code === 200) {
               // 检测结果：check_result 0账号未锁定 1账号锁定; account_exist 账号是否存在：1存在 0不存在
               if (result.data.account_exist > 0) {
@@ -287,6 +295,7 @@ export default {
       }, {
         token: '',
         platform: 7,
+        'gray-id': this.gray_id
       }).then(res => {
         if (res.data.check_result == 1) { // 账号被锁定 再次登录需要图片验证
           this.photoCpathaShow = true
@@ -306,6 +315,7 @@ export default {
         this.$fetch('getLoginKey', {}, {
           token: '',
           platform: 7,
+          'gray-id': this.gray_id
         }).then(res => {
           console.log(res)
           if (res.code === 200) {
@@ -405,7 +415,8 @@ export default {
           }
           this.$fetch('loginInfoC', params, {
             token: '',
-            platform: 7
+            platform: 7,
+            'gray-id': this.gray_id
           }).then(res => {
             if (res.code == 200) {
               this.loginErrMsg = ''
@@ -458,7 +469,8 @@ export default {
       }, {
          token: sessionOrLocal.get('vhsaas_token', 'localStorage') || '',
          platform: 7,
-         'request-id': uuidV1()
+         'request-id': uuidV1(),
+         'gray-id': this.gray_id
       }).then(res => {
         sessionOrLocal.set('vhsaas_userInfo', res.data || '', 'localStorage')
         // 关闭当前弹出框，更新状态
@@ -512,7 +524,8 @@ export default {
         scene_id: 7
       }, {
         token: '',
-        platform: 7
+        platform: 7,
+        'gray-id': this.gray_id
       }).then(res => {
         console.log(res)
         this.buttonControl = 'pending'
@@ -547,7 +560,8 @@ export default {
             visitor_id: this.visitor_id
           }, {
             token: '',
-            platform: 7
+            platform: 7,
+            'gray-id': this.gray_id
           }).then(res => {
             if (res.code == 200) {
               this.phoneKey = ''
@@ -606,7 +620,8 @@ export default {
           scene_id: 8
         }, {
           token: '',
-          platform: 7
+          platform: 7,
+          'gray-id': this.gray_id
         }).then(res => {
           console.log(res)
           this.regBtnControl = 'pending'
@@ -653,7 +668,8 @@ export default {
             password: retPassword,
             uuid: this.loginKey.uuid
           }, {
-            token: ''
+            token: '',
+            'gray-id': this.gray_id
           }).then(res => {
             if (res && res.code === 200) {
               this.regPhoneErr = ''

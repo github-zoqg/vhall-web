@@ -8,7 +8,7 @@
     </div>
     <div class="show-special" v-else>
       <el-scrollbar  style="height:100%" v-loadMore="moreLoadData">
-        <OldHeader scene="preShow" :isWhiteBg=true v-if="specialInfo && specialInfo.user_id" :user_id="specialInfo.user_id" :isSpecial=true :specialInfo="specialInfo" @share="share"></OldHeader>
+        <OldHeader scene="preShow" :isWhiteBg=true v-if="specialInfo && specialInfo.user_id" :user_id="specialInfo.user_id" :gray_id="gray_id" :isSpecial=true :specialInfo="specialInfo" @share="share"></OldHeader>
         <div class="special-show-ctx">
           <div class="special-info">
             <div class="special-main">
@@ -37,7 +37,7 @@
                       <span class="hot" v-if="item.hide_pv">
                         <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
                       </span>
-                      <span class="liveTag">{{ item | actionTag }}<span v-if="hasDelayPermission && item.no_delay_webinar == 1"> | 无延迟</span></span>
+                      <span class="liveTag">{{ item | actionTag }}<span v-if="item.webinar_type != 6 && hasDelayPermission && item.no_delay_webinar == 1"> | 无延迟</span></span>
                       <div class="img-box"><img :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
                     </div>
                     <div class="bottom">
@@ -90,14 +90,16 @@ export default {
       },
       totalList: [], //总数
       liveList: [],
-      hasDelayPermission: false
+      hasDelayPermission: false,
+      gray_id: null
     };
   },
   components: {
     OldHeader,
     share
   },
-  created() {
+  async created() {
+    await this.initGrayBefore()
     this.getSpecialList();
   },
   mounted() {
@@ -108,6 +110,23 @@ export default {
     document.getElementById('app').style.minWidth = '1366px'
   },
   methods: {
+    initGrayBefore() {
+      return this.$fetch('initSubjectGrayBefore', {
+          subject_id: this.$route.query.id
+        })
+        .then((res) => {
+          if (res.code == 200 && res.data) {
+            this.gray_id = res.data.user_id
+          } else {
+            console.log(`灰度ID-获取专题by用户信息失败~${res.msg}`)
+             this.gray_id = null
+          }
+        })
+        .catch((e) => {
+          console.log(`灰度ID-获取专题by用户信息失败~${e}`)
+          this.gray_id =  null
+        })
+    },
     share() {
       this.$refs.share.dialogVisible = true;
     },
@@ -125,7 +144,9 @@ export default {
       }, 1000)
     },
     getSpecialList() {
-      this.$fetch('subjectInfo', {subject_id: this.$route.query.id}).then(res => {
+      this.$fetch('subjectInfo', {subject_id: this.$route.query.id}, {
+        'gray-id': this.gray_id
+      }).then(res => {
         if (res.code === 200 && res.data) {
           this.isErrorPage = false
           this.specialInfo = res.data.webinar_subject;
@@ -411,7 +432,7 @@ export default {
       .liveItem{
         margin-bottom: 24px;
         border-radius: 4px;
-        // padding-left: 12px !important; 
+        // padding-left: 12px !important;
         // padding-right: 0px !important;
         .inner{
           display: inline-block;

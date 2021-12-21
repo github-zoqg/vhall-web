@@ -9,25 +9,25 @@
     </div>
     <div v-if="!disablePagechange" class="iconfont iconyoufanye" title="下一步" @click="handlePage('nextStep')"></div>
     <div
-      class="iconfont iconfangda"
+      class="iconfont iconfont-v3 saasbofangqi_fangda"
       title="放大"
       :class="{active:docToolActive == 'zoomIn'}"
       @click="handlePage('zoomIn')"
     ></div>
     <div
-      class="iconfont iconsuoxiao"
+      class="iconfont iconfont-v3 saasbofangqi_suoxiao"
       title="缩小"
       :class="{active:docToolActive == 'zoomOut'}"
       @click="handlePage('zoomOut')"
     ></div>
     <div
-      class="iconfont iconhuanyuan"
+      class="iconfont iconfont-v3 saasbofangqi_11"
       title="还原"
       :class="{active:docToolActive == 'zoomReset'}"
       @click="handlePage('zoomReset')"
     ></div>
     <div
-      class="iconfont iconyidong"
+      class="iconfont iconfont-v3 saasa-icon_jushou2x"
       title="移动"
       :class="{active:docToolActive == 'move'}"
       @click="handlePage('move')"

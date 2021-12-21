@@ -1,8 +1,11 @@
 <template>
   <div class="data-detail">
     <pageTitle :pageTitle='title'>
-       <div slot="content" v-if="title=='发群红包'">
+      <div slot="content" v-if="title == '发群红包'">
         主办方发送的红包未领取完时，会在直播结束时退回到财务中心-账户收益-<br>红包收益中。
+      </div>
+      <div slot="content" v-if="title == '聊天' && $route.query.wType == 6">
+        1.分组模式下，聊天数据仅展示主直播间聊天数据<br />2.点击“导出分组数据”，将导出每个小组内的聊天数据
       </div>
     </pageTitle>
     <div class="operaBox">
@@ -35,7 +38,11 @@
         />
         <el-button size="medium" round v-if="title==='聊天' || title==='问答'" :disabled="!isSeletedCheckout" @click="deleteAll(null)">批量删除</el-button>
       </div>
-      <span v-if="totalNum" class="search-export"><el-button round  size="medium" @click="exportData" >导出数据</el-button></span>
+      <span class="search-export">
+        <el-button round  size="medium" @click="exportData" v-if="$route.query.wType != 6 && totalNum">导出数据</el-button>
+        <el-button round  size="medium" @click="exportData" v-if="$route.query.wType == 6 && totalNum">导出主直播间数据</el-button>
+        <el-button round  size="medium" @click="getGroupRound" v-if="$route.query.wType == 6">导出分组数据</el-button>
+      </span>
     </div>
     <div class="interact-detail" v-show="totalNum">
       <table-list
@@ -56,6 +63,26 @@
       <noData :nullType="nullText" :text="text">
       </noData>
     </div>
+    <!-- 导出分组数据 - 选择场次面板  -->
+    <VhallDialog title="选择活动场次" v-if="groupRoundVisible" :visible.sync="groupRoundVisible" width="410px">
+      <el-form @submit.native.prevent label-width="64px">
+        <el-form-item class="no-border" label="请选择">
+          <el-select placeholder="请选择活动场次" round v-model="groupRound" style="width: 100%">
+            <el-option
+              v-for="item in groupRoundList"
+              :key="'gr_' + item.id"
+              :label="$moment(item.start_time).format('YYYY-MM-DD HH:mm')+' 至 '+$moment(item.end_time).format('YYYY-MM-DD HH:mm')"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="exportGroupByRound" round size="medium">确定</el-button>
+        <el-button @click="closeGroupRoundDialog" round size="medium">取消</el-button>
+      </div>
+    </VhallDialog>
+
   </div>
 </template>
 <script>
@@ -101,6 +128,9 @@ export default {
       },
       tableList: [
       ],
+      groupRoundList: [], // 是否选择分组导出
+      groupRoundVisible: false, // 是否展示选择分组导出 - 选择场次弹框
+      groupRound: null,
       tabelColumn:[],
       // 邀请排名
       inviteColumn: [
@@ -824,7 +854,7 @@ export default {
           this.exportSignInfo();
           break;
         case '聊天':
-          this.exportChatInfo();
+          this.exportChatInfo(); // 基本聊天导出，or分组直播中 - 导出聊天 - 主直播间数据
           break;
         case '问答':
           this.exportRecordInfo();
@@ -840,6 +870,71 @@ export default {
           break;
         default:
           break;
+      }
+    },
+    // 获取可选场次
+    async getGroupRound() {
+      try {
+        let roundResult = await this.$fetch('getWebinarSwitchList', this.$params({webinar_id: this.webinarId, ...this.params }))
+        if (roundResult && roundResult.code == 200) {
+          this.groupRoundList = roundResult.data.switch_list || []
+          if (this.groupRoundList.length > 0) {
+            this.groupRoundVisible = true
+          } else {
+            this.groupRoundVisible = false
+            this.$message({
+              message: `没有可选场次的数据`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            })
+          }
+        }
+      } catch(e) {
+        this.groupRoundVisible = false
+        this.$message({
+          message: `没有可选场次的数据`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        })
+      }
+    },
+    closeGroupRoundDialog() {
+      this.groupRoundVisible = false
+    },
+    exportGroupByRound() {
+      if (this.groupRound) {
+        const vo = this.groupRoundList.filter(item => item.id == this.groupRound)
+        if (!(vo && vo.length > 0)) {
+          console.log('未筛选到有效场次，直接阻止不返回')
+          return
+        }
+        this.$fetch('exportChatSwitch', {room_id: this.roomId, switch_id: this.groupRound, start_time: vo[0].start_time, end_time: vo[0].end_time}).then(res => {
+          // 暂无上报 this.$vhall_paas_port({
+          //   k: 100457,
+          //   data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          // })
+          this.$message({
+            message: `导出申请成功，请去下载中心下载`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.$EventBus.$emit('saas_vs_download_change');
+          this.groupRoundVisible = false
+        })
+      } else {
+        this.$message({
+          message: `请选择活动场次`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
       }
     },
     // 邀请详情导出
@@ -1085,10 +1180,11 @@ export default {
 }
 
 .operaBox{
-  overflow: hidden;
+  // overflow: hidden;
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
+  position: relative;
   .searchBox{
     display: flex;
     &:first-child{
@@ -1125,7 +1221,10 @@ export default {
   }
 }
 .search-export{
-  float: right;
+  position: absolute;
+  top: 0;
+  right: 0;
+  // float: right;
   // /deep/.el-button{
   //   background: transparent;
   //   &:hover{
@@ -1135,5 +1234,8 @@ export default {
   //     }
   //   }
   // }
+}
+.el-form-item.no-border {
+  margin-bottom: 0;
 }
 </style>

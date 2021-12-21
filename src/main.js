@@ -54,15 +54,15 @@ import fetchData from './api/fetch';
 import * as Sentry from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
 
-if(process.env.NODE_ENV == 'production') {
+if(process.env.VUE_APP_NODE_ENV == 'production') {
   Sentry.init({
-    dsn: 'http://f283305b06764042a899319546d60581@fe-log.vhall.com/29',
+    dsn: 'https://f283305b06764042a899319546d60581@fe-log.vhall.com/29',
     logErrors: true,
     integrations: [new Integrations.Vue({ Vue, attachProps: true })]
   })
-} else {
+} else if (process.env.VUE_APP_NODE_ENV == 'test') {
   Sentry.init({
-    dsn: 'http://40c39d3d012e41f3a20e9765545d28c2@test-sentry.vhall.com/22',
+    dsn: 'https://40c39d3d012e41f3a20e9765545d28c2@test-sentry.vhall.com/22',
     logErrors: true,
     integrations: [new Integrations.Vue({ Vue, attachProps: true })]
   })

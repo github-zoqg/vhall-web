@@ -621,6 +621,10 @@ const apis = {
   attentionStatus: ['/v3/users/attentions/info', 'POST'], // 关注状态
   getAttentionNum: ['/v3/users/attentions/count', 'POST'], // 获取关注数量
 
+  // 分组
+  getGroupStatics: ['/v3/interacts/group/group-statis', 'POST'], //分组统计
+  exportGroupList: ['/v3/interacts/group/export-group-list', 'POST'], // 分组统计导出
+  exportChatSwitch: ['/v3/interacts/chat/export-switch', 'POST'], // 导出当前分组场次聊天列表
   // 签到
   v3CreateSifn: ['/v3/interacts/sign/create-and-push', 'POST'], // 创建签到  √
   v3StopSign: ['/v3/interacts/sign/set-end-sign', 'POST'], // 结束签到  √
@@ -640,6 +644,9 @@ const apis = {
   codeCheckC: ['/v3/users/code-consumer/check', 'POST'],
   sendCodeC: ['/v3/users/code-consumer/send', 'POST'],
   loginCheckC: ['/v3/users/user/login-check', 'POST'],  //登录账号锁定检测接口
+  // 专题专用 - 灰度接口
+  initSubjectGrayBefore: ['/v3/webinars/subject/init-before', 'POST'],
+  initGrayBefore: ['/v3/webinars/webinar/init-before', 'POST'], // 通过活动id获取活动拥有者用户id - 用于灰度存储
 };
 
 const getApi = api => {

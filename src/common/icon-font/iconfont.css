@@ -1,16 +1,36 @@
 @font-face {
   font-family: "iconfont-v3"; /* Project id 2212678 */
-  src: url('iconfont.woff2?t=1629860837055') format('woff2'),
-       url('iconfont.woff?t=1629860837055') format('woff'),
-       url('iconfont.ttf?t=1629860837055') format('truetype');
+  src: url('iconfont.woff2?t=1636515512217') format('woff2'),
+       url('iconfont.woff?t=1636515512217') format('woff'),
+       url('iconfont.ttf?t=1636515512217') format('truetype');
 }
 
-.iconfont-v3{
+.iconfont-v3 {
   font-family: "iconfont-v3" !important;
   font-size: 16px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.saasbofangqi_suoxiao:before {
+  content: "\e7b4";
+}
+
+.saasbofangqi_fangda:before {
+  content: "\e7b5";
+}
+
+.saaszuidahua_icon1:before {
+  content: "\e7b6";
+}
+
+.saasbofangqi_11:before {
+  content: "\e7b7";
+}
+
+.saasa-icon_jushou2x:before {
+  content: "\e798";
 }
 
 .saasicon-wuyanchi:before {
@@ -127,10 +147,6 @@
 
 .saasset:before {
   content: "\e602";
-}
-
-.saasloops_icon:before {
-  content: "\e798";
 }
 
 .saasdanmukai_icon:before {

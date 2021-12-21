@@ -6,7 +6,9 @@
         <br/>
         2.控制台数据为真实数据，不统计虚拟数据
         <br/>
-        3.定时直播不支持发起直播，不支持在微吼直播App的活动列表展示
+        3.定时直播不支持发起直播，不支持在微吼直播APP的活动列表展示
+        <br/>
+        4.分组直播不支持客户端及APP端发起直播，不支持在微吼直播APP的活动列表展示
       </div>
     </pageTitle>
     <!-- 操作栏  -->
@@ -56,7 +58,7 @@
               <!--  @click.prevent.stop="toDetail(item.webinar_id)" -->
               <div class="top">
                 <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
-                  <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}<span v-if="item.is_new_version == 3 && item.webinar_type == 3 && item.zdy_inav_num > 1"> | 1v{{Number(item.inav_num)-1}}</span><span v-if="isDelay && item.no_delay_webinar == 1"> | 无延迟</span></span>
+                  <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}<span v-if="item.is_new_version == 3 && (item.webinar_type == 3 || item.webinar_type == 6) && item.zdy_inav_num > 1"> | 1v{{Number(item.inav_num)-1}}</span><span v-if="item.webinar_type != 6 && isDelay && item.no_delay_webinar == 1"> | 无延迟</span></span>
                 <span class="hot">
                   <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
                 </span>
@@ -775,7 +777,11 @@ export default {
   //   }
   // }
 </style>
-
+<style lang="less">
+ .el-tooltip__popper {
+    max-width: 100%;
+  }
+</style>
 <style lang="css">
   html{
     background: #F7F7F7;

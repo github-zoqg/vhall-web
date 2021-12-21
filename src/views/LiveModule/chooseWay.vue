@@ -18,14 +18,10 @@
             <p>可进行多人连麦</p>
             <p>需要使用chrome浏览器</p>
           </div> -->
-          <div class="choose-p choose-a-way" :class="[
-            chooseType === 'client' ? 'client active' : 'choose-a-way'
-          ]" @click.prevent.stop="changeChoose('client')">
-            <!-- class设置包含：hasDelayPermission && delayStatus == 1 ? 'no-hover' : ''
-            <div v-if="hasDelayPermission && delayStatus == 1" class="delay-mask">
-              无延迟直播暂不支持此方式发起
+          <div class="choose-p choose-a-way" :class="[chooseType === 'client' ? 'client active' : 'choose-a-way', groupLiveStatus ? 'no-hover' : '']" @click.prevent.stop="changeChoose('client')">
+            <div v-if="groupLiveStatus" class="delay-mask">
+              {{groupLiveStatus ? '分组直播暂不支持此方式发起' : ''}}
             </div>
-            -->
             <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
             <p class="f-20">客户端发起</p>
             <p>需安装客户端、支持多种视频采集卡、插入视频等功能</p>
@@ -72,10 +68,12 @@ export default {
       executeType: 'ctrl', // 是否控制台 ctrl 控制台
       downloadUrl: '',
       delayStatus: 0,
-      hasDelayPermission: false
+      hasDelayPermission: false,
+      groupLiveStatus: 0,
+      gray_id: null
     };
   },
-  created(){
+  async created(){
     this.executeType = this.$route.query.type;
     if (this.executeType === 'ctrl') {
       // 控制台，清除live_tokend等数据
@@ -84,16 +82,37 @@ export default {
     // 动态获取 下载客户端地址 + 启动PC客户端应用程序地址命令
     let _data = this.$route.params
     this.arr = [_data.str, _data.role]
+    await this.initGrayBefore()
     this.getRoleUrl();
     this.getDownloadUrl();
     this.getLiveBaseInfo()
   },
-
   methods: {
+    initGrayBefore() {
+      return this.$fetch('initGrayBefore', {
+        webinar_id: this.$route.params.str
+      })
+      .then((res) => {
+        if (res.code == 200 && res.data) {
+          this.gray_id = res.data.user_id
+        } else {
+          console.log(`灰度ID-获取用户by用户信息失败~${res.msg}`)
+          this.gray_id = null
+        }
+      })
+      .catch((e) => {
+        console.log(`灰度ID-获取用户by用户信息失败~${e}`)
+        this.gray_id =  null
+      })
+    },
     getLiveBaseInfo() {
-      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}, {
+        'gray-id': this.gray_id
+      }).then(res=>{
         if( res.code == 200 ){
           this.delayStatus = res.data.no_delay_webinar
+          // 是否分组直播
+          this.groupLiveStatus = res.data.webinar_type == 6
         }
       }).catch(res=>{
         console.log(res);
@@ -103,13 +122,14 @@ export default {
       this.$fetch('getPCDownloadUrl', {
         source: 'assistant'
       }, {
-        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7,
+        'gray-id': this.gray_id
       }).then(res => {
         this.downloadUrl = res.data.download_link
       })
     },
     changeChoose(type) {
-      // if (this.hasDelayPermission && this.delayStatus == 1) return
+      if (this.groupLiveStatus) return
       this.chooseType = type;
     },
     goLive(){
@@ -118,7 +138,8 @@ export default {
         this.$fetch('checkLive', this.$params({
           webinar_id: this.arr[0]
         }), {
-          platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
+          platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7,
+          'gray-id': this.gray_id
         }).then((res) => {
           if(res && res.code === 200) {
             /*  this.$router.push({
@@ -154,7 +175,8 @@ export default {
         params.live_token = getQueryString('liveT')
       }
       this.$fetch('getJoinUrl', this.$params(params), {
-        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7,
+        'gray-id': this.gray_id
       }).then((res) => {
         if(res && res.code === 200) {
           // this.watchUrl = res.data.page_url;
@@ -175,7 +197,8 @@ export default {
       this.$fetch('userLogoGet', {
         home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
       }, {
-        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7,
+        'gray-id': this.gray_id
       }).then(res => {
         console.log(res);
       }).catch(err=>{
@@ -186,7 +209,8 @@ export default {
       return this.$fetch('watchInterGetWebinarTag', {
         webinar_id: this.$route.params.id
       }, {
-        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7
+        platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7,
+        'gray-id': this.gray_id
       }).then(res => {
         if (res.data) {
           this.signInfo = res.data
@@ -201,9 +225,10 @@ export default {
     }else{
       this.watchUrl = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/lives/room/${this.arr[0]}${location.search}`
     }
-    const perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
-    if (perssionInfo) {
-      this.hasDelayPermission = perssionInfo['no.delay.webinar'] && perssionInfo['no.delay.webinar'] == 1 ? true : false
+    const checkInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+    if (checkInfo) {
+      // 无延迟发起
+      this.hasDelayPermission = checkInfo['no.delay.webinar'] && checkInfo['no.delay.webinar'] == 1 ? true : false
     }
   }
 };
@@ -348,6 +373,7 @@ export default {
   font-weight: 400;
   color: #FFFFFF;
   line-height: 220px;
+  border-radius: 4px;
   &:hover{
     cursor: unset;
   }

@@ -108,9 +108,10 @@
       <span><b></b>互动统计</span>
       <el-tooltip effect="dark" placement="right" v-tooltipMove>
         <div slot="content">
-          1.聊天：统计当前活动总计发送了多少条聊天，支持查看明细<br />2.问答：开启问答后，当前活动总计发送了多少条问答，支持查看明细
+          1.聊天：{{ webinarType == 6 ? '统计当前活动总计发送了多少条聊天，条数显示为主直播间的，支持查看明细，支持小组聊天记录导出' : '统计当前活动总计发送了多少条聊天，支持查看明细' }}
+          <br />2.问答：开启问答后，当前活动总计发送了多少条问答，支持查看明细
           <br>3.点赞：当前活动总计收到多少次点赞，数据统计不去重<br>4.签到：推送签到后，统计多少人进行了签到，支持查看明细<br>5.问卷：推送问卷后，统计多少人填写了问卷，支持查看明细
-          <br>6.抽奖：推送抽奖后，统计多少人中奖，支持查看明细<br>7.发群红包：发送红包后，统计发送红包的金额，支持查看明细<br>8.打赏：观众对当前活动打赏的金额统计<br>9.礼物：观众对当前活动赠送礼物的金额统计<br>10.连麦：互动活动支持，统计多少条连麦数据
+          <br>6.抽奖：推送抽奖后，统计多少人中奖，支持查看明细<br>7.发群红包：发送红包后，统计发送红包的金额，支持查看明细<br>8.打赏：观众对当前活动打赏的金额统计<br>9.礼物：观众对当前活动赠送礼物的金额统计<br>10.连麦：分组活动支持，统计多少条连麦数据<br>11.分组：分组讨论后，统计分组时间、分组次数、支持查看明细
         </div>
         <i class="iconfont-v3 saasicon_help_m"></i>
       </el-tooltip>
@@ -279,6 +280,23 @@
             </div>
           </div>
         </div>
+        <!-- 分组直播-分组导出，不是点播&是分组直播展示 -->
+        <div class="base-item" v-if="isStatus!= 4 && webinarType == 6" @click="exportGroup">
+          <p>导出</p>
+          <div class="base-main">
+            <label><img src="../../../../common/images/icon/icon_group@2x.png" alt=""></label>
+            <div class="base-text">
+              <span>分组(次)</span>
+              <h1 class="custom-font-barlow">
+                <count-to :startVal="0"
+                  :endVal="dataInfo.groupSwitchCount"
+                  :duration="1500"
+                  v-if="dataInfo.groupSwitchCount >= 0">
+                </count-to>
+              </h1>
+            </div>
+          </div>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -307,6 +325,7 @@ export default {
         signNum: 0,
         submitNum: 0,
         speakNum: 0,
+        groupSwitchCount: 0
       }
     };
   },
@@ -327,6 +346,8 @@ export default {
     webinarType() {
       if (this.webinarType == 3) {
         this.speakContactInfo();
+      } else if (this.webinarType == 6) {
+        this.getGroupStatics();
       }
     }
   },
@@ -407,6 +428,12 @@ export default {
     speakContactInfo() {
       this.$fetch('getSpeakListInfo', {room_id: this.roomId}).then(res => {
         this.dataInfo.speakNum = res.data.total || 0;
+      });
+    },
+    // 分组（次）
+    getGroupStatics() {
+      this.$fetch('getGroupStatics', {room_id: this.roomId}).then(res => {
+        this.dataInfo.groupSwitchCount = res.data.group_switch_count || 0;
       });
     },
     // 预约-导出
@@ -509,6 +536,20 @@ export default {
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
+    // 分组直播 --- 导出
+    exportGroup() {
+       this.$fetch('exportGroupList',{room_id: this.roomId}).then(res => {
+        // this.$vhall_paas_port({
+        //   k: 100455,
+        //   data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        // })
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.messageInfo()
+        this.$EventBus.$emit('saas_vs_download_change');
+      })
+    },
     lookOption(title, index) {
       this.$vhall_paas_port({
         k: index,
@@ -519,7 +560,8 @@ export default {
         query: {
           roomId: this.roomId,
           id: this.$route.params.str,
-          title: title
+          title: title,
+          wType: this.webinarType
         }
       });
     }

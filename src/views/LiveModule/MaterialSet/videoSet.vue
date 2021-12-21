@@ -43,6 +43,7 @@
               type="selection"
               width="52"
               align="left"
+              :selectable="checkSelectable"
             />
             <el-table-column
               label="音视频名称"
@@ -272,6 +273,13 @@ export default {
     });
   },
   methods: {
+    checkSelectable(row) {
+      if (row.transcode_status_text) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     searchTableList() {
       // if (this.keyword) {
       //   this.$vhall_paas_port({
