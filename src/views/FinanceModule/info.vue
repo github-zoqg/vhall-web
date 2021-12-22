@@ -12,7 +12,7 @@
           <span>用量统计</span>
         <el-tooltip effect="dark" placement="right" v-tooltipMove>
           <div slot="content" v-if="versionType">
-           1.数据更新频率：直播使用流量1小时更新，回放/点播使用流量1小时更新<br>2.删除活动或者删除子账号，不影响已统计的历史数据
+            1.{{ versionType == 1 ? '数据更新频率：直播使用流量1小时更新，回放/点播使用流量1小时更新' : '数据更新频率为1小时'}}<br>2.删除活动或者删除子账号，不影响已统计的历史数据
           </div>
           <div slot="content" v-else>
            1.数据更新频率：天，不支持查看当日数据<br>2.并发只针对直播状态的活动，观看回放和点播时不消耗并发<br>3.删除活动或者删除子账号，不影响已统计的历史数据
