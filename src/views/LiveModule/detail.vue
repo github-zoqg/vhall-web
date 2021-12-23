@@ -444,6 +444,7 @@ export default {
             showCancelButton: res.data.type == 2 ? false : true,
             cancelButtonClass: 'zdy-confirm-cancel',
           }).then(() => {
+            if (res.data.type == 2) return
             this.$router.push({path:'/finance/info'});
           }).catch(() => {});
         } else {
