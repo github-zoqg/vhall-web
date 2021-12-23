@@ -130,7 +130,7 @@ export default {
         },
         resetContent(val, editor){
             if(!editor) editor = this.editor
-            if(!!editor.resetContent) return editor.resetContent(val)
+            if(editor.resetContent) return editor.resetContent(val)
             editor.setContent(val)
             editor.setDirty(false)
             editor.undoManager.clear()

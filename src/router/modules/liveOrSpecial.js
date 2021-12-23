@@ -47,34 +47,34 @@ const router = [
       {
         path: 'edit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '创建直播', level: 2 , name: 'liveCreate', webniarType: 'live', activeMenu: '/live/edit'},
+        meta: { auth: true, title: '创建直播', level: 2 , name: 'liveCreate', webinarType: 'live', activeMenu: '/live/edit'},
       },
       {
         path: 'edit/:id',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '编辑直播', level: 2 , name: 'liveEdit', webniarType: 'live', activeMenu: '/live/list'},
+        meta: { auth: true, title: '编辑直播', level: 2 , name: 'liveEdit', webinarType: 'live', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'vodEdit/:id',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '编辑点播', name: 'vodEdit', webniarType: 'vod', activeMenu: '/live/list'},
+        meta: { auth: true, title: '编辑点播', name: 'vodEdit', webinarType: 'vod', activeMenu: '/live/list'},
         hidden: true
       },
       {
         path: 'vodEdit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '创建点播', name: 'vodCreate', webniarType: 'vod', activeMenu: '/live/vodEdit', auth_key: 'ui.upload_video_as_demand'},
+        meta: { auth: true, title: '创建点播', name: 'vodCreate', webinarType: 'vod', activeMenu: '/live/vodEdit', auth_key: 'ui.upload_video_as_demand'},
       },
       {
         path: 'timeEdit',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '定时直播', level: 2 , name: 'liveTimeCreate', webniarType: 'time', activeMenu: '/live/timeEdit',auth_key: 'webinar.timing'},
+        meta: { auth: true, title: '定时直播', level: 2 , name: 'liveTimeCreate', webinarType: 'time', activeMenu: '/live/timeEdit',auth_key: 'webinar.timing'},
       },
       {
         path: 'timeEdit/:id',
         component: () => import('@/views/LiveModule/edit'),
-        meta: { auth: true, title: '编辑定时直播', level: 2 , name: 'liveTimeEdit', webniarType: 'time', activeMenu: '/live/timeEdit'},
+        meta: { auth: true, title: '编辑定时直播', level: 2 , name: 'liveTimeEdit', webinarType: 'time', activeMenu: '/live/timeEdit'},
         hidden: true
       },
       {
