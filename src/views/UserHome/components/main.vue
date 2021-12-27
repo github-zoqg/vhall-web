@@ -92,6 +92,7 @@ export default {
   },
   data() {
    return {
+     lowerGradeInterval: null,
      query: {
        pos: 0,
        limit: 12,
@@ -106,6 +107,8 @@ export default {
      vsQuanxian: [],
      hasDelayPermission: false
    };
+  },
+  beforeDestroy() {
   },
   methods: {
     // 切换选项卡

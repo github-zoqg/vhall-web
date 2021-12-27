@@ -651,7 +651,9 @@ const apis = {
   languageCreate: ['/v3/webinars/webinar-language/create', 'POST'], // 多语种 - 创建
   languageEdit: ['/v3/webinars/webinar-language/edit', 'POST'], // 多语种 - 编辑
   languageDel: ['/v3/webinars/webinar-language/delete', 'POST'], // 多语种 - 删除
-  languageList: ['/v3/webinars/webinar-language/get-list', 'POST'] // 多语种 - 集合
+  languageList: ['/v3/webinars/webinar-language/get-list', 'POST'], // 多语种 - 集合
+
+  lowerGrade: ['/fault/test/ops_fault_code_publish.json', 'GET'] // 系统降级处理配置文件 线上及测试环境统一使用该域名
 };
 
 const getApi = api => {

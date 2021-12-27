@@ -608,6 +608,7 @@ export default {
   },
   data(){
     return {
+      lowerGradeInterval:null,
       showDelayTag: true,
       hasDelayPermission: false, // 是否有无延迟权限
       isDelay: false,
@@ -792,6 +793,7 @@ export default {
     });
   },
   async created(){
+    this.handleLowerGradeHeart()
     const path = this.$route.path
     console.log('>>>>>>>>11111', path)
     if (path.indexOf('/live/vodEdit') != -1 ||path.indexOf('/live/timeEdit') != -1  ) {
@@ -848,7 +850,46 @@ export default {
     }
 
   },
+  beforeDestroy() {
+    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+  },
   methods: {
+    handleLowerGradeHeart() {
+      this.lowerGradeInterval = setInterval(() => {
+        this.getLowerGradeConfig();
+      }, (Math.random() * 5 + 5) * 1000);
+    },
+    getLowerGradeConfig() {
+      this.$fetch('lowerGrade', {}).then(res => {
+      }).catch(res => {
+        // 降级没有code吗
+        const { activity, user, global } = res;
+        // 优先顺序：互动 > 用户 > 全局
+        const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.$route.params.str) : null;
+        if (activityConfig) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        } else if (userConfig) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        } else if (global && global.permissions) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        }
+      });
+    },
+    setLowerGradeConfig(val) {
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+      const data = val
+      this.hasDelayPermission = data['no.delay.webinar'] && data['no.delay.webinar'] == 1 ? true : false
+      if (!this.hasDelayPermission) {
+        this.selectDelayMode = 'common'
+      }
+      this.speakerMaxNum = data['speaker_max_num'] || ''
+      if (Number(this.$route.query.type) !== 2) {
+        // 不是编辑，默认设置值如此
+        // this.formData.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
+        this.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
+      }
+    },
     getLangKeyVal(lang, key) {
       let label = ''
       if (key == 'real') {

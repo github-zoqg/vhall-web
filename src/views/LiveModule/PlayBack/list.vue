@@ -226,6 +226,7 @@ import EventBus from "@/utils/Events";
 export default {
   data(){
     return {
+      lowerGradeInterval:null,
       // 预览
       showDialog: false,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
@@ -294,6 +295,7 @@ export default {
     this.getVersion()
   },
   mounted(){
+    this.handleLowerGradeHeart()
     window.addEventListener('resize', this.calcScreenWidth)
   },
   beforeDestroy(){
@@ -304,6 +306,7 @@ export default {
       this.chatSDK.destroy()
       this.chatSDK = null
     }
+    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
     EventBus.$off('record_download', this.handleDownload)
     EventBus.$off('encrypt_complete', this.handleEncryptCallback)
     window.removeEventListener('resize', this.calcScreenWidth)
@@ -315,6 +318,35 @@ export default {
       }).catch(e=>{
         console.log(e);
       });
+    },
+    handleLowerGradeHeart() {
+      this.lowerGradeInterval = setInterval(() => {
+        this.getLowerGradeConfig();
+      }, (Math.random() * 5 + 5) * 1000);
+    },
+    getLowerGradeConfig() {
+      this.$fetch('lowerGrade', {}).then(res => {
+      }).catch(res => {
+        // 降级没有code吗
+        const { activity, user, global } = res;
+        // 优先顺序：互动 > 用户 > 全局
+        const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.$route.params.str) : null;
+        if (activityConfig) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        } else if (userConfig) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        } else if (global && global.permissions) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        }
+      });
+    },
+    setLowerGradeConfig(val) {
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+      let perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+      perssionInfo = Object.assign(perssionInfo, val)
+      sessionOrLocal.set('WEBINAR_PES', perssionInfo, 'localStorage');
+      this.WEBINAR_PES = val
     },
     calcScreenWidth() {
       const clientWidth = document.body.clientWidth

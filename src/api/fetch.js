@@ -122,10 +122,16 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
     api = `${api}`
     option.headers = {}
   } else {
-    api = `${process.env.VUE_APP_BASE_URL}${api}`;
+    const replaceApi = api
+    const hasLowerConfig = replaceApi.indexOf('ops_fault_code_publish') > -1
+    const _nodeEnv = process.env.VUE_APP_NODE_ENV == 'development' ? 'develop' : (process.env.VUE_APP_NODE_ENV == 'test' ? 'test' : 'product');
+    if (hasLowerConfig) {
+      replaceApi.replace('test', _nodeEnv).replace('ops_fault_code_publish_2')
+      api = `${process.env.VUE_APP_LOWER_GRADE_URL}${replaceApi}`
+    } else {
+      api = `${process.env.VUE_APP_BASE_URL}${api}`;
+    }
   }
-
-  console.log('request.then', option, api)
 
   return fetch(api, option).then((res) => {
     return res.json();

@@ -98,6 +98,7 @@ export default {
   },
   data() {
     return {
+      lowerGradeInterval:null,
       switchType: 'app',
       query: {},
       userId: '',
@@ -141,7 +142,37 @@ export default {
       }
     },
   },
+  beforeDestroy() {
+    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+  },
   methods: {
+    handleLowerGradeHeart() {
+      this.lowerGradeInterval = setInterval(() => {
+        this.getLowerGradeConfig();
+      }, (Math.random() * 5 + 5) * 1000);
+    },
+    getLowerGradeConfig() {
+      this.$fetch('lowerGrade', {}).then(res => {
+      }).catch(res => {
+        // 降级没有code吗
+        const { activity, user, global } = res;
+        // 优先顺序：互动 > 用户 > 全局
+        const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.$route.params.str) : null;
+        if (activityConfig) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        } else if (userConfig) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        } else if (global && global.permissions) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        }
+      });
+    },
+    setLowerGradeConfig(val) {
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+      this.functionOpen = val['is_function_cofig'] > 0 ? true : false
+      this.planSuccessRender(JSON.stringify(val));
+    },
     showLiveKey(key) {
       let live = this.keyList.filter(item => item.type === key);
       let liveKey = this.liveKeyList.filter(item => item.type === key);
@@ -359,6 +390,7 @@ export default {
     // this.functionOpen = this.perssionInfo.is_function_cofig > 0 ? true : false
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getPermission();
+    this.handleLowerGradeHeart()
   }
 };
 </script>
