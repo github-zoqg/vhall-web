@@ -28,6 +28,7 @@ export default {
   data() {
     return {
       tabType: null,
+      lowerGradeInterval: null,
       type: 2,
       perssionInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')),
     };
@@ -39,15 +40,53 @@ export default {
       this.tabType = 'skinSet'
     }
   },
+  beforeDestroy() {
+    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+  },
   methods:{
     handleClick(tab, event) {
       console.log(tab, event);
       this.type = 2;
       this.$refs[`${this.tabType}Comp`].initComp();
-    }
+    },
+    handleLowerGradeHeart() {
+      this.lowerGradeInterval = setInterval(() => {
+        this.getLowerGradeConfig();
+      }, (Math.random() * 5 + 5) * 1000);
+    },
+    getLowerGradeConfig() {
+      this.$fetch('lowerGrade', {}).then(res => {
+      }).catch(res => {
+        // 降级没有code吗
+        const { activity, user, global } = res;
+        // 优先顺序：互动 > 用户 > 全局
+        const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.$route.params.str) : null;
+        console.log('777777777', res)
+        if (activityConfig) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        } else if (userConfig) {
+          this.setLowerGradeConfig(userConfig.permissions)
+        } else if (global && global.permissions) {
+          this.setLowerGradeConfig(global.permissions)
+        }
+      });
+    },
+    setLowerGradeConfig(data) {
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+      const permission = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
+      this.permissionInfo = Object.assign(permission, data)
+      if (this.perssionInfo['ui.brand_setting'] > 0) {
+        this.tabType = 'signSet'
+      } else {
+        this.tabType = 'skinSet'
+      }
+      this.$refs[`${this.tabType}Comp`].initComp();
+    },
   },
   mounted() {
     this.$refs[`${this.tabType}Comp`].initComp();
+    // this.handleLowerGradeHeart()
   }
 };
 </script>

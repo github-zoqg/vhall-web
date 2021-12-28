@@ -261,6 +261,7 @@ export default {
       ],
       // 权限配置
       WEBINAR_PES: {},
+      OLDWEBINAR_PES: {},
       isBidScreen: true,
       versionExpired: false, // 用户套餐是否过期
       publishDialogVisible: false,
@@ -295,7 +296,6 @@ export default {
     this.getVersion()
   },
   mounted(){
-    this.handleLowerGradeHeart()
     window.addEventListener('resize', this.calcScreenWidth)
   },
   beforeDestroy(){
@@ -335,18 +335,18 @@ export default {
         if (activityConfig) {
           this.setLowerGradeConfig(activityConfig.permissions)
         } else if (userConfig) {
-          this.setLowerGradeConfig(activityConfig.permissions)
+          this.setLowerGradeConfig(userConfig.permissions)
         } else if (global && global.permissions) {
-          this.setLowerGradeConfig(activityConfig.permissions)
+          this.setLowerGradeConfig(global.permissions)
         }
       });
     },
     setLowerGradeConfig(val) {
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
-      let perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
-      perssionInfo = Object.assign(perssionInfo, val)
+      const perssionInfo = Object.assign(this.OLDWEBINAR_PES, val)
       sessionOrLocal.set('WEBINAR_PES', perssionInfo, 'localStorage');
-      this.WEBINAR_PES = val
+      this.WEBINAR_PES = perssionInfo
+      this.handleTipMsgVisible()
     },
     calcScreenWidth() {
       const clientWidth = document.body.clientWidth
@@ -393,7 +393,8 @@ export default {
         if(res.code == 200) {
           if(res.data.permissions) {
             sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
-            this.WEBINAR_PES = JSON.parse(res.data.permissions)
+            this.OLDWEBINAR_PES = JSON.parse(res.data.permissions)
+            this.handleLowerGradeHeart()
           } else {
             sessionOrLocal.removeItem('WEBINAR_PES');
           }
@@ -448,7 +449,7 @@ export default {
         } else {
           this.isDemand = this.liveDetailInfo.is_demand == 1;
         }
-        
+
         this.calcScreenWidth()
         if (this.isDemand) {
           this.recordType = '上传'
@@ -911,7 +912,7 @@ export default {
         this.publishVodTiming(recordData, 1)
       }
     },
-    
+
     // 发布为点播或定时直播
     publishVodTiming(recordData, index) {
       const url = index == 1 ? '/live/vodEdit' : '/live/timeEdit'

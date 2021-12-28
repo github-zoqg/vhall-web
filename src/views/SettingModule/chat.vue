@@ -206,6 +206,7 @@ export default {
   },
   data() {
     return {
+      lowerGradeInterval: null,
       isUploadEnd: false,
       uploadResult: {
         status: 'start',
@@ -289,11 +290,55 @@ export default {
       return `interacts/keyword-docs`;
     }
   },
+  // mounted() {
+  //   this.handleLowerGradeHeart()
+  // },
   methods: {
     getSysConfig() {
       let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
       if(permissions) {
         let perVo = JSON.parse(permissions);
+        console.log(perVo, '权限-用户');
+        // perVo['ui.console_logo'] = 1; // TODO 默认配置项权限开启
+        if (perVo['front_keywords'] > 0) {
+          // 开启
+          this.auth_show = true;
+          this.getKeywordTemplate();
+          this.getAllKeyWordList();
+        } else {
+          this.auth_show = false;
+        }
+      }
+    },
+    handleLowerGradeHeart() {
+      this.lowerGradeInterval = setInterval(() => {
+        this.getLowerGradeConfig();
+      }, (Math.random() * 5 + 5) * 1000);
+    },
+    getLowerGradeConfig() {
+      this.$fetch('lowerGrade', {}).then(res => {
+      }).catch(res => {
+        // 降级没有code吗
+        const { activity, user, global } = res;
+        // 优先顺序：互动 > 用户 > 全局
+        const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.$route.params.str) : null;
+        console.log('777777777', res)
+        if (activityConfig) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        } else if (userConfig) {
+          this.setLowerGradeConfig(userConfig.permissions)
+        } else if (global && global.permissions) {
+          this.setLowerGradeConfig(global.permissions)
+        }
+      });
+    },
+    setLowerGradeConfig(data) {
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+      const permission = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
+      const permissionInfo = Object.assign(permission, data)
+      if(permissionInfo) {
+        let perVo = JSON.parse(permissionInfo);
         console.log(perVo, '权限-用户');
         // perVo['ui.console_logo'] = 1; // TODO 默认配置项权限开启
         if (perVo['front_keywords'] > 0) {
@@ -744,6 +789,9 @@ export default {
   created() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.getSysConfig();
+  },
+  beforeDestroy() {
+    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
   }
 };
 </script>
