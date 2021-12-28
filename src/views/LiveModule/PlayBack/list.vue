@@ -320,6 +320,7 @@ export default {
       });
     },
     handleLowerGradeHeart() {
+      this.getLowerGradeConfig()
       this.lowerGradeInterval = setInterval(() => {
         this.getLowerGradeConfig();
       }, (Math.random() * 5 + 5) * 1000);
@@ -345,8 +346,8 @@ export default {
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
       const perssionInfo = Object.assign(this.OLDWEBINAR_PES, val)
       sessionOrLocal.set('WEBINAR_PES', perssionInfo, 'localStorage');
+      console.log(perssionInfo, '========1111222=======')
       this.WEBINAR_PES = perssionInfo
-      this.handleTipMsgVisible()
     },
     calcScreenWidth() {
       const clientWidth = document.body.clientWidth
