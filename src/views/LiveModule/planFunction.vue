@@ -162,9 +162,9 @@ export default {
         if (activityConfig) {
           this.setLowerGradeConfig(activityConfig.permissions)
         } else if (userConfig) {
-          this.setLowerGradeConfig(activityConfig.permissions)
+          this.setLowerGradeConfig(userConfig.permissions)
         } else if (global && global.permissions) {
-          this.setLowerGradeConfig(activityConfig.permissions)
+          this.setLowerGradeConfig(global.permissions)
         }
       });
     },
