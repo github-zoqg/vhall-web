@@ -309,12 +309,17 @@ export default {
         }).then(async result => {
             if (result && result.code === 200) {
             let permissions = result.data.permissions;
+            // TODO 黄金链路 if(permissions) {
+            // TODO 黄金链路 // 设置全部权限
+            // TODO 黄金链路 this.vsConfig = JSON.parse(permissions);
+            // }
+            // this.handleLowerGradeHeart();
             if(permissions) {
               // 设置全部权限
-              this.vsConfig = JSON.parse(permissions);
-              // TODO: 取合并后的，this.hasDelayPermission = this.vsQuanxian['no.delay.webinar']
+              this.vsQuanxian = JSON.parse(permissions);
+              this.hasDelayPermission = this.vsQuanxian['no.delay.webinar']
             }
-            this.handleLowerGradeHeart();
+
             this.getShow(vo);
           }
         }).catch(e => {
@@ -323,10 +328,15 @@ export default {
         });
       } else {
         // 控制台-无延迟标签，使用缓存key
+        // TODO 黄金链路 let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+        // TODO 黄金链路  if (vsPersonStr) {
+        // TODO 黄金链路 this.vsConfig = JSON.parse(vsPersonStr);
+        // TODO 黄金链路 this.handleLowerGradeHeart();
+        // TODO 黄金链路 }
         let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
         if (vsPersonStr) {
-          this.vsConfig = JSON.parse(vsPersonStr);
-          this.handleLowerGradeHeart();
+          this.vsQuanxian = JSON.parse(vsPersonStr);
+          this.hasDelayPermission = this.vsQuanxian['no.delay.webinar']
         }
         this.getShow(vo);
       }
