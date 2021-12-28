@@ -346,7 +346,8 @@ export default {
       let perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
       perssionInfo = Object.assign(perssionInfo, val)
       sessionOrLocal.set('WEBINAR_PES', perssionInfo, 'localStorage');
-      this.WEBINAR_PES = val
+      this.WEBINAR_PES = perssionInfo
+      this.handleTipMsgVisible()
     },
     calcScreenWidth() {
       const clientWidth = document.body.clientWidth
@@ -448,7 +449,7 @@ export default {
         } else {
           this.isDemand = this.liveDetailInfo.is_demand == 1;
         }
-        
+
         this.calcScreenWidth()
         if (this.isDemand) {
           this.recordType = '上传'
@@ -911,7 +912,7 @@ export default {
         this.publishVodTiming(recordData, 1)
       }
     },
-    
+
     // 发布为点播或定时直播
     publishVodTiming(recordData, index) {
       const url = index == 1 ? '/live/vodEdit' : '/live/timeEdit'

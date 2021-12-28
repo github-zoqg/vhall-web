@@ -126,6 +126,7 @@ import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {
     return {
+      lowerGradeInterval:null,
       liveStatus: 0,
       nullText: 'nullData',
       orderBy: 1,
@@ -176,9 +177,44 @@ export default {
     this.getLiveList();
     const permission = SAAS_VS_PES ? SAAS_VS_PES['no.delay.webinar'] : 0
     this.isDelay = permission == 1 ? true : false
+    this.handleLowerGradeHeart()
     console.log('>>>>>>>10', this.isDelay)
   },
+  beforeDestroy() {
+    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+  },
   methods: {
+    handleLowerGradeHeart() {
+      this.lowerGradeInterval = setInterval(() => {
+        this.getLowerGradeConfig();
+      }, (Math.random() * 5 + 5) * 1000);
+    },
+    getLowerGradeConfig() {
+      this.$fetch('lowerGrade', {}).then(res => {
+      }).catch(res => {
+        // 降级没有code吗
+        const { activity, user, global } = res;
+        // 优先顺序：互动 > 用户 > 全局
+        const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.$route.params.str) : null;
+        if (activityConfig) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        } else if (userConfig) {
+          this.setLowerGradeConfig(userConfig.permissions)
+        } else if (global && global.permissions) {
+          this.setLowerGradeConfig(global.permissions)
+        }
+      });
+    },
+    setLowerGradeConfig(val) {
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+      const SAAS_VS_PES = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))
+      const perssionInfo = Object.assign(SAAS_VS_PES, val)
+      this.vodPerssion = perssionInfo['ui.upload_video_as_demand'];
+      this.isTiming = perssionInfo['webinar.timing']
+      const permission = perssionInfo ? perssionInfo['no.delay.webinar'] : 0
+      this.isDelay = permission == 1 ? true : false
+    },
     toLiveDetail(webinar_id) {
       this.$vhall_paas_port({
         k: 100046,

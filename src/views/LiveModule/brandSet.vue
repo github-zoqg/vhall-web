@@ -184,7 +184,7 @@ export default {
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
       const permission = this.permission
       Object.assign(permission, data)
-      this.permissions = permission
+      this.permissions = Object.assign(permission, data)
       this.brandOpen = Boolean(permissions['is_brand_cofig'] == 1)
       this.type = this.brandOpen ? 1 : 2;
       if (this.perssionInfo['ui.brand_setting'] > 0) {
