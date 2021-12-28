@@ -182,9 +182,16 @@ export default {
     },
     setLowerGradeConfig(data) {
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
-      let permissions = data
+      const permission = this.permission
+      Object.assign(permission, data)
+      this.permissions = permission
       this.brandOpen = Boolean(permissions['is_brand_cofig'] == 1)
       this.type = this.brandOpen ? 1 : 2;
+      if (this.perssionInfo['ui.brand_setting'] > 0) {
+        this.tabType = 'signSet'
+      } else {
+        this.tabType = 'skinSet'
+      }
       this.$refs[`${this.tabType}Comp`].initComp();
     }
   },
