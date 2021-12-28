@@ -237,7 +237,8 @@ export default {
         three: ''
       },
       guestVo: null,
-      assistantVo: null
+      assistantVo: null,
+      lowerGradeInterval: null
     };
   },
   computed: {
@@ -289,6 +290,8 @@ export default {
   created() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.isInteract = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')).new_interact;
+    // TODO 黄金链路 this.vsConfig = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'))
+    // TODO 黄金链路 this.handleLowerGradeHeart()
     // 根據活動ID獲取活動信息
     this.getWebinarInfo();
   },
@@ -592,7 +595,38 @@ export default {
       });
       // 根据ID获取活动-角色配置信息
       this.getPrivilegeInfo();
+    },
+    handleLowerGradeHeart() {
+      this.lowerGradeInterval = setInterval(() => {
+        this.getLowerGradeConfig();
+      }, (Math.random() * 5 + 5) * 1000);
+    },
+    getLowerGradeConfig() {
+      this.$fetch('lowerGrade', {}).then(res => {
+      }).catch(res => {
+        // 降级没有code吗
+        const { activity, user, global } = res;
+        // 优先顺序：互动 > 用户 > 全局
+        const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == sessionOrLocal.get('userId')) : null;
+        console.log('角色邀请配置', res)
+        if (activityConfig) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        } else if (userConfig) {
+          this.setLowerGradeConfig(userConfig.permissions)
+        } else if (global && global.permissions) {
+          this.setLowerGradeConfig(global.permissions)
+        }
+      });
+    },
+    setLowerGradeConfig(data) {
+      const permission = this.vsConfig
+      Object.assign(permission, data)
+      this.isInteract = permission.new_interact
     }
+  },
+  beforeDestroy() {
+    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
   }
 };
 </script>
