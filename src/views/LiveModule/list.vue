@@ -177,12 +177,14 @@ export default {
     this.getLiveList();
     const permission = SAAS_VS_PES ? SAAS_VS_PES['no.delay.webinar'] : 0
     this.isDelay = permission == 1 ? true : false
-    this.handleLowerGradeHeart()
     console.log('>>>>>>>10', this.isDelay)
   },
   beforeDestroy() {
     if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
   },
+  // mounted() {
+  //   this.handleLowerGradeHeart()
+  // },
   methods: {
     handleLowerGradeHeart() {
       this.lowerGradeInterval = setInterval(() => {
@@ -209,7 +211,6 @@ export default {
     setLowerGradeConfig(val) {
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
       const SAAS_VS_PES = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))
-      const perssionInfo = Object.assign(SAAS_VS_PES, val)
       this.vodPerssion = perssionInfo['ui.upload_video_as_demand'];
       this.isTiming = perssionInfo['webinar.timing']
       const permission = perssionInfo ? perssionInfo['no.delay.webinar'] : 0
@@ -506,7 +507,7 @@ export default {
         window.open(href, '_blank');
       }).catch(() => {});
     }
-  },
+  }
 };
 </script>
 <style lang="less" scoped>

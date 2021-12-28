@@ -792,12 +792,12 @@ export default {
     this.getLiveDetail(); // 获取活动信息，知晓是否设置过报名表单
     this.initPage();
   },
-  beforeDestroy() {
-    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
-  },
-  mounted() {
-    this.handleLowerGradeHeart()
-  }
+  // beforeDestroy() {
+  //   if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+  // },
+  // mounted() {
+  //   this.handleLowerGradeHeart()
+  // }
 };
 </script>
 

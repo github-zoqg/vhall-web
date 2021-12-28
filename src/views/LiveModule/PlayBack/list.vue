@@ -261,6 +261,7 @@ export default {
       ],
       // 权限配置
       WEBINAR_PES: {},
+      OLDWEBINAR_PES: {},
       isBidScreen: true,
       versionExpired: false, // 用户套餐是否过期
       publishDialogVisible: false,
@@ -295,7 +296,6 @@ export default {
     this.getVersion()
   },
   mounted(){
-    this.handleLowerGradeHeart()
     window.addEventListener('resize', this.calcScreenWidth)
   },
   beforeDestroy(){
@@ -335,16 +335,15 @@ export default {
         if (activityConfig) {
           this.setLowerGradeConfig(activityConfig.permissions)
         } else if (userConfig) {
-          this.setLowerGradeConfig(activityConfig.permissions)
+          this.setLowerGradeConfig(userConfig.permissions)
         } else if (global && global.permissions) {
-          this.setLowerGradeConfig(activityConfig.permissions)
+          this.setLowerGradeConfig(global.permissions)
         }
       });
     },
     setLowerGradeConfig(val) {
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
-      let perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
-      perssionInfo = Object.assign(perssionInfo, val)
+      const perssionInfo = Object.assign(this.OLDWEBINAR_PES, val)
       sessionOrLocal.set('WEBINAR_PES', perssionInfo, 'localStorage');
       this.WEBINAR_PES = perssionInfo
       this.handleTipMsgVisible()
@@ -394,7 +393,8 @@ export default {
         if(res.code == 200) {
           if(res.data.permissions) {
             sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
-            this.WEBINAR_PES = JSON.parse(res.data.permissions)
+            this.OLDWEBINAR_PES = JSON.parse(res.data.permissions)
+            this.handleLowerGradeHeart()
           } else {
             sessionOrLocal.removeItem('WEBINAR_PES');
           }

@@ -119,12 +119,12 @@ export default {
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
     this.initPage();
   },
-  beforeDestroy() {
-    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
-  },
-  mounted(){
-    this.handleLowerGradeHeart()
-  },
+  // beforeDestroy() {
+  //   if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+  // },
+  // mounted(){
+  //   this.handleLowerGradeHeart()
+  // },
   methods: {
     getSysConfig() {
       let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');

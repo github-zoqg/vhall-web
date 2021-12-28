@@ -86,7 +86,7 @@ export default {
   },
   mounted() {
     this.$refs[`${this.tabType}Comp`].initComp();
-    this.handleLowerGradeHeart()
+    // this.handleLowerGradeHeart()
   }
 };
 </script>

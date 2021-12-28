@@ -77,9 +77,9 @@ export default {
       auth_show: false
     };
   },
-  mounted() {
-    this.handleLowerGradeHeart()
-  },
+  // mounted() {
+  //   this.handleLowerGradeHeart()
+  // },
   methods: {
     getSysConfig() {
       let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');

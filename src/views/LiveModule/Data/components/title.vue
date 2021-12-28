@@ -29,48 +29,12 @@ export default {
   props: ['liveDetailInfo'],
   data() {
     return {
-      hasDelayPermission: false,
-      lowerGradeInterval: null
+      hasDelayPermission: false
     }
-  },
-  beforeDestroy() {
-    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
   },
   mounted() {
-    this.handleLowerGradeHeart()
     const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
     this.hasDelayPermission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] == '1' : false
-  },
-  methods: {
-    handleLowerGradeHeart() {
-      this.lowerGradeInterval = setInterval(() => {
-        this.getLowerGradeConfig();
-      }, (Math.random() * 5 + 5) * 1000);
-    },
-    getLowerGradeConfig() {
-      this.$fetch('lowerGrade', {}).then(res => {
-      }).catch(res => {
-        // 降级没有code吗
-        const { activity, user, global } = res;
-        // 优先顺序：互动 > 用户 > 全局
-        const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
-        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.$route.params.str) : null;
-        console.log('777777777', res)
-        if (activityConfig) {
-          this.setLowerGradeConfig(activityConfig.permissions)
-        } else if (userConfig) {
-          this.setLowerGradeConfig(userConfig.permissions)
-        } else if (global && global.permissions) {
-          this.setLowerGradeConfig(global.permissions)
-        }
-      });
-    },
-    setLowerGradeConfig(data) {
-      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
-      const permission = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
-      const permissionInfo = Object.assign(permission, data)
-      this.hasDelayPermission = permissionInfo ? JSON.parse(permissionInfo)['no.delay.webinar'] == '1' : false
-    }
   }
 };
 </script>
