@@ -108,8 +108,6 @@ export default {
      hasDelayPermission: false
    };
   },
-  beforeDestroy() {
-  },
   methods: {
     // 切换选项卡
     handleClick(tab, event) {
@@ -308,14 +306,15 @@ export default {
           webinar_user_id: this.$route.params.str
         }, {
           'gray-id': this.$route.params.str
-        }).then(result => {
+        }).then(async result => {
             if (result && result.code === 200) {
             let permissions = result.data.permissions;
             if(permissions) {
               // 设置全部权限
-              this.vsQuanxian = JSON.parse(permissions);
-              this.hasDelayPermission = this.vsQuanxian['no.delay.webinar']
+              this.vsConfig = JSON.parse(permissions);
+              // TODO: 取合并后的，this.hasDelayPermission = this.vsQuanxian['no.delay.webinar']
             }
+            this.handleLowerGradeHeart();
             this.getShow(vo);
           }
         }).catch(e => {
@@ -323,19 +322,52 @@ export default {
           this.getShow(vo);
         });
       } else {
+        // 控制台-无延迟标签，使用缓存key
         let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
         if (vsPersonStr) {
-          this.vsQuanxian = JSON.parse(vsPersonStr);
-          this.hasDelayPermission = this.vsQuanxian['no.delay.webinar']
+          this.vsConfig = JSON.parse(vsPersonStr);
+          this.handleLowerGradeHeart();
         }
         this.getShow(vo);
       }
+    },
+    handleLowerGradeHeart() {
+      this.getLowerGradeConfig(); // 初始化进入时先调用一次
+      this.lowerGradeInterval = setInterval(() => {
+        this.getLowerGradeConfig();
+      }, (Math.random() * 5 + 5) * 1000);
+    },
+    getLowerGradeConfig() {
+      this.$fetch('lowerGrade', {}).then(res => {
+      }).catch(res => {
+        // 降级没有code吗
+        const { user } = res;
+        // 优先顺序：用户 > 全局
+        let userId = this.$route.meta.type !== 'owner' ? this.$route.params.str : sessionOrLocal.get('userId')
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == userId) : null;
+        console.log('个人主页配置项...', userConfig)
+        if (userConfig) {
+          this.setLowerGradeConfig(userConfig.permissions)
+        } else if (global && global.permissions) {
+          this.setLowerGradeConfig(global.permissions)
+        }
+      });
+    },
+    setLowerGradeConfig(data) {
+      const permission = this.vsConfig
+      Object.assign(permission, data)
+      this.vsQuanxian = permission
+      this.hasDelayPermission = permission['no.delay.webinar']
+      console.log('个人主页中，黄金链路后缓存', permission)
     }
   },
   mounted() {
     // const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
     // this.hasDelayPermission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] == '1' : false
     // console.log('>>>>>>>>>>>>>>>>',JSON.parse(SAAS_VS_PES)['no.delay.webinar'] )
+  },
+  beforeDestroy() {
+    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
   }
 };
 </script>
