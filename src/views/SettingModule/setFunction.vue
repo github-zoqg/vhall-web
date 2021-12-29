@@ -81,6 +81,7 @@ export default {
   },
   data() {
     return {
+      permission: null,
       lowerGradeInterval: null,
       switchType: 'app',
       query: {},
@@ -145,7 +146,14 @@ export default {
     },
     setLowerGradeConfig(val) {
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
-      this.planSuccessRender(JSON.stringify(val))
+      let _permission = this.permission
+      let repermission = {}
+      if (_permission) {
+        repermission = Object.assign({}, _permission, val)
+      } else {
+        repermission = val
+      }
+      this.planSuccessRender(JSON.stringify(repermission))
     },
     showLiveKey(key) {
       let live = this.keyList.filter(item => item.type === key);
@@ -205,7 +213,7 @@ export default {
     },
     planSuccessRender (data) {
       let dataVo = JSON.parse(data);
-      // console.log(dataVo, '功能配置');
+      console.log(dataVo, '功能配置12');
       let permissions = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'));
       // let perVo = permissions ? JSON.parse(permissions) : {};
       // if(perVo['ui.record_chapter'] === '' || perVo['ui.record_chapter'] === '') {
@@ -285,6 +293,7 @@ export default {
         this.handleLowerGradeHeart()
         // 数据渲染
         if (res.data) {
+          this.permission = res.data.permissions ? JSON.parse(res.data.permissions) : null
           this.planSuccessRender(res.data.permissions);
         }
       }).catch(res =>{
@@ -295,7 +304,7 @@ export default {
   },
   created() {
     this.planFunctionGet();
-
+    console.log('helow')
   }
 };
 </script>
