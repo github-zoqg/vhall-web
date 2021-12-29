@@ -364,6 +364,7 @@ export default {
       });
     },
     setLowerGradeConfig(data) {
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
       const permission = this.vsConfig
       Object.assign(permission, data)
       this.vsQuanxian = permission
@@ -375,9 +376,6 @@ export default {
     // const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')
     // this.hasDelayPermission = SAAS_VS_PES ? JSON.parse(SAAS_VS_PES)['no.delay.webinar'] == '1' : false
     // console.log('>>>>>>>>>>>>>>>>',JSON.parse(SAAS_VS_PES)['no.delay.webinar'] )
-  },
-  beforeDestroy() {
-    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
   }
 };
 </script>

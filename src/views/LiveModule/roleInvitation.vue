@@ -620,13 +620,11 @@ export default {
       });
     },
     setLowerGradeConfig(data) {
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
       const permission = this.vsConfig
       Object.assign(permission, data)
       this.isInteract = permission.new_interact
     }
-  },
-  beforeDestroy() {
-    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
   }
 };
 </script>
