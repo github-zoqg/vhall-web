@@ -107,6 +107,7 @@ export default {
   },
   data(){
     return {
+      lowerGradeInterval: null,
       isDelay: false,
       hasDelayPermission: false,
       msg: '',
@@ -158,7 +159,47 @@ export default {
   mounted() {
     console.log(this.$route.meta.title, '1111111111111111');
   },
+  beforeDestroy() {
+    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+  },
   methods: {
+    handleLowerGradeHeart() {
+      this.getLowerGradeConfig();
+      this.lowerGradeInterval = setInterval(() => {
+        this.getLowerGradeConfig();
+      }, (Math.random() * 5 + 5) * 1000);
+    },
+    getLowerGradeConfig() {
+      this.$fetch('lowerGrade', {}).then(res => {
+      }).catch(res => {
+        // 降级没有code吗
+        const { activity, user, global } = res;
+        // 优先顺序：互动 > 用户 > 全局
+        const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.userId) : null;
+        if (activityConfig) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        } else if (userConfig) {
+          this.setLowerGradeConfig(userConfig.permissions)
+        } else if (global && global.permissions) {
+          this.setLowerGradeConfig(global.permissions)
+        }
+      });
+    },
+    setLowerGradeConfig(data) {
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+      let arr = ['component_1','component_2','component_3','component_4','component_5','component_6','component_7','component_8','component_9'];
+      let perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+      perssionInfo = Object.assign(perssionInfo, data)
+      this.perssionInfo = perssionInfo
+      sessionOrLocal.set('WEBINAR_PES', perssionInfo, 'localStorage');
+      console.log(this.perssionInfo, '>>>>>>1231<<<')
+      this.isShow = true;
+      this.isTrue = arr.some(item => {
+        return this.perssionInfo[item] > 0
+      })
+      this.hasDelayPermission = this.perssionInfo['no.delay.webinar'] && this.perssionInfo['no.delay.webinar'] == 1 ? true : false
+    },
     handleChildOver () {
       if (this.showFloat) {
         clearTimeout(this.handleTimer)
@@ -201,6 +242,7 @@ export default {
             return this.perssionInfo[item] > 0
           })
           this.hasDelayPermission = this.perssionInfo['no.delay.webinar'] && this.perssionInfo['no.delay.webinar'] == 1 ? true : false
+          this.handleLowerGradeHeart()
         } else {
           sessionOrLocal.removeItem('WEBINAR_PES');
         }

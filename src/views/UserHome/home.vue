@@ -148,9 +148,6 @@ export default {
     this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     this.getHomePageInfo();
   },
-  beforeMount() {
-
-  },
   mounted() {
     let userInfo  = sessionOrLocal.get('userInfo');
     if(userInfo !== null) {

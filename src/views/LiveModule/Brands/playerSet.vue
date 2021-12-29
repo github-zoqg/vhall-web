@@ -329,6 +329,7 @@ export default {
     };
     this.$Vhallplayer = null;
     return {
+      lowerGradeInterval:null,
       showDelay: false,
       showGroupLive: false,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
@@ -503,15 +504,50 @@ export default {
     this.getPermission()
     this.getFontList();
   },
-  mounted () {
-  },
   beforeDestroy() {
+    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
     if(this.$Vhallplayer){
       this.$Vhallplayer.destroy();
       vp.destroy();
     }
   },
   methods: {
+    getLowerGradeConfig() {
+      this.$fetch('lowerGrade', {}).then(res => {
+      }).catch(res => {
+        // 降级没有code吗
+        const { activity, user, global } = res;
+        // 优先顺序：互动 > 用户 > 全局
+        const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.userId) : null;
+        if (activityConfig) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        } else if (userConfig) {
+          this.setLowerGradeConfig(userConfig.permissions)
+        } else if (global && global.permissions) {
+          this.setLowerGradeConfig(global.permissions)
+        }
+      });
+    },
+    setLowerGradeConfig(data) {
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+      let permissions = data
+      this.playerOpen = permissions['is_player_cofig'] > 0 ? true : false
+      this.hasDelayPremission = permissions['no.delay.webinar'] == 1
+      this.getBasescrollingList();
+      this.getBaseWaterList();
+      // 获取其他信息
+      this.getBaseOtherList();
+      setTimeout(() => {
+        this.getVideoAppid();
+      }, 200)
+    },
+    handleLowerGradeHeart() {
+      this.getLowerGradeConfig();
+      this.lowerGradeInterval = setInterval(() => {
+        this.getLowerGradeConfig();
+      }, (Math.random() * 5 + 5) * 1000);
+    },
     closeDialog() {
       if (this.webinar_type == 6) {
         this.showGroupLive = false
@@ -545,6 +581,7 @@ export default {
           let permissions = JSON.parse(res.data.permissions)
           this.playerOpen = permissions['is_player_cofig'] > 0 ? true : false
           this.hasDelayPremission = permissions['no.delay.webinar'] == 1
+          this.handleLowerGradeHeart()
           this.getBasescrollingList();
           this.getBaseWaterList();
           // 获取其他信息

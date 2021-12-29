@@ -98,6 +98,7 @@ export default {
   },
   data() {
     return {
+      lowerGradeInterval:null,
       switchType: 'app',
       query: {},
       userId: '',
@@ -141,7 +142,41 @@ export default {
       }
     },
   },
+  beforeDestroy() {
+    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+  },
   methods: {
+    handleLowerGradeHeart() {
+      this.getLowerGradeConfig();
+      this.lowerGradeInterval = setInterval(() => {
+        this.getLowerGradeConfig();
+      }, (Math.random() * 5 + 5) * 1000);
+    },
+    getLowerGradeConfig() {
+      let userId = JSON.parse(sessionOrLocal.get("userId"));
+      this.$fetch('lowerGrade', {}).then(res => {
+      }).catch(res => {
+        // 降级没有code吗
+        const { activity, user, global } = res;
+        // 优先顺序：互动 > 用户 > 全局
+        const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == userId) : null;
+        if (activityConfig) {
+          this.setLowerGradeConfig(activityConfig.permissions)
+        } else if (userConfig) {
+          this.setLowerGradeConfig(userConfig.permissions)
+        } else if (global && global.permissions) {
+          this.setLowerGradeConfig(global.permissions)
+        }
+      });
+    },
+    setLowerGradeConfig(val) {
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+      this.functionOpen = val['is_function_cofig'] > 0 ? true : false
+      const permissions = JSON.parse(this._permissions)
+      const retPermissinos = Object.assign({}, permissions, val)
+      this.planSuccessRender(JSON.stringify(retPermissinos));
+    },
     showLiveKey(key) {
       let live = this.keyList.filter(item => item.type === key);
       let liveKey = this.liveKeyList.filter(item => item.type === key);
@@ -155,6 +190,7 @@ export default {
         if(res.code == 200) {
           let permissions = JSON.parse(res.data.permissions)
           this.functionOpen = permissions['is_function_cofig'] > 0 ? true : false
+          this.handleLowerGradeHeart()
           this.planFunctionGet();
         }
       }).catch(e => {});
@@ -305,6 +341,7 @@ export default {
         console.log(res);
         // 数据渲染
         if (res.data) {
+          this._permissions = res.data.permissions
           this.planSuccessRender(res.data.permissions);
         }
       }).catch(res =>{

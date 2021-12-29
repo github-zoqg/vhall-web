@@ -92,6 +92,7 @@ export default {
   },
   data() {
    return {
+     lowerGradeInterval: null,
      query: {
        pos: 0,
        limit: 12,
@@ -305,14 +306,20 @@ export default {
           webinar_user_id: this.$route.params.str
         }, {
           'gray-id': this.$route.params.str
-        }).then(result => {
+        }).then(async result => {
             if (result && result.code === 200) {
             let permissions = result.data.permissions;
+            // TODO 黄金链路 if(permissions) {
+            // TODO 黄金链路 // 设置全部权限
+            // TODO 黄金链路 this.vsConfig = JSON.parse(permissions);
+            // }
+            // this.handleLowerGradeHeart();
             if(permissions) {
               // 设置全部权限
               this.vsQuanxian = JSON.parse(permissions);
               this.hasDelayPermission = this.vsQuanxian['no.delay.webinar']
             }
+
             this.getShow(vo);
           }
         }).catch(e => {
@@ -320,6 +327,12 @@ export default {
           this.getShow(vo);
         });
       } else {
+        // 控制台-无延迟标签，使用缓存key
+        // TODO 黄金链路 let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
+        // TODO 黄金链路  if (vsPersonStr) {
+        // TODO 黄金链路 this.vsConfig = JSON.parse(vsPersonStr);
+        // TODO 黄金链路 this.handleLowerGradeHeart();
+        // TODO 黄金链路 }
         let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
         if (vsPersonStr) {
           this.vsQuanxian = JSON.parse(vsPersonStr);
@@ -327,6 +340,36 @@ export default {
         }
         this.getShow(vo);
       }
+    },
+    handleLowerGradeHeart() {
+      this.getLowerGradeConfig(); // 初始化进入时先调用一次
+      this.lowerGradeInterval = setInterval(() => {
+        this.getLowerGradeConfig();
+      }, (Math.random() * 5 + 5) * 1000);
+    },
+    getLowerGradeConfig() {
+      this.$fetch('lowerGrade', {}).then(res => {
+      }).catch(res => {
+        // 降级没有code吗
+        const { user } = res;
+        // 优先顺序：用户 > 全局
+        let userId = this.$route.meta.type !== 'owner' ? this.$route.params.str : sessionOrLocal.get('userId')
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == userId) : null;
+        console.log('个人主页配置项...', userConfig)
+        if (userConfig) {
+          this.setLowerGradeConfig(userConfig.permissions)
+        } else if (global && global.permissions) {
+          this.setLowerGradeConfig(global.permissions)
+        }
+      });
+    },
+    setLowerGradeConfig(data) {
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+      const permission = this.vsConfig
+      Object.assign(permission, data)
+      this.vsQuanxian = permission
+      this.hasDelayPermission = permission['no.delay.webinar']
+      console.log('个人主页中，黄金链路后缓存', permission)
     }
   },
   mounted() {
