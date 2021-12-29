@@ -173,7 +173,9 @@ export default {
     setLowerGradeConfig(val) {
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
       this.functionOpen = val['is_function_cofig'] > 0 ? true : false
-      this.planSuccessRender(JSON.stringify(val));
+      const permissions = JSON.parse(this._permissions)
+      const retPermissinos = Object.assign({}, permissions, val)
+      this.planSuccessRender(JSON.stringify(retPermissinos));
     },
     showLiveKey(key) {
       let live = this.keyList.filter(item => item.type === key);
@@ -339,6 +341,7 @@ export default {
         console.log(res);
         // 数据渲染
         if (res.data) {
+          this._permissions = res.data.permissions
           this.planSuccessRender(res.data.permissions);
         }
       }).catch(res =>{
