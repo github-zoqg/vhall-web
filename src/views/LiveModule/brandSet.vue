@@ -111,6 +111,7 @@ export default {
           this.brandOpen = Boolean(permissions['is_brand_cofig'] == 1)
           this.type = this.brandOpen ? 1 : 2;
           this.$refs[`${this.tabType}Comp`].initComp();
+          this.handleLowerGradeHeart()
         }
       }).catch(e => {});
     },
@@ -158,18 +159,20 @@ export default {
       });
     },
     handleLowerGradeHeart() {
+      this.getLowerGradeConfig();
       this.lowerGradeInterval = setInterval(() => {
         this.getLowerGradeConfig();
       }, (Math.random() * 5 + 5) * 1000);
     },
     getLowerGradeConfig() {
+      let userId = JSON.parse(sessionOrLocal.get("userId"));
       this.$fetch('lowerGrade', {}).then(res => {
       }).catch(res => {
         // 降级没有code吗
         const { activity, user, global } = res;
         // 优先顺序：互动 > 用户 > 全局
         const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
-        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.$route.params.str) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == userId) : null;
         console.log('777777777', res)
         if (activityConfig) {
           this.setLowerGradeConfig(activityConfig.permissions)
@@ -198,7 +201,7 @@ export default {
   mounted() {
     console.log(11111122233)
     this.getPermission();
-    this.handleLowerGradeHeart()
+
     // this.$refs[`signSetComp`].initComp();
   }
 };
