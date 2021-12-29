@@ -57,7 +57,6 @@ export default {
   },
   data() {
     return {
-      lowerGradeInterval: null,
       isSetShow: false,
       userHomeVo: {},
       attentioned_count: 0,
@@ -137,34 +136,6 @@ export default {
         this.userHomeVo = null;
       });
     },
-    handleLowerGradeHeart() {
-      this.lowerGradeInterval = setInterval(() => {
-        this.getLowerGradeConfig();
-      }, (Math.random() * 5 + 5) * 1000);
-    },
-    getLowerGradeConfig() {
-      this.$fetch('lowerGrade', {}).then(res => {
-      }).catch(res => {
-        // 降级没有code吗
-        const { activity, user, global } = res;
-        // 优先顺序：互动 > 用户 > 全局
-        // const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
-        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.$route.params.str) : null;
-        console.log('777777777', res)
-        if (userConfig) {
-          this.setLowerGradeConfig(userConfig.permissions)
-        } else if (global && global.permissions) {
-          this.setLowerGradeConfig(global.permissions)
-        }
-      });
-    },
-    setLowerGradeConfig(data) {
-      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
-      this.getHomePageInfo()
-      // let permissions = data
-      // this.brandOpen = Boolean(permissions['is_brand_cofig'] == 1)
-      // this.type = this.brandOpen ? 1 : 2;
-    },
     toHomeSetPage() {
       this.$router.push({
         path: `/homeSet/${sessionOrLocal.get('userId')}`
@@ -176,9 +147,6 @@ export default {
     this.userId = sessionOrLocal.get('userId');
     this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
     this.getHomePageInfo();
-  },
-  beforeDestroy() {
-    if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
   },
   beforeMount() {
 
@@ -194,7 +162,6 @@ export default {
          this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
       }
     }
-    this.handleLowerGradeHeart()
   }
 };
 </script>
