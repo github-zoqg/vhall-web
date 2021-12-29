@@ -147,18 +147,20 @@ export default {
   },
   methods: {
     handleLowerGradeHeart() {
+      this.getLowerGradeConfig();
       this.lowerGradeInterval = setInterval(() => {
         this.getLowerGradeConfig();
       }, (Math.random() * 5 + 5) * 1000);
     },
     getLowerGradeConfig() {
+      let userId = JSON.parse(sessionOrLocal.get("userId"));
       this.$fetch('lowerGrade', {}).then(res => {
       }).catch(res => {
         // 降级没有code吗
         const { activity, user, global } = res;
         // 优先顺序：互动 > 用户 > 全局
         const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
-        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == sessionOrLocal.get('userId')) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == userId) : null;
         if (activityConfig) {
           this.setLowerGradeConfig(activityConfig.permissions)
         } else if (userConfig) {
@@ -186,6 +188,7 @@ export default {
         if(res.code == 200) {
           let permissions = JSON.parse(res.data.permissions)
           this.functionOpen = permissions['is_function_cofig'] > 0 ? true : false
+          this.handleLowerGradeHeart()
           this.planFunctionGet();
         }
       }).catch(e => {});
@@ -390,7 +393,6 @@ export default {
     // this.functionOpen = this.perssionInfo.is_function_cofig > 0 ? true : false
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     this.getPermission();
-    this.handleLowerGradeHeart()
   }
 };
 </script>

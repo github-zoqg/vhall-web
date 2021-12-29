@@ -504,9 +504,6 @@ export default {
     this.getPermission()
     this.getFontList();
   },
-  mounted () {
-    this.handleLowerGradeHeart()
-  },
   beforeDestroy() {
     if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
     if(this.$Vhallplayer){
@@ -522,7 +519,7 @@ export default {
         const { activity, user, global } = res;
         // 优先顺序：互动 > 用户 > 全局
         const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
-        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == sessionOrLocal.get('userId')) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.userId) : null;
         if (activityConfig) {
           this.setLowerGradeConfig(activityConfig.permissions)
         } else if (userConfig) {
@@ -546,6 +543,7 @@ export default {
       }, 200)
     },
     handleLowerGradeHeart() {
+      this.getLowerGradeConfig();
       this.lowerGradeInterval = setInterval(() => {
         this.getLowerGradeConfig();
       }, (Math.random() * 5 + 5) * 1000);
@@ -583,6 +581,7 @@ export default {
           let permissions = JSON.parse(res.data.permissions)
           this.playerOpen = permissions['is_player_cofig'] > 0 ? true : false
           this.hasDelayPremission = permissions['no.delay.webinar'] == 1
+          this.handleLowerGradeHeart()
           this.getBasescrollingList();
           this.getBaseWaterList();
           // 获取其他信息

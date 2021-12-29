@@ -793,7 +793,7 @@ export default {
     });
   },
   async created(){
-    this.handleLowerGradeHeart()
+
     const path = this.$route.path
     console.log('>>>>>>>>11111', path)
     if (path.indexOf('/live/vodEdit') != -1 ||path.indexOf('/live/timeEdit') != -1  ) {
@@ -855,18 +855,20 @@ export default {
   },
   methods: {
     handleLowerGradeHeart() {
+      this.getLowerGradeConfig();
       this.lowerGradeInterval = setInterval(() => {
         this.getLowerGradeConfig();
       }, (Math.random() * 5 + 5) * 1000);
     },
     getLowerGradeConfig() {
+      let userId = JSON.parse(sessionOrLocal.get('userId'));
       this.$fetch('lowerGrade', {}).then(res => {
       }).catch(res => {
         // 降级没有code吗
         const { activity, user, global } = res;
         // 优先顺序：互动 > 用户 > 全局
         const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
-        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == sessionOrLocal.get('userId')) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == userId) : null;
         if (activityConfig) {
           this.setLowerGradeConfig(activityConfig.permissions)
         } else if (userConfig) {
@@ -969,6 +971,7 @@ export default {
             // this.formData.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
             this.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
           }
+          this.handleLowerGradeHeart()
         }
       }).catch(res =>{
         console.log(res);

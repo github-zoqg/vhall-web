@@ -157,7 +157,6 @@ export default {
     this.getPermission(this.$route.params.str);
   },
   mounted() {
-    this.handleLowerGradeHeart()
     console.log(this.$route.meta.title, '1111111111111111');
   },
   beforeDestroy() {
@@ -165,6 +164,7 @@ export default {
   },
   methods: {
     handleLowerGradeHeart() {
+      this.getLowerGradeConfig();
       this.lowerGradeInterval = setInterval(() => {
         this.getLowerGradeConfig();
       }, (Math.random() * 5 + 5) * 1000);
@@ -176,8 +176,7 @@ export default {
         const { activity, user, global } = res;
         // 优先顺序：互动 > 用户 > 全局
         const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
-        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == sessionOrLocal.get('userId')) : null;
-        console.log('777777777', res)
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.userId) : null;
         if (activityConfig) {
           this.setLowerGradeConfig(activityConfig.permissions)
         } else if (userConfig) {
@@ -243,6 +242,7 @@ export default {
             return this.perssionInfo[item] > 0
           })
           this.hasDelayPermission = this.perssionInfo['no.delay.webinar'] && this.perssionInfo['no.delay.webinar'] == 1 ? true : false
+          this.handleLowerGradeHeart()
         } else {
           sessionOrLocal.removeItem('WEBINAR_PES');
         }

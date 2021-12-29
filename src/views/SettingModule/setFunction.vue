@@ -121,6 +121,7 @@ export default {
   },
   methods: {
     handleLowerGradeHeart() {
+      this.getLowerGradeConfig();
       this.lowerGradeInterval = setInterval(() => {
         this.getLowerGradeConfig();
       }, (Math.random() * 5 + 5) * 1000);
@@ -132,7 +133,7 @@ export default {
         const { activity, user, global } = res;
         // 优先顺序：互动 > 用户 > 全局
         const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
-        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == sessionOrLocal.get('userId')) : null;
+        const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.userId) : null;
         if (activityConfig) {
           this.setLowerGradeConfig(activityConfig.permissions)
         } else if (userConfig) {
@@ -281,6 +282,7 @@ export default {
         scene_id: 2
       }).then(res=>{
         console.log(res);
+        this.handleLowerGradeHeart()
         // 数据渲染
         if (res.data) {
           this.planSuccessRender(res.data.permissions);
@@ -293,7 +295,7 @@ export default {
   },
   created() {
     this.planFunctionGet();
-    this.handleLowerGradeHeart()
+
   }
 };
 </script>
