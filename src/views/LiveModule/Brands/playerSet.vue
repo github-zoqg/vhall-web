@@ -530,6 +530,7 @@ export default {
       });
     },
     setLowerGradeConfig(data) {
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
       let permissions = data
       this.playerOpen = permissions['is_player_cofig'] > 0 ? true : false
       this.hasDelayPremission = permissions['no.delay.webinar'] == 1
