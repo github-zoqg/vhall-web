@@ -581,7 +581,7 @@ export default {
           let permissions = JSON.parse(res.data.permissions)
           this.playerOpen = permissions['is_player_cofig'] > 0 ? true : false
           this.hasDelayPremission = permissions['no.delay.webinar'] == 1
-          this.handleLowerGradeHeart()
+          // this.handleLowerGradeHeart()
           this.getBasescrollingList();
           this.getBaseWaterList();
           // 获取其他信息

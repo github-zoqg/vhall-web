@@ -242,7 +242,7 @@ export default {
             return this.perssionInfo[item] > 0
           })
           this.hasDelayPermission = this.perssionInfo['no.delay.webinar'] && this.perssionInfo['no.delay.webinar'] == 1 ? true : false
-          this.handleLowerGradeHeart()
+          // this.handleLowerGradeHeart()
         } else {
           sessionOrLocal.removeItem('WEBINAR_PES');
         }

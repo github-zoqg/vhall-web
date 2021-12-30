@@ -111,7 +111,7 @@ export default {
           this.brandOpen = Boolean(permissions['is_brand_cofig'] == 1)
           this.type = this.brandOpen ? 1 : 2;
           this.$refs[`${this.tabType}Comp`].initComp();
-          this.handleLowerGradeHeart()
+          // this.handleLowerGradeHeart()
         }
       }).catch(e => {});
     },

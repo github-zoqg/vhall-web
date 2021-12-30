@@ -398,25 +398,16 @@ export default {
             sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
             this.WEBINAR_PES = JSON.parse(res.data.permissions)
             console.log('之前旧的权限', this.WEBINAR_PES)
-            this.handleLowerGradeHeart();
+            // this.handleLowerGradeHeart();
           } else {
             sessionOrLocal.removeItem('WEBINAR_PES');
-            // 如果异常，也要执行降级码
-            this.WEBINAR_PES = {}
-            this.handleLowerGradeHeart();
           }
         } else {
           sessionOrLocal.removeItem('WEBINAR_PES');
-          // 如果异常，也要执行降级码
-          this.WEBINAR_PES = {}
-          this.handleLowerGradeHeart();
         }
       }).catch(e => {
         console.log(e);
         sessionOrLocal.removeItem('SAAS_VS_PES');
-        // 如果异常，也要执行降级码
-        this.WEBINAR_PES = {}
-        this.handleLowerGradeHeart();
       });
     },
     preview(data) {

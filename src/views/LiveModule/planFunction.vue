@@ -190,7 +190,7 @@ export default {
         if(res.code == 200) {
           let permissions = JSON.parse(res.data.permissions)
           this.functionOpen = permissions['is_function_cofig'] > 0 ? true : false
-          this.handleLowerGradeHeart()
+          // this.handleLowerGradeHeart()
           this.planFunctionGet();
         }
       }).catch(e => {});
