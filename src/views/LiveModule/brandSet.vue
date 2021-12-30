@@ -108,8 +108,14 @@ export default {
       this.$fetch('planFunctionGet', {webinar_id: this.$route.params.str, webinar_user_id: userId, scene_id: 1}).then(res => {
         if(res.code == 200) {
           let permissions = JSON.parse(res.data.permissions)
+          this.perssionInfo = permissions
           this.brandOpen = Boolean(permissions['is_brand_cofig'] == 1)
           this.type = this.brandOpen ? 1 : 2;
+          if (permissions['ui.brand_setting'] > 0) {
+            this.tabType = 'signSet'
+          } else {
+            this.tabType = 'skinSet'
+          }
           this.$refs[`${this.tabType}Comp`].initComp();
           // this.handleLowerGradeHeart()
         }
