@@ -339,6 +339,8 @@ export default {
           this.setLowerGradeConfig(userConfig.permissions)
         } else if (global && global.permissions) {
           this.setLowerGradeConfig(global.permissions)
+        } else {
+          this.WEBINAR_PES = Object.assign({}, this.OLDWEBINAR_PES)
         }
       });
     },
@@ -395,6 +397,7 @@ export default {
           if(res.data.permissions) {
             sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
             this.OLDWEBINAR_PES = JSON.parse(res.data.permissions)
+            console.log('之前旧的权限', this.OLDWEBINAR_PES)
             this.handleLowerGradeHeart()
           } else {
             sessionOrLocal.removeItem('WEBINAR_PES');
