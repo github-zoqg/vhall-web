@@ -334,20 +334,22 @@ export default {
         const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
         const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.userId) : null;
         if (activityConfig) {
-          this.setLowerGradeConfig(activityConfig.permissions)
+          this.setLowerGradeConfig(activityConfig.permissions, activityConfig.tip_message)
         } else if (userConfig) {
-          this.setLowerGradeConfig(userConfig.permissions)
+          this.setLowerGradeConfig(userConfig.permissions, userConfig.tip_message)
         } else if (global && global.permissions) {
-          this.setLowerGradeConfig(global.permissions)
+          this.setLowerGradeConfig(global.permissions, global.tip_message)
         }
       });
     },
-    setLowerGradeConfig(val) {
+    setLowerGradeConfig(val, tipMessage) {
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
       const perssionInfo = Object.assign(this.WEBINAR_PES, val)
       sessionOrLocal.set('WEBINAR_PES', perssionInfo, 'localStorage');
       console.log(perssionInfo, '========1111222=======')
       this.WEBINAR_PES = perssionInfo
+      // TODO 黄金链路-击中提示
+      this.$message.warning(tipMessage);
     },
     calcScreenWidth() {
       const clientWidth = document.body.clientWidth
