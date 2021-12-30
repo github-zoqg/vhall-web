@@ -244,7 +244,9 @@ export default {
           this.isOld = true
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
 
     let userInfo = sessionOrLocal.get('userInfo');
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -416,7 +418,7 @@ export default {
       this.getLineData(this.$params(params));
     },
     getLineData(obj) {
-      let url = this.versionType == '1' ? 'getFlowLineInfo' : 'getTrendLineInfo';
+      let url = this.versionType == '1' ? 'getFlowLineInfo' : this.versionType == '2' ? 'getTimeLineInfo' : 'getTrendLineInfo';
       this.$fetch(url, obj).then(res =>{
         this.lineDataList = res.data.list;
       }).catch(e=>{

@@ -57,8 +57,7 @@ export default {
         tooltip: {
           trigger: 'axis',
           show: true,
-          formatter: `{b0}<br />${that.type == 1 ? '流量' : that.type == 3 ? '观看人数' : '并发'}:{c0}${that.type == 1 ? 'GB' : that.type == 3 ? '' : '方'}`
-          // formatter: `{b0}<br />${that.type == 3 ? '并发' : that.type == 1 ? that.versionType == 1 ? '流量' : '并发' : '观看人数'}: {c0}${that.type == 3 ? '方' : that.type == 1 ? that.versionType == 1 ? 'GB' : '方' : ''}`,
+          formatter: `{b0}<br />${that.type == 1 ? '流量' : that.type == 3 ? '观看人数' : that.type == 2 ? '时长' : '并发'}:{c0}${that.type == 1 ? 'GB' : that.type == 3 ? '' : that.type == 2 ? '分钟' : '方'}`
         },
         title: {
           text: '暂无数据',
