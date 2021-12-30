@@ -339,14 +339,12 @@ export default {
           this.setLowerGradeConfig(userConfig.permissions)
         } else if (global && global.permissions) {
           this.setLowerGradeConfig(global.permissions)
-        } else {
-          this.WEBINAR_PES = Object.assign({}, this.OLDWEBINAR_PES)
         }
       });
     },
     setLowerGradeConfig(val) {
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
-      const perssionInfo = Object.assign(this.OLDWEBINAR_PES, val)
+      const perssionInfo = Object.assign(this.WEBINAR_PES, val)
       sessionOrLocal.set('WEBINAR_PES', perssionInfo, 'localStorage');
       console.log(perssionInfo, '========1111222=======')
       this.WEBINAR_PES = perssionInfo
@@ -396,16 +394,27 @@ export default {
         if(res.code == 200) {
           if(res.data.permissions) {
             sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
-            this.OLDWEBINAR_PES = JSON.parse(res.data.permissions)
-            console.log('之前旧的权限', this.OLDWEBINAR_PES)
-            this.handleLowerGradeHeart()
+            this.WEBINAR_PES = JSON.parse(res.data.permissions)
+            console.log('之前旧的权限', this.WEBINAR_PES)
+            this.handleLowerGradeHeart();
           } else {
             sessionOrLocal.removeItem('WEBINAR_PES');
+            // 如果异常，也要执行降级码
+            this.WEBINAR_PES = {}
+            this.handleLowerGradeHeart();
           }
+        } else {
+          sessionOrLocal.removeItem('WEBINAR_PES');
+          // 如果异常，也要执行降级码
+          this.WEBINAR_PES = {}
+          this.handleLowerGradeHeart();
         }
       }).catch(e => {
         console.log(e);
         sessionOrLocal.removeItem('SAAS_VS_PES');
+        // 如果异常，也要执行降级码
+        this.WEBINAR_PES = {}
+        this.handleLowerGradeHeart();
       });
     },
     preview(data) {
