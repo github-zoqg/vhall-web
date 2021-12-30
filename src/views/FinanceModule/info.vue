@@ -449,7 +449,7 @@ export default {
         this.totalNum = res.data.total;
          costList.map(item => {
             item.typeText = item.type == 1 ? '主账号' : '子账号';
-            item.typePay = item.pay_type == 1 ? '并发 ' : item.pay_type == 2 ? '时长' : '流量';
+            item.typePay = item.pay_type >= 0 && item.pay_type <= 3 ? ['', '并发', '流量', '时长'][item.pay_type] : ''
           });
         this.tableList = costList;
       }).catch(e=>{
