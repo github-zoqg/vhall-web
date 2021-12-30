@@ -971,7 +971,7 @@ export default {
             // this.formData.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
             this.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
           }
-          this.handleLowerGradeHeart()
+          // this.handleLowerGradeHeart()
         }
       }).catch(res =>{
         console.log(res);

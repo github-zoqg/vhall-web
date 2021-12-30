@@ -290,7 +290,7 @@ export default {
         scene_id: 2
       }).then(res=>{
         console.log(res);
-        this.handleLowerGradeHeart()
+        // this.handleLowerGradeHeart()
         // 数据渲染
         if (res.data) {
           this.permission = res.data.permissions ? JSON.parse(res.data.permissions) : null

@@ -334,20 +334,22 @@ export default {
         const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
         const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.userId) : null;
         if (activityConfig) {
-          this.setLowerGradeConfig(activityConfig.permissions)
+          this.setLowerGradeConfig(activityConfig.permissions, activityConfig.tip_message)
         } else if (userConfig) {
-          this.setLowerGradeConfig(userConfig.permissions)
+          this.setLowerGradeConfig(userConfig.permissions, userConfig.tip_message)
         } else if (global && global.permissions) {
-          this.setLowerGradeConfig(global.permissions)
+          this.setLowerGradeConfig(global.permissions, global.tip_message)
         }
       });
     },
-    setLowerGradeConfig(val) {
+    setLowerGradeConfig(val, tipMessage) {
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
-      const perssionInfo = Object.assign(this.OLDWEBINAR_PES, val)
+      const perssionInfo = Object.assign(this.WEBINAR_PES, val)
       sessionOrLocal.set('WEBINAR_PES', perssionInfo, 'localStorage');
       console.log(perssionInfo, '========1111222=======')
       this.WEBINAR_PES = perssionInfo
+      // TODO 黄金链路-击中提示
+      this.$message.warning(tipMessage);
     },
     calcScreenWidth() {
       const clientWidth = document.body.clientWidth
@@ -394,11 +396,14 @@ export default {
         if(res.code == 200) {
           if(res.data.permissions) {
             sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
-            this.OLDWEBINAR_PES = JSON.parse(res.data.permissions)
-            this.handleLowerGradeHeart()
+            this.WEBINAR_PES = JSON.parse(res.data.permissions)
+            console.log('之前旧的权限', this.WEBINAR_PES)
+            // this.handleLowerGradeHeart();
           } else {
             sessionOrLocal.removeItem('WEBINAR_PES');
           }
+        } else {
+          sessionOrLocal.removeItem('WEBINAR_PES');
         }
       }).catch(e => {
         console.log(e);
