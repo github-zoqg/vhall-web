@@ -633,6 +633,7 @@ export default {
 
       let browerType = isBrower()
       const _canvas = document.getElementById('shopInvent')
+      // console.log('邀请卡当前html', _canvas)
       const imgList = document.querySelectorAll('img.hsrc')
       let count = 0
       const _this = this
@@ -647,9 +648,9 @@ export default {
               useCORS: true,
               allowTaint: true,
               scale: 2,
-              width: 332,
+              width: 330,
               height: 622,
-              scrollY: 0,
+              // scrollY: 0,
               // scrollX: 0,
               // scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 12: 10,
               scrollX: -document.documentElement.scrollLeft,
