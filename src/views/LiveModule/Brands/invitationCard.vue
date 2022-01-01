@@ -141,7 +141,7 @@
           <div class="show-container">
             <div class="show-header">
               <div class="show-avator">
-                <img :src="avatar" alt="">
+                <img :src="avatar" alt="" crossorigin="anonymous"/>
               </div>
               <p>{{formInvitation.company || '微吼直播'}}</p>
               <p>邀请你一起看直播</p>
@@ -156,7 +156,7 @@
             </div>
             <div class="show-footer">
               <div class="show-code">
-                <img :src="qrcode" alt="">
+                <img :src="qrcode" alt="" crossorigin="anonymous" />
               </div>
               <div class="show-action">
                 <p>扫 / 描 / 二 / 维 / 码</p>
@@ -172,7 +172,7 @@
               <div class="watch-color">
                 <div class="watch-header">
                   <div class="watch-avator">
-                    <img :src="avatar" alt="">
+                    <img :src="avatar" alt="" crossorigin="anonymous" />
                   </div>
                   <p style="color:#fff;">{{formInvitation.company || '微吼直播'}}</p>
                   <p style="color:#fff;">邀请你一起看直播</p>
@@ -183,7 +183,7 @@
               <h1>{{ formInvitation.title }}</h1>
               <p>{{ formInvitation.desciption }}</p>
               <div class="watch-footer">
-                <div class="watch-code"><img :src="qrcode" alt=""></div>
+                <div class="watch-code"><img :src="qrcode" alt="" crossorigin="anonymous"/></div>
                 <div class="watch-action">
                   <!-- <p>扫码观看视频</p> -->
                   <h1 :title="formInvitation.webinar_date">{{ formInvitation.webinar_date }}</h1>
@@ -198,7 +198,7 @@
           <div class="look-color">
             <div class="look-header">
               <div class="look-avator">
-                <img :src="avatar" alt="">
+                <img :src="avatar" alt="" crossorigin="anonymous" />
               </div>
               <p>{{formInvitation.company || '微吼直播'}}</p>
               <p>邀请你一起看直播</p>
@@ -216,7 +216,7 @@
               <p>{{ formInvitation.location }}</p>
             </div>
             <div class="look-footer">
-              <div class="look-code"><img :src="qrcode" alt=""></div>
+              <div class="look-code"><img :src="qrcode" alt="" crossorigin="anonymous"/></div>
               <div class="look-action">
                 <p>扫 / 描 / 二 / 维 / 码</p>
                 <h1>立 即 参 与 活 动</h1>
@@ -522,6 +522,11 @@ export default {
       }
       let browerType = isBrower()
       const _canvas = document.getElementById('shopInvent')
+      // console.log('邀请卡当前html', _canvas)
+      // TODO 临时处理方案，在生成下载邀请卡之前，先把滚动条回到顶点。
+      window.pageYOffset = window.pageXOffset = 0;
+      document.documentElement.scrollTop = document.documentElement.scrollLeft = 0
+      document.body.scrollTop  = document.body.scrollLeft = 0
       const imgList = document.querySelectorAll('img.hsrc')
       let count = 0
       const _this = this
@@ -532,21 +537,34 @@ export default {
           count ++
           img.src = imaObj.getBase64Image()
           if (imgList.length == count) {
-            html2canvas(_canvas, {
+            const _canvasParams = {
               useCORS: true,
               allowTaint: true,
               scale: 2,
-              width: 332,
+              width: 330,
               height: 622,
-              scrollY: 0,
+              // scrollY: 0,
               // scrollX: 0,
               // scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 12: 10,
-              scrollX: browerType === 'safari' ? 115 : 12,
-              backgroundColor: null
-            }).then(canvas => {
+              scrollX: browerType === 'safari' ? 115 : 0,
+              backgroundColor: null,
+              dpi: window.devicePixelRatioHeight
+            }
+            html2canvas(_canvas, _canvasParams).then(canvas => {
+              // console.log('canvas画图', canvas)
               _this.downloadImg = canvas.toDataURL('image/png', 1.0);
+              // console.log('当前下载图片', _this.downloadImg)
               _this.loadDownInvition()
             })
+            // html2canvas(_canvas, {
+            //   onrendered: function(canvas) {
+            //     _this.downloadImg = canvas.toDataURL('image/png', 1.0);
+            //     console.log('当前下载图片', _this.downloadImg)
+            //     _this.loadDownInvition()
+            //   },
+            //   logging: true,
+            //   ..._canvasParams
+            // })
           }
         }
         imaObj.src = img.getAttribute('src')
