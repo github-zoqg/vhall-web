@@ -3,51 +3,92 @@
     <div class="title-data">
       <p>邀请卡</p>
       <p class="switch__box">
-      <el-switch
-        style="display: block; padding-top: 4px"
-        v-model="invitation"
-        @change="changeOpen"
-        active-color="#FB3A32"
-        inactive-color="#CECECE"
-        active-text="开启后，观众可以在观看页面生成邀请卡，邀请好友观看"
-      >
-      </el-switch>
+        <el-switch
+          style="display: block; padding-top: 4px"
+          v-model="invitation"
+          @change="changeOpen"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          active-text="开启后，观众可以在观看页面生成邀请卡，邀请好友观看"
+        >
+        </el-switch>
       </p>
       <div class="invitation-look">
-        <el-popover
-            placement="bottom"
-            trigger="hover"
-           >
-           <div class="invitation-code">
-            <img :src="showCode" alt="">
+        <el-popover placement="bottom" trigger="hover">
+          <div class="invitation-code">
+            <img :src="showCode" alt="" />
           </div>
-          <el-button round size="medium" class="transparent-btn" slot="reference" :disabled="!invitation">扫码查看</el-button>
+          <el-button
+            round
+            size="medium"
+            class="transparent-btn"
+            slot="reference"
+            :disabled="!invitation"
+            >扫码查看</el-button
+          >
         </el-popover>
-        <el-button size="medium" round class="transparent-btn" :disabled="!invitation" @click="getCanvasImg">本地下载</el-button>
+        <el-button
+          size="medium"
+          round
+          class="transparent-btn"
+          :disabled="!invitation"
+          @click="getCanvasImg"
+          >本地下载</el-button
+        >
       </div>
     </div>
     <div class="invitation-from">
       <div class="form-data">
-        <el-form ref="formData" :model="formInvitation" label-width="82px" :disabled="!invitation" :rules="rules">
+        <el-form
+          ref="formData"
+          :model="formInvitation"
+          label-width="82px"
+          :disabled="!invitation"
+          :rules="rules"
+        >
           <el-form-item label="封面背景">
             <div class="data-img" @click="invitation && changeImg()">
-              <div class="advor_img"><img :src="img" alt=""/></div>
+              <div class="advor_img"><img :src="img" alt="" /></div>
               <span class="choseImg">选择封面</span>
             </div>
           </el-form-item>
           <el-form-item label="展示方式">
             <div class="data-show">
-              <p :class="formInvitation.show_type === 1 ? 'isActiveColor' : ''" @click="invitation && changeType(1)">
-                <img src="../../../common/images/invite-card/tmpl1.png" alt="">
-                <label  class="img-tangle" v-if="formInvitation.show_type === 1"><img src="../../../common/images/icon-choose.png" alt=""></label>
+              <p
+                :class="formInvitation.show_type === 1 ? 'isActiveColor' : ''"
+                @click="invitation && changeType(1)"
+              >
+                <img
+                  src="../../../common/images/invite-card/tmpl1.png"
+                  alt=""
+                />
+                <label class="img-tangle" v-if="formInvitation.show_type === 1"
+                  ><img src="../../../common/images/icon-choose.png" alt=""
+                /></label>
               </p>
-               <p :class="formInvitation.show_type === 2 ? 'isActiveColor' : ''" @click="invitation && changeType(2)">
-                <img src="../../../common/images/invite-card/tmpl2.png" alt="">
-               <label  class="img-tangle" v-if="formInvitation.show_type === 2"><img src="../../../common/images/icon-choose.png" alt=""></label>
+              <p
+                :class="formInvitation.show_type === 2 ? 'isActiveColor' : ''"
+                @click="invitation && changeType(2)"
+              >
+                <img
+                  src="../../../common/images/invite-card/tmpl2.png"
+                  alt=""
+                />
+                <label class="img-tangle" v-if="formInvitation.show_type === 2"
+                  ><img src="../../../common/images/icon-choose.png" alt=""
+                /></label>
               </p>
-               <p :class="formInvitation.show_type === 3 ? 'isActiveColor' : ''" @click="invitation && changeType(3)">
-                <img src="../../../common/images/invite-card/tmpl3.png" alt="">
-                <label  class="img-tangle" v-if="formInvitation.show_type === 3"><img src="../../../common/images/icon-choose.png" alt=""></label>
+              <p
+                :class="formInvitation.show_type === 3 ? 'isActiveColor' : ''"
+                @click="invitation && changeType(3)"
+              >
+                <img
+                  src="../../../common/images/invite-card/tmpl3.png"
+                  alt=""
+                />
+                <label class="img-tangle" v-if="formInvitation.show_type === 3"
+                  ><img src="../../../common/images/icon-choose.png" alt=""
+                /></label>
               </p>
             </div>
           </el-form-item>
@@ -121,29 +162,29 @@
           <div class="invitation-hidden">
             <img
               :src="img"
-              style="display:none"
+              style="display: none"
               alt
               class="hsrc vh-invitation__show-img"
             />
-            <img
-              :src="qrcode"
-              style="display:none"
-              alt
-              class="hsrc"
-            />
-             <div class="invitation__down-warp">
+            <img :src="qrcode" style="display: none" alt class="hsrc" />
+            <div class="invitation__down-warp">
               <img :src="downloadImg" alt />
             </div>
           </div>
         </template>
         <!-- <p>移动端预览</p> -->
-        <div class="show-img" :style="`backgroundImage: url(${img})`" v-if="formInvitation.show_type==1" id="shopInvent">
+        <div
+          class="show-img"
+          :style="`backgroundImage: url(${img})`"
+          v-if="formInvitation.show_type == 1"
+          id="shopInvent"
+        >
           <div class="show-container">
             <div class="show-header">
               <div class="show-avator">
-                <img :src="avatar" alt="">
+                <img :src="avatar" alt="" />
               </div>
-              <p>{{formInvitation.company || '微吼直播'}}</p>
+              <p>{{ formInvitation.company || '微吼直播' }}</p>
               <p>邀请你一起看直播</p>
             </div>
             <div class="show-text">
@@ -156,7 +197,7 @@
             </div>
             <div class="show-footer">
               <div class="show-code">
-                <img :src="qrcode" alt="">
+                <img :src="qrcode" alt="" />
               </div>
               <div class="show-action">
                 <p>扫 / 描 / 二 / 维 / 码</p>
@@ -166,16 +207,23 @@
             </div>
           </div>
         </div>
-        <div class="watch-img" v-else-if="formInvitation.show_type===2"  id="shopInvent" :style="`backgroundImage: url(${img})`">
+        <div
+          class="watch-img"
+          v-else-if="formInvitation.show_type === 2"
+          id="shopInvent"
+          :style="`backgroundImage: url(${img})`"
+        >
           <div class="watch-container">
             <div class="watch-bg">
               <div class="watch-color">
                 <div class="watch-header">
                   <div class="watch-avator">
-                    <img :src="avatar" alt="">
+                    <img :src="avatar" alt="" />
                   </div>
-                  <p style="color:#fff;">{{formInvitation.company || '微吼直播'}}</p>
-                  <p style="color:#fff;">邀请你一起看直播</p>
+                  <p style="color: #fff">
+                    {{ formInvitation.company || '微吼直播' }}
+                  </p>
+                  <p style="color: #fff">邀请你一起看直播</p>
                 </div>
               </div>
             </div>
@@ -183,27 +231,39 @@
               <h1>{{ formInvitation.title }}</h1>
               <p>{{ formInvitation.desciption }}</p>
               <div class="watch-footer">
-                <div class="watch-code"><img :src="qrcode" alt=""></div>
+                <div class="watch-code"><img :src="qrcode" alt="" /></div>
                 <div class="watch-action">
                   <!-- <p>扫码观看视频</p> -->
-                  <h1 :title="formInvitation.webinar_date">{{ formInvitation.webinar_date }}</h1>
-                  <h1 :title="formInvitation.location">{{ formInvitation.location }}</h1>
+                  <h1 :title="formInvitation.webinar_date">
+                    {{ formInvitation.webinar_date }}
+                  </h1>
+                  <h1 :title="formInvitation.location">
+                    {{ formInvitation.location }}
+                  </h1>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="look-img" :style="`backgroundImage: url(${img})`"  id="shopInvent" v-else>
+        <div
+          class="look-img"
+          :style="`backgroundImage: url(${img})`"
+          id="shopInvent"
+          v-else
+        >
           <div class="look-color-shadow"></div>
           <div class="look-color">
             <div class="look-header">
               <div class="look-avator">
-                <img :src="avatar" alt="">
+                <img :src="avatar" alt="" />
               </div>
-              <p>{{formInvitation.company || '微吼直播'}}</p>
+              <p>{{ formInvitation.company || '微吼直播' }}</p>
               <p>邀请你一起看直播</p>
             </div>
-            <div class="look-text" v-if="formInvitation.title || formInvitation.desciption">
+            <div
+              class="look-text"
+              v-if="formInvitation.title || formInvitation.desciption"
+            >
               <h1>{{ formInvitation.title }}</h1>
               <p>{{ formInvitation.desciption }}</p>
             </div>
@@ -216,7 +276,7 @@
               <p>{{ formInvitation.location }}</p>
             </div>
             <div class="look-footer">
-              <div class="look-code"><img :src="qrcode" alt=""></div>
+              <div class="look-code"><img :src="qrcode" alt="" /></div>
               <div class="look-action">
                 <p>扫 / 描 / 二 / 维 / 码</p>
                 <h1>立 即 参 与 活 动</h1>
@@ -227,64 +287,79 @@
         </div>
       </div>
       <div class="sureBtn">
-        <el-button type="primary length152" round   :disabled="!invitation" v-preventReClick @click="onSubmit">保存</el-button>
+        <el-button
+          type="primary length152"
+          round
+          :disabled="!invitation"
+          v-preventReClick
+          @click="onSubmit"
+          >保存</el-button
+        >
       </div>
       <div class="white-show" v-show="!invitation"></div>
     </div>
-    <add-background ref="background" @onChangePic="onSubmitImg" :url="imgUrl" :type="formInvitation.img_type"></add-background>
-    <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
+    <add-background
+      ref="background"
+      @onChangePic="onSubmitImg"
+      :url="imgUrl"
+      :type="formInvitation.img_type"
+    ></add-background>
+    <begin-play
+      :webinarId="$route.params.str"
+      v-if="$route.query.type != 5 && webinarState != 4"
+    ></begin-play>
   </div>
 </template>
 <script>
-import addBackground from './components/imgBackground';
-import {sessionOrLocal} from "@/utils/utils";
-import { isBrower } from '@/utils/getBrowserType';
-import Env from "@/api/env";
-import html2canvas from 'html2canvas';
-import beginPlay from '@/components/beginBtn';
+import addBackground from './components/imgBackground'
+import { sessionOrLocal } from '@/utils/utils'
+import { isBrower } from '@/utils/getBrowserType'
+import Env from '@/api/env'
+import html2canvas from 'html2canvas'
+import beginPlay from '@/components/beginBtn'
 import { isEqual } from 'lodash'
 export default {
   data() {
     const locationValidate = (rule, value, callback) => {
       if (value && value.length > 20) {
-        callback && callback('地点在20个字符以内');
+        callback && callback('地点在20个字符以内')
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     const timeValidate = (rule, value, callback) => {
       if (value && value.length > 20) {
-        callback && callback('时间在20个字符以内');
+        callback && callback('时间在20个字符以内')
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     const desciptionValidate = (rule, value, callback) => {
       if (value && value.length > 45) {
-        callback && callback('简介在45个字符以内');
+        callback && callback('简介在45个字符以内')
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     const companyValidate = (rule, value, callback) => {
       if (value && value.length > 10) {
-        callback && callback('主办方在10个字符以内');
+        callback && callback('主办方在10个字符以内')
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     const titleValidate = (rule, value, callback) => {
       if (value && value.length > 16) {
-        callback && callback('标题在16个字符以内');
+        callback && callback('标题在16个字符以内')
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
       invitation: true,
       isInit: false,
       isSave: true,
-      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
+      webinarState: JSON.parse(sessionOrLocal.get('webinarState')),
       qrcode: '',
       showCode: '',
       avatar: '',
@@ -316,9 +391,7 @@ export default {
         `${Env.staticImgs.invitation[8]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
       ],
       rules: {
-        title: [
-          { required: false, validator: titleValidate, trigger: 'blur' },
-        ],
+        title: [{ required: false, validator: titleValidate, trigger: 'blur' }],
         desciption: [
           { required: false, validator: desciptionValidate, trigger: 'blur' },
         ],
@@ -332,7 +405,7 @@ export default {
           { required: false, validator: companyValidate, trigger: 'blur' },
         ],
       },
-    };
+    }
   },
   watch: {
     formInvitation: {
@@ -348,33 +421,35 @@ export default {
         }
 
         this.information = {
-          ...newVal
+          ...newVal,
         }
-      }
-    }
+      },
+    },
   },
-  created(){
-    this.webinarId = this.$route.params.str;
-    this.userId = JSON.parse(sessionOrLocal.get("userId"));
-    this.avatar = JSON.parse(sessionOrLocal.get("userInfo")).avatar || require('../../../common/images/avatar.png');
-    let token = sessionOrLocal.get('token', 'localStorage');
+  created() {
+    this.webinarId = this.$route.params.str
+    this.userId = JSON.parse(sessionOrLocal.get('userId'))
+    this.avatar =
+      JSON.parse(sessionOrLocal.get('userInfo')).avatar ||
+      require('../../../common/images/avatar.png')
+    let token = sessionOrLocal.get('token', 'localStorage')
     // this.showCode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?token=${token}`;
     const lookUrl = `${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?invite_id=&type=1`
-    this.showCode = `${Env.staticLinkVo.aliQr}${encodeURIComponent(lookUrl)}` ;
-    this.getInviteCardInfo();
-    this.initImage();
+    this.showCode = `${Env.staticLinkVo.aliQr}${encodeURIComponent(lookUrl)}`
+    this.getInviteCardInfo()
+    this.initImage()
   },
   components: {
     addBackground,
-    beginPlay
+    beginPlay,
   },
   methods: {
     changeType(index) {
-      this.formInvitation.show_type = index;
+      this.formInvitation.show_type = index
     },
     initImage() {
       this.$nextTick(() => {
-        Image.prototype.getBase64Image = function() {
+        Image.prototype.getBase64Image = function () {
           const img = this
           let canvas = document.createElement('canvas')
           canvas.width = img.width
@@ -387,110 +462,136 @@ export default {
       })
     },
     changeOpen() {
-      this.isInviteCard();
+      this.isInviteCard()
     },
     isInviteCard() {
       let params = {
         webinar_id: this.webinarId,
-        status: Number(this.invitation)
-      };
-      this.$fetch('setCardStatus', params).then(res => {
-        this.$vhall_paas_port({
-          k: this.invitation ? 100274 : 100275,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        status: Number(this.invitation),
+      }
+      this.$fetch('setCardStatus', params)
+        .then((res) => {
+          this.$vhall_paas_port({
+            k: this.invitation ? 100274 : 100275,
+            data: {
+              business_uid: this.userId,
+              user_id: '',
+              webinar_id: this.webinarId,
+              refer: '',
+              s: '',
+              report_extra: {},
+              ref_url: '',
+              req_url: '',
+            },
+          })
+          this.$message({
+            message: this.invitation ? '开启邀请卡成功' : '关闭邀请卡成功',
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box',
+          })
         })
-        this.$message({
-          message: this.invitation ? '开启邀请卡成功' : '关闭邀请卡成功',
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-      }).catch(res => {
-        this.$message({
-          message: res.msg || (this.invitation ? '开启邀请卡失败' : '关闭邀请卡失败'),
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-      });
+        .catch((res) => {
+          this.$message({
+            message:
+              res.msg ||
+              (this.invitation ? '开启邀请卡失败' : '关闭邀请卡失败'),
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box',
+          })
+        })
     },
     getInviteCardInfo() {
       let params = {
-        webinar_id: this.webinarId
-      };
-      this.$fetch('getCardDetailInfo', params).then(res => {
+        webinar_id: this.webinarId,
+      }
+      this.$fetch('getCardDetailInfo', params).then((res) => {
         this.isInit = true
         this.formInvitation = {
           ...res.data.invite_card,
-          is_show_watermark: Boolean(res.data.invite_card.is_show_watermark)
-        };
+          is_show_watermark: Boolean(res.data.invite_card.is_show_watermark),
+        }
         this.information = {
           ...res.data.invite_card,
-          is_show_watermark: Boolean(res.data.invite_card.is_show_watermark)
+          is_show_watermark: Boolean(res.data.invite_card.is_show_watermark),
         }
-        this.qrcode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}?invite=${res.data.invite}`;
-        this.img = this.formInvitation.img || this.fileList[0];
+        this.qrcode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}?invite=${res.data.invite}`
+        this.img = this.formInvitation.img || this.fileList[0]
         if (!this.formInvitation.img_type) {
-          this.img = this.formInvitation.img || this.fileList[0];
+          this.img = this.formInvitation.img || this.fileList[0]
         } else {
-          this.img = this.fileList[this.formInvitation.img_type - 1];
+          this.img = this.fileList[this.formInvitation.img_type - 1]
         }
-        this.imgUrl = this.formInvitation.img || '';
-        this.invitation = Boolean(res.data.status);
+        this.imgUrl = this.formInvitation.img || ''
+        this.invitation = Boolean(res.data.status)
         // this.formInvitation.is_show_watermark = Boolean(this.formInvitation.is_show_watermark);
-      });
+      })
     },
     changeImg() {
-      this.$refs.background.dialogVisible = true;
+      this.$refs.background.dialogVisible = true
     },
     code() {
-      this.$router.push({path: '/code'});
+      this.$router.push({ path: '/code' })
     },
     onSubmitImg(type, url, trueImg) {
       if (!type) {
-        this.formInvitation.img = url;
-        this.img = trueImg;
+        this.formInvitation.img = url
+        this.img = trueImg
       } else {
-        this.img = this.fileList[type - 1];
+        this.img = this.fileList[type - 1]
       }
-      this.formInvitation.img_type = type;
+      this.formInvitation.img_type = type
       // this.onSubmit();
     },
     // 修改邀请卡信息
     onSubmit() {
       let ids = {
         webinar_id: this.webinarId,
-      };
-      this.formInvitation.is_show_watermark = Number(this.formInvitation.is_show_watermark);
-      this.formInvitation.img = this.formInvitation.img_type ?  '' : this.img;
+      }
+      this.formInvitation.is_show_watermark = Number(
+        this.formInvitation.is_show_watermark
+      )
+      this.formInvitation.img = this.formInvitation.img_type ? '' : this.img
       let arrShowType = [100276, 100277, 100278]
-      let obj = Object.assign({}, ids, this.formInvitation);
-      this.$fetch('editCardStatus', this.$params(obj)).then(res => {
-       if (res.code == 200) {
-        this.isSave = true;
-        this.$vhall_paas_port({
-          k: arrShowType[this.formInvitation.show_type - 1],
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      let obj = Object.assign({}, ids, this.formInvitation)
+      this.$fetch('editCardStatus', this.$params(obj))
+        .then((res) => {
+          if (res.code == 200) {
+            this.isSave = true
+            this.$vhall_paas_port({
+              k: arrShowType[this.formInvitation.show_type - 1],
+              data: {
+                business_uid: this.userId,
+                user_id: '',
+                webinar_id: this.webinarId,
+                refer: '',
+                s: '',
+                report_extra: {},
+                ref_url: '',
+                req_url: '',
+              },
+            })
+            this.$message({
+              message: `保存数据成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box',
+            })
+          }
         })
-        this.$message({
-          message: `保存数据成功`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-       }
-      }).catch(res => {
-        this.$message({
-          message: res.msg || `保存数据失败`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-      });
+        .catch((res) => {
+          this.$message({
+            message: res.msg || `保存数据失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box',
+          })
+        })
     },
     fileDownLoad(imgUrl, name) {
       // 如果浏览器支持msSaveOrOpenBlob方法（也就是使用IE浏览器的时候），那么调用该方法去下载图片
@@ -512,7 +613,16 @@ export default {
       }
       this.$vhall_paas_port({
         k: 100279,
-        data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: {
+          business_uid: this.userId,
+          user_id: '',
+          webinar_id: this.webinarId,
+          refer: '',
+          s: '',
+          report_extra: {},
+          ref_url: '',
+          req_url: '',
+        },
       })
     },
     getCanvasImg() {
@@ -520,31 +630,33 @@ export default {
         this.loadDownInvition()
         return
       }
+
       let browerType = isBrower()
       const _canvas = document.getElementById('shopInvent')
+      // console.log('邀请卡当前html', _canvas)
       const imgList = document.querySelectorAll('img.hsrc')
       let count = 0
       const _this = this
-      imgList.forEach(img => {
+      imgList.forEach((img) => {
         const imaObj = new Image()
         imaObj.setAttribute('crossorigin', 'anonymous')
-        imaObj.onload = function() {
-          count ++
+        imaObj.onload = function () {
+          count++
           img.src = imaObj.getBase64Image()
           if (imgList.length == count) {
             html2canvas(_canvas, {
               useCORS: true,
               allowTaint: true,
               scale: 2,
-              width: 332,
-              height: 622,
-              scrollY: 0,
+              width: _canvas.offsetWidth,
+              height: _canvas.offsetHeight,
+              // scrollY: 0,
               // scrollX: 0,
               // scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 12: 10,
-              scrollX: browerType === 'safari' ? 115 : 12,
-              backgroundColor: null
-            }).then(canvas => {
-              _this.downloadImg = canvas.toDataURL('image/png', 1.0);
+              scrollX: -document.documentElement.scrollLeft,
+              backgroundColor: null,
+            }).then((canvas) => {
+              _this.downloadImg = canvas.toDataURL('image/png', 1.0)
               _this.loadDownInvition()
             })
           }
@@ -554,10 +666,10 @@ export default {
       })
     },
     loadDownInvition() {
-     this.fileDownLoad(this.downloadImg)
-    }
-  }
-};
+      this.fileDownLoad(this.downloadImg)
+    },
+  },
+}
 </script>
 <style lang="less" scoped>
 .invitation-card {
@@ -580,14 +692,14 @@ export default {
     font-weight: 400;
     color: #1a1a1a;
   }
-  /deep/.el-input .el-input__count{
-    color:#999;
-  }
-  /deep/.el-input__count-inner{
+  /deep/.el-input .el-input__count {
     color: #999;
   }
-  /deep/.el-textarea .el-input__count{
-    color:#999;
+  /deep/.el-input__count-inner {
+    color: #999;
+  }
+  /deep/.el-textarea .el-input__count {
+    color: #999;
     font-size: 14px;
   }
   /deep/.invite-card-button {
@@ -596,11 +708,12 @@ export default {
   }
   /deep/.el-input__count {
     line-height: 20px;
-    bottom:7px;
+    bottom: 7px;
   }
-  /deep/.el-input__inner, /deep/.el-textarea__inner {
+  /deep/.el-input__inner,
+  /deep/.el-textarea__inner {
     padding: 5px 12px;
-    color: #1A1A1A;
+    color: #1a1a1a;
   }
   .invitation-from {
     display: flex;
@@ -613,8 +726,10 @@ export default {
   .form-data {
     padding: 10px 0 10px;
     margin-right: 100px;
-    /deep/ .desc .el-textarea__inner{
-      font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    /deep/ .desc .el-textarea__inner {
+      font-family: '-apple-system', 'BlinkMacSystemFon', 'Helvetica Neue',
+        Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+        '微软雅黑', Arial, sans-serif;
     }
   }
   .data-img {
@@ -625,7 +740,7 @@ export default {
     border-radius: 4px;
     margin-top: 10px;
     cursor: pointer;
-    .advor_img{
+    .advor_img {
       width: 70px;
       height: 132px;
       position: absolute;
@@ -671,31 +786,32 @@ export default {
         height: 100%;
         object-fit: scale-down;
       }
-      .img-tangle{
+      .img-tangle {
         position: absolute;
         right: -1px;
-        top:-1px;
+        top: -1px;
         width: 20px;
         height: 20px;
         font-size: 0;
-        img{
+        img {
           width: 100%;
           height: 100%;
         }
       }
       &:hover {
-        box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08),
+          0px 2px 4px 0px rgba(0, 0, 0, 0.02);
         // border: 1px solid transparent;
         border: 1px solid #f2f2f2;
       }
-      &.isActiveColor{
-        box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
-        border: 1px solid #FB3A32;
+      &.isActiveColor {
+        box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08),
+          0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        border: 1px solid #fb3a32;
       }
     }
-
   }
-  .invitation-show{
+  .invitation-show {
     padding-top: 20px;
     padding-right: 200px;
     position: relative;
@@ -706,16 +822,16 @@ export default {
       color: #1a1a1a;
       padding-bottom: 16px;
     }
-    .invitation-hidden{
+    .invitation-hidden {
       width: 330px;
       height: 622px;
       background-color: #fff;
       overflow: hidden;
       position: absolute;
-      top:0;
+      top: 0;
       left: 0;
       z-index: -10;
-      .invitation__down-warp{
+      .invitation__down-warp {
         width: 100%;
         height: 100%;
       }
@@ -723,11 +839,11 @@ export default {
     .show-img {
       width: 330px;
       border-radius: 4px;
-      border: 1px solid #E6E6E6;
+      border: 1px solid #e6e6e6;
       background-image: url('../../../common/images/v35-webinar.png');
       background-size: 100% 100%;
       height: 622px;
-      .show-container{
+      .show-container {
         margin: 50px 24px;
         width: 282px;
         height: 520px;
@@ -737,22 +853,22 @@ export default {
         box-shadow: 0px 0 6px 0px rgba(0, 0, 0, 0.1);
         position: relative;
         border-radius: 4px;
-        .show-header{
+        .show-header {
           padding: 20px 24px;
           text-align: center;
-          .show-avator{
+          .show-avator {
             width: 36px;
             height: 36px;
             border-radius: 50%;
             margin: auto;
             margin-bottom: 10px;
-            img{
+            img {
               width: 100%;
               height: 100%;
               border-radius: 50%;
             }
           }
-          p{
+          p {
             padding: 0;
             font-size: 14px;
             color: #666;
@@ -760,24 +876,23 @@ export default {
             line-height: 18px;
           }
         }
-        .show-text{
-
+        .show-text {
           padding: 24px;
           text-align: center;
-          h1{
+          h1 {
             width: 218px;
             padding: 0;
             font-size: 26px;
-            color:#1A1A1A;
+            color: #1a1a1a;
             font-weight: 600;
             line-height: 37px;
             word-wrap: break-word;
             white-space: normal;
             word-break: break-all;
           }
-          p{
+          p {
             font-size: 14px;
-            color:#1A1A1A;
+            color: #1a1a1a;
             font-weight: 400;
             line-height: 20px;
             padding: 2px 0 5px 0;
@@ -788,16 +903,16 @@ export default {
             word-break: break-all;
             // min-height: 45px;
           }
-          .show-time{
+          .show-time {
             margin-top: 10px;
-            p{
-              padding:0;
+            p {
+              padding: 0;
               color: #666;
               line-height: 20px;
             }
           }
         }
-        .show-footer{
+        .show-footer {
           // width: 180px;
           position: absolute;
           display: flex;
@@ -806,41 +921,41 @@ export default {
           padding: 20px 20px 0 20px;
           justify-content: center;
           align-items: center;
-          .show-code{
+          .show-code {
             width: 60px;
             height: 60px;
             margin-right: 10px;
             // margin-left: 10px;
-            img{
+            img {
               width: 100%;
               height: 100%;
               object-fit: scale-down;
             }
           }
-          .show-action{
-            h1{
-              padding:0;
+          .show-action {
+            h1 {
+              padding: 0;
               font-size: 14px;
-              color:#1A1A1A;
+              color: #1a1a1a;
               font-weight: 600;
               line-height: 28px;
             }
-            p{
-              padding:0;
+            p {
+              padding: 0;
               font-size: 12px;
-              color:#666;
+              color: #666;
               font-weight: 400;
             }
           }
         }
       }
     }
-    .watch-img{
+    .watch-img {
       width: 330px;
-      background: #FFFFFF;
+      background: #ffffff;
       height: 622px;
       position: relative;
-      border: 1px solid #E6E6E6;
+      border: 1px solid #e6e6e6;
       // box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
       // height: 360px;
       background-image: url('../../../common/images/v35-webinar.png');
@@ -848,106 +963,106 @@ export default {
       background-repeat: no-repeat;
       border-radius: 4px;
       z-index: 0;
-      .watch-container{
+      .watch-container {
         width: 100%;
         height: 100%;
       }
-      .watch-bg{
+      .watch-bg {
         height: 362px;
         // background-image: url('../../../common/images/v35-webinar.png');
         // background-size: 100% 100%;
         // background-repeat: no-repeat;
         border-radius: 4px 4px 0 0;
         // background-color: rgba(0, 0, 0, 0.1);
-        .watch-color{
+        .watch-color {
           width: 100%;
           height: 100%;
           background-color: rgba(0, 0, 0, 0.1);
           border-radius: 4px 4px 0 0;
         }
-        .watch-header{
-            padding: 20px 24px;
-            text-align: center;
-            .watch-avator{
-              width: 36px;
-              height: 36px;
+        .watch-header {
+          padding: 20px 24px;
+          text-align: center;
+          .watch-avator {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            // border: 1px solid #ccc;
+            margin: auto;
+            margin-bottom: 10px;
+            img {
+              width: 100%;
+              height: 100%;
               border-radius: 50%;
-              // border: 1px solid #ccc;
-              margin: auto;
-              margin-bottom: 10px;
-              img{
-                width: 100%;
-                height: 100%;
-                border-radius: 50%;
-              }
-            }
-            p{
-              padding: 0;
-              font-size: 14px;
-              color: #666;
-              font-weight: 400;
-              line-height: 18px;
             }
           }
+          p {
+            padding: 0;
+            font-size: 14px;
+            color: #666;
+            font-weight: 400;
+            line-height: 18px;
+          }
+        }
       }
-    .watch-text{
-      padding: 10px 20px 24px 24px;
-      background: #fff;
-      z-index: 1;
-      height: 258px;
-      position: relative;
-      border-radius: 0 0 3px 3px;
-      text-align: center;
-      letter-spacing: 2px;
-      h1{
-        padding:0;
-        font-size: 28px;
-        color: #1A1A1A;
-        line-height: 40px;
-        font-weight: 500;
-        word-wrap: break-all;
-        word-wrap:break-word;
-      }
-      p{
-        padding-top:6px;
-        font-size: 14px;
-        color: #666;
-        line-height: 18px;
-        font-weight: 400;
-        min-height: 50px;
-        word-wrap: break-word;
-        white-space: normal;
-        word-break: break-all;
-      }
-      .watch-footer{
+      .watch-text {
+        padding: 10px 20px 24px 24px;
+        background: #fff;
+        z-index: 1;
+        height: 258px;
+        position: relative;
+        border-radius: 0 0 3px 3px;
+        text-align: center;
+        letter-spacing: 2px;
+        h1 {
+          padding: 0;
+          font-size: 28px;
+          color: #1a1a1a;
+          line-height: 40px;
+          font-weight: 500;
+          word-wrap: break-all;
+          word-wrap: break-word;
+        }
+        p {
+          padding-top: 6px;
+          font-size: 14px;
+          color: #666;
+          line-height: 18px;
+          font-weight: 400;
+          min-height: 50px;
+          word-wrap: break-word;
+          white-space: normal;
+          word-break: break-all;
+        }
+        .watch-footer {
           position: absolute;
           left: 24px;
           bottom: 24px;
           display: flex;
           padding-top: 25px;
           // padding: 20px 24px 24px 32px;
-          .watch-code{
+          .watch-code {
             width: 67px;
             height: 67px;
             margin-right: 10px;
             margin-top: 2px;
             // margin-left: 10px;
-            img{
+            img {
               width: 67px;
               height: 67px;
             }
           }
-          .watch-action{
+          .watch-action {
             width: 200px;
             display: flex;
             flex-direction: column;
             justify-content: space-around;
             vertical-align: middle;
             text-align: left;
-            h1{
-              padding:0;
+            h1 {
+              padding: 0;
               font-size: 14px;
-              color:#1A1A1A;
+              color: #1a1a1a;
               font-weight: 500;
               line-height: 18px;
               // white-space: nowrap;
@@ -964,11 +1079,11 @@ export default {
             // }
           }
         }
+      }
     }
-    }
-    .look-img{
+    .look-img {
       width: 330px;
-      color:#fff;
+      color: #fff;
       height: 622px;
       border-radius: 4px;
       // border: 1px solid #E2E2E2;
@@ -982,40 +1097,40 @@ export default {
         position: absolute;
         top: 0;
         left: 0;
-        background: rgba(0,0,0,.2);
+        background: rgba(0, 0, 0, 0.2);
       }
-      .look-color{
+      .look-color {
         position: relative;
         width: 100%;
         height: 100%;
         border-radius: 4px;
         padding: 20px 24px;
       }
-      .look-header{
+      .look-header {
         padding-bottom: 20px;
         text-align: center;
-        .look-avator{
+        .look-avator {
           width: 36px;
           height: 36px;
           border-radius: 50%;
           // border: 1px solid #ccc;
           margin: auto;
           margin-bottom: 10px;
-          img{
-              width: 100%;
-              height: 100%;
-              border-radius: 50%;
-            }
+          img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+          }
         }
-        p{
+        p {
           padding: 0;
           font-size: 14px;
           font-weight: 400;
           line-height: 18px;
-          color:#fff;
+          color: #fff;
         }
       }
-      .look-text{
+      .look-text {
         width: 100%;
         text-align: center;
         border: 4px solid #fff;
@@ -1024,7 +1139,7 @@ export default {
         margin-top: 10px;
         padding: 5px 0;
         letter-spacing: 2px;
-        h1{
+        h1 {
           padding: 0 15px;
           font-size: 26px;
           font-weight: 600;
@@ -1033,33 +1148,33 @@ export default {
           white-space: normal;
           word-break: break-all;
         }
-        p{
+        p {
           font-size: 14px;
           font-weight: 400;
           line-height: 20px;
-          color:#fff;
+          color: #fff;
           padding: 5px 15px;
           word-wrap: break-word;
           white-space: normal;
           word-break: break-all;
         }
       }
-      .look-time{
+      .look-time {
         margin-top: 30px;
         // padding-left: 24px;
-        p{
-          padding:0;
+        p {
+          padding: 0;
           line-height: 25px;
-          color:#fff;
+          color: #fff;
         }
-        span{
+        span {
           display: inline-block;
           width: 24px;
           height: 4px;
           background: #fff;
         }
       }
-      .look-footer{
+      .look-footer {
         position: absolute;
         display: flex;
         bottom: 20px;
@@ -1070,26 +1185,26 @@ export default {
         border-radius: 4px;
         // opacity: 0.2;
         padding: 10px;
-        .look-code{
+        .look-code {
           width: 60px;
           height: 60px;
           // float: left;
           margin: 0 16px;
-          img{
+          img {
             width: 60px;
             height: 60px;
           }
         }
-        .look-action{
-          h1{
-            padding:0;
+        .look-action {
+          h1 {
+            padding: 0;
             font-size: 14px;
             color: #fff;
             font-weight: 600;
             line-height: 30px;
           }
-          p{
-            padding:0;
+          p {
+            padding: 0;
             color: #fff;
             font-size: 12px;
             font-weight: 400;
@@ -1114,7 +1229,7 @@ export default {
       position: absolute;
       right: 0;
       top: 0;
-      /deep/.el-button:last-child{
+      /deep/.el-button:last-child {
         margin-left: 10px;
       }
     }
@@ -1129,21 +1244,21 @@ export default {
     //   margin: auto;
     // }
   }
-  .white-show{
+  .white-show {
     position: absolute;
     width: 100%;
     height: 100%;
-    top:0;
-    left:0;
+    top: 0;
+    left: 0;
     background: rgba(255, 255, 255, 0.5);
     z-index: 9;
   }
 }
-.invitation-code{
+.invitation-code {
   width: 132px;
   height: 132px;
   text-align: center;
-  img{
+  img {
     width: 132px;
     height: 132px;
     object-fit: scale-down;
