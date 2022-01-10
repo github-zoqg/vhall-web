@@ -653,7 +653,7 @@ export default {
               // scrollY: 0,
               // scrollX: 0,
               // scrollX: browerType === 'safari' ? 115 : browerType === 'firefox' ? 12: 10,
-              scrollX: -document.documentElement.scrollLeft,
+              // scrollX: -document.documentElement.scrollLeft,
               backgroundColor: null,
             }).then((canvas) => {
               _this.downloadImg = canvas.toDataURL('image/png', 1.0)
