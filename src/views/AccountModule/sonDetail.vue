@@ -47,7 +47,7 @@
           </li>
           <li>
             <label>用量分配</label>
-            <p>{{sonVo &&  sonVo.vip_info.type > 0 ? '流量' : '并发' }}（{{sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定'}}）</p>
+            <p>{{sonVo &&  sonVo.vip_info.type > 0 ? '流量' : '并发' }}（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）</p>
           </li>
           <li>
             <label>手机号码</label>
@@ -89,7 +89,12 @@ export default {
     sonText: function () {
       return `账号：${this.sonVo.name || '暂无'}
 请登录www.vhall.com，选择账号登录，首次登录请修改密码、绑定手机号后进行使用`;
-    }
+    },
+    isZhixueyun: function () {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      console.log('主账户是否知学云账户', userInfo.user_extends.extends_remark == 1)
+      return userInfo.user_extends.extends_remark == 1
+    },
   },
   methods:{
     handleClick(tab, event) {
