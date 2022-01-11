@@ -13,7 +13,7 @@
       <!-- 搜索 -->
       <div class="list--search">
         <el-button size="medium" type="primary" :disabled="isForbidCreate" round @click.prevent.stop="addSonShow(null)">创建</el-button>
-        <!-- 若当前是知学云账号，不展示用量分配按钮 -->
+        <!-- 若当前是知学云账号，不展示用量分配按钮, extends_remark 为1时表示 知学云账号-->
         <el-button v-show="userInfo.user_extends.extends_remark == 0" size="medium" plain round @click.prevent.stop="toAllocationPage">用量分配</el-button>
         <el-button size="medium" round @click.prevent.stop="multiMsgDel" :disabled="!(this.ids && this.ids.length > 0)">批量删除</el-button>
         <el-button size="medium" round @click="downloadHandle">导出</el-button>
@@ -594,25 +594,41 @@ export default {
         };
         (dao.list || []).map(item => {
           if (this.vipType > 0) {
-            if (item.is_dynamic > 0) {
-              // 流量动态
-              item.round = `流量动态`;
-            } else {
-              // 流量（XXXGB）
+            if (this.userInfo.user_extends.extends_remark == 1 && item.is_dynamic == 2) {
+              // 知学云 -固定 - 流量（XXXGB）
               item.round = `流量（${item.vip_info.flow}GB）`;
+            } else{
+              if (item.is_dynamic > 0) {
+                // 流量动态
+                item.round = `流量动态`;
+              } else {
+                // 流量（XXXGB）
+                item.round = `流量（${item.vip_info.flow}GB）`;
+              }
             }
           } else {
-            if (item.is_dynamic > 0) {
-              // 流量动态
-              item.round = `并发动态`;
-              item.extend_day = `并发动态`
-            } else {
+            if (this.userInfo.user_extends.extends_remark == 1 && item.is_dynamic == 2) {
+              // 知学云 - 固定 - 并发（xxx方 + （扩展包xxxxx）方）
               if(item.vip_info.extend_day > 0) {
                 // 并发（XXX方）
                 item.round = `并发（${Number(item.vip_info.total) + Number(item.vip_info.extend_day)}方）`;
               } else {
                 // 并发（XXX方）
                 item.round = `并发（${item.vip_info.total}方）`;
+              }
+            } else {
+              if (item.is_dynamic > 0) {
+                // 流量动态
+                item.round = `并发动态`;
+                item.extend_day = `并发动态`
+              } else {
+                if(item.vip_info.extend_day > 0) {
+                  // 并发（XXX方）
+                  item.round = `并发（${Number(item.vip_info.total) + Number(item.vip_info.extend_day)}方）`;
+                } else {
+                  // 并发（XXX方）
+                  item.round = `并发（${item.vip_info.total}方）`;
+                }
               }
             }
           }

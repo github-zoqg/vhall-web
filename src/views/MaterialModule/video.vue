@@ -1,7 +1,7 @@
 <template>
   <div class="video-wrap">
     <pageTitle pageTitle="音视频">
-      <span class="video-text">音视频中的文件内容应用于暖场视频、点播和插播文件</span>
+      <span class="video-text">音视频中的文件内容应用于暖场视频、点播、定时直播和插播文件</span>
       <div slot="content">
         1.上传单个文件最大5G
         <br>
