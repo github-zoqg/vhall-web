@@ -347,6 +347,7 @@ export default {
       if (this.webinarType == 3) {
         this.speakContactInfo();
       } else if (this.webinarType == 6) {
+        this.speakContactInfo();
         this.getGroupStatics();
       }
     }
