@@ -263,7 +263,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4&&webinarType==3&&webinarType!=5" @click="exportSpeak">
+         <div class="base-item" v-if="isStatus!=4&&[3,4,6,'3','4','6'].includes(webinarType)" @click="exportSpeak">
           <p>导出</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_whea@2x.png" alt=""></label>
