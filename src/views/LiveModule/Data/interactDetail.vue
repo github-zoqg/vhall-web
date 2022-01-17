@@ -41,7 +41,7 @@
       <span class="search-export">
         <el-button round  size="medium" @click="exportData" v-if="$route.query.wType != 6 && totalNum">导出数据</el-button>
         <el-button round  size="medium" @click="exportData" v-if="$route.query.wType == 6 && totalNum">导出主直播间数据</el-button>
-        <el-button round  size="medium" @click="getGroupRound" v-if="$route.query.wType == 6">导出分组数据</el-button>
+        <el-button round  size="medium" @click="getGroupRound" v-if="$route.query.wType == 6&&title!='问答'">导出分组数据</el-button>
       </span>
     </div>
     <div class="interact-detail" v-show="totalNum">
