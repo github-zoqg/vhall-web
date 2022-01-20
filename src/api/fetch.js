@@ -161,6 +161,10 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
         // Message.error(res.msg)
         res.msg = msg;
       }
+      if (res.code == 511006 && sessionOrLocal.getItem('token')) {
+        sessionOrLocal.removeItem('token');
+        sessionOrLocal.removeItem('tokenExpiredTime');
+      }
       return Promise.reject(res);
     }
   });
