@@ -17,7 +17,6 @@ pnpm-debug.log*
 .idea
 .vscode
 .history
-package-lock.json
 *.suo
 *.ntvs*
 *.njsproj
