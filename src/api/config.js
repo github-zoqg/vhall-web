@@ -92,6 +92,7 @@ const apis = {
   getHighLimit: ['/v3/fin/user-vip/get-balance', 'GET'], // 最高并发值 --获取付费用户余量
   liveList: ['/v3/webinars/webinar/get-list', 'POST'], // 获取直播列表 jian.chang  √
   getWebinarInfo: ['/v3/webinars/webinar/info', 'POST'], // 查询活动基础信息接口
+  setCustomRoleName: ['/v3/webinars/privilege/edit-role-name', 'POST'], // 设置自定义角色名称
   liveEdit: ['/v3/webinars/webinar/edit', 'POST'], // 活动修改 √
   liveDel: ['/v3/webinars/webinar/delete', 'POST'], // 活动删除  √
   demandCreate: ['/v3/webinars/webinar/create-demand', 'POST'], // 点播创建
