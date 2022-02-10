@@ -200,7 +200,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" v-preventReClick  @click="editCustomRoleNameHandle" round size="medium">确 定</el-button>
-        <el-button @click="visible = false" round size="medium">取 消</el-button>
+        <el-button @click="customRoleNameVisible = false" round size="medium">取 消</el-button>
       </span>
     </VhallDialog>
     <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5"></begin-play>
