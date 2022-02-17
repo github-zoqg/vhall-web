@@ -314,6 +314,9 @@ export default {
       ]
     };
   },
+  async created() {
+    // await this.getCustomRoleName()
+  },
   mounted() {
     this.title = this.$route.query.title;
     this.webinarId = this.$route.query.id;
@@ -321,6 +324,17 @@ export default {
     this.changeColumn(this.title);
   },
   methods: {
+    getCustomRoleName() {
+      this.$fetch('getCustomRoleName', {webinar_id: this.$route.query.id})
+        .then(res => {
+          if(res.code == 200) {
+            console.log('7777777', res.data, res.data.host_name)
+            sessionStorage.setItem('getCustomHostRoleName', res.data.host_name);
+            sessionStorage.setItem('getCustomAssistantRoleName', res.data.assistant_name);
+            sessionStorage.setItem('getCustomGuestRoleName', res.data.guest_name);
+          }
+        })
+    },
      dealDisabledData(time) {
       return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
     },
@@ -427,7 +441,8 @@ export default {
       });
     },
     // 聊天
-    chatInfo(pageInfo) {
+    async chatInfo(pageInfo) {
+      await this.getCustomRoleName()
       // let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
         room_id: this.roomId,
@@ -447,39 +462,44 @@ export default {
           room_id: this.roomId
         }
       }
-
-      // let obj = Object.assign({}, pageInfo, params);
-      this.$fetch('getChatListInfo', params).then(res => {
-        this.tableList = res.data.list;
-        this.tableList.map(item => {
-          item.name = item.role_name == 1 ? '主持人' : item.role_name == 2 ? '观众' : item.role_name == 3 ? '助理' : '嘉宾';
-          if(item.data.barrage_txt && (/\[|\]/g).test(item.data.barrage_txt)) {
-            item.data.barrage_txt = this.emojiToText(item.data.barrage_txt) || '';
-          }
-          if (item.data.text_content && (/\[|\]/g).test(item.data.text_content)) {
-            item.data.barrage_txt = this.emojiToText(item.data.text_content)
+      // setTimeout(() => {
+        // let obj = Object.assign({}, pageInfo, params);
+        this.$fetch('getChatListInfo', params).then(res => {
+          this.tableList = res.data.list;
+          this.tableList.map(item => {
+            const hostName = sessionStorage.getItem('getCustomHostRoleName', res.data.host_name);
+            const assistantName = sessionStorage.getItem('getCustomAssistantRoleName', res.data.assistant_name);
+            const guestName = sessionStorage.getItem('getCustomGuestRoleName', res.data.guest_name);
+            item.name = item.role_name == 1 ? (hostName ? hostName : '主持人') : item.role_name == 2 ? '观众' : item.role_name == 3 ? (assistantName ? assistantName : '助理') : (guestName ? guestName : '嘉宾');
+            if(item.data.barrage_txt && (/\[|\]/g).test(item.data.barrage_txt)) {
+              item.data.barrage_txt = this.emojiToText(item.data.barrage_txt) || '';
+            }
+            if (item.data.text_content && (/\[|\]/g).test(item.data.text_content)) {
+              item.data.barrage_txt = this.emojiToText(item.data.text_content)
+            } else {
+              item.data.barrage_txt = item.data.text_content || '';
+            }
+            if (item.data.image_urls && item.data.image_urls.length != 0) {
+              item.chatImg = this.chartsImgs(item.data.image_urls);
+            } else {
+              item.chatImg = ''
+            }
+            item.data.barrage_txt = item.data.barrage_txt.replace(/\*\*\*/g, "@")
+            item.imgOrText = item.data.barrage_txt + item.chatImg
+          })
+          this.totalNum = res.data.total;
+          if(this.searchTime) {
+            this.nullText = 'search';
+            this.text = '';
+            this.isSearch = true;
           } else {
-            item.data.barrage_txt = item.data.text_content || '';
+            this.nullText = 'nullData';
+            this.text = '您还没有聊天记录！';
+            this.isSearch = false;
           }
-          if (item.data.image_urls && item.data.image_urls.length != 0) {
-            item.chatImg = this.chartsImgs(item.data.image_urls);
-          } else {
-            item.chatImg = ''
-          }
-          item.data.barrage_txt = item.data.barrage_txt.replace(/\*\*\*/g, "@")
-          item.imgOrText = item.data.barrage_txt + item.chatImg
-        })
-        this.totalNum = res.data.total;
-        if(this.searchTime) {
-          this.nullText = 'search';
-          this.text = '';
-          this.isSearch = true;
-        } else {
-          this.nullText = 'nullData';
-          this.text = '您还没有聊天记录！';
-          this.isSearch = false;
-        }
-      });
+        });
+      // }, 500)
+      
     },
     chartsImgs(list) {
       let arr = '';
@@ -702,7 +722,8 @@ export default {
 
     },
     // 回答
-    getRecordList(pageInfo) {
+    async getRecordList(pageInfo) {
+      await this.getCustomRoleName()
       // let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
         room_id: this.roomId
@@ -727,6 +748,9 @@ export default {
         //     item.answer[0].is_open = item.answer[0].is_open == 1 ? '公开' : '私密';
         //   }
         // })
+        const hostName = sessionStorage.getItem('getCustomHostRoleName', res.data.host_name);
+        const assistantName = sessionStorage.getItem('getCustomAssistantRoleName', res.data.assistant_name);
+        const guestName = sessionStorage.getItem('getCustomGuestRoleName', res.data.guest_name);
         let tableList = res.data.list;
         tableList.map((item, index) => {
           if(item.content && (/\[|\]/g).test(item.content)) {
@@ -742,7 +766,7 @@ export default {
             item.answer.map(opt => {
               opt.is_open = opt.is_open == 1 ? '公开' : '私密';
               opt.name = '答';
-              opt.imgOrText = `${opt.nick_name} | ${opt.role_name} </br> ${opt.content}`;
+              opt.imgOrText = `${opt.nick_name} | ${opt.role == 'host' ? (hostName ? hostName : opt.role_name) : (opt.role == 'assistant' ? (assistantName ? assistantName : opt.role_name) : (guestName ? guestName : opt.role_name))} </br> ${opt.content}`;
               this.tableList.push(opt);
             })
           }

@@ -23,25 +23,27 @@
     <!-- 角色邀请卡片 -->
     <div :class="!roleSwitch ? 'role-card-list pre--full-mask' : 'role-card-list'">
       <div class="pre--full-cover" v-show="!roleSwitch"></div>
-      <div>
+      <div class="role-card-wrap">
         <!-- 主持人 -->
         <div class="role-card" v-if="webinarVo.webinar_type!=5">
           <div class="role-card-head">
             <div class="title--box">
               <label class="title--label role1">主持人</label>
             </div>
-            <p class="role-remark">主持人可发起直播，进行推流、文档演示等操作</p>
+            <p class="role-remark">昵称支持自定义，默认为主持人，主持人可发起直播，进行推流、文档演示等操作</p>
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
               <VhallInput :value="privilegeVo && host_join_link ? host_join_link : ''" readonly autocomplete="off"></VhallInput>
             </el-form-item>
             <el-form-item label="口令">
-              <!-- <VhallInput v-model.trim="privilegeVo.host_password" readonly class="input-no-right-border">
-                <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
-              </VhallInput> -->
               <VhallInput v-model.trim="privilegeVo.host_password" readonly class="btn-relative btn-two" autocomplete="off">
                   <el-button type="text" class="no-border no-hover" size="mini" slot="append" v-preventReClick  @click="privilegeShowHandle(2, 'host_password')">编辑</el-button>
+              </VhallInput>
+            </el-form-item>
+            <el-form-item label="角色名称">
+              <VhallInput v-model.trim="customRoleNameInfo.host" readonly class="btn-relative btn-two" autocomplete="off">
+                  <el-button type="text" class="no-border no-hover" size="mini" slot="append" v-preventReClick  @click="setCustomRoleName(1)">编辑</el-button>
               </VhallInput>
             </el-form-item>
           </el-form>
@@ -79,7 +81,7 @@
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
             </div>
-            <p class="role-remark">嘉宾支持连麦，获得主讲人权限后可进行文档演示</p>
+            <p class="role-remark">昵称支持自定义，默认为嘉宾，嘉宾支持连麦，获得主讲人权限后可进行文档演示</p>
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
@@ -88,6 +90,11 @@
             <el-form-item label="口令">
               <VhallInput v-model.trim="privilegeVo.guest_password" readonly  class="btn-relative btn-two" autocomplete="off" >
                 <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(1, 'guest_password')">编辑</el-button>
+              </VhallInput>
+            </el-form-item>
+            <el-form-item label="角色名称">
+              <VhallInput v-model.trim="customRoleNameInfo.guest" readonly class="btn-relative btn-two" autocomplete="off">
+                  <el-button type="text" class="no-border no-hover" size="mini" slot="append" v-preventReClick  @click="setCustomRoleName(2)">编辑</el-button>
               </VhallInput>
             </el-form-item>
           </el-form>
@@ -125,7 +132,7 @@
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
             </div>
-            <p class="role-remark">助理不可推流，可进行聊天过滤、观众管理等操作</p>
+            <p class="role-remark">昵称支持自定义，助理不可推流，可进行聊天过滤、观众管理等操作</p>
           </div>
           <el-form label-width="38px" class="role-card-content">
             <el-form-item label="链接">
@@ -134,6 +141,11 @@
             <el-form-item label="口令">
               <VhallInput v-model.trim="privilegeVo.assistant_password" readonly  class="input-no-right-border" autocomplete="off" >
                 <el-button class="no-border no-hover" size="mini" slot="append" @click="privilegeShowHandle(0, 'assistant_password')">编辑</el-button>
+              </VhallInput>
+            </el-form-item>
+            <el-form-item label="角色名称">
+              <VhallInput v-model.trim="customRoleNameInfo.assiatant" readonly class="btn-relative btn-two" autocomplete="off">
+                  <el-button type="text" class="no-border no-hover" size="mini" slot="append" v-preventReClick  @click="setCustomRoleName(3)">编辑</el-button>
               </VhallInput>
             </el-form-item>
           </el-form>
@@ -175,6 +187,22 @@
         <el-button @click="visible = false" round size="medium">取 消</el-button>
       </span>
     </VhallDialog>
+    <!-- 编辑自定义角色弹出框 -->
+    <VhallDialog title="编辑"
+      :visible.sync="customRoleNameVisible"
+      width="280px">
+      <div class="content">
+        <el-form :model="customRoleNameForm" ref="editCustomRoleName" :rules="customRoleNameRules" label-width="0">
+          <el-form-item label="" prop="name">
+            <VhallInput v-model.trim="customRoleNameForm.name" auto-complete="off" placeholder="请输入角色名称" :maxlength="5" show-word-limit></VhallInput>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" v-preventReClick  @click="editCustomRoleNameHandle" round size="medium">确 定</el-button>
+        <el-button @click="customRoleNameVisible = false" round size="medium">取 消</el-button>
+      </span>
+    </VhallDialog>
     <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5"></begin-play>
   </div>
 </template>
@@ -191,6 +219,13 @@ export default {
     beginPlay
   },
   data() {
+    const checkCustomRoleName = (rule,value, callback) => {
+      if (value === null || value === undefined || value === '') {
+        return callback(new Error('请输入角色名称'));
+      } else {
+        callback()
+      }
+    }
     let checkPassword = (rule, value, callback) => {
       if (value === null || value === undefined || value === '') {
         return callback(new Error('请输入口令'));
@@ -211,6 +246,11 @@ export default {
       }
     };
     return {
+      customRoleNameInfo: {
+        host: '',
+        assiatant: '',
+        guest: ''
+      },
       roleSwitch: null,
       webinarVo: {},
       userId: '',
@@ -221,14 +261,24 @@ export default {
         assistant_password: ''
       },
       visible: false,
+      customRoleNameVisible: false,
       pwdForm: {
         password: '',
         keyName: '',
         type: null
       },
+      customRoleNameForm: {
+        name: '',
+        role: 0
+      },
       pwdFormRules: {
         password: [
           { validator: checkPassword, trigger: 'blur' }
+        ]
+      },
+      customRoleNameRules: {
+        name: [
+          { validator: checkCustomRoleName, trigger: 'blur' }
         ]
       },
       urlText: {
@@ -296,6 +346,21 @@ export default {
     this.getWebinarInfo();
   },
   methods: {
+    setCustomRoleName(role) {
+      this.customRoleNameVisible = true;
+      switch (role) {
+        case 1:
+          this.customRoleNameForm.name = this.customRoleNameInfo.host
+          break;
+        case 3:
+          this.customRoleNameForm.name = this.customRoleNameInfo.assiatant
+          break;
+        case 2:
+          this.customRoleNameForm.name = this.customRoleNameInfo.guest
+          break;
+      }
+      this.customRoleNameForm.role = role
+    },
     sortPermission(params) {
       const sortKeys = Object.keys(params)
       const defaultSortArr = [
@@ -382,6 +447,44 @@ export default {
           });
         });
       }
+    },
+    editCustomRoleNameHandle() {
+      this.$refs.editCustomRoleName.validate((valid) => {
+        if (valid) {
+          this.$fetch('setCustomRoleName', {
+            need_sign: 1,
+            webinar_id: this.$route.params.str,
+            type: this.customRoleNameForm.role,
+            name: this.customRoleNameForm.name
+          }).then(res => {
+            this.$message({
+              message:  '修改成功',
+              showClose: true,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            switch (this.customRoleNameForm.role) {
+              case 1:
+                this.customRoleNameInfo.host = this.customRoleNameForm.name;
+                break;
+              case 2:
+                this.customRoleNameInfo.guest = this.customRoleNameForm.name;
+                break;
+              case 3:
+                this.customRoleNameInfo.assiatant = this.customRoleNameForm.name;
+                break;
+            }
+            this.customRoleNameVisible = false
+          }).catch(e => {
+            this.$message({
+              message:  e.msg,
+              showClose: true,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+          })
+        }
+      })
     },
     privilegeEditHandle() {
       // type = 0 助理；1 嘉宾；2 主持人。
@@ -529,6 +632,9 @@ export default {
               res.data.guest_password = '';
               res.data.assistant_password = '';
             }
+            this.customRoleNameInfo.host = res.data.host_name
+            this.customRoleNameInfo.assiatant = res.data.assistant_name
+            this.customRoleNameInfo.guest = res.data.guest_name
             // try {
             //   delete res.data.permission_data.guest['white_board'];
             // }catch (e) {
@@ -642,10 +748,20 @@ export default {
   vertical-align: sub;
 }
 .role-card-list {
+  
+}
+.role-card-wrap{
+// display: flex;
+// flex-direction: row;
+// align-items: flex-start;
+// justify-content: space-between;
+// flex-wrap: wrap;
+// width: 1362px;
 }
 .role-card {
   min-height: 472px;
   width: calc(50% - 12px);
+  // width: 675px;
   margin-right: 12px;
   margin-left: 0;
   display: inline-block;
@@ -724,9 +840,16 @@ export default {
   /deep/.el-form-item__label {
     font-size: 14px;
     font-family: @fontRegular;
-    font-weight: 400;
-    color: #1A1A1A;
     padding: 0 10px 0 0;
+    width: 70px!important;
+    text-align: right;
+    font-weight: 400;
+    color: #666666;
+    line-height: 20px;
+    margin-top: 10px;
+  }
+  /deep/ .el-form-item__content{
+    margin-left: 70px!important;
   }
   /deep/.el-input__inner {
     height: 40px;
