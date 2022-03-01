@@ -161,14 +161,16 @@ export default {
           const conf = JSON.parse(res.data.permissions)
           const langPermission = conf.multilingual || 0
           if (langPermission == 1) {
-            this.readyList.push({
-              icon: 'icon_languages@2x',
-              id: 9,
-              title: '多语言链接',
-              subText: `获取多语言观看链接及二维码`,
-              type: 100066,
-              path: `/live/langCard/${this.$route.params.str}`,
-              isShow: true
+            this.$nextTick(() => {
+              this.readyList.push({
+                icon: 'icon_languages@2x',
+                id: 9,
+                title: '多语言链接',
+                subText: `获取多语言观看链接及二维码`,
+                type: 100066,
+                path: `/live/langCard/${this.$route.params.str}`,
+                isShow: true
+              })
             })
           }
         }
