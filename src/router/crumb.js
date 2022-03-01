@@ -324,6 +324,22 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
+  else if (metaName === 'langCard') {// 推广嵌入
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '活动详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '多语言链接',
+        path: `/live/langCard/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
   else if (metaName === 'brandSet') {// 品牌设置
     return [
       ...CrumbLiveList('liveList'),
