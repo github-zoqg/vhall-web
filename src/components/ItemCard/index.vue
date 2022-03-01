@@ -157,11 +157,15 @@ export default {
         webinar_user_id: '',
         send_id: 1
       }).then(res => {
+        console.log('demo>>>>>获取多语言配置success1:', res, res.data, res.data.permissions, this.readyList)
         if (res.data && res.data.permissions) {
           const conf = JSON.parse(res.data.permissions)
           const langPermission = conf.multilingual || 0
+          console.log('demo>>>>>获取多语言配置success2:', res.data.permissions, langPermission, conf.multilingual, this.readyList)
           if (langPermission == 1) {
+            console.log('demo>>>>>获取多语言配置success3:', this.readyList)
             this.$nextTick(() => {
+
               this.readyList.push({
                 icon: 'icon_languages@2x',
                 id: 9,
@@ -171,9 +175,24 @@ export default {
                 path: `/live/langCard/${this.$route.params.str}`,
                 isShow: true
               })
+              console.log('demo>>>>>获取多语言配置success5:', this.readyList)
             })
+            setTimeout(() => {
+              this.readyList.push({
+                icon: 'icon_languages@2x',
+                id: 9,
+                title: '多语言链接',
+                subText: `获取多语言观看链接及二维码`,
+                type: 100066,
+                path: `/live/langCard/${this.$route.params.str}`,
+                isShow: true
+              })
+              console.log('demo>>>>>获取多语言配置success6:', this.readyList)
+            }, 1000)
           }
         }
+      }).catch(e => {
+        console.log('demo>>>>>获取多语言配置success4:', e)
       })
     },
     resetList(perssionInfo) {
