@@ -10,8 +10,11 @@
             <icon icon-class="saasicon_zanwushipin"></icon>
           </div>
           <template v-show="vodReady">
-            <div id="vh-player"
+            <keep-alive>
+              <div id="vh-player"
               v-if="showVideo"></div>
+            </keep-alive>
+            
           </template>
         </div>
         <div class="vh-video-tailoring__doc-warp fl" v-show="docReady ||  !vodReady">
@@ -293,6 +296,7 @@ export default {
   },
   mounted () {},
   beforeDestroy () {
+    alert('beforeDestroy')
     window.vhallPlayer && window.vhallPlayer.destroy();
     window.vhallPlayer = null;
     this.$EventBus.$off('docSDK_ready');
@@ -606,6 +610,7 @@ export default {
         if (n && n != o) {
           if (window.vhallPlayer) {
             window.vhallPlayer.destroy();
+            alert('roomInfo.record_id')
           }
           if (this.roomInfo.duration == '00:00:00') {
             this.$message({
