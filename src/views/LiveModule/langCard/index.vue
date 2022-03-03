@@ -6,16 +6,16 @@
       <div class="input-card">
         <div class="input-item">
           <span>标准观看页</span>
-          <el-input :value="item.language_type == 1 ? liveContent : liveContent + `?lang=${item.language_type}`" readonly style="max-width:640px">
+          <el-input :value="handleLiveContent(item.language_type)" readonly style="max-width:640px">
             <template slot="suffix" >
               <el-tooltip class="item" effect="dark" content="复制" placement="top" v-tooltipMove>
-                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(liveContent, 1)"></i>
+                <i class="iconfont-v3 saasicon_copy" :title="'复制'" @click="cope(handleLiveContent(item.language_type), 1)"></i>
               </el-tooltip>
             </template>
           </el-input>
           <el-popover popper-class="lang-scan" placement="bottom" trigger="hover">
             <div class="invitation-code">
-              <img :src="renderCodeImg(item.language_type)" alt="" />
+              <img class="lang-code-img" :src="renderCodeImg(item.language_type)" alt="" />
               <div class="download" @click="download(item.language_type)">下载二维码</div>
             </div>
             <el-button
@@ -57,6 +57,7 @@ import PageTitle from '@/components/PageTitle';
 import {sessionOrLocal} from "@/utils/utils";
 import beginPlay from '@/components/beginBtn';
 import Env from "@/api/env";
+import html2canvas from 'html2canvas'
 import Vue from 'vue'
 export default {
   name: 'langCard',
@@ -83,32 +84,49 @@ export default {
     this.getLangList()
   },
   methods: {
+    handleLiveContent(lang = 1) {
+      return this.liveContent + `?lang=${lang}`
+    },
     handlerVideo(lang = 1) {
       const env = process.env.VUE_APP_WAP_WATCH
       const il_id = this.$route.params.str
-      const url =  `<iframe border="0" allow="display-capture" allowfullscreen="true" src="${env}/lives/embedclient/watch/${il_id}?embed=video${lang != 1 ? '&lang=' + lang : ''}" width="800" height="600"></iframe>`
-      // this.video = url
+      const url =  `<iframe border="0" allow="display-capture" allowfullscreen="true" src="${env}/lives/embedclient/watch/${il_id}?embed=video&lang=${lang == 2 ? 2 : 1}" width="800" height="600"></iframe>`
       return url
     },
     handleCompletion(lang = 1) {
       const env = process.env.VUE_APP_WAP_WATCH
       const il_id = this.$route.params.str
-      const url = `<iframe allow="camera *;microphone *; display-capture" allowfullscreen="true" border="0" src="${env}/lives/embedclient/watch/${il_id}${lang != 1 ? '?lang=' + lang : ''}" width="800" height="600"></iframe>`
+      const url = `<iframe allow="camera *;microphone *; display-capture" allowfullscreen="true" border="0" src="${env}/lives/embedclient/watch/${il_id}?lang=${lang == 2 ? 2 : 1}" width="800" height="600"></iframe>`
       // this.completion = url
       return url
     },
     renderCodeImg(lang) {
       const url = `${Env.staticLinkVo.aliQr}${encodeURIComponent(this.liveContent)}`
-      if (!lang || lang == 1) return url
+      if (!lang) return url
       else return url + `?lang=${lang}`
     },
     download(lang) {
       const url = `${Env.staticLinkVo.aliQr}${encodeURIComponent(this.liveContent)}`
-      const a = document.createElement('a')
-      console.log(444444,  url + (lang == 1 || !lang ? '' : `?lang=${lang}`))
-      a.href = url + (lang == 1 || !lang ? '' : `?lang=${lang}`)
-      a.setAttribute('download', 'chart-download')
-      a.click()
+      const imgurl =  url + `${lang == 2 ? '?lang=2' : '?lang=1'}`
+      let image = new Image()
+      // 解决跨域 Canvas 污染问题
+      image.setAttribute('crossOrigin', 'anonymous')
+      image.onload = function () {
+        let canvas = document.createElement('canvas')
+        canvas.width = image.width
+        canvas.height = image.height
+        let context = canvas.getContext('2d')
+        context.drawImage(image, 0, 0, image.width, image.height)
+        let ext = imgurl.substring(imgurl.lastIndexOf('.') + 1).toLowerCase()
+        ext = ext.split('?')[0]
+        let imgData = canvas.toDataURL('image/' + ext)
+        let a = document.createElement('a')
+        let event = new MouseEvent('click')
+        a.download = '观看链接二维码.png'
+        a.href = imgData
+        a.dispatchEvent(event)
+      }
+      image.src = imgurl
     },
     getLangList() {
       return this.$fetch('getLanguageList', {
