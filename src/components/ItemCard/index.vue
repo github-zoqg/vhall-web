@@ -78,6 +78,8 @@
 </template>
 
 <script>
+import { sessionOrLocal } from '@/utils/utils';
+
 export default {
   name: "index.vue",
   props: {
@@ -160,7 +162,8 @@ export default {
         if (res.data && res.data.permissions) {
           const conf = JSON.parse(res.data.permissions)
           const langPermission = conf.multilingual || 0
-          if (langPermission == 1) {
+          const webinarType = sessionOrLocal.get('webinarType');
+          if (langPermission == 1 && webinarType && webinarType != 6) {
             this.$nextTick(() => {
               this.readyList.push({
                 icon: 'icon_languages@2x',
