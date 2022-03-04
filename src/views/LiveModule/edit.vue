@@ -1276,7 +1276,7 @@ export default {
             if (res.code == 200) {
               // 若是开启了 - 多语言权限，调用创建多语言接口。否则不调用
               await this.sendLanguage(res.data.webinar_id, url).then((result) => {
-                console.log('Promise.all --- success', result)       // 返回的是个结果数据 [ '3秒后醒来', '2秒后醒来' ]
+                console.log('Promise.all --- success', result, res)       // 返回的是个结果数据 [ '3秒后醒来', '2秒后醒来' ]
                 this.loading = false
                 this.renderSave(res)
               }).catch((error) => {
@@ -1325,49 +1325,50 @@ export default {
       });
     },
     renderSave(res) {
-      if (res.data.webinar_type == 6) {
+      if (this.liveMode == 6) {
                 // 创建分组直播成功
-                this.isChange = false;
-                if (this.title == '创建') {
+        this.isChange = false;
+        if (this.title == '创建') {
           this.$alert(`创建成功，观看密码默认为666666，请前往 <a href="${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${res.data.webinar_type}">【观看限制】</a>更改密码或观看限制`, '提示', {
-                    confirmButtonText: '我知道了',
-                    customClass: 'zdy-alert-box zdy-padding',
-                    dangerouslyUseHTMLString: true,
-                    // center: true,
-                    lockScroll: false,
-                    callback: action => {
-                      that.$router.push({path: `/live/detail/${res.data.webinar_id}`})
-                      //location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}`
-                    }
-                  })
-                } else {
-                  // 创建其它直播成功
-                  this.$message({
-                    message: `${this.title}成功`,
-                    showClose: true,
-                    // duration: 0,
-                    type: 'success',
-                    customClass: 'zdy-info-box'
-                  });
-                  setTimeout(()=>{
-                    this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
-                  }, 500);
-                }
-              } else {
-                // 创建其它直播成功
-                this.$message({
-                  message: `${this.title}成功`,
-                  showClose: true,
-                  // duration: 0,
-                  type: 'success',
-                  customClass: 'zdy-info-box'
-                });
-                this.$route.query.record_id ? this.reVodEditReportData() : this.reportData();
-                this.isChange = false;
-                setTimeout(()=>{
-                  this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
-                }, 500);
-              }
+            confirmButtonText: '我知道了',
+            customClass: 'zdy-alert-box zdy-padding',
+            dangerouslyUseHTMLString: true,
+            // center: true,
+            lockScroll: false,
+            callback: () => {
+              this.$router.push({path: `/live/detail/${res.data.webinar_id}`})
+              //location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}`
+            }
+          })
+          
+        } else {
+          // 创建其它直播成功
+          this.$message({
+            message: `${this.title}成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          setTimeout(()=>{
+            this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
+          }, 500);
+        }
+      } else {
+        // 创建其它直播成功
+        this.$message({
+          message: `${this.title}成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$route.query.record_id ? this.reVodEditReportData() : this.reportData();
+        this.isChange = false;
+        setTimeout(()=>{
+          this.$router.push({path: `/live/detail/${res.data.webinar_id}`});
+        }, 500);
+      }
     },
     async languageCreate(params) {
       return await this.$fetch('languageCreate', this.$params({
