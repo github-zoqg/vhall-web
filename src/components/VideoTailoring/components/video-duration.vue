@@ -245,6 +245,7 @@ export default {
       };
       this.cutTimeList.push(pushArr);
       this.$EventBus.$emit('cutTimeListChange', this.cutTimeList);
+      
     },
     /**
      * 初始化第一段裁剪片段
@@ -266,6 +267,7 @@ export default {
         this.cutTimeList.push(pushArr);
       }
       this.$EventBus.$emit('cutTimeListChange', this.cutTimeList);
+      sessionStorage.setItem('leftTime', leftTime)
     },
     /**
      * 添加裁剪时间段操作

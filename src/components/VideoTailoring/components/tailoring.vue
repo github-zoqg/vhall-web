@@ -403,7 +403,8 @@ export default {
           sliderBtn.onmousedown = () => { this.isUserInput = true }
           document.addEventListener("mouseup", this.sliderMouseUp);
         })
-        this.$EventBus.$emit('blockInit', 0, this.videoTime);
+        let leftTime = sessionStorage.getItem('leftTime')
+        this.$EventBus.$emit('blockInit', leftTime ? leftTime : 0, this.videoTime);
         window.vhallPlayer.on(window.VhallPlayer.TIMEUPDATE, () => {
           this.currentTime = window.vhallPlayer.getCurrentTime(() => {
             console.log('获取当前视频播放时间失败----------');

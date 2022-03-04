@@ -1,5 +1,6 @@
 <template>
   <div class="vh-video-tailoring__warp" ref="videoTailoringWarp">
+                  <!-- <keep-alive> -->
     <div class="vh-video-tailoring__section">
       <div class="vh-video-tailoring__head clearfix">
         <h3 class="vh-video-tailoring__title">{{ videoName }}</h3>
@@ -9,13 +10,16 @@
           <div class="vh-video-tailoring__noplay" v-show="!vodReady">
             <icon icon-class="saasicon_zanwushipin"></icon>
           </div>
-          <template v-show="vodReady">
-            <keep-alive>
-              <div id="vh-player"
-              v-if="showVideo"></div>
-            </keep-alive>
+          <!-- <template> -->
+            <div v-show="vodReady">
+
+                <div id="vh-player"
+                v-show="showVideo"></div>
+              
+            </div>
+
             
-          </template>
+          <!-- </template> -->
         </div>
         <div class="vh-video-tailoring__doc-warp fl" v-show="docReady ||  !vodReady">
           <doc
@@ -46,7 +50,7 @@
         :rulerLength="rulerLength"
         :videoTime="videoTime"
         :initUnit="initUnit"
-        v-if="rulerLength && showTailoring"
+        v-show="rulerLength && showTailoring"
         :vodReady="vodReady"
         @saveVideoClick="saveVideo"
         @exportVideoClick="exportVideo"
@@ -144,6 +148,7 @@
         <el-button round size="medium" @click="cancelExportVideoFun">{{ t('取消') }}</el-button>
       </div>
     </el-dialog>
+    <!-- </keep-alive> -->
   </div>
 </template>
 <script>
@@ -218,7 +223,7 @@ export default {
       return this.videoTitle.length;
     }
   },
-  created () {
+  mounted () {
     this.$nextTick(() => {
       // 监听视频初始化成功
       this.$EventBus.$on('component_playerSDK_ready', () => {
@@ -294,9 +299,7 @@ export default {
       this.showTailoring = true;
     });
   },
-  mounted () {},
   beforeDestroy () {
-    alert('beforeDestroy')
     window.vhallPlayer && window.vhallPlayer.destroy();
     window.vhallPlayer = null;
     this.$EventBus.$off('docSDK_ready');
@@ -610,7 +613,6 @@ export default {
         if (n && n != o) {
           if (window.vhallPlayer) {
             window.vhallPlayer.destroy();
-            alert('roomInfo.record_id')
           }
           if (this.roomInfo.duration == '00:00:00') {
             this.$message({
