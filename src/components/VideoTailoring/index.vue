@@ -300,6 +300,7 @@ export default {
     });
   },
   beforeDestroy () {
+    sessionStorage.removeItem('leftTime');
     window.vhallPlayer && window.vhallPlayer.destroy();
     window.vhallPlayer = null;
     this.$EventBus.$off('docSDK_ready');

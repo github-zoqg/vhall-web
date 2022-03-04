@@ -362,6 +362,7 @@ export default {
     };
   },
   beforeDestroy () {
+    // sessionStorage.setItem('leftTime', 0);
     this.$EventBus.$off('seekTime');
     // this.$EventBus.$off('cutTimeListChange') // 测试是否注释
     this.$EventBus.$off('showEventPointPop');
@@ -379,6 +380,7 @@ export default {
     document.removeEventListener("mouseup", this.sliderMouseUp);
   },
   created () {
+    sessionStorage.setItem('leftTime', 0)
     this.$nextTick(() => {
       // 对两个刻度尺初始化
       this.firstRulerStartTime = this.currentPage * this.rulerLength;
