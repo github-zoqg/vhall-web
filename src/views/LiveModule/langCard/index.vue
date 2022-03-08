@@ -191,6 +191,9 @@ export default {
     padding: 24px 20px;
     border-radius: 4px;
   }
+  .weixinWork{
+    margin-bottom: 24px;
+  }
   h3{
     font-weight: normal;
     font-size: 14px;
