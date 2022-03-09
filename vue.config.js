@@ -28,7 +28,7 @@ switch (process.env.VUE_APP_NODE_ENV)  {
     publicPath = '//cnstatic01.e.vhall.com/saas-v3-web/'
     break;
   case 'pre':
-    publicPath = '//cnstatic01.e.vhall.com/saas-v3-web/'
+    publicPath = '//cnstatic01.e.vhall.com/saas-v3-web-pre/'
     break;
   default :
     publicPath = './'
