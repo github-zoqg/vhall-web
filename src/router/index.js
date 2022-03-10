@@ -19,11 +19,11 @@ import setting from './modules/settingOrData'
 import userRoutes from './modules/user'
 import v3 from './modules/v3Sys'
 
-const base = (process.env.VUE_APP_NODE_ENV === 'production' || process.env.VUE_APP_NODE_ENV === 'test') ? '/v3/' : '/'
+const base = (process.env.VUE_APP_NODE_ENV == 'production' || process.env.VUE_APP_NODE_ENV == 'pre' || process.env.VUE_APP_NODE_ENV == 'test') ? '/v3/' : '/'
 const createRouter = () => new VueRouter({
   mode: 'history',
   base,
-  routes :[
+  routes: [
     ...Home,
     ...Live,
     ...material,
@@ -33,7 +33,7 @@ const createRouter = () => new VueRouter({
   ]
 });
 const router = createRouter();
-NProgress.configure({showSpinner: false}); // NProgress Configuration
+NProgress.configure({ showSpinner: false }); // NProgress Configuration
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
@@ -42,7 +42,7 @@ router.beforeEach((to, from, next) => {
   checkAuth(to, from, next, window.vm);
 });
 router.afterEach(() => {
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
   NProgress.done();
 });
 console.log('routerer');
