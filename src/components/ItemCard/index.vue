@@ -1,17 +1,5 @@
 <template>
   <div>
-    <!-- <section v-for="(item, index) in operas" :key="index">
-      <p class="subject">{{type == 4 && index == '回放' ? '点播' : index}}</p>
-      <div class="subjectOuter">
-        <div class="sunjectInner" v-for="opera in item" :key='opera.title' @click="blockHandler(opera)">
-          <icon class="icon" :icon-class="opera.icon"></icon>
-          <div class="desc">
-            <p class="mainText">{{opera.title}}</p>
-            <p class="subText">{{opera.subText}}</p>
-          </div>
-        </div>
-      </div>
-    </section> -->
     <section>
       <p class="subject">准备</p>
       <div class="subjectOuter">
@@ -90,6 +78,8 @@
 </template>
 
 <script>
+import { sessionOrLocal } from '@/utils/utils';
+
 export default {
   name: "index.vue",
   props: {
@@ -121,6 +111,7 @@ export default {
   },
   created() {
     console.log(this.perssionInfo, this.isTrue,  '????>>>>>>>>>>>')
+    this.getLanguagePermission()
     this.resetList(this.perssionInfo)
   },
   watch: {
@@ -162,6 +153,34 @@ export default {
     }
   },
   methods: {
+    getLanguagePermission() {
+      return this.$fetch('getConfigList', {
+        webinar_id: this.$route.params.str,
+        webinar_user_id: '',
+        send_id: 1
+      }).then(res => {
+        if (res.data && res.data.permissions) {
+          const conf = JSON.parse(res.data.permissions)
+          const langPermission = conf.multilingual || 0
+          const webinarType = sessionOrLocal.get('webinarType');
+          if (langPermission == 1 && webinarType && webinarType != 6) {
+            this.$nextTick(() => {
+              this.readyList.push({
+                icon: 'icon_languages@2x',
+                id: 9,
+                title: '多语言链接',
+                subText: `获取多语言观看链接及二维码`,
+                type: 100066,
+                path: `/live/langCard/${this.$route.params.str}`,
+                isShow: true
+              })
+            })
+          }
+        }
+      }).catch(e => {
+        console.log('demo>>>>>获取多语言配置success4:', e)
+      })
+    },
     resetList(perssionInfo) {
       this.readyList = [
         {icon: 'icon_information@2x', id: 1, title: '基本信息', subText: `编辑${this.type == 4 ? '点播' :'直播'}基本信息`, path: '/live/edit', isShow: true, type: 100058},

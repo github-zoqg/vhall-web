@@ -132,6 +132,12 @@ const router = [
         hidden: true
       },
       {
+        path: 'langCard/:str(\\d+)',
+        component: () => import('@/views/LiveModule/langCard'),
+        meta:{ auth: true, title: '多语言', name: 'langCard', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'brandSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/brandSet'),
         meta:{ auth: true, title: '品牌设置', name: 'brandSet', activeMenu: '/live/list'},

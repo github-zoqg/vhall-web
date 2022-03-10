@@ -539,6 +539,7 @@ const apis = {
   cancelApplySpeakOn: ['/v3/interacts/inav-user/cancel-apply', 'POST'], // 用户取消上麦申请
   speakList: ['/v3/interacts/inav/get-speak-list', 'POST'], // 上下麦列表
   redEnvCollectionRecord: ['/v3/interacts/redpacket/get-redpacket-partition-recorder', 'POST'], // 红包领取记录
+  getLanguageList: ['/v3/webinars/webinar-language/get-list', 'POST'], // 获取语言列表接口
 
   // 聊天
   getHistoryChat: ['/v3/interacts/chat/get-list', 'POST'], // 获取历史聊天消息 √
