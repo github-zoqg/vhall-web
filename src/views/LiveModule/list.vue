@@ -187,18 +187,48 @@ export default {
   // },
   methods: {
     handleLowerGradeHeart() {
-      this.lowerGradeInterval = setInterval(() => {
-        this.getLowerGradeConfig();
-      }, (Math.random() * 5 + 5) * 1000);
+      this.getLowerGradeConfig();
+      // this.lowerGradeInterval = setInterval(() => {
+      //   this.getLowerGradeConfig();
+      // }, (Math.random() * 5 + 5) * 1000);
     },
-    getLowerGradeConfig() {
+    getPermission(id) {
+      // 活动权限
+      this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: this.userId, scene_id: 1}).then(res => {
+        if(res.code == 200) {
+          let arr = ['component_1','component_2','component_3','component_4','component_5','component_6','component_7','component_8','component_9'];
+          if(res.data.permissions) {
+            sessionOrLocal.set('WEBINAR_PES', res.data.permissions, 'localStorage');
+            this.perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+            console.log(this.perssionInfo, '>>>>>>1231<<<')
+            this.isShow = true;
+            this.isTrue = arr.some(item => {
+              // eslint-disable-next-line no-prototype-builtins
+              return this.perssionInfo[item] > 0
+            })
+            this.hasDelayPermission = this.perssionInfo['no.delay.webinar'] && this.perssionInfo['no.delay.webinar'] == 1 ? true : false
+            // this.handleLowerGradeHeart()
+          } else {
+            sessionOrLocal.removeItem('WEBINAR_PES');
+          }
+                  
+          const { href } = this.$router.resolve({path: '/live/edit', query: {id: id, type: 3 }});
+          window.open(href, '_blank');
+        }
+      }).catch(e => {
+        console.log(e);
+        sessionOrLocal.removeItem('SAAS_VS_PES');
+      });
+    },
+    getLowerGradeConfig(id) {
       this.$fetch('lowerGrade', {}).then(res => {
       }).catch(res => {
         // 降级没有code吗
         const { activity, user, global } = res;
         // 优先顺序：互动 > 用户 > 全局
-        const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == this.$route.params.str) : null;
+        const activityConfig = activity && activity.length > 0 ? activity.find(option => option.audience_id == id) : null;
         const userConfig = user && user.length > 0 ? user.find(option => option.audience_id == this.userId) : null;
+        debugger
         if (activityConfig) {
           this.setLowerGradeConfig(activityConfig.permissions)
         } else if (userConfig) {
@@ -206,15 +236,26 @@ export default {
         } else if (global && global.permissions) {
           this.setLowerGradeConfig(global.permissions)
         }
+
       });
     },
-    setLowerGradeConfig(val) {
+    setLowerGradeConfig(data) {
+      console.log(data, 'data')
+      debugger
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
-      const SAAS_VS_PES = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))
+      let arr = ['component_1','component_2','component_3','component_4','component_5','component_6','component_7','component_8','component_9'];
+      let perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+      perssionInfo = perssionInfo ? Object.assign(perssionInfo, data) : data
+      this.perssionInfo = perssionInfo
+      sessionOrLocal.set('WEBINAR_PES', perssionInfo, 'localStorage');
+      if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
+      // const SAAS_VS_PES = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))
+      
       this.vodPerssion = perssionInfo['ui.upload_video_as_demand'];
       this.isTiming = perssionInfo['webinar.timing']
       const permission = perssionInfo ? perssionInfo['no.delay.webinar'] : 0
       this.isDelay = permission == 1 ? true : false
+      
     },
     toLiveDetail(webinar_id) {
       this.$vhall_paas_port({
@@ -505,8 +546,7 @@ export default {
           k: 100041,
           data: {business_uid: this.userId, user_id: '', webinar_id: id, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
-        const { href } = this.$router.resolve({path: '/live/edit', query: {id: id, type: 3 }});
-        window.open(href, '_blank');
+        this.getPermission(id)
       }).catch(() => {});
     }
   }

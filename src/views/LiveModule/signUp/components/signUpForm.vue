@@ -38,7 +38,7 @@
                   :key="question.id"
                   :prop="question.id + ''"
                   v-show="question.type != 6"
-                  :label="question.subject === '隐私声明' ? '' : `${quesIndex < 9 ? `0${ quesIndex + 1 }` : quesIndex + 1}.${question.subject}`"
+                  :label="question.subject === '隐私声明1' ? '' : `${quesIndex < 9 ? `0${ quesIndex + 1 }` : quesIndex + 1}.${question.subject}`"
                 >
                   <!-- 输入框 -->
                   <template
