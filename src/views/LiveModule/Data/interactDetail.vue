@@ -499,7 +499,7 @@ export default {
           }
         });
       // }, 500)
-      
+
     },
     chartsImgs(list) {
       let arr = '';
@@ -526,7 +526,7 @@ export default {
           this.$fetch('deleteChatList', obj).then(res => {
             this.$vhall_paas_port({
               k: index === 1 ? 100459 : 100460,
-              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str || this.$route.query.id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
             this.$message({
               message: `删除成功`,
