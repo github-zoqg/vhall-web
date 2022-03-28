@@ -596,7 +596,7 @@
 <script>
 import VhallReport from '@/components/VhallReport/main'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
-import { isIE } from '@/utils/utils'
+import { isIE, clearCookies } from '@/utils/utils'
 import invited from './rankList' // 邀请榜
 import reward from './rankList/reward' // 打赏榜
 import goodsPop from './rankList/goodsPop'
@@ -1741,6 +1741,7 @@ export default {
       this.$fetch('loginOut').then(res => {
         sessionOrLocal.clear('localStorage')
         sessionOrLocal.clear()
+        clearCookies()
         this.$nextTick(() => {
           window.location.reload()
         })

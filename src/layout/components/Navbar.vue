@@ -80,7 +80,7 @@
 
 <script>
 import Breadcrumb from './Breadcrumb/index.vue';
-import { sessionOrLocal } from "@/utils/utils";
+import { sessionOrLocal, clearCookies } from "@/utils/utils";
 import Cookies from 'js-cookie'
 import Env from "@/api/env";
 import EventBus from "@/utils/Events";
@@ -191,15 +191,18 @@ export default {
         sessionOrLocal.clear('localStorage');
         // 清除cookies
         Cookies.remove('gray-id');
+        clearCookies();
         // 监听消息变化
         this.$EventBus.$emit('saas_vs_login_out', true);
-        if(res.data && out_url) {
-          window.location.href = out_url
-        } else {
-          this.$router.push({
-            path: '/login'
-          });
-        }
+        setTimeout(() => {
+          if(res.data && out_url) {
+            window.location.href = out_url
+          } else {
+            this.$router.push({
+              path: '/login'
+            });
+          }
+        }, 200)
       }).catch(res=>{
         this.$message({
           message: res.msg || `退出失败`,
@@ -211,17 +214,20 @@ export default {
       }).finally(() => {
         // 清除cookies
         Cookies.remove('gray-id');
+        clearCookies();
         sessionOrLocal.clear();
         sessionOrLocal.clear('localStorage');
         // 监听消息变化
         this.$EventBus.$emit('saas_vs_login_out', true);
-        if(out_url) {
-          window.location.href = out_url
-        } else {
-          this.$router.push({
-            path: '/login'
-          });
-        }
+         setTimeout(() => {
+          if(out_url) {
+            window.location.href = out_url
+          } else {
+            this.$router.push({
+              path: '/login'
+            });
+          }
+        }, 200)
       });
     },
     updateAccount(account) {

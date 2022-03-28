@@ -38,7 +38,7 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import { isIE } from '@/utils/utils'
 import moment from 'moment'
 import tip from './tip'
-import { sessionOrLocal } from '@/utils/utils'
+import { sessionOrLocal, clearCookies } from '@/utils/utils'
 
 export default {
   data() {
@@ -1145,6 +1145,7 @@ export default {
         if (res.code == 200) {
           sessionOrLocal.clear('localStorage')
           sessionOrLocal.clear()
+          clearCookies()
           this.$nextTick(() => {
             window.location.reload()
           })

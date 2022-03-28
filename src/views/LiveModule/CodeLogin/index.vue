@@ -80,6 +80,8 @@ import { liveTag } from '@/utils/filter';
         this.$fetch('getWebinarInfo', {
           webinar_id: this.$route.params.id,
           is_no_check:1
+        }, {
+          token: ''
         }).then(res=>{
           if(res.code == 200){
             this.baseObj = res.data
@@ -119,7 +121,9 @@ import { liveTag } from '@/utils/filter';
             nickname: this.name,
             visitor_id: sessionOrLocal.get('visitor_id') ? sessionOrLocal.get('visitor_id') : ''
           }
-          this.$fetch('roleLogin', _data).then(res => {
+          this.$fetch('roleLogin', _data, {
+            token: ''
+          }).then(res => {
             if (res.code == 200) {
               sessionOrLocal.set('interact_token', res.data.live_token)
               sessionOrLocal.set('live_token', res.data.live_token, 'localStorage');
