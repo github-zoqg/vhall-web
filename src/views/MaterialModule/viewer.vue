@@ -282,14 +282,6 @@ import NullPage from '../PlatformModule/Error/nullPage.vue';
 import FileUpload from '@/components/FileUpload/main';
 import Env from "@/api/env";
 
-const validGroup =  (rule, value, callback) => {
-  const val = parseInt(value)
-  if (value&&(value !=val || value<1||value>50)) {
-    callback(new Error('请输入1-50的小组编号'));
-  }else{
-    callback();
-  }
-};
 
 export default {
   name: "viewer",
@@ -299,6 +291,16 @@ export default {
     FileUpload
   },
   data() {
+    const validGroup =  (rule, value, callback) => {
+      const val = parseInt(value)
+      if(value&&this.viewerDao.total>2000){
+        callback(new Error('分组人数超过上限'));
+      }else if (value&&(value !=val || value<1||value>50)) {
+        callback(new Error('请输入1-50的小组编号'));
+      }else{
+        callback();
+      }
+    };
     return {
       activeGroupIndex: '',
       isUploadEnd: false,
