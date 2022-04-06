@@ -284,10 +284,10 @@ import Env from "@/api/env";
 
 const validGroup =  (rule, value, callback) => {
   const val = parseInt(value)
-  if(value===''||value&&value>1&&value<50){
-    callback();
-  }else if (value !=val || value&&(value<1||value>50)) {
+  if (value&&(value !=val || value<1||value>50)) {
     callback(new Error('请输入1-50的小组编号'));
+  }else{
+    callback();
   }
 };
 
