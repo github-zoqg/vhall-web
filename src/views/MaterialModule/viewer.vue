@@ -2,17 +2,18 @@
   <div class="audienceBox">
     <pageTitle pageTitle="观众">
       <span class="dev-show-tips">
-        观众分组应用于观看限制中的白名单，设置后只有指定的观众才能观看活动
+        观众分组应用于观看限制中的白名单及分组直播中的白名单预设小组，设置后只有指定的观众才能观看
       </span>
     </pageTitle>
     <div class="div__main" v-if="groupList.length > 0">
       <div class="table__container">
         <!-- 操作栏 -->
         <div class="operaBox">
-          <el-button type="primary" round @click.prevent.stop="viewerDialogAdd" size="medium">新增观众</el-button>
-          <el-button round @click.prevent.stop="importViewerOpen" size="medium">导入观众</el-button>
-          <el-button round :disabled="multipleSelection.length == 0" @click.prevent.stop="viewerDel" size="medium">批量删除</el-button>
-          <el-button round size="medium" v-if="downloadUrl" @click="downloadTemplate">下载模版</el-button>
+          <el-button type="primary" round @click.prevent.stop="viewerDialogAdd" size="small">新增观众</el-button>
+          <el-button round @click.prevent.stop="importViewerOpen" size="small">导入观众</el-button>
+          <el-button round :disabled="multipleSelection.length == 0" @click.prevent.stop="viewerDel" size="small">批量删除</el-button>
+          <el-button round size="small" v-if="downloadUrl" @click="downloadTemplate">下载模版</el-button>
+          <el-button round :disabled="viewerDao.list&&viewerDao.list.length == 0" @click.prevent.stop="defaultGroup" size="small">预设小组</el-button>
           <div class="searchBox">
             <VhallInput
               placeholder="搜索内容"
@@ -77,6 +78,21 @@
                 width="120">
                 <template slot-scope="scope">
                   <span>{{ scope.row.job_number || '- -' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="小组"
+                width="120">
+                <template slot="header">
+                  <span class="pr20">小组</span>
+                  <el-tooltip
+                  content="此字段只适用于分组直播中的分组预导入功能，用来将观众提前分配到小组中，非必填字段"
+                  v-tooltipMove>
+                  <i :class="`iconfont-v3 saasicon_help_m gary`"></i>
+                </el-tooltip>
+                </template>
+                <template slot-scope="scope">
+                  <span>{{ scope.row.group || '- -' }}</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -196,8 +212,11 @@
         <el-form-item label="工号" prop="job_number">
           <VhallInput v-model.trim="viewerForm.job_number" auto-complete="off" placeholder="请输入工号（最多50个字符）" :maxlength="50"/>
         </el-form-item>
+        <el-form-item label="小组" prop="group">
+          <VhallInput v-model.trim="viewerForm.group" v-clearEmoij  auto-complete="off" placeholder="请输入小组浩，例如：1" :maxlength="50"/>
+        </el-form-item>
         <el-form-item label="其他" prop="other">
-          <VhallInput v-model="viewerForm.other" v-clearEmoij auto-complete="off" placeholder="请输入其他内容（最多50个字符）" :maxlength="50"/>
+          <VhallInput v-model="viewerForm.other" v-clearEmoij auto-complete="off" placeholder="请输入其他内容（最多50个字符）" :maxlength="2"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -262,6 +281,21 @@ import {sessionOrLocal} from "@/utils/utils";
 import NullPage from '../PlatformModule/Error/nullPage.vue';
 import FileUpload from '@/components/FileUpload/main';
 import Env from "@/api/env";
+
+const validGroup =  (rule, value, callback) => {
+  const val = parseInt(value)
+  debugger
+  if (value !=val) {
+    callback(new Error('请输入1-50的小组编号'));
+  } else {
+    if (value&&value>1&&value<50) {
+      callback();
+    }else{
+      callback(new Error('请输入1-50的小组编号'));
+    }
+    
+  }
+};
 
 export default {
   name: "viewer",
@@ -372,6 +406,7 @@ export default {
         phone: '',
         job_number: '',
         email: '',
+        group:'',//小组
         other: ''
       },
       viewerFormRules: {
@@ -399,6 +434,11 @@ export default {
           {required: false, message: '请输入工号（最多50个字符）', trigger: 'blur'},
           {max: 50, message: '请输入工号（最多50个字符）', trigger: 'blur'},
           {min: 1, message: '请输入工号（最多50个字符）', trigger: 'blur'}
+        ],
+        group:[
+          {required:false,validator:validGroup, trigger: 'blur'},
+          {max: 2, message: '请输入1-50的小组编号', trigger: 'blur'},
+          {min: 1, message: '请输入1-50的小组编号', trigger: 'blur'}
         ],
         other: [
           {max: 50, message: '请输入其他内容（最多50个字符）', trigger: 'blur'},
@@ -999,6 +1039,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.pr20{
+  display: inline-block;
+  padding-right: 6px;
+}
 .audienceBox{
   /deep/ .el-dialog__footer{
     padding-top: 0;
@@ -1362,5 +1406,10 @@ export default {
     font-weight: 400;
     line-height: 20px;
   }
+}
+/deep/.saasicon_help_m {
+  /* color: #1A1A1A; */
+  color: #999999;
+  font-size: 16px;
 }
 </style>
