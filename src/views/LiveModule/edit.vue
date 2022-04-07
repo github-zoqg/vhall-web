@@ -154,6 +154,24 @@
         </div>
         <div class="modeHide" v-if="$route.query.type==2"></div>
       </el-form-item>
+      <el-form-item label="云导播" required v-if="liveMode==2" class="max-column">
+        <div class="titleBox">
+            <span class="pageTitle">
+              <span v-if="!hasDelayPermission">云导播活动为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<span class="blue" @click.stop="showDelayMask = true">云导播活动</span></span>
+              <span v-else>云导播活动不能使用无延迟技术，点我了解<span class="blue" @click.stop="showDelayMask = true">云导播活动</span>
+              </span></span>
+          </div>
+          <div class="delay-director">
+            <div class="mode-common" :class="{delayActive: selectDirectorMode === 0}" @click.stop="handleSelectDirectorMode(0)">
+              <i class="vh-saas-iconfont vh-saas-line-mixeroff ft20"></i> 不启用云导播
+            </div>
+            <div v-if="webinarDelay" class="mode-director" :class="{delayActive: selectDirectorMode === 1}" @click.stop="handleSelectDirectorMode(1)">
+              <i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播</div>
+            <div v-if="!webinarDelay" class="mode-director noDirector">
+              <i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播<span class="no-open">未开通</span>
+            </div>
+          </div>
+      </el-form-item>
       <el-form-item v-if="(liveMode == 3 || liveMode == 6) && webinarType == 'live'" label="连麦人数" required :class="['invd-number', {'margin32': liveMode == 6}] ">
         <div class="titleBox">
           <span class="pageTitle">
@@ -620,6 +638,7 @@ export default {
       isDelay: false,
       showDelayMask: false,
       selectDelayMode: 'common',
+      selectDirectorMode: 0,
       formData: {
         title: '',
         date1: '',
@@ -995,6 +1014,10 @@ export default {
         this.zdy_inav_num = '1v5'
       }
     },
+    handleSelectDirectorMode(mode) {
+      if (this.title === '编辑') return
+      this.selectDirectorMode = mode
+    },
     getLiveBaseInfo(id, flag) {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(async res=>{
         if( res.code != 200 ){
@@ -1252,7 +1275,8 @@ export default {
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
         no_delay_webinar: this.liveMode == 6 ? 1 : this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status [分组直播默认无延迟]
         is_timing: this.webinarVideo ? (this.$route.meta.webinarType == 'vod' ? 0 : 1) : '',
-        inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webinarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
+        inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webinarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : '',
+        is_director: this.selectDirectorMode || 0
       };
       if (this.liveMode == 6) {
         data.auto_speak = Number(this.speakSwitch)
@@ -1340,7 +1364,7 @@ export default {
               //location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}`
             }
           })
-          
+
         } else {
           // 创建其它直播成功
           this.$message({
@@ -1732,13 +1756,13 @@ export default {
   .el-form-item.invd-number {
     max-width: 800px;
   }
-  .delay-select{
+  .delay-select,  .delay-director{
     min-width: 200px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     flex-direction: row;
-    .mode-common, .mode-delay{
+    .mode-common, .mode-delay, .mode-director{
       width: 183px;
       height: 86px;
       border: 1px solid #F2F2F2;
@@ -1773,15 +1797,15 @@ export default {
 
       }
     }
-    .noDelay{
+    .noDelay,  .noDirector{
       &:hover{
         cursor: unset;
       }
     }
-    .mode-delay{
+    .mode-delay, .mode-director{
       margin-left: 24px;
     }
-    .delayActive{
+    .delayActive, .directorActive{
       border-color: #FB3A32;
       position: relative;
       &::after{
