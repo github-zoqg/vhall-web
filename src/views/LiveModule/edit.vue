@@ -157,17 +157,17 @@
       <el-form-item label="云导播" required v-if="liveMode==2" class="max-column">
         <div class="titleBox">
             <span class="pageTitle">
-              <span v-if="!hasDelayPermission">云导播活动为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<span class="blue" @click.stop="showDelayMask = true">云导播活动</span></span>
-              <span v-else>云导播活动不能使用无延迟技术，点我了解<span class="blue" @click.stop="showDelayMask = true">云导播活动</span>
+              <span v-if="!webinarDirector">云导播活动为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">云导播活动</a></span>
+              <span v-else>云导播活动不能使用无延迟技术，点我了解<a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">云导播活动</a></span>
               </span></span>
           </div>
           <div class="delay-director">
-            <div class="mode-common" :class="{delayActive: selectDirectorMode === 0}" @click.stop="handleSelectDirectorMode(0)">
+            <div class="mode-common" :class="{directorActive: selectDirectorMode === 0}" @click.stop="handleSelectDirectorMode(0)">
               <i class="vh-saas-iconfont vh-saas-line-mixeroff ft20"></i> 不启用云导播
             </div>
-            <div v-if="webinarDelay" class="mode-director" :class="{delayActive: selectDirectorMode === 1}" @click.stop="handleSelectDirectorMode(1)">
+            <div v-if="webinarDirector" class="mode-director" :class="{ directorActive: selectDirectorMode === 1, disableBox: selectDelayMode == 'delay'}" @click.stop="handleSelectDirectorMode(1)">
               <i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播</div>
-            <div v-if="!webinarDelay" class="mode-director noDirector">
+            <div v-if="!webinarDirector" class="mode-director noDirector" :class="{disableBox: selectDelayMode == 'delay'}">
               <i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播<span class="no-open">未开通</span>
             </div>
           </div>
@@ -193,10 +193,10 @@
               </span></span>
           </div>
           <div class="delay-select">
-            <div class="mode-common" :class="{delayActive: selectDelayMode == 'common',noDelay:$route.params.id}" @click.stop="handleSelectDelayMode('common')"><i class="iconfont-v3 saasicon-changgui ft20"></i>
-  常规延迟≈5S</div>
-            <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay',noDelay:$route.params.id}" @click.stop="handleSelectDelayMode('delay')"><i class="iconfont-v3 saasicon-wuyanchi ft20"></i> 无延迟&lt;0.4S</div>
-            <div v-if="!webinarDelay" class="mode-delay noDelay"><i class="iconfont-v3 saasjishiqi ft20"></i> 无延迟&lt;0.4S<span class="no-open">未开通</span></div>
+            <div class="mode-common" :class="{delayActive: selectDelayMode == 'common',noDelay:$route.params.id}" @click.stop="handleSelectDelayMode('common')">
+              <i class="iconfont-v3 saasicon-changgui ft20"></i> 常规延迟≈5S</div>
+            <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay',noDelay:$route.params.id, disableBox: selectDirectorMode === 1&&liveMode==2 }" @click.stop="handleSelectDelayMode('delay')"><i class="iconfont-v3 saasicon-wuyanchi ft20"></i> 无延迟&lt;0.4S</div>
+            <div v-if="!webinarDelay" class="mode-delay noDelay" :class="{disableBox: selectDirectorMode === 1&&liveMode==2 }"><i class="iconfont-v3 saasjishiqi ft20"></i> 无延迟&lt;0.4S<span class="no-open">未开通</span></div>
           </div>
         </el-form-item>
       </template>
@@ -554,6 +554,15 @@ export default {
     webinarDelay() {
       // no.delay.webinar 1:有无延迟权限  0:无权限
       if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['no.delay.webinar'] == '1') {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    // admin无云导播活动权限
+    webinarDirector() {
+      //  webinar.director 1:有无延迟权限  0:无权限
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
         return true;
       } else {
         return false;
@@ -1007,6 +1016,7 @@ export default {
     },
     handleSelectDelayMode(mode) {
       if (this.title === '编辑') return
+      if (this.selectDirectorMode ===1&&this.liveMode==2) return
       this.selectDelayMode = mode
       // 切换直播延迟方式后，直播模式限制更新
       let inav_num = Number(this.zdy_inav_num.replace('1v', '')) + 1
@@ -1016,6 +1026,7 @@ export default {
     },
     handleSelectDirectorMode(mode) {
       if (this.title === '编辑') return
+      if (this.selectDelayMode == 'delay'&&mode== 1) return
       this.selectDirectorMode = mode
     },
     getLiveBaseInfo(id, flag) {
@@ -1024,6 +1035,7 @@ export default {
           return this.$message.warning(res.msg)
         }
         this.liveDetailInfo = res.data;
+        this.selectDirectorMode = this.liveDetailInfo.is_director || 0
         this.isDelay = this.liveDetailInfo.no_delay_webinar == 1 ? true : false
         this.selectDelayMode = this.hasDelayPermission && this.liveDetailInfo.no_delay_webinar == 1 ? 'delay' : 'common'
         this.formData.title = this.liveDetailInfo.subject;
@@ -1148,6 +1160,9 @@ export default {
           this.setTitleOrContentList([1], 'titleList')
           this.setTitleOrContentList([1], 'contentList')
         })
+      }
+      if (index == 2) {
+        this.selectDirectorMode = 0
       }
     },
     handleUploadSuccess(res, file) {
@@ -1819,6 +1834,9 @@ export default {
         background-size: 20px;
         background-position: center;
       }
+    }
+    .disableBox{
+      opacity: 0.3;
     }
   }
   .margin32 {
