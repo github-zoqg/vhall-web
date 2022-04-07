@@ -39,6 +39,11 @@ const router = [
         meta: { auth: true, title: '观众', name: 'viewerMgr', auth_key: 'white_list'}
       },
       {
+        path: 'groupingCard',
+        component: () => import('@/components/GroupingCard'),
+        meta: { auth: true, title: '拖拽卡片', name: 'viewerMgr', auth_key: 'white_list'}
+      },
+      {
         path: 'advertCard',
         component: () => import('@/views/LiveModule/Brands/advertisementCard'),
         meta: { auth: true, title: '广告', name: 'advertCard', auth_key: 'ad_recommend'}
