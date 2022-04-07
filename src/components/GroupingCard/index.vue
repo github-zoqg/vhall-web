@@ -6,9 +6,9 @@
       data-source="juju"
       :list="list"
       draggable=".item"
-      group="a">
+      :group="groupName">
       <div slot="header" class="btn-group" role="group">
-        <span>待分配({{list.length}})</span>
+        <span>{{groupName}}（{{list.length}}）</span>
         <div class="btn-group-right">
           <el-button type="text">解散</el-button>
           <el-button type="text" v-show="!batchGroupState" @click="batchGroupState = !batchGroupState">批量换组</el-button>
@@ -41,9 +41,18 @@ import draggable from "vuedraggable"
 let id=1
 export default {
   props:{
-    name:{
+    /**分组名称 */
+    groupName:{
       type:String,
-      default:''
+      default:'分组1'
+    },
+    list:{
+      type:Array,
+      default:()=>[
+        { name: "John 1", id: 0 },
+        { name: "Joao 2", id: 1 },
+        { name: "Jean 3", id: 2 }
+      ]
     }
   },
   components: {
@@ -51,13 +60,7 @@ export default {
   },
   data(){
     return{
-      batchGroupState:false,//批量换组
-      list: [
-        { name: "John 1", id: 0,show:false },
-        { name: "Joao 2", id: 1,show:false },
-        { name: "Jean 3", id: 2 ,show:false}
-      ],
-      id:2
+      batchGroupState:false//批量换组
     }
   },
   methods: {
