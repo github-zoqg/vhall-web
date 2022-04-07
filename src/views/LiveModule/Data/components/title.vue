@@ -9,13 +9,13 @@
           <img src="../../../../common/images/live/lives.gif" alt="">
           <b>直播 <span v-if="liveDetailInfo.webinar_type == 5">| 定时直播</span>
            <span v-if="hasDelayPermission && liveDetailInfo.no_delay_webinar && liveDetailInfo.webinar_type != 6">| 无延迟</span>
-           <span v-if="hasDirectorPermission && liveDetailInfo.is_director === 1"> | 云导播</span>
+           <span v-if="webinarDirector && liveDetailInfo.is_director === 1"> | 云导播</span>
            </b>
         </div>
         <div class="title-status grayColor" v-else>
           <b>{{ liveDetailInfo | actionTextTag }}
             <span v-if="liveDetailInfo.webinar_type != 6 && hasDelayPermission && liveDetailInfo.no_delay_webinar">| 无延迟</span>
-            <span v-if="hasDirectorPermission && liveDetailInfo.is_director === 1"> | 云导播</span>
+            <span v-if="webinarDirector && liveDetailInfo.is_director === 1"> | 云导播</span>
           </b>
         </div>
         <div class="title-text">
@@ -36,8 +36,18 @@ export default {
   data() {
     return {
       hasDelayPermission: false,
-      hasDirectorPermission: true,
     }
+  },
+  computed: {
+    // admin无云导播活动权限
+    webinarDirector() {
+      //  webinar.director 1:有无延迟权限  0:无权限
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   mounted() {
     const SAAS_VS_PES = sessionOrLocal.get('SAAS_VS_PES', 'localStorage')

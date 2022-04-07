@@ -64,7 +64,7 @@
                   {{item | liveTag}}
                   <span v-if="item.is_new_version == 3 && (item.webinar_type == 3 || item.webinar_type == 6) && item.zdy_inav_num > 1"> | 1v{{Number(item.inav_num)-1}}</span>
                   <span v-if="item.webinar_type != 6 && isDelay && item.no_delay_webinar == 1"> | 无延迟</span>
-                  <span v-if="hasDirectorPermission && item.is_director === 1"> | 云导播</span>
+                  <span v-if="webinarDirector && item.is_director === 1"> | 云导播</span>
                 </span>
                 <span class="hot">
                   <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
@@ -164,13 +164,21 @@ export default {
       loading: true,
       liveList: [],
       isTiming: 0,  //是否有定时直播权限
-      hasDirectorPermission: true,
     };
   },
   computed: {
     childPremission: function(){
       return sessionOrLocal.get('SAAS_V3_SON_PS') ? JSON.parse(sessionOrLocal.get('SAAS_V3_SON_PS')) : {};
-    }
+    },
+    // admin无云导播活动权限
+    webinarDirector() {
+      //  webinar.director 1:有无延迟权限  0:无权限
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   components: {
     PageTitle,

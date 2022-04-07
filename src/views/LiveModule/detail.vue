@@ -14,7 +14,7 @@
               {{ liveDetailInfo | liveTag }}
               <span v-if="liveDetailInfo.is_new_version == 3 && (liveDetailInfo.webinar_type == 3 || liveDetailInfo.webinar_type == 6) && liveDetailInfo.inav_num > 1"> | 1v{{Number(liveDetailInfo.inav_num)-1}}</span>
               <span v-if="liveDetailInfo.webinar_type != 6 && hasDelayPermission && isDelay"> | 无延迟</span>
-              <span v-if="hasDirectorPermission && isDirector"> | 云导播</span>
+              <span v-if="webinarDirector && isDirector"> | 云导播</span>
             </span>
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"> {{ liveDetailInfo.pv | unitCovert }}</i>
@@ -65,7 +65,7 @@
                 </div>
               </div>
               <div class="check-url director"
-                  v-if="hasDirectorPermission && isDirector"
+                  v-if="webinarDirector && isDirector"
                   @mouseout="handlerMouseOutDirector"
                   @mouseover="handleMouseInDirector">
                 <el-button round size="small"
@@ -141,7 +141,6 @@ export default {
       isDelay: false,
       isDirector: false,
       hasDelayPermission: false,
-      hasDirectorPermission: true,
       msg: '',
       userId: '',
       perssionInfo: {},
@@ -183,7 +182,16 @@ export default {
     },
     videoType() {  //定时直播视频格式 用来确定是否有暖场视频
       return this.liveDetailInfo.webinar_type == 5 && (this.liveDetailInfo.msg_url == '.MP3' || this.liveDetailInfo.msg_url == '.MAV')
-    }
+    },
+    // admin无云导播活动权限
+    webinarDirector() {
+      //  webinar.director 1:有无延迟权限  0:无权限
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   created(){
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
