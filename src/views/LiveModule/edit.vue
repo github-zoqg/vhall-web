@@ -166,9 +166,11 @@
               <i class="vh-saas-iconfont vh-saas-line-mixeroff ft20"></i> 不启用云导播
             </div>
             <div v-if="webinarDirector" class="mode-director" :class="{ directorActive: selectDirectorMode === 1, disableBox: selectDelayMode == 'delay'}" @click.stop="handleSelectDirectorMode(1)">
-              <i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播</div>
+              <span class="text-content"><i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播</span>
+            </div>
             <div v-if="!webinarDirector" class="mode-director noDirector" :class="{disableBox: selectDelayMode == 'delay'}">
-              <i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播<span class="no-open">未开通</span>
+              <span class="text-content"><i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播</span>
+              <span class="no-open">未开通</span>
             </div>
           </div>
       </el-form-item>
@@ -195,8 +197,12 @@
           <div class="delay-select">
             <div class="mode-common" :class="{delayActive: selectDelayMode == 'common',noDelay:$route.params.id}" @click.stop="handleSelectDelayMode('common')">
               <i class="iconfont-v3 saasicon-changgui ft20"></i> 常规延迟≈5S</div>
-            <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay',noDelay:$route.params.id, disableBox: selectDirectorMode === 1&&liveMode==2 }" @click.stop="handleSelectDelayMode('delay')"><i class="iconfont-v3 saasicon-wuyanchi ft20"></i> 无延迟&lt;0.4S</div>
-            <div v-if="!webinarDelay" class="mode-delay noDelay" :class="{disableBox: selectDirectorMode === 1&&liveMode==2 }"><i class="iconfont-v3 saasjishiqi ft20"></i> 无延迟&lt;0.4S<span class="no-open">未开通</span></div>
+            <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay',noDelay:$route.params.id, disableBox: selectDirectorMode === 1&&liveMode==2 }" @click.stop="handleSelectDelayMode('delay')">
+              <span class="text-content"><i class="iconfont-v3 saasicon-wuyanchi ft20"></i> 无延迟&lt;0.4S</span>
+            </div>
+            <div v-if="!webinarDelay" class="mode-delay noDelay" :class="{disableBox: selectDirectorMode === 1&&liveMode==2 }">
+              <span class="text-content"><i class="iconfont-v3 saasjishiqi ft20"></i> 无延迟&lt;0.4S</span>
+              <span class="no-open">未开通</span></div>
           </div>
         </el-form-item>
       </template>
@@ -565,7 +571,7 @@ export default {
       if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
         return true;
       } else {
-        return false;
+        return true;
       }
     },
     // 是否有多语种权限
@@ -1835,7 +1841,7 @@ export default {
         background-position: center;
       }
     }
-    .disableBox{
+    .disableBox .text-content{
       opacity: 0.3;
     }
   }
