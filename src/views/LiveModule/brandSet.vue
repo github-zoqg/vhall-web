@@ -18,10 +18,12 @@
       <el-tabs v-model="tabType" @tab-click="handleClick">
         <el-tab-pane label="标识设置" name="signSet" v-if="perssionInfo['ui.brand_setting'] > 0"></el-tab-pane>
         <el-tab-pane label="皮肤设置" name="skinSet" v-if="perssionInfo['webinar_skins']> 0"></el-tab-pane>
+        <el-tab-pane label="观看协议" name="viewingProtocol" v-if="perssionInfo['watch.viewing_protocol']> 0"></el-tab-pane>
       </el-tabs>
       <!-- 设置区域 -->
       <sign-set ref="signSetComp" v-show="tabType === 'signSet'"  v-if="perssionInfo['ui.brand_setting'] > 0" :brandConfig="brandOpen"></sign-set>
       <skin-set ref="skinSetComp" v-show="tabType === 'skinSet'" v-if="perssionInfo['webinar_skins'] > 0" :brandConfig="brandOpen"></skin-set>
+      <viewing-protocol ref="viewingProtocolComp" v-show="tabType === 'viewingProtocol'" v-if="perssionInfo['watch.viewing_protocol'] > 0" :brandConfig="brandOpen"></viewing-protocol>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
   </div>
@@ -31,6 +33,8 @@
 import PageTitle from '@/components/PageTitle';
 import SignSet from '../LiveModule/components/signSet';
 import SkinSet from '../LiveModule/components/skinSet';
+import ViewingProtocol from '../LiveModule/components/viewingProtocol';
+
 import beginPlay from '@/components/beginBtn';
 import {sessionOrLocal} from "@/utils/utils";
 export default {
@@ -39,7 +43,8 @@ export default {
     PageTitle,
     SignSet,
     SkinSet,
-    beginPlay
+    beginPlay,
+    ViewingProtocol
   },
   data() {
     return {
@@ -73,9 +78,12 @@ export default {
     this.userId = JSON.parse(sessionOrLocal.get('userId'))
     if (this.perssionInfo['ui.brand_setting'] > 0) {
       this.tabType = 'signSet'
-    } else {
+    } else if(this.perssionInfo['webinar_skins'] > 0){
       this.tabType = 'skinSet'
+    } else if(this.perssionInfo['watch.viewing_protocol'] > 0){
+      this.tabType = 'viewingProtocol'
     }
+    
   },
   beforeDestroy() {
     if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
@@ -111,10 +119,17 @@ export default {
           this.perssionInfo = permissions
           this.brandOpen = Boolean(permissions['is_brand_cofig'] == 1)
           this.type = this.brandOpen ? 1 : 2;
-          if (permissions['ui.brand_setting'] > 0) {
+          // if (permissions['ui.brand_setting'] > 0) {
+          //   this.tabType = 'signSet'
+          // } else {
+          //   this.tabType = 'skinSet'
+          // }
+          if (this.perssionInfo['ui.brand_setting'] > 0) {
             this.tabType = 'signSet'
-          } else {
+          } else if(this.perssionInfo['webinar_skins'] > 0){
             this.tabType = 'skinSet'
+          } else if(this.perssionInfo['watch.viewing_protocol'] > 0){
+            this.tabType = 'viewingProtocol'
           }
           this.$refs[`${this.tabType}Comp`].initComp();
           // this.handleLowerGradeHeart()
@@ -196,10 +211,17 @@ export default {
       this.perssionInfo = Object.assign(permission, data)
       this.brandOpen = Boolean(perssionInfo['is_brand_cofig'] == 1)
       this.type = this.brandOpen ? 1 : 2;
+      // if (this.perssionInfo['ui.brand_setting'] > 0) {
+      //   this.tabType = 'signSet'
+      // } else {
+      //   this.tabType = 'skinSet'
+      // }
       if (this.perssionInfo['ui.brand_setting'] > 0) {
         this.tabType = 'signSet'
-      } else {
+      } else if(this.perssionInfo['webinar_skins'] > 0){
         this.tabType = 'skinSet'
+      } else if(this.perssionInfo['watch.viewing_protocol'] > 0){
+        this.tabType = 'viewingProtocol'
       }
       this.$refs[`${this.tabType}Comp`].initComp();
     }
