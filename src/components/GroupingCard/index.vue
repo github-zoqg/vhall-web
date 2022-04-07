@@ -1,10 +1,10 @@
 <template>
   <div class="grouping-card">
     <draggable
-      id="first"
       class="list-group"
-      data-source="juju"
       :list="list"
+      @change="changeMove"
+      :sort="!sort"
       draggable=".item"
       :group="groupName">
       <div slot="header" class="btn-group" role="group">
@@ -17,7 +17,7 @@
         </div>
       </div>
       <div class="list-group-item item" v-for="item in list" :key="item.name">
-        <el-checkbox v-if="batchGroupState" :label="item.name" border size="medium" :name="name">{{item.name}}</el-checkbox>
+        <el-checkbox v-if="batchGroupState" :label="item.name" border size="medium" :name="groupName">{{item.name}}</el-checkbox>
         <div class="list-group-item-state" v-if="!batchGroupState">
           <el-popover
             placement="bottom"
@@ -43,8 +43,13 @@ export default {
   props:{
     /**分组名称 */
     groupName:{
+      require:false,
       type:String,
       default:'分组1'
+    },
+    sort:{
+      type:Boolean,
+      default:false
     },
     list:{
       type:Array,
@@ -66,7 +71,10 @@ export default {
   methods: {
     /*换组*/
     changeGroup(){
-
+      this.$emit('changeGroup',data)
+    },
+    changeMove(data){
+      this.$emit('change',data)
     }
   }
 }
