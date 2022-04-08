@@ -5,7 +5,7 @@
       @change="changeMove"
       :sort="!sort"
       draggable=".item"
-      :group="groupName">
+      group="a">
       <div slot="header"
         class="btn-group"
         role="group">
