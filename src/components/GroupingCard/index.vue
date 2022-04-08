@@ -11,14 +11,15 @@
         role="group">
         <span>{{groupName}}（{{list.length}}）</span>
         <div class="btn-group-right">
-          <el-button type="text">解散</el-button>
-          <el-button type="text"
-            v-show="!batchGroupState"
-            @click="batchGroupState = !batchGroupState">批量换组</el-button>
-          <el-button type="text"
-            @click="batchGroupState = false">取消</el-button>
-          <el-button type="text"
-            @click="changeGroup">换组</el-button>
+          <span v-if="!groupType"><i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>批量分配</span>
+          <span v-if="groupType"><i class="vh-saas-iconfont vh-saas-a-line-dissolutiongrouping pr4"></i>解散</span>
+          <span v-show="groupType&&!batchGroupState"
+            @click="batchGroupState = !batchGroupState">
+            <i class="vh-saas-iconfont vh-saas-a-line-batchChangegroup pr4"></i>批量换组</span>
+          <span v-show="batchGroupState"
+            @click="batchGroupState = false"><i class="el-icon el-icon-close cancel-size"></i>取消</span>
+          <span v-show="groupType&&batchGroupState"
+            @click="changeGroup"><i class="vh-saas-iconfont vh-saas-a-line-Ingroup pr4"></i>换组</span>
         </div>
       </div>
       <div class="list-group-item item"
@@ -57,6 +58,11 @@ export default {
       require: false,
       type: String,
       default: '分组1'
+    },
+    //0待分组1其他组
+    groupType: {
+      type: [String, Number],
+      default: 1
     },
     /**分组人数 */
     number: {
@@ -98,6 +104,9 @@ export default {
 .grouping-card {
   border: 1px solid #ccc;
   background: #f7f7f7;
+  .pr4 {
+    padding-right: 4px;
+  }
   .btn-group {
     padding: 0 12px;
     height: 40px;
@@ -106,6 +115,17 @@ export default {
     overflow: hidden;
     .btn-group-right {
       float: right;
+      span {
+        padding-left: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        &:hover {
+          color: #fb3a32;
+        }
+      }
+      .cancel-size {
+        font-size: 16px;
+      }
     }
   }
   .list-group {
