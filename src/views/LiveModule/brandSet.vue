@@ -23,7 +23,7 @@
       <!-- 设置区域 -->
       <sign-set ref="signSetComp" v-show="tabType === 'signSet'"  v-if="perssionInfo['ui.brand_setting'] > 0" :brandConfig="brandOpen"></sign-set>
       <skin-set ref="skinSetComp" v-show="tabType === 'skinSet'" v-if="perssionInfo['webinar_skins'] > 0" :brandConfig="brandOpen"></skin-set>
-      <viewing-protocol ref="viewingProtocolComp" v-show="tabType === 'viewingProtocol'" v-if="perssionInfo['watch.viewing_protocol'] > 0" :brandConfig="brandOpen"></viewing-protocol>
+      <viewing-protocol ref="viewingProtocolComp" :tabType="tabType" v-show="tabType === 'viewingProtocol'" v-if="perssionInfo['watch.viewing_protocol'] > 0" :brandConfig="brandOpen"></viewing-protocol>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
   </div>

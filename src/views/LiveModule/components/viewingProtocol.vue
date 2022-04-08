@@ -3,7 +3,7 @@
     <div class="sign--set--main">
       <div class="sign--set--left">
         <el-form :model="viewingProtocolForm" ref="viewingProtocolForm" :rules="viewingProtocolFormRules" label-width="88px">
-          <el-form-item label="观看协议" prop="organizers_status">
+          <el-form-item label="观看协议" prop="is_open">
             <div class="switch__box">
               <el-switch
                 v-model="viewingProtocolForm.is_open"
@@ -26,17 +26,17 @@
           <el-form-item class="margin32" prop="content" :label="`协议内容`">
             <v-editor class="editor-wrap" save-type='live' :placeholder="`请输入协议内容`" :isReturn=true ref="unitImgTxtEditor" v-model="viewingProtocolForm.content"></v-editor>
           </el-form-item>
-          <el-form-item label="进入规则">
-            <div class="switch__box">
+          <el-form-item label="进入规则" prop="rule">
+            <!-- <div class="switch__box"> -->
               <el-radio-group v-model="viewingProtocolForm.rule">
                 <el-radio :label="0">同意后进入直播间</el-radio>
                 <el-radio :label="1">阅读后进入直播间</el-radio>
                 
               </el-radio-group>
-            </div>
+            <!-- </div> -->
             
           </el-form-item>
-          <el-form-item label="协议声明">
+          <el-form-item label="协议声明"  prop="statement_status">
             <div class="switch__box">
               <el-switch
                 v-model="viewingProtocolForm.statement_status"
@@ -50,11 +50,9 @@
             </div>
           </el-form-item>
 
-          <el-form-item class="provicy-item" v-if="viewingProtocolForm.statement_status">
+          <el-form-item class="provicy-item" v-show="viewingProtocolForm.statement_status"  prop="statement_content">
             <!-- 隐私声明 -->
-            <template>
-              <VhallInput :maxlength="100" class="title-inform" show-word-limit v-model="viewingProtocolForm.statement_content" autocomplete="off"  placeholder="我已阅读并同意" > </VhallInput>
-            </template>
+            <VhallInput :maxlength="100" class="title-inform" show-word-limit v-model="viewingProtocolForm.statement_content" autocomplete="off"  placeholder="我已阅读并同意" > </VhallInput>
           </el-form-item>
           
           <template v-if="viewingProtocolForm.statement_status">
@@ -62,10 +60,7 @@
               
               <el-form-item class="item-title" :key="'title'+key">
                 <template>
-                  <!-- <div class="title-input-div">
-                    
-                  </div> -->
-                  <VhallInput :maxlength="100" class="title-inform" show-word-limit v-model="val.title" autocomplete="off" placeholder="观看协议"  > </VhallInput>
+                  <VhallInput @input="handleInput($event, key)" :maxlength="100" class="title-inform" show-word-limit v-model="val.title" autocomplete="off" placeholder="观看协议"  > </VhallInput>
                   <i
                     class="el-icon-remove-outline optIcon"
                     @click="deleteOptions"
@@ -113,8 +108,8 @@ import BrandSetPreview from '../../LiveModule/components/brandSetPreview';
 import Env from "@/api/env";
 import VEditor from '@/components/Tinymce';
 export default {
-  name: "signSet.vue",
-  props: ['brandConfig'],
+  name: "viewingProtocol.vue",
+  props: ['brandConfig', 'tabType'],
   components: {
     Upload,
     BrandSetPreview,
@@ -130,17 +125,26 @@ export default {
         logo_url: null,
         skip_url: null,
         content: '',
-        is_open: true,
-        rule: true,
-        statement_content: '',
+        is_open: 0,
+        rule: 0,
+        statement_content: '我已同意并阅读观看协议',
         statement_info: null
+      },
+      
+      brandType: 1,
+      domain_url: '',
+      firstProptocol: {
+        title: '观看协议',
+        link: ''
+      },
+      secondProptocol: {
+        title: '观看协议2',
+        link: ''
       },
       statementList: [{
         title: '观看协议',
         link: ''
       }],
-      brandType: 1,
-      domain_url: '',
       viewingProtocolFormRules: {
         organizers_status: [
           { required: false, message: '请选择标志', trigger: 'change'}
@@ -159,23 +163,73 @@ export default {
       }
     };
   },
+  mounted(){
+    this.$nextTick(() => {
+      console.log(this.$refs, 'val')
+      this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : ''
+    })
+  },
   watch: {
     '$parent.type'() {
       if (this.brandType) {
         this.initComp();
       }
+    },
+    tabType(newVal, oldVal) {
+      
+      this.$nextTick(() => {
+        console.log(newVal, this.$refs, this.$refs['viewingProtocolForm'], 'val')
+        if (newVal === 'viewingProtocol') {
+          this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
+        }
+      })
+      
+    },
+    // 'this.viewingProtocolForm.statement_content'(newVal, oldVal) {
+    //   if (newVal && newVal.match('')) {
+    //     this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
+    //   }
+    // },
+    statementList : {
+      handler(newVal) {
+        console.log(newVal);
+        if (newVal.length === 2) {
+          this.firstProptocol = newVal[0]
+          this.secondProptocol = newVal[0]
+        }else if(newVal.length === 1){
+          this.firstProptocol = newVal[0]
+        }
+      },
+      immediate: true,
+      deep: true // 表示开启深度监听
+      
     }
   },
   methods: {
+    handleInput(e, value){
+      console.log(e, value)
+    },
     deleteOptions(){
       this.statementList.pop()
+      // if(this.statementList > 1){
+      //   this.viewingProtocolForm.statement_content += '观看协议'
+      // }else{
+      //   this.viewingProtocolForm.statement_content -= '及观看协议2'
+      // }
     },
     privacyAdd(){
       let statementObj = {
-        title: '观看协议',
+        title: '观看协议2',
         link: ''
       }
+      
       this.statementList.push(statementObj)
+      this.viewingProtocolForm.statement_content += '及观看协议2'
+      // if(this.statementList > 1){
+      //   this.viewingProtocolForm.statement_content += '观看协议2'
+      // }else{
+      //   this.viewingProtocolForm.statement_content += '及观看协议2'
+      // }
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
@@ -255,34 +309,33 @@ export default {
         type: this.brandType,
         webinar_id: this.brandType == 1 ? this.$route.params.str : ''
       }
-      this.$fetch('getInterWebinarTag', this.$params(params)).then(res => {
+      this.$fetch('getAgreement', this.$params(params)).then(res => {
         console.log(res);
+        
         if (res && res.code === 200) {
           if (res.data) {
             this.viewingProtocolForm = res.data;
           } else {
-            this.viewingProtocolForm = {
-              organizers_status: null,
-              reserved_status: null,
-              view_status: null,
-              logo_url: null,
-              skip_url: null
-            };
+            this.$nextTick(() => {
+              console.log(newVal, this.$refs, this.$refs['viewingProtocolForm'], 'val')
+              if (newVal === 'viewingProtocol') {
+                this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
+              }
+            })
           }
-          this.domain_url = res.data.logo_url || '';
-          try {
-            this.$refs.brandSetPreviewComp.signSetVoInfo(this.viewingProtocolForm, this.domain_url);
-          } catch (e) {
-            console.log(e);
-          }
+          // this.domain_url = res.data.logo_url || '';
+          // try {
+          //   this.$refs.brandSetPreviewComp.signSetVoInfo(this.viewingProtocolForm, this.domain_url);
+          // } catch (e) {
+          //   console.log(e);
+          // }
         } else {
-          this.viewingProtocolForm = {
-            organizers_status: null,
-            reserved_status: null,
-            view_status: null,
-            logo_url: null,
-            skip_url: null
-          };
+          this.$nextTick(() => {
+            console.log(newVal, this.$refs, this.$refs['viewingProtocolForm'], 'val')
+            if (newVal === 'viewingProtocol') {
+              this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
+            }
+          })
         }
       }).catch(err=>{
         console.log(err);
@@ -294,12 +347,14 @@ export default {
     },
     // 保存
     signSetSave() {
+      console.log(this.statementList, 'this.statementList')
       this.$refs.viewingProtocolForm.validate((valid) => {
         if(valid) {
+          this.viewingProtocolForm.statement_info = JSON.stringify(this.statementList)
           console.log(this.viewingProtocolForm, 'viewingProtocolForm');
           let params = Object.assign(this.viewingProtocolForm, {webinar_id: this.$route.params.str || '', type: this.brandType});
           let signObj = {}
-          this.$fetch('setInterWebinarTag', this.$params(params)).then(res => {
+          this.$fetch('saveAgreement', this.$params(params)).then(res => {
             this.setReportData(this.$params(params))
             this.$message({
               message:  `保存基本设置成功`,
@@ -460,7 +515,7 @@ export default {
 .optIcon{
   position: absolute;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 20px;
   color: #666666;
   vertical-align: middle;
   display: none;
