@@ -571,7 +571,7 @@ export default {
       if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
         return true;
       } else {
-        return true;
+        return false;
       }
     },
     // 是否有多语种权限
