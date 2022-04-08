@@ -34,7 +34,7 @@
           </div> -->
         </div>
         <div class="choose-btn">
-          <el-button type="primary" round @click="goLive" class="length152" v-preventReClick>{{ arr[1] == 1 ? '发起直播' : '进入直播'}}</el-button>
+          <el-button type="primary" round @click="goLive(2)" class="length152" v-preventReClick>{{ arr[1] == 1 ? '发起直播' : '进入直播'}}</el-button>
           <iframe src="" class="hide" frameborder="0" scrolling="no" id="start_live"></iframe>
         </div>
         <div :class="['v-download', {'css': executeType === 'ctrl'} ]" v-if="chooseType === 'client' && downloadUrl">
@@ -42,6 +42,59 @@
         </div>
       </div>
     </div>
+     <el-dialog
+        title="云导播推流方式"
+        :visible.sync="dialogDirectorVisible"
+        :close-on-click-modal=false
+        :close-on-press-escape=false
+        width="480px"
+      >
+      <div class="director-dialog director-types-dialog">
+        <div class="director-types-boxs">
+          <div class="director-box" :class="{ active: selectDirectorMode === 1}" @click.stop="handleSelectDirectorMode(1)">
+            <div class="avatar">
+              <img src="../../common/images/icon/vh-saas-color-Video.png" alt="">
+            </div>
+            <div>
+              <div class="title">以主持人身份发起直播</div>
+              <div class="desc">以主持人身份进入直播间，发起并管理直播</div>
+            </div>
+          </div>
+          <div class="director-box" :class="{ active: selectDirectorMode === 2, closeDirectorStatus: !directorStatus}" @click.stop="handleSelectDirectorMode(2)">
+            <div class="avatar">
+            <img src="../../common/images/icon/vh-saas-color-mixer-on.png" alt="">
+            </div>
+            <div class="info">
+              <div class="title">以视频推流形式推流到云导播</div>
+              <div class="desc">仅将云导播视频流推到直播间</div>
+            </div>
+            <div class="corner" v-if="!directorStatus">未开启云导播台</div>
+          </div>
+        </div>
+        <el-button type="primary" round @click="openLive" class="btn" v-preventReClick>确认</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+        title="选择推流机位"
+        :visible.sync="dialogDirectorSeatVisible"
+        :close-on-click-modal=false
+        :close-on-press-escape=false
+        width="480px"
+      >
+      <div class="director-dialog director-seats-dialog">
+        <div class="director-seats-boxs">
+           <div class="director-seats-box"
+           v-for="item of seatList"
+           :key="item.room_id"
+           @click="selectSeat(item)"
+           :class="{ used: item.status === 1, selected: curSelected === item.room_id }">
+              {{item.name}}
+              <div class="corner" v-if="item.status === 1">已占用</div>
+           </div>
+        </div>
+        <el-button type="primary" round @click="toDirector" class="btn" v-preventReClick>确认</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -70,8 +123,26 @@ export default {
       delayStatus: 0,
       hasDelayPermission: false,
       groupLiveStatus: 0,
-      gray_id: null
+      gray_id: null,
+      dialogDirectorVisible: false,
+      is_director: false,
+      directorStatus: false,  //云导播台开启状态
+      seatList: [], //机位列表
+      selectDirectorMode: 1,
+      dialogDirectorSeatVisible: false,
+      curSelected: null
     };
+  },
+  computed: {
+    // admin无云导播活动权限
+    webinarDirector() {
+      //  webinar.director 1:有无延迟权限  0:无权限
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   async created(){
     this.executeType = this.$route.query.type;
@@ -113,6 +184,32 @@ export default {
           this.delayStatus = res.data.no_delay_webinar
           // 是否分组直播
           this.groupLiveStatus = res.data.webinar_type == 6
+          //是否云导播
+          this.is_director = res.data.is_director === 1
+          if(this.webinarDirector && this.is_director){
+            this.getLiveDirectorStatus()
+            this.getLiveDirectorSeatList()
+          }
+        }
+      }).catch(res=>{
+        console.log(res);
+      })
+    },
+    getLiveDirectorStatus() {
+      this.$fetch('getLiveDirectorStatus', {webinar_id: this.$route.params.str}).then(res=>{
+        if( res.code == 200 ){
+          //云导播台是否开启
+          this.directorStatus = res.data.director_status === 1
+        }
+      }).catch(res=>{
+        console.log(res);
+      })
+    },
+    getLiveDirectorSeatList() {
+      this.$fetch('getLiveDirectorSeatList', {webinar_id: this.$route.params.str}).then(res=>{
+        if( res.code == 200 ){
+          //云导播台是否开启
+         this.seatList = res.data.list || []
         }
       }).catch(res=>{
         console.log(res);
@@ -132,36 +229,40 @@ export default {
       if (this.groupLiveStatus) return
       this.chooseType = type;
     },
-    goLive(){
-      if(this.chooseType !== 'client') {
-        // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
-        this.$fetch('checkLive', this.$params({
-          webinar_id: this.arr[0]
-        }), {
-          platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7,
-          'gray-id': this.gray_id
-        }).then((res) => {
-          if(res && res.code === 200) {
-            /*  this.$router.push({
-              path: this.watchUrl
-            }) */
-            console.error(this.watchUrl);
-            window.location.href = this.watchUrl;
-          }
-        }).catch(res => {
-          this.$message({
-            message: res.msg || "检测异常",
-            showClose: true,
-            // duration: 0,
-            type: 'error',
-            customClass: 'zdy-info-box'
+    goLive(origin = 1){
+      if(this.chooseType !== 'client' && this.webinarDirector && this.is_director && origin !=1 ){
+        this.dialogDirectorVisible = true
+      }else{
+        if(this.chooseType !== 'client') {
+          // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
+          this.$fetch('checkLive', this.$params({
+            webinar_id: this.arr[0]
+          }), {
+            platform: this.executeType === 'ctrl' ? sessionOrLocal.get('platform', 'localStorage') || 17 : 7,
+            'gray-id': this.gray_id
+          }).then((res) => {
+            if(res && res.code === 200) {
+              /*  this.$router.push({
+                path: this.watchUrl
+              }) */
+              console.error(this.watchUrl);
+              window.location.href = this.watchUrl;
+            }
+          }).catch(res => {
+            this.$message({
+              message: res.msg || "检测异常",
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+            console.log(res);
           });
-          console.log(res);
-        });
-      } else {
-        // 客户端启动
-        document.querySelector('#start_live').setAttribute('src', this.scheme);
-        document.querySelector('#start_live').click();
+        } else {
+          // 客户端启动
+          document.querySelector('#start_live').setAttribute('src', this.scheme);
+          document.querySelector('#start_live').click();
+        }
       }
     },
     getRoleUrl() {
@@ -217,6 +318,25 @@ export default {
         }
       })
     },
+    //选择导播模式 1：主持人         2：视频推流云导播
+    handleSelectDirectorMode(mode){
+      if(!this.directorStatus) return
+      this.selectDirectorMode = mode
+    },
+    openLive(){
+      if(this.selectDirectorMode === 2){
+        this.dialogDirectorSeatVisible = true
+      }else{
+        this.goLive(1)
+      }
+    },
+    selectSeat(info){
+      if(info.status === 1) return
+      this.curSelected = info.room_id
+    },
+    toDirector(){
+
+    }
   },
   mounted() {
     console.warn('最终的url', location.search == '', location.search);
@@ -378,4 +498,125 @@ export default {
     cursor: unset;
   }
 }
+.director-dialog{
+  padding-bottom: 24px;
+
+  .btn{
+    width: 160px;
+    height: 40px;
+    background: #FB3A32;
+    border-radius: 20px;
+    margin: 24px auto 0;
+    display: block;
+  }
+}
+.director-types-dialog{
+  .director-types-boxs{
+    .director-box{
+      width: 416px;
+      height: 80px;
+      background: #F2F2F2;
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      margin-bottom: 16px;
+      cursor: pointer;
+
+      &.active{
+        border: 1px solid #FB3A32;
+        background-color: #fff;
+      }
+      &.closeDirectorStatus{
+        position: relative;
+
+        .avatar, .info{
+          opacity: 0.5;
+        }
+        .corner{
+          height: 18px;
+          background: #999999;
+          border-radius: 0px 12px 0px 4px;
+          position: absolute;
+          padding: 0 4px;
+          left: 0;
+          bottom: 0;
+          font-size: 12px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: #FFFFFF;
+          line-height: 17px;
+        }
+      }
+      .avatar{
+        margin-right: 24px;
+
+        img{
+          width: 44px;
+          height: 44px;
+        }
+      }
+      .title{
+        font-size: 16px;
+        font-family: PingFangSC-Medium, PingFang SC;
+        font-weight: 500;
+        color: #1A1A1A;
+        line-height: 22px;
+      }
+      .desc{
+        font-size: 14px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #666666;
+        line-height: 22px;
+      }
+    }
+  }
+}
+.director-seats-dialog{
+  .director-seats-boxs{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    .director-seats-box{
+      margin-bottom: 16px;
+      width: 92px;
+      height: 80px;
+      background: #F2F2F2;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      text-align: center;
+      line-height: 80px;
+      font-size: 14px;
+      color: #222;
+
+      &.used{
+        background: #FFF0EF;
+        color: #999;
+      }
+      &.selected{
+        background-color: #fff;
+        box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+        border: 1px solid #FB3A32;
+      }
+      .corner{
+        height: 18px;
+        background: #FB3A32;
+        border-radius: 0px 12px 0px 4px;
+        position: absolute;
+        padding: 0 4px;
+        left: 0;
+        bottom: 0;
+        font-size: 12px;
+        font-family: PingFangSC-Regular, PingFang SC;
+        font-weight: 400;
+        color: #FFFFFF;
+        line-height: 17px;
+      }
+    }
+  }
+}
+
 </style>

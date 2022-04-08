@@ -7,9 +7,14 @@
         <div class="inner">
           <div class="thumb">
             <img :src="liveDetailInfo.img_url" alt="">
-            <span class="liveTag"><label class="live-status" v-if="liveDetailInfo.webinar_state == 1"><img src="../../common/images/live.gif" alt=""></label>
-              {{ liveDetailInfo | liveTag }}<span v-if="liveDetailInfo.is_new_version == 3 && (liveDetailInfo.webinar_type == 3 || liveDetailInfo.webinar_type == 6) && liveDetailInfo.inav_num > 1
-              "> | 1v{{Number(liveDetailInfo.inav_num)-1}}</span><span v-if="liveDetailInfo.webinar_type != 6 && hasDelayPermission && isDelay"> | 无延迟</span>
+            <span class="liveTag">
+              <label class="live-status" v-if="liveDetailInfo.webinar_state == 1">
+                <img src="../../common/images/live.gif" alt="">
+              </label>
+              {{ liveDetailInfo | liveTag }}
+              <span v-if="liveDetailInfo.is_new_version == 3 && (liveDetailInfo.webinar_type == 3 || liveDetailInfo.webinar_type == 6) && liveDetailInfo.inav_num > 1"> | 1v{{Number(liveDetailInfo.inav_num)-1}}</span>
+              <span v-if="liveDetailInfo.webinar_type != 6 && hasDelayPermission && isDelay"> | 无延迟</span>
+              <span v-if="webinarDirector && isDirector"> | 云导播</span>
             </span>
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"> {{ liveDetailInfo.pv | unitCovert }}</i>
@@ -56,6 +61,31 @@
                   <div class="copy-item">
                     <el-button round size="small" type="primary" data-clipboard-target="#copy-val" @click="doCopy" class="copy-link">复制</el-button>
                     <el-button round size="small" @click="openLink">打开页面</el-button>
+                  </div>
+                </div>
+              </div>
+              <div class="check-url director"
+                  v-if="webinarDirector && isDirector"
+                  @mouseout="handlerMouseOutDirector"
+                  @mouseover="handleMouseInDirector">
+                <el-button round size="small"
+                  class="check-btn">云导播</el-button>
+                <div class="float-dom-director"
+                  v-if="showFloatDirector"
+                  @mouseout="handlerMouseOutDirector"
+                  @mouseover="handleChildOverDirector">
+                  <div>多路机位+异地推流，画中画分屏直播</div>
+                  <div class="flex-box">
+                    <span>分辨率</span>
+                    <el-select v-model="dpi" placeholder="请选择" :popper-append-to-body="false">
+                      <el-option label="1280*720" :value="1"></el-option>
+                      <el-option label="1920*1080" :value="2"></el-option>
+                    </el-select>
+                  </div>
+                  <div class="indent">设置后，分辨率不支持重复修改</div>
+                  <div class="btns">
+                    <el-button round size="small" type="primary" @click="setDpi">确定</el-button>
+                    <el-button round size="small" @click="showFloatDirector = false">取消</el-button>
                   </div>
                 </div>
               </div>
@@ -109,6 +139,7 @@ export default {
     return {
       lowerGradeInterval: null,
       isDelay: false,
+      isDirector: false,
       hasDelayPermission: false,
       msg: '',
       userId: '',
@@ -125,6 +156,7 @@ export default {
         webinar_type: 0
       },
       showFloat: false,
+      showFloatDirector: false,
       timer: null,
       link: `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
       h5WapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
@@ -133,7 +165,8 @@ export default {
         hours: 0,
         minute: 0,
         second: 0
-      }
+      },
+      dpi: 1
     };
   },
   computed: {
@@ -149,7 +182,16 @@ export default {
     },
     videoType() {  //定时直播视频格式 用来确定是否有暖场视频
       return this.liveDetailInfo.webinar_type == 5 && (this.liveDetailInfo.msg_url == '.MP3' || this.liveDetailInfo.msg_url == '.MAV')
-    }
+    },
+    // admin无云导播活动权限
+    webinarDirector() {
+      //  webinar.director 1:有无延迟权限  0:无权限
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   created(){
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -214,6 +256,22 @@ export default {
       if (this.handleTimer) clearTimeout(this.handleTimer)
       this.handleTimer = setTimeout(() => {
         this.showFloat = false
+      }, 400)
+    },
+    handleChildOverDirector () {
+      if (this.showFloatDirector) {
+        clearTimeout(this.handleTimerDirector)
+      }
+      this.showFloatDirector = true
+    },
+    handleMouseInDirector () {
+      if (this.handleTimerDirector) clearTimeout(this.handleTimerDirector)
+      this.showFloatDirector = true
+    },
+    handlerMouseOutDirector () {
+      if (this.handleTimerDirector) clearTimeout(this.handleTimerDirector)
+      this.handleTimerDirector = setTimeout(() => {
+        this.showFloatDirector = false
       }, 400)
     },
     // 字符截取显示...兼容ie，用js
@@ -281,6 +339,7 @@ export default {
           this.downTime(formateDates(nowTime).replace(/-/g,'/'), res.data.start_time.replace(/-/g,'/'));
         }
         this.isDelay = res.data.no_delay_webinar == 1 ? true : false
+        this.isDirector = res.data.is_director == 1 ? true : false
       }).catch(res=>{
         this.$message({
           message: res.msg || "获取信息失败",
@@ -563,6 +622,13 @@ export default {
           return `0天0时0分0秒`;
         }
       }
+    },
+    //设置导播分辨率
+    setDpi(){
+      this.$fetch('lowerGrade', {}).then(res => {
+
+      }).catch(res => {
+      })
     }
   }
 };
@@ -761,6 +827,42 @@ export default {
   }
 }
 
+.float-dom-director{
+  position: absolute;
+  top: 40px;
+  left: -40px!important;
+  width: 358px;
+  height: 217px;
+  border-radius: 4px;
+  padding: 25px 32px;
+  background: #fff;
+  border: 1px solid #F2F2F2;
+  transform-origin: center top;
+  z-index: 2001;
+  color: #666;
+  line-height: 1.4;
+  text-align: justify;
+  font-size: 14px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  word-break: break-all;
+  .flex-box{
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    span{
+      margin-right: 10px;
+    }
+  }
+  .indent{
+    text-indent: 50px;
+    margin-top: 8px;
+  }
+  .btns{
+    margin-top: 24px;
+    text-align: right;
+  }
+}
+
 .mainColor{
   color: #1A1A1A;
 }
@@ -786,6 +888,9 @@ export default {
   width: 62px;
   height: 32px;
   position: relative;
+}
+.director{
+  margin-left: 8px;
 }
 .font-20{
   font-size: @20;

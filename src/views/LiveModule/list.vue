@@ -57,8 +57,15 @@
             <div @click="toLiveDetail(item.webinar_id)" class="inner">
               <!--  @click.prevent.stop="toDetail(item.webinar_id)" -->
               <div class="top">
-                <span class="liveTag"><label class="live-status" v-if="item.webinar_state == 1">
-                  <img src="../../common/images/live.gif" alt=""></label>{{item | liveTag}}<span v-if="item.is_new_version == 3 && (item.webinar_type == 3 || item.webinar_type == 6) && item.zdy_inav_num > 1"> | 1v{{Number(item.inav_num)-1}}</span><span v-if="item.webinar_type != 6 && isDelay && item.no_delay_webinar == 1"> | 无延迟</span></span>
+                <span class="liveTag">
+                  <label class="live-status" v-if="item.webinar_state == 1">
+                    <img src="../../common/images/live.gif" alt="">
+                  </label>
+                  {{item | liveTag}}
+                  <span v-if="item.is_new_version == 3 && (item.webinar_type == 3 || item.webinar_type == 6) && item.zdy_inav_num > 1"> | 1v{{Number(item.inav_num)-1}}</span>
+                  <span v-if="item.webinar_type != 6 && isDelay && item.no_delay_webinar == 1"> | 无延迟</span>
+                  <span v-if="webinarDirector && item.is_director === 1"> | 云导播</span>
+                </span>
                 <span class="hot">
                   <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
                 </span>
@@ -156,13 +163,22 @@ export default {
       ],
       loading: true,
       liveList: [],
-      isTiming: 0  //是否有定时直播权限
+      isTiming: 0,  //是否有定时直播权限
     };
   },
   computed: {
     childPremission: function(){
       return sessionOrLocal.get('SAAS_V3_SON_PS') ? JSON.parse(sessionOrLocal.get('SAAS_V3_SON_PS')) : {};
-    }
+    },
+    // admin无云导播活动权限
+    webinarDirector() {
+      //  webinar.director 1:有无延迟权限  0:无权限
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   components: {
     PageTitle,
@@ -211,7 +227,7 @@ export default {
           } else {
             sessionOrLocal.removeItem('WEBINAR_PES');
           }
-                  
+
           const { href } = this.$router.resolve({path: '/live/edit', query: {id: id, type: 3 }});
           window.open(href, '_blank');
         }
@@ -250,12 +266,12 @@ export default {
       sessionOrLocal.set('WEBINAR_PES', perssionInfo, 'localStorage');
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
       // const SAAS_VS_PES = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))
-      
+
       this.vodPerssion = perssionInfo['ui.upload_video_as_demand'];
       this.isTiming = perssionInfo['webinar.timing']
       const permission = perssionInfo ? perssionInfo['no.delay.webinar'] : 0
       this.isDelay = permission == 1 ? true : false
-      
+
     },
     toLiveDetail(webinar_id) {
       this.$vhall_paas_port({
