@@ -28,6 +28,14 @@
           :label="item.label"
           :show-overflow-tooltip="!item.customTooltip"
         >
+          <template slot="header" v-if="item.showHeader">
+            <span class="pr20">小组</span>
+            <el-tooltip
+            :content="item.headerTooltip"
+            v-tooltipMove>
+            <i :class="`iconfont-v3 saasicon_help_m gary`"></i>
+          </el-tooltip>
+          </template>
           <template slot-scope="scope">
             <span>{{ scope.row[item.isEdit] }}</span>
             <div v-if="item.key == 'transcode_status_text'">
@@ -194,6 +202,7 @@
           align="left"
           v-if="isHandle && scene !== 'development' && scene !== 'downloadList'"
           :width="width"
+          :fixed="fixedBtn"
           class="btn-rows"
         >
           <template slot-scope="scope">
@@ -256,6 +265,10 @@ export default {
     width: {
       type: [Number, String],
       default: 300,
+    },
+    fixedBtn:{
+      type:String,
+      default:null
     },
     maxHeight: {
       type: [Number, String],
@@ -387,6 +400,10 @@ export default {
 <style lang="less" scoped>
 .data-list {
   min-height: 650px;
+  .pr20{
+    display: inline-block;
+    padding-right: 6px;
+  }
   &.no-height {
     min-height: 0;
     /deep/.el-table {
@@ -604,5 +621,10 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+/deep/.saasicon_help_m {
+  /* color: #1A1A1A; */
+  color: #999999;
+  font-size: 16px;
 }
 </style>

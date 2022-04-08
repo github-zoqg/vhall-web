@@ -9,11 +9,11 @@
       <div class="table__container">
         <!-- 操作栏 -->
         <div class="operaBox">
-          <el-button type="primary" round @click.prevent.stop="viewerDialogAdd" size="small">新增观众</el-button>
-          <el-button round @click.prevent.stop="importViewerOpen" size="small">导入观众</el-button>
-          <el-button round :disabled="multipleSelection.length == 0" @click.prevent.stop="viewerDel" size="small">批量删除</el-button>
-          <el-button round size="small" v-if="downloadUrl" @click="downloadTemplate">下载模版</el-button>
-          <el-button round :disabled="viewerDao.list&&viewerDao.list.length == 0" @click.prevent.stop="defaultGroup" size="small">预设小组</el-button>
+          <el-button type="primary" round @click.prevent.stop="viewerDialogAdd" size="medium">新增观众</el-button>
+          <el-button round @click.prevent.stop="importViewerOpen" size="medium">导入观众</el-button>
+          <el-button round :disabled="multipleSelection.length == 0" @click.prevent.stop="viewerDel" size="medium">批量删除</el-button>
+          <el-button round size="medium" v-if="downloadUrl" @click="downloadTemplate">下载模版</el-button>
+          <el-button round :disabled="viewerDao.list&&viewerDao.list.length == 0" @click.prevent.stop="defaultGroup" size="medium">预设小组</el-button>
           <div class="searchBox">
             <VhallInput
               placeholder="搜索内容"
@@ -34,104 +34,7 @@
         </div>
         <!-- 列表 -->
         <div class="viewer_list" v-if="viewerDao.total || query.keyword">
-          <el-table
-              :data="viewerDao.list"
-              style="width: 100%"
-              @selection-change="handleSelectionChange"
-              :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
-            >
-              <el-table-column
-                type="selection"
-                width="52"
-                align="left"
-              />
-              <el-table-column
-                prop="name"
-                label="姓名"
-                min-width="200"
-                >
-              </el-table-column>
-              <el-table-column
-                label="行业"
-                min-width="200"
-                >
-                <template slot-scope="scope">
-                  <span>{{ scope.row.industry || '- -' }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                label="邮箱"
-                width="150">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.email || '- -' }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                label="手机号"
-                width="120">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.phone || '- -' }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                label="工号"
-                width="120">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.job_number || '- -' }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                label="小组"
-                width="120">
-                <template slot="header">
-                  <span class="pr20">小组</span>
-                  <el-tooltip
-                  content="此字段只适用于分组直播中的分组预导入功能，用来将观众提前分配到小组中，非必填字段"
-                  v-tooltipMove>
-                  <i :class="`iconfont-v3 saasicon_help_m gary`"></i>
-                </el-tooltip>
-                </template>
-                <template slot-scope="scope">
-                  <span>{{ scope.row.group || '- -' }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                label="其他"
-                width="180">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.other || '- -' }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                width="100"
-                v-if="viewerDao.total"
-                fixed="right"
-                label="操作">
-                <template slot-scope="scope">
-                  <el-button
-                    type="text"
-                    @click="viewerDialogShow(scope.row)"
-                    >修改</el-button
-                  >
-                  <el-button
-                    type="text"
-                    @click="delViewer(scope.row)"
-                    >删除</el-button
-                  >
-                </template>
-              </el-table-column>
-              <div slot="empty"><NullPage :nullType="'search'" v-if="!viewerDao.total" :text="'暂无数据'" :height="20"></NullPage></div>
-          </el-table>
-          <SPagination
-              :total="viewerDao.total"
-              v-if="viewerDao.total > 10"
-              :currentPage="pageInfo.pageNum"
-              @current-change="currentChangeHandler"
-              align="center"
-            >
-          </SPagination>
-        </div>
-        <!-- <table-list
+          <table-list
           ref="viewerTable"
           :manageTableData="viewerDao.list"
           :tabelColumnLabel="tableColumn"
@@ -141,13 +44,16 @@
           :totalNum="viewerDao.total"
           maxHeight="100%"
           width=120
+          fixedBtn='right'
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="viewerList"
           @changeTableCheckbox="handleSelectionChange"
         >
-        </table-list> -->
+        </table-list>
         <!-- 无消息内容 -->
-        <null-page nullType="other" v-else></null-page>
+        <!--<null-page nullType="other" v-else></null-page>-->
+        </div>
+        
       </div>
       <div  class="group__container">
         <p class="group__title">全部分组</p>
@@ -316,32 +222,39 @@ export default {
         {
           label: '姓名',
           key: 'name',
-          width: ''
+          width: '140'
         },
         {
           label: '行业',
           key: 'industry',
-          width: ''
+          width: '200'
         },
         {
           label: '邮箱',
           key: 'email',
-          width: ''
+          width: '120'
         },
         {
           label: '手机号',
           key: 'phone',
-          width: ''
+          width: '120'
         },
         {
           label: '工号',
           key: 'job_number',
-          width: ''
+          width: '120'
+        },
+        {
+          label: '小组',
+          key: 'job_number',
+          width: '120',
+          showHeader:true,
+          headerTooltip:'此字段只适用于分组直播中的分组预导入功能，用来将观众提前分配到小组中，非必填字段'
         },
         {
           label: '其它',
           key: 'other',
-          width: ''
+          width: '200'
         }
       ],
       tableRowBtnFun: [
@@ -719,37 +632,38 @@ export default {
       }
     },
     // 展示观众修改
-    viewerDialogShow(rows) {
-      let item = rows;
+    viewerDialogShow(that,data) {
+      debugger
+      let item = data.rows;
       try{
-        if (this.$refs.viewerForm) {
-          this.$refs.viewerForm.resetFields();
+        if (that.$refs.viewerForm) {
+          that.$refs.viewerForm.resetFields();
         }
       }catch (e){
         console.log(e);
       }
       if(item) { // 观众信息修改
-        this.viewerDialog.type = 'edit';
-        this.viewerDialog.title = '观众信息修改';
-        this.viewerDialog.row = item;
-        this.$set(this.viewerForm, 'name', item.name);
-        this.$set(this.viewerForm, 'industry', item.industry);
-        this.$set(this.viewerForm, 'phone', item.phone);
-        this.$set(this.viewerForm, 'job_number', item.job_number);
-        this.$set(this.viewerForm, 'email', item.email);
-        this.$set(this.viewerForm, 'other', item.other);
-        this.viewerDialog.visible = true;
+        that.viewerDialog.type = 'edit';
+        that.viewerDialog.title = '观众信息修改';
+        that.viewerDialog.row = item;
+        that.$set(that.viewerForm, 'name', item.name);
+        that.$set(that.viewerForm, 'industry', item.industry);
+        that.$set(that.viewerForm, 'phone', item.phone);
+        that.$set(that.viewerForm, 'job_number', item.job_number);
+        that.$set(that.viewerForm, 'email', item.email);
+        that.$set(that.viewerForm, 'other', item.other);
+        that.viewerDialog.visible = true;
       } else { // 添加观众
-        this.viewerDialog.type = 'add';
-        this.viewerDialog.title = '添加观众';
-        this.viewerDialog.row = null;
-        this.$set(this.viewerForm, 'name', '');
-        this.$set(this.viewerForm, 'industry', '');
-        this.$set(this.viewerForm, 'phone', '');
-        this.$set(this.viewerForm, 'job_number', '');
-        this.$set(this.viewerForm, 'email', '');
-        this.$set(this.viewerForm, 'other', '');
-        this.viewerDialog.visible = true;
+        that.viewerDialog.type = 'add';
+        that.viewerDialog.title = '添加观众';
+        that.viewerDialog.row = null;
+        that.$set(that.viewerForm, 'name', '');
+        that.$set(that.viewerForm, 'industry', '');
+        that.$set(that.viewerForm, 'phone', '');
+        that.$set(that.viewerForm, 'job_number', '');
+        that.$set(that.viewerForm, 'email', '');
+        that.$set(that.viewerForm, 'other', '');
+        that.viewerDialog.visible = true;
       }
     },
     // 白名单添加观众至分组 or 白名单观众信息修改
@@ -786,15 +700,15 @@ export default {
         }
       });
     },
-    delViewer(rows) {
-      this.$confirm('确定从当前组里删除该观众？', '删除观众', {
+    delViewer(that,{rows}) {
+      that.$confirm('确定从当前组里删除该观众？', '删除观众', {
         confirmButtonText: '删除',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        this.sendViewerDel([rows.id], 2);
+        that.sendViewerDel([rows.id], 2);
       }).catch(() => {
       });
     },
