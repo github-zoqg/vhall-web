@@ -1,26 +1,37 @@
 <template>
   <div class="grouping-card">
-    <draggable
-      class="list-group"
+    <draggable class="list-group"
       :list="list"
       @change="changeMove"
       :sort="!sort"
       draggable=".item"
       :group="groupName">
-      <div slot="header" class="btn-group" role="group">
+      <div slot="header"
+        class="btn-group"
+        role="group">
         <span>{{groupName}}（{{list.length}}）</span>
         <div class="btn-group-right">
           <el-button type="text">解散</el-button>
-          <el-button type="text" v-show="!batchGroupState" @click="batchGroupState = !batchGroupState">批量换组</el-button>
-          <el-button type="text" @click="batchGroupState = false">取消</el-button>
-          <el-button type="text" @click="changeGroup">换组</el-button>
+          <el-button type="text"
+            v-show="!batchGroupState"
+            @click="batchGroupState = !batchGroupState">批量换组</el-button>
+          <el-button type="text"
+            @click="batchGroupState = false">取消</el-button>
+          <el-button type="text"
+            @click="changeGroup">换组</el-button>
         </div>
       </div>
-      <div class="list-group-item item" v-for="item in list" :key="item.name">
-        <el-checkbox v-if="batchGroupState" :label="item.name" border size="medium" :name="groupName">{{item.name}}</el-checkbox>
-        <div class="list-group-item-state" v-if="!batchGroupState">
-          <el-popover
-            placement="bottom"
+      <div class="list-group-item item"
+        v-for="item in list"
+        :key="item.name">
+        <el-checkbox v-if="batchGroupState"
+          :label="item.name"
+          border
+          size="medium"
+          :name="groupName">{{item.name}}</el-checkbox>
+        <div class="list-group-item-state"
+          v-if="!batchGroupState">
+          <el-popover placement="bottom"
             width="100%"
             popperClass="list-group-popover"
             trigger="click">
@@ -38,66 +49,70 @@
 
 <script>
 import draggable from "vuedraggable"
-let id=1
+let id = 1
 export default {
-  props:{
+  props: {
     /**分组名称 */
-    groupName:{
-      require:false,
-      type:String,
-      default:'分组1'
+    groupName: {
+      require: false,
+      type: String,
+      default: '分组1'
     },
-    sort:{
-      type:Boolean,
-      default:false
+    /**分组人数 */
+    number: {
+      type: [String, Number],
+      default: 0
     },
-    list:{
-      type:Array,
-      default:()=>[
-        { name: "John 1", id: 0 },
-        { name: "Joao 2", id: 1 },
-        { name: "Jean 3", id: 2 }
-      ]
+    /**排序 */
+    sort: {
+      type: Boolean,
+      default: false
+    },
+    /**本组观众 */
+    list: {
+      type: Array,
+      default: () => []
     }
   },
   components: {
     draggable
   },
-  data(){
-    return{
-      batchGroupState:false//批量换组
+  data() {
+    return {
+      batchGroupState: false//批量换组
     }
   },
   methods: {
     /*换组*/
-    changeGroup(){
-      this.$emit('changeGroup',data)
+    changeGroup() {
+      this.$emit('changeGroup', data)
     },
-    changeMove(data){
-      this.$emit('change',data)
+    changeMove(data) {
+      this.$emit('change', data)
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
-.grouping-card{
+.grouping-card {
   border: 1px solid #ccc;
-  .btn-group{
+  background: #f7f7f7;
+  .btn-group {
     padding: 0 12px;
-    height: 36px;
-    line-height: 36px;
+    height: 40px;
+    line-height: 40px;
     border-bottom: 1px solid #ccc;
     overflow: hidden;
-    .btn-group-right{
+    .btn-group-right {
       float: right;
     }
   }
-  .list-group{
+  .list-group {
     overflow: auto;
-    height: 200px;
-    background: #fff;
-    .list-group-item{
+    height: 205px;
+    background: #f7f7f7;
+    .list-group-item {
       margin-top: 8px;
       width: 100px;
       line-height: 34px;
@@ -106,15 +121,15 @@ export default {
       margin-left: 8px;
       float: left;
       cursor: pointer;
-      .list-group-popover{
+      .list-group-popover {
         width: 100px;
       }
     }
-    .list-group-item-state{
+    .list-group-item-state {
       border: 1px solid #ccc;
       width: 100px;
       border-radius: 4px;
-      span{
+      span {
         display: inline-block;
         width: 100%;
         height: 100%;
@@ -124,16 +139,16 @@ export default {
 }
 </style>
 <style lang="less">
-.list-group-popover{
+.list-group-popover {
   box-sizing: border-box;
   min-width: 100px;
-  .list-group-item-button{
+  .list-group-item-button {
     background: #fff;
-    div{
+    div {
       cursor: pointer;
     }
-    div:hover{
-      color: #FB3A32;
+    div:hover {
+      color: #fb3a32;
     }
   }
 }

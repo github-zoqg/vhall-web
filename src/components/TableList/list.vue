@@ -29,7 +29,7 @@
           :show-overflow-tooltip="!item.customTooltip"
         >
           <template slot="header" v-if="item.showHeader">
-            <span class="pr20">小组</span>
+            <span class="pr20">{{item.label}}</span>
             <el-tooltip
             :content="item.headerTooltip"
             v-tooltipMove>
