@@ -15,6 +15,7 @@
           v-for="item in data"
           :key="item.groupName">
           <grouping-card :groupName="item.groupName"
+            :groupType="item.groupName==='预分配'?0:1"
             :list="item.list"></grouping-card>
         </div>
       </div>
