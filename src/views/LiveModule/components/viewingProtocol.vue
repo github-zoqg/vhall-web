@@ -326,6 +326,14 @@ export default {
         if (res && res.code === 200) {
           if (res.data) {
             this.viewingProtocolForm = res.data;
+            let statement_info = this.res.data.statement_info
+            this.statementList = statement_info
+            statement_info.forEach((item, index)=>{
+              let titleName = `proptocolTitle_${index}`
+              let linkName = `proptocolLink_${index}`
+              this.viewingProtocolForm[titleName] = item.title;
+              this.viewingProtocolForm[linkName] = item.link
+            })
           } else {
             this.$nextTick(() => {
               console.log(newVal, this.$refs, this.$refs['viewingProtocolForm'], 'val')
