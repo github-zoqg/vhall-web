@@ -156,23 +156,23 @@
       </el-form-item>
       <el-form-item label="云导播" required v-if="liveMode==2" class="max-column">
         <div class="titleBox">
-            <span class="pageTitle">
-              <span v-if="!webinarDirector">云导播活动为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">云导播活动</a></span>
-              <span v-else>云导播活动不能使用无延迟技术，点我了解<a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">云导播活动</a></span>
-              </span></span>
+          <div class="pageTitle">
+            <span v-if="!webinarDirector">云导播活动为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">云导播活动</a></span>
+            <span v-else>云导播活动不能使用无延迟技术，点我了解<a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">云导播活动</a></span>
           </div>
-          <div class="delay-director">
-            <div class="mode-common" :class="{directorActive: selectDirectorMode === 0}" @click.stop="handleSelectDirectorMode(0)">
-              <i class="vh-saas-iconfont vh-saas-line-mixeroff ft20"></i> 不启用云导播
-            </div>
-            <div v-if="webinarDirector" class="mode-director" :class="{ directorActive: selectDirectorMode === 1, disableBox: selectDelayMode == 'delay'}" @click.stop="handleSelectDirectorMode(1)">
-              <span class="text-content"><i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播</span>
-            </div>
-            <div v-if="!webinarDirector" class="mode-director noDirector" :class="{disableBox: selectDelayMode == 'delay'}">
-              <span class="text-content"><i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播</span>
-              <span class="no-open">未开通</span>
-            </div>
+        </div>
+        <div class="delay-director">
+          <div class="mode-common" :class="{directorActive: selectDirectorMode === 0}" @click.stop="handleSelectDirectorMode(0)">
+            <i class="vh-saas-iconfont vh-saas-line-mixeroff ft20"></i> 不启用云导播
           </div>
+          <div v-if="webinarDirector" class="mode-director" :class="{ directorActive: selectDirectorMode === 1, disableBox: selectDelayMode == 'delay'}" @click.stop="handleSelectDirectorMode(1)">
+            <span class="text-content"><i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播</span>
+          </div>
+          <div v-if="!webinarDirector" class="mode-director noDirector" :class="{disableBox: selectDelayMode == 'delay'}">
+            <span class="text-content"><i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播</span>
+            <span class="no-open">未开通</span>
+          </div>
+        </div>
       </el-form-item>
       <el-form-item v-if="(liveMode == 3 || liveMode == 6) && webinarType == 'live'" label="连麦人数" required :class="['invd-number', {'margin32': liveMode == 6}] ">
         <div class="titleBox">
@@ -1031,7 +1031,6 @@ export default {
       }
     },
     handleSelectDirectorMode(mode) {
-      if (this.title === '编辑') return
       if (this.selectDelayMode == 'delay'&&mode== 1) return
       this.selectDirectorMode = mode
     },
