@@ -322,11 +322,10 @@ export default {
       }
       this.$fetch('getAgreement', this.$params(params)).then(res => {
         console.log(res);
-        
         if (res && res.code === 200) {
           if (res.data) {
             this.viewingProtocolForm = res.data;
-            let statement_info = this.res.data.statement_info
+            let statement_info = res.data.statement_info
             this.statementList = statement_info
             statement_info.forEach((item, index)=>{
               let titleName = `proptocolTitle_${index}`
@@ -334,6 +333,7 @@ export default {
               this.viewingProtocolForm[titleName] = item.title;
               this.viewingProtocolForm[linkName] = item.link
             })
+            console.log(this.viewingProtocolForm, this.statementList, ' this.statementList')
           } else {
             this.$nextTick(() => {
               console.log(newVal, this.$refs, this.$refs['viewingProtocolForm'], 'val')
@@ -356,7 +356,7 @@ export default {
     },
     initComp() {
       this.brandType = this.$parent.type;
-      // this.getSignInfo();// 获取活动标志内容
+      this.getSignInfo();// 获取活动标志内容
     },
     // 保存
     signSetSave() {
@@ -376,7 +376,7 @@ export default {
               customClass: 'zdy-info-box'
             });
             // 重新获取数据
-            this.getSignInfo();
+            // this.getSignInfo();
           }).catch(res=>{
             console.log(res);
             this.$message({

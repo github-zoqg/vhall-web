@@ -7,27 +7,24 @@
           <div class="pc-preview">
             
             <div class="pc-contain">
-              <div class="sign-title" :class="signSetVo && signSetVo.organizers_status == 1 ? 'sign-open' : 'sign-close'">
+              <div class="sign-title">
                 <p>
                   {{viewingProtocolForm.title}}
                 </p>
               </div>
-              <div class="sign-content" :class="viewingProtocolForm.rule == 0 ? 'sign-content-read' : 'sign-content-choose'">
+              <div class="sign-content" :class="viewingProtocolForm.rule == 1 ? 'sign-content-read' : 'sign-content-choose'">
                 <div v-html="viewingProtocolForm.content">
 
                 </div>
               </div>
-              <div class="sign-bottom" :class="signSetVo && signSetVo.organizers_status == 1 ? 'sign-open' : 'sign-close'">
-
-                  <!-- <span>{{viewingProtocolForm.statement_content}}</span>,了解详细信息 -->
-
+              <div class="sign-bottom">
                 <p v-html="result_content"></p>
 
               </div>
-              <div class="sign-button" v-if="viewingProtocolForm.rule == 0">
+              <div class="sign-button" v-if="viewingProtocolForm.rule == 1">
                 <el-button size="medium" type="primary" round v-preventReClick>我知道了</el-button>
               </div>
-              <div class="sign-button sign-button" v-if="viewingProtocolForm.rule == 1">
+              <div class="sign-button" v-if="viewingProtocolForm.rule == 0">
                 <div>
                   <el-button size="medium" type="primary" round v-preventReClick>同意并继续</el-button>
                 </div>
@@ -45,7 +42,7 @@
 </template>
 <script>
 export default {
-  name: "brandSetPreview.vue",
+  name: "protocolPreview.vue",
   props: ['brandType', 'tabType', 'viewingProtocolForm'],
   data() {
     return {
@@ -77,92 +74,11 @@ export default {
         let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
         text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">$1</a>`);
       }
-      text += ',了解详细信息'
+      text += '，了解详细信息'
       this.result_content = text;
     },
-    changeSwitch(type) {
-      this.switchType = type;
-    },
-    signSetVoInfo(vo, domain_url) {
-      this.$nextTick(() => {
-        this.signSetVo = vo;
-        this.domain_url = domain_url;
-        // this.getInterWebinarSkin();
-      });
-    },
-    skinSetVoInfo(vo) {
-      this.$nextTick(() => {
-        if (vo && Number(vo.status) > 0)  {
-          // 页面赋值
-          this.skinSetVo = vo;
-          this.skinSetVo.bg_url = vo.bg_url || vo.domain_url;
-        } else {
-          this.skinSetVo = {
-            bgColor: '#1A1A1A', // 背景色
-            pageStyle: '#ff3333', // 按钮色
-            bg_url: '' // 背景图
-          };
-        }
-        // this.getSignInfo();
-      });
-    },
-    getSignInfo() {
-      let params = {
-        webinar_id: this.brandType == 1 ? this.$route.params.str : '',
-        type: this.brandType
-      }
-      this.$fetch('getInterWebinarTag', this.$params(params)).then(res => {
-        console.log(res);
-        if (res && res.code === 200) {
-          this.signSetVo = res.data;
-        } else {
-          this.signSetVo = {};
-        }
-      }).catch(err=>{
-        console.log(err);
-        this.signSetVo = {};
-      });
-    },
-    getInterWebinarSkin() {
-      let params = {
-        webinar_id: this.brandType == 1 ? this.$route.params.str : '',
-        type: this.brandType
-      }
-      this.$fetch('getInterWebinarSkin', this.$params(params)).then(res => {
-        if (res && res.code === 200) {
-          this.skinSetVo.status = res.data.status
-          if (this.skinSetVo.status > 0)  {
-            // 页面赋值
-            let skin_json_pc = JSON.parse(res.data.skin_json_pc);
-            this.skinSetVo.bgColor = skin_json_pc.bgColor || '#1A1A1A';
-            this.skinSetVo.pageStyle = skin_json_pc.pageStyle || '#FB3A32';
-            this.skinSetVo.bg_url = skin_json_pc.background;
-          } else {
-            this.skinSetVo = {
-              bgColor: '#1A1A1A', // 背景色
-              pageStyle: '#FB3A32', // 按钮色
-              bg_url: '' // 背景图
-            };
-          }
-        } else {
-          this.skinSetVo = {
-            bgColor: '#1A1A1A', // 背景色
-            pageStyle: '#FB3A32', // 按钮色
-            bg_url: '' // 背景图
-          };
-        }
-      }).catch(err=>{
-        console.log(err);
-        this.skinSetVo = {
-          bgColor: '#1A1A1A', // 背景色
-          pageStyle: '#FB3A32', // 按钮色
-          bg_url: '' // 背景图
-        };
-      });
-    },
+
     initPage() {
-      this.getSignInfo();
-      this.getInterWebinarSkin();
       this.privacyFormatter()
     }
   },
@@ -338,10 +254,10 @@ export default {
       overflow-y: scroll
     }
     .sign-content-read{
-      height: 138px;
+      height: 148px;
     }
     .sign-content-choose{
-      height: 92px;
+      height: 110px;
     }
     .sign-bottom{
       width: 100%;
@@ -353,7 +269,7 @@ export default {
     }
     .sign-button{
       text-align: center;
-      margin-top: 16px;
+      margin-top: 2px;
     }
     .bottom-button{
       margin-top: 8px
