@@ -15,6 +15,7 @@
           v-for="item in data"
           :key="item.groupName">
           <grouping-card :groupName="item.groupName"
+            :groupType="item.groupName==='预分配'?0:1"
             :list="item.list"></grouping-card>
         </div>
       </div>
@@ -47,15 +48,15 @@ export default {
           groupName: '预分配',
           list: [
             {
-              name: '观众1',
+              name: '观众阿里妈妈1',
               id: 1
             },
             {
-              name: '观众2',
+              name: '观阿萨斯众2',
               id: 2
             },
             {
-              name: '观众3',
+              name: '观啊实打实众3',
               id: 3
             }
           ]
@@ -65,7 +66,7 @@ export default {
           list: [
             {
               name: '观众3',
-              id: 3
+              id: 9
             },
             {
               name: '观众4',
