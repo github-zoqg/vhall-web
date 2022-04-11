@@ -27,20 +27,34 @@
         :key="item.name">
         <el-checkbox v-if="batchGroupState"
           :label="item.name"
-          border
           size="medium"
           :name="groupName">{{item.name}}</el-checkbox>
         <div class="list-group-item-state"
           v-if="!batchGroupState">
-          <el-popover placement="bottom"
+          <el-popover placement="bottom-start"
             width="100%"
+            :append-to-body="false"
+            :popper-options="{
+              boundariesElement: 'body',
+              gpuAcceleration:true,
+              positionFixed:false,
+              preventOverflow:true
+            }"
             popperClass="list-group-popover"
             trigger="click">
             <div class="list-group-item-button">
-              <div>换组</div>
               <div>移出小组</div>
+              <div>换组</div>
             </div>
-            <span slot="reference">{{item.name}}</span>
+            <span slot="reference">
+              <span class="list-group-name">{{item.name}}</span>
+              <!--<el-tooltip class="item"
+                effect="dark"
+                :content="item.name"
+                placement="top">
+                <span class="list-group-name">{{item.name}}</span>
+              </el-tooltip>-->
+            </span>
           </el-popover>
         </div>
       </div>
@@ -95,6 +109,9 @@ export default {
     },
     changeMove(data) {
       this.$emit('change', data)
+    },
+    startMove(data) {
+      this.$emit('start', data)
     }
   }
 }
@@ -134,26 +151,31 @@ export default {
     background: #f7f7f7;
     .list-group-item {
       margin-top: 8px;
-      width: 100px;
-      line-height: 34px;
-      text-align: center;
-      height: 34px;
       margin-left: 8px;
       float: left;
       cursor: pointer;
       .list-group-popover {
-        width: 100px;
+        width: 96px;
+        margin-top: 0;
       }
     }
     .list-group-item-state {
-      border: 1px solid #ccc;
-      width: 100px;
       border-radius: 4px;
-      span {
-        display: inline-block;
-        width: 100%;
-        height: 100%;
-      }
+      position: relative;
+    }
+    .list-group-name {
+      max-width: 78px;
+      display: inline-block;
+      border-radius: 4px;
+      overflow: hidden;
+      height: 24px;
+      line-height: 24px;
+      font-size: 12px;
+      padding: 0 8px;
+      background: #e6e6e6;
+      border-radius: 4px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }
@@ -161,15 +183,59 @@ export default {
 <style lang="less">
 .list-group-popover {
   box-sizing: border-box;
-  min-width: 100px;
+  min-width: 96px;
+  padding: 4px 0;
+  position: absolute !important;
+  left: 0;
+  top: 0;
+  transform: none;
+  &[x-placement^='bottom'] {
+    margin-top: 0px;
+  }
   .list-group-item-button {
     background: #fff;
+    text-align: left;
     div {
       cursor: pointer;
+      padding: 0 14px;
+      height: 28px;
+      line-height: 28px;
     }
     div:hover {
-      color: #fb3a32;
+      color: #1a1a1a;
+      background: #f7f7f7;
     }
+  }
+}
+.list-group-item {
+  color: #1a1a1a;
+  .el-checkbox {
+    max-width: 96px;
+    height: 24px;
+    background: #e6e6e6;
+    border-radius: 4px;
+    line-height: 24px;
+    overflow: hidden;
+    padding: 0 8px;
+  }
+  .el-checkbox__label {
+    max-width: 78px;
+    display: inline-block;
+    overflow: hidden;
+    font-size: 12px;
+    height: 24px;
+    line-height: 24px;
+    background: #e6e6e6;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 4px;
+  }
+  .el-checkbox__input.is-checked + .el-checkbox__label {
+    color: #1a1a1a;
+  }
+  .el-checkbox__input {
+    margin-top: 5px;
+    vertical-align: top;
   }
 }
 </style>
