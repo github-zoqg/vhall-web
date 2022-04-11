@@ -364,8 +364,6 @@ export default {
       width: 900px;
       margin: 122px auto;
     }
-    .choose__way__ctx {
-    }
   }
 }
 .choose__way__main {
