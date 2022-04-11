@@ -237,6 +237,8 @@ export default {
       console.log(oldValue, 'value.substring(0, value.length-1)')
       
       this.viewingProtocolForm.statement_content = viewingProtocolForm.statement_content.replace(oldValue, '')
+      this.viewingProtocolForm.statement_content = viewingProtocolForm.statement_content.replace('及', '')
+      
       this.viewingProtocolForm.proptocolTitle_1 = ''
       this.viewingProtocolForm.proptocolLink_1 = ''
 
