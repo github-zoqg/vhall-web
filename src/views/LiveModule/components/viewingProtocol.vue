@@ -81,14 +81,6 @@
             
           </template>
          
-          <!-- <el-form-item class="provicy-item" v-if="provicy">
-            
-            <template>
-              <el-checkbox class="provicy-checkbox">
-                <p v-html="provicyText"></p>
-              </el-checkbox>
-            </template>
-          </el-form-item> -->
           <el-form-item label="">
             <el-button type="primary" round v-preventReClick @click.prevent.stop="signSetSave">保 存</el-button>
           </el-form-item>
@@ -96,28 +88,27 @@
         <div class="hide-white" v-show="!brandConfig"></div>
       </div>
       <!-- 预览区域 -->
-      <brand-set-preview ref="brandSetPreviewComp" class="brand--preview" :brandType="brandType" :tabType="'signSet'"></brand-set-preview>
+      <protocol-preview ref="brandSetPreviewComp" :viewingProtocolForm="viewingProtocolForm" class="brand--preview" :brandType="brandType" :tabType="'signSet'"></protocol-preview>
     </div>
   </div>
 </template>
 
 <script>
 import Upload from '@/components/Upload/main';
-import BrandSetPreview from '../../LiveModule/components/brandSetPreview';
-import Env from "@/api/env";
+import ProtocolPreview from '../../LiveModule/components/protocolPreview';
 import VEditor from '@/components/Tinymce';
 export default {
   name: "viewingProtocol.vue",
   props: ['brandConfig', 'tabType'],
   components: {
     Upload,
-    BrandSetPreview,
+    ProtocolPreview,
     VEditor
   },
   data() {
     return {
       viewingProtocolForm: {
-        title: null,
+        title: '',
         organizers_status: null,
         reserved_status: null,
         statement_status: 1,
@@ -130,7 +121,7 @@ export default {
         statement_info: null,
         proptocolTitle_0: '观看协议',
         proptocolLink_0: '',
-        proptocolTitle_1: '观看协议2',
+        proptocolTitle_1: '',
         proptocolLink_1: ''
       },
       
@@ -219,13 +210,18 @@ export default {
       if(type === 'title') {
         let titleName = `proptocolTitle_${index}`
         this.viewingProtocolForm[titleName] = value
-        if(statement_content.indexOf(value) === -1){
+        if(value && statement_content.indexOf(value) === -1){
           this.statementList[index].title = '';
           this.viewingProtocolForm[titleName] = '';
           let oldValue = value.substring(0, value.length-1)
           console.log(value.substring(0, value.length-1), 'value.substring(0, value.length-1)')
           let viewingProtocolForm = this.viewingProtocolForm
           this.viewingProtocolForm.statement_content = viewingProtocolForm.statement_content.replace(oldValue, '')
+        }
+        if(index === 0){
+          this.viewingProtocolForm.proptocolTitle_0 = value
+        }else{
+          this.viewingProtocolForm.proptocolTitle_1 = value
         }
           
       }else {
@@ -236,11 +232,14 @@ export default {
     },
     deleteOptions(){
       this.statementList.pop()
-      // if(this.statementList > 1){
-      //   this.viewingProtocolForm.statement_content += '观看协议'
-      // }else{
-      //   this.viewingProtocolForm.statement_content -= '及观看协议2'
-      // }
+      let viewingProtocolForm = this.viewingProtocolForm
+      let oldValue = viewingProtocolForm.proptocolTitle_1
+      console.log(oldValue, 'value.substring(0, value.length-1)')
+      
+      this.viewingProtocolForm.statement_content = viewingProtocolForm.statement_content.replace(oldValue, '')
+      this.viewingProtocolForm.proptocolTitle_1 = ''
+      this.viewingProtocolForm.proptocolLink_1 = ''
+
     },
     privacyAdd(){
       let statementObj = {
@@ -250,11 +249,7 @@ export default {
       
       this.statementList.push(statementObj)
       this.viewingProtocolForm.statement_content += '及观看协议2'
-      // if(this.statementList > 1){
-      //   this.viewingProtocolForm.statement_content += '观看协议2'
-      // }else{
-      //   this.viewingProtocolForm.statement_content += '及观看协议2'
-      // }
+      this.viewingProtocolForm.proptocolTitle_1 = '观看协议2'
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
@@ -337,12 +332,6 @@ export default {
               }
             })
           }
-          // this.domain_url = res.data.logo_url || '';
-          // try {
-          //   this.$refs.brandSetPreviewComp.signSetVoInfo(this.viewingProtocolForm, this.domain_url);
-          // } catch (e) {
-          //   console.log(e);
-          // }
         } else {
           this.$nextTick(() => {
             console.log(newVal, this.$refs, this.$refs['viewingProtocolForm'], 'val')
