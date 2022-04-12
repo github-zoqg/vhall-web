@@ -29,20 +29,25 @@
         round
         @click="hide">取 消</el-button>
     </span>
+    <group-add ref="groupAdd"
+      :show="groupAddShow"></group-add>
   </VhallDialog>
 </template>
 
 <script>
 import GroupingCard from '@/components/GroupingCard'
+import GroupAdd from './components/GroupAdd.vue'
 export default {
   components: {
-    GroupingCard
+    GroupingCard,
+    GroupAdd
   },
   data() {
     return {
       defaultGroup: {
         show: false
       },
+      groupAddShow: false,
       data: [
         {
           groupName: '预分配',
@@ -99,6 +104,9 @@ export default {
     }
   },
   methods: {
+    viewerDialogAdd() {
+      this.$refs.groupAdd.handlOpen()
+    },
     show() {
       this.defaultGroup.show = true
     },
