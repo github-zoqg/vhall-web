@@ -1,27 +1,28 @@
 <template>
   <div class="grouping-card">
+    <!--小组卡片-->
     <draggable class="list-group"
       :list="list"
       @change="changeMove"
       :sort="!sort"
       draggable=".item"
       group="a">
+      <!--分配小组按钮组-->
       <div slot="header"
         class="btn-group"
         role="group">
         <span>{{groupName}}（{{list.length}}）</span>
         <div class="btn-group-right">
-          <span v-if="!groupType"><i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>批量分配</span>
-          <span v-if="groupType"><i class="vh-saas-iconfont vh-saas-a-line-dissolutiongrouping pr4"></i>解散</span>
-          <span v-show="groupType&&!batchGroupState"
-            @click="batchGroupState = !batchGroupState">
-            <i class="vh-saas-iconfont vh-saas-a-line-batchChangegroup pr4"></i>批量换组</span>
+          <span v-if="!batchGroupState"
+            @click="batchGroup"><i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>{{groupType?'批量换组':'批量分配'}}</span>
+          <span v-if="groupType&&!batchGroupState"><i class="vh-saas-iconfont vh-saas-a-line-dissolutiongrouping pr4"></i>解散</span>
           <span v-show="batchGroupState"
             @click="batchGroupState = false"><i class="el-icon el-icon-close cancel-size"></i>取消</span>
-          <span v-show="groupType&&batchGroupState"
+          <span v-show="batchGroupState"
             @click="changeGroup"><i class="vh-saas-iconfont vh-saas-a-line-Ingroup pr4"></i>换组</span>
         </div>
       </div>
+      <!--分配小组观众-->
       <div class="list-group-item item"
         v-for="item in list"
         :key="item.name">
@@ -59,11 +60,14 @@
         </div>
       </div>
     </draggable>
+    <!--换组-->
+    <group-change ref="groupChange"></group-change>
   </div>
 </template>
 
 <script>
 import draggable from "vuedraggable"
+import GroupChange from './GroupChange.vue'
 let id = 1
 export default {
   props: {
@@ -95,17 +99,22 @@ export default {
     }
   },
   components: {
-    draggable
+    draggable,
+    GroupChange
   },
   data() {
     return {
-      batchGroupState: false//批量换组
+      batchGroupState: false//批量换组,
     }
   },
   methods: {
+    batchGroup() {
+      this.batchGroupState = true
+    },
     /*换组*/
     changeGroup() {
-      this.$emit('changeGroup', data)
+      this.$refs.groupChange.handleOpen()
+      this.$emit('changeGroup')
     },
     changeMove(data) {
       this.$emit('change', data)
