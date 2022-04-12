@@ -1,7 +1,7 @@
 <template>
-  <div class="sign--set">
-    <div class="sign--set--main">
-      <div class="sign--set--left">
+  <div class="protocol--set">
+    <div class="protocol--set--main">
+      <div class="protocol--set--left">
         <el-form :model="viewingProtocolForm" ref="viewingProtocolForm" :rules="viewingProtocolFormRules" label-width="88px">
           <el-form-item label="观看协议" prop="is_open">
             <div class="switch__box">
@@ -21,7 +21,7 @@
             label="协议标题"
             prop="title"
           >
-            <VhallInput v-model="viewingProtocolForm.title" v-clearEmoij :maxlength="30" class="title-inform" autocomplete="off" :placeholder="`微吼直播观看协议`"  show-word-limit></VhallInput>
+            <VhallInput v-model="viewingProtocolForm.title" v-clearEmoij :maxlength="50" class="title-inform" autocomplete="off" :placeholder="`微吼直播观看协议`"  show-word-limit></VhallInput>
           </el-form-item>
           <el-form-item class="margin32" prop="content" :label="`协议内容`">
             <v-editor class="editor-wrap" save-type='live' :placeholder="`请输入协议内容`" :isReturn=true ref="unitImgTxtEditor" v-model="viewingProtocolForm.content"></v-editor>
@@ -82,13 +82,21 @@
           </template>
          
           <el-form-item label="">
-            <el-button type="primary" round v-preventReClick @click.prevent.stop="signSetSave">保 存</el-button>
+            <el-button type="primary" round v-preventReClick @click.prevent.stop="protocolSave">保 存</el-button>
           </el-form-item>
         </el-form>
         <div class="hide-white" v-show="!brandConfig"></div>
       </div>
       <!-- 预览区域 -->
-      <protocol-preview ref="brandSetPreviewComp" :viewingProtocolForm="viewingProtocolForm" class="brand--preview" :brandType="brandType" :tabType="'signSet'"></protocol-preview>
+      <protocol-preview 
+        ref="brandSetPreviewComp" 
+        :viewingProtocolForm="viewingProtocolForm" 
+        class="brand--preview" 
+        :brandType="brandType" 
+        :tabType="'signSet'"
+        :proptocolTitle_0="viewingProtocolForm.proptocolTitle_0"
+        :proptocolTitle_1="viewingProtocolForm.proptocolTitle_1"
+      ></protocol-preview>
     </div>
   </div>
 </template>
@@ -109,8 +117,6 @@ export default {
     return {
       viewingProtocolForm: {
         title: '',
-        organizers_status: null,
-        reserved_status: null,
         statement_status: 1,
         logo_url: null,
         skip_url: null,
@@ -140,16 +146,13 @@ export default {
         link: ''
       }],
       viewingProtocolFormRules: {
-        organizers_status: [
-          { required: false, message: '请选择标志', trigger: 'change'}
-        ],
         skip_url: [
           { required: false, message: '请输入标志链接', trigger: 'blur'},
           // { pattern: /((http|https):\/\/)?[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入正确的标志链接' , trigger: 'blur'}
           { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入以http://或https://开头的标志链接' , trigger: 'blur'}
         ],
         title: [
-          { required: true, max: 100,  message: `请输入标题`, trigger: 'blur' }
+          { required: true, max: 50,  message: `请输入标题`, trigger: 'blur' }
         ],
         content: [
           { required: true, max: 1000,  message: `请输入协议内容`, trigger: 'blur' }
@@ -197,11 +200,6 @@ export default {
       })
       
     },
-    // 'this.viewingProtocolForm.statement_content'(newVal, oldVal) {
-    //   if (newVal && newVal.match('')) {
-    //     this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
-    //   }
-    // },
   },
   methods: {
     handleInput(value, index, type){
@@ -315,7 +313,7 @@ export default {
       console.log('uploadPreview', file);
     },
     // 获取活动标记记录
-    getSignInfo() {
+    getProtocol() {
       let params = {
         type: this.brandType,
         webinar_id: this.brandType == 1 ? this.$route.params.str : ''
@@ -356,10 +354,10 @@ export default {
     },
     initComp() {
       this.brandType = this.$parent.type;
-      this.getSignInfo();// 获取活动标志内容
+      this.getProtocol();// 获取活动标志内容
     },
     // 保存
-    signSetSave() {
+    protocolSave() {
       console.log(this.viewingProtocolForm, this.statementList, 'this.statementList')
       this.$refs.viewingProtocolForm.validate((valid) => {
         if(valid) {
@@ -375,7 +373,7 @@ export default {
               customClass: 'zdy-info-box'
             });
             // 重新获取数据
-            // this.getSignInfo();
+            // this.getProtocol();
           }).catch(res=>{
             console.log(res);
             this.$message({
@@ -394,15 +392,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.sign--set {
+.protocol--set {
   padding: 41px 40px 40px 40px;
 }
-.sign--set--main {
+.protocol--set--main {
   .flex-display;
   .justify(space-between);
   .align(flex-start);
 }
-.sign--set--left {
+.protocol--set--left {
   width: 480px;
   position: relative;
   /deep/.el-form-item__label {

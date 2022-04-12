@@ -2,29 +2,31 @@
   <div class="brand--set--preview">
     <div>
       <!-- 标识预览 -->
-      <div  class="pc" v-if="switchType === 'pc' && tabType === 'signSet' ">
-        <div :class="`skin-preview preview-${switchType} sign-preview`">
+      <div  class="pc">
+        <p> 预览</p>
+        <div :class="`skin-preview preview-pc protocol-preview`">
+          
           <div class="pc-preview">
-            
+           
             <div class="pc-contain">
-              <div class="sign-title">
+              <div class="protocol-title">
                 <p>
                   {{viewingProtocolForm.title}}
                 </p>
               </div>
-              <div class="sign-content" :class="viewingProtocolForm.rule == 1 ? 'sign-content-read' : 'sign-content-choose'">
+              <div class="protocol-content" :class="viewingProtocolForm.rule == 1 ? 'protocol-content-read' : 'protocol-content-choose'">
                 <div v-html="viewingProtocolForm.content">
 
                 </div>
               </div>
-              <div class="sign-bottom">
+              <div class="protocol-bottom">
                 <p v-html="result_content"></p>
 
               </div>
-              <div class="sign-button" v-if="viewingProtocolForm.rule == 1">
+              <div class="protocol-button" v-if="viewingProtocolForm.rule == 1">
                 <el-button size="medium" type="primary" round v-preventReClick>我知道了</el-button>
               </div>
-              <div class="sign-button" v-if="viewingProtocolForm.rule == 0">
+              <div class="protocol-button" v-if="viewingProtocolForm.rule == 0">
                 <div>
                   <el-button size="medium" type="primary" round v-preventReClick>同意并继续</el-button>
                 </div>
@@ -43,7 +45,7 @@
 <script>
 export default {
   name: "protocolPreview.vue",
-  props: ['brandType', 'tabType', 'viewingProtocolForm'],
+  props: ['brandType', 'tabType', 'viewingProtocolForm', 'proptocolTitle_0', 'proptocolTitle_1'],
   data() {
     return {
       switchType: 'pc',
@@ -63,7 +65,7 @@ export default {
     privacyFormatter(){
       let text = this.viewingProtocolForm.statement_content
       let matchPrivacy1 = this.viewingProtocolForm.proptocolTitle_0 ? text.match(this.viewingProtocolForm.proptocolTitle_0) : null;
-      console.log(text, matchPrivacy1, 'text')
+      console.log(text, matchPrivacy1, this.viewingProtocolForm, 'text')
       if(matchPrivacy1){
         let reg = new RegExp(`(${matchPrivacy1[0]})`);
         text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_0 || 'javascript:void(0);'}" target="_blank">$1</a>`);
@@ -91,21 +93,22 @@ export default {
         this.initPage();
       }
     },
-    'viewingProtocolForm.proptocolTitle_0'(val, oldVal) {
-      if (val) {
-        this.privacyFormatter()
-      }
-    },
-    'viewingProtocolForm.proptocolTitle_1'(val, oldVal) {
-      if (val) {
-        this.privacyFormatter()
-      }
-    },
     'viewingProtocolForm.statement_content'(val, oldVal) {
       if (val) {
         this.privacyFormatter()
       }
     },
+    proptocolTitle_0(val, oldVal) {
+      if (val) {
+        this.privacyFormatter()
+      }
+    },
+    proptocolTitle_1(val, oldVal) {
+      if (val) {
+        this.privacyFormatter()
+      }
+    },
+    
   }
 };
 </script>
@@ -117,6 +120,7 @@ export default {
   height: 300px;
   border-radius: 4px;
   border: 1px solid #CCCCCC;
+  margin-top: 16px
 }
 .brand-preview{
   overflow: hidden;
@@ -202,7 +206,7 @@ export default {
     width: 100%;
     margin: 16px;
     position: relative;
-    .sign-intro{
+    .protocol-intro{
       font-size: 12px;
       color: #999;
       transform:scale(0.4);
@@ -223,7 +227,7 @@ export default {
       }
       
     }
-    .sign-title{
+    .protocol-title{
       height: 25px;
       font-size: 18px;
       font-family: PingFangSC-Medium, PingFang SC;
@@ -239,11 +243,11 @@ export default {
           color: blue;
         }
       }
-      &.sign-close{
+      &.protocol-close{
         left: 65px;
       }
     }
-    .sign-content{
+    .protocol-content{
       font-size: 14px;
       margin-top: 18px;
       font-family: PingFangSC-Regular, PingFang SC;
@@ -253,13 +257,13 @@ export default {
       
       overflow-y: scroll
     }
-    .sign-content-read{
+    .protocol-content-read{
       height: 148px;
     }
-    .sign-content-choose{
+    .protocol-content-choose{
       height: 110px;
     }
-    .sign-bottom{
+    .protocol-bottom{
       width: 100%;
       font-size: 14px;
       font-family: PingFangSC-Regular, PingFang SC;
@@ -267,7 +271,7 @@ export default {
       color: #666666;
       line-height: 20px;
     }
-    .sign-button{
+    .protocol-button{
       text-align: center;
       margin-top: 2px;
     }
@@ -276,7 +280,7 @@ export default {
     }
   }
 }
-.sign-version{
+.protocol-version{
   position: absolute;
   left: 80px;
   bottom: 2px;
