@@ -321,16 +321,18 @@ export default {
       this.$fetch('getAgreement', this.$params(params)).then(res => {
         console.log(res);
         if (res && res.code === 200) {
-          if (res.data) {
+          if (res.data && res.data.title) {
             this.viewingProtocolForm = res.data;
             let statement_info = res.data.statement_info
-            this.statementList = statement_info
-            statement_info.forEach((item, index)=>{
-              let titleName = `proptocolTitle_${index}`
-              let linkName = `proptocolLink_${index}`
-              this.viewingProtocolForm[titleName] = item.title;
-              this.viewingProtocolForm[linkName] = item.link
-            })
+            if(statement_info && statement_info.length > 0){
+              this.statementList = statement_info;
+              statement_info.forEach((item, index)=>{
+                let titleName = `proptocolTitle_${index}`
+                let linkName = `proptocolLink_${index}`
+                this.viewingProtocolForm[titleName] = item.title;
+                this.viewingProtocolForm[linkName] = item.link
+              })
+            }
             console.log(this.viewingProtocolForm, this.statementList, ' this.statementList')
           } else {
             this.$nextTick(() => {
