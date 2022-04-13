@@ -10,7 +10,8 @@
           @click.prevent.stop="viewerDialogAdd"
           size="small">新增分组</el-button>
       </div>
-      <div class="group-list">
+      <div class="group-list"
+        v-if="defaultGroup.show">
         <div class="group-list-item"
           v-for="(item,index) in data"
           :key="item.groupName">

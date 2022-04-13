@@ -1,82 +1,74 @@
 <template>
   <div class="grouping-card">
     <!--小组卡片-->
-    <el-checkbox-group class="list-group-item item"
-      v-model="checkList"
-      @change="changeCheck">
-      <draggable class="list-group"
-        :list="list"
-        :move="groupMove"
-        @start="groupStart"
-        @end="groupEnd"
-        :sort="!sort"
-        draggable=".item"
-        :groupName="groupName"
-        ghostClass="ghost"
-        group="a">
-        <!--分配小组按钮组-->
-        <div slot="header"
-          class="btn-group"
-          role="group">
-          <span class="group-header-name">{{groupName}}（{{list.length}}）</span>
-          <div class="btn-group-right">
-            <span v-if="!batchGroupState"
-              @click="batchGroup"><i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>{{groupType?'批量换组':'批量分配'}}</span>
-            <span v-if="groupType&&!batchGroupState"
-              @click="dissolution"><i class="vh-saas-iconfont vh-saas-a-line-dissolutiongrouping pr4"></i>解散</span>
-            <span v-show="batchGroupState"
-              @click="batchGroupState = false"><i class="el-icon el-icon-close cancel-size"></i>取消</span>
-            <span v-show="batchGroupState"
-              @click="changeGroup"
-              :class="checkList&&checkList.length?'':'group-disable'"><i class="vh-saas-iconfont vh-saas-a-line-Ingroup pr4"></i>换组</span>
-          </div>
+    <div class="list-group">
+      <!--分配小组按钮组-->
+      <div class="group-header btn-group">
+        <span class="group-header-name">{{groupName}}（{{list.length}}）</span>
+        <div class="btn-group-right">
+          <span v-if="!batchGroupState"
+            @click="batchGroup"><i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>{{groupType?'批量换组':'批量分配'}}</span>
+          <span v-if="groupType&&!batchGroupState"
+            @click="dissolution"><i class="vh-saas-iconfont vh-saas-a-line-dissolutiongrouping pr4"></i>解散</span>
+          <span v-show="batchGroupState"
+            @click="batchGroupState = false"><i class="el-icon el-icon-close cancel-size"></i>取消</span>
+          <span v-show="batchGroupState"
+            @click="changeGroup"
+            :class="checkList&&checkList.length?'':'group-disable'"><i class="vh-saas-iconfont vh-saas-a-line-Ingroup pr4"></i>换组</span>
         </div>
-        <!--分配小组观众-->
-        <div class="list-group-item item"
-          v-for="item in list"
-          :key="item.name">
-          <el-checkbox v-if="batchGroupState"
+      </div>
+      <!--分配小组观众-->
+      <div class="list-group-item"
+        v-if="batchGroupState">
+        <el-checkbox-group class="list-group-item item"
+          v-model="checkList"
+          @change="changeCheck">
+          <el-checkbox v-for="item in list"
+            :key="item.name"
             :label="item.name"
             size="medium"
             :name="groupName">{{item.name}}</el-checkbox>
-          <div class="list-group-item-state"
-            v-if="!batchGroupState">
-            <el-popover placement="bottom-start"
-              width="100%"
-              :append-to-body="false"
-              :popper-options="{
+        </el-checkbox-group>
+      </div>
+      <div class="list-group-item"
+        v-else>
+        <div class="list-group-item-state"
+          v-for="item in list"
+          :key="item.name">
+          <el-popover placement="bottom-start"
+            width="100%"
+            :append-to-body="false"
+            :popper-options="{
               boundariesElement: 'body',
               gpuAcceleration:true,
               positionFixed:false,
               preventOverflow:true
             }"
-              popperClass="list-group-popover"
-              trigger="click">
-              <div class="list-group-item-button">
-                <div>移出小组</div>
-                <div>换组</div>
-              </div>
-              <span slot="reference">
-                <span class="list-group-name">{{item.name}}</span>
-                <!--<el-tooltip class="item"
-                effect="dark"
+            popperClass="list-group-popover"
+            trigger="click">
+            <div class="list-group-item-button"
+              :class="groupType?'':'list-none'">
+              <div>移出小组</div>
+              <div>换组</div>
+            </div>
+            <span slot="reference">
+              <el-tooltip effect="dark"
                 :content="item.name"
                 placement="top">
                 <span class="list-group-name">{{item.name}}</span>
-              </el-tooltip>-->
-              </span>
-            </el-popover>
-          </div>
+              </el-tooltip>
+            </span>
+          </el-popover>
         </div>
-      </draggable>
-    </el-checkbox-group>
+      </div>
+    </div>
     <!--换组-->
     <group-change ref="groupChange"></group-change>
   </div>
 </template>
 
 <script>
-import draggable from "vuedraggable"
+//import draggable from "vuedraggable"
 import GroupChange from './GroupChange.vue'
 let id = 1
 export default {
@@ -102,11 +94,6 @@ export default {
       type: [String, Number],
       default: 2000
     },
-    /**排序 */
-    sort: {
-      type: Boolean,
-      default: false
-    },
     /**本组观众 */
     list: {
       type: Array,
@@ -114,22 +101,17 @@ export default {
     }
   },
   components: {
-    draggable,
     GroupChange
   },
   data() {
     return {
       checkList: [],//复选数据
-      batchGroupState: false,//批量换组,
-      validMove: false,//拖动校验
-      isStart: false,
-      isSameGroup: true//同组拖动
+      batchGroupState: false//批量换组,
     }
   },
   methods: {
     /**复选事件 */
     changeCheck(data) {
-      debugger
     },
     batchGroup() {
       this.batchGroupState = true
@@ -144,35 +126,6 @@ export default {
     dissolution() {
       this.$emit('groupDissolution', this.groupIndex, this.list)
       console.log('解散' + this.groupName)
-    },
-    groupChange(data) {
-      this.$emit('change', data)
-    },
-    groupStart() {
-      this.isStart = true
-    },
-    groupEnd() {
-      this.isStart = false
-    },
-    groupMove(data) {
-      const { draggedContext, relatedContext } = data
-      const relatedGroupName = relatedContext?.component?.$attrs.groupName
-      this.$emit('move', data)
-      /*同组拖动允许*/
-      if (relatedGroupName === '预分配' || relatedGroupName === this.groupName) {
-        return true
-      }
-      if (this.isStart && relatedContext?.list.length >= this.maxNumber) {
-        this.isStart = false
-        this.$message({
-          message: '该组观众已超出上限，请选择其他小组',
-          showClose: true,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-        return false
-      }
-      return true
     }
   }
 }
@@ -182,9 +135,6 @@ export default {
 .grouping-card {
   border: 1px solid #ccc;
   background: #f7f7f7;
-  .ghost {
-    color: #fb3a32;
-  }
   .pr4 {
     padding-right: 4px;
   }
@@ -226,10 +176,6 @@ export default {
     height: 205px;
     background: #f7f7f7;
     .list-group-item {
-      margin-top: 8px;
-      margin-left: 8px;
-      float: left;
-      cursor: pointer;
       .list-group-popover {
         width: 96px;
         margin-top: 0;
@@ -237,6 +183,10 @@ export default {
     }
     .list-group-item-state {
       border-radius: 4px;
+      margin-top: 8px;
+      margin-left: 8px;
+      display: inline-block;
+      cursor: pointer;
       position: relative;
     }
     .list-group-name {
@@ -260,7 +210,7 @@ export default {
 .list-group-popover {
   box-sizing: border-box;
   min-width: 96px;
-  padding: 4px 0;
+  padding: 0;
   position: absolute !important;
   left: 0;
   top: 0;
@@ -271,6 +221,10 @@ export default {
   .list-group-item-button {
     background: #fff;
     text-align: left;
+    padding: 4px 0;
+    &.list-none {
+      display: none;
+    }
     div {
       cursor: pointer;
       padding: 0 14px;
@@ -286,6 +240,7 @@ export default {
 .list-group-item {
   color: #1a1a1a;
   .el-checkbox {
+    margin: 8px 0 0 8px;
     max-width: 96px;
     height: 24px;
     background: #e6e6e6;
@@ -305,6 +260,7 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
     padding-left: 4px;
+    padding-right: 8px;
   }
   .el-checkbox__input.is-checked + .el-checkbox__label {
     color: #1a1a1a;
