@@ -85,9 +85,9 @@
         <div class="director-seats-boxs">
            <div class="director-seats-box"
            v-for="item of seatList"
-           :key="item.room_id"
+           :key="item.seat_id"
            @click="selectSeat(item)"
-           :class="{ used: item.status === 1, selected: curSelected === item.room_id }">
+           :class="{ used: item.status === 1, selected: curSelected === item.seat_id }">
               {{item.name}}
               <div class="corner" v-if="item.status === 1">已占用</div>
            </div>
@@ -186,17 +186,13 @@ export default {
           this.groupLiveStatus = res.data.webinar_type == 6
           //是否云导播
           this.is_director = res.data.is_director === 1
-          if(this.webinarDirector && this.is_director){
-            this.getLiveDirectorStatus()
-            this.getLiveDirectorSeatList()
-          }
         }
       }).catch(res=>{
         console.log(res);
       })
     },
     getLiveDirectorStatus() {
-      this.$fetch('getLiveDirectorStatus', {webinar_id: this.$route.params.str}).then(res=>{
+      return this.$fetch('getLiveDirectorStatus', {webinar_id: this.$route.params.str}).then(res=>{
         if( res.code == 200 ){
           //云导播台是否开启
           this.directorStatus = res.data.director_status === 1
@@ -206,7 +202,7 @@ export default {
       })
     },
     getLiveDirectorSeatList() {
-      this.$fetch('getLiveDirectorSeatList', {webinar_id: this.$route.params.str}).then(res=>{
+      return this.$fetch('getLiveDirectorSeatList', {webinar_id: this.$route.params.str}).then(res=>{
         if( res.code == 200 ){
           //云导播台是否开启
          this.seatList = res.data.list || []
@@ -231,7 +227,9 @@ export default {
     },
     goLive(origin = 1){
       if(this.chooseType !== 'client' && this.webinarDirector && this.is_director && origin !=1 ){
-        this.dialogDirectorVisible = true
+        Promise.resolve(this.getLiveDirectorStatus()).then(res=>{
+          this.dialogDirectorVisible = true
+        })
       }else{
         if(this.chooseType !== 'client') {
           // 浏览器检测 => 若失败，跳转浏览器效果页；若成功，跳转观看页
@@ -325,17 +323,42 @@ export default {
     },
     openLive(){
       if(this.selectDirectorMode === 2){
-        this.dialogDirectorSeatVisible = true
+        Promise.resolve(this.getLiveDirectorSeatList()).then(res=>{
+          this.dialogDirectorSeatVisible = true
+        })
       }else{
         this.goLive(1)
       }
     },
     selectSeat(info){
       if(info.status === 1) return
-      this.curSelected = info.room_id
+      this.curSelected = info.seat_id
     },
     toDirector(){
-
+      if(this.curSelected == null){
+         this.$message({
+          message: "请选择机位",
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return
+      }
+      this.$fetch('setLiveDirectorSeat', {
+        webinar_id: this.$route.params.str,
+        seat_id: this.curSelected,
+      }).then(res => {
+        if (res.code === 515000) {
+           this.$message({
+            message: "机位被占用",
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+        }
+      })
     }
   },
   mounted() {

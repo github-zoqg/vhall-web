@@ -68,18 +68,17 @@
                   v-if="webinarDirector && isDirector"
                   @mouseout="handlerMouseOutDirector"
                   @mouseover="handleMouseInDirector">
-                <el-button round size="small"
-                  class="check-btn">云导播</el-button>
+                <el-button round size="small" class="check-btn" @click="toDirector">云导播</el-button>
                 <div class="float-dom-director"
-                  v-if="showFloatDirector"
+                  v-if="showFloatDirector&&!hasUpdate"
                   @mouseout="handlerMouseOutDirector"
                   @mouseover="handleChildOverDirector">
                   <div>多路机位+异地推流，画中画分屏直播</div>
                   <div class="flex-box">
                     <span>分辨率</span>
                     <el-select v-model="dpi" placeholder="请选择" :popper-append-to-body="false">
-                      <el-option label="1280*720" :value="1"></el-option>
-                      <el-option label="1920*1080" :value="2"></el-option>
+                      <el-option label="1280*720" value="1280*720"></el-option>
+                      <el-option label="1920*1080" value="1920*1080"></el-option>
                     </el-select>
                   </div>
                   <div class="indent">设置后，分辨率不支持重复修改</div>
@@ -166,7 +165,8 @@ export default {
         minute: 0,
         second: 0
       },
-      dpi: 1
+      dpi: '1280*720',
+      hasUpdate: false  //false: 没有修改过
     };
   },
   computed: {
@@ -340,6 +340,9 @@ export default {
         }
         this.isDelay = res.data.no_delay_webinar == 1 ? true : false
         this.isDirector = res.data.is_director == 1 ? true : false
+        if(this.isDirector){
+          this.getLiveDirectorResolution()
+        }
       }).catch(res=>{
         this.$message({
           message: res.msg || "获取信息失败",
@@ -625,10 +628,33 @@ export default {
     },
     //设置导播分辨率
     setDpi(){
-      this.$fetch('lowerGrade', {}).then(res => {
-
+      this.$fetch('setLiveDirectorResolution', this.$params({
+        webinar_id: this.$route.params.str,
+        resolution_ratio: this.dpi,
+      })).then(res => {
+        this.hasUpdate = true
+        this.toDirector()
       }).catch(res => {
       })
+    },
+    // 控制台-获取活动分辨率信息
+    getLiveDirectorResolution() {
+      this.$fetch('getLiveDirectorResolution', this.$params({
+        webinar_id: this.$route.params.str
+      })).then((res) => {
+        if(res && res.code === 200) {
+          //1:未修改 2:已修改不可修改
+          this.hasUpdate = res.data.is_update === 2
+        }
+      }).catch(e => {
+      });
+    },
+    //打开云导播台
+    toDirector(){
+      if(this.hasUpdate){
+        //打开云导播台
+
+      }
     }
   }
 };
