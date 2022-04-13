@@ -100,6 +100,7 @@ const apis = {
   getPCDownloadUrl: ['/v3/commons/version/upgrade', 'POST'], // 客户端下载地址获取接口
   getLiveDirectorStatus: ['/v3/webinars/director/get-status', 'GET'], // 控制台-获取云导播台状态
   getLiveDirectorSeatList: ['/v3/webinars/director/get-seat-list', 'GET'], // 控制台-获取机位列表
+  setLiveDirectorSeat: ['/v3/webinars/director/select-seat', 'GET'], // 控制台-获取机位列表
 
   // 插播
   waitingVideoList: ['/v3/webinars/waiting-file/get-list', 'POST'], // 插播列表
