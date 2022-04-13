@@ -8,23 +8,26 @@
       :close-on-click-modal="false"
       width="400px"
       title="新增分组">
-      <el-form class="add-form">
+      <el-form class="add-form"
+        :rules="rules"
+        :model="formInline"
+        ref="viewerForm">
         <el-form-item label="新增"
-          label-width="40px">
+          prop="count"
+          label-width="50px">
           <el-input :placeholder="placeholder"
-            v-model.trim.number="count"
+            v-model.trim.number="formInline.count"
             onkeyup="this.value=this.value.replace(/[^\d]/g,'')">
             <template slot="suffix">组</template>
           </el-input>
         </el-form-item>
       </el-form>
-
       <!-- 底部按钮 -->
       <div slot="footer"
         class="vmp-group-ft">
         <el-button type="primary"
           :round="true"
-          @click="handleThrottleSubmit()">确定</el-button>
+          @click="handleSubmit">确定</el-button>
         <el-button :round="true"
           @click="handleClose">取消</el-button>
       </div>
@@ -37,44 +40,49 @@ import _ from 'lodash';
 export default {
   name: 'VmpGroupAdd',
   data() {
+    const validGroup = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入分组'));
+      } else if (value && this.formInline.count > 50) {
+        callback(new Error('分组人数超过上限'));
+      } else if (value && (value < 1 || value > 50)) {
+        callback(new Error('请输入1-50的小组编号'));
+      } else {
+        callback();
+      }
+    }
     return {
       dialogVisible: false,
-      count: 1
+      formInline: {
+        count: 1
+      },
+      rules: {
+        count: { required: true, validator: validGroup, trigger: 'blur' }
+      }
     };
   },
-  beforeCreate() {
-    //this.groupServer = useGroupServer();
+  props: {
+    group: {
+      type: Number,
+      default: 1
+    }
   },
   computed: {
     placeholder() {
-      return `最多新增${50}组`;
+      return `最多新增${50 - this.group}组`;
     }
-  },
-  mounted() {
-    //this.handleThrottleSubmit = _.throttle(this.handleSubmit, 300, { trailing: false });
   },
   methods: {
     // 新增分组确定
-    handleSubmit: async function() {
-      const c = parseInt(this.count);
-      if (isNaN(c) || c < 1) {
-        this.$message.warning('参数错误');
-        return false;
-      }
-      try {
-        const result = await this.groupServer.groupCreate({
-          number: c,
-          way: 2
-        });
-        if (result && result.code === 200) {
-          this.count = 1;
-          this.handleClose();
+    handleSubmit() {
+      this.$refs.viewerForm.validate((valid) => {
+        if (valid) {
+          alert('submit!');
         } else {
-          this.$message.warning(result.msg || '新增分组失败');
+          console.log('error submit!!');
+          return false;
         }
-      } catch (ex) {
-        this.$message.warning(ex.messge || '新增分组出现异常');
-      }
+      });
     },
     handlOpen() {
       this.dialogVisible = true

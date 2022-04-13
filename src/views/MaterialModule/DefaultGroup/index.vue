@@ -34,6 +34,7 @@
         @click="hide">取 消</el-button>
     </span>
     <group-add ref="groupAdd"
+      :group="data.length-1"
       :show="groupAddShow"></group-add>
   </VhallDialog>
 </template>
