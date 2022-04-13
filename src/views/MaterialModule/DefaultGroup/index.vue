@@ -12,10 +12,13 @@
       </div>
       <div class="group-list">
         <div class="group-list-item"
-          v-for="item in data"
+          v-for="(item,index) in data"
           :key="item.groupName">
           <grouping-card :groupName="item.groupName"
             :groupType="item.groupName==='预分配'?0:1"
+            @groupDissolution="groupDissolution"
+            :groupIndex="index"
+            :maxNumber="4"
             :list="item.list"></grouping-card>
         </div>
       </div>
@@ -112,6 +115,11 @@ export default {
     },
     hide() {
       this.defaultGroup.show = false
+    },
+    /**解散 */
+    groupDissolution(groupIndex, list) {
+      this.data.splice(groupIndex, 1)
+      this.data[0].list = this.data[0].list.concat(list)
     },
     okHandle() { }
   }
