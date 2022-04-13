@@ -1209,6 +1209,7 @@ export default {
   display: flex;
   justify-content: space-between;
   position: relative;
+  min-height: 36px;
   .searchBox{
     display: flex;
     &:first-child{
