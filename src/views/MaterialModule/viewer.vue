@@ -185,7 +185,7 @@
           <VhallInput v-model.trim="viewerForm.group"
             v-clearEmoij
             auto-complete="off"
-            placeholder="请输入小组浩，例如：1"
+            placeholder="请输入小组号，例如：1"
             :maxlength="50" />
         </el-form-item>
         <el-form-item label="其他"
