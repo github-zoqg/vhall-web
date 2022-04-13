@@ -3,9 +3,13 @@
     <!--小组卡片-->
     <draggable class="list-group"
       :list="list"
-      @change="changeMove"
+      :move="groupMove"
+      @start="groupStart"
+      @end="groupEnd"
       :sort="!sort"
       draggable=".item"
+      :groupName="groupName"
+      ghostClass="ghost"
       group="a">
       <!--分配小组按钮组-->
       <div slot="header"
@@ -15,7 +19,8 @@
         <div class="btn-group-right">
           <span v-if="!batchGroupState"
             @click="batchGroup"><i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>{{groupType?'批量换组':'批量分配'}}</span>
-          <span v-if="groupType&&!batchGroupState"><i class="vh-saas-iconfont vh-saas-a-line-dissolutiongrouping pr4"></i>解散</span>
+          <span v-if="groupType&&!batchGroupState"
+            @click="dissolution"><i class="vh-saas-iconfont vh-saas-a-line-dissolutiongrouping pr4"></i>解散</span>
           <span v-show="batchGroupState"
             @click="batchGroupState = false"><i class="el-icon el-icon-close cancel-size"></i>取消</span>
           <span v-show="batchGroupState"
@@ -73,9 +78,14 @@ export default {
   props: {
     /**分组名称 */
     groupName: {
-      require: false,
+      require: true,
       type: String,
       default: '分组1'
+    },
+    groupIndex: {
+      require: true,
+      type: Number,
+      default: 0
     },
     //0待分组1其他组
     groupType: {
@@ -83,9 +93,9 @@ export default {
       default: 1
     },
     /**分组人数 */
-    number: {
+    maxNumber: {
       type: [String, Number],
-      default: 0
+      default: 2000
     },
     /**排序 */
     sort: {
@@ -104,7 +114,10 @@ export default {
   },
   data() {
     return {
-      batchGroupState: false//批量换组,
+      batchGroupState: false,//批量换组,
+      validMove: false,//拖动校验
+      isStart: false,
+      isSameGroup: true//同组拖动
     }
   },
   methods: {
@@ -116,11 +129,40 @@ export default {
       this.$refs.groupChange.handleOpen()
       this.$emit('changeGroup')
     },
-    changeMove(data) {
+    /*解散*/
+    dissolution() {
+      this.$emit('groupDissolution', this.groupIndex, this.list)
+      console.log('解散' + this.groupName)
+    },
+    groupChange(data) {
+      debugger
       this.$emit('change', data)
     },
-    startMove(data) {
-      this.$emit('start', data)
+    groupStart() {
+      this.isStart = true
+    },
+    groupEnd() {
+      this.isStart = false
+    },
+    groupMove(data) {
+      const { draggedContext, relatedContext } = data
+      const relatedGroupName = relatedContext?.component?.$attrs.groupName
+      this.$emit('move', data)
+      /*同组拖动允许*/
+      if (relatedGroupName === '预分配' || relatedGroupName === this.groupName) {
+        return true
+      }
+      if (this.isStart && relatedContext?.list.length >= this.maxNumber) {
+        this.isStart = false
+        this.$message({
+          message: '该组观众已超出上限，请选择其他小组',
+          showClose: true,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return false
+      }
+      return true
     }
   }
 }
@@ -130,6 +172,9 @@ export default {
 .grouping-card {
   border: 1px solid #ccc;
   background: #f7f7f7;
+  .ghost {
+    color: #fb3a32;
+  }
   .pr4 {
     padding-right: 4px;
   }
