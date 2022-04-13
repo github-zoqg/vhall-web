@@ -9,13 +9,13 @@
           <div class="pc-preview">
            
             <div class="pc-contain">
-              <div class="protocol-top">
+              <div class="protocol-top" :class="viewingProtocolForm.rule == 1 ? 'protocol-content-read' : 'protocol-content-choose'">
                 <div class="protocol-title">
                   <p>
                     {{viewingProtocolForm.title}}
                   </p>
                 </div>
-                <div class="protocol-content" :class="viewingProtocolForm.rule == 1 ? 'protocol-content-read' : 'protocol-content-choose'">
+                <div class="protocol-content">
                   <div v-html="viewingProtocolForm.content">
 
                   </div>
@@ -251,7 +251,7 @@ export default {
     }
     .protocol-top{
       overflow-y: scroll;
-      height: 170px;
+      
     }
     .protocol-content{
       font-size: 14px;
@@ -262,10 +262,10 @@ export default {
       line-height: 20px;
     }
     .protocol-content-read{
-      height: 148px;
+      height: 208px;
     }
     .protocol-content-choose{
-      height: 110px;
+      height: 170px;
     }
     .protocol-bottom{
       width: 100%;
