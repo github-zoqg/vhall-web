@@ -9,16 +9,19 @@
           <div class="pc-preview">
            
             <div class="pc-contain">
-              <div class="protocol-title">
-                <p>
-                  {{viewingProtocolForm.title}}
-                </p>
-              </div>
-              <div class="protocol-content" :class="viewingProtocolForm.rule == 1 ? 'protocol-content-read' : 'protocol-content-choose'">
-                <div v-html="viewingProtocolForm.content">
+              <div class="protocol-top">
+                <div class="protocol-title">
+                  <p>
+                    {{viewingProtocolForm.title}}
+                  </p>
+                </div>
+                <div class="protocol-content" :class="viewingProtocolForm.rule == 1 ? 'protocol-content-read' : 'protocol-content-choose'">
+                  <div v-html="viewingProtocolForm.content">
 
+                  </div>
                 </div>
               </div>
+              
               <div class="protocol-bottom">
                 <p v-html="result_content"></p>
 
@@ -228,7 +231,6 @@ export default {
       
     }
     .protocol-title{
-      height: 25px;
       font-size: 18px;
       font-family: PingFangSC-Medium, PingFang SC;
       font-weight: 500;
@@ -247,6 +249,10 @@ export default {
         left: 65px;
       }
     }
+    .protocol-top{
+      overflow-y: scroll;
+      height: 170px;
+    }
     .protocol-content{
       font-size: 14px;
       margin-top: 18px;
@@ -254,8 +260,6 @@ export default {
       font-weight: 400;
       color: #1A1A1A;
       line-height: 20px;
-      
-      overflow-y: scroll
     }
     .protocol-content-read{
       height: 148px;

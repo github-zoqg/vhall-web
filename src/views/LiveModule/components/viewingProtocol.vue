@@ -24,7 +24,7 @@
             <VhallInput v-model="viewingProtocolForm.title" v-clearEmoij :maxlength="50" class="title-inform" autocomplete="off" :placeholder="`微吼直播观看协议`"  show-word-limit></VhallInput>
           </el-form-item>
           <el-form-item class="margin32" prop="content" :label="`协议内容`">
-            <v-editor class="editor-wrap" save-type='live' :placeholder="`请输入协议内容`" :isReturn=true ref="unitImgTxtEditor" v-model="viewingProtocolForm.content"></v-editor>
+            <v-editor class="editor-wrap" save-type='live' :isReturn=true ref="unitImgTxtEditor" v-model="viewingProtocolForm.content"></v-editor>
           </el-form-item>
           <el-form-item label="进入规则" prop="rule">
             <!-- <div class="switch__box"> -->
@@ -59,7 +59,7 @@
               <!-- :prop="'proptocolTitle_'+key" -->
               <el-form-item class="item-title" :key="'title'+key" prop="proptocolTitle_0">
                 <template>
-                  <VhallInput @input="handleInput($event, key, 'title')" :maxlength="100" class="title-inform" show-word-limit v-model="val.title" autocomplete="off" placeholder="观看协议"  > </VhallInput>
+                  <VhallInput @input="handleInput($event, key, 'title')" :maxlength="100" class="title-inform" show-word-limit v-model="val.title" autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
                   <i
                     class="el-icon-remove-outline optIcon"
                     @click="deleteOptions"
@@ -215,11 +215,14 @@ export default {
           console.log(value.substring(0, value.length-1), 'value.substring(0, value.length-1)')
           let viewingProtocolForm = this.viewingProtocolForm
           this.viewingProtocolForm.statement_content = viewingProtocolForm.statement_content.replace(oldValue, '')
-        }
-        if(index === 0){
-          this.viewingProtocolForm.proptocolTitle_0 = value
         }else{
-          this.viewingProtocolForm.proptocolTitle_1 = value
+          this.statementList[index].title = value;
+          if(index === 0){
+            this.viewingProtocolForm.proptocolTitle_0 = value
+            
+          }else{
+            this.viewingProtocolForm.proptocolTitle_1 = value
+          }
         }
           
       }else {
@@ -246,10 +249,22 @@ export default {
         title: '观看协议2',
         link: ''
       }
+      if(this.viewingProtocolForm.proptocolTitle_1){
+        this.statementList.push(statementObj)
+        this.viewingProtocolForm.statement_content += '及观看协议2'
+        this.viewingProtocolForm.proptocolTitle_1 = '观看协议2'
+
+      }else{
+        
+        this.$message({
+          message: '请完善可点击文字',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      }
       
-      this.statementList.push(statementObj)
-      this.viewingProtocolForm.statement_content += '及观看协议2'
-      this.viewingProtocolForm.proptocolTitle_1 = '观看协议2'
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
