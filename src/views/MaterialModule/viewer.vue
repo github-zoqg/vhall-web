@@ -181,8 +181,8 @@
             :maxlength="50" />
         </el-form-item>
         <el-form-item label="小组"
-          prop="group">
-          <VhallInput v-model.trim="viewerForm.group"
+          prop="group_order_id">
+          <VhallInput v-model.trim.number="viewerForm.group_order_id"
             v-clearEmoij
             auto-complete="off"
             placeholder="请输入小组号，例如：1"
@@ -299,9 +299,7 @@ export default {
   data() {
     const validGroup = (rule, value, callback) => {
       const val = parseInt(value)
-      if (value && this.viewerDao.total > 2000) {
-        callback(new Error('分组人数超过上限'));
-      } else if (value && (value != val || value < 1 || value > 50)) {
+      if (value && (value != val || value < 1 || value > 50)) {
         callback(new Error('请输入1-50的小组编号'));
       } else {
         callback();
@@ -346,7 +344,7 @@ export default {
         },
         {
           label: '小组',
-          key: 'job_number',
+          key: 'group_order_id',
           width: '120',
           showHeader: true,
           headerTooltip: '此字段只适用于分组直播中的分组预导入功能，用来将观众提前分配到小组中，非必填字段'
@@ -444,10 +442,8 @@ export default {
           { max: 50, message: '请输入工号（最多50个字符）', trigger: 'blur' },
           { min: 1, message: '请输入工号（最多50个字符）', trigger: 'blur' }
         ],
-        group: [
-          { required: false, validator: validGroup, trigger: 'blur' },
-          { max: 2, message: '请输入1-50的小组编号', trigger: 'blur' },
-          { min: 1, message: '请输入1-50的小组编号', trigger: 'blur' }
+        group_order_id: [
+          { required: false, validator: validGroup, trigger: 'blur' }
         ],
         other: [
           { max: 50, message: '请输入其他内容（最多50个字符）', trigger: 'blur' },

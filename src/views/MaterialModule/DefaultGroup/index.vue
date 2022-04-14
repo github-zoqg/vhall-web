@@ -15,12 +15,14 @@
         <div class="group-list-item"
           v-for="(item,index) in data"
           :key="item.groupName">
-          <grouping-card :groupName="item.groupName"
+          <grouping-card ref="groupingCard"
             :groupType="item.groupName==='预分配'?0:1"
             @groupDissolution="groupDissolution"
+            @changeGroup="changeGroup"
+            @removeGroup="removeGroup"
             :groupIndex="index"
-            :maxNumber="4"
-            :list="item.list"></grouping-card>
+            :data="item"
+            :maxNumber="4"></grouping-card>
         </div>
       </div>
     </div>
@@ -34,18 +36,24 @@
         @click="hide">取 消</el-button>
     </span>
     <group-add ref="groupAdd"
-      :group="data.length-1"
+      :dataList="data"
       :show="groupAddShow"></group-add>
+    <!--换组-->
+    <group-change ref="groupChange"
+      @changeGroupComplete="changeGroupComplete"
+      :groupList="groupList"></group-change>
   </VhallDialog>
 </template>
 
 <script>
 import GroupingCard from '@/components/GroupingCard'
 import GroupAdd from './components/GroupAdd.vue'
+import GroupChange from './components/GroupChange.vue'
 export default {
   components: {
     GroupingCard,
-    GroupAdd
+    GroupAdd,
+    GroupChange
   },
   data() {
     return {
@@ -53,9 +61,17 @@ export default {
         show: false
       },
       groupAddShow: false,
+      /**换组 */
+      changeGroupDefault: {
+        currentGroup: null, //from当前分组
+        checkList: [],//data选中换组观众
+        selectGroup: 1//to换到组
+      },
       data: [
         {
           groupName: '预分配',
+          index: 0,//组序号
+          id: '2323232',
           list: [
             {
               name: '观众阿里妈妈1',
@@ -73,6 +89,8 @@ export default {
         },
         {
           groupName: '分组1',
+          index: 1,
+          id: '232312',
           list: [
             {
               name: '观众3',
@@ -90,6 +108,8 @@ export default {
         },
         {
           groupName: '分组2',
+          index: 2,
+          id: '2323eq',
           list: [
             {
               name: '观众6',
@@ -108,6 +128,18 @@ export default {
       ]
     }
   },
+  computed: {
+    // 分组小组
+    groupList() {
+      return this.data.map(item => {
+        return {
+          id: item.id,
+          groupName: item.groupName,
+          index: item.index
+        };
+      });
+    }
+  },
   methods: {
     viewerDialogAdd() {
       this.$refs.groupAdd.handlOpen()
@@ -122,6 +154,41 @@ export default {
     groupDissolution(groupIndex, list) {
       this.data.splice(groupIndex, 1)
       this.data[0].list = this.data[0].list.concat(list)
+    },
+    /**换组 */
+    /**groupName   分组名称*/
+    /**checkList  选中换组观众数据 */
+    changeGroup(currentGroup, checkList) {
+      this.$set(this.changeGroupDefault, 'currentGroup', currentGroup)
+      this.$set(this.changeGroupDefault, 'checkList', checkList)
+      this.$nextTick(() => {
+        this.$refs.groupChange.handleOpen()
+      })
+    },
+    /** 移出小组*/
+    removeGroup(item) {
+      this.data[0].list.push(item)
+    },
+    /**确定换组 */
+    changeGroupComplete(selectGroup) {
+      this.$set(this.changeGroupDefault, 'selectGroup', selectGroup)
+      const toGroupDataFilter = this.data.filter(item => {
+        return item.index === this.changeGroupDefault.selectGroup
+      })
+      const toGroupData = toGroupDataFilter && toGroupDataFilter.length ? toGroupDataFilter[0] : []
+      const currentGroupList = []
+      this.changeGroupDefault.currentGroup.list.forEach(item => {
+        if (this.changeGroupDefault.checkList.includes(item.id)) {
+          toGroupData.list.push(item)
+        } else {
+          currentGroupList.push(item)
+        }
+      });
+      this.changeGroupDefault.currentGroup.list = currentGroupList
+      this.$nextTick(() => {
+        this.$refs.groupChange && this.$refs.groupChange.handleClose()
+        this.$refs.groupingCard && this.$refs.groupingCard.clearData()
+      })
     },
     okHandle() { }
   }

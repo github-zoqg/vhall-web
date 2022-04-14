@@ -35,7 +35,6 @@
   </div>
 </template>
 <script>
-import _ from 'lodash';
 
 export default {
   name: 'VmpGroupAdd',
@@ -62,14 +61,15 @@ export default {
     };
   },
   props: {
-    group: {
-      type: Number,
-      default: 1
+    dataList: {
+      type: Array,
+      default: () => []
     }
   },
   computed: {
     placeholder() {
-      return `最多新增${50 - this.group}组`;
+      const group = this.dataList.length - 1
+      return `最多新增${50 - group}组`;
     }
   },
   methods: {
@@ -77,9 +77,12 @@ export default {
     handleSubmit() {
       this.$refs.viewerForm.validate((valid) => {
         if (valid) {
-          alert('submit!');
+          const arrObj = {}
+          this.dataList.forEach(item => {
+
+          });
         } else {
-          console.log('error submit!!');
+          console.log('新增分组校验错误');
           return false;
         }
       });

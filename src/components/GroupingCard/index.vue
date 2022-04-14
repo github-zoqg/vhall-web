@@ -4,14 +4,14 @@
     <div class="list-group">
       <!--分配小组按钮组-->
       <div class="group-header btn-group">
-        <span class="group-header-name">{{groupName}}（{{list.length}}）</span>
+        <span class="group-header-name">{{data.groupName}}（{{data.list.length}}）</span>
         <div class="btn-group-right">
           <span v-if="!batchGroupState"
             @click="batchGroup"><i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>{{groupType?'批量换组':'批量分配'}}</span>
           <span v-if="groupType&&!batchGroupState"
             @click="dissolution"><i class="vh-saas-iconfont vh-saas-a-line-dissolutiongrouping pr4"></i>解散</span>
           <span v-show="batchGroupState"
-            @click="batchGroupState = false"><i class="el-icon el-icon-close cancel-size"></i>取消</span>
+            @click="clearData"><i class="el-icon el-icon-close cancel-size"></i>取消</span>
           <span v-show="batchGroupState"
             @click="changeGroup"
             :class="checkList&&checkList.length?'':'group-disable'"><i class="vh-saas-iconfont vh-saas-a-line-Ingroup pr4"></i>换组</span>
@@ -23,17 +23,17 @@
         <el-checkbox-group class="list-group-item item"
           v-model="checkList"
           @change="changeCheck">
-          <el-checkbox v-for="item in list"
+          <el-checkbox v-for="item in data.list"
             :key="item.name"
-            :label="item.name"
+            :label="item.id"
             size="medium"
-            :name="groupName">{{item.name}}</el-checkbox>
+            :name="data.groupName">{{item.name}}</el-checkbox>
         </el-checkbox-group>
       </div>
       <div class="list-group-item"
         v-else>
         <div class="list-group-item-state"
-          v-for="item in list"
+          v-for="(item,index) in data.list"
           :key="item.name">
           <el-popover placement="bottom-start"
             width="100%"
@@ -48,8 +48,8 @@
             trigger="click">
             <div class="list-group-item-button"
               :class="groupType?'':'list-none'">
-              <div>移出小组</div>
-              <div>换组</div>
+              <div @click="removeGroup(item,index)">移出小组</div>
+              <div @click="changeCurrentGroup(item)">换组</div>
             </div>
             <span slot="reference">
               <el-tooltip effect="dark"
@@ -62,23 +62,14 @@
         </div>
       </div>
     </div>
-    <!--换组-->
-    <group-change ref="groupChange"></group-change>
   </div>
 </template>
 
 <script>
 //import draggable from "vuedraggable"
-import GroupChange from './GroupChange.vue'
-let id = 1
 export default {
   props: {
     /**分组名称 */
-    groupName: {
-      require: true,
-      type: String,
-      default: '分组1'
-    },
     groupIndex: {
       require: true,
       type: Number,
@@ -89,19 +80,16 @@ export default {
       type: [String, Number],
       default: 1
     },
-    /**分组人数 */
+    /**分组最大人数 */
     maxNumber: {
       type: [String, Number],
       default: 2000
     },
     /**本组观众 */
-    list: {
-      type: Array,
-      default: () => []
+    data: {
+      type: Object,
+      default: () => { }
     }
-  },
-  components: {
-    GroupChange
   },
   data() {
     return {
@@ -113,19 +101,34 @@ export default {
     /**复选事件 */
     changeCheck(data) {
     },
+    /**批量换组||批量分配 */
     batchGroup() {
       this.batchGroupState = true
     },
-    /*换组*/
+    /*批量换组*/
     changeGroup() {
       if (!this.checkList.length) return
-      this.$refs.groupChange.handleOpen()
-      this.$emit('changeGroup')
+      this.$emit('changeGroup', this.data, this.checkList)
+    },
+    /**单个换组 */
+    changeCurrentGroup(item) {
+      this.$emit('changeGroup', this.data, [item.id])
+    },
+    /**移出小组 */
+    removeGroup(item, index) {
+      this.data.list.splice(index, 1)
+      this.$emit('removeGroup', item)
     },
     /*解散*/
     dissolution() {
-      this.$emit('groupDissolution', this.groupIndex, this.list)
-      console.log('解散' + this.groupName)
+      this.checkList = []
+      this.$emit('groupDissolution', this.groupIndex, this.data.list)
+      console.log('解散' + this.data.groupName)
+    },
+    /**清楚状态 */
+    clearData() {
+      this.checkList = []
+      this.batchGroupState = false
     }
   }
 }

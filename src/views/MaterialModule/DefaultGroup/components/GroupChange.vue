@@ -14,10 +14,10 @@
           <el-select v-model="selectGroup"
             style="width: 100%"
             placeholder="请选择">
-            <el-option v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"></el-option>
+            <el-option v-for="item in groupList"
+              :key="item.id"
+              :label="item.groupName"
+              :value="item.index"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -38,43 +38,27 @@
 //import { useGroupServer } from 'middle-domain';
 export default {
   name: 'VmpGroupChoose',
+  props: {
+    groupList: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
       dialogVisible: false,
-      selectGroup: '',
-      options: [],
-      groupedUserList: [
-        {
-          id: 1,
-          name: '分组1'
-        }
-      ]
+      selectGroup: ''
     };
-  },
-  beforeCreate() {
-    //this.groupServer = useGroupServer();
-  },
-  computed: {
-    // 已分组人员列表
-    // groupedUserList() {
-    //return this.groupServer.state.groupedUserList;
-    //}
   },
   methods: {
     // 确认换组
     handleSubmit() {
-      this.$emit('chooseGroupComplete', this.selectGroup);
+      this.$emit('changeGroupComplete', this.selectGroup);
     },
     // 对话框打开时，设置可选小组
     handleOpen() {
       this.dialogVisible = true
-      this.selectGroup = '';
-      this.options = this.groupedUserList.map(item => {
-        return {
-          value: item.id,
-          label: item.name
-        };
-      });
+      this.selectGroup = ''
     },
     handleClose() {
       this.dialogVisible = false;
