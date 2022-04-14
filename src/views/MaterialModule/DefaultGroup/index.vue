@@ -15,7 +15,7 @@
         <div class="group-list-item"
           v-for="(item,index) in data"
           :key="item.groupName">
-          <grouping-card ref="groupingCard"
+          <grouping-card :ref="`groupingCard${item.index}`"
             :groupType="item.groupName==='预分配'?0:1"
             @groupDissolution="groupDissolution"
             @changeGroup="changeGroup"
@@ -36,8 +36,8 @@
         @click="hide">取 消</el-button>
     </span>
     <group-add ref="groupAdd"
-      :dataList="data"
-      :show="groupAddShow"></group-add>
+      :data="data"
+      :groupList="groupList"></group-add>
     <!--换组-->
     <group-change ref="groupChange"
       @changeGroupComplete="changeGroupComplete"
@@ -142,7 +142,7 @@ export default {
   },
   methods: {
     viewerDialogAdd() {
-      this.$refs.groupAdd.handlOpen()
+      this.$refs.groupAdd.handlOpen(this.groupList)
     },
     show() {
       this.defaultGroup.show = true
@@ -185,10 +185,8 @@ export default {
         }
       });
       this.changeGroupDefault.currentGroup.list = currentGroupList
-      this.$nextTick(() => {
-        this.$refs.groupChange && this.$refs.groupChange.handleClose()
-        this.$refs.groupingCard && this.$refs.groupingCard.clearData()
-      })
+      this.$refs.groupChange.handleClose()
+      this.$refs[`groupingCard${this.changeGroupDefault.currentGroup.index}`][0].clearData()
     },
     okHandle() { }
   }
