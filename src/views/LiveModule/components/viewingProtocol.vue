@@ -155,7 +155,7 @@ export default {
           { required: true, max: 50,  message: `请输入标题`, trigger: 'blur' }
         ],
         content: [
-          { required: true, max: 1000,  message: `请输入协议内容`, trigger: 'blur' }
+          { required: true, max: 1007,  message: `请输入协议内容`, trigger: 'blur' }
         ],
         statement_content: [
           { required: true, max: 100,  message: `请填写协议提示内容`, trigger: 'blur' }
@@ -536,5 +536,6 @@ export default {
 }
 .disabled-editor{
   pointer-events: none;
+  cursor: not-allowed;
 }
 </style>
