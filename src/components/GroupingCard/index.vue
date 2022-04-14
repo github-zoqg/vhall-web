@@ -113,6 +113,7 @@ export default {
     /**单个换组 */
     changeCurrentGroup(item) {
       this.$emit('changeGroup', this.data, [item.id])
+      this.clearData()
     },
     /**移出小组 */
     removeGroup(item, index) {

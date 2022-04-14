@@ -15,7 +15,7 @@
         <div class="group-list-item"
           v-for="(item,index) in data"
           :key="item.groupName">
-          <grouping-card ref="groupingCard"
+          <grouping-card :ref="`groupingCard${item.index}`"
             :groupType="item.groupName==='预分配'?0:1"
             @groupDissolution="groupDissolution"
             @changeGroup="changeGroup"
@@ -185,10 +185,8 @@ export default {
         }
       });
       this.changeGroupDefault.currentGroup.list = currentGroupList
-      this.$nextTick(() => {
-        this.$refs.groupChange && this.$refs.groupChange.handleClose()
-        this.$refs.groupingCard && this.$refs.groupingCard.clearData()
-      })
+      this.$refs.groupChange.handleClose()
+      this.$refs[`groupingCard${this.changeGroupDefault.currentGroup.index}`][0].clearData()
     },
     okHandle() { }
   }
