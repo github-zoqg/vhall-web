@@ -357,6 +357,9 @@ export default {
             type: 'error',
             customClass: 'zdy-info-box'
           });
+        }else if (res.code === 200){
+          //跳转推流页
+          window.location.href = `${process.env.VUE_APP_WEB_URL}/lives/yun/${this.curSelected}`
         }
       })
     }
