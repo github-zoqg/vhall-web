@@ -92,7 +92,6 @@
         ref="brandSetPreviewComp" 
         :viewingProtocolForm="viewingProtocolForm" 
         class="brand--preview" 
-        :brandType="brandType" 
         :tabType="'signSet'"
         :proptocolTitle_0="viewingProtocolForm.proptocolTitle_0"
         :proptocolTitle_1="viewingProtocolForm.proptocolTitle_1"
@@ -107,7 +106,7 @@ import ProtocolPreview from '../../LiveModule/components/protocolPreview';
 import VEditor from '@/components/Tinymce';
 export default {
   name: "viewingProtocol.vue",
-  props: ['brandConfig', 'tabType'],
+  props: ['brandConfig', 'tabType', 'type'],
   components: {
     Upload,
     ProtocolPreview,
@@ -117,7 +116,7 @@ export default {
     return {
       viewingProtocolForm: {
         title: '',
-        statement_status: 1,
+        statement_status: 0,
         logo_url: null,
         skip_url: null,
         content: '',
@@ -330,8 +329,8 @@ export default {
     // 获取活动标记记录
     getProtocol() {
       let params = {
-        type: this.brandType,
-        webinar_id: this.brandType == 1 ? this.$route.params.str : ''
+        type: this.type,
+        webinar_id: this.type == 1 ? this.$route.params.str : ''
       }
       this.$fetch('getAgreement', this.$params(params)).then(res => {
         console.log(res);
@@ -380,7 +379,7 @@ export default {
         if(valid) {
           this.viewingProtocolForm.statement_info = JSON.stringify(this.statementList)
           console.log(this.viewingProtocolForm, 'viewingProtocolForm');
-          let params = Object.assign(this.viewingProtocolForm, {webinar_id: this.$route.params.str || '', type: this.brandType});
+          let params = Object.assign(this.viewingProtocolForm, {webinar_id: this.$route.params.str || '', type: this.type});
           this.$fetch('saveAgreement', this.$params(params)).then(res => {
             this.$message({
               message:  `保存基本设置成功`,

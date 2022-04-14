@@ -10,7 +10,7 @@
       <!-- 设置区域 -->
       <sign-set ref="signSetComp" v-show="tabType === 'signSet'"  v-if="perssionInfo['ui.brand_setting'] > 0"  :brandConfig="true"></sign-set>
       <skin-set ref="skinSetComp" v-show="tabType === 'skinSet'" v-if="perssionInfo['webinar_skins'] > 0" :brandConfig="true"></skin-set>
-      <viewing-protocol ref="viewingProtocolComp" :tabType="tabType" v-show="tabType === 'viewingProtocol'" v-if="perssionInfo['watch.viewing_protocol'] > 0" :brandConfig="true"></viewing-protocol>
+      <viewing-protocol ref="viewingProtocolComp" type="0" :tabType="tabType" v-show="tabType === 'viewingProtocol'" v-if="perssionInfo['watch.viewing_protocol'] > 0" :brandConfig="true"></viewing-protocol>
     </div>
   </div>
 </template>

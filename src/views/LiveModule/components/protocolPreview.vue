@@ -48,7 +48,7 @@
 <script>
 export default {
   name: "protocolPreview.vue",
-  props: ['brandType', 'tabType', 'viewingProtocolForm', 'proptocolTitle_0', 'proptocolTitle_1'],
+  props: ['tabType', 'viewingProtocolForm', 'proptocolTitle_0', 'proptocolTitle_1'],
   data() {
     return {
       switchType: 'pc',
@@ -91,11 +91,6 @@ export default {
    this.initPage();
   },
   watch: {
-    brandType() {
-      if (this.brandType) {
-        this.initPage();
-      }
-    },
     'viewingProtocolForm.statement_content'(val, oldVal) {
       if (val) {
         this.privacyFormatter()
