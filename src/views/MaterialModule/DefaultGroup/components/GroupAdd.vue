@@ -42,7 +42,7 @@ export default {
     const validGroup = (rule, value, callback) => {
       if (!value) {
         callback(new Error('请输入分组'));
-      } else if (value && this.formInline.count > 50) {
+      } else if (value && (value * 1 + this.groupList.length) > 51) {
         callback(new Error('分组人数超过上限'));
       } else if (value && (value < 1 || value > 50)) {
         callback(new Error('请输入1-50的小组编号'));
@@ -61,14 +61,18 @@ export default {
     };
   },
   props: {
-    dataList: {
+    groupList: {
+      type: Array,
+      default: () => []
+    },
+    data: {
       type: Array,
       default: () => []
     }
   },
   computed: {
     placeholder() {
-      const group = this.dataList.length - 1
+      const group = this.groupList.length - 1
       return `最多新增${50 - group}组`;
     }
   },
@@ -77,21 +81,32 @@ export default {
     handleSubmit() {
       this.$refs.viewerForm.validate((valid) => {
         if (valid) {
-          const arrObj = {}
-          this.dataList.forEach(item => {
-
+          const arr = this.groupList.map(item => {
+            return item.index
           });
+          const allGroup = this.groupList.length + this.formInline.count
+          for (let i = 0; i < allGroup; i++) {
+            if (i && !arr.includes(i)) {
+              this.data.push({
+                groupName: '分组' + i,
+                index: i,
+                list: []
+              })
+            }
+          }
+          this.handleClose()
         } else {
           console.log('新增分组校验错误');
-          return false;
         }
-      });
+
+      })
     },
     handlOpen() {
       this.dialogVisible = true
     },
     handleClose() {
       this.dialogVisible = false;
+      this.formInline.count = 1
       this.$emit('update:show', false);
     }
   }

@@ -36,8 +36,8 @@
         @click="hide">取 消</el-button>
     </span>
     <group-add ref="groupAdd"
-      :dataList="data"
-      :show="groupAddShow"></group-add>
+      :data="data"
+      :groupList="groupList"></group-add>
     <!--换组-->
     <group-change ref="groupChange"
       @changeGroupComplete="changeGroupComplete"
@@ -142,7 +142,7 @@ export default {
   },
   methods: {
     viewerDialogAdd() {
-      this.$refs.groupAdd.handlOpen()
+      this.$refs.groupAdd.handlOpen(this.groupList)
     },
     show() {
       this.defaultGroup.show = true
