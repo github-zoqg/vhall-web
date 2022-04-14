@@ -146,8 +146,21 @@ export default {
     },
     show() {
       this.defaultGroup.show = true
+      this.$fetch('getAudienceList').then(res => {
+        if (res && res.code === 200 && res.data) {
+          const wait_list = res.data.wait_list ? res.data.wait_list : []
+          const ready_list = res.data.ready_list ? res.data.ready_list : []
+          this.data = wait_list.concat(ready_list)
+        } else {
+          this.data = []
+        }
+      }).catch(e => {
+        console.log(e);
+        //this.data = []
+      });
     },
     hide() {
+      this.data = []
       this.defaultGroup.show = false
     },
     /**解散 */
@@ -188,7 +201,29 @@ export default {
       this.$refs.groupChange.handleClose()
       this.$refs[`groupingCard${this.changeGroupDefault.currentGroup.index}`][0].clearData()
     },
-    okHandle() { }
+    okHandle() {
+      const data = this.data.slice(1)
+      const params = {
+        list: data
+      }
+      this.$fetch('saveAudienceSave', this.$params(params)).then(res => {
+        this.$message({
+          message: `操作成功`,
+          showClose: true,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.hide()
+      }).catch(res => {
+        console.log(res);
+        this.$message({
+          message: res.msg || `操作失败`,
+          showClose: true,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      });
+    }
   }
 }
 </script>
