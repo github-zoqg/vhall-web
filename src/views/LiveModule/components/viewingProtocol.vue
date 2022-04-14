@@ -21,14 +21,14 @@
             label="协议标题"
             prop="title"
           >
-            <VhallInput v-model="viewingProtocolForm.title" v-clearEmoij :maxlength="50" class="title-inform" autocomplete="off" :placeholder="`微吼直播观看协议`"  show-word-limit></VhallInput>
+            <VhallInput :disabled="viewingProtocolForm.is_open === 0" v-model="viewingProtocolForm.title" v-clearEmoij :maxlength="50" class="title-inform" autocomplete="off" :placeholder="`微吼直播观看协议`"  show-word-limit></VhallInput>
           </el-form-item>
           <el-form-item class="margin32" prop="content" :label="`协议内容`">
-            <v-editor class="editor-wrap" save-type='live' :isReturn=true ref="unitImgTxtEditor" v-model="viewingProtocolForm.content"></v-editor>
+            <v-editor :disabled="viewingProtocolForm.is_open === 0" class="editor-wrap" save-type='live' :isReturn=true ref="unitImgTxtEditor" v-model="viewingProtocolForm.content"></v-editor>
           </el-form-item>
           <el-form-item label="进入规则" prop="rule">
             <!-- <div class="switch__box"> -->
-              <el-radio-group v-model="viewingProtocolForm.rule">
+              <el-radio-group v-model="viewingProtocolForm.rule"  :disabled="viewingProtocolForm.is_open === 0">
                 <el-radio :label="0">同意后进入直播间</el-radio>
                 <el-radio :label="1">阅读后进入直播间</el-radio>
                 
@@ -40,6 +40,7 @@
             <div class="switch__box">
               <el-switch
                 v-model="viewingProtocolForm.statement_status"
+                :disabled="viewingProtocolForm.is_open === 0"
                 :active-value=1
                 :inactive-value=0
                 active-color="#FB3A32"
@@ -51,7 +52,7 @@
           </el-form-item>
 
           <el-form-item class="provicy-item" v-show="viewingProtocolForm.statement_status"  prop="statement_content">
-            <VhallInput :maxlength="100" class="title-inform" show-word-limit v-model="viewingProtocolForm.statement_content" autocomplete="off"  placeholder="我已阅读并同意" > </VhallInput>
+            <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInputContent($event)" :maxlength="100" class="title-inform" show-word-limit v-model="viewingProtocolForm.statement_content" autocomplete="off"  placeholder="我已阅读并同意" > </VhallInput>
           </el-form-item>
           
           <template v-if="viewingProtocolForm.statement_status">
@@ -59,22 +60,22 @@
               <!-- :prop="'proptocolTitle_'+key" -->
               <el-form-item class="item-title" :key="'title'+key" prop="proptocolTitle_0">
                 <template>
-                  <VhallInput @input="handleInput($event, key, 'title')" :maxlength="100" class="title-inform" show-word-limit v-model="val.title" autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
+                  <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInput($event, key, 'title')" :maxlength="100" class="title-inform" show-word-limit v-model="val.title" autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
                   <i
                     class="el-icon-remove-outline optIcon"
                     @click="deleteOptions"
-                    v-if="statementList && key == 1 && statementList.length == 2"
+                    v-if="viewingProtocolForm.is_open === 1 && statementList && key == 1 && statementList.length == 2"
                   ></i>
                   <i
                     class="el-icon-circle-plus-outline optIcon"
-                    v-if="statementList && key == 0 && statementList.length == 1"
+                    v-if="viewingProtocolForm.is_open === 1 && statementList && key == 0 && statementList.length == 1"
                     @click="privacyAdd"
                   ></i>
                 </template>
               </el-form-item>
               <el-form-item class="item-link" :key="key" :prop="'proptocolLink_'+key">
                 <template>
-                  <VhallInput @input="handleInput($event, key, 'link')" :maxlength="100" class="title-inform" show-word-limit v-model="val.link" autocomplete="off" placeholder="请输入http://或https://开头的链接" > </VhallInput>
+                  <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInput($event, key, 'link')" :maxlength="100" class="title-inform" show-word-limit v-model="val.link" autocomplete="off" placeholder="请输入http://或https://开头的链接" > </VhallInput>
                 </template>
               </el-form-item>
             </template>
@@ -82,16 +83,16 @@
           </template>
          
           <el-form-item label="">
-            <el-button type="primary" round v-preventReClick @click.prevent.stop="protocolSave">保 存</el-button>
+            <el-button :disabled="viewingProtocolForm.is_open === 0" type="primary" round v-preventReClick @click.prevent.stop="protocolSave">保 存</el-button>
           </el-form-item>
         </el-form>
         <div class="hide-white" v-show="!brandConfig"></div>
       </div>
       <!-- 预览区域 -->
       <protocol-preview 
-        ref="brandSetPreviewComp" 
+        ref="brandSetPreviewComp"
         :viewingProtocolForm="viewingProtocolForm" 
-        class="brand--preview" 
+        class="brand--preview"
         :tabType="'signSet'"
         :proptocolTitle_0="viewingProtocolForm.proptocolTitle_0"
         :proptocolTitle_1="viewingProtocolForm.proptocolTitle_1"
@@ -201,11 +202,27 @@ export default {
     },
   },
   methods: {
+    handleInputContent(value){
+      let statementList = this.statementList
+      statementList.forEach((item, index)=>{
+        let titleName = `proptocolTitle_${index}`
+        if(item.title && value.indexOf(item.title) === -1){
+          this.statementList[index].title = '';
+          this.viewingProtocolForm[titleName] = '';
+          // let oldValue = item.title.substring(0, item.title.length-1)
+          // console.log(item.title.substring(0, item.title.length-1), 'value.substring(0, value.length-1)')
+          // let viewingProtocolForm = this.viewingProtocolForm
+          // this.viewingProtocolForm.statement_content = viewingProtocolForm.statement_content.replace(oldValue, '')
+        }
+      })
+      
+    },
     handleInput(value, index, type){
       console.log(value, index)
       let statement_content = this.viewingProtocolForm.statement_content
+      let titleName = `proptocolTitle_${index}`
       if(type === 'title') {
-        let titleName = `proptocolTitle_${index}`
+        
         this.viewingProtocolForm[titleName] = value
         if(value && statement_content.indexOf(value) === -1){
           this.statementList[index].title = '';
@@ -216,12 +233,8 @@ export default {
           this.viewingProtocolForm.statement_content = viewingProtocolForm.statement_content.replace(oldValue, '')
         }else{
           this.statementList[index].title = value;
-          if(index === 0){
-            this.viewingProtocolForm.proptocolTitle_0 = value
-            
-          }else{
-            this.viewingProtocolForm.proptocolTitle_1 = value
-          }
+          this.viewingProtocolForm[titleName] = value
+         
         }
           
       }else {
@@ -248,7 +261,7 @@ export default {
         title: '观看协议2',
         link: ''
       }
-      if(this.viewingProtocolForm.proptocolTitle_1){
+      if(this.viewingProtocolForm.proptocolTitle_0){
         this.statementList.push(statementObj)
         this.viewingProtocolForm.statement_content += '及观看协议2'
         this.viewingProtocolForm.proptocolTitle_1 = '观看协议2'
@@ -337,7 +350,8 @@ export default {
         if (res && res.code === 200) {
           if (res.data && res.data.title) {
             this.viewingProtocolForm = res.data;
-            let statement_info = res.data.statement_info
+            let statement_info = res.data.statement_info;
+            
             if(statement_info && statement_info.length > 0){
               this.statementList = statement_info;
               statement_info.forEach((item, index)=>{

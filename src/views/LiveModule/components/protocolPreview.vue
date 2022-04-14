@@ -12,29 +12,29 @@
               <div class="protocol-top" :class="viewingProtocolForm.rule == 1 ? 'protocol-content-read' : 'protocol-content-choose'">
                 <div class="protocol-title">
                   <p>
-                    {{viewingProtocolForm.title}}
+                    {{viewingProtocolForm.title ? viewingProtocolForm.title : '协议标题'}}
                   </p>
                 </div>
                 <div class="protocol-content">
-                  <div v-html="viewingProtocolForm.content">
+                  <div v-html="viewingProtocolForm.content ? viewingProtocolForm.content : '协议内容'">
 
                   </div>
                 </div>
               </div>
               
-              <div class="protocol-bottom">
+              <div class="protocol-bottom" v-if="viewingProtocolForm.statement_status">
                 <p v-html="result_content"></p>
 
               </div>
               <div class="protocol-button" v-if="viewingProtocolForm.rule == 1">
-                <el-button size="medium" type="primary" round v-preventReClick>我知道了</el-button>
+                <el-button size="small" type="primary" round v-preventReClick>我知道了</el-button>
               </div>
               <div class="protocol-button" v-if="viewingProtocolForm.rule == 0">
                 <div>
-                  <el-button size="medium" type="primary" round v-preventReClick>同意并继续</el-button>
+                  <el-button size="small" type="primary" round v-preventReClick>同意并继续</el-button>
                 </div>
                 <div class="bottom-button">
-                  <el-button size="medium" round v-preventReClick>拒绝</el-button>
+                  <el-button size="small" type="text" round v-preventReClick>拒绝</el-button>
                 </div>
                 
               </div>
@@ -269,10 +269,12 @@ export default {
       font-weight: 400;
       color: #666666;
       line-height: 20px;
+      margin-top: 10px
     }
     .protocol-button{
       text-align: center;
       margin-top: 2px;
+      margin-top: 6px;
     }
     .bottom-button{
       margin-top: 8px
