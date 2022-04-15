@@ -59,7 +59,6 @@
           <el-form-item class="provicy-item" v-show="viewingProtocolForm.statement_status"  prop="statement_content">
             <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInputContent($event)" :maxlength="100" class="title-inform" show-word-limit v-model="viewingProtocolForm.statement_content" autocomplete="off"  placeholder="我已阅读并同意" > </VhallInput>
           </el-form-item>
-<<<<<<< HEAD
           <template>
             <el-form-item class="item-title" v-show="viewingProtocolForm.statement_status"  prop="proptocolTitle_0">
               <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 0, 'title')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolTitle_0" show-word-limit autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
@@ -99,13 +98,6 @@
           </el-form-item> -->
             <!-- <template v-for="(val, key) in statementList">
               <el-form-item v-show="viewingProtocolForm.statement_status" class="item-title" :key="'title'+val.id" :prop="'proptocolTitle_'+key">
-=======
-
-          <template v-if="viewingProtocolForm.statement_status">
-            <template v-for="(val, key) in statementList" >
-              <!-- :prop="'proptocolTitle_'+key" -->
-              <el-form-item class="item-title" :key="'title'+key" prop="proptocolTitle_0">
->>>>>>> 64c7ca4c0339da3a147d269b2cd650ff711233e1
                 <template>
                   <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInput($event, key, 'title')" :maxlength="100" class="title-inform" show-word-limit v-model="val.title" autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
                   <i
@@ -126,15 +118,9 @@
                 </template>
               </el-form-item>
             </template>
-<<<<<<< HEAD
              -->
           <!-- </template> -->
          
-=======
-
-          </template>
-
->>>>>>> 64c7ca4c0339da3a147d269b2cd650ff711233e1
           <el-form-item label="">
             <el-button :disabled="viewingProtocolForm.is_open === 0" type="primary" round v-preventReClick @click.prevent.stop="protocolSave">保 存</el-button>
           </el-form-item>
@@ -229,7 +215,6 @@ export default {
     };
   },
   mounted(){
-<<<<<<< HEAD
     // this.$nextTick(() => {
     //   console.log(this.$refs, 'val')
     //   setTimeout(()=>{
@@ -237,15 +222,6 @@ export default {
     //   }, 1000)
       
     // })
-=======
-    this.$nextTick(() => {
-      console.log(this.$refs, 'val')
-      setTimeout(()=>{
-        this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : ''
-      }, 1000)
-
-    })
->>>>>>> 64c7ca4c0339da3a147d269b2cd650ff711233e1
   },
   watch: {
     '$parent.type'() {
@@ -465,10 +441,6 @@ export default {
           if (res.data && res.data.title) {
             this.viewingProtocolForm = res.data;
             let statement_info = res.data.statement_info;
-<<<<<<< HEAD
-=======
-
->>>>>>> 64c7ca4c0339da3a147d269b2cd650ff711233e1
             if(statement_info && statement_info.length > 0){
               this.statementList = statement_info;
               // this.viewingProtocolForm.proptocolTitle_0 = 'statement_info[0].title';
@@ -500,7 +472,7 @@ export default {
     },
     initComp() {
       this.brandType = this.$parent.type;
-      // this.getProtocol();// 获取活动标志内容
+      this.getProtocol();// 获取活动标志内容
     },
     // 保存
     protocolSave() {
