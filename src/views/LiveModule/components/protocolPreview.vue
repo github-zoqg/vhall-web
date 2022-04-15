@@ -115,7 +115,7 @@ export default {
 /*预览区域样式开始*/
 .skin-preview.preview-pc{
   width: 360px;
-  height: 300px;
+  min-height: 300px;
   border-radius: 4px;
   border: 1px solid #CCCCCC;
   margin-top: 16px

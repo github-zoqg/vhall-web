@@ -123,9 +123,9 @@ export default {
         content: '',
         is_open: 0,
         rule: 0,
-        statement_content: '我已同意并阅读观看协议',
+        statement_content: '我已同意并阅读《观看协议》',
         statement_info: null,
-        proptocolTitle_0: '观看协议',
+        proptocolTitle_0: '《观看协议》',
         proptocolLink_0: '',
         proptocolTitle_1: '',
         proptocolLink_1: ''
@@ -262,10 +262,21 @@ export default {
         link: ''
       }
       if(this.viewingProtocolForm.proptocolTitle_0){
-        this.statementList.push(statementObj)
-        this.viewingProtocolForm.statement_content += '及观看协议2'
-        this.viewingProtocolForm.proptocolTitle_1 = '观看协议2'
-
+        let contentLength = this.viewingProtocolForm.statement_content.length
+        
+        if(contentLength + 5 <= 100){
+          this.statementList.push(statementObj)
+          this.viewingProtocolForm.statement_content += '及《观看协议2》'
+          this.viewingProtocolForm.proptocolTitle_1 = '观看协议2'
+        }else{
+          this.$message({
+            message: '添加隐私协议会超出预览字数，请删减后再添加',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+        }
       }else{
         
         this.$message({
