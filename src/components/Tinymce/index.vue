@@ -32,6 +32,10 @@ import VueTinymce from './editorPlugin'
 export default {
   name: "vhall-editor",
   props: {
+    modelType: {
+      type: String,
+      defaut: 'common'
+    },
     id: {
       type: String,
       default: function() {
@@ -176,10 +180,11 @@ export default {
     },
      //文案提示问题
     messageInfo() {
+      const message = this.modelType == 'restriction' ? '您输入的内容超出1000限制' : '您输入的内容超出1000限制，已自动取消'
       this.vm = this.$message({
         showClose: false,
         duration: 2000,
-        message: '您输入的内容超出1000限制，已自动取消',
+        message,
         type: 'warning'
       });
     },
