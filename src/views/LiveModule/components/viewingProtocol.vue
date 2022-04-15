@@ -247,9 +247,8 @@ export default {
       this.statementList.pop()
       let viewingProtocolForm = this.viewingProtocolForm
       let oldValue = viewingProtocolForm.proptocolTitle_1
-      console.log(oldValue, 'value.substring(0, value.length-1)')
-
-      this.viewingProtocolForm.statement_content = viewingProtocolForm.statement_content.replace(oldValue, '')
+      // console.log(oldValue, 'value.substring(0, value.length-1)')
+      this.viewingProtocolForm.statement_content = viewingProtocolForm.statement_content.replace('《' + oldValue + '》', '')
       this.viewingProtocolForm.statement_content = viewingProtocolForm.statement_content.replace('及', '')
 
       this.viewingProtocolForm.proptocolTitle_1 = ''
