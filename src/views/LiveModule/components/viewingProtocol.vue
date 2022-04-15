@@ -477,6 +477,21 @@ export default {
 /deep/.el-switch__label.is-active {
   color: #999999;
 }
+/deep/.el-radio {
+    //选中时边框的颜色
+    &.is-checked .el-radio__label{
+      color: #1a1a1a !important;
+    }
+    //鼠标滑过改变字体和小圆圈边框的样式
+    &:hover {
+      color: #1a1a1a !important;
+      //鼠标滑过时小圆点边框显示
+      .el-radio__inner {
+        color: #1a1a1a !important;
+      }
+    }
+}
+
 .p-notice {
   font-size: 14px;
   font-family: @fontRegular;

@@ -20,12 +20,12 @@
 
                   </div>
                 </div>
+                <div class="protocol-bottom" v-if="viewingProtocolForm.statement_status">
+                  <p v-html="result_content"></p>
+
+                </div>
               </div>
               
-              <div class="protocol-bottom" v-if="viewingProtocolForm.statement_status">
-                <p v-html="result_content"></p>
-
-              </div>
               <div class="protocol-button" v-if="viewingProtocolForm.rule == 1">
                 <el-button size="small" type="primary" round v-preventReClick>我知道了</el-button>
               </div>
@@ -257,10 +257,10 @@ export default {
       line-height: 20px;
     }
     .protocol-content-read{
-      height: 208px;
+      height: 234px;
     }
     .protocol-content-choose{
-      height: 170px;
+      height: 196px;
     }
     .protocol-bottom{
       width: 100%;
