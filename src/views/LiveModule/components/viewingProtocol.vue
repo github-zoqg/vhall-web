@@ -24,7 +24,7 @@
             <VhallInput :disabled="viewingProtocolForm.is_open === 0" v-model="viewingProtocolForm.title" v-clearEmoij :maxlength="50" class="title-inform" autocomplete="off" placeholder="请输入《观看协议》标题"  show-word-limit></VhallInput>
           </el-form-item>
           <el-form-item class="margin32" prop="content" :label="`协议内容`">
-            <v-editor placeholder="请输入《观看协议》内容" :class="viewingProtocolForm.is_open === 0 ? 'disabled-editor' : ''" class="editor-wrap" save-type='live' :isReturn=true ref="unitImgTxtEditor" v-model="viewingProtocolForm.content"></v-editor>
+            <v-editor :placeholder="introPlaceholder" :class="viewingProtocolForm.is_open === 0 ? 'disabled-editor' : ''" class="editor-wrap" save-type='live' :isReturn=true ref="unitImgTxtEditor" v-model="viewingProtocolForm.content"></v-editor>
           </el-form-item>
           <el-form-item label="进入规则" prop="rule">
             <!-- <div class="switch__box"> -->
@@ -194,8 +194,12 @@ export default {
         console.log(newVal, this.$refs, this.$refs['viewingProtocolForm'], 'val')
         this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
       })
-
     },
+  },
+  computed: {
+    introPlaceholder() {
+      return this.viewingProtocolForm.content ? '' : '请输入《观看协议》内容'
+    }
   },
   methods: {
     handleInputContent(value){
@@ -307,7 +311,7 @@ export default {
       console.log(file.type.toLowerCase())
       let typeArr = file.type.toLowerCase().split('/');
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt2M = file.size / 1024 / 1024 < 4;
       if (!isType) {
         this.$message({
           message: `标志图片只能是 ${typeList.join('、')} 格式!`,
@@ -320,7 +324,7 @@ export default {
       }
       if (!isLt2M) {
         this.$message({
-          message: `标志图片大小不能超过 2MB!`,
+          message: `标志图片大小不能超过 4MB!`,
           showClose: true,
           // duration: 0,
           type: 'error',
