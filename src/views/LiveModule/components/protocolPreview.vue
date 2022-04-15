@@ -261,6 +261,9 @@ export default {
       word-break: break-all;
       word-wrap: break-word;
       padding-right: 16px;
+      img {
+        max-width: 100%;
+      }
     }
     .protocol-content-read{
       height: 202px;
