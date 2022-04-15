@@ -24,7 +24,13 @@
             <VhallInput :disabled="viewingProtocolForm.is_open === 0" v-model="viewingProtocolForm.title" v-clearEmoij :maxlength="50" class="title-inform" autocomplete="off" placeholder="请输入《观看协议》标题"  show-word-limit></VhallInput>
           </el-form-item>
           <el-form-item class="margin32" prop="content" :label="`协议内容`">
-            <v-editor :placeholder="introPlaceholder" :class="viewingProtocolForm.is_open === 0 ? 'disabled-editor' : ''" class="editor-wrap" save-type='live' :isReturn=true ref="unitImgTxtEditor" v-model="viewingProtocolForm.content"></v-editor>
+            <v-editor
+              modelType="restriction"
+              :placeholder="introPlaceholder"
+              :class="viewingProtocolForm.is_open === 0 ? 'disabled-editor' : ''"
+              class="editor-wrap" save-type='live'
+              :isReturn=true ref="unitImgTxtEditor"
+              v-model="viewingProtocolForm.content"></v-editor>
           </el-form-item>
           <el-form-item label="进入规则" prop="rule">
             <!-- <div class="switch__box"> -->
