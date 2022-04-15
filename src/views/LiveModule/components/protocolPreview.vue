@@ -1,13 +1,13 @@
 <template>
   <div class="brand--set--preview">
-    <div>
+    <div :class="viewingProtocolForm.is_open === 0 ? 'preview-readonly' : ''">
       <!-- 标识预览 -->
       <div  class="pc">
         <p> 预览</p>
         <div :class="`skin-preview preview-pc protocol-preview`">
-          
+
           <div class="pc-preview">
-           
+
             <div class="pc-contain">
               <div class="protocol-top" :class="viewingProtocolForm.rule == 1 ? 'protocol-content-read' : 'protocol-content-choose'">
                 <div class="protocol-title">
@@ -25,7 +25,7 @@
 
                 </div>
               </div>
-              
+
               <div class="protocol-button" v-if="viewingProtocolForm.rule == 1">
                 <el-button size="small" type="primary" round v-preventReClick>我知道了</el-button>
               </div>
@@ -36,7 +36,7 @@
                 <div class="bottom-button">
                   <el-button size="small" type="text" round v-preventReClick>拒绝</el-button>
                 </div>
-                
+
               </div>
             </div>
           </div>
@@ -106,7 +106,7 @@ export default {
         this.privacyFormatter()
       }
     },
-    
+
   }
 };
 </script>
@@ -202,7 +202,7 @@ export default {
     height: 100%;
     // width: calc(100% - 25px);
     width: 100%;
-    margin: 16px;
+    padding: 24px 0 16px 16px;
     position: relative;
     .protocol-intro{
       font-size: 12px;
@@ -223,7 +223,7 @@ export default {
           object-fit: scale-down;
         }
       }
-      
+
     }
     .protocol-title{
       font-size: 18px;
@@ -231,6 +231,9 @@ export default {
       font-weight: 500;
       color: #1A1A1A;
       line-height: 25px;
+      word-break: break-all;
+      word-wrap: break-word;
+      padding-right: 16px;
       .time{
         padding-left: 10px;
       }
@@ -246,21 +249,50 @@ export default {
     }
     .protocol-top{
       overflow-y: scroll;
-      
+
     }
     .protocol-content{
       font-size: 14px;
-      margin-top: 18px;
+      margin-top: 16px;
       font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       color: #1A1A1A;
       line-height: 20px;
+      word-break: break-all;
+      word-wrap: break-word;
+      padding-right: 16px;
     }
     .protocol-content-read{
-      height: 234px;
+      height: 202px;
     }
     .protocol-content-choose{
-      height: 196px;
+      height: 180px;
+    }
+    .protocol-content-read, .protocol-content-choose{
+      // 滚动条的宽度
+      /deep/ &::-webkit-scrollbar {
+        width: 6px; // 横向滚动条
+        height: 6px; // 纵向滚动条 必写
+      }
+      // 滚动条的滑块
+      /deep/ &::-webkit-scrollbar-thumb {
+        border-radius: 3px;
+        transition: all 0.3s;
+        cursor: pointer;
+        display: none;
+        background-color: #cccccc;
+        &:hover {
+          background-color: #cccccc;
+        }
+        &:active {
+          background-color: #cccccc;
+        }
+      }
+      &:hover {
+        /deep/ &::-webkit-scrollbar-thumb {
+          display: block;
+        }
+      }
     }
     .protocol-bottom{
       width: 100%;
@@ -269,15 +301,20 @@ export default {
       font-weight: 400;
       color: #666666;
       line-height: 20px;
-      margin-top: 10px
+      margin-top: 10px;
+      word-break: break-all;
+      word-wrap: break-word;
+      padding-right: 16px;
     }
     .protocol-button{
       text-align: center;
-      margin-top: 2px;
-      margin-top: 6px;
+      margin-top: 16px;
     }
     .bottom-button{
-      margin-top: 8px
+      margin-top: 10px;
+      /deep/.el-button--text {
+        padding: 0 0;
+      }
     }
   }
 }
@@ -394,4 +431,17 @@ export default {
     border-bottom-left-radius: 20px;
   }
 }
+
+.preview-readonly {
+    .pc-preview {
+     .pc-contain {
+        .protocol-title {
+          color: #999999;
+        }
+        .protocol-content {
+          color: #999999;
+        }
+      }
+    }
+  }
 </style>
