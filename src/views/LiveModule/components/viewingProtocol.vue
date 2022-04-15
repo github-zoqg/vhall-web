@@ -8,6 +8,7 @@
               <el-switch
                 v-model="viewingProtocolForm.is_open"
                 :active-value=1
+                @change="protocolChange"
                 :inactive-value=0
                 active-color="#FB3A32"
                 inactive-color="#CECECE"
@@ -50,15 +51,48 @@
               </el-switch>
             </div>
           </el-form-item>
-
           <el-form-item class="provicy-item" v-show="viewingProtocolForm.statement_status"  prop="statement_content">
             <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInputContent($event)" :maxlength="100" class="title-inform" show-word-limit v-model="viewingProtocolForm.statement_content" autocomplete="off"  placeholder="我已阅读并同意" > </VhallInput>
           </el-form-item>
+          <template>
+            <el-form-item class="item-title" v-show="viewingProtocolForm.statement_status"  prop="proptocolTitle_0">
+              <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 0, 'title')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolTitle_0" show-word-limit autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
+              <i
+                class="el-icon-circle-plus-outline optIcon"
+                v-if="viewingProtocolForm.is_open === 1 && statementList && statementList.length == 1"
+                @click="privacyAdd"
+              ></i>
+            </el-form-item>
+            
+            
+          </template>
           
-          <template v-if="viewingProtocolForm.statement_status">
-            <template v-for="(val, key) in statementList" >
-              <!-- :prop="'proptocolTitle_'+key" -->
-              <el-form-item class="item-title" :key="'title'+key" prop="proptocolTitle_0">
+          <el-form-item class="item-link"  v-show="viewingProtocolForm.statement_status" prop="proptocolLink_0">
+            <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 0, 'link')" :maxlength="100"  v-model="viewingProtocolForm.proptocolLink_0" class="title-inform" show-word-limit autocomplete="off" placeholder="请输入http://或https://开头的链接"  > </VhallInput>
+          </el-form-item>
+          <template>
+            <el-form-item class="item-title" v-if="statementList.length > 1 && viewingProtocolForm.statement_status"  prop="proptocolTitle_1">
+              <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 1, 'title')" :maxlength="100" class="title-inform" show-word-limit autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
+              <i
+                class="el-icon-remove-outline optIcon"
+                @click="deleteOptions"
+                v-if="viewingProtocolForm.is_open === 1 && statementList && statementList.length == 2"
+              ></i>
+            </el-form-item>
+            
+          </template>
+          
+          <el-form-item class="item-link"  v-if="statementList.length > 1" v-show="viewingProtocolForm.statement_status" prop="proptocolLink_1">
+            <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 1, 'link')" :maxlength="100" class="title-inform" show-word-limit autocomplete="off" placeholder="请输入http://或https://开头的链接"  > </VhallInput>
+          </el-form-item>
+          <!-- <el-form-item class="provicy-proptocolTitle_1" v-show="viewingProtocolForm.statement_status"  prop="proptocolTitle_1">
+            <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInput($event, 1, 'title')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolTitle_1" show-word-limit autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
+          </el-form-item>
+          <el-form-item class="provicy-proptocolLink_1"  prop="proptocolLink_1">
+            <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInput($event, 1, 'link')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolLink_1" show-word-limit autocomplete="off" placeholder="请输入http://或https://开头的链接"  > </VhallInput>
+          </el-form-item> -->
+            <!-- <template v-for="(val, key) in statementList">
+              <el-form-item v-show="viewingProtocolForm.statement_status" class="item-title" :key="'title'+val.id" :prop="'proptocolTitle_'+key">
                 <template>
                   <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInput($event, key, 'title')" :maxlength="100" class="title-inform" show-word-limit v-model="val.title" autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
                   <i
@@ -73,14 +107,14 @@
                   ></i>
                 </template>
               </el-form-item>
-              <el-form-item class="item-link" :key="key" :prop="'proptocolLink_'+key">
+              <el-form-item v-show="viewingProtocolForm.statement_status" class="item-link" :key="key" :prop="'proptocolLink_'+key">
                 <template>
-                  <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInput($event, key, 'link')" :maxlength="100" class="title-inform" show-word-limit v-model="val.link" autocomplete="off" placeholder="请输入http://或https://开头的链接" > </VhallInput>
+                  <VhallInput @blur="handleBlur($event, key)" :disabled="viewingProtocolForm.is_open === 0" @input="handleInput($event, key, 'link')" :maxlength="100" class="title-inform" show-word-limit v-model="val.link" autocomplete="off" placeholder="请输入http://或https://开头的链接" > </VhallInput>
                 </template>
               </el-form-item>
             </template>
-            
-          </template>
+             -->
+          <!-- </template> -->
          
           <el-form-item label="">
             <el-button :disabled="viewingProtocolForm.is_open === 0" type="primary" round v-preventReClick @click.prevent.stop="protocolSave">保 存</el-button>
@@ -126,7 +160,7 @@ export default {
         statement_content: '我已同意并阅读《观看协议》',
         statement_info: null,
         proptocolTitle_0: '《观看协议》',
-        proptocolLink_0: '',
+        proptocolLink_0: '23',
         proptocolTitle_1: '',
         proptocolLink_1: ''
       },
@@ -178,13 +212,13 @@ export default {
     };
   },
   mounted(){
-    this.$nextTick(() => {
-      console.log(this.$refs, 'val')
-      setTimeout(()=>{
-        this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : ''
-      }, 1000)
+    // this.$nextTick(() => {
+    //   console.log(this.$refs, 'val')
+    //   setTimeout(()=>{
+    //     this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : ''
+    //   }, 1000)
       
-    })
+    // })
   },
   watch: {
     '$parent.type'() {
@@ -202,6 +236,34 @@ export default {
     },
   },
   methods: {
+    protocolChange(value){
+      console.log(value, 'value')
+      if(value === 0){
+        this.viewingProtocolForm.statement_info = JSON.stringify(this.statementList)
+        console.log(this.viewingProtocolForm, 'viewingProtocolForm');
+        let params = Object.assign(this.viewingProtocolForm, {webinar_id: this.$route.params.str || '', type: this.type});
+        this.$fetch('saveAgreement', this.$params(params)).then(res => {
+          this.$message({
+            message:  `保存基本设置成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          // 重新获取数据
+          // this.getProtocol();
+        }).catch(res=>{
+          console.log(res);
+          this.$message({
+            message: res.msg || `保存基本设置失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+        });
+      }
+    },
     handleInputContent(value){
       let statementList = this.statementList
       statementList.forEach((item, index)=>{
@@ -220,7 +282,9 @@ export default {
     handleInput(value, index, type){
       console.log(value, index)
       let statement_content = this.viewingProtocolForm.statement_content
+      let viewingProtocolForm = this.viewingProtocolForm
       let titleName = `proptocolTitle_${index}`
+      let statementList = this.statementList
       if(type === 'title') {
         
         this.viewingProtocolForm[titleName] = value
@@ -240,8 +304,18 @@ export default {
       }else {
         let linkName = `proptocolLink_${index}`
         this.viewingProtocolForm[linkName] = value
+        this.statementList[index].link = value;
+        
       }
-      console.log(this.viewingProtocolForm, 'this.viewingProtocolForm[`proptocolTitle_${index}`]')
+      // this.viewingProtocolForm = viewingProtocolForm
+      // this.statementList = statementList
+      // console.log(statementList, this.statementList, 'statementList')
+      // // this.$refs.viewingProtocolForm.clearValidate()
+      // console.log(this.viewingProtocolForm, 'this.viewingProtocolForm[`proptocolTitle_${index}`]')
+    },
+    handleBlur(val, index){
+      console.log(val, index, 'index')
+      this.statementList[index].id = Math.random() * 10000;
     },
     deleteOptions(){
       this.statementList.pop()
@@ -362,9 +436,10 @@ export default {
           if (res.data && res.data.title) {
             this.viewingProtocolForm = res.data;
             let statement_info = res.data.statement_info;
-            
             if(statement_info && statement_info.length > 0){
               this.statementList = statement_info;
+              // this.viewingProtocolForm.proptocolTitle_0 = 'statement_info[0].title';
+              // this.viewingProtocolForm.proptocolLink_0 =' statement_info[0].link'
               statement_info.forEach((item, index)=>{
                 let titleName = `proptocolTitle_${index}`
                 let linkName = `proptocolLink_${index}`
@@ -374,20 +449,17 @@ export default {
             }
             console.log(this.viewingProtocolForm, this.statementList, ' this.statementList')
           } else {
-            this.$nextTick(() => {
-              console.log(newVal, this.$refs, this.$refs['viewingProtocolForm'], 'val')
-              if (newVal === 'viewingProtocol') {
-                this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
-              }
-            })
+            // this.$nextTick(() => {
+
+            //   this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
+
+            // })
           }
         } else {
-          this.$nextTick(() => {
-            console.log(newVal, this.$refs, this.$refs['viewingProtocolForm'], 'val')
-            if (newVal === 'viewingProtocol') {
-              this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
-            }
-          })
+          // this.$nextTick(() => {
+          //   this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
+            
+          // })
         }
       }).catch(err=>{
         console.log(err);
@@ -395,7 +467,7 @@ export default {
     },
     initComp() {
       this.brandType = this.$parent.type;
-      this.getProtocol();// 获取活动标志内容
+      // this.getProtocol();// 获取活动标志内容
     },
     // 保存
     protocolSave() {
