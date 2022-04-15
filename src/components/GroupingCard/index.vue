@@ -52,7 +52,10 @@
               <div @click="changeCurrentGroup(item)">换组</div>
             </div>
             <span slot="reference">
+              <span class="list-group-name"
+                v-if="isOverflow(item.name)">{{item.name}}</span>
               <el-tooltip effect="dark"
+                v-else
                 :content="item.name"
                 placement="top">
                 <span class="list-group-name">{{item.name}}</span>
@@ -130,6 +133,10 @@ export default {
     clearData() {
       this.checkList = []
       this.batchGroupState = false
+    },
+    isOverflow(name) {
+      var bytesLen = name.replace(/[^\x00-\xff]/g, 'xx').length;
+      return bytesLen < 10
     }
   }
 }
