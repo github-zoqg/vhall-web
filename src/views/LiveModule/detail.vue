@@ -653,7 +653,10 @@ export default {
     toDirector(){
       if(this.hasUpdate){
         //打开云导播台
-
+        this.$vhall_paas_port({
+          k: 100838,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
       }
     }
   }

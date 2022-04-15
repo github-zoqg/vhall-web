@@ -130,7 +130,8 @@ export default {
       seatList: [], //机位列表
       selectDirectorMode: 1,
       dialogDirectorSeatVisible: false,
-      curSelected: null
+      curSelected: null,
+      userId: ''
     };
   },
   computed: {
@@ -243,6 +244,13 @@ export default {
               /*  this.$router.push({
                 path: this.watchUrl
               }) */
+              if(this.selectDirectorMode === 1){
+                //云导播选择以主持人身份发起直播 确认进入直播间
+                this.$vhall_paas_port({
+                  k: 100839,
+                  data: {business_uid: this.userId, user_id: '', webinar_id: this.arr[0], refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+                })
+              }
               console.error(this.watchUrl);
               window.location.href = this.watchUrl;
             }
@@ -358,6 +366,13 @@ export default {
             customClass: 'zdy-info-box'
           });
         }else if (res.code === 200){
+          if(this.selectDirectorMode === 1){
+            //云导播选择以视频推流到云导播 确认进入视频推流页面
+            this.$vhall_paas_port({
+              k: 100840,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.arr[0], refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
           //跳转推流页
           window.location.href = `${process.env.VUE_APP_WEB_URL}/lives/yun/${this.$route.params.str}?seat=${this.curSelected}`
         }
@@ -376,6 +391,7 @@ export default {
       // 无延迟发起
       this.hasDelayPermission = checkInfo['no.delay.webinar'] && checkInfo['no.delay.webinar'] == 1 ? true : false
     }
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
   }
 };
 </script>

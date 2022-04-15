@@ -1318,6 +1318,14 @@ export default {
           }
           this.$fetch(url, this.$params(data)).then(async res=>{
             if (res.code == 200) {
+              if(this.selectDirectorMode === 1){
+                //创建或者编辑云导播活动 保存成功后
+                let userId = JSON.parse(sessionOrLocal.get('userId'));
+                this.$vhall_paas_port({
+                  k: 100837,
+                  data: {business_uid: userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+                })
+              }
               // 若是开启了 - 多语言权限，调用创建多语言接口。否则不调用
               await this.sendLanguage(res.data.webinar_id, url).then((result) => {
                 console.log('Promise.all --- success', result, res)       // 返回的是个结果数据 [ '3秒后醒来', '2秒后醒来' ]
