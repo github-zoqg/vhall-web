@@ -59,39 +59,30 @@
           <el-form-item class="provicy-item" v-show="viewingProtocolForm.statement_status"  prop="statement_content">
             <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInputContent($event)" :maxlength="100" class="title-inform" show-word-limit v-model="viewingProtocolForm.statement_content" autocomplete="off"  placeholder="我已阅读并同意" > </VhallInput>
           </el-form-item>
-          <el-form-item class="item-link"  v-show="viewingProtocolForm.statement_status" prop="proptocolLink_0">
-            <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInputContent($event)" :maxlength="100"  v-model="viewingProtocolForm.proptocolLink_0" class="title-inform" show-word-limit autocomplete="off" placeholder="请输入http://或https://开头的链接"  > </VhallInput>
+
+          <el-form-item class="item-title" v-show="viewingProtocolForm.statement_status"  prop="proptocolTitle_0">
+            <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 0, 'title')" :maxlength="100" v-model="viewingProtocolForm.proptocolTitle_0" show-word-limit autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
+            <i
+              class="el-icon-circle-plus-outline optIcon"
+              v-if="viewingProtocolForm.is_open === 1 && statementList && statementList.length == 1"
+              @click="privacyAdd"
+            ></i>
           </el-form-item>
-          <template>
-            <el-form-item class="item-title" v-show="viewingProtocolForm.statement_status"  prop="proptocolTitle_0">
-              <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 0, 'title')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolTitle_0" show-word-limit autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
-              <i
-                class="el-icon-circle-plus-outline optIcon"
-                v-if="viewingProtocolForm.is_open === 1 && statementList && statementList.length == 1"
-                @click="privacyAdd"
-              ></i>
-            </el-form-item>
-            
-            
-          </template>
           
           <el-form-item class="item-link"  v-show="viewingProtocolForm.statement_status" prop="proptocolLink_0">
             <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 0, 'link')" :maxlength="100"  v-model="viewingProtocolForm.proptocolLink_0" class="title-inform" show-word-limit autocomplete="off" placeholder="请输入http://或https://开头的链接"  > </VhallInput>
           </el-form-item>
-          <template>
-            <el-form-item class="item-title" v-if="statementList.length > 1 && viewingProtocolForm.statement_status"  prop="proptocolTitle_1">
-              <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 1, 'title')" :maxlength="100" class="title-inform" show-word-limit autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
-              <i
-                class="el-icon-remove-outline optIcon"
-                @click="deleteOptions"
-                v-if="viewingProtocolForm.is_open === 1 && statementList && statementList.length == 2"
-              ></i>
-            </el-form-item>
+          <el-form-item class="item-title" v-if="statementList.length > 1 && viewingProtocolForm.statement_status"  prop="proptocolTitle_1">
+            <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 1, 'title')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolTitle_1" show-word-limit autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
+            <i
+              class="el-icon-remove-outline optIcon"
+              @click="deleteOptions"
+              v-if="viewingProtocolForm.is_open === 1 && statementList && statementList.length == 2"
+            ></i>
+          </el-form-item>
             
-          </template>
-          
           <el-form-item class="item-link"  v-if="statementList.length > 1" v-show="viewingProtocolForm.statement_status" prop="proptocolLink_1">
-            <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 1, 'link')" :maxlength="100" class="title-inform" show-word-limit autocomplete="off" placeholder="请输入http://或https://开头的链接"  > </VhallInput>
+            <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 1, 'link')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolLink_1" show-word-limit autocomplete="off" placeholder="请输入http://或https://开头的链接"  > </VhallInput>
           </el-form-item>
           <!-- <el-form-item class="provicy-proptocolTitle_1" v-show="viewingProtocolForm.statement_status"  prop="proptocolTitle_1">
             <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInput($event, 1, 'title')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolTitle_1" show-word-limit autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
@@ -303,16 +294,17 @@ export default {
         }
 
       }else {
+        
         let linkName = `proptocolLink_${index}`
         this.viewingProtocolForm[linkName] = value
         this.statementList[index].link = value;
-        
+        console.log(this.viewingProtocolForm, linkName, 'linkName')
       }
       // this.viewingProtocolForm = viewingProtocolForm
       // this.statementList = statementList
       // console.log(statementList, this.statementList, 'statementList')
       // // this.$refs.viewingProtocolForm.clearValidate()
-      // console.log(this.viewingProtocolForm, 'this.viewingProtocolForm[`proptocolTitle_${index}`]')
+      console.log(this.viewingProtocolForm, 'this.viewingProtocolForm[`proptocolTitle_${index}`]')
     },
     handleBlur(val, index){
       console.log(val, index, 'index')
@@ -341,7 +333,9 @@ export default {
         if(contentLength + 5 <= 100){
           this.statementList.push(statementObj)
           this.viewingProtocolForm.statement_content += '及《观看协议2》'
-          this.viewingProtocolForm.proptocolTitle_1 = '观看协议2'
+          // this.viewingProtocolForm.proptocolTitle_1 = '观看协议2'
+          this.$set(this.viewingProtocolForm, 'proptocolTitle_1', '观看协议2')
+          this.$set(this.viewingProtocolForm, 'proptocolLink_1', '')
         }else{
           this.$message({
             message: '添加隐私协议会超出预览字数，请删减后再添加',
