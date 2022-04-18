@@ -59,6 +59,9 @@
           <el-form-item class="provicy-item" v-show="viewingProtocolForm.statement_status"  prop="statement_content">
             <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInputContent($event)" :maxlength="100" class="title-inform" show-word-limit v-model="viewingProtocolForm.statement_content" autocomplete="off"  placeholder="我已阅读并同意" > </VhallInput>
           </el-form-item>
+          <el-form-item class="item-link"  v-show="viewingProtocolForm.statement_status" prop="proptocolLink_0">
+            <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInputContent($event)" :maxlength="100"  v-model="viewingProtocolForm.proptocolLink_0" class="title-inform" show-word-limit autocomplete="off" placeholder="请输入http://或https://开头的链接"  > </VhallInput>
+          </el-form-item>
           <template>
             <el-form-item class="item-title" v-show="viewingProtocolForm.statement_status"  prop="proptocolTitle_0">
               <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 0, 'title')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolTitle_0" show-word-limit autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
@@ -163,21 +166,13 @@ export default {
         statement_content: '我已同意并阅读《观看协议》',
         statement_info: null,
         proptocolTitle_0: '《观看协议》',
-        proptocolLink_0: '23',
+        proptocolLink_0: '',
         proptocolTitle_1: '',
         proptocolLink_1: ''
       },
 
       brandType: 1,
       domain_url: '',
-      firstProptocol: {
-        title: '观看协议',
-        link: ''
-      },
-      secondProptocol: {
-        title: '观看协议2',
-        link: ''
-      },
       statementList: [{
         title: '观看协议',
         link: ''
@@ -202,7 +197,7 @@ export default {
         ],
         proptocolLink_0: [
           { required: true, max: 100,  message: `请填写协议链接`, trigger: 'blur' },
-          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入以http://或https://开头的标志链接' , trigger: 'blur'}
+          // { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入以http://或https://开头的标志链接' , trigger: 'blur'}
         ],
         proptocolTitle_1: [
           { required: true, max: 100,  message: `请填写协议名称`, trigger: 'blur' }
@@ -431,6 +426,8 @@ export default {
     },
     // 获取活动标记记录
     getProtocol() {
+      //  this.viewingProtocolForm.proptocolTitle_0 = 'statement_info[0].title';
+      //  this.viewingProtocolForm.proptocolLink_0 =' statement_info[0].link'
       let params = {
         type: this.type,
         webinar_id: this.type == 1 ? this.$route.params.str : ''
@@ -438,18 +435,18 @@ export default {
       this.$fetch('getAgreement', this.$params(params)).then(res => {
         console.log(res);
         if (res && res.code === 200) {
+            // this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
           if (res.data && res.data.title) {
             this.viewingProtocolForm = res.data;
             let statement_info = res.data.statement_info;
             if(statement_info && statement_info.length > 0){
               this.statementList = statement_info;
-              // this.viewingProtocolForm.proptocolTitle_0 = 'statement_info[0].title';
-              // this.viewingProtocolForm.proptocolLink_0 =' statement_info[0].link'
+            
               statement_info.forEach((item, index)=>{
                 let titleName = `proptocolTitle_${index}`
                 let linkName = `proptocolLink_${index}`
-                this.viewingProtocolForm[titleName] = item.title;
-                this.viewingProtocolForm[linkName] = item.link
+                this.$set(this.viewingProtocolForm, titleName, item.title)
+                this.$set(this.viewingProtocolForm, linkName, item.link)
               })
             }
             console.log(this.viewingProtocolForm, this.statementList, ' this.statementList')
@@ -460,6 +457,7 @@ export default {
 
             // })
           }
+          
         } else {
           // this.$nextTick(() => {
           //   this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
