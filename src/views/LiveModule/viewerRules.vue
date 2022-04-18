@@ -240,7 +240,7 @@
     <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
     <VhallDialog :visible='visible' title="权限验证" width='400px' @close="visible = false;">
       <span class="pr" v-if='!showPwd'>
-        <el-input :placeholder="showText" v-model="stash" type="password"></el-input>
+        <el-input :placeholder="showText" v-model="stash" type="password" maxlength="12"></el-input>
         <span class="iconfont-v3 saaseyeclose_huaban1 inputIcon cursor" @click='showPwd = true'></span>
       </span>
       <span class="pr" v-else>
@@ -843,7 +843,6 @@ export default {
   display: inline-block;
   height: 16px;
   background: #fff;
-  width: 45px;
   text-align: right;
 }
 .viewer-rules {

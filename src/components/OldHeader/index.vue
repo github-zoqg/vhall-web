@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import {sessionOrLocal} from "@/utils/utils";
+import { sessionOrLocal, clearCookies } from "@/utils/utils";
 import Env from "@/api/env";
 import RegLogin from './components/reg-login/index'
 
@@ -205,6 +205,7 @@ export default {
     loginOut() {
       sessionOrLocal.clear();
       sessionOrLocal.clear('localStorage');
+      clearCookies(); // 清空缓存 - cookies缓存
       // 更新当前页面
       this.isLogin = false;
     },

@@ -551,3 +551,15 @@ export const refreshToken = () => {
     })
   }
 }
+
+// 清空Cookies
+export const clearCookies = () => {
+  const keys = document.cookie.match(/[^ =;]+(?=\\=)/g);
+  if (keys) {
+    for (let i = keys.length; i--;)
+    document.cookie = keys[i] + '=0;expires=' + new Date(0).toUTCString()
+  }
+  // TODO 重点关注如何清空缓存key
+  Cookies.remove('token', { path: '' })
+  Cookies.remove('sso_token', { path: '' })
+}

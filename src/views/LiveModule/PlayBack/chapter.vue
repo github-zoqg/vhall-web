@@ -70,10 +70,10 @@
         </div>
         <div class="docBox">
           <div class="docInner">
-            <div class="nodoc" v-show="tableData.length === 0">
+            <!-- <div class="nodoc" v-show="tableData.length === 0">
               <i class="saasicon_zanwuwendang iconfont-v3"></i>
               <span>主讲人未添加文档，请稍等...</span>
-            </div>
+            </div> -->
             <doc
               v-if="showDoc"
               ref="doc"
