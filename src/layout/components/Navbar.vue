@@ -194,7 +194,7 @@ export default {
         clearCookies();
         // 监听消息变化
         this.$EventBus.$emit('saas_vs_login_out', true);
-        setTimeout(() => {
+       // setTimeout(() => {
           if(res.data && out_url) {
             window.location.href = out_url
           } else {
@@ -202,7 +202,7 @@ export default {
               path: '/login'
             });
           }
-        }, 200)
+       // }, 200)
       }).catch(res=>{
         this.$message({
           message: res.msg || `退出失败`,
@@ -219,7 +219,7 @@ export default {
         sessionOrLocal.clear('localStorage');
         // 监听消息变化
         this.$EventBus.$emit('saas_vs_login_out', true);
-         setTimeout(() => {
+        // setTimeout(() => {
           if(out_url) {
             window.location.href = out_url
           } else {
@@ -227,7 +227,7 @@ export default {
               path: '/login'
             });
           }
-        }, 200)
+        // }, 200)
       });
     },
     updateAccount(account) {
