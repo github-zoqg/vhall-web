@@ -94,6 +94,7 @@ export default {
 
                         editor.on('keyup input', e=>{ //只在编辑器中打字才会触发
                             this.status = INPUT       //编辑器录入文字时标记为`INPUT`状态
+                            this.$emit('blur', 'input')
                         })
                         editor.on('SetContent', e=>{ //编辑器在插入图片和撤销/重做时触发，组件content更新数据也会导致触发
                             this.status = INPUT      //编辑器在响应`setContent`方法后标记为`INPUT`状态
@@ -101,6 +102,7 @@ export default {
                         })
                         editor.on('Blur', e=>{
                             this.status = INIT
+                            this.$emit('blur', 'init')
                             this.changedLog(e, this.status, editor.getContent(), "--")
                         })
                         editor.on('input keyup Change Undo Redo ExecCommand NodeChange', e=>{

@@ -1,6 +1,6 @@
 <template>
   <div class="vh-editor-wrapbox" :style="{'height': height}">
-    <vue-tinymce ref="editor" :content="value" :setting="setting" @change="sendContent">
+    <vue-tinymce ref="editor" :content="value" :setting="setting" @change="sendContent" @blur="blurWatch">
     </vue-tinymce>
     <span class="set-placeholder" v-if="!value || currentCount == 0" onselectstart="return false;" unselectable="on" @click="$refs.editor.getInstance().focus()">{{placeholder}}</span>
     <div class="word-count">
@@ -158,6 +158,9 @@ export default {
     };
   },
   methods: {
+    blurWatch(value){
+      // cnosole.log(value)
+    },
     // 内容修改后，将信息返回
     sendContent(text) {
       // console.log('字符数', this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())

@@ -9,7 +9,7 @@
           <div class="pc-preview">
 
             <div class="pc-contain">
-              <div class="protocol-top" :class="viewingProtocolForm.rule == 1 ? 'protocol-content-read' : 'protocol-content-choose'">
+              <div class="protocol-top" :class="rule == 1 ? 'protocol-content-read' : 'protocol-content-choose'">
                 <div class="protocol-title">
                   <p>
                     {{viewingProtocolForm.title ? viewingProtocolForm.title : '协议标题'}}
@@ -26,10 +26,10 @@
                 </div>
               </div>
 
-              <div class="protocol-button" v-if="viewingProtocolForm.rule == 1">
-                <el-button size="small" type="primary" round v-preventReClick>我知道了</el-button>
+              <div class="protocol-button" v-if="rule == 1">
+                <el-button size="small" type="primary" round v-preventReClick>同意并继续</el-button>
               </div>
-              <div class="protocol-button" v-if="viewingProtocolForm.rule == 0">
+              <!-- <div class="protocol-button" v-if="viewingProtocolForm.rule == 0">
                 <div>
                   <el-button size="small" type="primary" round v-preventReClick>同意并继续</el-button>
                 </div>
@@ -37,7 +37,7 @@
                   <el-button size="small" type="text" round v-preventReClick>拒绝</el-button>
                 </div>
 
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -61,7 +61,8 @@ export default {
       },
       logoUrl: null,
       domain_url: '',
-      result_content: null
+      result_content: null,
+      rule: 1
     };
   },
   methods: {
