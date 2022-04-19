@@ -12,11 +12,11 @@
               <div class="protocol-top" :class="rule == 1 ? 'protocol-content-read' : 'protocol-content-choose'">
                 <div class="protocol-title">
                   <p>
-                    {{viewingProtocolForm.title ? viewingProtocolForm.title : '协议标题'}}
+                    {{viewingProtocolForm.title ? viewingProtocolForm.title : '请输入《观看协议》标题'}}
                   </p>
                 </div>
                 <div class="protocol-content">
-                  <div v-html="viewingProtocolForm.content ? viewingProtocolForm.content : '协议内容'">
+                  <div v-html="viewingProtocolForm.content ? viewingProtocolForm.content : '请输入《观看协议》内容'">
 
                   </div>
                 </div>
