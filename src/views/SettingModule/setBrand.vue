@@ -156,5 +156,11 @@ export default {
     }
   }
 }
+/deep/ .el-tabs__active-bar {
+  height: 2px;
+  background: #FB3A32;
+  border-radius: 2px 2px 0px 0px;
+  opacity: 1;
+}
 </style>
 

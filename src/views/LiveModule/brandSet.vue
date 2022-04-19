@@ -252,6 +252,12 @@ export default {
       color: #999;
     }
   }
+  /deep/ .el-tabs__active-bar {
+    height: 2px;
+    background: #FB3A32;
+    border-radius: 2px 2px 0px 0px;
+    opacity: 1;
+  }
 .brand--set {
   // .layout--right--main();
   .min-height();
