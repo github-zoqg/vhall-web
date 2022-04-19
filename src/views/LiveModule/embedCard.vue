@@ -43,7 +43,7 @@
             </template>
           </el-input>
         </div>
-        <div class="input-item" v-if="isInteract != 3">
+        <div class="input-item" v-if="isInteract != 3 && $route.query.type != 6">
           <span>视频嵌入</span>
           <el-input v-model="video" readonly style="max-width:640px">
             <template slot="suffix" >
@@ -53,10 +53,11 @@
             </template>
           </el-input>
         </div>
-        <p>提示：<span v-if="isInteract == 3">互动连麦功能必须要求浏览器地址为https协议进入！</span><span v-if="isInteract != 3">1.视频嵌入不支持无延迟直播；2.</span>当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1238', 2)"> 网页嵌入指南</a></p>
+        <p v-if="$route.query.type != 6">提示：<span v-if="isInteract == 3">互动连麦功能必须要求浏览器地址为https协议进入！</span><span v-if="isInteract != 3">1.视频嵌入不支持无延迟直播；2.</span>当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1238', 2)"> 网页嵌入指南</a></p>
+        <p v-else>提示：<span>互动连麦功能必须要求浏览器地址为https协议进入！</span>当前只支持密码活动的嵌入，更多嵌入信息参见<a @click="goForm('https://saas-doc.vhall.com/docs/show/1238', 2)"> 网页嵌入指南</a></p>
       </div>
     </div>
-    <div class="thirdMethod">
+    <div class="thirdMethod" v-if="$route.query.type != 6">
       <h3>第三方渠道推广嵌入</h3>
       <div class="third-list"></div>
       <p class="third-text">提示：目前微吼已支持在各大平台进行同步直播<a @click="goEmbedForm"> 填写推广需求表</a></p>
