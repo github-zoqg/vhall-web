@@ -48,7 +48,7 @@
 <script>
 export default {
   name: "protocolPreview.vue",
-  props: ['tabType', 'viewingProtocolForm', 'proptocolTitle_0', 'proptocolTitle_1'],
+  props: ['tabType', 'viewingProtocolForm', 'proptocolTitle_0', 'proptocolTitle_1', 'proptocolLink_0', 'proptocolLink_1'],
   data() {
     return {
       switchType: 'pc',
@@ -75,7 +75,7 @@ export default {
         text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_0 || 'javascript:void(0);'}" target="_blank">$1</a>`);
       }
       let matchPrivacy2 = this.viewingProtocolForm.proptocolTitle_1 ? text.match(this.viewingProtocolForm.proptocolTitle_1) : null;
-      // alert(matchPrivacy2, 'matchPrivacy2')
+      console.log(text, matchPrivacy2, 'matchPrivacy2')
       if(matchPrivacy2){
         let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
         text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">$1</a>`);
@@ -103,6 +103,16 @@ export default {
       }
     },
     proptocolTitle_1(val, oldVal) {
+      if (val) {
+        this.privacyFormatter()
+      }
+    },
+    proptocolLink_0(val, oldVal) {
+      if (val) {
+        this.privacyFormatter()
+      }
+    },
+    proptocolLink_1(val, oldVal) {
       if (val) {
         this.privacyFormatter()
       }

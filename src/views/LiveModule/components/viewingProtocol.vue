@@ -97,6 +97,8 @@
         :tabType="'signSet'"
         :proptocolTitle_0="viewingProtocolForm.proptocolTitle_0"
         :proptocolTitle_1="viewingProtocolForm.proptocolTitle_1"
+        :proptocolLink_0="viewingProtocolForm.proptocolLink_0"
+        :proptocolLink_1="viewingProtocolForm.proptocolLink_1"
       ></protocol-preview>
     </div>
   </div>
@@ -224,6 +226,7 @@ export default {
       console.log(value, index)
       let statement_content = this.viewingProtocolForm.statement_content
       let titleName = `proptocolTitle_${index}`
+      let linkName = `proptocolLink_${index}`
       if(type === 'title') {
 
         this.viewingProtocolForm[titleName] = value
@@ -242,7 +245,6 @@ export default {
 
       }else {
         
-        let linkName = `proptocolLink_${index}`
         this.viewingProtocolForm[linkName] = value
         this.statementList[index].link = value;
         // console.log(this.viewingProtocolForm, linkName, 'linkName')
