@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import GroupingCard from '@/components/GroupingCard'
+import GroupingCard from './components/GroupingCard'
 import GroupAdd from './components/GroupAdd.vue'
 import GroupChange from './components/GroupChange.vue'
 export default {
@@ -188,8 +188,11 @@ export default {
       const toGroupDataFilter = this.data.filter(item => {
         return item.index === this.changeGroupDefault.selectGroup
       })
-      const toGroupData = toGroupDataFilter && toGroupDataFilter.length ? toGroupDataFilter[0] : []
+      const toGroupData = toGroupDataFilter && toGroupDataFilter.length ? toGroupDataFilter[0] : { list: [] }
       const currentGroupList = []
+      if (!toGroupData.list) {
+        toGroupData.list = []
+      }
       this.changeGroupDefault.currentGroup.list.forEach(item => {
         if (this.changeGroupDefault.checkList.includes(item.id)) {
           toGroupData.list.push(item)
@@ -198,8 +201,9 @@ export default {
         }
       });
       this.changeGroupDefault.currentGroup.list = currentGroupList
-      this.$refs.groupChange.handleClose()
-      this.$refs[`groupingCard${this.changeGroupDefault.currentGroup.index}`][0].clearData()
+      this.$refs.groupChange && this.$refs.groupChange.handleClose()
+      const groupingCardIndex = `groupingCard${this.changeGroupDefault.currentGroup.index}`
+      this.$refs[groupingCardIndex] && this.$refs[groupingCardIndex][0].clearData()
     },
     okHandle() {
       const data = this.data.slice(1)
