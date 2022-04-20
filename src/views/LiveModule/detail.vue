@@ -166,7 +166,8 @@ export default {
         second: 0
       },
       dpi: '1280*720',
-      hasUpdate: false  //false: 没有修改过
+      hasUpdate: false,  //false: 没有修改过
+      director_web_url: ''  //云导播地址
     };
   },
   computed: {
@@ -633,6 +634,7 @@ export default {
         resolution_ratio: this.dpi,
       })).then(res => {
         this.hasUpdate = true
+        this.director_web_url = res.data.director_web_url
         this.toDirector()
       }).catch(res => {
       })
@@ -645,6 +647,7 @@ export default {
         if(res && res.code === 200) {
           //1:未修改 2:已修改不可修改
           this.hasUpdate = res.data.is_update === 2
+          this.director_web_url = res.data.director_web_url
         }
       }).catch(e => {
       });
@@ -657,6 +660,9 @@ export default {
           k: 100838,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
+        if(this.director_web_url){
+          window.open(this.director_web_url, '_blank');
+        }
       }
     }
   }
