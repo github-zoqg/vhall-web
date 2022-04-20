@@ -60,6 +60,9 @@ export default {
       this.dialogVisible = true
       this.selectGroup = ''
     },
+    /**
+     * 关闭弹框
+     */
     handleClose() {
       this.dialogVisible = false;
       this.$emit('update:show', false);

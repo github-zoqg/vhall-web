@@ -4,7 +4,7 @@
     <div class="list-group">
       <!--分配小组按钮组-->
       <div class="group-header btn-group">
-        <span class="group-header-name">{{data.groupName}}（{{data.list.length}}）</span>
+        <span class="group-header-name">{{groupType?data.groupName:'预分组'}}（{{data.list&&data.list.length}}）</span>
         <div class="btn-group-right">
           <span v-if="!batchGroupState"
             @click="batchGroup"><i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>{{groupType?'批量换组':'批量分配'}}</span>
@@ -71,6 +71,7 @@
 <script>
 //import draggable from "vuedraggable"
 export default {
+  name: 'VmpGroupCard',
   props: {
     /**分组名称 */
     groupIndex: {
@@ -113,12 +114,19 @@ export default {
       if (!this.checkList.length) return
       this.$emit('changeGroup', this.data, this.checkList)
     },
-    /**单个换组 */
+    /**
+     * 单个换组 
+     * @param {object} item 选择组
+     * */
     changeCurrentGroup(item) {
       this.$emit('changeGroup', this.data, [item.id])
       this.clearData()
     },
-    /**移出小组 */
+    /**
+     * 移出小组 
+     * @param {object} item 当前分组观众
+     * @param {number} index 观众序号
+    */
     removeGroup(item, index) {
       this.data.list.splice(index, 1)
       this.$emit('removeGroup', item)
@@ -129,7 +137,7 @@ export default {
       this.$emit('groupDissolution', this.groupIndex, this.data.list)
       console.log('解散' + this.data.groupName)
     },
-    /**清楚状态 */
+    /**清除状态 关闭弹框 */
     clearData() {
       this.checkList = []
       this.batchGroupState = false
