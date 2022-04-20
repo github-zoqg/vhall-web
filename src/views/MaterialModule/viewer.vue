@@ -279,7 +279,7 @@
 </template>
 
 <script>
-import DefaultGroup from './DefaultGroup/index.vue'
+import DefaultGroup from '@/components/DefaultGroup'
 import PageTitle from '@/components/PageTitle';
 import env from '@/api/env';
 import { sessionOrLocal } from "@/utils/utils";
