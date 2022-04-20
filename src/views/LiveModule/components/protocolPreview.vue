@@ -88,7 +88,7 @@ export default {
       this.privacyFormatter()
     }
   },
-  created() {
+  mounted() {
    this.initPage();
   },
   watch: {
