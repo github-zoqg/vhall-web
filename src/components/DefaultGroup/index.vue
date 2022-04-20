@@ -1,17 +1,18 @@
 <template>
   <VhallDialog title="分配小组"
-    :visible.sync="defaultGroup.show"
+    :visible.sync="defaultGroupShow"
     width="800px"
     height="520px"
     @close="hide">
-    <div class="group-content">
+    <div class="group-content"
+      v-loading="loading">
       <div class="group-header">
         <el-button round
           @click.prevent.stop="viewerDialogAdd"
           size="small">新增分组</el-button>
       </div>
       <div class="group-list"
-        v-if="defaultGroup.show">
+        v-if="defaultGroupShow">
         <div class="group-list-item"
           v-for="(item,index) in data"
           :key="item.groupName">
@@ -35,6 +36,7 @@
         round
         @click="hide">取 消</el-button>
     </span>
+    <!-- 新增分组 -->
     <group-add ref="groupAdd"
       :data="data"
       :groupList="groupList"></group-add>
@@ -57,9 +59,8 @@ export default {
   },
   data() {
     return {
-      defaultGroup: {
-        show: false
-      },
+      defaultGroupShow: false,
+      loading: false,
       groupAddShow: false,
       /**换组 */
       changeGroupDefault: {
@@ -129,7 +130,9 @@ export default {
     }
   },
   computed: {
-    // 分组小组
+    /** 
+     * 分组小组
+    */
     groupList() {
       return this.data.map(item => {
         return {
@@ -141,11 +144,23 @@ export default {
     }
   },
   methods: {
+    /**
+     * 新增分组
+     */
     viewerDialogAdd() {
-      this.$refs.groupAdd.handlOpen(this.groupList)
+      this.$refs.groupAdd && this.$refs.groupAdd.handlOpen(this.groupList)
     },
+    /**
+     * 显示分配小组弹框
+     */
     show() {
-      this.defaultGroup.show = true
+      this.defaultGroupShow = true
+
+    },
+    /**
+     * 查询分组观众
+     */
+    getDefaultData() {
       this.$fetch('getAudienceList').then(res => {
         if (res && res.code === 200 && res.data) {
           const wait_list = res.data.wait_list ? res.data.wait_list : []
@@ -159,18 +174,27 @@ export default {
         //this.data = []
       });
     },
+    /**
+     * 重置分组
+     */
     hide() {
       this.data = []
-      this.defaultGroup.show = false
+      this.defaultGroupShow = false
     },
-    /**解散 */
+    /**
+     * 解散小组
+     * @param groupIndex {Number} groupIndex 分组序号
+     * @param list {Array} list 当前分组观众
+    */
     groupDissolution(groupIndex, list) {
       this.data.splice(groupIndex, 1)
       this.data[0].list = this.data[0].list.concat(list)
     },
-    /**换组 */
-    /**groupName   分组名称*/
-    /**checkList  选中换组观众数据 */
+    /**
+     * 换组 
+     * @param {string} groupName   分组名称
+     * @param {Array}  checkList  选中换组观众数据
+     */
     changeGroup(currentGroup, checkList) {
       this.$set(this.changeGroupDefault, 'currentGroup', currentGroup)
       this.$set(this.changeGroupDefault, 'checkList', checkList)
@@ -178,11 +202,17 @@ export default {
         this.$refs.groupChange.handleOpen()
       })
     },
-    /** 移出小组*/
+    /** 
+     * 移出小组
+     * @param {object} item  当前被移出观众
+    */
     removeGroup(item) {
       this.data[0].list.push(item)
     },
-    /**确定换组 */
+    /**
+     * 确定换组
+     * @param {string | number} selectGroup 选择小组
+    */
     changeGroupComplete(selectGroup) {
       this.$set(this.changeGroupDefault, 'selectGroup', selectGroup)
       const toGroupDataFilter = this.data.filter(item => {
@@ -205,6 +235,9 @@ export default {
       const groupingCardIndex = `groupingCard${this.changeGroupDefault.currentGroup.index}`
       this.$refs[groupingCardIndex] && this.$refs[groupingCardIndex][0].clearData()
     },
+    /**
+     * 分组保存
+     */
     okHandle() {
       const data = this.data.slice(1)
       const params = {

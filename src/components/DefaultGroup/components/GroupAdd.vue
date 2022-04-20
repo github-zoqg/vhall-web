@@ -77,7 +77,7 @@ export default {
     }
   },
   methods: {
-    // 新增分组确定
+    // 确定新增分组
     handleSubmit() {
       this.$refs.viewerForm.validate((valid) => {
         if (valid) {
@@ -101,9 +101,15 @@ export default {
 
       })
     },
+    /**
+     * 打开弹框
+     */
     handlOpen() {
       this.dialogVisible = true
     },
+    /**
+     * 关闭弹框
+     */
     handleClose() {
       this.dialogVisible = false;
       this.formInline.count = 1

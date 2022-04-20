@@ -113,12 +113,19 @@ export default {
       if (!this.checkList.length) return
       this.$emit('changeGroup', this.data, this.checkList)
     },
-    /**单个换组 */
+    /**
+     * 单个换组 
+     * @param {object} item 选择组
+     * */
     changeCurrentGroup(item) {
       this.$emit('changeGroup', this.data, [item.id])
       this.clearData()
     },
-    /**移出小组 */
+    /**
+     * 移出小组 
+     * @param {object} item 当前分组观众
+     * @param {number} index 观众序号
+    */
     removeGroup(item, index) {
       this.data.list.splice(index, 1)
       this.$emit('removeGroup', item)
@@ -129,7 +136,7 @@ export default {
       this.$emit('groupDissolution', this.groupIndex, this.data.list)
       console.log('解散' + this.data.groupName)
     },
-    /**清楚状态 */
+    /**清除状态 关闭弹框 */
     clearData() {
       this.checkList = []
       this.batchGroupState = false
