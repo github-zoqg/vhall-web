@@ -5,6 +5,7 @@
     height="520px"
     @close="hide">
     <div class="group-content"
+      element-loading-text="努力加载中"
       v-loading="loading">
       <div class="group-header">
         <el-button round
@@ -13,11 +14,18 @@
       </div>
       <div class="group-list"
         v-if="defaultGroupShow">
+        <div class="group-list-item">
+          <grouping-card :ref="`groupingCard`"
+            :groupType="0"
+            @groupDissolution="groupDissolution"
+            @changeGroup="changeGroup"
+            :data="waitList"></grouping-card>
+        </div>
         <div class="group-list-item"
-          v-for="(item,index) in data"
+          v-for="(item,index) in readyList"
           :key="item.groupName">
           <grouping-card :ref="`groupingCard${item.index}`"
-            :groupType="item.groupName==='预分配'?0:1"
+            groupType="1"
             @groupDissolution="groupDissolution"
             @changeGroup="changeGroup"
             @removeGroup="removeGroup"
@@ -38,7 +46,7 @@
     </span>
     <!-- 新增分组 -->
     <group-add ref="groupAdd"
-      :data="data"
+      :readyList="readyList"
       :groupList="groupList"></group-add>
     <!--换组-->
     <group-change ref="groupChange"
@@ -68,26 +76,26 @@ export default {
         checkList: [],//data选中换组观众
         selectGroup: 1//to换到组
       },
-      data: [
-        {
-          groupName: '预分配',
-          index: 0,//组序号
-          id: '2323232',
-          list: [
-            {
-              name: '观众阿里妈妈1',
-              id: 1
-            },
-            {
-              name: '观阿萨斯众2',
-              id: 2
-            },
-            {
-              name: '观啊实打实众3',
-              id: 3
-            }
-          ]
-        },
+      waitList: {
+        groupName: '预分配',
+        index: 0,//组序号
+        id: '2323232',
+        list: [
+          {
+            name: '观众阿里妈妈1',
+            id: 1
+          },
+          {
+            name: '观阿萨斯众2',
+            id: 2
+          },
+          {
+            name: '观啊实打实众3',
+            id: 3
+          }
+        ]
+      },//待分配
+      readyList: [//已分配
         {
           groupName: '分组1',
           index: 1,
@@ -134,7 +142,7 @@ export default {
      * 分组小组
     */
     groupList() {
-      return this.data.map(item => {
+      return this.readyList.map(item => {
         return {
           id: item.id,
           groupName: item.groupName,
@@ -155,30 +163,34 @@ export default {
      */
     show() {
       this.defaultGroupShow = true
-
+      this.getDefaultData()
     },
     /**
      * 查询分组观众
      */
     getDefaultData() {
+      this.loading = true
       this.$fetch('getAudienceList').then(res => {
+        this.loading = false
         if (res && res.code === 200 && res.data) {
-          const wait_list = res.data.wait_list ? res.data.wait_list : []
-          const ready_list = res.data.ready_list ? res.data.ready_list : []
-          this.data = wait_list.concat(ready_list)
+          this.waitList.list = res.data.wait_list ? res.data.wait_list : []
+          this.readyList = res.data.ready_list ? res.data.ready_list : []
         } else {
-          this.data = []
+          this.waitList.list = []
+          this.readyList = []
         }
       }).catch(e => {
-        console.log(e);
-        //this.data = []
+        this.loading = false
+        this.waitList.list = []
+        this.readyList = []
       });
     },
     /**
      * 重置分组
      */
     hide() {
-      this.data = []
+      this.waitList.list = []
+      this.readyList = []
       this.defaultGroupShow = false
     },
     /**
@@ -187,8 +199,8 @@ export default {
      * @param list {Array} list 当前分组观众
     */
     groupDissolution(groupIndex, list) {
-      this.data.splice(groupIndex, 1)
-      this.data[0].list = this.data[0].list.concat(list)
+      this.readyList.splice(groupIndex, 1)
+      this.waitList.list = this.waitList.list.concat(list)
     },
     /**
      * 换组 
@@ -207,7 +219,7 @@ export default {
      * @param {object} item  当前被移出观众
     */
     removeGroup(item) {
-      this.data[0].list.push(item)
+      this.waitList.list.push(item)
     },
     /**
      * 确定换组
@@ -215,7 +227,7 @@ export default {
     */
     changeGroupComplete(selectGroup) {
       this.$set(this.changeGroupDefault, 'selectGroup', selectGroup)
-      const toGroupDataFilter = this.data.filter(item => {
+      const toGroupDataFilter = this.readyList.filter(item => {
         return item.index === this.changeGroupDefault.selectGroup
       })
       const toGroupData = toGroupDataFilter && toGroupDataFilter.length ? toGroupDataFilter[0] : { list: [] }
@@ -239,9 +251,8 @@ export default {
      * 分组保存
      */
     okHandle() {
-      const data = this.data.slice(1)
       const params = {
-        list: data
+        list: this.readyList
       }
       this.$fetch('saveAudienceSave', this.$params(params)).then(res => {
         this.$message({

@@ -188,8 +188,8 @@ const apis = {
   viewerSetSave: ['/v3/webinars/verify/save', 'POST'],// 观看限制保存接口 jia.li  √
   fCodeExecute: ['/v3/webinars/webinar/post-generate-fcode', 'POST'],// 生成验证码 jia.li  √
   getFCodeExcel: ['/v3/webinars/webinar/get-fcode-excel', 'POST'],// 生成验证码 jia.li  √
-  getAudienceList:['/v3/webinars/audience/list','POST','mock'],//预设小组-观众列表
-  saveAudienceSave:['/v3/webinars/audience/save','POST','mock'],//预设小组保存
+  getAudienceList:['/v3/webinars/audience-groups/group-user-list','POST'],//预设小组-观众列表
+  saveAudienceSave:['/v3/webinars/audience/save','POST'],//预设小组保存
 
   // 自定义菜单
   menuTplList: ['/v3/interacts/menu/components-list', 'POST'], // 控制台-组件列表接口 jia.li
