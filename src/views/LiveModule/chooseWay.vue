@@ -229,6 +229,7 @@ export default {
     goLive(origin = 1){
       if(this.chooseType !== 'client' && this.webinarDirector && this.is_director && origin !=1 ){
         Promise.resolve(this.getLiveDirectorStatus()).then(res=>{
+          this.selectDirectorMode = 1
           this.dialogDirectorVisible = true
         })
       }else{
