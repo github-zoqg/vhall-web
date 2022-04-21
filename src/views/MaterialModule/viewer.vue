@@ -451,7 +451,7 @@ export default {
         ]
       },
       multipleSelection: [],
-      downloadUrl: `${env.staticLinkVo.tmplDownloadUrl}/download/audience.xlsx`,
+      downloadUrl: 'https://cnstatic01.e.vhall.com/upload/interacts/download/d9/8c/audience.xlsx',
       importFileShow: false,
       fileUrl: '', // 文件地址
       fileResult: '', // 文件上传结果
