@@ -59,13 +59,13 @@ export default {
     privacyFormatter(){
       let text = this.viewingProtocolForm.statement_content
       let matchPrivacy1 = this.viewingProtocolForm.proptocolTitle_0 ? text.match(this.viewingProtocolForm.proptocolTitle_0) : null;
-      console.log(text, matchPrivacy1, this.viewingProtocolForm, 'text')
+      // console.log(text, matchPrivacy1, this.viewingProtocolForm, 'text')
       if(matchPrivacy1){
         let reg = new RegExp(`(${matchPrivacy1[0]})`);
         text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_0 || 'javascript:void(0);'}" target="_blank">$1</a>`);
       }
       let matchPrivacy2 = this.viewingProtocolForm.proptocolTitle_1 ? text.match(this.viewingProtocolForm.proptocolTitle_1) : null;
-      console.log(text, matchPrivacy2, 'matchPrivacy2')
+      // console.log(text, matchPrivacy2, 'matchPrivacy2')
       if(matchPrivacy2){
         let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
         text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">$1</a>`);
