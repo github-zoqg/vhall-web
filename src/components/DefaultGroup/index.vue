@@ -90,7 +90,7 @@ export default {
         audiences: []
       },//待分配
       readyList: [],//已分配
-      maxNumber: 2//最大人数
+      maxNumber: 2000//最大人数
     }
   },
   computed: {
