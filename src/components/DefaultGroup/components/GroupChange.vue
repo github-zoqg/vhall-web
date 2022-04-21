@@ -15,9 +15,9 @@
             style="width: 100%"
             placeholder="请选择">
             <el-option v-for="item in groupList"
-              :key="item.id"
+              :key="item.group_order_id"
               :label="item.groupName"
-              :value="item.index"></el-option>
+              :value="item.group_order_id"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
