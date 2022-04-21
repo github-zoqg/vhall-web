@@ -182,7 +182,7 @@
         </el-form-item>
         <el-form-item label="小组"
           prop="group_order_id">
-          <VhallInput v-model.trim.number="viewerForm.group_order_id"
+          <VhallInput v-model.trim="viewerForm.group_order_id"
             v-clearEmoij
             auto-complete="off"
             placeholder="请输入小组号，例如：1"
@@ -755,6 +755,7 @@ export default {
         that.$set(that.viewerForm, 'job_number', item.job_number);
         that.$set(that.viewerForm, 'email', item.email);
         that.$set(that.viewerForm, 'other', item.other);
+        that.$set(that.viewerForm, 'group_order_id', item.group_order_id)
         that.viewerDialog.visible = true;
       } else { // 添加观众
         that.viewerDialog.type = 'add';
@@ -766,6 +767,7 @@ export default {
         that.$set(that.viewerForm, 'job_number', '');
         that.$set(that.viewerForm, 'email', '');
         that.$set(that.viewerForm, 'other', '');
+        that.$set(that.viewerForm, 'group_order_id', '')
         that.viewerDialog.visible = true;
       }
     },
