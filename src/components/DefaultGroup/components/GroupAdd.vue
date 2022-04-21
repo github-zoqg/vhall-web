@@ -82,16 +82,17 @@ export default {
       this.$refs.viewerForm.validate((valid) => {
         if (valid) {
           const arr = this.groupList.map(item => {
-            return item.index
+            return item.group_order_id
           });
           const allGroup = this.groupList.length + this.formInline.count
+          let add = 0
           for (let i = 1; i <= allGroup; i++) {
-            if (i && !arr.includes(i)) {
+            if (i && !arr.includes(i) && add < this.formInline.count) {
               this.readyList.push({
-                groupName: '分组' + i,
-                index: i,
-                list: []
+                group_order_id: i,
+                audiences: []
               })
+              add++
             }
           }
           this.handleClose()

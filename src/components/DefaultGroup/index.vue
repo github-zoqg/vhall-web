@@ -23,9 +23,9 @@
         </div>
         <div class="group-list-item"
           v-for="(item,index) in readyList"
-          :key="item.groupName">
-          <grouping-card :ref="`groupingCard${item.index}`"
-            groupType="1"
+          :key="item.group_order_id">
+          <grouping-card :ref="`groupingCard${item.group_order_id}`"
+            :groupType="1"
             @groupDissolution="groupDissolution"
             @changeGroup="changeGroup"
             @removeGroup="removeGroup"
@@ -77,64 +77,11 @@ export default {
         selectGroup: 1//to换到组
       },
       waitList: {
-        groupName: '预分配',
         index: 0,//组序号
-        id: '2323232',
-        list: [
-          {
-            name: '观众阿里妈妈1',
-            id: 1
-          },
-          {
-            name: '观阿萨斯众2',
-            id: 2
-          },
-          {
-            name: '观啊实打实众3',
-            id: 3
-          }
-        ]
+        id: '0',
+        audiences: []
       },//待分配
-      readyList: [//已分配
-        {
-          groupName: '分组1',
-          index: 1,
-          id: '232312',
-          list: [
-            {
-              name: '观众3',
-              id: 9
-            },
-            {
-              name: '观众4',
-              id: 4
-            },
-            {
-              name: '观众5',
-              id: 5
-            }
-          ]
-        },
-        {
-          groupName: '分组2',
-          index: 2,
-          id: '2323eq',
-          list: [
-            {
-              name: '观众6',
-              id: 6
-            },
-            {
-              name: '观众7',
-              id: 7
-            },
-            {
-              name: '观众8',
-              id: 8
-            }
-          ]
-        }
-      ]
+      readyList: []//已分配
     }
   },
   computed: {
@@ -144,9 +91,8 @@ export default {
     groupList() {
       return this.readyList.map(item => {
         return {
-          id: item.id,
-          groupName: item.groupName,
-          index: item.index
+          group_order_id: item.group_order_id,
+          groupName: '分组' + item.group_order_id
         };
       });
     }
@@ -173,15 +119,15 @@ export default {
       this.$fetch('getAudienceList').then(res => {
         this.loading = false
         if (res && res.code === 200 && res.data) {
-          this.waitList.list = res.data.wait_list ? res.data.wait_list : []
+          this.waitList.audiences = res.data.wait_list ? res.data.wait_list : []
           this.readyList = res.data.ready_list ? res.data.ready_list : []
         } else {
-          this.waitList.list = []
+          this.waitList.audiences = []
           this.readyList = []
         }
       }).catch(e => {
         this.loading = false
-        this.waitList.list = []
+        this.waitList.audiences = []
         this.readyList = []
       });
     },
@@ -189,7 +135,7 @@ export default {
      * 重置分组
      */
     hide() {
-      this.waitList.list = []
+      this.waitList.audiences = []
       this.readyList = []
       this.defaultGroupShow = false
     },
@@ -200,7 +146,7 @@ export default {
     */
     groupDissolution(groupIndex, list) {
       this.readyList.splice(groupIndex, 1)
-      this.waitList.list = this.waitList.list.concat(list)
+      this.waitList.audiences = this.waitList.audiences.concat(list)
     },
     /**
      * 换组 
@@ -219,7 +165,7 @@ export default {
      * @param {object} item  当前被移出观众
     */
     removeGroup(item) {
-      this.waitList.list.push(item)
+      this.waitList.audiences.push(item)
     },
     /**
      * 确定换组
@@ -228,21 +174,21 @@ export default {
     changeGroupComplete(selectGroup) {
       this.$set(this.changeGroupDefault, 'selectGroup', selectGroup)
       const toGroupDataFilter = this.readyList.filter(item => {
-        return item.index === this.changeGroupDefault.selectGroup
+        return item.group_order_id === this.changeGroupDefault.selectGroup
       })
-      const toGroupData = toGroupDataFilter && toGroupDataFilter.length ? toGroupDataFilter[0] : { list: [] }
+      const toGroupData = toGroupDataFilter && toGroupDataFilter.length ? toGroupDataFilter[0] : { audiences: [] }
       const currentGroupList = []
-      if (!toGroupData.list) {
-        toGroupData.list = []
+      if (!toGroupData.audiences) {
+        toGroupData.audiences = []
       }
-      this.changeGroupDefault.currentGroup.list.forEach(item => {
+      this.changeGroupDefault.currentGroup.audiences.forEach(item => {
         if (this.changeGroupDefault.checkList.includes(item.id)) {
-          toGroupData.list.push(item)
+          toGroupData.audiences.push(item)
         } else {
           currentGroupList.push(item)
         }
       });
-      this.changeGroupDefault.currentGroup.list = currentGroupList
+      this.changeGroupDefault.currentGroup.audiences = currentGroupList
       this.$refs.groupChange && this.$refs.groupChange.handleClose()
       const groupingCardIndex = `groupingCard${this.changeGroupDefault.currentGroup.index}`
       this.$refs[groupingCardIndex] && this.$refs[groupingCardIndex][0].clearData()

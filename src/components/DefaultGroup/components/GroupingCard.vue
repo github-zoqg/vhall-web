@@ -4,7 +4,7 @@
     <div class="list-group">
       <!--分配小组按钮组-->
       <div class="group-header btn-group">
-        <span class="group-header-name">{{groupType?data.groupName:'预分组'}}（{{data.list&&data.list.length}}）</span>
+        <span class="group-header-name">{{groupType?'分组'+data.group_order_id:'预分组'}}（{{data.audiences&&data.audiences.length}}）</span>
         <div class="btn-group-right">
           <span v-if="!batchGroupState"
             @click="batchGroup"><i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>{{groupType?'批量换组':'批量分配'}}</span>
@@ -23,8 +23,8 @@
         <el-checkbox-group class="list-group-item item"
           v-model="checkList"
           @change="changeCheck">
-          <el-checkbox v-for="item in data.list"
-            :key="item.name"
+          <el-checkbox v-for="item in data.audiences"
+            :key="item.group_order_id"
             :label="item.id"
             size="medium"
             :name="data.groupName">{{item.name}}</el-checkbox>
@@ -33,8 +33,8 @@
       <div class="list-group-item"
         v-else>
         <div class="list-group-item-state"
-          v-for="(item,index) in data.list"
-          :key="item.name">
+          v-for="(item,index) in data.audiences"
+          :key="item.id">
           <el-popover placement="bottom-start"
             width="100%"
             :append-to-body="false"
@@ -128,14 +128,14 @@ export default {
      * @param {number} index 观众序号
     */
     removeGroup(item, index) {
-      this.data.list.splice(index, 1)
+      this.data.audiences.splice(index, 1)
       this.$emit('removeGroup', item)
     },
     /*解散*/
     dissolution() {
       this.checkList = []
-      this.$emit('groupDissolution', this.groupIndex, this.data.list)
-      console.log('解散' + this.data.groupName)
+      this.$emit('groupDissolution', this.groupIndex, this.data.audiences)
+      console.log('解散' + this.data.group_order_id)
     },
     /**清除状态 关闭弹框 */
     clearData() {
