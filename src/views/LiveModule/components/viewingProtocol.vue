@@ -27,13 +27,13 @@
           <el-form-item class="margin32" prop="content" :label="`协议内容`">
             <v-editor
               modelType="restriction"
-              
+              :placeholder="introPlaceholder"
               :class="viewingProtocolForm.is_open === 0 ? 'disabled-editor' : ''"
               class="editor-wrap" save-type='live'
               :isReturn=true ref="unitImgTxtEditor"
               v-model="viewingProtocolForm.content"></v-editor>
           </el-form-item>
-          <!-- :placeholder="introPlaceholder" -->
+          <!--  -->
           <!-- <el-form-item label="进入规则" prop="rule">
               <el-radio-group v-model="viewingProtocolForm.rule"  :disabled="viewingProtocolForm.is_open === 0">
                 <el-radio :label="0">同意后进入直播间</el-radio>
@@ -169,7 +169,7 @@ export default {
     },
     tabType(newVal, oldVal) {
       this.$nextTick(() => {
-        console.log(newVal, this.$refs, this.$refs['viewingProtocolForm'], 'val')
+        // console.log(newVal, this.$refs, this.$refs['viewingProtocolForm'], 'val')
         this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
       })
     },
@@ -185,10 +185,10 @@ export default {
 
   methods: {
     protocolChange(value){
-      console.log(value, 'value')
+      // console.log(value, 'value')
       if(value === 0){
         this.viewingProtocolForm.statement_info = JSON.stringify(this.statementList)
-        console.log(this.viewingProtocolForm, 'viewingProtocolForm');
+        // console.log(this.viewingProtocolForm, 'viewingProtocolForm');
         let params = Object.assign(this.viewingProtocolForm, {webinar_id: this.$route.params.str || '', type: this.type});
         this.$fetch('saveAgreement', this.$params(params)).then(res => {
           this.$message({
@@ -224,7 +224,7 @@ export default {
 
     },
     handleInput(value, index, type){
-      console.log(value, index)
+      // console.log(value, index)
       let statement_content = this.viewingProtocolForm.statement_content
       let titleName = `proptocolTitle_${index}`
       let linkName = `proptocolLink_${index}`
@@ -235,7 +235,7 @@ export default {
           this.statementList[index].title = '';
           this.viewingProtocolForm[titleName] = '';
           let oldValue = value.substring(0, value.length-1)
-          console.log(value.substring(0, value.length-1), 'value.substring(0, value.length-1)')
+          // console.log(value.substring(0, value.length-1), 'value.substring(0, value.length-1)')
           let viewingProtocolForm = this.viewingProtocolForm
           this.viewingProtocolForm.statement_content = viewingProtocolForm.statement_content.replace(oldValue, '')
         }else{
@@ -300,7 +300,7 @@ export default {
 
     },
     handleUploadSuccess(res, file){
-      console.log(res, file);
+      // console.log(res, file);
       if(res.data) {
         let domain_url = res.data.domain_url || ''
         let file_url = res.data.file_url || '';
@@ -391,14 +391,9 @@ export default {
               }
             }
             
-            console.log(this.viewingProtocolForm, this.statementList, ' this.statementList')
+            // console.log(this.viewingProtocolForm, this.statementList, ' this.statementList')
           }
           
-        } else {
-          // this.$nextTick(() => {
-          //   this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
-            
-          // })
         }
       }).catch(err=>{
         console.log(err);
@@ -410,11 +405,11 @@ export default {
     },
     // 保存
     protocolSave() {
-      console.log(this.viewingProtocolForm, this.statementList, 'this.statementList')
+      // console.log(this.viewingProtocolForm, this.statementList, 'this.statementList')
       this.$refs.viewingProtocolForm.validate((valid) => {
         if(valid) {
           this.viewingProtocolForm.statement_info = JSON.stringify(this.statementList)
-          console.log(this.viewingProtocolForm, 'viewingProtocolForm');
+          // console.log(this.viewingProtocolForm, 'viewingProtocolForm');
           let params = Object.assign(this.viewingProtocolForm, {webinar_id: this.$route.params.str || '', type: this.type});
           this.$fetch('saveAgreement', this.$params(params)).then(res => {
             this.$message({
@@ -427,7 +422,7 @@ export default {
             // 重新获取数据
             // this.getProtocol();
           }).catch(res=>{
-            console.log(res);
+            // console.log(res);
             this.$message({
               message: res.msg || `保存基本设置失败`,
               showClose: true,
