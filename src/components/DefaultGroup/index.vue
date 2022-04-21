@@ -198,10 +198,10 @@ export default {
      */
     okHandle() {
       const params = {
-        list: {
+        list: JSON.stringify({
           ready_list: this.readyList,
           wait_list: this.waitList.audiences
-        }
+        })
       }
       console.log(JSON.stringify(params))
       this.$fetch('saveAudienceSave', params).then(res => {
