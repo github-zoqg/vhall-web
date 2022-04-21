@@ -42,9 +42,9 @@ export default {
     const validGroup = (rule, value, callback) => {
       if (!value) {
         callback(new Error('请输入分组'));
-      } else if (value && (value * 1 + this.groupList.length) > 50) {
+      } else if ((value * 1 + this.groupList.length) > 50) {
         callback(new Error('分组人数超过上限'));
-      } else if (value && (value < 1 || value > 50)) {
+      } else if (value < 1 || value > 50) {
         callback(new Error('请输入1-50的小组编号'));
       } else {
         callback();
@@ -99,7 +99,6 @@ export default {
         } else {
           console.log('新增分组校验错误');
         }
-
       })
     },
     /**

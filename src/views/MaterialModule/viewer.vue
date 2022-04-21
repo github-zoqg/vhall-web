@@ -274,7 +274,8 @@
     </VhallDialog>
 
     <!-- 预设小组-->
-    <default-group ref="defaultGroup"></default-group>
+    <default-group ref="defaultGroup"
+      :groupId="query.group_id"></default-group>
   </div>
 </template>
 
