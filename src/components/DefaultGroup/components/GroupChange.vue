@@ -8,10 +8,14 @@
       :close-on-click-modal="false"
       width="400px"
       title="提示">
-      <el-form class="group-form">
+      <el-form class="group-form"
+        :rules="rules"
+        ref="groupForm"
+        :model="formInline">
         <el-form-item label="选择小组"
-          label-width="70px">
-          <el-select v-model="selectGroup"
+          prop="selectGroup"
+          label-width="80px">
+          <el-select v-model="formInline.selectGroup"
             style="width: 100%"
             placeholder="请选择">
             <el-option v-for="item in groupList"
@@ -42,23 +46,45 @@ export default {
     groupList: {
       type: Array,
       default: () => []
+    },
+    isMax: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
+    const validGroup = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请选择分组'));
+      } else if (this.isMax) {
+        callback(new Error('分组人数超过上限'));
+      } else {
+        callback();
+      }
+    }
     return {
       dialogVisible: false,
-      selectGroup: ''
+      formInline: {
+        selectGroup: '',
+      },
+      rules: {
+        selectGroup: { required: true, validator: validGroup, trigger: 'blur' }
+      }
     };
   },
   methods: {
     // 确认换组
     handleSubmit() {
-      this.$emit('changeGroupComplete', this.selectGroup);
+      this.$refs.groupForm.validate((valid) => {
+        if (valid) {
+          this.$emit('changeGroupComplete', this.formInline.selectGroup);
+        }
+      })
     },
     // 对话框打开时，设置可选小组
     handleOpen() {
       this.dialogVisible = true
-      this.selectGroup = ''
+      this.formInline.selectGroup = ''
     },
     /**
      * 关闭弹框

@@ -31,7 +31,7 @@
             @removeGroup="removeGroup"
             :groupIndex="index"
             :data="item"
-            :maxNumber="4"></grouping-card>
+            :maxNumber="maxNumber"></grouping-card>
         </div>
       </div>
     </div>
@@ -50,6 +50,7 @@
       :groupList="groupList"></group-add>
     <!--换组-->
     <group-change ref="groupChange"
+      :isMax="changeGroupDefault.isMax"
       @changeGroupComplete="changeGroupComplete"
       :groupList="groupList"></group-change>
   </VhallDialog>
@@ -65,6 +66,12 @@ export default {
     GroupAdd,
     GroupChange
   },
+  props: {
+    groupId: {
+      type: [String, Number],
+      default: ''
+    }
+  },
   data() {
     return {
       defaultGroupShow: false,
@@ -74,14 +81,16 @@ export default {
       changeGroupDefault: {
         currentGroup: null, //from当前分组
         checkList: [],//data选中换组观众
-        selectGroup: 1//to换到组
+        selectGroup: 1,//to换到组
+        isMax: false//是否超过小组上限
       },
       waitList: {
         index: 0,//组序号
-        id: '0',
+        id: 0,
         audiences: []
       },//待分配
-      readyList: []//已分配
+      readyList: [],//已分配
+      maxNumber: 2//最大人数
     }
   },
   computed: {
@@ -95,6 +104,15 @@ export default {
           groupName: '分组' + item.group_order_id
         };
       });
+    },
+    allReadyNumber() {
+      let num = 0
+      this.readyList.forEach(item => {
+        if (item && item.audiences && item.audiences.length) {
+          num += item.audiences.length
+        }
+      })
+      return num
     }
   },
   methods: {
@@ -116,7 +134,7 @@ export default {
      */
     getDefaultData() {
       this.loading = true
-      this.$fetch('getAudienceList').then(res => {
+      this.$fetch('getAudienceList', { am_id: this.groupId }).then(res => {
         this.loading = false
         if (res && res.code === 200 && res.data) {
           this.waitList.audiences = res.data.wait_list ? res.data.wait_list : []
@@ -154,6 +172,11 @@ export default {
      * @param {Array}  checkList  选中换组观众数据
      */
     changeGroup(currentGroup, checkList) {
+      if (currentGroup.id === 0 && (this.allReadyNumber + checkList.length) > this.maxNumber) {
+        this.$set(this.changeGroupDefault, 'isMax', true)
+      } else {
+        this.$set(this.changeGroupDefault, 'isMax', false)
+      }
       this.$set(this.changeGroupDefault, 'currentGroup', currentGroup)
       this.$set(this.changeGroupDefault, 'checkList', checkList)
       this.$nextTick(() => {
@@ -198,6 +221,7 @@ export default {
      */
     okHandle() {
       const params = {
+        am_id: this.groupId,
         list: JSON.stringify({
           ready_list: this.readyList,
           wait_list: this.waitList.audiences
