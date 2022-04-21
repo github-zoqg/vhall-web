@@ -51,16 +51,6 @@ export default {
   props: ['tabType', 'viewingProtocolForm', 'proptocolTitle_0', 'proptocolTitle_1', 'proptocolLink_0', 'proptocolLink_1'],
   data() {
     return {
-      switchType: 'pc',
-      bgColorType: 'black',
-      signSetVo: null,
-      skinSetVo: {
-        bgColor: '1A1A1A', // 背景色
-        pageStyle: 'ff3333', // 按钮色
-        bg_url: '' // 背景图
-      },
-      logoUrl: null,
-      domain_url: '',
       result_content: null,
       rule: 1
     };

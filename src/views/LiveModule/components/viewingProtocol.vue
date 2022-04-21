@@ -27,19 +27,18 @@
           <el-form-item class="margin32" prop="content" :label="`协议内容`">
             <v-editor
               modelType="restriction"
-              :placeholder="introPlaceholder"
+              
               :class="viewingProtocolForm.is_open === 0 ? 'disabled-editor' : ''"
               class="editor-wrap" save-type='live'
               :isReturn=true ref="unitImgTxtEditor"
               v-model="viewingProtocolForm.content"></v-editor>
           </el-form-item>
+          <!-- :placeholder="introPlaceholder" -->
           <!-- <el-form-item label="进入规则" prop="rule">
               <el-radio-group v-model="viewingProtocolForm.rule"  :disabled="viewingProtocolForm.is_open === 0">
                 <el-radio :label="0">同意后进入直播间</el-radio>
                 <el-radio :label="1">阅读后进入直播间</el-radio>
               </el-radio-group>
-
-
           </el-form-item> -->
           <el-form-item label="协议声明"  prop="statement_status">
             <div class="switch__box">
@@ -174,12 +173,15 @@ export default {
         this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
       })
     },
-  },
-  computed: {
-    introPlaceholder() {
-      return this.viewingProtocolForm.content ? '' : '请输入《观看协议》内容'
+    'viewingProtocolForm.content'(newVal) {
+      this.introPlaceholder = newVal ? '' : '请输入《观看协议》内容'
     }
   },
+  // computed: {
+  //   introPlaceholder() {
+  //     return this.viewingProtocolForm.content ? '' : '请输入《观看协议》内容'
+  //   }
+  // },
 
   methods: {
     protocolChange(value){
@@ -355,10 +357,7 @@ export default {
         customClass: 'zdy-info-box'
       });
     },
-    uploadPreview(file){
-      console.log('uploadPreview', file);
-    },
-    // 获取活动标记记录
+    // 获取观看协议记录
     getProtocol() {
       //  this.viewingProtocolForm.proptocolTitle_0 = 'statement_info[0].title';
       //  this.viewingProtocolForm.proptocolLink_0 =' statement_info[0].link'
@@ -371,25 +370,28 @@ export default {
         if (res && res.code === 200) {
             // this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
           if (res.data && res.data.title) {
-            this.viewingProtocolForm = res.data;
-            let statement_info = res.data.statement_info;
-            if(statement_info && statement_info.length > 0){
-              this.statementList = statement_info;
-            
-              statement_info.forEach((item, index)=>{
-                let titleName = `proptocolTitle_${index}`
-                let linkName = `proptocolLink_${index}`
-                this.$set(this.viewingProtocolForm, titleName, item.title)
-                this.$set(this.viewingProtocolForm, linkName, item.link)
-              })
+            // this.viewingProtocolForm = res.data;
+            this.$set(this.viewingProtocolForm, 'content', res.data.content)
+            this.$set(this.viewingProtocolForm, 'title', res.data.title)
+            this.$set(this.viewingProtocolForm, 'statement_status', res.data.statement_status)
+            this.$set(this.viewingProtocolForm, 'is_open', res.data.is_open)
+            if(res.data.statement_status){
+              // this.$set(this.viewingProtocolForm, 'statement_info', res.data.statement_info)
+              this.$set(this.viewingProtocolForm, 'statement_content', res.data.statement_content)
+              let statement_info = res.data.statement_info;
+              if(statement_info && statement_info.length > 0){
+                this.statementList = statement_info;
+              
+                statement_info.forEach((item, index)=>{
+                  let titleName = `proptocolTitle_${index}`
+                  let linkName = `proptocolLink_${index}`
+                  this.$set(this.viewingProtocolForm, titleName, item.title)
+                  this.$set(this.viewingProtocolForm, linkName, item.link)
+                })
+              }
             }
+            
             console.log(this.viewingProtocolForm, this.statementList, ' this.statementList')
-          } else {
-            // this.$nextTick(() => {
-
-            //   this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
-
-            // })
           }
           
         } else {
