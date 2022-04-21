@@ -198,9 +198,13 @@ export default {
      */
     okHandle() {
       const params = {
-        list: this.readyList
+        list: JSON.stringify({
+          ready_list: this.readyList,
+          wait_list: this.waitList.audiences
+        })
       }
-      this.$fetch('saveAudienceSave', this.$params(params)).then(res => {
+      console.log(JSON.stringify(params))
+      this.$fetch('saveAudienceSave', params).then(res => {
         this.$message({
           message: `操作成功`,
           showClose: true,
