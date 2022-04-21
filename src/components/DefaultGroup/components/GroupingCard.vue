@@ -34,6 +34,7 @@
         v-else>
         <div class="list-group-item-state"
           v-for="(item,index) in data.audiences"
+          :ref="'groupItem'+item.id"
           :key="item.id">
           <el-popover placement="bottom-start"
             width="100%"
@@ -44,10 +45,9 @@
               positionFixed:false,
               preventOverflow:true
             }"
-            popperClass="list-group-popover"
+            :popperClass="groupType?'list-group-popover':'list-group-popover list-none'"
             trigger="click">
-            <div class="list-group-item-button"
-              :class="groupType?'':'list-none'">
+            <div class="list-group-item-button">
               <div @click="removeGroup(item,index)">移出小组</div>
               <div @click="changeCurrentGroup(item)">换组</div>
             </div>
@@ -237,13 +237,13 @@ export default {
   &[x-placement^='bottom'] {
     margin-top: 0px;
   }
+  &.list-none {
+    display: none;
+  }
   .list-group-item-button {
     background: #fff;
     text-align: left;
     padding: 4px 0;
-    &.list-none {
-      display: none;
-    }
     div {
       cursor: pointer;
       padding: 0 14px;
