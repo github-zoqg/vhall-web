@@ -156,8 +156,13 @@ export default {
     };
   },
   watch: {
-    value(newValue){
-      console.log(newValue, 'newValue')
+    value: {
+      handler: "updateEditor", 
+      immediate: true
+    }
+  },
+  methods: {
+    updateEditor(newValue){
       if(newValue){
         // this.sendContent()
         this.$nextTick(()=>{
@@ -165,10 +170,7 @@ export default {
           this.sendContent(newValue)
         })
       }
-      
-    }
-  },
-  methods: {
+    },
     blurWatch(value){
       // cnosole.log(value)
     },
