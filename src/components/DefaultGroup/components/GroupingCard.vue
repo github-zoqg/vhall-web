@@ -230,7 +230,6 @@ export default {
   box-sizing: border-box;
   min-width: 96px;
   padding: 0;
-  position: absolute !important;
   left: 0;
   top: 0;
   transform: none;
