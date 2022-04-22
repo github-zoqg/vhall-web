@@ -89,7 +89,7 @@ export default {
                     this.setup(editor);
                     // console.log('setup');
                     editor.on('init', ()=>{
-                        // console.log('init', this.content);
+                        console.log('init', this.content);
                         this.setContent(this.content, editor)
 
                         editor.on('keyup input', e=>{ //只在编辑器中打字才会触发

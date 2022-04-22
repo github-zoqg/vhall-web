@@ -1,6 +1,6 @@
 <template>
   <div class="vh-editor-wrapbox" :style="{'height': height}">
-    <vue-tinymce ref="editor" :content="value" :setting="setting" @change="sendContent" @blur="blurWatch">
+    <vue-tinymce ref="editor" :content="value" :setting="setting" @change="sendContent">
     </vue-tinymce>
     <span class="set-placeholder" v-if="!value || currentCount == 0" onselectstart="return false;" unselectable="on" @click="$refs.editor.getInstance().focus()">{{placeholder}}</span>
     <div class="word-count">
@@ -157,26 +157,18 @@ export default {
   },
   watch: {
     value: {
-      handler: "updateEditor", 
+      handler(newVal) {
+        if (newVal) {
+          this.sendContent(newVal)
+        }
+      },
       immediate: true
     }
   },
   methods: {
-    updateEditor(newValue){
-      if(newValue){
-        // this.sendContent()
-        this.$nextTick(()=>{
-          // this.currentCount = this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount()
-          this.sendContent(newValue)
-        })
-      }
-    },
-    blurWatch(value){
-      // cnosole.log(value)
-    },
     // 内容修改后，将信息返回
     sendContent(text) {
-      // console.log('字符数', this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())
+      console.log('字符数', text, this.value, this.$refs.editor.getInstance().plugins.wordcount.body.innerText,  this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())
       this.currentCount = this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount()
 
       if(this.currentCount > 1000) {
