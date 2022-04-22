@@ -67,7 +67,7 @@ export default {
       }
     },
     reservationDisable() {
-      if (this.perssionWebInfo['ui.brand_setting'] > 0 || this.perssionWebInfo['webinar_skins'] > 0) {
+      if (this.perssionWebInfo['ui.brand_setting'] > 0 || this.perssionWebInfo['webinar_skins'] > 0 || this.perssionWebInfo['watch.viewing_protocol'] > 0) {
         return false
       } else {
         return true
