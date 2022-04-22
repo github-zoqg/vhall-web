@@ -374,8 +374,15 @@ export default {
               data: {business_uid: this.userId, user_id: '', webinar_id: this.arr[0], refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
           }
-          //跳转推流页
-          window.location.href = `${process.env.VUE_APP_WEB_URL}/lives/yun/${this.$route.params.str}?seat=${this.curSelected}`
+          let arr = this.seatList.filter(e=>{
+            return e.seat_id === this.curSelected
+          })
+          if(arr.length){
+            let seat_name = arr[0].name
+            //跳转推流页
+            window.location.href = `${process.env.VUE_APP_WEB_URL}/lives/yun/${this.$route.params.str}?seat_id=${this.curSelected}&seat_name=${seat_name}`
+          }
+
         }
       })
     }
