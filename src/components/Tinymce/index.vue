@@ -82,8 +82,6 @@ export default {
 
   created() {
   },
-  mounted() {
-  },
   updated() {
   },
   data() {
@@ -156,6 +154,19 @@ export default {
 
       currentCount: 0,
     };
+  },
+  watch: {
+    value(newValue){
+      console.log(newValue, 'newValue')
+      if(newValue){
+        // this.sendContent()
+        this.$nextTick(()=>{
+          // this.currentCount = this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount()
+          this.sendContent(newValue)
+        })
+      }
+      
+    }
   },
   methods: {
     blurWatch(value){

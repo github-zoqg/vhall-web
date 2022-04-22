@@ -127,7 +127,7 @@ export default {
         proptocolTitle_1: '',
         proptocolLink_1: ''
       },
-
+      introPlaceholder: '',
       brandType: 1,
       domain_url: '',
       statementList: [{
@@ -224,7 +224,7 @@ export default {
 
     },
     handleInput(value, index, type){
-      // console.log(value, index)
+      console.log(value, index)
       let statement_content = this.viewingProtocolForm.statement_content
       let titleName = `proptocolTitle_${index}`
       let linkName = `proptocolLink_${index}`
@@ -300,7 +300,7 @@ export default {
 
     },
     handleUploadSuccess(res, file){
-      // console.log(res, file);
+      console.log(res, file);
       if(res.data) {
         let domain_url = res.data.domain_url || ''
         let file_url = res.data.file_url || '';
