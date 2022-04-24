@@ -18,11 +18,12 @@
             </div>
           </el-form-item>
           <el-form-item
-            class="margin44"
+            class="provicy-item"
             label="协议标题"
             prop="title"
           >
-            <VhallInput :disabled="viewingProtocolForm.is_open === 0" v-model="viewingProtocolForm.title" v-clearEmoij :maxlength="50" class="title-inform" autocomplete="off" placeholder="请输入《观看协议》标题"  show-word-limit></VhallInput>
+            <VhallInput :disabled="viewingProtocolForm.is_open === 0" v-model="viewingProtocolForm.title" v-clearEmoij :maxlength="50" autocomplete="off" placeholder="请输入《观看协议》标题"  show-word-limit></VhallInput>
+            
           </el-form-item>
           <el-form-item class="margin32" prop="content" :label="`协议内容`">
             <v-editor
@@ -162,12 +163,6 @@ export default {
     };
   },
   watch: {
-    // '$parent.type'() {
-    //   console.log(this.brandType, 'this.brandType')
-    //   if (this.brandType) {
-    //     this.initComp();
-    //   }
-    // },
     'viewingProtocolForm.content'(newVal) {
       this.introPlaceholder = newVal ? '' : '请输入《观看协议》内容'
     }
@@ -575,5 +570,8 @@ export default {
 .disabled-editor{
   pointer-events: none;
   cursor: not-allowed;
+}
+.protocol--set--left /deep/.el-input__inner{
+  padding-right: 65px !important;
 }
 </style>
