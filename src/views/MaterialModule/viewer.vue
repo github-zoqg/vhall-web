@@ -573,7 +573,7 @@ export default {
         if (this.groupList.length > 0) {
           this.query.group_id = this.groupList[0].id;
           this.activeGroupIndex = 0;
-          this.$refs.viewerTable && this.$refs.viewerTable.currentChangeHandler(1)
+          this.search(1)
           //this.queryList(1);
         } else {
           // 若无分组，默认清空列表
