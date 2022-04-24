@@ -217,7 +217,7 @@ export default {
       });
       this.changeGroupDefault.currentGroup.audiences = currentGroupList
       this.$refs.groupChange && this.$refs.groupChange.handleClose()
-      const groupingCardIndex = `groupingCard${this.changeGroupDefault.currentGroup.index}`
+      const groupingCardIndex = `groupingCard${this.changeGroupDefault.currentGroup.group_order_id}`
       this.$refs[groupingCardIndex] && this.$refs[groupingCardIndex][0].clearData()
     },
     /**
