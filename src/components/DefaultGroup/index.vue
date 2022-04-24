@@ -224,6 +224,18 @@ export default {
      * 分组保存
      */
     okHandle() {
+      const validList = this.readyList.filter(item => {
+        return item.audiences.length == 0
+      })
+      if (validList.length > 0) {
+        this.$message({
+          message: '小组内观众不能为空，请解散空白小组',
+          showClose: true,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return
+      }
       const params = {
         am_id: this.groupId,
         list: JSON.stringify({
