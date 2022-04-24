@@ -3,7 +3,7 @@
     :visible.sync="defaultGroupShow"
     width="800px"
     height="520px"
-    @close="hide">
+    @close="closeDialog">
     <div class="group-content"
       element-loading-text="努力加载中"
       v-loading="loading">
@@ -42,7 +42,7 @@
         @click="okHandle">确 定</el-button>
       <el-button size="medium"
         round
-        @click="hide">取 消</el-button>
+        @click="closeDialog">取 消</el-button>
     </span>
     <!-- 新增分组 -->
     <group-add ref="groupAdd"
@@ -92,6 +92,8 @@ export default {
         audiences: []
       },
       readyList: [],//已分配
+      copyReadyList: '',
+      changeData: false,//数据是否变动
       maxNumber: 2000//最大人数
     }
   },
@@ -118,6 +120,21 @@ export default {
     }
   },
   methods: {
+    closeDialog() {
+      if (this.defaultGroupShow && this.copyReadyList != JSON.stringify(this.readyList)) {
+        this.$confirm('数据有变化，确认不保存？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {
+          this.hide()
+        }).catch(() => { });
+      } else {
+        this.hide()
+      }
+    },
     /**
      * 新增分组
      */
@@ -141,6 +158,7 @@ export default {
         if (res && res.code === 200 && res.data) {
           this.waitList.audiences = res.data.wait_list ? res.data.wait_list : []
           this.readyList = res.data.ready_list ? res.data.ready_list : []
+          this.copyReadyList = JSON.stringify(this.readyList)
         } else {
           this.waitList.audiences = []
           this.readyList = []
@@ -252,6 +270,7 @@ export default {
           customClass: 'zdy-info-box'
         });
         this.hide()
+        this.$emit('search')//重置列表数据
       }).catch(res => {
         console.log(res);
         this.$message({
