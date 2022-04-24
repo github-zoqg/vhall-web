@@ -108,13 +108,13 @@ export default {
       });
     },
     allReadyNumber() {
-      let num = 0
+      let _num = 0
       this.readyList.forEach(item => {
         if (item && item.audiences && item.audiences.length) {
-          num += item.audiences.length
+          _num += item.audiences.length
         }
       })
-      return num
+      return _num
     }
   },
   methods: {
@@ -201,7 +201,9 @@ export default {
       const toGroupDataFilter = this.readyList.filter(item => {
         return item.group_order_id === this.changeGroupDefault.selectGroup
       })
+      //目标小组
       const toGroupData = toGroupDataFilter && toGroupDataFilter.length ? toGroupDataFilter[0] : { audiences: [] }
+      //当前小组
       const currentGroupList = []
       if (!toGroupData.audiences) {
         toGroupData.audiences = []
