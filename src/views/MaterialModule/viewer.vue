@@ -685,11 +685,11 @@ export default {
       this.viewerList();
     },
     // 白名单根据分组获取观众列表
-    viewerList() {
-      // if (row) {
-      //   this.query.pos = row.pos;
-      //   this.query.pageNumber = row.pageNum;
-      // }
+    viewerList(row) {
+      if (row) {
+        this.query.pos = row.pos;
+        this.query.pageNumber = row.pageNum;
+      }
       this.$fetch('viewerList', this.$params(this.query)).then(res => {
         res && res.code === 200 && res.data && res.data.total > 0 ? this.viewerDao = res.data : this.viewerDao = {
           total: 0,
