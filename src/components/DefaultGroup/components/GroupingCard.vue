@@ -7,7 +7,11 @@
         <span class="group-header-name">{{groupType?'分组'+data.group_order_id:'预分组'}}（{{data.audiences&&data.audiences.length}}）</span>
         <div class="btn-group-right">
           <span v-if="!batchGroupState"
-            @click="batchGroup"><i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>{{groupType?'批量换组':'批量分配'}}</span>
+            @click="batchGroup"
+            :class="data.audiences.length>0?'':'group-disable'">
+            <i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>
+            {{groupType?'批量换组':'批量分配'}}
+          </span>
           <span v-if="groupType&&!batchGroupState"
             @click="dissolution"><i class="vh-saas-iconfont vh-saas-a-line-dissolutiongrouping pr4"></i>解散</span>
           <span v-show="batchGroupState"
@@ -107,6 +111,9 @@ export default {
     },
     /**批量换组||批量分配 */
     batchGroup() {
+      if (this.data.audiences.length == 0) {
+        return
+      }
       this.batchGroupState = true
     },
     /*批量换组*/
