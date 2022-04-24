@@ -472,7 +472,12 @@ export default {
   methods: {
     search(pageNumber) {
       this.pageInfo.pageNumber = pageNumber
-      this.$refs.viewerTable && this.$refs.viewerTable.currentChangeHandler(pageNumber)
+      if (this.$refs.viewerTable) {
+        this.$refs.viewerTable.currentChangeHandler(pageNumber)
+      } else {
+        this.queryList(1)
+      }
+
     },
     defaultGroupShwo() {
       this.$nextTick(() => {
@@ -797,7 +802,7 @@ export default {
               customClass: 'zdy-info-box'
             });
             this.viewerDialog.visible = false;
-            this.$refs.viewerTable && this.$refs.viewerTable.currentChangeHandler(1)
+            this.search(1)
             // 重查当前分组下观众信息
             //this.queryList(1);
           }).catch(res => {
@@ -844,7 +849,7 @@ export default {
           // this.$refs.viewerTable.clearSelect();
           this.pageInfo.pageNum = 1;
           this.pageInfo.pos = 0;
-          this.$refs.viewerTable && this.$refs.viewerTable.currentChangeHandler(1)
+          this.search(1)
           //this.queryList(1);
         } else {
           this.$message({
