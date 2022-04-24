@@ -39,7 +39,7 @@
       <el-button type="primary"
         size="medium"
         round
-        @click="okHandle">确 定</el-button>
+        @click="okHandle">保 存</el-button>
       <el-button size="medium"
         round
         @click="closeDialog">取 消</el-button>

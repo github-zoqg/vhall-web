@@ -4,7 +4,7 @@
     <div class="list-group">
       <!--分配小组按钮组-->
       <div class="group-header btn-group">
-        <span class="group-header-name">{{groupType?'分组'+data.group_order_id:'预分组'}}（{{data.audiences&&data.audiences.length}}）</span>
+        <span class="group-header-name">{{groupType?'分组'+data.group_order_id:'待分配'}}（{{data.audiences&&data.audiences.length}}）</span>
         <div class="btn-group-right">
           <span v-if="!batchGroupState"
             @click="batchGroup"
