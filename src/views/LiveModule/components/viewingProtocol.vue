@@ -18,7 +18,7 @@
             </div>
           </el-form-item>
           <el-form-item
-            class="provicy-item"
+            class="protocol-title"
             label="协议标题"
             prop="title"
           >
@@ -55,10 +55,10 @@
               </el-switch>
             </div>
           </el-form-item>
-          <el-form-item class="provicy-item" v-if="viewingProtocolForm.statement_status"  prop="statement_content">
+          <el-form-item class="protocol-item" v-if="viewingProtocolForm.statement_status"  prop="statement_content">
             <VhallInput :disabled="viewingProtocolForm.is_open === 0" @input="handleInputContent($event)" :maxlength="100" class="title-inform" show-word-limit v-model="viewingProtocolForm.statement_content" autocomplete="off"  placeholder="我已阅读并同意" > </VhallInput>
           </el-form-item>
-          <el-form-item class="item-title" v-if="viewingProtocolForm.statement_status"  prop="proptocolTitle_0">
+          <el-form-item class="protocol-item item-title" v-if="viewingProtocolForm.statement_status"  prop="proptocolTitle_0">
             <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 0, 'title')" :maxlength="100" v-model="viewingProtocolForm.proptocolTitle_0" show-word-limit autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
             <i
               class="el-icon-circle-plus-outline optIcon"
@@ -67,10 +67,10 @@
             ></i>
           </el-form-item>
           
-          <el-form-item class="item-link"  v-if="viewingProtocolForm.statement_status" prop="proptocolLink_0">
+          <el-form-item class="protocol-item item-link"  v-if="viewingProtocolForm.statement_status" prop="proptocolLink_0">
             <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 0, 'link')" :maxlength="100"  v-model="viewingProtocolForm.proptocolLink_0" class="title-inform" show-word-limit autocomplete="off" placeholder="请输入http://或https://开头的链接"  > </VhallInput>
           </el-form-item>
-          <el-form-item class="item-title" v-if="statementList.length > 1 && viewingProtocolForm.statement_status"  prop="proptocolTitle_1">
+          <el-form-item class="protocol-item item-title" v-if="statementList.length > 1 && viewingProtocolForm.statement_status"  prop="proptocolTitle_1">
             <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 1, 'title')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolTitle_1" show-word-limit autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
             <i
               class="el-icon-remove-outline optIcon"
@@ -79,7 +79,7 @@
             ></i>
           </el-form-item>
             
-          <el-form-item class="item-link"  v-if="statementList.length > 1" v-show="viewingProtocolForm.statement_status" prop="proptocolLink_1">
+          <el-form-item class="protocol-item item-link"  v-if="statementList.length > 1" v-show="viewingProtocolForm.statement_status" prop="proptocolLink_1">
             <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 1, 'link')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolLink_1" show-word-limit autocomplete="off" placeholder="请输入http://或https://开头的链接"  > </VhallInput>
           </el-form-item>
           <el-form-item label="">
@@ -571,7 +571,10 @@ export default {
   pointer-events: none;
   cursor: not-allowed;
 }
-.protocol--set--left /deep/.el-input__inner{
+.protocol-item /deep/.el-input__inner{
   padding-right: 65px !important;
+}
+.protocol-title /deep/.el-input__inner{
+  padding-right: 52px !important;
 }
 </style>
