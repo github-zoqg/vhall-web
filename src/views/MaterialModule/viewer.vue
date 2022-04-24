@@ -275,6 +275,7 @@
 
     <!-- 预设小组-->
     <default-group ref="defaultGroup"
+      @search="search(1)"
       :groupId="query.group_id"></default-group>
   </div>
 </template>
