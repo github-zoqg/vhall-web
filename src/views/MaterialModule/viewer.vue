@@ -778,7 +778,7 @@ export default {
         if (valid) {
           console.log('新增 or 修改观众信息：' + JSON.stringify(this.viewerForm));
           let params = Object.assign(this.viewerDialog.type === 'add' ? { group_id: this.query.group_id } : { id: this.viewerDialog.row.id, group_id: this.query.group_id }, this.viewerForm);
-          this.$fetch(this.viewerDialog.type === 'add' ? 'viewerAdd' : 'viewerEdit', this.$params(params)).then(res => {
+          this.$fetch(this.viewerDialog.type === 'add' ? 'viewerAdd' : 'viewerEdit', params).then(res => {
             this.$vhall_paas_port({
               k: this.viewerDialog.type === 'add' ? 100541 : 100543,
               data: { business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: '' }
