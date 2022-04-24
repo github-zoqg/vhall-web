@@ -35,12 +35,12 @@
               clearable
               autocomplete="off"
               v-clearEmoij
-              @keyup.enter.native="queryList(1)"
+              @keyup.enter.native="search(1)"
               class="resetRightBrn"
-              @clear="queryList(1)">
+              @clear="search(1)">
               <i class="el-icon-search el-input__icon"
                 slot="prefix"
-                @click="queryList(1)">
+                @click="search(1)">
               </i>
             </VhallInput>
           </div>
@@ -194,7 +194,7 @@
             v-clearEmoij
             auto-complete="off"
             placeholder="请输入其他内容（最多50个字符）"
-            :maxlength="2" />
+            :maxlength="50" />
         </el-form-item>
       </el-form>
       <div slot="footer"
@@ -469,6 +469,10 @@ export default {
     }
   },
   methods: {
+    search(pageNumber) {
+      this.pageInfo.pageNumber = pageNumber
+      this.$refs.viewerTable && this.$refs.viewerTable.currentChangeHandler(pageNumber)
+    },
     defaultGroupShwo() {
       this.$nextTick(() => {
         this.$refs.defaultGroup.show()
@@ -563,7 +567,8 @@ export default {
         if (this.groupList.length > 0) {
           this.query.group_id = this.groupList[0].id;
           this.activeGroupIndex = 0;
-          this.queryList(1);
+          this.$refs.viewerTable && this.$refs.viewerTable.currentChangeHandler(1)
+          //this.queryList(1);
         } else {
           // 若无分组，默认清空列表
           this.query.group_id = null;
@@ -791,8 +796,9 @@ export default {
               customClass: 'zdy-info-box'
             });
             this.viewerDialog.visible = false;
+            this.$refs.viewerTable && this.$refs.viewerTable.currentChangeHandler(1)
             // 重查当前分组下观众信息
-            this.queryList(1);
+            //this.queryList(1);
           }).catch(res => {
             console.log(res);
             this.$message({
@@ -837,7 +843,8 @@ export default {
           // this.$refs.viewerTable.clearSelect();
           this.pageInfo.pageNum = 1;
           this.pageInfo.pos = 0;
-          this.queryList(1);
+          this.$refs.viewerTable && this.$refs.viewerTable.currentChangeHandler(1)
+          //this.queryList(1);
         } else {
           this.$message({
             message: res.msg || `删除观众-操作失败`,
