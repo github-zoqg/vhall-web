@@ -136,26 +136,26 @@ export default {
       }],
       viewingProtocolFormRules: {
         title: [
-          { required: true, max: 50,  message: `请填写协议标题`, trigger: 'blur' }
+          { required: true,  message: `请填写协议标题`, trigger: 'blur' }
         ],
         content: [
           { required: true,  message: `请输入协议内容`, trigger: 'blur' }
         ],
         statement_content: [
-          { required: true, max: 100,  message: `请填写协议提示内容`, trigger: 'blur' }
+          { required: true,  message: `请填写协议提示内容`, trigger: 'blur' }
         ],
         proptocolTitle_0: [
-          { required: true, max: 100,  message: `请填写协议名称`, trigger: 'blur' }
+          { required: true,  message: `请填写协议名称`, trigger: 'blur' }
         ],
         proptocolLink_0: [
-          { required: true, max: 100,  message: `请填写协议链接`, trigger: 'blur' },
+          { required: true,  message: `请填写协议链接`, trigger: 'blur' },
           { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入以http://或https://开头的标志链接' , trigger: 'blur'}
         ],
         proptocolTitle_1: [
-          { required: true, max: 100,  message: `请填写协议名称`, trigger: 'blur' }
+          { required: true,  message: `请填写协议名称`, trigger: 'blur' }
         ],
         proptocolLink_1: [
-          { required: true, max: 100,  message: `请填写协议链接`, trigger: 'blur' },
+          { required: true,  message: `请填写协议链接`, trigger: 'blur' },
           { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入以http://或https://开头的标志链接' , trigger: 'blur'}
         ],
       }
@@ -214,6 +214,8 @@ export default {
           this.viewingProtocolForm[titleName] = '';
         }
       })
+      console.log(value, 'value')
+      // this.$set(this.viewingProtocolForm, 'statement_content', value)
 
     },
     handleInput(value, index, type){
@@ -265,7 +267,7 @@ export default {
       if(this.viewingProtocolForm.proptocolTitle_0){
         let contentLength = this.viewingProtocolForm.statement_content.length
 
-        if(contentLength + 5 <= 100){
+        if(contentLength + 8 <= 100){
           this.statementList.push(statementObj)
           this.viewingProtocolForm.statement_content += '及《观看协议2》'
           // this.viewingProtocolForm.proptocolTitle_1 = '观看协议2'
@@ -401,22 +403,28 @@ export default {
       // console.log(this.viewingProtocolForm, this.statementList, 'this.statementList')
       this.$refs.viewingProtocolForm.validate((valid) => {
         if(valid) {
+          if(this.statementList.length === 2 && this.statementList[0].title === this.statementList[1].title){
+            this.$message({
+              message: `隐私协议名称不能重复`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+            return
+          }
           this.viewingProtocolForm.statement_info = JSON.stringify(this.statementList)
           // console.log(this.viewingProtocolForm, 'viewingProtocolForm');
           let params = Object.assign(this.viewingProtocolForm, {webinar_id: this.$route.params.str || '', type: this.type});
           this.$fetch('saveAgreement', this.$params(params)).then(res => {
-            if(res.code === 513554){
 
-            }else{
-              this.$message({
-                message:  `保存基本设置成功`,
-                showClose: true,
-                // duration: 0,
-                type: 'success',
-                customClass: 'zdy-info-box'
-              });
-            }
-            
+            this.$message({
+              message:  `保存基本设置成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
             // 重新获取数据
             // this.getProtocol();
           }).catch(res=>{

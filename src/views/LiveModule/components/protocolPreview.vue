@@ -83,29 +83,19 @@ export default {
   },
   watch: {
     'viewingProtocolForm.statement_content'(val, oldVal) {
-      if (val) {
-        this.privacyFormatter()
-      }
+      this.privacyFormatter()
     },
     proptocolTitle_0(val, oldVal) {
-      if (val) {
-        this.privacyFormatter()
-      }
+      this.privacyFormatter()
     },
     proptocolTitle_1(val, oldVal) {
-      if (val) {
-        this.privacyFormatter()
-      }
+      this.privacyFormatter()
     },
     proptocolLink_0(val, oldVal) {
-      if (val) {
-        this.privacyFormatter()
-      }
+      this.privacyFormatter()
     },
     proptocolLink_1(val, oldVal) {
-      if (val) {
-        this.privacyFormatter()
-      }
+      this.privacyFormatter()
     },
 
   }
