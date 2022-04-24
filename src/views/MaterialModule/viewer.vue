@@ -18,7 +18,7 @@
             @click.prevent.stop="importViewerOpen"
             size="medium">导入观众</el-button>
           <el-button round
-            :disabled="multipleSelection.length == 0"
+            :disabled="multipleSelection.length == 0 || !viewerDao.total"
             @click.prevent.stop="viewerDel"
             size="medium">批量删除</el-button>
           <el-button round

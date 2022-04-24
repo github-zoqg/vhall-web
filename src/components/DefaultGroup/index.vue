@@ -67,6 +67,7 @@ export default {
     GroupChange
   },
   props: {
+    //当前分组id
     groupId: {
       type: [String, Number],
       default: ''
@@ -84,11 +85,12 @@ export default {
         selectGroup: 1,//to换到组
         isMax: false//是否超过小组上限
       },
+      //待分配
       waitList: {
         index: 0,//组序号
         id: 0,
         audiences: []
-      },//待分配
+      },
       readyList: [],//已分配
       maxNumber: 2000//最大人数
     }
