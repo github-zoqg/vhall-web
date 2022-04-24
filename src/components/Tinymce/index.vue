@@ -168,9 +168,8 @@ export default {
   methods: {
     // 内容修改后，将信息返回
     sendContent(text) {
-      console.log('字符数', text, this.value, this.$refs.editor.getInstance().plugins.wordcount.body.innerText,  this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())
+      console.log('字符数', text, this.value, this.$refs.editor.getInstance(),  this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())
       this.currentCount = this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount()
-
       if(this.currentCount > 1000) {
         if (this.vm) {
           this.vm.close();

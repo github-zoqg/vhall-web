@@ -162,27 +162,20 @@ export default {
     };
   },
   watch: {
-    '$parent.type'() {
-      if (this.brandType) {
-        this.initComp();
-      }
-    },
-    tabType(newVal, oldVal) {
-      this.$nextTick(() => {
-        // console.log(newVal, this.$refs, this.$refs['viewingProtocolForm'], 'val')
-        this.$refs['viewingProtocolForm'] ? this.$refs['viewingProtocolForm'].resetFields() : '';
-      })
-    },
+    // '$parent.type'() {
+    //   console.log(this.brandType, 'this.brandType')
+    //   if (this.brandType) {
+    //     this.initComp();
+    //   }
+    // },
     'viewingProtocolForm.content'(newVal) {
       this.introPlaceholder = newVal ? '' : '请输入《观看协议》内容'
     }
   },
-  // computed: {
-  //   introPlaceholder() {
-  //     return this.viewingProtocolForm.content ? '' : '请输入《观看协议》内容'
-  //   }
-  // },
-
+  mounted(){
+    console.log(this.brandType, 'this.brandType')
+    this.initComp();
+  },
   methods: {
     protocolChange(value){
       // console.log(value, 'value')
