@@ -139,7 +139,7 @@ export default {
           { required: true, max: 50,  message: `请填写协议标题`, trigger: 'blur' }
         ],
         content: [
-          { required: true, max: 1007,  message: `请输入协议内容`, trigger: 'blur' }
+          { required: true,  message: `请输入协议内容`, trigger: 'blur' }
         ],
         statement_content: [
           { required: true, max: 100,  message: `请填写协议提示内容`, trigger: 'blur' }
@@ -405,13 +405,18 @@ export default {
           // console.log(this.viewingProtocolForm, 'viewingProtocolForm');
           let params = Object.assign(this.viewingProtocolForm, {webinar_id: this.$route.params.str || '', type: this.type});
           this.$fetch('saveAgreement', this.$params(params)).then(res => {
-            this.$message({
-              message:  `保存基本设置成功`,
-              showClose: true,
-              // duration: 0,
-              type: 'success',
-              customClass: 'zdy-info-box'
-            });
+            if(res.code === 513554){
+
+            }else{
+              this.$message({
+                message:  `保存基本设置成功`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
+            }
+            
             // 重新获取数据
             // this.getProtocol();
           }).catch(res=>{
