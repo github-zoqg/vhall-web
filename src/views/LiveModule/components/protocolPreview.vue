@@ -67,10 +67,9 @@ export default {
       let matchPrivacy2 = this.viewingProtocolForm.proptocolTitle_1 ? text.match(this.viewingProtocolForm.proptocolTitle_1) : null;
       // console.log(text, matchPrivacy2, 'matchPrivacy2')
       if(matchPrivacy2){
-        let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
+        let reg = new RegExp(`(${matchPrivacy2[0]})`);
         text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">$1</a>`);
       }
-      text += '，了解详细信息'
       this.result_content = text;
     },
 

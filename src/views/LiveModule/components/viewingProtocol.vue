@@ -412,7 +412,8 @@ export default {
           // console.log(this.viewingProtocolForm, 'viewingProtocolForm');
           let params = Object.assign(this.viewingProtocolForm, {webinar_id: this.$route.params.str || '', type: this.type});
           this.$fetch('saveAgreement', this.$params(params)).then(res => {
-
+            console.log(res, 'res')
+            
             this.$message({
               message:  `保存基本设置成功`,
               showClose: true,
@@ -423,7 +424,17 @@ export default {
             // 重新获取数据
             // this.getProtocol();
           }).catch(res=>{
-            // console.log(res);
+            console.log(res);
+            if(res.code === 513554){
+              this.$message({
+                message: `协议名称不能重复`,
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
+              return
+            }
             this.$message({
               message: res.msg || `保存基本设置失败`,
               showClose: true,
