@@ -57,7 +57,7 @@ export default {
       if (!value) {
         callback(new Error('请选择分组'));
       } else if (this.isMax) {
-        callback(new Error('分组人数超过上限'));
+        callback(new Error('超出分组上限50'));
       } else {
         callback();
       }
