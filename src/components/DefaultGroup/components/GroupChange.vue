@@ -47,6 +47,10 @@ export default {
       type: Array,
       default: () => []
     },
+    readyList: {
+      type: Array,
+      default: () => []
+    },
     isMax: {
       type: Boolean,
       default: false
@@ -56,8 +60,10 @@ export default {
     const validGroup = (rule, value, callback) => {
       if (!value) {
         callback(new Error('请选择分组'));
+      } else if (this.currentGroupNumber(value) + this.selectNum > this.isMax) {
+        callback('该组人员已超上限，请选择其他小组')
       } else if (this.isMax) {
-        callback(new Error('超出分组上限50'));
+        callback(new Error('分组人数超过上限'));
       } else {
         callback();
       }
@@ -67,12 +73,19 @@ export default {
       formInline: {
         selectGroup: '',
       },
+      selectNum: 0,//选择更换的观众数量
       rules: {
         selectGroup: { required: true, validator: validGroup, trigger: 'blur' }
       }
     };
   },
   methods: {
+    currentGroupNumber(group) {
+      const filterList = this.readyList.filter(item => {
+        return item.group_order_id == group
+      })
+      return filterList[0]?.audiences.length
+    },
     // 确认换组
     handleSubmit() {
       this.$refs.groupForm.validate((valid) => {
@@ -82,8 +95,9 @@ export default {
       })
     },
     // 对话框打开时，设置可选小组
-    handleOpen() {
+    handleOpen(checkList) {
       this.dialogVisible = true
+      this.selectNum = this.checkList.length
       this.formInline.selectGroup = ''
     },
     /**
