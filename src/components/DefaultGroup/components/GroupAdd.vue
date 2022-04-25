@@ -43,7 +43,7 @@ export default {
       if (!value) {
         callback(new Error('请输入分组'));
       } else if ((value * 1 + this.groupList.length) > 50) {
-        callback(new Error('分组人数超过上限'));
+        callback(new Error('超出分组上限50'));
       } else if (value < 1 || value > 50) {
         callback(new Error('请输入1-50的小组编号'));
       } else {
