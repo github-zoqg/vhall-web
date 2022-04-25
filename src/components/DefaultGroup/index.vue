@@ -3,7 +3,7 @@
     :visible.sync="defaultGroupShow"
     width="800px"
     height="520px"
-    @close="closeDialog">
+    @beforeClose="cancelDialog">
     <div class="group-content"
       element-loading-text="努力加载中"
       v-loading="loading">
@@ -42,7 +42,7 @@
         @click="okHandle">保 存</el-button>
       <el-button size="medium"
         round
-        @click="closeDialog">取 消</el-button>
+        @click="cancelDialog(null)">取 消</el-button>
     </span>
     <!-- 新增分组 -->
     <group-add ref="groupAdd"
@@ -121,7 +121,7 @@ export default {
     }
   },
   methods: {
-    closeDialog() {
+    cancelDialog(done) {
       if (this.defaultGroupShow && this.copyReadyList != JSON.stringify(this.readyList)) {
         this.$confirm('数据有变化，确认不保存？', '提示', {
           confirmButtonText: '确定',
@@ -130,10 +130,10 @@ export default {
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
-          this.hide()
+          done ? done() : this.hide()
         }).catch(() => { });
       } else {
-        this.hide()
+        done ? done() : this.hide()
       }
     },
     /**
@@ -262,7 +262,6 @@ export default {
           wait_list: this.waitList.audiences
         })
       }
-      console.log(JSON.stringify(params))
       this.$fetch('saveAudienceSave', params).then(res => {
         this.$message({
           message: `操作成功`,
