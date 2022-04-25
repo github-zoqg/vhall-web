@@ -56,7 +56,7 @@ export default {
         count: 1
       },
       rules: {
-        count: { required: true, validator: validGroup, trigger: 'blur' }
+        count: { required: true, validator: validGroup, trigger: 'change' }
       }
     };
   },
