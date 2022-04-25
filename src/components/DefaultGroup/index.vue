@@ -51,6 +51,7 @@
     <!--换组-->
     <group-change ref="groupChange"
       :isMax="changeGroupDefault.isMax"
+      :readyList="readyList"
       @changeGroupComplete="changeGroupComplete"
       :groupList="groupList"></group-change>
   </VhallDialog>
@@ -200,7 +201,7 @@ export default {
       this.$set(this.changeGroupDefault, 'currentGroup', currentGroup)
       this.$set(this.changeGroupDefault, 'checkList', checkList)
       this.$nextTick(() => {
-        this.$refs.groupChange.handleOpen()
+        this.$refs.groupChange.handleOpen(checkList)
       })
     },
     /** 
