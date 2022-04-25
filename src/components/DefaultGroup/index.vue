@@ -15,7 +15,7 @@
       <div class="group-list"
         v-if="defaultGroupShow">
         <div class="group-list-item">
-          <grouping-card :ref="`groupingCard`"
+          <grouping-card ref="groupingCard0"
             :groupType="0"
             @groupDissolution="groupDissolution"
             @changeGroup="changeGroup"
@@ -51,7 +51,9 @@
     <!--换组-->
     <group-change ref="groupChange"
       :isMax="changeGroupDefault.isMax"
+      :maxNumber="maxNumber"
       :readyList="readyList"
+      :checkList="changeGroupDefault.checkList"
       @changeGroupComplete="changeGroupComplete"
       :groupList="groupList"></group-change>
   </VhallDialog>
@@ -88,7 +90,7 @@ export default {
       },
       //待分配
       waitList: {
-        index: 0,//组序号
+        group_order_id: 0,//组序号
         id: 0,
         audiences: []
       },
@@ -237,7 +239,9 @@ export default {
       this.changeGroupDefault.currentGroup.audiences = currentGroupList
       this.$refs.groupChange && this.$refs.groupChange.handleClose()
       const groupingCardIndex = `groupingCard${this.changeGroupDefault.currentGroup.group_order_id}`
-      this.$refs[groupingCardIndex] && this.$refs[groupingCardIndex][0].clearData()
+      if (this.$refs[groupingCardIndex]) {
+        this.$refs[groupingCardIndex].clearData ? this.$refs[groupingCardIndex].clearData() : this.$refs[groupingCardIndex][0].clearData()
+      }
     },
     /**
      * 分组保存

@@ -51,18 +51,28 @@ export default {
       type: Array,
       default: () => []
     },
+    //所有组合计是否超过最大值
     isMax: {
       type: Boolean,
       default: false
+    },
+    maxNumber: {
+      type: Number,
+      default: 2000
+    },
+    checkList: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
     const validGroup = (rule, value, callback) => {
+      let _this = this
       if (!value) {
         callback(new Error('请选择分组'));
-      } else if (this.currentGroupNumber(value) + this.selectNum > this.isMax) {
+      } else if (_this.currentGroupNumber(value) + _this.checkList.length > _this.maxNumber) {
         callback('该组人员已超上限，请选择其他小组')
-      } else if (this.isMax) {
+      } else if (_this.isMax) {
         callback(new Error('分组人数超过上限'));
       } else {
         callback();
@@ -95,9 +105,8 @@ export default {
       })
     },
     // 对话框打开时，设置可选小组
-    handleOpen(checkList) {
+    handleOpen() {
       this.dialogVisible = true
-      this.selectNum = this.checkList.length
       this.formInline.selectGroup = ''
     },
     /**
