@@ -1,9 +1,9 @@
 <template>
-  <VhallDialog title="分配小组"
+  <el-dialog title="分配小组"
     :visible.sync="defaultGroupShow"
     width="800px"
     height="520px"
-    @beforeClose="cancelDialog">
+    :before-close="cancelDialog">
     <div class="group-content"
       element-loading-text="努力加载中"
       v-loading="loading">
@@ -56,7 +56,7 @@
       :checkList="changeGroupDefault.checkList"
       @changeGroupComplete="changeGroupComplete"
       :groupList="groupList"></group-change>
-  </VhallDialog>
+  </el-dialog>
 </template>
 
 <script>
