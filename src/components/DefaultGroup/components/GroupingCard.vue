@@ -1,26 +1,26 @@
 <template>
   <div class="grouping-card">
+    <!--分配小组按钮组-->
+    <div class="group-header btn-group">
+      <span class="group-header-name">{{groupType?'分组'+data.group_order_id:'待分配'}}（{{data.audiences&&data.audiences.length}}）</span>
+      <div class="btn-group-right">
+        <span v-if="!batchGroupState"
+          @click="batchGroup"
+          :class="data.audiences.length>0?'':'group-disable'">
+          <i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>
+          {{groupType?'批量换组':'批量分配'}}
+        </span>
+        <span v-if="groupType&&!batchGroupState"
+          @click="dissolution"><i class="vh-saas-iconfont vh-saas-a-line-dissolutiongrouping pr4"></i>解散</span>
+        <span v-show="batchGroupState"
+          @click="clearData"><i class="el-icon el-icon-close cancel-size"></i>取消</span>
+        <span v-show="batchGroupState"
+          @click="changeGroup"
+          :class="checkList&&checkList.length?'':'group-disable'"><i class="vh-saas-iconfont vh-saas-a-line-Ingroup pr4"></i>换组</span>
+      </div>
+    </div>
     <!--小组卡片-->
     <div class="list-group">
-      <!--分配小组按钮组-->
-      <div class="group-header btn-group">
-        <span class="group-header-name">{{groupType?'分组'+data.group_order_id:'待分配'}}（{{data.audiences&&data.audiences.length}}）</span>
-        <div class="btn-group-right">
-          <span v-if="!batchGroupState"
-            @click="batchGroup"
-            :class="data.audiences.length>0?'':'group-disable'">
-            <i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>
-            {{groupType?'批量换组':'批量分配'}}
-          </span>
-          <span v-if="groupType&&!batchGroupState"
-            @click="dissolution"><i class="vh-saas-iconfont vh-saas-a-line-dissolutiongrouping pr4"></i>解散</span>
-          <span v-show="batchGroupState"
-            @click="clearData"><i class="el-icon el-icon-close cancel-size"></i>取消</span>
-          <span v-show="batchGroupState"
-            @click="changeGroup"
-            :class="checkList&&checkList.length?'':'group-disable'"><i class="vh-saas-iconfont vh-saas-a-line-Ingroup pr4"></i>换组</span>
-        </div>
-      </div>
       <!--分配小组观众-->
       <div class="list-group-item"
         v-if="batchGroupState">
