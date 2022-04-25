@@ -4,7 +4,6 @@
     @opened="openedHandler"
     @close="closeHandler"
     @closed="closedHandler"
-    :before-close="handleClose"
     :visible.sync="dialogVisable"
     :close-on-click-modal=modalClick
     :close-on-press-escape=false>
