@@ -903,7 +903,7 @@ export default {
       this.activeGroupIndex = index;
       this.query.group_id = item.id;
       this.query.keyword = '';
-      this.queryList(1);
+      this.search(1);
     },
     // 文件上传成功
     uploadSuccess(res, file) {
