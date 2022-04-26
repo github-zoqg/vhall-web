@@ -138,7 +138,8 @@ export default {
     // admin无云导播活动权限
     webinarDirector() {
       //  webinar.director 1:有无延迟权限  0:无权限
-      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
+      const configInfo = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))
+      if (configInfo&&configInfo['webinar.director'] == '1') {
         return true;
       } else {
         return false;
