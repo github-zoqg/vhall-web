@@ -46,7 +46,7 @@
   </div>
 </template>
 <script>
-import { replaceWithRules } from '../../../utils/utils.js'
+import { replaceWithRules } from '@/utils/utils.js'
 export default {
   name: "protocolPreview.vue",
   props: ['tabType', 'viewingProtocolForm', 'proptocolTitle_0', 'proptocolTitle_1', 'proptocolLink_0', 'proptocolLink_1'],
