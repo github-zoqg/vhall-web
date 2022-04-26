@@ -35,7 +35,7 @@
   </div>
 </template>
 <script>
-
+import { debounce } from "@/utils/utils"
 export default {
   name: 'VmpGroupAdd',
   data() {
@@ -78,7 +78,7 @@ export default {
   },
   methods: {
     // 确定新增分组
-    handleSubmit() {
+    addGroup() {
       this.$refs.viewerForm.validate((valid) => {
         if (valid) {
           const arr = this.groupList.map(item => {
@@ -100,6 +100,11 @@ export default {
           console.log('新增分组校验错误');
         }
       })
+    },
+    handleSubmit() {
+      debounce(async () => {
+        await this.addGroup();
+      }, 500)
     },
     /**
      * 打开弹框
