@@ -73,11 +73,11 @@ export default {
       // }else if(matchPrivacy1 && !matchHref1){
       //   alert('请输入协议声明除1之外的文字')
       // }
-      if(matchPrivacy1){
+      // if(matchPrivacy1){
         
-        let reg = new RegExp(`(${matchPrivacy1[0]})`);
-        text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_0 || 'javascript:void(0);'}" target="_blank">$1</a>`);
-      }
+      //   let reg = new RegExp(`(${matchPrivacy1[0]})`);
+      //   text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_0 || 'javascript:void(0);'}" target="_blank">$1</a>`);
+      // }
       
       // console.log(text, matchPrivacy2, 'matchPrivacy2')
       let matchHref2 = (this.viewingProtocolForm.proptocolTitle_2 && this.result_content ) ? this.result_content.match(this.viewingProtocolForm.proptocolTitle_2) : null;
@@ -87,13 +87,45 @@ export default {
       // }else if(matchPrivacy2 && !matchHref2){
       //   alert('请输入协议声明除1之外的文字')
       // }
-      if(matchPrivacy2){
-        let reg = new RegExp(`(${matchPrivacy2[0]})`);
-        text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">$1</a>`);
-      }
-      this.result_content = text;
-    },
+      // if(matchPrivacy2){
+      //   let reg = new RegExp(`(${matchPrivacy2[0]})`);
+      //   text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">$1</a>`);
+      // }
+      // this.result_content = text;
+      let rules = [{
+        before: this.viewingProtocolForm.proptocolTitle_0,
+        after: `<a href="${this.viewingProtocolForm.proptocolLink_0 || 'javascript:void(0);'}" target="_blank">${this.viewingProtocolForm.proptocolTitle_0}</a>`
+      }, {
+        before: this.viewingProtocolForm.proptocolTitle_1,
+        after: `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">${this.viewingProtocolForm.proptocolTitle_1}</a>`
+      }]
+      this.result_content = this.replaceAll(text, rules)
 
+    },
+    replaceAll (longText, rules = []) {
+      let restText = longText
+      let replaceText = ''
+      for (let i = 0; i < rules.length; i++) {
+        const rule = rules[i]
+        const idx = restText.indexOf(rule.before)
+        if (idx === -1) {
+          continue // 如果当前没有
+        } else {
+          console.log('restText', restText)
+          console.log('replaceText', replaceText)
+          const splitIdx = idx + rule.before.length // 切割的位置应该
+          const currentReplaceText = restText.substring(0, idx).concat(rule.after)
+          console.log('splitIdx', splitIdx)
+          console.log('currentReplaceText', currentReplaceText)
+          restText = restText.substring(splitIdx, restText.length)
+          replaceText = replaceText.concat(currentReplaceText)
+          console.log('restText', restText)
+          console.log('replaceText', replaceText)
+          console.log(`-------------${i + 1}轮结束---------------`)
+        }
+      }
+      return replaceText.concat(restText)
+    },
     initPage() {
       this.privacyFormatter()
     }
