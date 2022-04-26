@@ -46,6 +46,7 @@
   </div>
 </template>
 <script>
+import { replaceWithRules } from '../../../utils/utils.js'
 export default {
   name: "protocolPreview.vue",
   props: ['tabType', 'viewingProtocolForm', 'proptocolTitle_0', 'proptocolTitle_1', 'proptocolLink_0', 'proptocolLink_1'],
@@ -69,7 +70,8 @@ export default {
         }
         rules.push(secondRule)
       }
-      this.result_content = this.replaceAll(text, rules)
+      this.result_content = replaceWithRules(text, rules)
+      console.log(this.result_content, 'longText')
 
     },
     replaceAll (longText, rules = []) {
@@ -89,9 +91,6 @@ export default {
           // console.log('currentReplaceText', currentReplaceText)
           restText = restText.substring(splitIdx, restText.length)
           replaceText = replaceText.concat(currentReplaceText)
-          // console.log('restText', restText)
-          // console.log('replaceText', replaceText)
-          // console.log(`-------------${i + 1}轮结束---------------`)
         }
       }
       return replaceText.concat(restText)

@@ -3,7 +3,7 @@ import fetchData from "@/api/fetch";
 import NProgress from "nprogress";
 import { message } from 'element-ui';
 import Cookies from 'js-cookie';
-
+import { v1 as uuidV1 } from 'uuid';
 export const sessionOrLocal = {
   set: (key, value, saveType = 'sessionStorage') => {
     if (!key) return;
@@ -551,3 +551,19 @@ export const refreshToken = () => {
     })
   }
 }
+/**
+ * @description 多次替换对一个问题做替换(使用uuid作为占位符)
+ * @param longText String 替换前文本
+ * @param rules Array 替换前后的数据封装体
+ * @returns string
+ */
+ export const replaceWithRules = (longText, rules = []) => {
+  rules.forEach(rule => {
+    rule.tempSign = uuidV1(); // 先替换为占位符
+    longText = longText.replace(rule.before, rule.tempSign);
+  });
+  rules.forEach(rule => {
+    longText = longText.replace(rule.tempSign, rule.after);
+  });
+  return longText;
+};
