@@ -166,7 +166,7 @@ export default {
         second: 0
       },
       dpi: '1280*720',
-      hasUpdate: false,  //false: 没有修改过
+      hasUpdate: true,  //false: 没有修改过
       director_web_url: ''  //云导播地址
     };
   },
