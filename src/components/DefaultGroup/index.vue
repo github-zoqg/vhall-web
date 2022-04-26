@@ -112,6 +112,7 @@ export default {
         };
       });
     },
+    //所有分配小组人数和
     allReadyNumber() {
       let _num = 0
       this.readyList.forEach(item => {
@@ -123,6 +124,9 @@ export default {
     }
   },
   methods: {
+    /**
+     * 数据变动关闭弹框提示
+     */
     cancelDialog(done) {
       if (this.defaultGroupShow && this.copyReadyList != JSON.stringify(this.readyList)) {
         this.$confirm('数据有变化，确认不保存？', '提示', {
