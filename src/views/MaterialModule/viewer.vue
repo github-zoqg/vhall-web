@@ -215,7 +215,8 @@
       :visible.sync="importFileShow"
       width="400px"
       @close="closeImportViewer">
-      <div class="upload-dialog-content">
+      <div class="upload-dialog-content"
+        v-loading="uploadLoading">
         <file-upload ref="viewerUpload"
           v-model="fileUrl"
           @delete="deleteFile"
@@ -265,7 +266,7 @@
             @click="reloadViewerList"
             size="medium"
             round
-            :disabled="fileResult === 'error'">确定</el-button>
+            :disabled="fileResult === 'error' || !isUploadEnd">确定</el-button>
           <el-button @click="closeImportViewer"
             size="medium"
             round>取消</el-button>
@@ -946,6 +947,12 @@ export default {
             this.$refs.viewerUpload.setError(res.msg || '检测失败，请重新上传');
           }
         });
+      } else {
+        this.fileResult = 'error';
+        this.uploadResult = {
+          status: 'error',
+          text: res.msg
+        }
       }
     },
     beforeUploadHandler(file) {
@@ -983,7 +990,7 @@ export default {
         status: 'progress',
         text: '上传中，请稍候'
       }
-      this.percent = parseInt(event.percent);
+      this.percent = parseInt(event.percent)
     },
     uploadError(err, file, fileList) {
       console.log('uploadError', err, file, fileList);
