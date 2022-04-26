@@ -947,6 +947,12 @@ export default {
             this.$refs.viewerUpload.setError(res.msg || '检测失败，请重新上传');
           }
         });
+      } else {
+        this.fileResult = 'error';
+        this.uploadResult = {
+          status: 'error',
+          text: res.msg
+        }
       }
     },
     beforeUploadHandler(file) {
