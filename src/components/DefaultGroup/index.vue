@@ -247,6 +247,15 @@ export default {
      * 分组保存
      */
     okHandle() {
+      if (this.readyList.length == 0) {
+        this.$message({
+          message: '预分组必须＞＝1',
+          showClose: true,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return
+      }
       const validList = this.readyList.filter(item => {
         return item.audiences.length == 0
       })
