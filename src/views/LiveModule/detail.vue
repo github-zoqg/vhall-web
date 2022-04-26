@@ -68,7 +68,7 @@
                   v-if="webinarDirector && isDirector"
                   @mouseout="handlerMouseOutDirector"
                   @mouseover="handleMouseInDirector">
-                <el-button round size="small" class="check-btn" @click="toDirector">云导播</el-button>
+                <el-button round size="small" class="check-btn" @click="toDirector(false)">云导播</el-button>
                 <div class="float-dom-director"
                   v-if="showFloatDirector&&!hasUpdate"
                   @mouseout="handlerMouseOutDirector"
@@ -635,12 +635,12 @@ export default {
       })).then(res => {
         this.hasUpdate = true
         this.director_web_url = res.data.director_web_url
-        this.toDirector()
+        this.toDirector(true)
       }).catch(res => {
       })
     },
     // 控制台-获取活动分辨率信息
-    getLiveDirectorResolution() {
+    getLiveDirectorResolution(open = false) {
       this.$fetch('getLiveDirectorResolution', this.$params({
         webinar_id: this.$route.params.str
       })).then((res) => {
@@ -648,22 +648,30 @@ export default {
           //1:未修改 2:已修改不可修改
           this.hasUpdate = res.data.is_update === 2
           this.director_web_url = res.data.director_web_url
+          if(open){
+            this.openDirector()
+          }
         }
       }).catch(e => {
       });
     },
     //打开云导播台
-    toDirector(){
+    toDirector(open = false){
       if(this.hasUpdate){
-        //打开云导播台
-        this.$vhall_paas_port({
-          k: 100838,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        if(this.director_web_url){
-          window.open(this.director_web_url, '_blank');
+        if(this.director_web_url&&open){
+          this.openDirector()
+        }else{
+          this.getLiveDirectorResolution(true)
         }
       }
+    },
+    openDirector(){
+      //打开云导播台
+      this.$vhall_paas_port({
+        k: 100838,
+        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
+      window.open(this.director_web_url, '_blank');
     }
   }
 };
