@@ -52,26 +52,20 @@ export default {
   data() {
     return {
       result_content: null,
-      rule: 1,
-      indexFirst: 0,
-      indexSecond: 0
+      rule: 1
     };
   },
   methods: {
     privacyFormatter(){
       let text = this.viewingProtocolForm.statement_content
-      let matchPrivacy1 = this.viewingProtocolForm.proptocolTitle_0 ? text.match(this.viewingProtocolForm.proptocolTitle_0) : null;
-      let matchPrivacy2 = this.viewingProtocolForm.proptocolTitle_1 ? text.match(this.viewingProtocolForm.proptocolTitle_1) : null;
-      this.indexFirst = text.indexOf(this.viewingProtocolForm.proptocolTitle_0)
-      this.indexSecond = text.indexOf(this.viewingProtocolForm.proptocolTitle_1)
       let rules = [{
         before: this.viewingProtocolForm.proptocolTitle_0,
-        after: `<a href="${this.viewingProtocolForm.proptocolLink_0 || 'javascript:void(0);'}" target="_blank">${this.viewingProtocolForm.proptocolTitle_0}</a>`
+        after: `<a class="protocolLinkStyle" href="${this.viewingProtocolForm.proptocolLink_0 || 'javascript:void(0);'}" target="_blank">${this.viewingProtocolForm.proptocolTitle_0}</a>`
       }]
       if(this.viewingProtocolForm.proptocolTitle_1){
         let secondRule =  {
           before: this.viewingProtocolForm.proptocolTitle_1,
-          after: `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">${this.viewingProtocolForm.proptocolTitle_1}</a>`
+          after: `<a class="protocolLinkStyle" href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">${this.viewingProtocolForm.proptocolTitle_1}</a>`
         }
         rules.push(secondRule)
       }
@@ -129,7 +123,15 @@ export default {
   }
 };
 </script>
-
+<style lang="less">
+.protocolLinkStyle{
+  color: #3562fa;
+}
+.protocolLinkStyle:link,.protocolLinkStyle:visited,.protocolLinkStyle:hover,.protocolLinkStyle:active {
+  color: #3562fa;
+  text-decoration: none;
+}
+</style>
 <style lang="less" scoped>
 /*预览区域样式开始*/
 .skin-preview.preview-pc{
@@ -327,22 +329,6 @@ export default {
       word-break: break-all;
       word-wrap: break-word;
       padding-right: 16px;
-      a{
-        color: #3562fa;
-      }
-      a:link{
-        color: #3562fa;
-      }
-      a:visited{
-        color: #3562fa;
-        text-decoration: none;
-      }
-      a:hover{
-        color: #3562fa;
-      }
-      a:active{
-        color: #3562fa;
-      }
     }
     .protocol-button{
       text-align: center;
