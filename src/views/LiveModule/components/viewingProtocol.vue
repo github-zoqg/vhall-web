@@ -71,7 +71,7 @@
             <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 0, 'link')" :maxlength="100"  v-model="viewingProtocolForm.proptocolLink_0" class="title-inform" show-word-limit autocomplete="off" placeholder="请输入http://或https://开头的链接"  > </VhallInput>
           </el-form-item>
           <el-form-item class="protocol-item item-title" v-if="statementList.length > 1 && viewingProtocolForm.statement_status"  prop="proptocolTitle_1">
-            <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 1, 'title')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolTitle_1" show-word-limit autocomplete="off" placeholder="请输入请1行中包含的文字才能实现跳转效果"  > </VhallInput>
+            <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 1, 'title')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolTitle_1" show-word-limit autocomplete="off" placeholder="请输入第1行中包含的文字才能实现跳转效果"  > </VhallInput>
             <i
               class="el-icon-remove-outline optIcon"
               @click="deleteOptions"
@@ -123,7 +123,7 @@ export default {
         is_open: 0,
         statement_content: '我已同意并阅读《观看协议》',
         statement_info: null,
-        proptocolTitle_0: '《观看协议》',
+        proptocolTitle_0: '观看协议',
         proptocolLink_0: '',
         proptocolTitle_1: '',
         proptocolLink_1: ''
@@ -218,16 +218,30 @@ export default {
       let statement_content = this.viewingProtocolForm.statement_content
       let titleName = `proptocolTitle_${index}`
       let linkName = `proptocolLink_${index}`
+      // let matchPrivacy1 = this.viewingProtocolForm.proptocolTitle_0 ? statement_content.match(this.viewingProtocolForm.proptocolTitle_0) : null;
+      // let matchPrivacy2 = this.viewingProtocolForm.proptocolTitle_1 ? statement_content.match(this.viewingProtocolForm.proptocolTitle_1) : null;
+      // this.indexFirst = statement_content.indexOf(this.viewingProtocolForm.proptocolTitle_0)
+      // this.indexSecond = statement_content.indexOf(this.viewingProtocolForm.proptocolTitle_1)
+      // if(matchPrivacy1 && matchPrivacy2 && this.indexFirst === this.indexSecond){
+      //     this.$message({
+      //       message: '两个观看协议标题不能占用协议声明相同位置的相同字段，请先补充协议声明',
+      //       showClose: true,
+      //       // duration: 0,
+      //       type: 'error',
+      //       customClass: 'zdy-info-box'
+      //     });
+      //     return
+      // }
       if(type === 'title') {
 
         this.viewingProtocolForm[titleName] = value
         if(value && statement_content.indexOf(value) === -1){
           this.statementList[index].title = '';
           this.viewingProtocolForm[titleName] = '';
-          let oldValue = value.substring(0, value.length-1)
+          // let oldValue = value.substring(0, value.length-1)
           // console.log(value.substring(0, value.length-1), 'value.substring(0, value.length-1)')
-          let viewingProtocolForm = this.viewingProtocolForm
-          this.viewingProtocolForm.statement_content = viewingProtocolForm.statement_content.replace(oldValue, '')
+          // let viewingProtocolForm = this.viewingProtocolForm
+          // this.viewingProtocolForm.statement_content = viewingProtocolForm.statement_content.replace(oldValue, '')
         }else{
           this.statementList[index].title = value;
           this.viewingProtocolForm[titleName] = value

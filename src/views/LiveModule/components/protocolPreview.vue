@@ -12,11 +12,11 @@
               <div class="protocol-top" :class="rule == 1 ? 'protocol-content-read' : 'protocol-content-choose'">
                 <div class="protocol-title">
                   <p>
-                    {{viewingProtocolForm.title ? viewingProtocolForm.title : '请输入《观看协议》标题'}}
+                    {{viewingProtocolForm.title ? viewingProtocolForm.title : '《观看协议》标题'}}
                   </p>
                 </div>
                 <div class="protocol-content">
-                  <div v-html="viewingProtocolForm.content ? viewingProtocolForm.content : '请输入《观看协议》内容'">
+                  <div v-html="viewingProtocolForm.content ? viewingProtocolForm.content : '《观看协议》内容'">
 
                   </div>
                 </div>
@@ -52,20 +52,41 @@ export default {
   data() {
     return {
       result_content: null,
-      rule: 1
+      rule: 1,
+      indexFirst: 0,
+      indexSecond: 0
     };
   },
   methods: {
     privacyFormatter(){
       let text = this.viewingProtocolForm.statement_content
       let matchPrivacy1 = this.viewingProtocolForm.proptocolTitle_0 ? text.match(this.viewingProtocolForm.proptocolTitle_0) : null;
+      let matchPrivacy2 = this.viewingProtocolForm.proptocolTitle_1 ? text.match(this.viewingProtocolForm.proptocolTitle_1) : null;
+      this.indexFirst = text.indexOf(this.viewingProtocolForm.proptocolTitle_0)
+      this.indexSecond = text.indexOf(this.viewingProtocolForm.proptocolTitle_1)
+      let matchHref1 = (this.viewingProtocolForm.proptocolTitle_0 && this.result_content) ? this.result_content.match(this.viewingProtocolForm.proptocolTitle_0) : null;
       // console.log(text, matchPrivacy1, this.viewingProtocolForm, 'text')
+      // if(matchPrivacy1 && matchHref1){
+        
+      //   let reg = new RegExp(`(${matchPrivacy1[0]})`);
+      //   text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_0 || 'javascript:void(0);'}" target="_blank">$1</a>`);
+      // }else if(matchPrivacy1 && !matchHref1){
+      //   alert('请输入协议声明除1之外的文字')
+      // }
       if(matchPrivacy1){
+        
         let reg = new RegExp(`(${matchPrivacy1[0]})`);
         text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_0 || 'javascript:void(0);'}" target="_blank">$1</a>`);
       }
-      let matchPrivacy2 = this.viewingProtocolForm.proptocolTitle_1 ? text.match(this.viewingProtocolForm.proptocolTitle_1) : null;
+      
       // console.log(text, matchPrivacy2, 'matchPrivacy2')
+      let matchHref2 = (this.viewingProtocolForm.proptocolTitle_2 && this.result_content ) ? this.result_content.match(this.viewingProtocolForm.proptocolTitle_2) : null;
+      // if(matchPrivacy2 && matchHref2){
+      //   let reg = new RegExp(`(${matchPrivacy2[0]})`);
+      //   text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">$1</a>`);
+      // }else if(matchPrivacy2 && !matchHref2){
+      //   alert('请输入协议声明除1之外的文字')
+      // }
       if(matchPrivacy2){
         let reg = new RegExp(`(${matchPrivacy2[0]})`);
         text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">$1</a>`);
@@ -218,7 +239,7 @@ export default {
     .protocol-title{
       font-size: 18px;
       font-family: PingFangSC-Medium, PingFang SC;
-      font-weight: 500;
+      // font-weight: 500;
       color: #1A1A1A;
       line-height: 25px;
       word-break: break-all;
@@ -253,6 +274,21 @@ export default {
       padding-right: 16px;
       /deep/img {
         max-width: 100%;
+      }
+      a{
+        color: #3562fa;
+      }
+      a:link{
+        color: #3562fa;
+      }
+      a:visited{
+        color: #3562fa;
+      }
+      a:hover{
+        color: #3562fa;
+      }
+      a:active{
+        color: #3562fa;
       }
     }
     .protocol-content-read{
@@ -437,4 +473,8 @@ export default {
       }
     }
   }
+.protocol-button /deep/ .el-button{
+  cursor: default;
+  pointer-events: none;
+}
 </style>
