@@ -64,41 +64,17 @@ export default {
       let matchPrivacy2 = this.viewingProtocolForm.proptocolTitle_1 ? text.match(this.viewingProtocolForm.proptocolTitle_1) : null;
       this.indexFirst = text.indexOf(this.viewingProtocolForm.proptocolTitle_0)
       this.indexSecond = text.indexOf(this.viewingProtocolForm.proptocolTitle_1)
-      let matchHref1 = (this.viewingProtocolForm.proptocolTitle_0 && this.result_content) ? this.result_content.match(this.viewingProtocolForm.proptocolTitle_0) : null;
-      // console.log(text, matchPrivacy1, this.viewingProtocolForm, 'text')
-      // if(matchPrivacy1 && matchHref1){
-        
-      //   let reg = new RegExp(`(${matchPrivacy1[0]})`);
-      //   text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_0 || 'javascript:void(0);'}" target="_blank">$1</a>`);
-      // }else if(matchPrivacy1 && !matchHref1){
-      //   alert('请输入协议声明除1之外的文字')
-      // }
-      // if(matchPrivacy1){
-        
-      //   let reg = new RegExp(`(${matchPrivacy1[0]})`);
-      //   text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_0 || 'javascript:void(0);'}" target="_blank">$1</a>`);
-      // }
-      
-      // console.log(text, matchPrivacy2, 'matchPrivacy2')
-      let matchHref2 = (this.viewingProtocolForm.proptocolTitle_2 && this.result_content ) ? this.result_content.match(this.viewingProtocolForm.proptocolTitle_2) : null;
-      // if(matchPrivacy2 && matchHref2){
-      //   let reg = new RegExp(`(${matchPrivacy2[0]})`);
-      //   text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">$1</a>`);
-      // }else if(matchPrivacy2 && !matchHref2){
-      //   alert('请输入协议声明除1之外的文字')
-      // }
-      // if(matchPrivacy2){
-      //   let reg = new RegExp(`(${matchPrivacy2[0]})`);
-      //   text = text.replace(reg, `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">$1</a>`);
-      // }
-      // this.result_content = text;
       let rules = [{
         before: this.viewingProtocolForm.proptocolTitle_0,
         after: `<a href="${this.viewingProtocolForm.proptocolLink_0 || 'javascript:void(0);'}" target="_blank">${this.viewingProtocolForm.proptocolTitle_0}</a>`
-      }, {
-        before: this.viewingProtocolForm.proptocolTitle_1,
-        after: `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">${this.viewingProtocolForm.proptocolTitle_1}</a>`
       }]
+      if(this.viewingProtocolForm.proptocolTitle_1){
+        let secondRule =  {
+          before: this.viewingProtocolForm.proptocolTitle_1,
+          after: `<a href="${this.viewingProtocolForm.proptocolLink_1 || 'javascript:void(0);'}" target="_blank">${this.viewingProtocolForm.proptocolTitle_1}</a>`
+        }
+        rules.push(secondRule)
+      }
       this.result_content = this.replaceAll(text, rules)
 
     },
@@ -111,17 +87,17 @@ export default {
         if (idx === -1) {
           continue // 如果当前没有
         } else {
-          console.log('restText', restText)
-          console.log('replaceText', replaceText)
+          // console.log('restText', restText)
+          // console.log('replaceText', replaceText)
           const splitIdx = idx + rule.before.length // 切割的位置应该
           const currentReplaceText = restText.substring(0, idx).concat(rule.after)
-          console.log('splitIdx', splitIdx)
-          console.log('currentReplaceText', currentReplaceText)
+          // console.log('splitIdx', splitIdx)
+          // console.log('currentReplaceText', currentReplaceText)
           restText = restText.substring(splitIdx, restText.length)
           replaceText = replaceText.concat(currentReplaceText)
-          console.log('restText', restText)
-          console.log('replaceText', replaceText)
-          console.log(`-------------${i + 1}轮结束---------------`)
+          // console.log('restText', restText)
+          // console.log('replaceText', replaceText)
+          // console.log(`-------------${i + 1}轮结束---------------`)
         }
       }
       return replaceText.concat(restText)
@@ -307,21 +283,6 @@ export default {
       /deep/img {
         max-width: 100%;
       }
-      a{
-        color: #3562fa;
-      }
-      a:link{
-        color: #3562fa;
-      }
-      a:visited{
-        color: #3562fa;
-      }
-      a:hover{
-        color: #3562fa;
-      }
-      a:active{
-        color: #3562fa;
-      }
     }
     .protocol-content-read{
       height: 206px;
@@ -366,6 +327,22 @@ export default {
       word-break: break-all;
       word-wrap: break-word;
       padding-right: 16px;
+      a{
+        color: #3562fa;
+      }
+      a:link{
+        color: #3562fa;
+      }
+      a:visited{
+        color: #3562fa;
+        text-decoration: none;
+      }
+      a:hover{
+        color: #3562fa;
+      }
+      a:active{
+        color: #3562fa;
+      }
     }
     .protocol-button{
       text-align: center;

@@ -476,6 +476,9 @@ export default {
 .protocol--set--left {
   width: 480px;
   position: relative;
+  /deep/.el-form-item__content{
+    line-height: 37px;
+  }
   /deep/.el-form-item__label {
     line-height: 40px;
   }
