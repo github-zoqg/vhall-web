@@ -288,6 +288,7 @@ import { sessionOrLocal } from "@/utils/utils";
 import NullPage from '../PlatformModule/Error/nullPage.vue';
 import FileUpload from '@/components/FileUpload/main';
 import Env from "@/api/env";
+import { debounce } from "@/utils/utils"
 
 
 export default {
@@ -590,43 +591,47 @@ export default {
     },
     // 白名单创建分组 or 白名单分组重命名
     postGroupSend() {
-      this.$refs.groupForm.validate((valid) => {
-        if (valid) {
-          let params = {
-            subject: this.groupForm.subject,
-          };
-          if (this.groupDialog.type !== 'add') {
-            params.group_id = this.groupDialog.row.id;
+      debounce(() => {
+        this.$refs.groupForm.validate((valid) => {
+          if (valid) {
+            let params = {
+              subject: this.groupForm.subject,
+            };
+            if (this.groupDialog.type !== 'add') {
+              params.group_id = this.groupDialog.row.id;
+            }
+            this.$fetch(this.groupDialog.type === 'add' ? 'postGroupAdd' : 'postGroupEdit', this.$params(params)).then(res => {
+              this.$vhall_paas_port({
+                k: this.groupDialog.type === 'add' ? 100546 : 100547,
+                data: { business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: '' }
+              })
+              this.$message({
+                message: `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作成功`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
+              this.groupForm.subject = ''
+              // 刷新数据
+              this.audienceGet();
+              this.groupDialog.visible = false;
+            }).catch(res => {
+              console.log(res);
+              this.$message({
+                message: res.msg || `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作失败`,
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
+            });
           }
-          this.$fetch(this.groupDialog.type === 'add' ? 'postGroupAdd' : 'postGroupEdit', this.$params(params)).then(res => {
-            this.$vhall_paas_port({
-              k: this.groupDialog.type === 'add' ? 100546 : 100547,
-              data: { business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: '' }
-            })
-            this.$message({
-              message: `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作成功`,
-              showClose: true,
-              // duration: 0,
-              type: 'success',
-              customClass: 'zdy-info-box'
-            });
-            this.groupForm.subject = ''
-            // 刷新数据
-            this.audienceGet();
-            this.groupDialog.visible = false;
-          }).catch(res => {
-            console.log(res);
-            this.$message({
-              message: res.msg || `${this.groupDialog.type === 'add' ? '添加分组' : '重命名分组'}操作失败`,
-              showClose: true,
-              // duration: 0,
-              type: 'error',
-              customClass: 'zdy-info-box'
-            });
-          });
-        }
-      });
+        });
+      }, 500)
+
     },
+
     // 白名单删除分组
     postGroupDel(item) {
       this.$confirm('确定要删除当前分组？', '删除组', {
