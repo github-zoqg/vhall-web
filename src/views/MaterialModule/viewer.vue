@@ -261,7 +261,6 @@
         <p class="uploadtips">提示：单个文件不超过5000条数据，数据量较大时请拆分上传</p>
         <div class="dialog-right-btn dialog-footer">
           <el-button type="primary"
-            v-preventReClick
             @click="reloadViewerList"
             size="medium"
             round
