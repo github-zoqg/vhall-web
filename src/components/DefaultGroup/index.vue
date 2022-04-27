@@ -200,6 +200,7 @@ export default {
      * @param {Array}  checkList  选中换组观众数据
      */
     changeGroup(currentGroup, checkList) {
+      //如果是待分配组，判断所有已分配+选中数据是否超过最大允许人数
       if (currentGroup.id === 0 && (this.allReadyNumber + checkList.length) > this.maxNumber) {
         this.$set(this.changeGroupDefault, 'isMax', true)
       } else {
@@ -223,6 +224,16 @@ export default {
      * @param {string | number} selectGroup 选择小组
     */
     changeGroupComplete(selectGroup) {
+      let currentGroupID = this.changeGroupDefault.currentGroup.group_order_id
+      if (currentGroupID == selectGroup) {
+        this.$message({
+          message: '不能选择同一组',
+          showClose: true,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return
+      }
       this.$set(this.changeGroupDefault, 'selectGroup', selectGroup)
       const toGroupDataFilter = this.readyList.filter(item => {
         return item.group_order_id === this.changeGroupDefault.selectGroup
