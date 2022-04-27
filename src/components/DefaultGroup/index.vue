@@ -39,6 +39,7 @@
       <el-button type="primary"
         size="medium"
         round
+        :disabled="loading"
         @click="okHandle">保 存</el-button>
       <el-button size="medium"
         round
