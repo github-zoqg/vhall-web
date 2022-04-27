@@ -215,8 +215,7 @@
       :visible.sync="importFileShow"
       width="400px"
       @close="closeImportViewer">
-      <div class="upload-dialog-content"
-        v-loading="uploadLoading">
+      <div class="upload-dialog-content">
         <file-upload ref="viewerUpload"
           v-model="fileUrl"
           @delete="deleteFile"
