@@ -913,7 +913,6 @@ export default {
     // 文件上传成功
     uploadSuccess(res, file) {
       console.log(res, file);
-      this.isUploadEnd = true;
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
         // 文件上传成功，检测观众
@@ -922,6 +921,7 @@ export default {
           group_id: this.query.group_id,
           request_type: 0 // 校验
         }).then(resV => {
+          this.isUploadEnd = true;
           this.fileResult = 'success';
           this.uploadResult = {
             status: 'success',
@@ -935,6 +935,7 @@ export default {
             this.$refs.viewerUpload.setError('');
           }
         }).catch(res => {
+          this.isUploadEnd = true;
           this.fileResult = 'error';
           this.uploadResult = {
             status: 'error',
@@ -947,6 +948,7 @@ export default {
           }
         });
       } else {
+        this.isUploadEnd = true;
         this.fileResult = 'error';
         this.uploadResult = {
           status: 'error',
