@@ -183,6 +183,7 @@ export default {
       this.waitList.audiences = []
       this.readyList = []
       this.defaultGroupShow = false
+      this.loading = false
     },
     /**
      * 解散小组
@@ -272,6 +273,7 @@ export default {
         });
         return
       }
+      this.loading = true
       const params = {
         am_id: this.groupId,
         list: JSON.stringify({
@@ -296,6 +298,7 @@ export default {
           type: 'error',
           customClass: 'zdy-info-box'
         });
+        this.loading = false
       });
     }
   }
