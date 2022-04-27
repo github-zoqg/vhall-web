@@ -1015,51 +1015,53 @@ export default {
       }
     },
     reloadViewerList() {
-      if (!this.fileUrl) {
-        this.$message({
-          message: `请先选择模板`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-        return;
-      }
-      // 数据存储
-      this.$fetch('viewerImport', {
-        file_url: this.fileUrl,
-        group_id: this.query.group_id,
-        request_type: 1 // 保存
-      }).then(resV => {
-        this.$vhall_paas_port({
-          k: 100542,
-          data: { business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: '' }
-        })
-        /* this.$message({
-          message:resV.msg || '导入观众信息成功',
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        }); */
-        this.importFileShow = false;
-        this.isUploadEnd = false;
-        this.fileUrl = '';
-        this.uploadResult = {
-          status: 'start',
-          text: '请上传文件'
+      debounce(() => {
+        if (!this.fileUrl) {
+          this.$message({
+            message: `请先选择模板`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+          return;
         }
-        // 刷新列表数据
-        this.queryList(1);
-      }).catch(res => {
-        this.$message({
-          message: res.msg || '导入观众信息失败',
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
+        // 数据存储
+        this.$fetch('viewerImport', {
+          file_url: this.fileUrl,
+          group_id: this.query.group_id,
+          request_type: 1 // 保存
+        }).then(resV => {
+          this.$vhall_paas_port({
+            k: 100542,
+            data: { business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: '' }
+          })
+          /* this.$message({
+            message:resV.msg || '导入观众信息成功',
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          }); */
+          this.importFileShow = false;
+          this.isUploadEnd = false;
+          this.fileUrl = '';
+          this.uploadResult = {
+            status: 'start',
+            text: '请上传文件'
+          }
+          // 刷新列表数据
+          this.queryList(1);
+        }).catch(res => {
+          this.$message({
+            message: res.msg || '导入观众信息失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
         });
-      });
+      }, 500)
     },
     // 下载无效数据
     downErrorHandle() {
