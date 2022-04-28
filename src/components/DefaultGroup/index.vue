@@ -15,7 +15,7 @@
           @click.prevent.stop="viewerDialogAdd"
           size="small">新增分组</el-button>
       </div>
-      <div class="group-list"
+      <el-scrollbar class="group-list scroll-bar"
         v-if="defaultGroupShow">
         <div class="group-list-item">
           <grouping-card ref="groupingCard0"
@@ -36,7 +36,7 @@
             :data="item"
             :maxNumber="maxNumber"></grouping-card>
         </div>
-      </div>
+      </el-scrollbar>
     </div>
     <span slot="footer">
       <el-button type="primary"
@@ -322,16 +322,16 @@ export default {
 
 <style lang="less" scoped>
 .group-content {
-  height: 430px;
-  padding-bottom: 12px;
-  overflow: auto;
+  overflow: hidden;
   background: #fff;
   .group-header {
     text-align: right;
-    padding-bottom: 20px;
+    padding: 0 32px 20px 32px;
   }
   .group-list {
     background: #fff;
+    height: 380px;
+    overflow: hidden;
     .group-list-item {
       box-sizing: border-box;
       width: 49.9%;
@@ -339,16 +339,18 @@ export default {
       float: left;
       &:nth-child(odd) {
         padding-right: 5px;
+        padding-left: 20px;
       }
       &:nth-child(even) {
         padding-left: 5px;
+        padding-right: 20px;
       }
     }
   }
 }
 </style>
 <style lang="less">
-.dispach-chgroup .el-dialog__body {
-  padding-bottom: 12px;
+.dispach-chgroup .el-dialog .el-dialog__body {
+  padding: 0;
 }
 </style>
