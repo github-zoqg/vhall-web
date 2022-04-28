@@ -161,6 +161,7 @@ export default {
 .grouping-card {
   border: 1px solid #ccc;
   background: #f7f7f7;
+  border-radius: 4px;
   .pr4 {
     padding-right: 4px;
   }
