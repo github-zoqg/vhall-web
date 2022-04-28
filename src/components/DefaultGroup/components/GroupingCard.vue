@@ -22,7 +22,7 @@
     <!--小组卡片-->
     <div class="list-group">
       <!--分配小组观众-->
-      <div class="list-group-item"
+      <el-scrollbar class="list-group-item scroll-bar"
         v-if="batchGroupState">
         <el-checkbox-group class="list-group-item item"
           v-model="checkList">
@@ -32,8 +32,8 @@
             size="medium"
             :name="data.groupName">{{item.name}}</el-checkbox>
         </el-checkbox-group>
-      </div>
-      <div class="list-group-item"
+      </el-scrollbar>
+      <el-scrollbar class="list-group-item scroll-bar"
         v-else>
         <div class="list-group-item-state"
           v-for="(item,index) in data.audiences"
@@ -66,7 +66,7 @@
             </span>
           </el-popover>
         </div>
-      </div>
+      </el-scrollbar>
     </div>
   </div>
 </template>
@@ -135,9 +135,23 @@ export default {
     },
     //解散
     dissolution() {
-      this.checkList = []
-      this.$emit('groupDissolution', this.groupIndex, this.data.audiences)
-      console.log('解散' + this.data.group_order_id)
+      this.$confirm('解散后小组成员将全部回到主待分配中，确定是否要解散小组？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(() => {
+        this.checkList = []
+        this.$emit('groupDissolution', this.groupIndex, this.data.audiences)
+        this.$message({
+          message: `解散成功`,
+          showClose: true,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        console.log('解散' + this.data.group_order_id)
+      }).catch(() => { });
     },
     //清除状态 关闭弹框
     clearData() {
@@ -200,6 +214,8 @@ export default {
     height: 205px;
     background: #f7f7f7;
     .list-group-item {
+      height: 205px;
+      overflow: hidden;
       .list-group-popover {
         width: 96px;
         margin-top: 0;
