@@ -16,13 +16,13 @@
           size="small">新增分组</el-button>
       </div>
       <el-scrollbar class="group-list scroll-bar"
-        v-if="defaultGroupShow">
+        v-if="defaultGroupShow&&loadingData">
         <div class="group-list-item">
           <grouping-card ref="groupingCard0"
             :groupType="0"
             @groupDissolution="groupDissolution"
             @changeGroup="changeGroup"
-            :data="waitList"></grouping-card>
+            :cardList="waitList"></grouping-card>
         </div>
         <div class="group-list-item"
           v-for="(item,index) in readyList"
@@ -33,7 +33,7 @@
             @changeGroup="changeGroup"
             @removeGroup="removeGroup"
             :groupIndex="index"
-            :data="item"
+            :cardList="item"
             :maxNumber="maxNumber"></grouping-card>
         </div>
       </el-scrollbar>
@@ -84,8 +84,9 @@ export default {
     return {
       defaultGroupShow: false,
       loading: false,
+      loadingData: false,
       groupAddShow: false,
-      /**换组 */
+      //换组
       changeGroupDefault: {
         currentGroup: null, //from当前分组
         checkList: [],//data选中换组观众
@@ -105,9 +106,7 @@ export default {
     }
   },
   computed: {
-    /** 
-     * 分组小组
-    */
+    //分组小组
     groupList() {
       return this.readyList.map(item => {
         return {
@@ -130,6 +129,7 @@ export default {
   methods: {
     /**
      * 数据变动关闭弹框提示
+     * function(done)，done 用于关闭 Dialog 
      */
     cancelDialog(done) {
       if (this.defaultGroupShow && this.copyReadyList != JSON.stringify(this.readyList)) {
@@ -146,22 +146,16 @@ export default {
         done ? done() : this.hide()
       }
     },
-    /**
-     * 新增分组
-     */
+    //新增分组
     viewerDialogAdd() {
-      this.$refs.groupAdd && this.$refs.groupAdd.handlOpen(this.groupList)
+      this.$refs.groupAdd?.handlOpen(this.groupList)
     },
-    /**
-     * 显示分配小组弹框
-     */
+    //显示分配小组弹框
     show() {
       this.defaultGroupShow = true
       this.getDefaultData()
     },
-    /**
-     * 查询分组观众
-     */
+    //查询分组观众
     getDefaultData() {
       this.loading = true
       this.$fetch('getAudienceList', { am_id: this.groupId }).then(res => {
@@ -169,6 +163,7 @@ export default {
         if (res && res.code === 200 && res.data) {
           this.waitList.audiences = res.data.wait_list ? res.data.wait_list : []
           this.readyList = res.data.ready_list ? res.data.ready_list : []
+          this.loadingData = true
           this.copyReadyList = JSON.stringify(this.readyList)
         } else {
           this.waitList.audiences = []
@@ -180,9 +175,7 @@ export default {
         this.readyList = []
       });
     },
-    /**
-     * 重置分组
-     */
+    //重置分组
     hide() {
       this.waitList.audiences = []
       this.readyList = []
@@ -263,9 +256,7 @@ export default {
         this.$refs[groupingCardIndex].clearData ? this.$refs[groupingCardIndex].clearData() : this.$refs[groupingCardIndex][0].clearData()
       }
     },
-    /**
-     * 分组保存
-     */
+    //分组保存
     okHandle() {
       if (this.readyList.length == 0) {
         this.$message({
@@ -322,8 +313,8 @@ export default {
 
 <style lang="less" scoped>
 .group-content {
-  overflow: hidden;
   background: #fff;
+  padding: 0 5px;
   .group-header {
     text-align: right;
     padding: 0 32px 20px 32px;
@@ -331,7 +322,6 @@ export default {
   .group-list {
     background: #fff;
     height: 380px;
-    overflow: hidden;
     .group-list-item {
       box-sizing: border-box;
       width: 49.9%;
