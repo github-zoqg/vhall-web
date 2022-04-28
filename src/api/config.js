@@ -661,7 +661,10 @@ const apis = {
   languageList: ['/v3/webinars/webinar-language/get-list', 'POST'], // 多语种 - 集合
 
   lowerGrade: ['/fault/test/ops_fault_code_publish.json', 'GET'], // 系统降级处理配置文件 线上及测试环境统一使用该域名
-  getCustomRoleName: ['/v3/webinars/privilege/get-role-name', 'POST'] // 获取自定义角色名称
+  getCustomRoleName: ['/v3/webinars/privilege/get-role-name', 'POST'], // 获取自定义角色名称
+  
+  saveAgreement: ['/v3/interacts/agreement/save-agreement-info', 'POST'],
+  getAgreement: ['/v3/interacts/agreement/get-agreement-info', 'POST']
 };
 
 const getApi = api => {

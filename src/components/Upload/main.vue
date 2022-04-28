@@ -3,7 +3,8 @@
     class="avatar-uploader"
     v-bind="$props"
     :headers="headersVo"
-    :data=saveData
+    :action="action"
+    :data="saveData"
     name="resfile"
     accept="image/x-ms-bmp,image/x-png,image/gif,image/jpeg,image/bmp"
     :on-success='handleuploadSuccess'>
