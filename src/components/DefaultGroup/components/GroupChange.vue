@@ -146,6 +146,9 @@ export default {
 .group-change {
   .el-dialog__body {
     padding: 14px 20px;
+    .el-form-item {
+      margin-bottom: 0px;
+    }
   }
   .el-dialog__headerbtn .el-dialog__close {
     color: #666;
