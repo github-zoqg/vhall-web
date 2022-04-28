@@ -15,26 +15,29 @@
           @click.prevent.stop="viewerDialogAdd"
           size="small">新增分组</el-button>
       </div>
-      <el-scrollbar class="group-list scroll-bar"
-        v-if="defaultGroupShow&&loadingData">
-        <div class="group-list-item">
-          <grouping-card ref="groupingCard0"
-            :groupType="0"
-            @groupDissolution="groupDissolution"
-            @changeGroup="changeGroup"
-            :cardList="waitList"></grouping-card>
-        </div>
-        <div class="group-list-item"
-          v-for="(item,index) in readyList"
-          :key="item.group_order_id">
-          <grouping-card :ref="`groupingCard${item.group_order_id}`"
-            :groupType="1"
-            @groupDissolution="groupDissolution"
-            @changeGroup="changeGroup"
-            @removeGroup="removeGroup"
-            :groupIndex="index"
-            :cardList="item"
-            :maxNumber="maxNumber"></grouping-card>
+      <el-scrollbar class="scroll-bar"
+        ref="scrollBar">
+        <div class="group-list"
+          v-if="defaultGroupShow">
+          <div class="group-list-item">
+            <grouping-card ref="groupingCard0"
+              :groupType="0"
+              @groupDissolution="groupDissolution"
+              @changeGroup="changeGroup"
+              :cardList="waitList"></grouping-card>
+          </div>
+          <div class="group-list-item"
+            v-for="(item,index) in readyList"
+            :key="item.group_order_id">
+            <grouping-card :ref="`groupingCard${item.group_order_id}`"
+              :groupType="1"
+              @groupDissolution="groupDissolution"
+              @changeGroup="changeGroup"
+              @removeGroup="removeGroup"
+              :groupIndex="index"
+              :cardList="item"
+              :maxNumber="maxNumber"></grouping-card>
+          </div>
         </div>
       </el-scrollbar>
     </div>
@@ -149,6 +152,9 @@ export default {
     //新增分组
     viewerDialogAdd() {
       this.$refs.groupAdd?.handlOpen(this.groupList)
+      this.$nextTick(() => {
+        this.$refs.scrollBar?.update()
+      })
     },
     //显示分配小组弹框
     show() {
@@ -158,12 +164,16 @@ export default {
     //查询分组观众
     getDefaultData() {
       this.loading = true
+      this.waitList.audiences = []
+      this.readyList = []
       this.$fetch('getAudienceList', { am_id: this.groupId }).then(res => {
         this.loading = false
         if (res && res.code === 200 && res.data) {
           this.waitList.audiences = res.data.wait_list ? res.data.wait_list : []
           this.readyList = res.data.ready_list ? res.data.ready_list : []
-          this.loadingData = true
+          this.$nextTick(() => {
+            this.$refs.scrollBar?.update()
+          })
           this.copyReadyList = JSON.stringify(this.readyList)
         } else {
           this.waitList.audiences = []
@@ -314,14 +324,15 @@ export default {
 <style lang="less" scoped>
 .group-content {
   background: #fff;
-  padding: 0 5px;
   .group-header {
     text-align: right;
     padding: 0 32px 20px 32px;
   }
+  .scroll-bar {
+    height: 380px;
+  }
   .group-list {
     background: #fff;
-    height: 380px;
     .group-list-item {
       box-sizing: border-box;
       width: 49.9%;
