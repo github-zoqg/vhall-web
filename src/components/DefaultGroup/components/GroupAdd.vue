@@ -3,6 +3,7 @@
   <div class="vmp-group-add">
     <el-dialog :visible="dialogVisible"
       @open="handlOpen"
+      class="group-change"
       append-to-body
       :before-close="handleClose"
       :close-on-click-modal="false"
