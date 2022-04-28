@@ -25,8 +25,7 @@
       <div class="list-group-item"
         v-if="batchGroupState">
         <el-checkbox-group class="list-group-item item"
-          v-model="checkList"
-          @change="changeCheck">
+          v-model="checkList">
           <el-checkbox v-for="item in data.audiences"
             :key="item.group_order_id"
             :label="item.id"
@@ -77,9 +76,9 @@
 export default {
   name: 'VmpGroupCard',
   props: {
-    /**分组名称 */
+    //分组名称
     groupIndex: {
-      require: true,
+      required: true,
       type: Number,
       default: 0
     },
@@ -88,15 +87,16 @@ export default {
       type: [String, Number],
       default: 1
     },
-    /**分组最大人数 */
+    //分组最大人数
     maxNumber: {
       type: [String, Number],
       default: 2000
     },
-    /**本组观众 */
+    //本组观众
     data: {
+      required: true,
       type: Object,
-      default: () => { }
+      default: () => ({})
     }
   },
   data() {
@@ -106,17 +106,12 @@ export default {
     }
   },
   methods: {
-    /**复选事件 */
-    changeCheck(data) {
-    },
-    /**批量换组||批量分配 */
+    //批量换组||批量分配
     batchGroup() {
-      if (this.data.audiences.length == 0) {
-        return
-      }
+      if (!this.data.audiences.length) return
       this.batchGroupState = true
     },
-    /*批量换组*/
+    //换组
     changeGroup() {
       if (!this.checkList.length) return
       this.$emit('changeGroup', this.data, this.checkList)
@@ -138,19 +133,21 @@ export default {
       this.data.audiences.splice(index, 1)
       this.$emit('removeGroup', item)
     },
-    /*解散*/
+    //解散
     dissolution() {
       this.checkList = []
       this.$emit('groupDissolution', this.groupIndex, this.data.audiences)
       console.log('解散' + this.data.group_order_id)
     },
-    /**清除状态 关闭弹框 */
+    //清除状态 关闭弹框
     clearData() {
       this.checkList = []
       this.batchGroupState = false
     },
+    //超出显示el-tooltip
     isOverflow(name) {
-      var bytesLen = name.replace(/[^\x00-\xff]/g, 'xx').length;
+      // eslint-disable-next-line no-control-regex
+      let bytesLen = name.replace(/[^\x00-\xff]/g, 'xx').length;
       return bytesLen < 10
     }
   }
@@ -176,7 +173,7 @@ export default {
       float: right;
       height: 40px;
       overflow: hidden;
-      span.group-disable {
+      .group-disable {
         color: gray;
         padding-left: 8px;
         font-size: 14px;

@@ -7,6 +7,7 @@
       :before-close="handleClose"
       :close-on-click-modal="false"
       width="400px"
+      class="group-change"
       title="提示">
       <el-form class="group-form"
         :rules="rules"
@@ -30,9 +31,11 @@
       <div slot="footer"
         class="vmp-group-ft">
         <el-button type="primary"
-          :round="true"
+          size="medium"
+          round
           @click="handleSubmit">确定</el-button>
-        <el-button :round="true"
+        <el-button round
+          size="medium"
           @click="handleClose">取消</el-button>
       </div>
     </el-dialog>
@@ -124,18 +127,31 @@ export default {
   .el-dialog__body {
     min-height: 32px !important;
   }
-
-  .group-form {
-    .el-form-item {
-      margin-bottom: 0px;
-      .el-form-item__label {
-        color: #1a1a1a;
-        font-weight: 400;
-      }
-      .el-form-item__content {
-        margin-left: 70px;
-      }
+}
+.group-form {
+  .el-dialog__headerbtn .el-dialog__close {
+    color: #666;
+  }
+  .el-form-item {
+    margin-bottom: 0px;
+    .el-form-item__label {
+      color: #1a1a1a;
+      font-weight: 400;
     }
+    .el-form-item__content {
+      margin-left: 70px;
+    }
+  }
+}
+.group-change {
+  .el-dialog__body {
+    padding: 14px 20px;
+  }
+  .el-dialog__headerbtn .el-dialog__close {
+    color: #666;
+  }
+  .el-dialog {
+    border-radius: 4px;
   }
 }
 </style>
