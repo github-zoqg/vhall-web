@@ -677,7 +677,7 @@ export default {
           type: 'error',
           customClass: 'zdy-info-box'
         });
-      } else if (nodes[0].value.length + 8 > 100) {
+      } else if (nodes[0].value.length + 7 > 100) {
         return this.$message({
           message: '添加隐私协议会超出预览字数，请删减后再添加',
           showClose: true,
@@ -686,6 +686,7 @@ export default {
           customClass: 'zdy-info-box'
         });
       }
+
       let cloneNode = JSON.parse(JSON.stringify(nodes[1]));
       let cloneNode2 = JSON.parse(JSON.stringify(nodes[2]));
       cloneNode.value = "《隐私声明2》";
@@ -716,7 +717,7 @@ export default {
           })
         };
         this.questionEdit(options);
-      }).catch(err => { consoel.log(ree); });
+      }).catch(err => { console.log(err); });
     },
     privacyFormatter(item){
       let text = JSON.parse(JSON.stringify(item[0].value));
