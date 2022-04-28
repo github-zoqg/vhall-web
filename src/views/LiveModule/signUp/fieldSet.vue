@@ -677,7 +677,7 @@ export default {
           type: 'error',
           customClass: 'zdy-info-box'
         });
-      } else if (nodes[0].value.length >= 53) {
+      } else if (nodes[0].value.length + 8 > 100) {
         return this.$message({
           message: '添加隐私协议会超出预览字数，请删减后再添加',
           showClose: true,
