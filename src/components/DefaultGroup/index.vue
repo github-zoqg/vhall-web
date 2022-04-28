@@ -3,6 +3,9 @@
     :visible.sync="defaultGroupShow"
     width="800px"
     height="520px"
+    class="dispach-chgroup"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
     :before-close="cancelDialog">
     <div class="group-content"
       element-loading-text="努力加载中"
@@ -320,6 +323,7 @@ export default {
 <style lang="less" scoped>
 .group-content {
   height: 430px;
+  padding-bottom: 12px;
   overflow: auto;
   background: #fff;
   .group-header {
@@ -341,5 +345,10 @@ export default {
       }
     }
   }
+}
+</style>
+<style lang="less">
+.dispach-chgroup .el-dialog__body {
+  padding-bottom: 12px;
 }
 </style>
