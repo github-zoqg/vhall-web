@@ -2,11 +2,11 @@
   <div class="grouping-card">
     <!--分配小组按钮组-->
     <div class="group-header btn-group">
-      <span class="group-header-name">{{groupType?'分组'+data.group_order_id:'待分配'}}（{{data.audiences&&data.audiences.length}}）</span>
+      <span class="group-header-name">{{groupType?'分组'+cardList.group_order_id:'待分配'}}（{{cardList.audiences&&cardList.audiences.length}}）</span>
       <div class="btn-group-right">
         <span v-if="!batchGroupState"
           @click="batchGroup"
-          :class="data.audiences.length>0?'':'group-disable'">
+          :class="cardList.audiences.length>0?'':'group-disable'">
           <i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>
           {{groupType?'批量换组':'批量分配'}}
         </span>
@@ -26,17 +26,17 @@
         v-if="batchGroupState">
         <el-checkbox-group class="list-group-item item"
           v-model="checkList">
-          <el-checkbox v-for="item in data.audiences"
+          <el-checkbox v-for="item in cardList.audiences"
             :key="item.group_order_id"
             :label="item.id"
             size="medium"
-            :name="data.groupName">{{item.name}}</el-checkbox>
+            :name="cardList.groupName">{{item.name}}</el-checkbox>
         </el-checkbox-group>
       </el-scrollbar>
       <el-scrollbar class="list-group-item scroll-bar"
         v-else>
         <div class="list-group-item-state"
-          v-for="(item,index) in data.audiences"
+          v-for="(item,index) in cardList.audiences"
           :ref="'groupItem'+item.id"
           :key="item.id">
           <el-popover placement="bottom-start"
@@ -59,8 +59,9 @@
                 v-if="isOverflow(item.name)">{{item.name}}</span>
               <el-tooltip effect="dark"
                 v-else
-                :content="item.name"
                 placement="top">
+                <div slot="content"
+                  class="group-tooltip">{{item.name}}</div>
                 <span class="list-group-name">{{item.name}}</span>
               </el-tooltip>
             </span>
@@ -78,22 +79,24 @@ export default {
   props: {
     //分组名称
     groupIndex: {
-      required: true,
+      required: false,
       type: Number,
       default: 0
     },
     //0待分组1其他组
     groupType: {
+      required: false,
       type: [String, Number],
       default: 1
     },
     //分组最大人数
     maxNumber: {
+      required: true,
       type: [String, Number],
       default: 2000
     },
     //本组观众
-    data: {
+    cardList: {
       required: true,
       type: Object,
       default: () => ({})
@@ -105,23 +108,26 @@ export default {
       batchGroupState: false//批量换组,
     }
   },
+  computed: {
+
+  },
   methods: {
     //批量换组||批量分配
     batchGroup() {
-      if (!this.data.audiences.length) return
+      if (!this.cardList.audiences.length) return
       this.batchGroupState = true
     },
     //换组
     changeGroup() {
       if (!this.checkList.length) return
-      this.$emit('changeGroup', this.data, this.checkList)
+      this.$emit('changeGroup', this.cardList, this.checkList)
     },
     /**
      * 单个换组 
      * @param {object} item 选择组
      * */
     changeCurrentGroup(item) {
-      this.$emit('changeGroup', this.data, [item.id])
+      this.$emit('changeGroup', this.cardList, [item.id])
       this.clearData()
     },
     /**
@@ -130,7 +136,7 @@ export default {
      * @param {number} index 观众序号
     */
     removeGroup(item, index) {
-      this.data.audiences.splice(index, 1)
+      this.cardList.audiences.splice(index, 1)
       this.$emit('removeGroup', item)
     },
     //解散
@@ -143,14 +149,14 @@ export default {
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
         this.checkList = []
-        this.$emit('groupDissolution', this.groupIndex, this.data.audiences)
+        this.$emit('groupDissolution', this.groupIndex, this.cardList.audiences)
         this.$message({
           message: `解散成功`,
           showClose: true,
           type: 'success',
           customClass: 'zdy-info-box'
         });
-        console.log('解散' + this.data.group_order_id)
+        console.log('解散' + this.cardList.group_order_id)
       }).catch(() => { });
     },
     //清除状态 关闭弹框
@@ -247,6 +253,9 @@ export default {
 }
 </style>
 <style lang="less">
+.group-tooltip {
+  max-width: 300px;
+}
 .list-group-popover {
   box-sizing: border-box;
   min-width: 96px;
