@@ -197,7 +197,7 @@ export default {
     // 获取活动标记记录
     getSignInfo() {
       let params = {
-        type: this.brandType,
+        type: this.$route.params.str ? this.brandType : 2,
         webinar_id: this.brandType == 1 ? this.$route.params.str : ''
       }
       this.$fetch('getInterWebinarTag', this.$params(params)).then(res => {
