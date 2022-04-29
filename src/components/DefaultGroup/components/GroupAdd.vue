@@ -132,7 +132,6 @@ export default {
   .el-dialog__body {
     min-height: 32px !important;
   }
-
   .add-form {
     .el-form-item {
       margin-bottom: 0px;
@@ -142,7 +141,6 @@ export default {
       }
       .el-form-item__content {
         margin-left: 40px;
-
         .el-input__suffix-inner {
           color: #666;
           padding: 2px 8px;

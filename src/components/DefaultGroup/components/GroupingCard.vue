@@ -91,7 +91,7 @@ export default {
     },
     //分组最大人数
     maxNumber: {
-      required: true,
+      required: false,
       type: [String, Number],
       default: 2000
     },
