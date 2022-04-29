@@ -5,8 +5,9 @@
       @open="handlOpen"
       class="group-change"
       append-to-body
-      :before-close="handleClose"
       :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :before-close="handleClose"
       width="400px"
       title="新增分组">
       <el-form class="add-form"
@@ -27,9 +28,11 @@
       <div slot="footer"
         class="vmp-group-ft">
         <el-button type="primary"
-          :round="true"
+          round
+          size="medium"
           @click="handleSubmit">确定</el-button>
-        <el-button :round="true"
+        <el-button round
+          size="medium"
           @click="handleClose">取消</el-button>
       </div>
     </el-dialog>

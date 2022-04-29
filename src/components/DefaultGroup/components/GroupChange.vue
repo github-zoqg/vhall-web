@@ -4,8 +4,9 @@
     <el-dialog :visible="dialogVisible"
       @open="handleOpen"
       append-to-body
-      :before-close="handleClose"
       :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :before-close="handleClose"
       width="400px"
       class="group-change"
       title="提示">
