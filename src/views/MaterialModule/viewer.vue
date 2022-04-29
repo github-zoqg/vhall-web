@@ -182,7 +182,7 @@
         </el-form-item>
         <el-form-item label="小组"
           prop="group_order_id">
-          <VhallInput v-model.trim="viewerForm.group_order_id"
+          <VhallInput v-model.trim.number="viewerForm.group_order_id"
             v-clearEmoij
             auto-complete="off"
             placeholder="请输入小组号，例如：1"
