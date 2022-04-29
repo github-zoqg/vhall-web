@@ -342,11 +342,11 @@ export default {
       float: left;
       &:nth-child(odd) {
         padding-right: 5px;
-        padding-left: 20px;
+        padding-left: 32px;
       }
       &:nth-child(even) {
         padding-left: 5px;
-        padding-right: 20px;
+        padding-right: 32px;
       }
     }
   }
