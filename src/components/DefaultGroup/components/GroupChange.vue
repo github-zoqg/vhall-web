@@ -145,6 +145,12 @@ export default {
   }
 }
 .group-change {
+  .el-dialog {
+    padding: 0 12px;
+    .el-dialog__headerbtn {
+      right: 32px;
+    }
+  }
   .el-dialog__body {
     padding: 14px 20px;
     .el-form-item {
