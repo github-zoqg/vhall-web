@@ -141,6 +141,8 @@ export default {
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
           lockScroll: false,
+          closeOnClickModal: false,
+          closeOnPressEscape: false,
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           done ? done() : this.hide()

@@ -157,5 +157,11 @@ export default {
   .el-dialog {
     border-radius: 4px;
   }
+  .el-input--suffix .el-input__inner {
+    padding-left: 10px;
+  }
+  .el-input__suffix {
+    right: 10px;
+  }
 }
 </style>
