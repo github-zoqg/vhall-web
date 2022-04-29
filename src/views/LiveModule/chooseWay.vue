@@ -103,6 +103,8 @@ import PageTitle from '@/components/PageTitle';
 import {sessionOrLocal, getQueryString} from "@/utils/utils";
 import OldHeader from '@/components/OldHeader';
 import Env from '@/api/env';
+import {v1 as uuidV1} from "uuid";
+
 export default {
   name: 'chooseWay.vue',
   components: {
@@ -355,9 +357,11 @@ export default {
         });
         return
       }
+      const uuid = uuidV1()
       this.$fetch('setLiveDirectorSeat', {
         webinar_id: this.$route.params.str,
         seat_id: this.curSelected,
+        uuid: uuid
       }).then(res => {
         if (res.code === 515000) {
            this.$message({
@@ -381,7 +385,7 @@ export default {
           if(arr.length){
             let seat_name = arr[0].name
             //跳转推流页
-            window.location.href = `${process.env.VUE_APP_WEB_URL}/lives/yun/${this.$route.params.str}?seat_id=${this.curSelected}&seat_name=${seat_name}`
+            window.location.href = `${process.env.VUE_APP_WEB_URL}/lives/yun/${this.$route.params.str}?seat_id=${this.curSelected}&seat_name=${seat_name}&uuid=${uuid}`
           }
 
         }
