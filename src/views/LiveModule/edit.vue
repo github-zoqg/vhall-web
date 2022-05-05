@@ -1031,6 +1031,7 @@ export default {
       }
     },
     handleSelectDirectorMode(mode) {
+      if (this.title === '编辑') return
       if (this.selectDelayMode == 'delay'&&mode== 1) return
       this.selectDirectorMode = mode
     },
