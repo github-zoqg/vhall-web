@@ -377,6 +377,7 @@ export default {
         'webinar_notice', // 公告
         'disable_msg', // 全员禁言
         'share', // 分享
+        'speak_manage'
       ]
       const obj = {}
       defaultSortArr.forEach((item) => {
@@ -748,7 +749,7 @@ export default {
   vertical-align: sub;
 }
 .role-card-list {
-  
+
 }
 .role-card-wrap{
 // display: flex;
