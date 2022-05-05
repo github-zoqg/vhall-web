@@ -94,6 +94,7 @@ export default {
     };
   },
   methods: {
+    //当前分组观众数
     currentGroupNumber(group) {
       const filterList = this.readyList.filter(item => {
         return item.group_order_id == group
@@ -113,9 +114,7 @@ export default {
       this.dialogVisible = true
       this.formInline.selectGroup = ''
     },
-    /**
-     * 关闭弹框
-     */
+    //关闭弹框
     handleClose() {
       this.dialogVisible = false;
       this.$emit('update:show', false);

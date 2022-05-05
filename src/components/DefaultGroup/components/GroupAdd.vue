@@ -65,10 +65,12 @@ export default {
     };
   },
   props: {
+    //所有分组
     groupList: {
       type: Array,
       default: () => []
     },
+    //已分组数据
     readyList: {
       type: Array,
       default: () => []
@@ -105,20 +107,17 @@ export default {
         }
       })
     },
+    //确定防抖
     handleSubmit() {
       debounce(async () => {
         await this.addGroup();
       }, 500)
     },
-    /**
-     * 打开弹框
-     */
+    //打开弹框
     handlOpen() {
       this.dialogVisible = true
     },
-    /**
-     * 关闭弹框
-     */
+    //关闭弹框
     handleClose() {
       this.dialogVisible = false;
       this.formInline.count = 1

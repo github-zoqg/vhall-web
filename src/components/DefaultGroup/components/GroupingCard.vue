@@ -2,19 +2,23 @@
   <div class="grouping-card">
     <!--分配小组按钮组-->
     <div class="group-header btn-group">
-      <span class="group-header-name">{{groupType?'分组'+cardList.group_order_id:'待分配'}}（{{cardList.audiences&&cardList.audiences.length}}）</span>
+      <span class="group-header-name">{{groupHeaderName}}（{{cardList.audiences&&cardList.audiences.length}}）</span>
       <div class="btn-group-right">
         <span v-if="!batchGroupState"
           @click="batchGroup"
+          class="span"
           :class="cardList.audiences.length>0?'':'group-disable'">
           <i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>
-          {{groupType?'批量换组':'批量分配'}}
+          {{batchGroupName}}
         </span>
         <span v-if="groupType&&!batchGroupState"
+          class="span"
           @click="dissolution"><i class="vh-saas-iconfont vh-saas-a-line-dissolutiongrouping pr4"></i>解散</span>
         <span v-show="batchGroupState"
+          class="span"
           @click="clearData"><i class="el-icon el-icon-close cancel-size"></i>取消</span>
         <span v-show="batchGroupState"
+          class="span"
           @click="changeGroup"
           :class="checkList&&checkList.length?'':'group-disable'"><i class="vh-saas-iconfont vh-saas-a-line-Ingroup pr4"></i>换组</span>
       </div>
@@ -51,8 +55,10 @@
             :popperClass="groupType?'list-group-popover':'list-group-popover list-none'"
             trigger="click">
             <div class="list-group-item-button">
-              <div @click="removeGroup(item,index)">移出小组</div>
-              <div @click="changeCurrentGroup(item)">换组</div>
+              <div class="item-button"
+                @click="removeGroup(item,index)">移出小组</div>
+              <div class="item-button"
+                @click="changeCurrentGroup(item)">换组</div>
             </div>
             <span slot="reference">
               <span class="list-group-name"
@@ -109,7 +115,12 @@ export default {
     }
   },
   computed: {
-
+    groupHeaderName() {
+      return this.groupType ? '分组' + this.cardList.group_order_id : '待分配'
+    },
+    batchGroupName() {
+      return this.groupType ? '批量换组' : '批量分配'
+    }
   },
   methods: {
     //批量换组||批量分配
@@ -204,7 +215,7 @@ export default {
           color: gray;
         }
       }
-      span {
+      .span {
         padding-left: 8px;
         font-size: 14px;
         cursor: pointer;
@@ -275,13 +286,13 @@ export default {
     background: #fff;
     text-align: left;
     padding: 4px 0;
-    div {
+    .item-button {
       cursor: pointer;
       padding: 0 14px;
       height: 28px;
       line-height: 28px;
     }
-    div:hover {
+    .item-button:hover {
       color: #1a1a1a;
       background: #f7f7f7;
     }
