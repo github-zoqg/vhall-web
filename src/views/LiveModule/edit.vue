@@ -565,15 +565,6 @@ export default {
         return false;
       }
     },
-    // admin无云导播活动权限
-    webinarDirector() {
-      //  webinar.director 1:有无延迟权限  0:无权限
-      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
-        return true;
-      } else {
-        return false;
-      }
-    },
     // 是否有多语种权限
     hasMultilingual() {
       // 发布为定时直播 或者 点播，不需要取值 this.$route.query.webinar_id
@@ -794,7 +785,8 @@ export default {
           subject: '',
           introduce: ''
         } // 1固定，表示西班牙语
-      }
+      },
+      webinarDirector: false    // admin无云导播活动权限
     };
   },
   beforeRouteEnter (to, from, next) {
@@ -889,6 +881,12 @@ export default {
       this.getHighLimit();
     }
 
+    //  webinar.director 1:有无延迟权限  0:无权限
+    if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
+      this.webinarDirector = true;
+    } else {
+      this.webinarDirector = false;
+    }
   },
   beforeDestroy() {
     if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
@@ -1078,6 +1076,10 @@ export default {
         }
         if (flag) {
           this.selectMedia.msg_url = this.liveDetailInfo.webinar_type == 1 ? '.mp3' : '.mp4';
+        }
+        //处理云导播到期情况
+        if(!this.webinarDirector){
+          this.selectDirectorMode = 0
         }
         console.log(this.selectMedia, '?????????')
         // 重置修改状态
