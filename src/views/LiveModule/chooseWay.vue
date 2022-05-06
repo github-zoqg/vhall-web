@@ -92,7 +92,7 @@
               <div class="corner" v-if="item.status === 1">已占用</div>
            </div>
         </div>
-        <el-button type="primary" round @click="toDirector" class="btn" v-preventReClick>确认</el-button>
+        <el-button type="primary" round :disabled="!curSelected" @click="toDirector" class="btn" v-preventReClick>确认</el-button>
       </div>
     </el-dialog>
   </div>
@@ -337,6 +337,8 @@ export default {
       if(this.selectDirectorMode === 2){
         Promise.resolve(this.getLiveDirectorSeatList()).then(res=>{
           this.dialogDirectorSeatVisible = true
+          this.dialogDirectorVisible = false
+          this.curSelected = null
         })
       }else{
         this.goLive(1)

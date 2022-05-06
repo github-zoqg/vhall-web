@@ -84,7 +84,7 @@
                   <div class="indent">设置后，分辨率不支持重复修改</div>
                   <div class="btns">
                     <el-button round size="small" type="primary" @click="setDpi">确定</el-button>
-                    <el-button round size="small" @click="showFloatDirector = false">取消</el-button>
+                    <el-button round size="small" @click="cancelSetDirector">取消</el-button>
                   </div>
                 </div>
               </div>
@@ -273,6 +273,7 @@ export default {
       if (this.handleTimerDirector) clearTimeout(this.handleTimerDirector)
       this.handleTimerDirector = setTimeout(() => {
         this.showFloatDirector = false
+        this.dpi = '1280*720'
       }, 400)
     },
     // 字符截取显示...兼容ie，用js
@@ -672,6 +673,10 @@ export default {
         data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       window.open(this.director_web_url, '_blank');
+    },
+    cancelSetDirector(){
+        this.showFloatDirector = false
+        this.dpi = '1280*720'
     }
   }
 };
