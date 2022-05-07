@@ -187,7 +187,7 @@ export default {
             openShow: '开启后，直播活动删除成功进行通知',
             closeShow: '已开启，直播活动删除成功进行通知',
             value: Number(eventsList.includes('10') ? 1 : 0) || 0,
-            k: 100615
+            k: 100841
           }
         ];
         this.keyList = keyList;
