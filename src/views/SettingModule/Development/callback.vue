@@ -180,6 +180,14 @@ export default {
             closeShow: '已开启，文档上传并转码成功进行通知',
             value: Number(eventsList.includes('7') ? 1 : 0) || 0,
             k: 100613
+          },
+          {
+            type: 'key_10',
+            key_name: '活动删除',
+            openShow: '开启后，直播活动删除成功进行通知',
+            closeShow: '已开启，直播活动删除成功进行通知',
+            value: Number(eventsList.includes('10') ? 1 : 0) || 0,
+            k: 100841
           }
         ];
         this.keyList = keyList;
@@ -244,6 +252,13 @@ export default {
             key_name: '文档转码',
             openShow: '开启后，文档上传并转码成功进行通知',
             closeShow: '已开启，文档上传并转码成功进行通知',
+            value: 0
+          },
+          {
+            type: 'key_10',
+            key_name: '活动删除',
+            openShow: '开启后，直播活动删除成功进行通知',
+            closeShow: '已开启，直播活动删除成功进行通知',
             value: 0
           }
         ];
