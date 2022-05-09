@@ -371,6 +371,7 @@ export default {
         'personal_chat', // 问答
         'sign_in', // 签到
         'timer', // 计时器
+        'video_polling', // 视频轮巡
         'members_manager', // 成员管理
         'webinar_group', // 分组讨论
         'comment_check', // 聊天过滤
