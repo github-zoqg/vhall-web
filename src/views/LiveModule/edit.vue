@@ -74,16 +74,6 @@
             <img src="../../common/images/live/mode-video_check@2x.png" :class="{active: liveMode== 2}" @click='liveModeChange(2)' v-if="liveMode== 2">
             <img src="../../common/images/live/mode-video@2x.png" alt="" @click='liveModeChange(2)' v-else>
             <p class="desc">视频直播</p>
-            <!-- <el-container class='model'> -->
-              <!-- :class="{active: liveMode== 2}" -->
-              <!-- <el-aside width="80px" class="block">
-                <i class="el-icon-video-camera icon"></i>
-              </el-aside>
-              <el-container>
-                <el-header height='13px' class="block"></el-header>
-                <el-main class="block"></el-main>
-              </el-container> -->
-            <!-- </el-container> -->
           </div>
           <!-- card 互动直播 -->
           <div>
@@ -94,23 +84,6 @@
              <img src="../../common/images/live/mode-active_check@2x.png" alt="" :class="{active: liveMode== 3}" @click='!webniarIntact && liveModeChange(3)' v-if="liveMode== 3">
               <img src="../../common/images/live/mode-active@2x.png" alt="" @click='!webniarIntact && liveModeChange(3)' v-else>
             </template>
-            <!-- <el-container class='model'> -->
-
-              <!-- <el-header height='13px'>
-                <el-col :span="3" class="block"></el-col>
-                <el-col :span="3" :offset='1' class="block"></el-col>
-                <el-col :span="3" :offset='1' class="block"></el-col>
-                <el-col :span="3" :offset='1' class="block"></el-col>
-                <el-col :span="3" :offset='1' class="block"></el-col>
-                <el-col :span="4" :offset='1' class="block"></el-col>
-              </el-header>
-              <el-container>
-                <el-aside width="80px" class="block">
-                  <i class="el-icon-s-custom icon"></i>
-                </el-aside>
-                <el-main class="block"></el-main>
-              </el-container> -->
-            <!-- </el-container> -->
             <p class="desc">互动直播</p>
             <!-- <span class="notAllow" v-if="webniarIntact">未开通</span> -->
           </div>
@@ -118,16 +91,6 @@
           <div>
             <img src="../../common/images/live/mode-media_check@2x.png" :class="{active: liveMode == 1}" alt=""  @click='liveModeChange(1)' v-if="liveMode== 1">
             <img src="../../common/images/live/mode-media@2x.png" alt=""  @click='liveModeChange(1)' v-else>
-            <!-- <el-container class='model'>
-              <img src="../../common/images/live/mode-media.png" alt="">
-              <el-aside width="80px" class="block">
-                <i class="el-icon-microphone icon"></i>
-              </el-aside>
-              <el-container>
-                <el-header height='13px' class="block"></el-header>
-                <el-main class="block"></el-main>
-              </el-container>
-            </el-container> -->
             <p class="desc">音频直播</p>
           </div>
           <!-- card 分组直播 -->
@@ -139,16 +102,6 @@
              <img src="../../common/images/live/mode-group_check@2x.png" alt="" :class="{active: liveMode == 6}" @click='!webinarGroup && liveModeChange(6)' v-if="liveMode == 6">
               <img src="../../common/images/live/mode-group@2x.png" alt="" @click='!webinarGroup && liveModeChange(6)' v-else>
             </template>
-            <!-- <el-container class='model'>
-              <img src="../../common/images/live/mode-media.png" alt="">
-              <el-aside width="80px" class="block">
-                <i class="el-icon-microphone icon"></i>
-              </el-aside>
-              <el-container>
-                <el-header height='13px' class="block"></el-header>
-                <el-main class="block"></el-main>
-              </el-container>
-            </el-container> -->
             <p class="desc">分组直播</p>
           </div>
         </div>
@@ -165,6 +118,13 @@
             <el-option :key="optIndex" :label="opt.label" :value="opt.label" :disabled="selectDelayMode == 'delay' && liveMode != 6 ? (speakerMaxNum < 6 ? opt.value > speakerMaxNum : opt.value > 6) : opt.value > speakerMaxNum"/>
           </template>
         </el-select>
+        <el-tooltip v-if="liveMode == 3" v-tooltipMove>
+            <div slot="content">
+              <p>1.开启视频轮巡功能后，会占用上麦数（视频轮巡路数&lt;=当前活动连麦数-已连麦数）</p>
+              <p>2.请根据视频轮巡及上麦的需要，酌情设置本场活动的连麦数量</p>
+            </div>
+            <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999; margin-left:5px"></i>
+          </el-tooltip>
       </el-form-item>
       <template  v-if="showDelayTag && liveMode != 6">
         <el-form-item class="margin32" label="直播延迟" required style="display: none;" :style="{'display' : liveMode != 6 ? 'block' : 'nonelay'}">
@@ -1340,7 +1300,7 @@ export default {
               //location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}`
             }
           })
-          
+
         } else {
           // 创建其它直播成功
           this.$message({

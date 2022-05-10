@@ -193,7 +193,7 @@ export default {
         { icon: 'icon_embedded@2x', id: 8, title: '推广嵌入', subText: `获取活动推广嵌入的方法`, type: 100065, path: `/live/embedCard/${this.$route.params.str}`, isShow: true}
       ],
       this.brandList = [
-        { icon: 'icon_brand@2x', id: 1, title: '品牌设置', subText: '设置观看页品牌信息', path: `/live/brandSet/${this.$route.params.str}`,isShow: perssionInfo['ui.brand_setting'] > 0 || perssionInfo.webinar_skins > 0},
+        { icon: 'icon_brand@2x', id: 1, title: '品牌设置', subText: '设置观看页品牌信息', path: `/live/brandSet/${this.$route.params.str}`,isShow: perssionInfo['ui.brand_setting'] > 0 || perssionInfo.webinar_skins > 0 || perssionInfo['watch.viewing_protocol'] > 0},
         { icon: 'icon_custom@2x', id: 2, title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/live/customTab/${this.$route.params.str}`,isShow: this.isTrue},
         { icon: 'icon_player@2x',id: 3, title: '播放器设置', subText: `设置${this.type == 4 ? '点播' :'直播'}跑马灯水印`, path: `/live/playerSet/${this.$route.params.str}`,isShow: perssionInfo.player_config==1},
         { icon: 'icon_invitation@2x', id: 4, title: '邀请卡', subText: `用于${this.type == 4 ? '点播' :'直播'}邀请或裂变分享`, path: `/live/invCard/${this.$route.params.str}`,isShow: perssionInfo.btn_invite==1},

@@ -32,6 +32,10 @@ import VueTinymce from './editorPlugin'
 export default {
   name: "vhall-editor",
   props: {
+    modelType: {
+      type: String,
+      defaut: 'common'
+    },
     id: {
       type: String,
       default: function() {
@@ -77,8 +81,6 @@ export default {
   },
 
   created() {
-  },
-  mounted() {
   },
   updated() {
   },
@@ -153,12 +155,21 @@ export default {
       currentCount: 0,
     };
   },
+  watch: {
+    value: {
+      handler(newVal) {
+        if (newVal) {
+          this.sendContent(newVal)
+        }
+      },
+      immediate: true
+    }
+  },
   methods: {
     // 内容修改后，将信息返回
     sendContent(text) {
-      // console.log('字符数', this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())
+      console.log('字符数', text, this.value, this.$refs.editor.getInstance(),  this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())
       this.currentCount = this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount()
-
       if(this.currentCount > 1000) {
         if (this.vm) {
           this.vm.close();
@@ -176,10 +187,11 @@ export default {
     },
      //文案提示问题
     messageInfo() {
+      const message = this.modelType == 'restriction' ? '您输入的内容超出1000限制' : '您输入的内容超出1000限制，已自动取消'
       this.vm = this.$message({
         showClose: false,
         duration: 2000,
-        message: '您输入的内容超出1000限制，已自动取消',
+        message,
         type: 'warning'
       });
     },

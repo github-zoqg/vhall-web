@@ -371,12 +371,14 @@ export default {
         'personal_chat', // 问答
         'sign_in', // 签到
         'timer', // 计时器
+        'video_polling', // 视频轮巡
         'members_manager', // 成员管理
         'webinar_group', // 分组讨论
         'comment_check', // 聊天过滤
         'webinar_notice', // 公告
         'disable_msg', // 全员禁言
         'share', // 分享
+        'speak_manage'
       ]
       const obj = {}
       defaultSortArr.forEach((item) => {
@@ -748,7 +750,7 @@ export default {
   vertical-align: sub;
 }
 .role-card-list {
-  
+
 }
 .role-card-wrap{
 // display: flex;
