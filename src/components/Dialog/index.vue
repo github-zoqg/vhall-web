@@ -5,8 +5,8 @@
     @close="closeHandler"
     @closed="closedHandler"
     :visible.sync="dialogVisable"
-    :close-on-click-modal=modalClick
-    :close-on-press-escape=false
+    :close-on-click-modal="modalClick"
+    :close-on-press-escape="false"
     >
     <div>
       <slot></slot>
