@@ -45,7 +45,7 @@ export default {
       loading: true,
     }
   },
-  props: ['questionId'],
+  props: ['questionId','alias'],
   created() {
     this.type = this.$route.query.type;
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
@@ -175,6 +175,9 @@ export default {
         img_url: this.questionDataInfo.imgUrl,
         playback_filling: extension.playback_filling
       }
+      if(this.alias){
+        params.alias = this.alias
+      }
       this.$fetch('createQuestion', params).then(res => {
         if (this.type == 1) {
           this.$vhall_paas_port({
@@ -202,6 +205,9 @@ export default {
         img_url: this.questionDataInfo.imgUrl,
         playback_filling: extension.playback_filling
       }
+      if(this.alias){
+        params.alias = this.alias
+      }
       this.$fetch('editQuestion', params).then(res => {
         this.$vhall_paas_port({
           k: 100527,
@@ -228,6 +234,9 @@ export default {
         description: description,
         img_url: this.questionDataInfo.imgUrl,
         playback_filling: extension.playback_filling
+      }
+      if(this.alias){
+        params.alias = this.alias
       }
       this.$fetch('createLiveQuestion', params).then(res => {
         this.$vhall_paas_port({
@@ -260,6 +269,9 @@ export default {
         description: description,
         img_url: this.questionDataInfo.imgUrl,
         playback_filling: extension.playback_filling
+      }
+      if(this.alias){
+        params.alias = this.alias
       }
       this.$fetch('editLiveQuestion', params).then(res => {
         this.$vhall_paas_port({

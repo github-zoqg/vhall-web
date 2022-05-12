@@ -3,14 +3,14 @@
     <!-- 头部标题 -->
      <pageTitle :pageTitle="`${title}问卷`">
         <div class="headBtnGroup">
-          <el-button type="text" @click="openSet" class="name_set_button">修改问卷显示名称</el-button>
+          <el-button type="text" @click="openSet" class="name_set_button">修改「问卷」显示名称</el-button>
           <i class="iconfont-v3 saasicon_help_m" @click="showPreview"></i>
         </div>
       </pageTitle>
       <!-- 问卷组件 -->
       <question
           ref="questions"
-          :newName='newName'
+          :alias='alias'
       ></question>
 
       <!-- 别名设置弹框 -->
@@ -24,16 +24,17 @@
         <div class="async__body">
           <div class="async__ctx">
             <VhallInput
-            v-model="newName"
+            v-model="alias"
             :placeholder="('请输入标记文字')"
             maxlength="8"
             v-clearEmoij
             show-word-limit
           ></VhallInput>
-            <p class="setname_tip">可将名称修改为「投票」「报名」等，修改后用户观看直播时看到的是修改后的名称</p>
+            <p class="setname_tip">可将名称修改为「投票」「报名」等，修改后用户观看直播时看到的是修改后的名称。</p>
           </div>
           <div class="async__footer">
-            <el-button type="primary" size="medium" @click="saveNewName" round>保存</el-button>
+            <el-button type="primary" size="medium" @click="saveNewName" round>确定</el-button>
+            <el-button plain size="medium" @click="saveNewName" round>取消</el-button>
           </div>
         </div>
       </VhallDialog>
@@ -58,7 +59,7 @@ import question from '@/components/Question/question'
 export default {
   data(){
     return {
-      newName: '',
+      alias: '',
       dialogNameSet: false,
       dialogPreview: false
     }
@@ -83,12 +84,12 @@ export default {
     },
     openSet(){
       this.dialogNameSet = true;
-      this.newName = '';
+      this.alias = '';
       console.log('%c 打开别名设置弹框','color:blue')
 
     },
     saveNewName(){
-      this.$route.query.newName = this.newName;
+      this.$route.query.alias = this.alias;
       this.dialogNameSet = false;
       console.log(this.$route.query)
     }
@@ -137,6 +138,7 @@ export default {
     float: right;
     .name_set_button{
       margin-right: 8px;
+      color: #3562FA;
     }
   }
   .setname_tip{
