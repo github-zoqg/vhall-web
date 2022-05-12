@@ -747,7 +747,7 @@ export default {
       next()
       return false;
     }
-    this.$confirm(`是否取消${this.title}的${this.webinarTypeToZH}内容？`, '提示', {
+    this.$confirm(`确定不${this.title}${this.webinarTypeToZH}内容？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       customClass: 'zdy-message-box',
