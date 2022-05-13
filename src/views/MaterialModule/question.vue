@@ -167,7 +167,8 @@ export default {
         path: '/material/addQuestion',
         query: {
           questionId: rows.question_id,
-          type: 1
+          type: 1,
+          alias: rows.alias,
         }
       });
     },

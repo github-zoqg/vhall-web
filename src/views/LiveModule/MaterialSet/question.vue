@@ -196,6 +196,7 @@ export default {
           path: '/live/addQuestion',
           query: {
               questionId: rows.question_id,
+              alias: rows.alias,
               webinarId: that.webinarId,
               roomId: that.$route.query.roomId,
               type: 2
