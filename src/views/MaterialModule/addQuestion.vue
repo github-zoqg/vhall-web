@@ -38,16 +38,13 @@
     </VhallDialog>
     <!-- 图列展示弹框 -->
     <VhallDialog
-      title="提示"
       :visible.sync="dialogPreview"
       :modalClick="true"
-      :show-close="false"
-      class="zdy-async-dialog"
-      width="400px"
+      :show-close="true"
+      class="zdy-dialog"
+      width="732px"
     >
-      <div class="async__body">
-        <img src="" alt="">
-      </div>
+      <img src="@/views/LiveModule/MaterialSet/images/Q_preview.png" alt="">
     </VhallDialog>
   </div>
 </template>
@@ -146,4 +143,22 @@ export default {
     margin-top: 10px;
   }
 
+</style>
+<style  lang="less">
+  .add-question .zdy-dialog{
+    .el-dialog__header{
+      padding: 0;
+    }
+    .el-dialog__body{
+      height: 0px;
+      padding: 0;
+    }
+    .el-dialog__headerbtn{
+      right: 0px;
+      top: -30px;
+      .el-dialog__close{
+        color: white;
+      }
+    }
+  }
 </style>
