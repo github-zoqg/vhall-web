@@ -62,9 +62,9 @@ export default {
       return str;
     }
   },
-  mounted() {
-    this.changeInput()
-  },
+  // mounted() {
+  //   this.changeInput()
+  // },
   methods: {
     changeInput() {
       this.$emit('changeContent', {data: {content: this.content}})

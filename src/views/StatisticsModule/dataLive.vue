@@ -7,7 +7,7 @@
     </pageTitle>
     <div class="box-card" v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)">
       <div class="search">
-        <el-select v-model="selectKey">
+        <el-select v-model="selectKey" @change="changeSelect" class="vh-data-select">
           <el-option
             v-for="item in selectOptions"
             :key="'v_' + item.id"
@@ -15,7 +15,7 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <search-date v-if="selectKey == 1" @changeDate="searchTimeList"></search-date>
+        <search-date v-if="selectKey == 1" ref="searchDateRef" @changeDate="searchTimeList"></search-date>
         <search-input v-else  @changeContent="searchTableList" :searchType="selectKey"></search-input>
         <div class="export-data">
           <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
@@ -131,9 +131,15 @@ export default {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
   },
   mounted() {
-    this.getTableList();
+    this.$EventBus.$emit('onceQueryDateLiveData')
+    // 时间空间和搜索栏交替使用时，只用回车操作及切换日期时，调用接口获取数据列表
   },
   methods: {
+    changeSelect() {
+      this.$nextTick(() => {
+        this.$EventBus.$emit('changeDateLiveSelect')
+      })
+    },
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
@@ -274,6 +280,17 @@ export default {
     .search{
       position: relative;
       margin-bottom: 24px;
+      .vh-data-select{
+        width: 160px;
+        vertical-align: top;
+        margin-right: 16px;
+        display: inline-block;
+      }
+      .data-search, .search-input{
+        width: 218px;
+        vertical-align: top;
+        display: inline-block;
+      }
       /deep/.el-input__inner{
         border-radius: 18px;
         height: 36px;

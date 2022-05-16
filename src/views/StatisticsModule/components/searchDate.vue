@@ -95,13 +95,21 @@ export default {
     }
   },
   created() {
-    this.initPage()
+    this.initDate()
   },
   mounted() {
-    this.getDateList('init')
+    this.$EventBus.$on('changeDateLiveSelect', () => {
+      this.cleanDateValue()
+    })
+    this.$EventBus.$on('onceQueryDateLiveData', () => {
+      this.getDateList('init')
+    })
   },
   methods: {
-    initPage() {
+    cleanDateValue() {
+      this.dateValue = ''
+    },
+    initDate() {
       // 初始化设置日期为最近一周
       const end = new Date();
       const start = new Date();
