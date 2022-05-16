@@ -7,33 +7,16 @@
     </pageTitle>
     <div class="box-card" v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)">
       <div class="search">
-        <el-date-picker
-          v-model="dateValue"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          unlink-panels
-          @change="searchTimeList"
-          range-separator="至"
-          start-placeholder="开始日期"
-          prefix-icon="iconfont-v3 saasicon_date"
-          end-placeholder="结束日期"
-          :picker-options="pickerOptions"
-          style="width: 240px;margin-right:16px"
-        />
-        <VhallInput
-          class="search-tag"
-          placeholder="请输入活动标题"
-          v-model="title"
-          clearable
-          v-clearEmoij
-          @change="searchTableList"
-          @keyup.enter.native="searchTableList">
-          <i
-            class="el-icon-search el-input__icon"
-            slot="prefix"
-            @click="searchTableList">
-          </i>
-        </VhallInput>
+        <el-select v-model="selectKey">
+          <el-option
+            v-for="item in selectOptions"
+            :key="'v_' + item.id"
+            :label="item.label"
+            :value="item.id">
+          </el-option>
+        </el-select>
+        <search-date v-if="selectKey == 1" @changeDate="searchTimeList"></search-date>
+        <search-input v-else  @changeContent="searchTableList" :searchType="selectKey"></search-input>
         <div class="export-data">
           <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
         </div>
@@ -61,23 +44,31 @@
 import PageTitle from '@/components/PageTitle';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import { sessionOrLocal } from '@/utils/utils';
+import searchDate from './components/searchDate'
+import searchInput from './components/searchInput'
+
 export default {
   name: "dataLive",
   components: {
     PageTitle,
-    noData
+    noData,
+    searchDate,
+    searchInput
   },
   data() {
-    let _this = this;
     return {
+      timeOpt: {
+        start_time: '',
+        end_time: ''
+      },
+      selectKey: 1, // 1时间选择 2活动id 3活动名称 4专题id 5专题名称
       isCheckout: false,
       active: 3,
       nullText: 'noData',
       totalNum: 0,
       dateValue: '',
-      title: '',
+      searchStr: '',
       timeType: 2,
-      params: {}, //导出的时候用来记录参数
       loading: true,
       tableList: [],
       tabelColumn: [
@@ -127,79 +118,17 @@ export default {
           index: 100044
         }
       ],
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: '全部',
-            onClick(picker) {
-              let childrenArray = Array.from(picker.$el.firstChild.firstChild.children)
-              childrenArray.forEach((item)=>{
-                item.style.color = '#666'
-              })
-              picker.$el.firstChild.firstChild.children[0].style.color = '#FB3A32'
-              const end = '';
-              const start = '';
-              picker.$emit('pick', [start, end]);
-              _this.timeType = 0;
-            }
-          },
-          {
-            text: '今日',
-            onClick(picker) {
-              let childrenArray = Array.from(picker.$el.firstChild.firstChild.children)
-              childrenArray.forEach((item)=>{
-                item.style.color = '#666'
-              })
-              picker.$el.firstChild.firstChild.children[1].style.color = '#FB3A32'
-              const end = new Date();
-              const start = new Date();
-              end.setTime(end.getTime());
-              start.setTime(start.getTime());
-              picker.$emit('pick', [start, end]);
-              _this.timeType = 1;
-            }
-          },
-          {
-            text: '近7日',
-            onClick(picker) {
-              let childrenArray = Array.from(picker.$el.firstChild.firstChild.children)
-              childrenArray.forEach((item)=>{
-                item.style.color = '#666'
-              })
-              picker.$el.firstChild.firstChild.children[2].style.color = '#FB3A32'
-              const end = new Date();
-              const start = new Date();
-              end.setTime(end.getTime() - 3600 * 1000 * 24);
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', [start, end]);
-              _this.timeType = 2;
-            }
-          }, {
-            text: '近30日',
-            onClick(picker) {
-              let childrenArray = Array.from(picker.$el.firstChild.firstChild.children)
-              childrenArray.forEach((item)=>{
-                item.style.color = '#666'
-              })
-              picker.$el.firstChild.firstChild.children[3].style.color = '#FB3A32'
-              const end = new Date();
-              const start = new Date();
-              end.setTime(end.getTime() - 3600 * 1000 * 24);
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit('pick', [start, end]);
-              _this.timeType = 3;
-            }
-          }],
-        // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
-        disabledDate: (time) => {
-          return this.dealDisabledData(time);
-        }
-      }
+      selectOptions: [
+        {label: '按活动创建时间', id: 1},
+        {label: '按专题名称', id: 5},
+        {label: '按专题ID', id: 4},
+        {label: '按活动名称', id: 3},
+        {label: '按活动ID', id: 2}
+      ]
     };
   },
   created() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
-    this.initPage()
   },
   mounted() {
     this.getTableList();
@@ -209,51 +138,36 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
-    dealDisabledData(time) {
-      // return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
-      return time.getTime() > Date.now() //设置选择今天之前的日期（不能选择当天）
-    },
-    initPage() {
-      // 初始化设置日期为最近一周
-      const end = new Date();
-      const start = new Date();
-      end.setTime(end.getTime() - 3600 * 1000 * 24);
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-      this.dateValue = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
-    },
-    searchTimeList() {
-      let timeArr = [100571, 100572, 100573, 100574]
+    searchTimeList(opt) {
+      const { data, type } = opt
+      const timeArr = [100571, 100572, 100573, 100574]
+      this.timeOpt.start_time = data.time[0]
+      this.timeOpt.end_time = data.time[1]
       this.$vhall_paas_port({
-        k: timeArr[this.timeType],
+        k: timeArr[data.timeType],
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
+      this.getTableList(type);
+    },
+    searchTableList(opt) {
+      const { data } = opt
+      this.searchStr = data.content
       this.getTableList('search');
     },
-    searchTableList() {
-      if (this.title) {
-        this.$vhall_paas_port({
-          k: 100576,
-          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-      }
-      this.getTableList('search');
-    },
-    getTableList(params) {
-      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
-      let paramsObj = {
-        title: this.title,
-        start_time: this.dateValue ? this.dateValue[0] : '',
-        end_time: this.dateValue ? this.dateValue[1] : ''
-      };
-      if (params === 'search') {
+    getTableList(type) {
+      const pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      if (type === 'search') {
         pageInfo.pageNum = 1;
         pageInfo.pos = 0;
       }
-      this.params = paramsObj;
-      let obj = Object.assign({}, pageInfo, paramsObj);
-      this.getLiveList(obj, params);
+      const extraOptions = this.formatParmas()
+      const options = {
+        ...extraOptions,
+        ...pageInfo,
+      }
+      this.getLiveList(options);
     },
-     getLiveList(data, params){
+     getLiveList(data){
       this.loading = true;
       this.$fetch('getActiveDataList', this.$params(data)).then(res=>{
         this.tableList = res.data.list;
@@ -276,7 +190,8 @@ export default {
     },
     // 导出
     exportCenterData() {
-      this.$fetch('exportWebinar', this.$params(this.params)).then(res => {
+      const extraOptions = this.formatParmas()
+      this.$fetch('exportWebinar', this.$params({...extraOptions})).then(res => {
         this.$vhall_paas_port({
           k: 100575,
           data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
@@ -312,6 +227,28 @@ export default {
         }
       });
       window.open(routeData.href, '_blank');
+    },
+    formatParmas() {
+      const opt = {}
+      switch(this.selectKey) {
+        case 1:
+          opt.start_time = this.timeOpt.start_time
+          opt.end_time = this.timeOpt.end_time
+          break;
+        case 2:
+          opt.like_webinar_id = this.searchStr
+          break;
+        case 3:
+          opt.title = this.searchStr
+          break;
+        case 4:
+          opt.project_id = this.searchStr
+          break;
+        case 5:
+          opt.project_name = this.searchStr
+          break;
+      }
+      return opt
     }
   }
 };
