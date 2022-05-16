@@ -15,7 +15,7 @@
         :picker-options="pickerOptions"
         @change="queryList"
       />
-      <VhallInput placeholder="请输入活动标题" v-model="query.title"
+      <VhallInput placeholder="请输入直播标题或者直播ID" v-model="query.title"
                 clearable
                 v-clearEmoij
                 @keyup.enter.native="searchList"

@@ -3,7 +3,7 @@
   <div class="search" >
     <VhallInput
       v-model="keyword"
-      placeholder="请输入直播标题"
+      placeholder="请输入直播标题或者直播ID"
       @change="inputChange"
       v-clearEmoij
       clearable
