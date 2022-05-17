@@ -737,8 +737,8 @@ export default {
   }
   img{
     margin-bottom: 10px;
-    width: 217px;
-    height: 217px;
+    width: 132px;
+    height: 132px;
   }
   .copy-item{
     text-align: right;

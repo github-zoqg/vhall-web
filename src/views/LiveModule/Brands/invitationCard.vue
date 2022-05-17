@@ -1263,12 +1263,12 @@ export default {
   }
 }
 .invitation-code {
-  width: 217px;
-  height: 217px;
+  width: 132px;
+  height: 132px;
   text-align: center;
   img {
-    width: 217px;
-    height: 217px;
+    width: 132px;
+    height: 132px;
     object-fit: scale-down;
   }
 }

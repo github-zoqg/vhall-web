@@ -286,8 +286,8 @@ export default {
   padding: 0px!important;
   margin: 0px!important;
   img {
-    width: 217px;
-    height: 217px;
+    width: 132px;
+    height: 132px;
     object-fit: scale-down;
     padding: 0px!important;
     margin: 0px!important;

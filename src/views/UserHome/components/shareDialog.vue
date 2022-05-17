@@ -28,7 +28,7 @@
       title="分享"
       :visible.sync="wxDialogVisible"
       :close-on-click-modal="false"
-      width="350px">
+      width="320px">
       <div class="wximg-box">
         <img :src="wxUrl + link" alt="">
       </div>
@@ -271,8 +271,8 @@ export default {
     justify-content: center;
     padding-bottom: 16px;
     img {
-      width: 217px;
-      height: 217px;
+      width: 132px;
+      height: 132px;
     }
   }
   .wximg-intro {
