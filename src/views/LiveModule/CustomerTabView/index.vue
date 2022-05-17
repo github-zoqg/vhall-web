@@ -7,7 +7,7 @@
       <div slot="content">所有设置对电脑端和移动浏览器同时生效</div>
       <div class="vh-customer-menu-btns">
         <span @click="workHelp" class="link__left">使用帮助</span>
-        <el-button type="primary" :disabled = 'buttonDis' style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab">保存</el-button>
+        <el-button type="primary" :disabled = 'buttonDis' style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab" >保存</el-button>
       </div>
     </page-title>
     <div class="vh-customer-menu-contentBox">
@@ -38,6 +38,7 @@
             :menus.sync="customMenus"
             :pre="activeIndex"
             @updateMenus="updateMenus"
+            @deleteCustomItem="deleteCustomItem"
           ></mobile-preview>
         </div>
         <div class="vh-customer__preview-pc" v-show="activeIndex == 2">
@@ -93,10 +94,13 @@ export default {
       link:  '',
       userId: '',
       showWatch: false,
-      buttonDis: false
+      buttonDis: false,
+      deleteStack: []
     }
   },
-
+  beforeDetroy() {
+    this.deleteStack = []
+  },
   components: {
     PageTitle,
     DragComponents,
@@ -112,6 +116,11 @@ export default {
   },
 
   methods: {
+    deleteCustomItem(menu) {
+      menu.op_type = 'del'
+      menu?.id && this.deleteStack.push(menu)
+      console.log(77777, menu, this.deleteStack)
+    },
     copy() {
       this.$copyText(this.link).then(e => {
         this.$message({
@@ -174,7 +183,8 @@ export default {
         this.buttonDis = false;
         return false
       }
-      const saveMenus = Array.from(this.customMenus)
+      const saveMenus = Array.from(this.deleteStack.length > 0 ? this.customMenus.concat(this.deleteStack) : this.customMenus)
+      console.log(123123123, this.deleteStack, saveMenus)
       let params = {
         webinar_id: this.$route.params.str,
         save_type: 2, // 1--保存；2--保存+发布
@@ -196,6 +206,7 @@ export default {
           this.addCustomVisbile = false;
           // this.customMenuList();
           this.showWatch = true
+          this.getInitMenus()
         }
       }).catch(res=>{
         this.buttonDis = false;

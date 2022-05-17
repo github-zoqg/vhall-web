@@ -98,11 +98,9 @@ export default {
     this.initDate()
   },
   mounted() {
+    this.getDateList('init')
     this.$EventBus.$on('changeDateLiveSelect', () => {
       this.cleanDateValue()
-    })
-    this.$EventBus.$on('onceQueryDateLiveData', () => {
-      this.getDateList('init')
     })
   },
   methods: {

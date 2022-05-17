@@ -62,18 +62,9 @@ export default {
       return str;
     }
   },
-  // mounted() {
-  //   this.changeInput()
-  // },
   methods: {
     changeInput() {
       this.$emit('changeContent', {data: {content: this.content}})
-      if (!this.content) return
-      const userId = JSON.parse(sessionOrLocal.get('userId'));
-      this.$vhall_paas_port({
-        k: 100576,
-        data: {business_uid: userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
     }
   }
 }

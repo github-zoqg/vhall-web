@@ -8,6 +8,7 @@
     <div class="search panel-btn" v-if="(vo.show_subject && vsQuanxian && vsQuanxian['subject_manager'] > 0) || vo.show_webinar_list">
       <div class="search-query">
         <VhallInput
+          style="width: 240px"
           :placeholder="tabType === 'special' ? '请输入专题名称' : '请输入直播标题或者直播ID'"
           v-model="query.keyword"
           clearable

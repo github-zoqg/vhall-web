@@ -2,7 +2,7 @@
   <div class="data-live">
     <pageTitle :pageTitle="$route.meta.title">
       <div slot="content">
-        1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
+        1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据<br />3.数据报告、用户统计筛选近7天的数据内容
       </div>
     </pageTitle>
     <div class="box-card" v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)">
@@ -15,8 +15,8 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <search-date v-if="selectKey == 1" ref="searchDateRef" @changeDate="searchTimeList"></search-date>
-        <search-input v-else  @changeContent="searchTableList" :searchType="selectKey"></search-input>
+        <search-date v-show="selectKey == 1" ref="searchDateRef" @changeDate="searchTimeList"></search-date>
+        <search-input v-show="selectKey != 1" @changeContent="searchTableList" :searchType="selectKey"></search-input>
         <div class="export-data">
           <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
         </div>
@@ -131,7 +131,7 @@ export default {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
   },
   mounted() {
-    this.$EventBus.$emit('onceQueryDateLiveData')
+    // this.$EventBus.$emit('onceQueryDateLiveData')
     // 时间空间和搜索栏交替使用时，只用回车操作及切换日期时，调用接口获取数据列表
   },
   methods: {
@@ -158,6 +158,10 @@ export default {
     searchTableList(opt) {
       const { data } = opt
       this.searchStr = data.content
+      this.$vhall_paas_port({
+        k: 100576,
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      })
       this.getTableList('search');
     },
     getTableList(type) {

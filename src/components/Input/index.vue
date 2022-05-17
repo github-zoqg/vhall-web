@@ -36,7 +36,6 @@
         @input="handleInput"
         @focus="handleFocus"
         @blur="handleBlur"
-        @change="handleChange"
         :aria-label="label"
         :style="textStyle"
       >
