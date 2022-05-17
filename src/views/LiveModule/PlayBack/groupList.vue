@@ -1,22 +1,8 @@
 <template>
   <div class="listBox">
-    <pageTitle :pageTitle="title">
-      <div slot class="color999">
-        视频加密后，观看端播放加密视频，详细介绍请查看<span class="msgBlue" @click="openTip">《视频加密介绍》</span>
-      </div>
-    </pageTitle>
-    <div class="noData" v-if="no_show === true">
-      <null-page text="暂未创建回放" nullType="noAuth">
-        <el-button class="length152" round type="primary" @click="toCreate">创建回放</el-button>
-        <el-button v-if="WEBINAR_PES.btn_record" class="length152 transparent-btn" round type="white-primary" @click="toRecord">录制</el-button>
-        <!-- <el-button type="white-primary" class="length152" round @click="openCheckWord" v-if="$route.params.str">资料库</el-button> -->
-      </null-page>
-    </div>
+    <pageTitle :pageTitle="title"></pageTitle>
     <template v-if="no_show === false">
       <div v-if="!isDemand" class="operaBlock">
-        <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
-        <el-button v-if="WEBINAR_PES.btn_record"  class="transparent-btn" size="medium" plain round @click="toRecord">录制</el-button>
-        <el-button size="medium"  class="transparent-btn" round @click="settingHandler">回放设置</el-button>
         <el-button size="medium" class="transparent-btn" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','), 1)">批量删除</el-button>
         <VhallInput
           clearable
@@ -76,19 +62,12 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column :width="recordType != 3 && recordType != -1 ? 78 : 106">
-            <template slot-scope="{ column, $index }" slot="header">
-              <el-select popper-class="playback-list-popper" v-if="!isDemand" v-model="recordType" @change="typeChange(column, $index)">
-                <el-option
-                  v-for="item in typeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-              <span v-else>视频来源</span>
-            </template>
-            <span class="playpackSource" slot-scope="scope">{{scope.row.source | soruceTotext}}</span>
+         
+          <el-table-column
+            label="状态"
+            :width="isBidScreen ? '' : 91"
+            show-overflow-tooltip>
+            <span class="playpackSource">生成中</span>
           </el-table-column>
 
           <el-table-column
@@ -96,13 +75,6 @@
             :width="isBidScreen ? '' : 91"
             show-overflow-tooltip>
             <span class="playpackSource" slot-scope="scope">{{scope.row.duration}}</span>
-          </el-table-column>
-
-          <el-table-column
-            label="小组视频"
-            :width="isBidScreen ? '' : 108"
-            show-overflow-tooltip>
-            <router-link :to="`/live/playback/${webinar_id}/group`" style="color:blue;">10</router-link>
           </el-table-column>
 
           <el-table-column
@@ -290,7 +262,7 @@ export default {
       } else if (this.isDemand) {
         return this.liveDetailInfo.webinar_type == 5 ? '视频管理' : '点播管理'
       } else {
-        return '回放管理'
+        return '小组视频'
       }
     }
   },
