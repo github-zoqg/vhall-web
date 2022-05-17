@@ -46,14 +46,22 @@ module.exports = {
         target: 'http://yapi.vhall.domain',
         changeOrigin: true
       },
+      // '/v3': {
+      //   target: 'http://t-saas-dispatch.vhall.com',
+      //   changeOrigin: true
+      // },
       '/v3': {
-        target: 'http://t-saas-dispatch.vhall.com',
+        target: 'https://test4-saas-api.vhall.com',
         changeOrigin: true
       },
       '/account': {
-        target: 'http://t-saas-dispatch.vhall.com',
+        target: 'https://test4-saas-api.vhall.com',
         changeOrigin: true
       },
+      // '/account': {
+      //   target: 'http://t-saas-dispatch.vhall.com',
+      //   changeOrigin: true
+      // },
       '/api/upload':{
         target: 'http://test-zhike.vhall.com/',
         changeOrigin: true

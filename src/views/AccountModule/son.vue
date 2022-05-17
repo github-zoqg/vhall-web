@@ -4,7 +4,9 @@
     <!-- 子账号管理头部 -->
     <div class="title--flex--top">
       <div class="top-item">
-        <p>{{sonInfo && sonInfo.vip_info && sonInfo.vip_info.type > 0 ? '总流量（GB）' : '总并发（方）'}}</p>
+        <p v-if="sonInfo && sonInfo.vip_info && sonInfo.vip_info.type === 0">总并发（方）}}</p>
+        <p v-if="sonInfo && sonInfo.vip_info && sonInfo.vip_info.type === 1">总流量（GB）</p>
+        <p v-if="sonInfo && sonInfo.vip_info && sonInfo.vip_info.type === 2">总时长</p>
         <p class="custom-font-barlow">
           <count-to :startVal="0"
                     :endVal="vipTotal"
@@ -75,7 +77,13 @@ export default {
   computed: {
     vipTotal: function() {
       if (this.sonInfo && this.sonInfo.vip_info) {
-        return this.sonInfo.vip_info.type > 0 ? Number(this.sonInfo.vip_info.flow) : Number(this.sonInfo.vip_info.total);
+        if(this.sonInfo.vip_info.type === 1){
+          return Number(this.sonInfo.vip_info.flow)
+        }else if(this.sonInfo.vip_info.type === 0){
+          return Number(this.sonInfo.vip_info.total)
+        }else if(this.sonInfo.vip_info.type === 2){
+          return Number(this.sonInfo.vip_info.total_duration)
+        }
       } else {
         return 0;
       }
