@@ -306,6 +306,7 @@ export default {
     },
     // 下载二维码
     downErCode() {
+      const activeName = this.liveDetailInfo.subject
       this.$vhall_paas_port({
         k: 100055,
         data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
@@ -322,7 +323,7 @@ export default {
         let url = canvas.toDataURL("image/png"); //得到图片的base64编码数据
         let a = document.createElement("a"); // 生成一个a元素
         let event = new MouseEvent("click"); // 创建一个单击事件
-        a.download = `code${new Date().getTime()}`; // 设置图片名称
+        a.download = `${activeName || 'code'}观看端二维码`; // 设置图片名称
         a.href = url; // 将生成的URL设置为a.href属性
         a.dispatchEvent(event); // 触发a的单击事件
       };
@@ -736,8 +737,8 @@ export default {
   }
   img{
     margin-bottom: 10px;
-    width: 132px;
-    height: 132px;
+    width: 217px;
+    height: 217px;
   }
   .copy-item{
     text-align: right;

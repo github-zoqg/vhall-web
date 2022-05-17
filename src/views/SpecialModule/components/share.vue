@@ -33,7 +33,7 @@
       title="分享"
       :visible.sync="wxDialogVisible"
       :close-on-click-modal="false"
-      width="320px">
+      width="350px">
       <div class="wximg-box">
         <img :src="`//aliqr.e.vhall.com/qr.png?t=${this.shareVo.url || this.url}`" alt="">
       </div>
@@ -292,8 +292,8 @@ export default {
     justify-content: center;
     padding-bottom: 16px;
     img {
-      width: 132px;
-      height: 132px;
+      width: 217px;
+      height: 217px;
     }
   }
   .wximg-intro {
