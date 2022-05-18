@@ -15,7 +15,7 @@
         :picker-options="pickerOptions"
         @change="queryList"
       />
-      <VhallInput placeholder="请输入活动标题" v-model="query.title"
+      <VhallInput placeholder="请输入直播标题或者直播ID" v-model="query.title"
                 clearable
                 v-clearEmoij
                 @keyup.enter.native="searchList"
@@ -129,7 +129,15 @@ export default {
         params.start_time = this.query.timeStr[0] || '';
         params.end_time = this.query.timeStr[1] || '';
       }
-      this.$fetch(this.sonVo.vip_info.type > 0 ? 'getBusinessList' : 'getAccountList', this.$params(params)).then(res=>{
+      let apiLive = 'getAccountList'
+      if(this.sonVo.vip_info.type === 1){
+        apiLive = 'getBusinessList'
+      } else if(this.sonVo.vip_info.type === 0){
+        apiLive = 'getAccountList'
+      } else if(this.sonVo.vip_info.type === 2){
+        apiLive = 'getDurationList'
+      }
+      this.$fetch(apiLive, this.$params(params)).then(res=>{
         if (res.data) {
           this.dataDao = {
             total: res.data.total || 0,
@@ -157,7 +165,16 @@ export default {
         params.start_time = this.query.timeStr[0] || '';
         params.end_time = this.query.timeStr[1] || '';
       }
-      this.$fetch(this.sonVo.vip_info.type > 0 ? 'exportFlowDetail' : 'exportOnlineDetail', this.$params(params)).then(res=>{
+      
+      let apiLine = 'getTrendLineInfo';
+      if(this.sonVo.vip_info.type === 1){
+        apiLine = 'exportFlowDetail';
+      }else if(this.sonVo.vip_info.type === 0){
+        apiLine = 'exportOnlineDetail'
+      }else if(this.sonVo.vip_info.type === 2){
+        apiLine = 'exportDurationDetail'
+      }
+      this.$fetch(apiLine, this.$params(params)).then(res=>{
         this.$vhall_paas_port({
           k: 100822,
           data: {business_uid: this.$parent.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
@@ -206,8 +223,8 @@ export default {
           width: 200
         },
         {
-          label: `${this.sonVo.vip_info.type > 0 ? '消耗流量（GB）' : '最高并发（方）'}`,
-          key: `${this.sonVo.vip_info.type > 0 ? 'webinar_flow' : 'webinar_max_uv'}`,
+          label: `${this.sonVo.vip_info.type === 2 ? '消耗时长（分钟）' : (this.sonVo.vip_info.type > 0 ? '消耗流量（GB）' : '最高并发（方）')}`,
+          key: `${this.sonVo.vip_info.type === 2 ? 'webinar_duration' : (this.sonVo.vip_info.type > 0 ? 'webinar_flow' : 'webinar_max_uv')}`,
           width: 150
         }
       ]
