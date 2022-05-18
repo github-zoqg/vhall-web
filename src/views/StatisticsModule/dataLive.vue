@@ -18,7 +18,7 @@
         <search-date v-show="selectKey == 1" ref="searchDateRef" @changeDate="searchTimeList"></search-date>
         <search-input v-show="selectKey != 1" @changeContent="searchTableList" :searchType="selectKey"></search-input>
         <div class="export-data">
-          <el-button round  size="medium" @click="exportCenterData">导出数据</el-button>
+          <el-button round  size="medium" @click="exportCenterData" :disabled="!tableList.length">导出数据</el-button>
         </div>
       </div>
       <table-list
