@@ -56,7 +56,7 @@ import question from '@/components/Question/question'
 export default {
   data(){
     return {
-      alias: '',
+      alias: '问卷',
       dialogNameSet: false,
       dialogPreview: false
     }
@@ -86,12 +86,12 @@ export default {
       if (this.$route.query.alias) {
         this.alias = this.$route.query.alias
       } else {
-        this.alias = ''
+        this.alias = '问卷'
       }
       console.log('%c 打开别名设置弹框','color:blue')
     },
     saveNewName(){
-      this.$route.query.alias = this.alias;
+      this.$route.query.alias = this.alias || '问卷';
       this.dialogNameSet = false;
       console.log(this.$route.query)
     }
