@@ -643,7 +643,7 @@
                 result.extend_day = Number(this.multiAllocForm.count1);
                 result.resources = item.count;
               } else if (this.dialogType === 4) {
-                // 并发-分配扩展包，设置 extend_day， type为并发
+                // 并发-分配时长，设置 extend_day， type为时长
                 result.extend_day = item.extend_day;
                 result.resources = Number(this.multiAllocForm.count2);
               }
