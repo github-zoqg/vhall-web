@@ -25,7 +25,7 @@
           <div class="async__ctx">
             <VhallInput
             v-model="alias"
-            :placeholder="('问卷')"
+            :placeholder="('请输入名称')"
             maxlength="8"
             v-clearEmoij
             show-word-limit
@@ -33,7 +33,7 @@
             <p class="setname_tip">可将名称修改为「投票」「报名」等，修改后用户观看直播时看到的是修改后的名称。</p>
           </div>
           <div class="async__footer">
-            <el-button type="primary" size="medium" @click="saveNewName" round>确定</el-button>
+            <el-button type="primary" size="medium" @click="saveNewName" round>保存</el-button>
             <el-button plain size="medium" @click="saveNewName('cancel')" round>取消</el-button>
           </div>
         </div>
@@ -44,9 +44,11 @@
         :modalClick="true"
         :show-close="true"
         class="zdy-dialog "
-        width="732px"
+        width="740px"
       >
+      <div class="img_base">
           <img src="../images/Q_preview.png" alt="">
+      </div>
       </VhallDialog>
   </div>
 </template>
@@ -135,12 +137,20 @@ export default {
   }
   .setname_tip{
     margin-top: 10px;
+    color: #666;
   }
 </style>
 <style  lang="less">
   .add-question .zdy-dialog{
+    .el-dialog{
+      background: transparent;
+      box-shadow: none
+    }
     .el-dialog__header{
+      list-style: none;
+      background: transparent;
       padding: 0;
+      height: 48px;
     }
     .el-dialog__body{
       height: 0px;
@@ -148,9 +158,17 @@ export default {
     }
     .el-dialog__headerbtn{
       right: 0px;
-      top: -30px;
+      top: 24px;
       .el-dialog__close{
         color: white;
+      }
+    }
+    .img_base{
+      padding: 4px;
+      border-radius: 4px;
+      background: #000;
+      img{
+        width: 100%;
       }
     }
   }
