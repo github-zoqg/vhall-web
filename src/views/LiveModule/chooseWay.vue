@@ -1,22 +1,15 @@
 <template>
   <div :class="['chooseWay', {'no-login': executeType !== 'ctrl'}]">
-    <OldHeader :is-show-login=false
-      class="old-header"
-      v-if="executeType !== 'ctrl' && arr[1] != 1 && arr[1] != 2"
-      scene="chooseWay"
-      :isWhiteBg="executeType !== 'ctrl'"></OldHeader>
-    <pageTitle :pageTitle="arr[1] == 1 ? '选择发起方式' : '选择进入方式'"
-      v-if="executeType === 'ctrl'"></pageTitle>
+    <OldHeader :is-show-login=false class="old-header" v-if="executeType !== 'ctrl' && arr[1] != 1 && arr[1] != 2"
+      scene="chooseWay" :isWhiteBg="executeType !== 'ctrl'"></OldHeader>
+    <pageTitle :pageTitle="arr[1] == 1 ? '选择发起方式' : '选择进入方式'" v-if="executeType === 'ctrl'"></pageTitle>
     <div class="choose__way__main">
       <div class="choose__way__ctx">
-        <h1 class="choose-method"
-          v-if="executeType !== 'ctrl'">{{ arr[1] == 1 ? '选择发起方式' : '选择进入方式'}}</h1>
+        <h1 class="choose-method" v-if="executeType !== 'ctrl'">{{ arr[1] == 1 ? '选择发起方式' : '选择进入方式'}}</h1>
         <div class="select-way">
-          <div class="choose-p choose-a-way "
-            :class="chooseType === 'browser' ? 'active' : 'choose-a-way'"
+          <div class="choose-p choose-a-way " :class="chooseType === 'browser' ? 'active' : 'choose-a-way'"
             @click.prevent.stop="changeChoose('browser')">
-            <div class="choose-img"><img src="../../common/images/live/app.png"
-                alt=""></div>
+            <div class="choose-img"><img src="../../common/images/live/app.png" alt=""></div>
             <p class="f-20">网页发起</p>
             <p>一键发起直播，无需安装客户端</p>
           </div>
@@ -30,12 +23,10 @@
           <div class="choose-p choose-a-way"
             :class="[chooseType === 'client' ? 'client active' : 'choose-a-way', groupLiveStatus ? 'no-hover' : '']"
             @click.prevent.stop="changeChoose('client')">
-            <div v-if="groupLiveStatus"
-              class="delay-mask">
+            <div v-if="groupLiveStatus" class="delay-mask">
               {{groupLiveStatus ? '分组直播暂不支持此方式发起' : ''}}
             </div>
-            <div class="choose-img"><img src="../../common/images/live/net.png"
-                alt=""></div>
+            <div class="choose-img"><img src="../../common/images/live/net.png" alt=""></div>
             <p class="f-20">客户端发起</p>
             <p>需安装客户端、支持多种视频采集卡、插入视频等功能</p>
           </div>
@@ -47,20 +38,12 @@
           </div> -->
         </div>
         <div class="choose-btn">
-          <el-button type="primary"
-            round
-            @click="goLive"
-            class="length152">{{ arr[1] == 1 ? '发起直播' : '进入直播'}}</el-button>
-          <iframe src=""
-            class="hide"
-            frameborder="0"
-            scrolling="no"
-            id="start_live"></iframe>
+          <el-button type="primary" round @click="goLive" class="length152">{{ arr[1] == 1 ? '发起直播' : '进入直播'}}
+          </el-button>
+          <iframe src="" class="hide" frameborder="0" scrolling="no" id="start_live"></iframe>
         </div>
-        <div :class="['v-download', {'css': executeType === 'ctrl'} ]"
-          v-if="chooseType === 'client' && downloadUrl">
-          客户端启动遇到问题？您可以尝试：<a target="_blank"
-            :href="downloadUrl">下载客户端</a> 联系客服：400-888-9970
+        <div :class="['v-download', {'css': executeType === 'ctrl'} ]" v-if="chooseType === 'client' && downloadUrl">
+          客户端启动遇到问题？您可以尝试：<a target="_blank" :href="downloadUrl">下载客户端</a> 联系客服：400-888-9970
         </div>
       </div>
     </div>
@@ -137,9 +120,15 @@ export default {
         'gray-id': this.gray_id
       }).then(res => {
         if (res.code == 200) {
-          this.delayStatus = res.data.no_delay_webinar
+          this.delayStatus = res.data.no_delay_webinar;
           // 是否分组直播
-          this.groupLiveStatus = res.data.webinar_type == 6
+          this.groupLiveStatus = res.data.webinar_type == 6;
+
+          // 如果是角色邀请流程过来的逻辑
+          if (this.executeType == 'code') {
+            // 使用活动的标题作为浏览器title显示, 由于发起端不用翻译所以直接用活动下的, 如果后期要翻译需要, 通过翻译里取
+            document.title = res.data.subject;
+          }
         }
       }).catch(res => {
         console.log(res);
