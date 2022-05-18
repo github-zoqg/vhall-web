@@ -138,15 +138,14 @@
             <img src="../../common/images/account/saasbingfa_tubiao.png" alt="" v-show="tabType === 'regular'"/>
             <!-- <i :class="`${resourcesVo && resourcesVo.type > 0 ? 'iconfont-v3 saasliuliang_tubiao' : 'iconfont-v3 saasbingfa_tubiao'}`"></i> -->
           </div>
-          <ul class="allocation_one" v-if="resourcesVo && resourcesVo.type === 0">
-            <!-- <li class="custom-font-barlow">{{ (resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total ) : 0) | unitCovert }}  </li> -->
-            <!-- <li>可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量` : `并发`) : ''}} {{resourcesVo ? (resourcesVo.type > 0 ? `（GB）` : `（方）`) : ''}}</li> -->
-            <!-- <li class="custom-font-barlow" v-if="resourcesVo.type === 1">{{ (resourcesVo ? resourcesVo.flow : 0) | unitCovert }}  </li> -->
+          <ul class="allocation_one">
+            <li class="custom-font-barlow">{{typeNumber}}</li>
+            <li >可分配{{typeName}}</li>
+            <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
+          </ul>
+          <!-- <ul class="allocation_one" v-if="resourcesVo && resourcesVo.type === 0">
             <li class="custom-font-barlow">{{ (resourcesVo ? resourcesVo.total : 0) | unitCovert }}  </li>
-            <!-- <li class="custom-font-barlow" v-if="resourcesVo.type === 2">{{ (resourcesVo ? resourcesVo.duration : 0) | unitCovert }}  </li> -->
             <li >可分配并发（方）</li>
-            <!-- <li v-if="resourcesVo && resourcesVo.type === 1">可分配流量（GB）</li>
-            <li v-if="resourcesVo && resourcesVo.type === 2">可分配时长（分钟）</li> -->
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
           <ul class="allocation_one" v-if="resourcesVo && resourcesVo.type === 1">
@@ -159,7 +158,7 @@
             <li class="custom-font-barlow">{{ (resourcesVo ? resourcesVo.duration : 0) | unitCovert }}  </li>
             <li>可分配时长（分钟）</li>
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
-          </ul>
+          </ul> -->
           <ul class="allocation_one mt32" v-if="resourcesVo && resourcesVo.extend_end_time != ''">
             <li class="custom-font-barlow">{{ (resourcesVo && resourcesVo.extend_day ? resourcesVo.extend_day : 0)  | unitCovert}} </li>
             <li>可分配并发扩展包（天）</li>
@@ -274,6 +273,8 @@
           limit: 10,
           pageNumber: 1
         },
+        typeNumber: '',
+        typeName: ''
       };
     },
     methods: {
@@ -414,7 +415,7 @@
               // 当前为并发-分配并发包
               this.dialogType = 1;
             } else if (Number(this.resourcesVo.type) === 2){
-              // 当前为并发-分配并发包
+              // 当前为时长
               this.dialogType = 4;
             }
           }
@@ -521,6 +522,7 @@
               
               item.count = item.vip_info.duration;
               item.inputCount = item.vip_info.duration;
+              
             } 
             item.extend_day = item.vip_info.extend_day;
             item.inputExtendDay = item.vip_info.extend_day;
@@ -545,6 +547,18 @@
         if (res && res.code === 200) {
           // res = {"msg":"操作成功！","code":200,"data":{"extend_end_time":"2022-03-03 23:59:59","end_time":"2022-03-03 23:59:59","type":0,"total":0,"extend_day": 0,"flow":"297.59"},"request_id":"35d779b0-808d-11eb-8860-937321402ac7"}
           this.resourcesVo = res.data;
+          if(res.data && res.data.type === 0){
+            this.typeName = '并发（方）';
+            this.typeNumber = res.data.total
+          }else if(res.data && res.data.type === 1){
+            this.typeName = '流量（GB）';
+            this.typeNumber = res.data.flow
+          }else if(res.data && res.data.type === 2){
+            this.typeName = '时长（分钟）';
+            this.typeNumber = res.data.duration
+          }else {
+            this.typeNumber = res.data.duration
+          }
           let userResult = await this.$fetch('getInfo', {scene_id: 2}).catch(error => {
             console.log('获取账户信息异常', error)
           });
