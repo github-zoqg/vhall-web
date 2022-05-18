@@ -156,7 +156,11 @@ export default {
       this.$service.renderPageEdit('#settingBox', id || '');
     },
     copeQuestion(id) {
-      this.$fetch('copyQuestion', {survey_id: id}).then(res => {
+      const params = {survey_id: id}
+      if(this.alias){
+        params.alias = this.alias
+      }
+      this.$fetch('copyQuestion', params).then(res => {
         this.$message({
           message: res.code == 200 ? '同步成功' : '同步失败',
           showClose: true,

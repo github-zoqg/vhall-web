@@ -25,7 +25,7 @@
           <div class="async__ctx">
             <VhallInput
             v-model="alias"
-            :placeholder="('请输入标记文字')"
+            :placeholder="('问卷')"
             maxlength="8"
             v-clearEmoij
             show-word-limit

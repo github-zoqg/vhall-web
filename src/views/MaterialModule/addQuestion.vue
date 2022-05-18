@@ -23,7 +23,7 @@
         <div class="async__ctx">
           <VhallInput
           v-model="alias"
-          :placeholder="('请输入标记文字')"
+          :placeholder="('问卷')"
           maxlength="8"
           v-clearEmoij
           show-word-limit
@@ -80,9 +80,13 @@ export default {
     },
     openSet(){
       this.dialogNameSet = true;
-      this.alias = '';
+      // 资料管理 - 被同步后的数据，编辑的时候反显
+      if (this.$route.query.alias) {
+        this.alias = this.$route.query.alias
+      } else {
+        this.alias = ''
+      }
       console.log('%c 打开别名设置弹框','color:blue')
-
     },
     saveNewName(){
       this.$route.query.alias = this.alias;
