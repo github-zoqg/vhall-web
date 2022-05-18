@@ -146,7 +146,11 @@ export default {
     },
     // 复制
     cope(that, {rows}) {
-      that.$fetch('copyQuestion', {survey_id: rows.question_id}).then(res => {
+      const params = {survey_id: rows.question_id}
+      if(this.alias){
+        params.alias = this.alias
+      }
+      that.$fetch('copyQuestion', params).then(res => {
         that.$vhall_paas_port({
           k: 100528,
           data: {business_uid: that.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
