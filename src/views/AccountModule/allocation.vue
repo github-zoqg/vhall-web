@@ -150,24 +150,13 @@
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
           <ul class="allocation_one" v-if="resourcesVo && resourcesVo.type === 1">
-            <!-- <li class="custom-font-barlow">{{ (resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total ) : 0) | unitCovert }}  </li> -->
-            <!-- <li>可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量` : `并发`) : ''}} {{resourcesVo ? (resourcesVo.type > 0 ? `（GB）` : `（方）`) : ''}}</li> -->
+            
             <li class="custom-font-barlow">{{ (resourcesVo ? resourcesVo.flow : 0) | unitCovert }}  </li>
-            <!-- <li class="custom-font-barlow" v-if="resourcesVo.type === 0">{{ (resourcesVo ? resourcesVo.total : 0) | unitCovert }}  </li>
-            <li class="custom-font-barlow" v-if="resourcesVo.type === 2">{{ (resourcesVo ? resourcesVo.duration : 0) | unitCovert }}  </li> -->
-            <!-- <li v-if="resourcesVo && resourcesVo.type === 0">可分配并发（方）</li> -->
             <li>可分配流量（GB）</li>
-            <!-- <li v-if="resourcesVo && resourcesVo.type === 2">可分配时长（分钟）</li> -->
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
           <ul class="allocation_one" v-if="resourcesVo && resourcesVo.type === 2">
-            <!-- <li class="custom-font-barlow">{{ (resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total ) : 0) | unitCovert }}  </li> -->
-            <!-- <li>可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量` : `并发`) : ''}} {{resourcesVo ? (resourcesVo.type > 0 ? `（GB）` : `（方）`) : ''}}</li> -->
-            <!-- <li class="custom-font-barlow" v-if="resourcesVo.type === 1">{{ (resourcesVo ? resourcesVo.flow : 0) | unitCovert }}  </li>
-            <li class="custom-font-barlow" v-if="resourcesVo.type === 0">{{ (resourcesVo ? resourcesVo.total : 0) | unitCovert }}  </li> -->
             <li class="custom-font-barlow">{{ (resourcesVo ? resourcesVo.duration : 0) | unitCovert }}  </li>
-            <!-- <li v-if="resourcesVo && resourcesVo.type === 0">可分配并发（方）</li>
-            <li v-if="resourcesVo && resourcesVo.type === 1">可分配流量（GB）</li> -->
             <li>可分配时长（分钟）</li>
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
@@ -460,6 +449,8 @@
           // 若当前为固定分配，获取子账户列表数据
           this.is_dynamic = type === 'regular' ? 0 : 1;
           this.getSonList();
+          this.allocMoreGet();
+
         }).catch(res =>{
           console.log(res);
           this.$message({
