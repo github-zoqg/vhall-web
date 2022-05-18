@@ -5,7 +5,7 @@
       value-format="yyyy-MM-dd"
       type="daterange"
       unlink-panels
-      @change="getDateList"
+      @change="getDateList('search')"
       range-separator="至"
       start-placeholder="开始日期"
       prefix-icon="iconfont-v3 saasicon_date"

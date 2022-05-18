@@ -166,10 +166,14 @@ export default {
     },
     getTableList(type) {
       const pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      console.log(1, type)
+
       if (type === 'search') {
         pageInfo.pageNum = 1;
         pageInfo.pos = 0;
+        console.log(2)
       }
+      console.log(3, pageInfo)
       const extraOptions = this.formatParmas()
       const options = {
         ...extraOptions,
