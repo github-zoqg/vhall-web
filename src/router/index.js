@@ -39,6 +39,19 @@ VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
 router.beforeEach((to, from, next) => {
+  // 每次切换页面都先重置下页面title
+  if (to.meta.name == "chooseWay" && to.meta.level == undefined) {
+    // 如果是邀请的链接
+    document.title = "";
+  } else if (to.meta.name == "userHome" && to.meta.level == undefined) {
+    // 如果是个人首页
+    document.title = "";
+  } else if (to.meta.name == "specialDetail" && to.meta.level == undefined) {
+    // 如果是个人专题详情
+    document.title = "";
+  } else {
+    document.title = window.SAAS_vhall_title;
+  }
   checkAuth(to, from, next, window.vm);
 });
 router.afterEach(() => {

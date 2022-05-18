@@ -102,6 +102,10 @@ window.SAAS_V3_COL = {
   KEY_3: 'SAAS_V3_BASE64', // 控制台token
   KEY_4: 'SAAS_V3_UO', // 用户对象
 };
+
+// 微吼默认标题
+window.SAAS_vhall_title = "微吼-直播,网络直播,视频直播,在线教育平台,视频直播平台,网络直播系统,中国最大的网络直播互动平台";
+
 // 组件扩展
 import SPagination from '@/components/Spagination/main';
 import tableList from '@/components/TableList/list';
