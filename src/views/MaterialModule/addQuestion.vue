@@ -175,9 +175,9 @@ export default {
       border-radius: 4px;
       background: #000;
     }
+  }
     .setname_tip{
       margin-top: 10px;
       color: #666 !important;
     }
-  }
 </style>

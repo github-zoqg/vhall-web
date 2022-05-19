@@ -83,7 +83,7 @@ export default {
     },
     openSet(){
       this.dialogNameSet = true;
-      this.alias = this.$route.query.alias
+      this.alias = this.$route.query.alias || '问卷'
       console.log('%c 打开别名设置弹框','color:blue')
 
     },
@@ -167,9 +167,9 @@ export default {
         width: 100%;
       }
     }
+  }
     .setname_tip{
       margin-top: 10px;
       color: #666 !important;;
     }
-  }
 </style>
