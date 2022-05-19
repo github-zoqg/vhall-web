@@ -145,10 +145,6 @@ export default {
       color: #3562FA;
     }
   }
-  .setname_tip{
-    margin-top: 10px;
-    color: #666;
-  }
 
 </style>
 <style  lang="less">
@@ -178,6 +174,10 @@ export default {
       padding: 4px;
       border-radius: 4px;
       background: #000;
+    }
+    .setname_tip{
+      margin-top: 10px;
+      color: #666 !important;
     }
   }
 </style>

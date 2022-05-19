@@ -135,10 +135,6 @@ export default {
       color: #3562FA;
     }
   }
-  .setname_tip{
-    margin-top: 10px;
-    color: #666;
-  }
 </style>
 <style  lang="less">
   .add-question .zdy-dialog{
@@ -170,6 +166,10 @@ export default {
       img{
         width: 100%;
       }
+    }
+    .setname_tip{
+      margin-top: 10px;
+      color: #666 !important;;
     }
   }
 </style>
