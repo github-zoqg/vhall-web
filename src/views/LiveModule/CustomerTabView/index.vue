@@ -141,6 +141,7 @@ export default {
     },
 
     getInitMenus() {
+      this.activeIndex = 0
       this.$fetch('customMenuList', {
         webinar_id: this.$route.params.str
       }).then(res=>{
@@ -161,6 +162,8 @@ export default {
         }
       }).catch(error=>{
         console.log(error);
+      }).finally(() => {
+        this.activeIndex = 1
       });
     },
 
