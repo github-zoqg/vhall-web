@@ -32,7 +32,7 @@
         </div>
         <div class="async__footer">
           <el-button type="primary" size="medium" @click="saveNewName" round>保存</el-button>
-          <el-button plain size="medium" @click="saveNewName" round>取消</el-button>
+          <el-button plain size="medium" @click="saveNewName('cancel')" round>取消</el-button>
         </div>
       </div>
     </VhallDialog>
@@ -86,9 +86,11 @@ export default {
       this.alias = this.alias || this.$route.query.alias || '问卷'
       console.log('%c 打开别名设置弹框','color:blue')
     },
-    saveNewName(){
-      this.$route.query.alias = this.alias || '问卷';
+    saveNewName(data){
       this.dialogNameSet = false;
+      if(data == 'cancel'){
+        this.alias = this.$route.query.alias || '问卷'
+      }
       console.log(this.$route.query)
     }
   }

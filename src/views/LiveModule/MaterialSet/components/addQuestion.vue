@@ -90,7 +90,7 @@ export default {
     saveNewName(data){
       this.dialogNameSet = false;
       if(data == 'cancel'){
-        this.alias = ''
+        this.alias = this.$route.query.alias || '问卷'
       }
       console.log(this.$route.query)
     }
