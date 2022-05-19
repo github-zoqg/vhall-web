@@ -34,7 +34,7 @@
             </el-option>
           </el-select>
           <VhallInput
-          style="width: 250px;"
+            style="width: 250px;"
             class="search-tag"
             placeholder="请输入直播标题或者直播ID"
             v-model="keyWords"

@@ -267,7 +267,7 @@ export default {
   }
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .el-picker-panel__shortcut:nth-of-type(3) {
   color: #fb3a32;
 }

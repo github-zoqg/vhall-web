@@ -17,7 +17,6 @@
    </div> 
 </template>
 <script>
-import { sessionOrLocal } from '@/utils/utils';
 
 export default {
   name: "searchInput",
@@ -69,3 +68,22 @@ export default {
   }
 }
 </script>
+<style lang="less">
+.search-input{
+  /deep/.search-tag {
+    width: 180px;
+    /deep/.el-input__icon {
+      line-height: 36px;
+    }
+    /deep/.el-input__inner {
+      border-radius: 20px;
+      height: 36px;
+      padding-right: 50px!important;
+    }
+    /deep/ .el-input__prefix {
+      cursor: pointer;
+    }
+  }
+}
+
+</style>

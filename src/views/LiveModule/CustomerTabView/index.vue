@@ -32,7 +32,7 @@
             PC预览
           </span>
         </div>
-        <div class="vh-customer__preview-mobile" v-show="activeIndex == 1">
+        <div class="vh-customer__preview-mobile" v-if="activeIndex == 1">
           <mobile-preview
             ref="menusControl"
             :menus.sync="customMenus"
@@ -41,7 +41,7 @@
             @deleteCustomItem="deleteCustomItem"
           ></mobile-preview>
         </div>
-        <div class="vh-customer__preview-pc" v-show="activeIndex == 2">
+        <div class="vh-customer__preview-pc" v-if="activeIndex == 2">
           <pc-preview
             :menus="customMenus"
             :pre="activeIndex"
@@ -119,7 +119,6 @@ export default {
     deleteCustomItem(menu) {
       menu.op_type = 'del'
       menu?.id && this.deleteStack.push(menu)
-      console.log(77777, menu, this.deleteStack)
     },
     copy() {
       this.$copyText(this.link).then(e => {
@@ -142,6 +141,7 @@ export default {
     },
 
     getInitMenus() {
+      this.activeIndex = 0
       this.$fetch('customMenuList', {
         webinar_id: this.$route.params.str
       }).then(res=>{
@@ -158,12 +158,13 @@ export default {
           })
           console.log(menuList)
           this.customMenus = menuList;
-
         } else {
           this.customMenus = [];
         }
       }).catch(error=>{
         console.log(error);
+      }).finally(() => {
+        this.activeIndex = 1
       });
     },
 
@@ -171,9 +172,12 @@ export default {
       this.customMenus= this.customMenus.filter((item, index) => {
         return idx != index
       })
+      console.log(9999999, idx)
     },
     updateMenus(info) {
       this.customMenus = info
+      console.log(10000000, info)
+
     },
 
     saveCustomTab() {
@@ -183,8 +187,8 @@ export default {
         this.buttonDis = false;
         return false
       }
-      const saveMenus = Array.from(this.deleteStack.length > 0 ? this.customMenus.concat(this.deleteStack) : this.customMenus)
-      console.log(123123123, this.deleteStack, saveMenus)
+      const saveMenus = Array.from(this.customMenus)
+      console.log(123123123, this.deleteStack, saveMenus,this.customMenus)
       let params = {
         webinar_id: this.$route.params.str,
         save_type: 2, // 1--保存；2--保存+发布
@@ -206,7 +210,10 @@ export default {
           this.addCustomVisbile = false;
           // this.customMenuList();
           this.showWatch = true
-          this.getInitMenus()
+          this.deleteStack = []
+          this.$nextTick(() => {
+            this.getInitMenus()
+          })
         }
       }).catch(res=>{
         this.buttonDis = false;
