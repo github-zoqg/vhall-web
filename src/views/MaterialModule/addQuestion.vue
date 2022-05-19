@@ -56,7 +56,7 @@ import question from '@/components/Question/question'
 export default {
   data(){
     return {
-      alias: '问卷',
+      alias: '',
       dialogNameSet: false,
       dialogPreview: false
     }
@@ -83,11 +83,7 @@ export default {
     openSet(){
       this.dialogNameSet = true;
       // 资料管理 - 被同步后的数据，编辑的时候反显
-      if (this.$route.query.alias) {
-        this.alias = this.$route.query.alias
-      } else {
-        this.alias = '问卷'
-      }
+      this.alias = this.alias || this.$route.query.alias || '问卷'
       console.log('%c 打开别名设置弹框','color:blue')
     },
     saveNewName(){

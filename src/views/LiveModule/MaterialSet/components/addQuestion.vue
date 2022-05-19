@@ -83,7 +83,7 @@ export default {
     },
     openSet(){
       this.dialogNameSet = true;
-      this.alias = this.$route.query.alias || '问卷'
+      this.alias = this.alias || this.$route.query.alias || '问卷'
       console.log('%c 打开别名设置弹框','color:blue')
 
     },
