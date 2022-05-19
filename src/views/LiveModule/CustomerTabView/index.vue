@@ -141,7 +141,6 @@ export default {
     },
 
     getInitMenus() {
-      this.activeIndex = 0
       this.$fetch('customMenuList', {
         webinar_id: this.$route.params.str
       }).then(res=>{
@@ -156,15 +155,12 @@ export default {
             }
             return {...item}
           })
-          console.log(menuList)
           this.customMenus = menuList;
         } else {
           this.customMenus = [];
         }
       }).catch(error=>{
         console.log(error);
-      }).finally(() => {
-        this.activeIndex = 1
       });
     },
 
@@ -172,12 +168,9 @@ export default {
       this.customMenus= this.customMenus.filter((item, index) => {
         return idx != index
       })
-      console.log(9999999, idx)
     },
     updateMenus(info) {
       this.customMenus = info
-      console.log(10000000, info)
-
     },
 
     saveCustomTab() {
@@ -187,8 +180,7 @@ export default {
         this.buttonDis = false;
         return false
       }
-      const saveMenus = Array.from(this.customMenus)
-      console.log(123123123, this.deleteStack, saveMenus,this.customMenus)
+      const saveMenus = Array.from(this.deleteStack.length > 0 ? this.customMenus.concat(this.deleteStack) : this.customMenus)
       let params = {
         webinar_id: this.$route.params.str,
         save_type: 2, // 1--保存；2--保存+发布
