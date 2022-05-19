@@ -40,20 +40,7 @@
             <template slot-scope="scope">
               {{ scope.row.date }}
               <div class="content">
-                <div class="imageBox">
-                  <div class="imageWrap" v-if="scope.row.transcode_status != 1">
-
-                    <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">生成失败</p>
-                    <p v-else class="statusDesc disabled">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
-                  </div>
-                  <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
-                  <span v-if="!isDemand || liveDetailInfo.webinar_type == 5" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
-                  <div v-if="scope.row.encrypt_status == 2" class="ps jiami">加密</div>
-                  <div class="ps jiami_zhezhao" v-if="scope.row.encrypt_status == 1">
-                    <div class="ps jiamizhong">加密中...</div>
-                  </div>
-                </div>
-                <div class="info">
+                <div class="info" @click="preview(scope.row)" style="cursor: pointer;">
                   <p class="name">{{ scope.row.name }}</p>
                   <p class="create-time">{{ scope.row.created_at }}</p>
                   <span v-if="scope.row.doc_status && WEBINAR_PES['ui.record_chapter']" class="tag">章节</span>
@@ -67,7 +54,17 @@
             label="状态"
             :width="isBidScreen ? '' : 91"
             show-overflow-tooltip>
-            <span class="playpackSource">生成中</span>
+            <template slot-scope="scope">
+              <div class="imageWrap" v-if="scope.row.transcode_status != 1">
+                <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">生成失败</p>
+                <p v-else class="statusDesc disabled">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
+              </div>
+              <span v-if="!isDemand || liveDetailInfo.webinar_type == 5" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
+              <div v-if="scope.row.encrypt_status == 2" class="ps jiami">加密</div>
+              <div class="ps jiami_zhezhao" v-if="scope.row.encrypt_status == 1">
+                <div class="ps jiamizhong">加密中...</div>
+              </div>
+            </template>
           </el-table-column>
 
           <el-table-column
@@ -255,6 +252,9 @@ export default {
     },
     webinar_id(){
       return this.$route.params.str;
+    },
+    switch_id(){
+      return this.$route.params.switch_id;
     },
     title(){
       if (this.isDemand === '') {
@@ -556,15 +556,15 @@ export default {
     getList(){
       let param = {
         webinar_id: this.webinar_id,
-        user_id: this.userId,
         pos: this.pos,
         limit: this.pageSize,
-        source: this.recordType,
+        switch_id: this.switch_id,
       };
-      param.source == '上传' && (param.source = -1)
       this.keyWords && (param.name = this.keyWords)
+      console.log('param:',param)
       this.loading = true;
-      this.$fetch('playBackList', param).then(res=>{
+      // 获取小组回放列表
+      this.$fetch('getGroupRecordList', param).then(res=>{
         res.data.list.forEach(item => {
           item.transcoding = false
         })

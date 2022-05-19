@@ -253,7 +253,7 @@ const router = [
         hidden: true
       },
       {
-        path: 'playback/:str(\\d+)/group',
+        path: 'playback/:str(\\d+)/group/:switch_id(\\d+)',
         component: () => import('@/views/LiveModule/PlayBack/groupList'),
         meta:{ auth: true, title: '小组视频', name: 'playbackGroupList', activeMenu: '/live/list'},
         hidden: true

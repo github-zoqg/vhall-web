@@ -102,7 +102,10 @@
             label="小组视频"
             :width="isBidScreen ? '' : 108"
             show-overflow-tooltip>
-            <router-link :to="`/live/playback/${webinar_id}/group`" style="color:blue;">10</router-link>
+            <template slot-scope="scope">
+              <router-link :to="`/live/playback/${webinar_id}/group/${scope.row.switch_id}`" style="color:blue;">
+              {{scope.row.group_record_num}}</router-link>
+            </template>
           </el-table-column>
 
           <el-table-column

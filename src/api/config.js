@@ -248,6 +248,9 @@ const apis = {
   recordRemark: ['/v3/webinars/record/record-remake', 'POST'], // 课件重制
   recordEncrypt: ['/v3/webinars/record/push-entry-video', 'POST'], // 视频加密
 
+  // 小组视频
+  getGroupRecordList:['/v3/webinars/record/get-group-record-list', 'POST'], //小组回放列表
+
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
 
