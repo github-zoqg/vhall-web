@@ -46,6 +46,7 @@
           <el-table-column
             v-if="!isDemand"
             type="selection"
+            fixed="left"
             :width="isBidScreen ? 55 : 52">
           </el-table-column>
           <el-table-column
@@ -99,12 +100,15 @@
           </el-table-column>
 
           <el-table-column
+            v-if="webinarType==6"
             label="小组视频"
             :width="isBidScreen ? '' : 108"
             show-overflow-tooltip>
             <template slot-scope="scope">
-              <router-link :to="`/live/playback/${webinar_id}/group/${scope.row.switch_id}`" style="color:blue;">
+              <router-link v-if="scope.row.group_record_num>0"
+               :to="`/live/playback/${webinar_id}/group/${scope.row.switch_id}`" style="color:blue;">
               {{scope.row.group_record_num}}</router-link>
+              <span v-else>-</span>
             </template>
           </el-table-column>
 
@@ -128,6 +132,7 @@
           <el-table-column
             :width="isBidScreen ? 190 : 176"
             label="操作"
+            fixed="right"
             align="left"
           >
             <template slot-scope="scope">
@@ -295,6 +300,9 @@ export default {
       } else {
         return '回放管理'
       }
+    },
+    webinarType(){
+      return this.liveDetailInfo && this.liveDetailInfo.webinar_type;
     }
   },
   created(){

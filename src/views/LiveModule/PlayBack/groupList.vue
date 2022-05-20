@@ -429,6 +429,7 @@ export default {
     getLiveDetail() {
       this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
         this.liveDetailInfo = res.data;
+        console.log('this.liveDetailInfo:',this.liveDetailInfo)
         if (this.liveDetailInfo.webinar_type == 5 && !this.liveDetailInfo.is_demand) {
           this.isDemand = true
         } else {
