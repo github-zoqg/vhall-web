@@ -42,7 +42,7 @@
               <div class="content">
                 <div class="info" @click="preview(scope.row)" style="cursor: pointer;">
                   <p class="name">{{ scope.row.name }}</p>
-                  <p class="create-time">{{ scope.row.created_at }}</p>
+                   <p>第{{scope.row.group_switch_num}}次分组：{{scope.row.group_name}}</p>
                   <span v-if="scope.row.doc_status && WEBINAR_PES['ui.record_chapter']" class="tag">章节</span>
                   <span v-if="scope.row.layout != 0" class="tag">重制</span>
                 </div>
@@ -1190,7 +1190,7 @@ export default {
     .info{
       margin-left: 12px;
       font-size: 14px;
-      width: 187px;
+      // width: 227px;
       color: #1A1A1A;
       float: left;
       .name{
