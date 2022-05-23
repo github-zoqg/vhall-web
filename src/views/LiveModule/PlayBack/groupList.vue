@@ -42,9 +42,10 @@
               <div class="content">
                 <div class="info" @click="preview(scope.row)" style="cursor: pointer;">
                   <p class="name">{{ scope.row.name }}</p>
-                   <p>第{{scope.row.group_switch_num}}次分组：{{scope.row.group_name}}</p>
-                  <span v-if="scope.row.doc_status && WEBINAR_PES['ui.record_chapter']" class="tag">章节</span>
-                  <span v-if="scope.row.layout != 0" class="tag">重制</span>
+                  <p>第{{scope.row.group_switch_num}}次分组：{{scope.row.group_name}}
+                    <span v-if="scope.row.doc_status && WEBINAR_PES['ui.record_chapter']" class="tag">章节</span>
+                    <span v-if="scope.row.layout != 0" class="tag">重制</span>
+                  </p>
                 </div>
               </div>
             </template>
@@ -55,14 +56,12 @@
             :width="isBidScreen ? '' : 91"
             show-overflow-tooltip>
             <template slot-scope="scope">
-              <div class="imageWrap" v-if="scope.row.transcode_status != 1">
+              <div v-if="scope.row.encrypt_status == 2">加密</div>
+              <div v-else-if="scope.row.encrypt_status == 1">加密中</div>
+              <div v-else-if="scope.row.transcode_status == 1">-</div>
+              <div v-else>
                 <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">生成失败</p>
                 <p v-else class="statusDesc disabled">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
-              </div>
-              <span v-if="!isDemand || liveDetailInfo.webinar_type == 5" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
-              <div v-if="scope.row.encrypt_status == 2" class="ps jiami">加密</div>
-              <div class="ps jiami_zhezhao" v-if="scope.row.encrypt_status == 1">
-                <div class="ps jiamizhong">加密中...</div>
               </div>
             </template>
           </el-table-column>
@@ -443,7 +442,7 @@ export default {
             { label: '上传', value: '2' }
           ]
         } else {
-          this.handleTipMsgVisible()
+          // this.handleTipMsgVisible()
           this.typeOptions = [
             { label: '全部来源', value: '-1' },
             { label: '回放', value: '0' },
@@ -761,7 +760,8 @@ export default {
         this.$router.push({
           path: `/live/vodreset/${this.webinar_id}`,
           query: {
-            record_id: data.id
+            record_id: data.id,
+            switch_id:this.switch_id
           }
         });
       }
@@ -902,6 +902,8 @@ export default {
 
     // 发布为点播或定时直播
     publishVodTiming(recordData, index) {
+      console.log('----this.recordData---');
+      console.log(recordData);
       const url = index == 1 ? '/live/vodEdit' : '/live/timeEdit'
       const routerPush = () => {
         this.$router.push({
@@ -916,6 +918,7 @@ export default {
       }
       this.checkTransStatus(recordData.id, routerPush)
     },
+    // 点击弹窗中的“立即发布”按钮
     publishVideo() {
       this.publishDialogVisible = false
       this.publishVodTiming(this.recordData, this.activeIndex)

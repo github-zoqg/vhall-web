@@ -990,12 +990,16 @@ export default {
         // this.formData.zdy_inav_num = `1v${Number(this.liveDetailInfo.inav_num) - 1}`;
         this.zdy_inav_num = `1v${Number(this.liveDetailInfo.inav_num) - 1}`;
         if (this.liveDetailInfo.paas_record_id) {
-          this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
-          this.selectMedia.id = this.liveDetailInfo.record_id;
-          this.selectMedia.name = this.liveDetailInfo.record_subject;
+          // 通过回放视频发布点播或定时直播跳转过来的，通过query参数赋值给selectMedia，不重新赋值，否则小组视频会出问题
+          if(!this.selectMedia.id){
+            this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
+            this.selectMedia.id = this.liveDetailInfo.record_id;
+            this.selectMedia.name = this.liveDetailInfo.record_subject;
+          }
           this.selectMedia.msg_url = this.liveDetailInfo.msg_url || '.mp4';
         }
         if (flag) {
+          // 音频直播 后缀是mp3,其它直播后缀是mp4
           this.selectMedia.msg_url = this.liveDetailInfo.webinar_type == 1 ? '.mp3' : '.mp4';
         }
         console.log(this.selectMedia, '?????????')
@@ -1558,7 +1562,6 @@ export default {
     },
     mediaSelected(media){
       this.selectMedia = media;
-      console.log(this.selectMedia);
     }
   },
 };
