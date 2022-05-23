@@ -646,10 +646,13 @@
                 // 并发-分配时长，设置 extend_day， type为时长
                 result.extend_day = item.extend_day;
                 result.resources = Number(this.multiAllocForm.count2);
+                
               }
               console.log(result, '批量数据')
+              
               return result;
             })
+            this.multiAllocForm.count2 = null;
             let params = {
               type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量,
               pid: sessionOrLocal.get('userId'),
