@@ -195,7 +195,7 @@ export default {
             openShow: '开启后，直播活动恢复预告状态成功进行通知',
             closeShow: '开启后，直播活动恢复预告状态成功进行通知',
             value: Number(eventsList.includes('11') ? 1 : 0) || 0,
-            k: 100842   // TODO: 是否添加埋点
+            k: 100843
           }
         ];
         this.keyList = keyList;
