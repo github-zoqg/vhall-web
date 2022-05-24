@@ -16,7 +16,7 @@
           <el-popover popper-class="lang-scan" placement="bottom" trigger="hover">
             <div class="invitation-code">
               <img class="lang-code-img" :src="renderCodeImg(item.language_type)" alt="" />
-              <div class="download" @click="download(item.language_type)">下载二维码</div>
+              <div class="download" @click="download(item.language_type,  item.subject)">下载二维码</div>
             </div>
             <el-button
               round
@@ -49,6 +49,10 @@
         </div>
       </div>
     </div>
+    <begin-play
+      :webinarId="$route.params.str"
+      v-if="$route.query.type != 5 && webinarState != 4"
+    ></begin-play>
   </div>
 </template>
 
@@ -105,7 +109,7 @@ export default {
       if (!lang) return url
       else return url + `?lang=${lang}`
     },
-    download(lang) {
+    download(lang, subject) {
       const url = `${Env.staticLinkVo.aliQr}${encodeURIComponent(this.liveContent)}`
       const imgurl =  url + `${lang == 2 ? '?lang=2' : '?lang=1'}`
       let image = new Image()
@@ -122,7 +126,7 @@ export default {
         let imgData = canvas.toDataURL('image/' + ext)
         let a = document.createElement('a')
         let event = new MouseEvent('click')
-        a.download = '观看链接二维码.png'
+        a.download = `${subject}观看端二维码（${lang == 1 ? '中文' : lang == 2 ? '英文' : ''}）.png`
         a.href = imgData
         a.dispatchEvent(event)
       }
@@ -282,8 +286,8 @@ export default {
   padding: 0px!important;
   margin: 0px!important;
   img {
-    width: 108px;
-    height: 108px;
+    width: 132px;
+    height: 132px;
     object-fit: scale-down;
     padding: 0px!important;
     margin: 0px!important;
