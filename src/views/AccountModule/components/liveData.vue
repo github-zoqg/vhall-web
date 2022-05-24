@@ -271,7 +271,7 @@ export default {
   }
   .el-input{
     margin-left: 12px;
-    width: 220px;
+    width: 236px;
     /deep/ .el-input__prefix{
       cursor: pointer;
       /deep/ .el-input__icon{
