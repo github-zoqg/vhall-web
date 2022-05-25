@@ -2,7 +2,7 @@
   <div class="data-live">
     <pageTitle :pageTitle="$route.meta.title">
       <div slot="content">
-        1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据<br />3.数据报告、用户统计筛选近7天的数据内容
+        1.当日数据更新频率10分钟，建议活动结束后10分钟查看完整数据<br />2.控制台数据统计为真实数据，不统计虚拟数据
       </div>
     </pageTitle>
     <div class="box-card" v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)">
