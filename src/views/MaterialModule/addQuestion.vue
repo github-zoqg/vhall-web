@@ -90,6 +90,11 @@ export default {
       this.dialogNameSet = false;
       if(data == 'cancel'){
         this.alias = this.$route.query.alias || '问卷'
+      } else {
+        if (!this.alias) {
+          // 若当前输入没有内容，设定地址栏的''
+          this.alias = this.$route.query.alias || '问卷'
+        }
       }
       console.log(this.$route.query)
     }
