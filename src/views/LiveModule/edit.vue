@@ -158,7 +158,7 @@
         <div class="titleBox">
           <div class="pageTitle">
             <span v-if="!webinarDirector">云导播活动为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">云导播活动</a></span>
-            <span v-else>云导播活动不能使用无延迟技术，点我了解<a class="set-font" href="https://saas-doc.vhall.com/docs/show/1367" target="_blank">云导播活动</a></span>
+            <span v-else>云导播活动不能使用无延迟技术，点我了解<a class="set-font" href="https://saas-doc.vhall.com/docs/show/1504" target="_blank">云导播活动</a></span>
           </div>
         </div>
         <div class="delay-director">
