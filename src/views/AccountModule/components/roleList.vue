@@ -17,6 +17,7 @@
         <VhallInput placeholder="搜索角色名称" v-model="role_name"
                   clearable
                   v-clearEmoij
+                  @input="checkoutList"
                   @clear="initQuerySonList"
                   class="search-query"
                   @keyup.enter.native="initQuerySonList">
@@ -200,6 +201,11 @@ export default {
     };
   },
   methods: {
+    checkoutList(newValue) {
+      if(!newValue){
+        this.initQuerySonList()
+      }
+    },
     // 表格操作列回调函数， val表示每行
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;

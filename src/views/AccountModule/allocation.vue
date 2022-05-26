@@ -9,7 +9,7 @@
         </el-tabs>
         <el-button round @click.prevent.stop="multiSetHandle()" :class="['panel-btn length104', {'btn-right': resourcesVo && resourcesVo.extend_end_time != ''}]"
                    size="medium"
-                   v-if="!(is_dynamic > 0) && dataList.length > 0" :disabled="!multipleSelection.length">{{resourcesVo && Number(resourcesVo.type) === 1 ? '批量分配' : '分配并发包'}}</el-button>
+                   v-if="!(is_dynamic > 0) && dataList.length > 0" :disabled="!multipleSelection.length">{{resourcesVo && Number(resourcesVo.type) !== 0 ? '批量分配' : '分配并发包'}}</el-button>
         <el-button round @click.prevent.stop="multiSetHandle('more')" class="panel-btn length104" size="medium"
                    v-if="!(is_dynamic > 0) && dataList.length > 0 && resourcesVo && resourcesVo.extend_end_time != ''" :disabled="!multipleSelection.length">分配扩展包</el-button>
         <!-- 固定分配，有查询列表。 -->
@@ -48,7 +48,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="分配流量" v-if="resourcesVo && (resourcesVo.type > 0)"
+              label="分配流量" v-if="resourcesVo && resourcesVo.type === 1"
               align="left"
               width="230">
               <template slot-scope="scope">
@@ -62,7 +62,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="分配并发" v-if="resourcesVo && !(resourcesVo.type > 0)"
+              label="分配并发" v-if="resourcesVo && resourcesVo.type === 0"
               align="left"
               width="230">
               <template slot-scope="scope">
@@ -73,6 +73,20 @@
                   <template slot="append">方</template>
                 </VhallInput>
                 <span v-else>{{scope.row.count | unitCovert}} 方</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="分配时长" v-if="resourcesVo && resourcesVo.type === 2"
+              align="left"
+              width="230">
+              <template slot-scope="scope">
+               <!--  <el-input type="text" maxlength="5" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide" class="btn-relative" oninput="this.value=this.value.replace(/[^\d]+/g, '')">
+                  <template slot="append"> 方</template>
+                </el-input> -->
+                <VhallInput v-model.trim="scope.row.inputCount" :maxlength="8" v-if="scope.row.isHide" class="btn-relative" autocomplete="off"  @input="formatBFInputs($event, scope.row, 'inputCount')">
+                  <template slot="append">分钟</template>
+                </VhallInput>
+                <span v-else>{{scope.row.count | unitCovert}} 分钟</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -111,7 +125,7 @@
         </div>
         <!-- 动态分配，无查询列表 -->
         <div v-if="tabType === 'trends'" :class="['trends-ctx', {'trends-list': vipStatus === 'trends_1'}]">
-          <p>所有子账号共用所有可用的并发或流量<br />无需为单个账户分配</p>
+          <p>所有子账号共用所有可用的并发/流量/时长资源，<br />无需为单个账户分配</p>
           <el-button type="primary" class="length152" round v-preventReClick @click="allocationSave('trends')" v-if="!(is_dynamic > 0)">保存</el-button>
         </div>
       </div>
@@ -125,10 +139,26 @@
             <!-- <i :class="`${resourcesVo && resourcesVo.type > 0 ? 'iconfont-v3 saasliuliang_tubiao' : 'iconfont-v3 saasbingfa_tubiao'}`"></i> -->
           </div>
           <ul class="allocation_one">
-            <li class="custom-font-barlow">{{ (resourcesVo ? (resourcesVo.type > 0 ? resourcesVo.flow : resourcesVo.total ) : 0) | unitCovert }}  </li>
-            <li>可分配{{resourcesVo ? (resourcesVo.type > 0 ? `流量` : `并发`) : ''}} {{resourcesVo ? (resourcesVo.type > 0 ? `（GB）` : `（方）`) : ''}}</li>
+            <li class="custom-font-barlow">{{typeNumber}}</li>
+            <li >可分配{{typeName}}</li>
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
+          <!-- <ul class="allocation_one" v-if="resourcesVo && resourcesVo.type === 0">
+            <li class="custom-font-barlow">{{ (resourcesVo ? resourcesVo.total : 0) | unitCovert }}  </li>
+            <li >可分配并发（方）</li>
+            <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
+          </ul>
+          <ul class="allocation_one" v-if="resourcesVo && resourcesVo.type === 1">
+            
+            <li class="custom-font-barlow">{{ (resourcesVo ? resourcesVo.flow : 0) | unitCovert }}  </li>
+            <li>可分配流量（GB）</li>
+            <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
+          </ul>
+          <ul class="allocation_one" v-if="resourcesVo && resourcesVo.type === 2">
+            <li class="custom-font-barlow">{{ (resourcesVo ? resourcesVo.duration : 0) | unitCovert }}  </li>
+            <li>可分配时长（分钟）</li>
+            <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
+          </ul> -->
           <ul class="allocation_one mt32" v-if="resourcesVo && resourcesVo.extend_end_time != ''">
             <li class="custom-font-barlow">{{ (resourcesVo && resourcesVo.extend_day ? resourcesVo.extend_day : 0)  | unitCovert}} </li>
             <li>可分配并发扩展包（天）</li>
@@ -137,7 +167,7 @@
         </div>
         <ul class="ac__allocation--info">
           <li>提示：</li>
-          <li><span>1.</span><span>动态分配方式：所有子账户共用所有可用的并发或流量，无需为单个账户分配</span></li>
+          <li><span>1.</span><span>动态分配方式：所有子账户共用所有可用的并发、流量或时长，无需为单个账户分配</span></li>
           <li><span>2.</span><span>固定分配方式：请为每个子账号分配用量，所有账号用量之和不能大于可分配用量</span></li>
         </ul>
       </div>
@@ -155,10 +185,15 @@
             <template slot="append">GB</template>
           </VhallInput>
          </el-form-item>
-         <el-form-item label="分配数量" prop="count1" v-else>
+         <el-form-item label="分配数量" prop="count1" v-if="resourcesVo && Number(resourcesVo.type) === 0">
           <VhallInput v-model.trim="multiAllocForm.count1" :maxlength="8" class="btn-relative" autocomplete="off" placeholder="请输入分配数量" @input="formatBFInputs($event, 'multiAllocForm', 'count1')">
-          <template slot="append">方</template>
-        </VhallInput>
+            <template slot="append">方</template>
+          </VhallInput>
+         </el-form-item>
+         <el-form-item label="分配数量" prop="count2" v-if="resourcesVo && Number(resourcesVo.type) === 2">
+          <VhallInput v-model.trim="multiAllocForm.count2"  :maxlength="11" class="btn-relative" autocomplete="off" placeholder="请输入分配数量" @input="formatTimeInputs($event, 'multiAllocForm', 'count2')">
+            <template slot="append">分钟</template>
+          </VhallInput>
          </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -212,7 +247,8 @@
         multiAllocShow: false,
         multiAllocForm: {
           count: null,
-          count1: null
+          count1: null,
+          count2: null
         },
         multiAllocFormRules: {
           count: [
@@ -223,7 +259,12 @@
           count1: [
             { required: true, message: '请输入分配数量', trigger: 'blur' },
            /*  { pattern: /^\d{0,8}$/, message: '请输入正整数' , trigger: 'blur'} */
-          ]
+          ],
+          count2: [
+            { required: true, message: '请输入分配数量', trigger: 'blur' },
+           /*  { pattern: /^\d{0,8}$/, message: '请输入正整数' , trigger: 'blur'} */
+          ],
+          
         },
         sonDao: {},
         multipleSelection: [],
@@ -232,6 +273,8 @@
           limit: 10,
           pageNumber: 1
         },
+        typeNumber: '',
+        typeName: ''
       };
     },
     methods: {
@@ -328,6 +371,30 @@
           }
         }
       },
+      formatTimeInputs(value, row, key) {
+        if(value && key === 'count2') {
+          this[row][key] = this[row][key].replace(/[^\d]+/g, '')
+          row = this[row];
+        } else {
+          return
+        }
+        if (!/^\d{0,8}$/.test(value)) {
+          if(!value.match(/^\d{0,8}$/g)) {
+            row[key] = row[key].replace(/[^\d]+/g, '')
+          } else {
+            // 前两位不能是00开头
+            if(`${value.substring(0, 2)}` === '00') {
+              row[key] = row[key].substring(0, row[key].length - 1);
+            } else {
+              row[key] = parseInt(value);
+            }
+          }
+        } else {
+          if(`${value.substring(0, 2)}` === '00') {
+            row[key] = row[key].substring(0, row[key].length - 1);
+          }
+        }
+      },
       // 切换选项卡[每次点击切换时，设定其需要点击保存按钮]
       handleClick(tab, event) {
         console.log(tab, event);
@@ -344,9 +411,12 @@
             if (Number(this.resourcesVo.type) === 1) {
               // 当前为流量-批量分配
               this.dialogType = 2;
-            } else {
+            } else if (Number(this.resourcesVo.type) === 0){
               // 当前为并发-分配并发包
               this.dialogType = 1;
+            } else if (Number(this.resourcesVo.type) === 2){
+              // 当前为时长
+              this.dialogType = 4;
             }
           }
           this.multiAllocShow = true;
@@ -380,6 +450,8 @@
           // 若当前为固定分配，获取子账户列表数据
           this.is_dynamic = type === 'regular' ? 0 : 1;
           this.getSonList();
+          this.allocMoreGet();
+
         }).catch(res =>{
           console.log(res);
           this.$message({
@@ -426,7 +498,7 @@
           };
           (dao.list||[]).map(item => {
             // 组装数据 type =>  0并发 1流量 [Number(this.resourcesVo.type)]
-            if(Number(this.resourcesVo.type) > 0) {
+            if(Number(this.resourcesVo.type) == 1) {
               if (item.is_dynamic > 0 ) {
                 // 流量动态
                 item.count = 0;
@@ -436,7 +508,7 @@
                 item.inputCount = item.vip_info.flow;
                 item.count = item.vip_info.flow;
               }
-            } else {
+            } else if(Number(this.resourcesVo.type) == 0){
               if (item.is_dynamic > 0 ) {
                 // 流量动态
                 item.count = 0;
@@ -446,7 +518,12 @@
                 item.inputCount = item.vip_info.total;
                 item.count = item.vip_info.total;
               }
-            }
+            }else if(Number(this.resourcesVo.type) == 2){
+              
+              item.count = item.vip_info.duration;
+              item.inputCount = item.vip_info.duration;
+              
+            } 
             item.extend_day = item.vip_info.extend_day;
             item.inputExtendDay = item.vip_info.extend_day;
             item.isHide = false;
@@ -470,6 +547,18 @@
         if (res && res.code === 200) {
           // res = {"msg":"操作成功！","code":200,"data":{"extend_end_time":"2022-03-03 23:59:59","end_time":"2022-03-03 23:59:59","type":0,"total":0,"extend_day": 0,"flow":"297.59"},"request_id":"35d779b0-808d-11eb-8860-937321402ac7"}
           this.resourcesVo = res.data;
+          if(res.data && res.data.type === 0){
+            this.typeName = '并发（方）';
+            this.typeNumber = res.data.total
+          }else if(res.data && res.data.type === 1){
+            this.typeName = '流量（GB）';
+            this.typeNumber = res.data.flow
+          }else if(res.data && res.data.type === 2){
+            this.typeName = '时长（分钟）';
+            this.typeNumber = res.data.duration
+          }else {
+            this.typeNumber = res.data.duration
+          }
           let userResult = await this.$fetch('getInfo', {scene_id: 2}).catch(error => {
             console.log('获取账户信息异常', error)
           });
@@ -540,6 +629,7 @@
                 resources: 0,
                 extend_day: 0
               }
+              console.log(this.multiAllocForm, 'this.multiAllocForm')
               if (this.dialogType === 1) {
                 // 并发-分配并发包，设置resources， type为并发
                 result.resources = Number(this.multiAllocForm.count1);
@@ -548,14 +638,21 @@
                 // 流量-批量分配，设置 resources， type为流量
                 result.resources = Number(this.multiAllocForm.count);
                 result.extend_day = item.extend_day;
-              }  else if (this.dialogType === 3) {
+              } else if (this.dialogType === 3) {
                 // 并发-分配扩展包，设置 extend_day， type为并发
                 result.extend_day = Number(this.multiAllocForm.count1);
                 result.resources = item.count;
+              } else if (this.dialogType === 4) {
+                // 并发-分配时长，设置 extend_day， type为时长
+                result.extend_day = item.extend_day;
+                result.resources = Number(this.multiAllocForm.count2);
+                
               }
               console.log(result, '批量数据')
+              
               return result;
             })
+            this.multiAllocForm.count2 = null;
             let params = {
               type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量,
               pid: sessionOrLocal.get('userId'),
