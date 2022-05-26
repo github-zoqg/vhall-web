@@ -45,7 +45,7 @@ export default {
       loading: true,
     }
   },
-  props: ['questionId'],
+  props: ['questionId','alias'],
   created() {
     this.type = this.$route.query.type;
     this.userId = JSON.parse(sessionOrLocal.get("userId"));
@@ -80,7 +80,8 @@ export default {
         // 是否开启消息提示，非必填,默认是true
         notify: true,
         uploadUrl: process.env.VUE_APP_BASE_URL,
-        isPreview: this.questionId ? true : false
+        isPreview: this.questionId ? true : false,
+        nweName: 'nweName'
       });
 
       this.$service.$on(VHall_Questionnaire_Const.EVENT.READY, () => {
@@ -155,7 +156,11 @@ export default {
       this.$service.renderPageEdit('#settingBox', id || '');
     },
     copeQuestion(id) {
-      this.$fetch('copyQuestion', {survey_id: id}).then(res => {
+      const params = {survey_id: id}
+      if(this.alias){
+        params.alias = this.alias
+      }
+      this.$fetch('copyQuestion', params).then(res => {
         this.$message({
           message: res.code == 200 ? '同步成功' : '同步失败',
           showClose: true,
@@ -173,6 +178,9 @@ export default {
         description: description,
         img_url: this.questionDataInfo.imgUrl,
         playback_filling: extension.playback_filling
+      }
+      if(this.alias){
+        params.alias = this.alias
       }
       this.$fetch('createQuestion', params).then(res => {
         if (this.type == 1) {
@@ -201,6 +209,9 @@ export default {
         img_url: this.questionDataInfo.imgUrl,
         playback_filling: extension.playback_filling
       }
+      if(this.alias){
+        params.alias = this.alias
+      }
       this.$fetch('editQuestion', params).then(res => {
         this.$vhall_paas_port({
           k: 100527,
@@ -227,6 +238,9 @@ export default {
         description: description,
         img_url: this.questionDataInfo.imgUrl,
         playback_filling: extension.playback_filling
+      }
+      if(this.alias){
+        params.alias = this.alias
       }
       this.$fetch('createLiveQuestion', params).then(res => {
         this.$vhall_paas_port({
@@ -259,6 +273,9 @@ export default {
         description: description,
         img_url: this.questionDataInfo.imgUrl,
         playback_filling: extension.playback_filling
+      }
+      if(this.alias){
+        params.alias = this.alias
       }
       this.$fetch('editLiveQuestion', params).then(res => {
         this.$vhall_paas_port({

@@ -80,12 +80,29 @@ export default {
         params.start_time = this.timeStr[0] || '';
         params.end_time = this.timeStr[1] || '';
       }
-      this.$fetch(this.sonVo.vip_info.type > 0 ? 'getFlowLineInfo' : 'getTrendLineInfo', this.$params(params)).then(res=>{
+      let apiLine = 'getTrendLineInfo';
+      if(this.sonVo.vip_info.type === 1){
+        apiLine = 'getFlowLineInfo';
+      }else if(this.sonVo.vip_info.type === 0){
+        apiLine = 'getTrendLineInfo'
+      }else if(this.sonVo.vip_info.type === 2){
+        apiLine = 'getTimeLineInfo'
+      }
+        
+      this.$fetch(apiLine, this.$params(params)).then(res=>{
         if (res && res.code === 200) {
           let costList = res.data.list;
           costList.map(item => {
+            let typePay = '流量'
+            if(item.pay_type === 1){
+              typePay = '并发 '
+            }else if(item.pay_type === 0){
+              typePay = '流量'
+            }else if(item.pay_type === 2){
+              typePay = '时长'
+            }
             item.typeText = item.type == 1 ? '主账号' : item.type == 2 ? '父账号+子账号' : '子账号';
-            item.typePay = item.pay_type == 1 ? '并发 ' : '流量';
+            item.typePay = typePay;
           });
           this.tableList = costList;
           this.renderLineCharts();
@@ -147,7 +164,7 @@ export default {
         tooltip: {
           trigger: 'axis',
           show: true,
-          formatter:  `{b} <br/>{a}: {c}（${this.sonVo.vip_info.type > 0 ? 'GB' : '方'}）`
+          formatter:  `{b} <br/>{a}: {c}（${this.sonVo.vip_info.type === 2 ? '分钟' : (this.sonVo.vip_info.type > 0 ? 'GB' : '方')}）`
         },
         xAxis: {
           /* name: '日期', */
@@ -210,7 +227,7 @@ export default {
         ],
         series: [
           {
-            name: this.sonVo.vip_info.type > 0 ? '流量' : '并发',
+            name: this.sonVo.vip_info.type === 2 ? '时长' : (this.sonVo.vip_info.type === 1 ? '流量' : '并发'),
             type: 'line',
             showSymbol: false,
             symbolSize: 2,   //拐点圆的大小
