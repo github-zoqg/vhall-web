@@ -130,7 +130,9 @@ export const wordStatusCss = (ext) => {
     return 'saasexcelwendang color-14BA6A';
   } else if (ext === 'media') {
     return 'saasyinpinwenjian color-3562FA';
-  } else {
+  } else if (ext === 'zip') {
+    return 'saasyasuowenjian'
+  } else  {
     return 'saasexcelwendang color-14BA6A';
   }
 }

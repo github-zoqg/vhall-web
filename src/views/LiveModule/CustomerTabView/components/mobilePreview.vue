@@ -346,8 +346,10 @@ export default {
     // 删除
     delThis(index) {
       let activeTab = index === 0 ? 0 : (index - 1)
+      const _this = this
       setTimeout(() => {
-        this.menus.splice(index, 1)
+        const deleteMenu = this.menus.splice(index, 1)
+        _this.$emit('deleteCustomItem', deleteMenu[0])
         this.choseMenu(activeTab)
       }, 100);
     },
