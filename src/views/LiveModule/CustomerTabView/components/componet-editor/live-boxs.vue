@@ -237,6 +237,9 @@ export default {
       /deep/.el-input__icon{
         line-height: 36px;
       }
+      /deep/.el-input__inner{
+        padding-right: 10px!important;
+      }
     }
   }
 
