@@ -98,6 +98,11 @@ const apis = {
   demandCreate: ['/v3/webinars/webinar/create-demand', 'POST'], // 点播创建
   checkLive: ['/v3/webinars/live/check', 'POST'], // 进入直播前检测
   getPCDownloadUrl: ['/v3/commons/version/upgrade', 'POST'], // 客户端下载地址获取接口
+  getLiveDirectorStatus: ['/v3/webinars/director/get-status', 'GET'], // 控制台-获取云导播台状态
+  getLiveDirectorSeatList: ['/v3/webinars/director/get-seat-list', 'GET'], // 控制台-获取机位列表
+  setLiveDirectorSeat: ['/v3/webinars/director/select-seat', 'GET'], // 控制台-设置机位列表
+  getLiveDirectorResolution: ['/v3/webinars/director/get-webinar-resolution', 'GET'], // 控制台-获取活动分辨率信息
+  setLiveDirectorResolution: ['/v3/webinars/director/update-webinar-resolution', 'POST'], // 控制台-调整活动分辨率
 
   // 插播
   waitingVideoList: ['/v3/webinars/waiting-file/get-list', 'POST'], // 插播列表
@@ -188,6 +193,8 @@ const apis = {
   viewerSetSave: ['/v3/webinars/verify/save', 'POST'],// 观看限制保存接口 jia.li  √
   fCodeExecute: ['/v3/webinars/webinar/post-generate-fcode', 'POST'],// 生成验证码 jia.li  √
   getFCodeExcel: ['/v3/webinars/webinar/get-fcode-excel', 'POST'],// 生成验证码 jia.li  √
+  getAudienceList:['/v3/webinars/audience-groups/group-user-list','POST'],//预设小组-观众列表
+  saveAudienceSave:['/v3/webinars/audience/save','POST'],//预设小组保存
 
   // 自定义菜单
   menuTplList: ['/v3/interacts/menu/components-list', 'POST'], // 控制台-组件列表接口 jia.li

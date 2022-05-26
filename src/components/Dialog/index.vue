@@ -11,10 +11,12 @@
     <div>
       <slot></slot>
     </div>
-    <div slot="title" v-if="$slots.title">
+    <div slot="title"
+      v-if="$slots.title">
       <slot name="title"></slot>
     </div>
-    <div slot="footer" v-if="$slots.footer">
+    <div slot="footer"
+      v-if="$slots.footer">
       <slot name="footer"></slot>
     </div>
   </el-dialog>
@@ -38,29 +40,32 @@ export default {
   },
   computed: {
     dialogVisable: {
-      get(){
+      get() {
         return this.visible;
       },
-      set(val){
+      set(val) {
         this.$emit('update:visible', val);
       }
     },
   },
-  data(){
+  data() {
     return {
     };
   },
   methods: {
-    openHandler(){
+    openHandler() {
       this.$emit('open');
     },
-    openedHandler(){
+    openedHandler() {
       this.$emit('opened');
     },
-    closeHandler(){
+    handleClose(done) {
+      this.$emit('beforeClose', done);
+    },
+    closeHandler() {
       this.$emit('close');
     },
-    closedHandler(){
+    closedHandler() {
       this.$emit('closed');
     },
   }
