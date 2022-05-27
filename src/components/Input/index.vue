@@ -36,6 +36,7 @@
         @input="handleInput"
         @focus="handleFocus"
         @blur="handleBlur"
+        @change="handleChange"
         @keyup.enter="handleChange"
         :aria-label="label"
         :style="textStyle"
