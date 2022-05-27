@@ -19,7 +19,18 @@ import setting from './modules/settingOrData'
 import userRoutes from './modules/user'
 import v3 from './modules/v3Sys'
 
-const base = (process.env.VUE_APP_NODE_ENV == 'production' || process.env.VUE_APP_NODE_ENV == 'pre' || process.env.VUE_APP_NODE_ENV == 'test') ? '/v3/' : '/'
+const envList = [
+  'production',
+  'pre',
+  'test',
+  'new_test',
+  'test_zt',
+  'test4',
+  'test5',
+  'test6'
+]
+const base = envList.includes(process.env.VUE_APP_NODE_ENV) ? '/v3/' : '/'
+console.log(`路由地址base=${base}`)
 const createRouter = () => new VueRouter({
   mode: 'history',
   base,
