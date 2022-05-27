@@ -121,3 +121,11 @@ export default {
   }
 }
 </script>
+<style lang="less">
+.el-picker-panel__shortcut:nth-of-type(3) {
+  color: #fb3a32;
+}
+.el-picker-panel__shortcut:nth-of-type(1) {
+  color: #666;
+}
+</style>
