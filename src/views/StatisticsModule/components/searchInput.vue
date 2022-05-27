@@ -6,7 +6,6 @@
         v-model="content"
         clearable
         v-clearEmoij
-        @change="changeInput"
         @keyup.enter.native="changeInput">
         <i
           class="el-icon-search el-input__icon"
