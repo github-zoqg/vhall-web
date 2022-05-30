@@ -593,7 +593,7 @@ export default {
           list: []
         };
         (dao.list || []).map(item => {
-          if (this.vipType > 0) {
+          if (this.vipType === 1) {
             if (this.userInfo.user_extends.extends_remark == 1 && item.is_dynamic == 2) {
               // 知学云 -固定 - 流量（XXXGB）
               item.round = `流量（${item.vip_info.flow}GB）`;
@@ -606,7 +606,7 @@ export default {
                 item.round = `流量（${item.vip_info.flow}GB）`;
               }
             }
-          } else {
+          } else if (this.vipType === 0){
             if (this.userInfo.user_extends.extends_remark == 1 && item.is_dynamic == 2) {
               // 知学云 - 固定 - 并发（xxx方 + （扩展包xxxxx）方）
               if(item.vip_info.extend_day > 0) {
@@ -631,6 +631,8 @@ export default {
                 }
               }
             }
+          } else if (this.vipType === 2){
+            item.round = `时长（${item.vip_info.duration}分钟）`;
           }
           // item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : item.vip_info.type > 0 ? `${item.vip_info.total_flow}GB` : `${item.vip_info.total}方`}）`;
         });
