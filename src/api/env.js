@@ -8,7 +8,7 @@
  */
 let staticLinkVo = {
   kf: 'https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038',
-  aliQr: '//aliqr.e.vhall.com/qr.png?s=7&t=',
+  aliQr: '//aliqr.e.vhall.com/qr.png?s=7&m=1&t=',
   uploadBaseUrl: '//t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/upload/', // 图片上传后回显域名（后期字段变化）
   tmplDownloadUrl: 'https://t-alistatic01.e.vhall.com/static', // 原有静态模板下载地址
   helpLinkUrl: 'https://www.vhall.com/help' // 帮助中心跳转地址
