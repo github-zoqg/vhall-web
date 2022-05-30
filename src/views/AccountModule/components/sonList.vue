@@ -21,6 +21,7 @@
                   clearable
                   @clear="initQuerySonList"
                   class="search-query"
+                  @input="checkoutList"
                   v-clearEmoij
                   @keyup.enter.native="initQuerySonList">
           <i class="el-icon-search el-input__icon" slot="prefix" @click="initQuerySonList"></i>
@@ -300,8 +301,13 @@ export default {
     };
   },
   methods: {
+    checkoutList(newValue) {
+      if(!newValue){
+        this.initQuerySonList()
+      }
+    },
     handleClose() {
-      console.log(1111111)
+      // console.log(1111111)
       this.isReset = {
         phone: false,
         email: false
