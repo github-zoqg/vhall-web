@@ -117,10 +117,13 @@ export default {
       image.setAttribute('crossOrigin', 'anonymous')
       image.onload = function () {
         let canvas = document.createElement('canvas')
-        canvas.width = image.width
-        canvas.height = image.height
+        // canvas.width = image.width
+        // canvas.height = image.height
+        canvas.width = 217
+        canvas.height = 217
         let context = canvas.getContext('2d')
-        context.drawImage(image, 0, 0, image.width, image.height)
+        context.drawImage(image, 0, 0, 217, 217)
+        // context.drawImage(image, 0, 0, image.width, image.height)
         let ext = imgurl.substring(imgurl.lastIndexOf('.') + 1).toLowerCase()
         ext = ext.split('?')[0]
         let imgData = canvas.toDataURL('image/' + ext)
