@@ -47,7 +47,10 @@
           </li>
           <li>
             <label>用量分配</label>
-            <p>{{sonVo &&  sonVo.vip_info.type > 0 ? '流量' : '并发' }}（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）</p>
+            <!-- <p>{{sonVo &&  sonVo.vip_info.type > 0 ? '流量' : '并发' }}（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）</p> -->
+            <p v-if="sonVo &&  sonVo.vip_info.type === 0">并发（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）</p>
+            <p v-if="sonVo &&  sonVo.vip_info.type === 1">流量（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）</p>
+            <p v-if="sonVo &&  sonVo.vip_info.type === 2">时长（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）</p>
           </li>
           <li>
             <label>手机号码</label>

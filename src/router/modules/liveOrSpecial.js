@@ -328,7 +328,7 @@ const router = [
   },
   {
     path: '/special/detail',
-    name: 'detail',
+    meta: { title: '个人专题详情', name: 'specialDetail'},
     component: () => import('@/views/SpecialModule/components/preShow'),
     hidden: true
   }

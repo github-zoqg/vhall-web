@@ -1,3 +1,4 @@
+const { debug } = require('console');
 const path = require('path');
 let cdn = {
   js: [
@@ -14,27 +15,15 @@ let cdn = {
   ]
 }
 
-let publicPath = null
-
-console.warn('配置环境变量----',process.env.VUE_APP_NODE_ENV, process.env.VUE_APP_WEB_URL);
-switch (process.env.VUE_APP_NODE_ENV)  {
-  case 'development':
-    publicPath = '/'
-    break;
-  case 'test':
-    publicPath = process.env.VUE_APP_PUBLIC_PATH
-    break;
-  case 'production':
-    publicPath = '//cnstatic01.e.vhall.com/saas-v3-web/'
-    break;
-  case 'pre':
-    publicPath = '//cnstatic01.e.vhall.com/saas-v3-web-pre/'
-    break;
-  default :
-    publicPath = './'
-    break;
-}
-
+console.warn(process)
+let publicPath = process.env.VUE_APP_PUBLIC_PATH || './'
+console.warn('配置环境变量----', {
+  MODE: process.VUE_CLI_SERVICE,
+  NODE_ENV: process.env.NODE_ENV,
+  VUE_APP_NODE_ENV: process.env.VUE_APP_NODE_ENV,
+  VUE_APP_WEB_URL: process.env.VUE_APP_WEB_URL,
+  VUE_APP_BASE_URL: process.env.VUE_APP_BASE_URL
+});
 
 module.exports = {
   lintOnSave: false,
@@ -47,13 +36,17 @@ module.exports = {
         changeOrigin: true
       },
       '/v3': {
-        target: 'http://t-saas-dispatch.vhall.com',
+        target: process.env.VUE_APP_BASE_URL,
         changeOrigin: true
       },
       '/account': {
-        target: 'http://t-saas-dispatch.vhall.com',
+        target: process.env.VUE_APP_BASE_URL,
         changeOrigin: true
       },
+      // '/account': {
+      //   target: 'http://t-saas-dispatch.vhall.com',
+      //   changeOrigin: true
+      // },
       '/api/upload':{
         target: 'http://test-zhike.vhall.com/',
         changeOrigin: true
