@@ -884,7 +884,8 @@ export default {
             customClass: 'zdy-info-box' // 样式处理
           });
         } else {
-          this.$router.push({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand, pageKey: this.$route.meta.name, type: this.liveDetailInfo.webinar_type}});
+          this.$router.push({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand, pageKey: this.$route.meta.name, type: this.liveDetailInfo.webinar_type, switch_id: this.switch_id}});
+
           // const routeData = this.$router.resolve({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
           // window.open(routeData.href, '_blank');
         }
