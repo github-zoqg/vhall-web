@@ -7,7 +7,7 @@
       <div slot="content">所有设置对电脑端和移动浏览器同时生效</div>
       <div class="vh-customer-menu-btns">
         <span @click="workHelp" class="link__left">使用帮助</span>
-        <el-button type="primary" :disabled = 'buttonDis' style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab">保存</el-button>
+        <el-button type="primary" :disabled = 'buttonDis' style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab" >保存</el-button>
       </div>
     </page-title>
     <div class="vh-customer-menu-contentBox">
@@ -32,15 +32,16 @@
             PC预览
           </span>
         </div>
-        <div class="vh-customer__preview-mobile" v-show="activeIndex == 1">
+        <div class="vh-customer__preview-mobile" v-if="activeIndex == 1">
           <mobile-preview
             ref="menusControl"
             :menus.sync="customMenus"
             :pre="activeIndex"
             @updateMenus="updateMenus"
+            @deleteCustomItem="deleteCustomItem"
           ></mobile-preview>
         </div>
-        <div class="vh-customer__preview-pc" v-show="activeIndex == 2">
+        <div class="vh-customer__preview-pc" v-if="activeIndex == 2">
           <pc-preview
             :menus="customMenus"
             :pre="activeIndex"
@@ -93,10 +94,13 @@ export default {
       link:  '',
       userId: '',
       showWatch: false,
-      buttonDis: false
+      buttonDis: false,
+      deleteStack: []
     }
   },
-
+  beforeDetroy() {
+    this.deleteStack = []
+  },
   components: {
     PageTitle,
     DragComponents,
@@ -112,6 +116,10 @@ export default {
   },
 
   methods: {
+    deleteCustomItem(menu) {
+      menu.op_type = 'del'
+      menu?.id && this.deleteStack.push(menu)
+    },
     copy() {
       this.$copyText(this.link).then(e => {
         this.$message({
@@ -133,6 +141,7 @@ export default {
     },
 
     getInitMenus() {
+      this.activeIndex = 0
       this.$fetch('customMenuList', {
         webinar_id: this.$route.params.str
       }).then(res=>{
@@ -147,14 +156,14 @@ export default {
             }
             return {...item}
           })
-          console.log(menuList)
           this.customMenus = menuList;
-
         } else {
           this.customMenus = [];
         }
       }).catch(error=>{
         console.log(error);
+      }).finally(() => {
+        this.activeIndex = 1
       });
     },
 
@@ -174,7 +183,7 @@ export default {
         this.buttonDis = false;
         return false
       }
-      const saveMenus = Array.from(this.customMenus)
+      const saveMenus = Array.from(this.deleteStack.length > 0 ? this.customMenus.concat(this.deleteStack) : this.customMenus)
       let params = {
         webinar_id: this.$route.params.str,
         save_type: 2, // 1--保存；2--保存+发布
@@ -196,6 +205,10 @@ export default {
           this.addCustomVisbile = false;
           // this.customMenuList();
           this.showWatch = true
+          this.deleteStack = []
+          this.$nextTick(() => {
+            this.getInitMenus()
+          })
         }
       }).catch(res=>{
         this.buttonDis = false;

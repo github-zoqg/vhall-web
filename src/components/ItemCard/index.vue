@@ -111,7 +111,7 @@ export default {
   },
   created() {
     console.log(this.perssionInfo, this.isTrue,  '????>>>>>>>>>>>')
-    this.getLanguagePermission()
+    // this.getLanguagePermission()
     this.resetList(this.perssionInfo)
   },
   watch: {
@@ -190,21 +190,22 @@ export default {
         { icon: 'icon_video@2x', id: 5, title: '暖场视频', subText: '开启后设置暖场视频',index: 4, type: 100062, path: `/live/warm/${this.$route.params.str}`, isShow: this.type != 4 && this.webinarType!=1 && !this.videoType},
         { icon: 'icon_virtual@2x', id: 6, title: '虚拟人数', subText: `添加${this.type == 4 ? '点播' :'直播'}的虚拟人数`, type: 100063, path: `/live/virtual/${this.$route.params.str}`, isShow: this.webinarType == 6 ? false : perssionInfo.virtual_user == 1},
         { icon: 'icon_registration form@2x', id: 7, title: '报名表单', subText: '开启后收集目标观众信息', type: 100064, path: `/live/signup/${this.$route.params.str}`, isShow: perssionInfo.join_check==1},
-        { icon: 'icon_embedded@2x', id: 8, title: '推广嵌入', subText: `获取活动推广嵌入的方法`, type: 100065, path: `/live/embedCard/${this.$route.params.str}`, isShow: true}
+        { icon: 'icon_embedded@2x', id: 8, title: '推广嵌入', subText: `获取活动推广嵌入的方法`, type: 100065, path: `/live/embedCard/${this.$route.params.str}`, isShow: true},
+        { icon: 'icon_languages@2x', id: 9, title: '多语言链接', subText: `获取多语言观看链接及二维码`, type: 100845, path: `/live/langCard/${this.$route.params.str}`, isShow: perssionInfo.multilingual==1 && this.webinarType != 6}
       ],
       this.brandList = [
-        { icon: 'icon_brand@2x', id: 1, title: '品牌设置', subText: '设置观看页品牌信息', path: `/live/brandSet/${this.$route.params.str}`,isShow: perssionInfo['ui.brand_setting'] > 0 || perssionInfo.webinar_skins > 0 || perssionInfo['watch.viewing_protocol'] > 0},
-        { icon: 'icon_custom@2x', id: 2, title: '自定义菜单', subText: '自定义观看页菜单栏', path: `/live/customTab/${this.$route.params.str}`,isShow: this.isTrue},
-        { icon: 'icon_player@2x',id: 3, title: '播放器设置', subText: `设置${this.type == 4 ? '点播' :'直播'}跑马灯水印`, path: `/live/playerSet/${this.$route.params.str}`,isShow: perssionInfo.player_config==1},
-        { icon: 'icon_invitation@2x', id: 4, title: '邀请卡', subText: `用于${this.type == 4 ? '点播' :'直播'}邀请或裂变分享`, path: `/live/invCard/${this.$route.params.str}`,isShow: perssionInfo.btn_invite==1},
-        { icon: 'icon_advertising@2x', id: 5, title: '广告', subText: '设置观看页广告位信息', path: `/live/advertCard/${this.$route.params.str}`,isShow: perssionInfo.ad_recommend==1},
-        { icon: 'icon_public@2x', id: 6, title: '公众号', subText: '设置观看页展示的公众号', path: `/live/officeSet/${this.$route.params.str}`,isShow: this.webinarType == 6 ? false : perssionInfo.live_broadcast_window==1},
-        { icon: 'icon_posters@2x', id: 7, title: '开屏海报', subText: '设置观看页的开屏海报', path: `/live/posterCard/${this.$route.params.str}`,isShow: perssionInfo.market_open_posters==1},
-        { icon: 'icon_shareSetting@2x', id: 8, title: '分享设置', subText: '设置活动分享到微信中的效果', path: `/live/shareSetting/${this.$route.params.str}`,isShow: perssionInfo.share_set == 1},
+        { icon: 'icon_brand@2x', id: 1, title: '品牌设置', subText: '设置观看页品牌信息', type: 100066, path: `/live/brandSet/${this.$route.params.str}`,isShow: perssionInfo['ui.brand_setting'] > 0 || perssionInfo.webinar_skins > 0 || perssionInfo['watch.viewing_protocol'] > 0},
+        { icon: 'icon_custom@2x', id: 2, title: '自定义菜单', subText: '自定义观看页菜单栏', type: 100067, path: `/live/customTab/${this.$route.params.str}`,isShow: this.isTrue},
+        { icon: 'icon_player@2x',id: 3, title: '播放器设置', subText: `设置${this.type == 4 ? '点播' :'直播'}跑马灯水印`, type: 100068, path: `/live/playerSet/${this.$route.params.str}`,isShow: perssionInfo.player_config==1},
+        { icon: 'icon_invitation@2x', id: 4, title: '邀请卡', subText: `用于${this.type == 4 ? '点播' :'直播'}邀请或裂变分享`, type: 100069, path: `/live/invCard/${this.$route.params.str}`,isShow: perssionInfo.btn_invite==1},
+        { icon: 'icon_advertising@2x', id: 5, title: '广告', subText: '设置观看页广告位信息', type: 100070, path: `/live/advertCard/${this.$route.params.str}`,isShow: perssionInfo.ad_recommend==1},
+        { icon: 'icon_public@2x', id: 6, title: '公众号', subText: '设置观看页展示的公众号', type: 100071, path: `/live/officeSet/${this.$route.params.str}`,isShow: this.webinarType == 6 ? false : perssionInfo.live_broadcast_window==1},
+        { icon: 'icon_posters@2x', id: 7, title: '开屏海报', subText: '设置观看页的开屏海报', type: 100072, path: `/live/posterCard/${this.$route.params.str}`,isShow: perssionInfo.market_open_posters==1},
+        { icon: 'icon_shareSetting@2x', id: 8, title: '分享设置', subText: '设置活动分享到微信中的效果', type: 100846, path: `/live/shareSetting/${this.$route.params.str}`,isShow: perssionInfo.share_set == 1},
       ],
       this.liveDataList = [
         { icon: 'icon_document@2x', id: 1, title: '文档', subText: '直播中使用文档演示', type: 100073, path: `/live/word/${this.$route.params.str}`,isShow: this.type != 4 && this.webinarType != 5},
-        { icon: 'icon_videoSet@2x', id: 6, title: '插播文件', subText: '直播中使用音视频文件演示', type: '000000', path: `/live/videoSet/${this.$route.params.str}`, isShow:  this.webinarType != 5 && perssionInfo['waiting.video.file']==1 && this.type != 4},
+        { icon: 'icon_videoSet@2x', id: 6, title: '插播文件', subText: '直播中使用音视频文件演示', type: 100847, path: `/live/videoSet/${this.$route.params.str}`, isShow:  this.webinarType != 5 && perssionInfo['waiting.video.file']==1 && this.type != 4},
         { icon: 'icon_Lucky draw@2x', id: 2, title: '抽奖', subText: '直播中发起抽奖活跃气氛', type: 100074, path: `/live/prizeSet/${this.$route.params.str}`, isShow: this.webinarType != 5 && perssionInfo['ui.hide_lottery']==1 && this.type != 4},
         { icon: 'icon_questionnaire@2x', id: 3,title: '问卷', subText: '创建问卷收集信息', type: 100075, path: '/live/question',isShow: this.webinarType != 5 && perssionInfo['ui.hide_survey']==1 && this.type != 4},
         { icon: 'icon_goods@2x', id: 4, title: '商品', subText: '设置展示给观众的商品', type: 100076, path: `/live/productSet/${this.$route.params.str}`,isShow: perssionInfo.product_show==1},

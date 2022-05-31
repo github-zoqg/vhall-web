@@ -68,7 +68,7 @@ export default {
   methods: {
     initInfo(menuInfo) {
       this.currentInfo = menuInfo
-      if (this.type == 1) {
+      if (this.type == 1 && this.currentInfo.components?.length > 0) {
         this.currentInfo.components = this.currentInfo.components.map((item) => {
           return {
             ...item

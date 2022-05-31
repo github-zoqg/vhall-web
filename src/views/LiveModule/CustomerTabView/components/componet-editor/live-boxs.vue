@@ -3,7 +3,7 @@
   <div class="search" >
     <VhallInput
       v-model="keyword"
-      placeholder="请输入直播标题"
+      placeholder="请输入直播标题或者直播ID"
       @change="inputChange"
       v-clearEmoij
       clearable
@@ -130,24 +130,32 @@ export default {
       this.$fetch('liveList', this.$params(params)).then((res) => {
         if(res.code == 200) {
           this.page = this.page + 1
+          console.log(0, res.data.list.length)
           if(res.data.total == 0) {
             this.lock = true
             this.loading = false
             this.total = 0
-          } else {
+            console.log(1, this.disabled,this.loading, this.lock, this.activeList)
+          } else if (res.data.list.length == 0) {
+            this.lock = true
+            this.loading = false
+          }else {
             this.activeList =  this.activeList.concat(res.data.list.map(item => {
               return {
                 ...item,
                 checked: false
               }
             }))
+            this.lock = false
             this.total = res.data.total
             // 老控制台选择不需要回显选中的
             this.syncCheckStatus()
             this.loading = false
+            console.log(2,this.disabled,this.loading, this.lock, this.activeList)
           }
         } else {
           this.loading = false
+          console.log(3,this.disabled,this.loading, this.lock)
         }
       })
     },
@@ -228,6 +236,9 @@ export default {
       }
       /deep/.el-input__icon{
         line-height: 36px;
+      }
+      /deep/.el-input__inner{
+        padding-right: 10px!important;
       }
     }
   }
