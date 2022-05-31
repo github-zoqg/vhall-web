@@ -19,7 +19,18 @@ import setting from './modules/settingOrData'
 import userRoutes from './modules/user'
 import v3 from './modules/v3Sys'
 
-const base = (process.env.VUE_APP_NODE_ENV == 'production' || process.env.VUE_APP_NODE_ENV == 'pre' || process.env.VUE_APP_NODE_ENV == 'test') ? '/v3/' : '/'
+const envList = [
+  'production',
+  'pre',
+  'test',
+  'new_test',
+  'test_zt',
+  'test4',
+  'test5',
+  'test6'
+]
+const base = envList.includes(process.env.VUE_APP_NODE_ENV) ? '/v3/' : '/'
+console.log(`路由地址base=${base}`)
 const createRouter = () => new VueRouter({
   mode: 'history',
   base,
@@ -39,6 +50,19 @@ VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
 router.beforeEach((to, from, next) => {
+  // 每次切换页面都先重置下页面title
+  if (to.meta.name == "chooseWay" && to.meta.level == undefined) {
+    // 如果是邀请的链接
+    document.title = "";
+  } else if (to.meta.name == "userHome" && to.meta.level == undefined) {
+    // 如果是个人首页
+    document.title = "";
+  } else if (to.meta.name == "specialDetail" && to.meta.level == undefined) {
+    // 如果是个人专题详情
+    document.title = "";
+  } else {
+    document.title = window.SAAS_vhall_title;
+  }
   checkAuth(to, from, next, window.vm);
 });
 router.afterEach(() => {
