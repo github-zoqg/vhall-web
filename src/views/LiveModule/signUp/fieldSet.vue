@@ -1205,6 +1205,10 @@ export default {
 .previewPrivacy{
   font-size: 14px;
   color: #666;
+  /deep/ .el-checkbox__input{
+    padding-top: 18px;
+    vertical-align: top;
+  }
   /deep/ .el-checkbox__input.is-checked+.el-checkbox__label {
     color: #666;
   }
@@ -1215,7 +1219,7 @@ export default {
   }
   p{
     margin: 16px 0 8px 0;
-    display: flex;
+    /* display: flex; */
     align-items: flex-start;
     width: 100%;
     white-space: normal;
