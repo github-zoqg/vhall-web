@@ -2,7 +2,7 @@
   <div class="vh-editor-wrapbox" :style="{'height': height}">
     <vue-tinymce ref="editor" :content="value" :setting="setting" @change="sendContent">
     </vue-tinymce>
-    <span class="set-placeholder" v-if="!value || currentCount == 0" onselectstart="return false;" unselectable="on" @click="$refs.editor.getInstance().focus()">{{placeholder}}</span>
+    <span class="set-placeholder" v-if="!value || currentCount == 0" onselectstart="return false;" unselectable="on" @click="handleTinyClick">{{placeholder}}</span>
     <div class="word-count">
       <span :class="value && currentCount > 0 && currentCount < (maxWord || 1000) ? 'blue' : value && currentCount == (maxWord || 1000)  ? 'red' : ''">{{ value ? currentCount : 0 }}</span> / {{ maxWord || '1000' }}
     </div>
@@ -32,6 +32,10 @@ import VueTinymce from './editorPlugin'
 export default {
   name: "vhall-editor",
   props: {
+    modelType: {
+      type: String,
+      defaut: 'common'
+    },
     id: {
       type: String,
       default: function() {
@@ -77,8 +81,6 @@ export default {
   },
 
   created() {
-  },
-  mounted() {
   },
   updated() {
   },
@@ -153,33 +155,45 @@ export default {
       currentCount: 0,
     };
   },
+  watch: {
+    value: {
+      handler(newVal) {
+        if (newVal) {
+          this.sendContent(newVal)
+        }
+      },
+      immediate: true
+    }
+  },
   methods: {
+    handleTinyClick() {
+      this.$refs.editor?.getInstance()?.focus()
+    },
     // 内容修改后，将信息返回
     sendContent(text) {
-      // console.log('字符数', this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount())
-      this.currentCount = this.$refs.editor.getInstance().plugins.wordcount.body.getCharacterCount()
-
-      if(this.currentCount > 1000) {
-        if (this.vm) {
-          this.vm.close();
-          this.messageInfo();
+        this.currentCount = this.$refs.editor?.getInstance()?.plugins?.wordcount?.body?.getCharacterCount()
+        if(this.currentCount > 1000) {
+          if (this.vm) {
+            this.vm.close();
+            this.messageInfo();
+          } else {
+            this.messageInfo();
+          }
+          // this.$message.warning('您输入的内容超出1000限制，已自动取消')
+          this.$refs.editor.getInstance().setContent(this.value)
+          this.$emit('input', this.value)
+          return
         } else {
-          this.messageInfo();
+          this.$emit('input', text);
         }
-        // this.$message.warning('您输入的内容超出1000限制，已自动取消')
-        this.$refs.editor.getInstance().setContent(this.value)
-        this.$emit('input', this.value)
-        return
-      } else {
-        this.$emit('input', text);
-      }
     },
      //文案提示问题
     messageInfo() {
+      const message = this.modelType == 'restriction' ? '您输入的内容超出1000限制' : '您输入的内容超出1000限制，已自动取消'
       this.vm = this.$message({
         showClose: false,
         duration: 2000,
-        message: '您输入的内容超出1000限制，已自动取消',
+        message,
         type: 'warning'
       });
     },

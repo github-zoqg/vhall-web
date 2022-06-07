@@ -697,6 +697,7 @@ export default {
       nodes[0].value = nodes[0].value.replace(reg, `$1和${cloneNode.value}`);
       nodes.push(cloneNode);
       nodes.push(cloneNode2);
+      console.log(nodes[0].value, 'nodes[0].value')
       this.$fetch('regRrivacyAdd', {
         webinar_id: this.webinar_id,
         content: nodes[0].value,
@@ -721,6 +722,7 @@ export default {
     },
     privacyFormatter(item){
       let text = JSON.parse(JSON.stringify(item[0].value));
+      console.log(text, item, 'text')
       // let privacy =
       let matchPrivacy1 = item[1].value.trim() ? text.match(item[1].value) : null;
       if(matchPrivacy1){
@@ -730,6 +732,7 @@ export default {
         item[1].value = '';
       }
       let matchPrivacy2 = (item[3] && item[3].value.trim()) ? text.match(item[3].value) : null;
+      // alert(matchPrivacy2, 'matchPrivacy2')
       if(matchPrivacy2){
         let reg = new RegExp(`(${matchPrivacy2[0]})`, "g");
         text = text.replace(reg, `<a href="${item[4].value || 'javascript:void(0);'}" target="_blank">$1</a>`);

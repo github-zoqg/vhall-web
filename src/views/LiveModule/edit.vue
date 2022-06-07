@@ -74,16 +74,6 @@
             <img src="../../common/images/live/mode-video_check@2x.png" :class="{active: liveMode== 2}" @click='liveModeChange(2)' v-if="liveMode== 2">
             <img src="../../common/images/live/mode-video@2x.png" alt="" @click='liveModeChange(2)' v-else>
             <p class="desc">视频直播</p>
-            <!-- <el-container class='model'> -->
-              <!-- :class="{active: liveMode== 2}" -->
-              <!-- <el-aside width="80px" class="block">
-                <i class="el-icon-video-camera icon"></i>
-              </el-aside>
-              <el-container>
-                <el-header height='13px' class="block"></el-header>
-                <el-main class="block"></el-main>
-              </el-container> -->
-            <!-- </el-container> -->
           </div>
           <!-- card 互动直播 -->
           <div>
@@ -94,23 +84,6 @@
              <img src="../../common/images/live/mode-active_check@2x.png" alt="" :class="{active: liveMode== 3}" @click='!webniarIntact && liveModeChange(3)' v-if="liveMode== 3">
               <img src="../../common/images/live/mode-active@2x.png" alt="" @click='!webniarIntact && liveModeChange(3)' v-else>
             </template>
-            <!-- <el-container class='model'> -->
-
-              <!-- <el-header height='13px'>
-                <el-col :span="3" class="block"></el-col>
-                <el-col :span="3" :offset='1' class="block"></el-col>
-                <el-col :span="3" :offset='1' class="block"></el-col>
-                <el-col :span="3" :offset='1' class="block"></el-col>
-                <el-col :span="3" :offset='1' class="block"></el-col>
-                <el-col :span="4" :offset='1' class="block"></el-col>
-              </el-header>
-              <el-container>
-                <el-aside width="80px" class="block">
-                  <i class="el-icon-s-custom icon"></i>
-                </el-aside>
-                <el-main class="block"></el-main>
-              </el-container> -->
-            <!-- </el-container> -->
             <p class="desc">互动直播</p>
             <!-- <span class="notAllow" v-if="webniarIntact">未开通</span> -->
           </div>
@@ -118,16 +91,6 @@
           <div>
             <img src="../../common/images/live/mode-media_check@2x.png" :class="{active: liveMode == 1}" alt=""  @click='liveModeChange(1)' v-if="liveMode== 1">
             <img src="../../common/images/live/mode-media@2x.png" alt=""  @click='liveModeChange(1)' v-else>
-            <!-- <el-container class='model'>
-              <img src="../../common/images/live/mode-media.png" alt="">
-              <el-aside width="80px" class="block">
-                <i class="el-icon-microphone icon"></i>
-              </el-aside>
-              <el-container>
-                <el-header height='13px' class="block"></el-header>
-                <el-main class="block"></el-main>
-              </el-container>
-            </el-container> -->
             <p class="desc">音频直播</p>
           </div>
           <!-- card 分组直播 -->
@@ -139,20 +102,30 @@
              <img src="../../common/images/live/mode-group_check@2x.png" alt="" :class="{active: liveMode == 6}" @click='!webinarGroup && liveModeChange(6)' v-if="liveMode == 6">
               <img src="../../common/images/live/mode-group@2x.png" alt="" @click='!webinarGroup && liveModeChange(6)' v-else>
             </template>
-            <!-- <el-container class='model'>
-              <img src="../../common/images/live/mode-media.png" alt="">
-              <el-aside width="80px" class="block">
-                <i class="el-icon-microphone icon"></i>
-              </el-aside>
-              <el-container>
-                <el-header height='13px' class="block"></el-header>
-                <el-main class="block"></el-main>
-              </el-container>
-            </el-container> -->
             <p class="desc">分组直播</p>
           </div>
         </div>
         <div class="modeHide" v-if="$route.query.type==2"></div>
+      </el-form-item>
+      <el-form-item label="云导播" required v-if="showDelayTag && liveMode==2" class="max-column">
+        <div class="titleBox">
+          <div class="pageTitle">
+            <span v-if="!webinarDirector">云导播活动为付费功能请<a class="blue" target="_blank"  href="https://vhall.s4.udesk.cn/im_client/?web_plugin_id=15038"> 联系客服 </a>开通，点我了解<a class="set-font" href="https://saas-doc.vhall.com/docs/show/1504" target="_blank">云导播活动</a></span>
+            <span v-else>云导播活动不能使用无延迟技术，点我了解<a class="set-font" href="https://saas-doc.vhall.com/docs/show/1504" target="_blank">云导播活动</a></span>
+          </div>
+        </div>
+        <div class="delay-director">
+          <div class="mode-common" :class="{directorActive: selectDirectorMode === 0}" @click.stop="handleSelectDirectorMode(0)">
+            <i class="vh-saas-iconfont vh-saas-line-mixeroff ft20"></i> 不启用云导播
+          </div>
+          <div v-if="webinarDirector" class="mode-director" :class="{ directorActive: selectDirectorMode === 1, disableBox: selectDelayMode == 'delay'}" @click.stop="handleSelectDirectorMode(1)">
+            <span class="text-content"><i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播</span>
+          </div>
+          <div v-if="!webinarDirector" class="mode-director noDirector" :class="{disableBox: selectDelayMode == 'delay'}">
+            <span class="text-content"><i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播</span>
+            <span class="no-open">未开通</span>
+          </div>
+        </div>
       </el-form-item>
       <el-form-item v-if="(liveMode == 3 || liveMode == 6) && webinarType == 'live'" label="连麦人数" required :class="['invd-number', {'margin32': liveMode == 6}] ">
         <div class="titleBox">
@@ -165,6 +138,13 @@
             <el-option :key="optIndex" :label="opt.label" :value="opt.label" :disabled="selectDelayMode == 'delay' && liveMode != 6 ? (speakerMaxNum < 6 ? opt.value > speakerMaxNum : opt.value > 6) : opt.value > speakerMaxNum"/>
           </template>
         </el-select>
+        <el-tooltip v-if="liveMode == 3" v-tooltipMove>
+            <div slot="content">
+              <p>1.开启视频轮巡功能后，会占用上麦数（视频轮巡路数&lt;=当前活动连麦数-已连麦数）</p>
+              <p>2.请根据视频轮巡及上麦的需要，酌情设置本场活动的连麦数量</p>
+            </div>
+            <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999; margin-left:5px"></i>
+          </el-tooltip>
       </el-form-item>
       <template  v-if="showDelayTag && liveMode != 6">
         <el-form-item class="margin32" label="直播延迟" required style="display: none;" :style="{'display' : liveMode != 6 ? 'block' : 'nonelay'}">
@@ -175,10 +155,14 @@
               </span></span>
           </div>
           <div class="delay-select">
-            <div class="mode-common" :class="{delayActive: selectDelayMode == 'common',noDelay:$route.params.id}" @click.stop="handleSelectDelayMode('common')"><i class="iconfont-v3 saasicon-changgui ft20"></i>
-  常规延迟≈5S</div>
-            <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay',noDelay:$route.params.id}" @click.stop="handleSelectDelayMode('delay')"><i class="iconfont-v3 saasicon-wuyanchi ft20"></i> 无延迟&lt;0.4S</div>
-            <div v-if="!webinarDelay" class="mode-delay noDelay"><i class="iconfont-v3 saasjishiqi ft20"></i> 无延迟&lt;0.4S<span class="no-open">未开通</span></div>
+            <div class="mode-common" :class="{delayActive: selectDelayMode == 'common',noDelay:$route.params.id}" @click.stop="handleSelectDelayMode('common')">
+              <i class="iconfont-v3 saasicon-changgui ft20"></i> 常规延迟≈5S</div>
+            <div v-if="webinarDelay" class="mode-delay" :class="{delayActive: selectDelayMode == 'delay',noDelay:$route.params.id, disableBox: selectDirectorMode === 1&&liveMode==2 }" @click.stop="handleSelectDelayMode('delay')">
+              <span class="text-content"><i class="iconfont-v3 saasicon-wuyanchi ft20"></i> 无延迟&lt;0.4S</span>
+            </div>
+            <div v-if="!webinarDelay" class="mode-delay noDelay" :class="{disableBox: selectDirectorMode === 1&&liveMode==2 }">
+              <span class="text-content"><i class="iconfont-v3 saasjishiqi ft20"></i> 无延迟&lt;0.4S</span>
+              <span class="no-open">未开通</span></div>
           </div>
         </el-form-item>
       </template>
@@ -620,6 +604,7 @@ export default {
       isDelay: false,
       showDelayMask: false,
       selectDelayMode: 'common',
+      selectDirectorMode: 0,
       formData: {
         title: '',
         date1: '',
@@ -760,7 +745,8 @@ export default {
           subject: '',
           introduce: ''
         } // 1固定，表示西班牙语
-      }
+      },
+      webinarDirector: false    // admin无云导播活动权限
     };
   },
   beforeRouteEnter (to, from, next) {
@@ -787,7 +773,7 @@ export default {
       next()
       return false;
     }
-    this.$confirm(`是否取消${this.title}的${this.webinarTypeToZH}内容？`, '提示', {
+    this.$confirm(`确定不${this.title}${this.webinarTypeToZH}内容？`, '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       customClass: 'zdy-message-box',
@@ -855,6 +841,12 @@ export default {
       this.getHighLimit();
     }
 
+    //  webinar.director 1:有无延迟权限  0:无权限
+    if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
+      this.webinarDirector = true;
+    } else {
+      this.webinarDirector = false;
+    }
   },
   beforeDestroy() {
     if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
@@ -988,6 +980,7 @@ export default {
     },
     handleSelectDelayMode(mode) {
       if (this.title === '编辑') return
+      if (this.selectDirectorMode ===1&&this.liveMode==2) return
       this.selectDelayMode = mode
       // 切换直播延迟方式后，直播模式限制更新
       let inav_num = Number(this.zdy_inav_num.replace('1v', '')) + 1
@@ -995,12 +988,18 @@ export default {
         this.zdy_inav_num = '1v5'
       }
     },
+    handleSelectDirectorMode(mode) {
+      if (this.title === '编辑') return
+      if (this.selectDelayMode == 'delay'&&mode== 1) return
+      this.selectDirectorMode = mode
+    },
     getLiveBaseInfo(id, flag) {
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(async res=>{
         if( res.code != 200 ){
           return this.$message.warning(res.msg)
         }
         this.liveDetailInfo = res.data;
+        this.selectDirectorMode = this.liveDetailInfo.is_director || 0
         this.isDelay = this.liveDetailInfo.no_delay_webinar == 1 ? true : false
         this.selectDelayMode = this.hasDelayPermission && this.liveDetailInfo.no_delay_webinar == 1 ? 'delay' : 'common'
         this.formData.title = this.liveDetailInfo.subject;
@@ -1037,6 +1036,10 @@ export default {
         }
         if (flag) {
           this.selectMedia.msg_url = this.liveDetailInfo.webinar_type == 1 ? '.mp3' : '.mp4';
+        }
+        //处理云导播到期情况
+        if(!this.webinarDirector){
+          this.selectDirectorMode = 0
         }
         console.log(this.selectMedia, '?????????')
         // 重置修改状态
@@ -1125,6 +1128,9 @@ export default {
           this.setTitleOrContentList([1], 'titleList')
           this.setTitleOrContentList([1], 'contentList')
         })
+      }
+      if (index == 2) {
+        this.selectDirectorMode = 0
       }
     },
     handleUploadSuccess(res, file) {
@@ -1252,7 +1258,8 @@ export default {
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
         no_delay_webinar: this.liveMode == 6 ? 1 : this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status [分组直播默认无延迟]
         is_timing: this.webinarVideo ? (this.$route.meta.webinarType == 'vod' ? 0 : 1) : '',
-        inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webinarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : ''
+        inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webinarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : '',
+        is_director: this.selectDirectorMode || 0
       };
       if (this.liveMode == 6) {
         data.auto_speak = Number(this.speakSwitch)
@@ -1274,6 +1281,14 @@ export default {
           }
           this.$fetch(url, this.$params(data)).then(async res=>{
             if (res.code == 200) {
+              if(this.selectDirectorMode === 1){
+                //创建或者编辑云导播活动 保存成功后
+                let userId = JSON.parse(sessionOrLocal.get('userId'));
+                this.$vhall_paas_port({
+                  k: 100837,
+                  data: {business_uid: userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+                })
+              }
               // 若是开启了 - 多语言权限，调用创建多语言接口。否则不调用
               await this.sendLanguage(res.data.webinar_id, url).then((result) => {
                 console.log('Promise.all --- success', result, res)       // 返回的是个结果数据 [ '3秒后醒来', '2秒后醒来' ]
@@ -1340,7 +1355,7 @@ export default {
               //location.href = `${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${data.webinar_type}`
             }
           })
-          
+
         } else {
           // 创建其它直播成功
           this.$message({
@@ -1732,13 +1747,13 @@ export default {
   .el-form-item.invd-number {
     max-width: 800px;
   }
-  .delay-select{
+  .delay-select,  .delay-director{
     min-width: 200px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     flex-direction: row;
-    .mode-common, .mode-delay{
+    .mode-common, .mode-delay, .mode-director{
       width: 183px;
       height: 86px;
       border: 1px solid #F2F2F2;
@@ -1773,15 +1788,15 @@ export default {
 
       }
     }
-    .noDelay{
+    .noDelay,  .noDirector{
       &:hover{
         cursor: unset;
       }
     }
-    .mode-delay{
+    .mode-delay, .mode-director{
       margin-left: 24px;
     }
-    .delayActive{
+    .delayActive, .directorActive{
       border-color: #FB3A32;
       position: relative;
       &::after{
@@ -1795,6 +1810,9 @@ export default {
         background-size: 20px;
         background-position: center;
       }
+    }
+    .disableBox .text-content{
+      opacity: 0.3;
     }
   }
   .margin32 {

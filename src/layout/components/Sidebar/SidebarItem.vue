@@ -67,7 +67,7 @@ export default {
     let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
     let perVo = permissions ? JSON.parse(permissions) : {};
     children = children.filter(items => {
-      return items.meta.name !== 'brandMgr' || ( items.meta.name === 'brandMgr' && !(perVo['ui.brand_setting'] == 0 && perVo['webinar_skins'] == 0))
+      return items.meta.name !== 'brandMgr' || ( items.meta.name === 'brandMgr' && !(perVo['ui.brand_setting'] == 0 && perVo['webinar_skins'] == 0 && perVo['watch.viewing_protocol'] == 0))
     })
     if (userInfo) {
       let vo = JSON.parse(userInfo);

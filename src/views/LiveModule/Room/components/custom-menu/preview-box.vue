@@ -1,5 +1,5 @@
 <template>
-  <div class="vh-preview-box 11">
+  <div class="vh-preview-box">
     <component
       :is="componentName"
       :info="info"
