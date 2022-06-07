@@ -69,7 +69,7 @@
                   </div>
                 </div>
                 <div class="info">
-                  <p class="name">{{ scope.row.name }}</p>
+                  <p class="name" :title="scope.row.name">{{ scope.row.name }}</p>
                   <p class="create-time">{{ scope.row.created_at }}</p>
                   <span v-if="scope.row.doc_status && WEBINAR_PES['ui.record_chapter']" class="tag">章节</span>
                   <span v-if="scope.row.layout != 0" class="tag">重制</span>
@@ -1395,6 +1395,20 @@ export default {
   .dialog-publish-footer{
     padding:  32px 0;
     text-align: center;
+  }
+
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar {
+    width: 6px; // 横向滚动条
+    height: 6px; // 纵向滚动条
+  }
+  /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: #dedede;
+    border-radius: 5px;
+  }
+  /deep/ .el-table__body::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    background: rgba(255,255,255,1);
   }
 </style>
 <style lang="less">
