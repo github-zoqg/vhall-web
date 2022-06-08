@@ -671,7 +671,16 @@ const apis = {
   getCustomRoleName: ['/v3/webinars/privilege/get-role-name', 'POST'], // 获取自定义角色名称
   
   saveAgreement: ['/v3/interacts/agreement/save-agreement-info', 'POST'],
-  getAgreement: ['/v3/interacts/agreement/get-agreement-info', 'POST']
+  getAgreement: ['/v3/interacts/agreement/get-agreement-info', 'POST'],
+  
+  // 设置中心-标签设置
+  labelCreate: ['/v3/webinars/label/create', 'POST'],
+  labelList: ['/v3/webinars/label/list', 'POST'],
+  labelGetInfo: ['/v3/webinars/label/get-info', 'POST'],
+  labelDelete: ['/v3/webinars/label/delete', 'POST'],
+  labelEdit: ['/v3/webinars/label/edit', 'POST'],
+  labelResetOrder: ['/v3/webinars/label/reset-order', 'POST'],
+  labelTop: ['/v3/webinars/label/top', 'POST']
 };
 
 const getApi = api => {

@@ -1130,6 +1130,17 @@ export function CrumbSet(metaName, that) {
       }
     ]
   }
+  else if (metaName === 'tagset') {//设置中心-标签设置
+    return [
+      ...CrumbLiveList('setting'),
+      {
+        title: '标签设置',
+        path: '/setting/tagset',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ]
+  }
   /** 财务中心 **/
   else if (metaName === 'financeInfo') {//财务中心-财务总览
     return [
