@@ -405,6 +405,7 @@ export default {
           { required: false, validator: companyValidate, trigger: 'blur' },
         ],
       },
+      liveDetail: null
     }
   },
   watch: {
@@ -426,7 +427,7 @@ export default {
       },
     },
   },
-  created() {
+  async created() {
     this.webinarId = this.$route.params.str
     this.userId = JSON.parse(sessionOrLocal.get('userId'))
     this.avatar =
@@ -436,6 +437,14 @@ export default {
     // this.showCode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?token=${token}`;
     const lookUrl = `${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?invite_id=&type=1`
     this.showCode = `${Env.staticLinkVo.aliQr}${encodeURIComponent(lookUrl)}`
+    try {
+      const result = await this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str})
+      if (result.code == 200 && result.data) {
+        this.liveDetail = result.data
+      }
+    } catch {
+      this.liveDetail = {}
+    }
     this.getInviteCardInfo()
     this.initImage()
   },
@@ -557,6 +566,7 @@ export default {
       this.formInvitation.img = this.formInvitation.img_type ? '' : this.img
       let arrShowType = [100276, 100277, 100278]
       let obj = Object.assign({}, ids, this.formInvitation)
+      // 字段里面若对象值为空，也要传递。
       this.$fetch('editCardStatus', obj)
         .then((res) => {
           if (res.code == 200) {
@@ -603,12 +613,12 @@ export default {
           u8arr[n] = bstr.charCodeAt(n)
         }
         var blob = new Blob([u8arr])
-        window.navigator.msSaveOrOpenBlob(blob, 'chart-download' + '.' + 'png')
+        window.navigator.msSaveOrOpenBlob(blob, `${this.liveDetail.subject || ''}邀请卡.png`)
       } else {
         // 这里就按照chrome等新版浏览器来处理
         const a = document.createElement('a')
         a.href = imgUrl
-        a.setAttribute('download', 'chart-download')
+        a.setAttribute('download', `${this.liveDetail.subject || ''}邀请卡`)
         a.click()
       }
       this.$vhall_paas_port({
@@ -630,7 +640,6 @@ export default {
         this.loadDownInvition()
         return
       }
-
       let browerType = isBrower()
       const _canvas = document.getElementById('shopInvent')
       // console.log('邀请卡当前html', _canvas)

@@ -70,7 +70,7 @@
       title="分享"
       :visible.sync="wxDialogVisible"
       :close-on-click-modal="false"
-      width="20%">
+      width="320px">
       <div class="wximg-box">
         <img :src="wxUrl" alt="">
       </div>
