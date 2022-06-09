@@ -677,7 +677,7 @@ export default {
           type: 'error',
           customClass: 'zdy-info-box'
         });
-      } else if (nodes[0].value.length >= 53) {
+      } else if (nodes[0].value.length + 8 > 100) {
         return this.$message({
           message: '添加隐私协议会超出预览字数，请删减后再添加',
           showClose: true,
@@ -686,6 +686,7 @@ export default {
           customClass: 'zdy-info-box'
         });
       }
+
       let cloneNode = JSON.parse(JSON.stringify(nodes[1]));
       let cloneNode2 = JSON.parse(JSON.stringify(nodes[2]));
       cloneNode.value = "《隐私声明2》";
@@ -717,7 +718,7 @@ export default {
           })
         };
         this.questionEdit(options);
-      }).catch(err => { consoel.log(ree); });
+      }).catch(err => { console.log(err); });
     },
     privacyFormatter(item){
       let text = JSON.parse(JSON.stringify(item[0].value));
@@ -1207,6 +1208,10 @@ export default {
 .previewPrivacy{
   font-size: 14px;
   color: #666;
+  /deep/ .el-checkbox__input{
+    padding-top: 18px;
+    vertical-align: top;
+  }
   /deep/ .el-checkbox__input.is-checked+.el-checkbox__label {
     color: #666;
   }
@@ -1217,7 +1222,7 @@ export default {
   }
   p{
     margin: 16px 0 8px 0;
-    display: flex;
+    /* display: flex; */
     align-items: flex-start;
     width: 100%;
     white-space: normal;
