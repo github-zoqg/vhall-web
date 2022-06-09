@@ -557,7 +557,7 @@ export default {
       this.formInvitation.img = this.formInvitation.img_type ? '' : this.img
       let arrShowType = [100276, 100277, 100278]
       let obj = Object.assign({}, ids, this.formInvitation)
-      this.$fetch('editCardStatus', this.$params(obj))
+      this.$fetch('editCardStatus', obj)
         .then((res) => {
           if (res.code == 200) {
             this.isSave = true
