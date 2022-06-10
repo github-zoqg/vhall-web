@@ -18,7 +18,7 @@
             <i class="el-icon-plus"></i>
             创建直播/点播
           </el-button>
-          <el-dropdown-menu slot="dropdown">
+          <el-dropdown-menu slot="dropdown" class="dropdown_width">
             <el-dropdown-item type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-dropdown-item>
             <el-dropdown-item size="medium"  round @click="createLiveAction('2')" v-if="vodPerssion == 1" class="transparent-btn" v-preventReClick>创建点播</el-dropdown-item>
             <el-dropdown-item v-if="isTiming == 1" size="medium"  round @click="createLiveAction('3')" class="transparent-btn" v-preventReClick>创建定时直播</el-dropdown-item>
@@ -927,6 +927,11 @@ export default {
 <style lang="less">
  .el-tooltip__popper {
     max-width: 100%;
+  }
+  .dropdown_width{
+    .length104{
+      width: 140px;
+    }
   }
 </style>
 <style lang="css">

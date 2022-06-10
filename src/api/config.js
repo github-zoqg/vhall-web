@@ -675,7 +675,7 @@ const apis = {
   
   // 设置中心-标签设置
   labelCreate: ['/v3/webinars/label/create', 'POST'],
-  labelList: ['/v3/webinars/label/list', 'POST'],
+  labelList: ['/v3/webinars/label/get-list', 'POST'],
   labelGetInfo: ['/v3/webinars/label/get-info', 'POST'],
   labelDelete: ['/v3/webinars/label/delete', 'POST'],
   labelEdit: ['/v3/webinars/label/edit', 'POST'],

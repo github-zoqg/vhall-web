@@ -30,6 +30,7 @@
           size="medium"
           round
           @click="remove"
+          :disabled='!checkList.length'
           class="transparent-btn"
           v-preventReClick
           >批量删除</el-button
@@ -44,19 +45,16 @@
         >
         <div class="searchBox">
           <VhallInput
-            style="width: 250px;"
             class="search-tag"
             placeholder="请输入标签名称"
             v-model="keyWords"
-            clearable
             v-clearEmoij
             @change="searchHandler"
-            @keyup.enter.native="searchHandler"
           >
             <i
               class="el-icon-search el-input__icon"
               slot="prefix"
-              @click="searchHandler"
+              @click="searchHandler()"
             >
             </i>
           </VhallInput>
@@ -117,8 +115,6 @@
             v-clearEmoij
             show-word-limit
             maxlength="10"
-            @change="searchHandler"
-            @keyup.enter.native="searchHandler"
           >
           </VhallInput>
         </div>
@@ -261,11 +257,11 @@ export default {
     },
     //   重置排序
     reset() {
-      t.$fetch('labelResetOrder', {
+      this.$fetch('labelResetOrder', {
         }).then(res=>{
           if(res.code == 200){
             this.searchHandler()
-            t.$message({
+            this.$message({
               message: `标签保存成功`,
               showClose: true,
               type: 'success',
@@ -276,7 +272,7 @@ export default {
     },
     // 搜索
     searchHandler(row) {
-      if (row) {
+      if (typeof row == 'object') {
         this.query.pos = row.pos
         this.query.pageNumber = row.pageNum
       }
@@ -293,6 +289,7 @@ export default {
               this.nullDate = false
             }
             this.tableList = res.data.list;
+            this.totalNum = res.data.total;
             this.tableList.forEach(item=>{
               item.is_quote = item.is_quote ? '是' : '否'
             })
@@ -331,13 +328,6 @@ export default {
       t.status = 'edit'
       t.createDialog = true
       t.selectId = row.rows.label_id
-      t.$fetch('labelGetInfo', {
-          label_id: row.rows.label_id
-        }).then(res=>{
-          if(res.code == 200){
-            t.keyWords = res.data.name
-          }
-        })
       t.$confirm('修改后，直播下的标签引用会同步更新，确认修改？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -347,12 +337,19 @@ export default {
         closeOnPressEscape: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        t.$message({
-          message: `标签保存成功`,
-          showClose: true,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
+        t.$fetch('labelGetInfo', {
+            label_id: row.rows.label_id
+          }).then(res=>{
+            if(res.code == 200){
+              t.keyWords = res.data.name
+              t.$message({
+                message: `标签保存成功`,
+                showClose: true,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
+            }
+          })
       }).catch(() => { });
     },
     // 删除
@@ -383,7 +380,7 @@ export default {
           if(res.code == 200){
             t.searchHandler()
             t.$message({
-              message: `标签保存成功`,
+              message: `标签删除成功`,
               showClose: true,
               type: 'success',
               customClass: 'zdy-info-box'
