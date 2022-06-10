@@ -42,7 +42,9 @@
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
-          @selection-change="handleSelectionChange">
+          @selection-change="handleSelectionChange"
+          @cell-mouse-enter="handleCellMouseEnter"
+          @cell-mouse-leave="handleCellMouseLeave">
           <el-table-column
             v-if="!isDemand"
             type="selection"
@@ -69,7 +71,12 @@
                   </div>
                 </div>
                 <div class="info">
-                  <p class="name" :title="scope.row.name">{{ scope.row.name }}</p>
+                  <el-tooltip  :disabled="!isTextOverflow" placement="top-start" :content="scope.row.name">
+                    <div class="videoName custom-tooltip-content">
+                      {{ scope.row.name}}
+                    </div>
+                  </el-tooltip>
+
                   <p class="create-time">{{ scope.row.created_at }}</p>
                   <span v-if="scope.row.doc_status && WEBINAR_PES['ui.record_chapter']" class="tag">章节</span>
                   <span v-if="scope.row.layout != 0" class="tag">重制</span>
@@ -238,7 +245,11 @@ import { sessionOrLocal } from '@/utils/utils';
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
 import beginPlay from '@/components/beginBtn';
 import EventBus from "@/utils/Events";
+import tableCellTooltip from '@/components/TableList/mixins/tableCellTooltip';
+
 export default {
+  name: 'PlaybackList',
+  mixins: [tableCellTooltip],
   data(){
     return {
       lowerGradeInterval:null,
