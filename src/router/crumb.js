@@ -1043,6 +1043,17 @@ export function CrumbSet(metaName, that) {
       }
     ]
   }
+  else if (metaName === 'safeScreen') {//设置中心-聊天严禁词
+    return [
+      ...CrumbLiveList('setting'),
+      {
+        title: '防录屏设置',
+        path: '/setting/safeScreen',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ]
+  }
   else if (metaName === 'devMgr') {//设置中心-开发设置
     return [
       ...CrumbLiveList('setting'),

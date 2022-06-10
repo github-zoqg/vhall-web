@@ -37,6 +37,12 @@ const router = [
         meta:{ auth: true, title: '聊天严禁词', name: 'chatMgr', activeMenu: '/setting/chat'},
       },
       {
+        path: 'safeScreen',
+        component: () => import('@/views/SettingModule/safeScreen'),
+        name: 'player',
+        meta:{ auth: true, title: '防录屏设置', name: 'safeScreen', activeMenu: '/setting/safeScreen', auth_key: 'player_config'},
+      },
+      {
         path: '/setting/dev',
         component: () => import('@/views/SettingModule/setting'),
         name: 'dev',
@@ -61,7 +67,7 @@ const router = [
         meta:{ auth: true, title: '品牌设置', name: 'brandMgr', activeMenu: '/setting/brand'},
       },
       {
-        path: 'player/:str',
+        path: 'player',
         component: () => import('@/views/SettingModule/setPlayer'),
         name: 'player',
         meta:{ auth: true, title: '播放器设置', name: 'playerMgr', activeMenu: '/setting/player', auth_key: 'player_config'},
