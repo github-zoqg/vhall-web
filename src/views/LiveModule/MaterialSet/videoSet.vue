@@ -138,7 +138,7 @@
       </noData>
     </div>
     <!-- 资料库选择组件 -->
-    <selectMedia ref="selecteMedia" @selected='mediaSelected' :videoSet="true" :videoType="videoSetType"></selectMedia>
+    <selectMedia ref="selecteMedia" @selected='mediaSelected' :videoType="videoSetType"></selectMedia>
     <!-- 预览功能 -->
     <template v-if="showDialog">
       <el-dialog class="vh-dialog" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center

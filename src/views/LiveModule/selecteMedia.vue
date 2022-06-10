@@ -26,6 +26,8 @@
         style="width: 100%"
         max-height="300"
         v-loadMore="moreLoadData"
+        @select="handleSelection"
+        @select-all="handleAllSelection"
         @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
@@ -66,9 +68,17 @@
           </template>
         </el-table-column>
 
+         <el-table-column
+         v-if="isWarmVideo"
+          label="转码后大小"
+          prop="storage"
+          width="120"
+          show-overflow-tooltip>
+        </el-table-column>
+
         <el-table-column
           label="操作"
-          width="80"
+          width="70"
           align="left"
           show-overflow-tooltip>
           <template slot-scope="scope">
@@ -85,11 +95,11 @@
     </div>
     <div slot="footer" class="dialog-footer" v-show="total || isSearch">
       <div>
-        <p v-if="videoSet">当前选择 <b>{{ tableSelect.length }}</b> 个文件</p>
+        <p>当前选择 <b>{{ isWarmVideo ? totalWarmSelect.length : tableSelect.length }}</b> 个文件 </p>
       </div>
       <span>
-        <el-button type="primary" @click="handlerConfirm" :disabled="!tableSelect.length" round size="medium" v-preventReClick>确定</el-button>
-        <el-button @click="dialogVisible = false" round size="medium">取消</el-button>
+        <el-button type="primary" @click="handlerConfirm" :disabled="isWarmVideo ? !totalWarmSelect.length : !tableSelect.length" round size="medium" v-preventReClick>确定</el-button>
+        <el-button @click="closeDialog" round size="medium">取消</el-button>
       </span>
     </div>
   </el-dialog>
@@ -116,7 +126,11 @@ export default {
       required: false,
       default: ''
     },
-    videoSet: { //是否是转播文件
+    selectedList: {
+      required: false,
+      default: []
+    },
+    isWarmVideo: {
       required: false,
       default: false
     }
@@ -135,6 +149,7 @@ export default {
         pageNum: 1
       },
       totalPages: 0,
+      totalWarmSelect: [],
       tableSelect: [],
       keyWords:''
     };
@@ -148,14 +163,22 @@ export default {
       //获取资料中心的音视频
       if (this.dialogVisible) {
         this.tableSelect = [];
+        this.totalWarmSelect = [];
         this.docList = [];
         this.pageInfo.pageNum = 1;
         this.pageInfo.pos = 0;
+        if (this.$refs.docList) {
+          this.$refs.docList.clearSelection();
+        }
         this.getMediaList();
       } else {
         this.keyWords = '';
         this.pageInfo.pageNum = 1;
         this.pageInfo.pos = 0;
+        this.totalWarmSelect = [];
+        if (this.$refs.docList) {
+          this.$refs.docList.clearSelection();
+        }
       }
     }
   },
@@ -172,7 +195,17 @@ export default {
         return date
       }
     },
+    closeDialog() {
+      this.$refs.docList.clearSelection();
+      this.dialogVisible = false;
+      this.totalWarmSelect = [];
+      this.pageInfo.pageNum = 1;
+      this.pageInfo.pos = 0;
+    },
     handleClose(done) {
+      this.$refs.docList.clearSelection();
+      this.dialogVisible = false;
+      this.totalWarmSelect = [];
       this.pageInfo.pageNum = 1;
       this.pageInfo.pos = 0;
       done();
@@ -223,25 +256,90 @@ export default {
           this.total = res.data.total;
           this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
           this.isSearch = this.keyWords ? true : false
+          if (this.isWarmVideo) {
+            console.log(this.selectedList, '??!23')
+            if (this.pageInfo.pageNum == 1) {
+              this.totalWarmSelect = JSON.parse(JSON.stringify(this.selectedList || []));
+            }
+            this.selectedDefaultList()
+          }
         }
       });
+    },
+    // 默认选择
+    selectedDefaultList() {
+      this.$nextTick(() => {
+        if (this.totalWarmSelect.length && this.docList.length) {
+          let selectedList = [];
+          this.totalWarmSelect.map(item => {
+            selectedList.push(item.paas_record_id)
+          })
+          this.docList.forEach((item) => {
+            if (selectedList.includes(item.paas_record_id)) {
+              this.$nextTick(() => {
+                this.$refs.docList.toggleRowSelection(item, true);
+              })
+            }
+          });
+        }
+      })
     },
     preVidio(rows) {
       this.videoParam = rows;
       this.showDialog = true;
       console.log(rows);
     },
-    handleSelectionChange(val){
-      this.tableSelect = val;
-      if (!this.videoSet) {
-        this.docList.forEach((item) => {
-          if (val.length !== 0) {
-            if (item.paas_record_id !== val[[val.length - 1]].paas_record_id) {
-              this.$refs.docList.toggleRowSelection(item, false);
-            }
+    // 单选
+    handleSelection(val, item) {
+      if (!this.isWarmVideo || this.selectedList.length == 0) return;
+      console.log(this.selectedList, item);
+       let selectedList = [];
+        this.totalWarmSelect.map(item => {
+          selectedList.push(item.paas_record_id)
+        })
+        if (selectedList.includes(item.paas_record_id)) {
+          this.totalWarmSelect = this.totalWarmSelect.filter(items => items.paas_record_id != item.paas_record_id);
+        } else {
+          this.totalWarmSelect.push(item)
+        }
+    },
+    // 全选和取消全选
+    handleAllSelection(val) {
+      if (!this.isWarmVideo || this.selectedList.length == 0) return;
+      let selectedList = [];
+      this.totalWarmSelect.map(item => {
+        selectedList.push(item.paas_record_id)
+      })
+      if (val.length) {
+        this.docList.forEach(item => {
+          if (!selectedList.includes(item.paas_record_id)) {
+           this.totalWarmSelect.push(item)
+          }
+        });
+      } else {
+        this.docList.forEach(item => {
+          if (selectedList.includes(item.paas_record_id)) {
+            this.totalWarmSelect = this.totalWarmSelect.filter(items => items.paas_record_id != item.paas_record_id);
           }
         });
       }
+
+    },
+    // 选择框变化
+    handleSelectionChange(val){
+      this.tableSelect = val;
+      if (!this.isWarmVideo) return;
+      if (this.selectedList.length == 0) {
+        this.totalWarmSelect = val;
+        return
+      }
+      //  this.docList.forEach((item) => {
+      //     if (val.length !== 0) {
+      //       if (item.paas_record_id !== val[[val.length - 1]].paas_record_id) {
+      //         this.$refs.docList.toggleRowSelection(item, false);
+      //       }
+      //     }
+      //   });
     },
     handlerConfirm(){
       // if (this.tableSelect[0].transcode_status != 1) {
@@ -254,14 +352,19 @@ export default {
       //   });
       //   return;
       // }
-      if (this.videoSet) {
+      if (this.isWarmVideo) {
+        if (this.totalWarmSelect.length > 10) {
+          this.$$message.warn('最多添加10个暖场视频');
+          return;
+        }
+        this.$emit('selected', this.totalWarmSelect);
+      } else {
         let tableList = []
         this.tableSelect.map(item => {
           tableList.push(item.id)
         })
         this.$emit('selected', tableList);
-      } else {
-        this.$emit('selected', this.tableSelect[0]);
+
       }
       this.dialogVisible = false;
     },

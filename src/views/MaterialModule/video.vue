@@ -92,6 +92,11 @@
               </template>
             </el-table-column>
             <el-table-column
+              width="120"
+              prop="storage"
+              label="转码后大小">
+            </el-table-column>
+            <el-table-column
               width="150"
               label="操作">
               <template slot-scope="scope">
