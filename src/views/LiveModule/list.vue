@@ -233,6 +233,8 @@ export default {
             })
       this.$fetch('labelList', {
           webinar_id: this.keyWords,
+          pos: 0,
+          limit: 100,
         }).then(res=>{
           if(res.code == 200){
             this.labelList = res.data.list;

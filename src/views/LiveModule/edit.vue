@@ -1311,7 +1311,7 @@ export default {
 
       let abelIdArr = []
       this.checkedTags.forEach(item=>{
-        abelIdArr.push(item.label_id)
+        abelIdArr.push(item)
       })
       let label_ids = abelIdArr.join(',')
 
@@ -1711,7 +1711,8 @@ export default {
     // 获取标签列表
     getTagsList(data){
       return this.$fetch('labelList', {
-          webinar_id: this.$route.params.id,
+        // 编辑使用params 复制使用query
+          webinar_id: this.$route.params.id || this.$route.query.id,
           pos: 0,
           limit: 100,
         }).then(res=>{

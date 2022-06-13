@@ -249,6 +249,7 @@
               <el-button :key="index"
                 type="text"
                 v-preventReClick
+                :disabled='item.disabledKey && manageTableData[index++][item.disabledKey]==1'
                 @click="handleBtnClick(scope, item)"
                 v-if="checkShowHandle(scope.row, item)">{{ item.name }}</el-button>
             </template>
@@ -662,5 +663,12 @@ export default {
   /* color: #1A1A1A; */
   color: #999;
   font-size: 16px;
+}
+</style>
+<style lang='less'>
+.data-list{
+  .el-button.is-disabled:hover{
+    border: none;
+  }
 }
 </style>

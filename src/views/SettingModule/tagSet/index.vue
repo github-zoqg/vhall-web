@@ -209,7 +209,8 @@ export default {
       tableRowBtnFun: [
         {
           name: '置顶',
-          methodName: 'setTop'
+          methodName: 'setTop',
+          disabledKey: 'is_order'
         },
         {
           name: '编辑',
