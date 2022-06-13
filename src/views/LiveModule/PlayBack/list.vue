@@ -1433,4 +1433,7 @@ export default {
     color: #3562FA;
     cursor: pointer;
   }
+  .el-tooltip__popper {
+    max-width: 376px;
+  }
 </style>
