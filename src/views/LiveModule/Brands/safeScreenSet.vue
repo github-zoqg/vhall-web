@@ -1,6 +1,6 @@
 <template>
   <div class="prize-card">
-    <pageTitle pageTitle="播放器设置">
+    <pageTitle pageTitle="防录屏设置">
       <div class="title_text">
         <p class="switch__box">
           <el-switch
@@ -11,7 +11,7 @@
             :active-text="reservationDesc"
           >
           </el-switch>
-          <span @click="toSettingDetail">查看账号下播放器设置</span>
+          <span @click="toSettingDetail">查看账号下防录屏设置</span>
         </p>
       </div>
     </pageTitle>
@@ -212,7 +212,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="水印设置" name="second">
-          <div class="give-item">
+          <div class="give-item waterSet">
             <div class="give-prize">
               <el-form
                 :model="formWatermark"
@@ -290,12 +290,107 @@
                   ></el-slider>
                   <span class="isNum">{{ formWatermark.img_alpha }}%</span>
                 </el-form-item>
+
+                <div class="block"></div>
+                <el-form-item label="文档水印">
+                  <p class="switch__box">
+                    <el-switch
+                      v-model="docMark_open"
+                      active-color="#ff4949"
+                      inactive-color="#ccc"
+                      @change="closeWaterDocInfo"
+                      :active-text="docMarkText"
+                    >
+                    </el-switch>
+                  </p>
+                </el-form-item>
+                <el-form-item label="文本类型" required>
+                  <el-checkbox
+                    v-model="docMarkOption.doc_watermark_type.text"
+                    :true-label="1"
+                    :false-label="0"
+                    :disabled="!docMark_open"
+                    @change="editDocWaterInfo"
+                  >
+                    固定文本
+                  </el-checkbox>
+                  <el-checkbox
+                    v-model="docMarkOption.doc_watermark_type.user_id"
+                    :true-label="1"
+                    :false-label="0"
+                    :disabled="!docMark_open"
+                    @change="editDocWaterInfo"
+                  >
+                    观看者ID
+                  </el-checkbox>
+                  <el-checkbox
+                    v-model="docMarkOption.doc_watermark_type.nick_name"
+                    :true-label="1"
+                    :false-label="0"
+                    :disabled="!docMark_open"
+                    @change="editDocWaterInfo"
+                  >
+                    观看者昵称
+                  </el-checkbox>
+                </el-form-item>
+                <el-form-item label="固定文本">
+                  <VhallInput
+                    v-model="docMarkOption.doc_watermark_type.text_value"
+                    class="textType"
+                    placeholder="版权所有，盗版必究"
+                    :disabled="
+                      !docMark_open || !docMarkOption.doc_watermark_type.text
+                    "
+                    autocomplete="off"
+                    :maxlength="20"
+                    v-clearEmoij
+                    show-word-limit
+                    @change="editDocWaterInfo"
+                  ></VhallInput>
+                </el-form-item>
+                <el-form-item label="文字大小">
+                  <el-select
+                    v-model="docMarkOption.size"
+                    placeholder="请选择"
+                    :disabled="!docMark_open"
+                    style="margin-bottom: 10px"
+                    @change="editDocWaterInfo"
+                  >
+                    <el-option
+                      v-for="item in fontList"
+                      :key="item.value"
+                      :label="item.value"
+                      :value="item.value"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="文字颜色" prop="color">
+                  <color-set
+                    ref="pageThemeColorsDoc"
+                    :themeKeys="pageThemeColors"
+                    :openSelect="true"
+                    @color="pageStyleHandleDoc"
+                    :colorDefault="docMarkOption.color"
+                  ></color-set>
+                </el-form-item>
+                <el-form-item label="不透明度"
+                  ><el-slider
+                    v-model="docMarkOption.alpha"
+                    :disabled="!docMark_open"
+                    style="width: 315px"
+                    @change="editDocWaterInfo"
+                  ></el-slider
+                  ><span class="isNum"
+                    >{{ docMarkOption.alpha }}%</span
+                  ></el-form-item
+                >
                 <el-form-item>
                   <el-button
                     type="primary length152"
                     v-preventReClick
                     class="common-save"
-                    :disabled="!watermark_open"
+                    :disabled="!watermark_open && !docMark_open"
                     @click="preWatermark(1)"
                     >保存</el-button
                   >
@@ -307,66 +402,10 @@
               v-show="!(watermark_open && playerOpen)"
               :class="playerOpen ? 'webinarTop' : 'userTop'"
             ></div>
-          </div>
-        </el-tab-pane>
-        <el-tab-pane label="其它" name="third">
-          <div class="give-item">
-            <div class="give-prize">
-              <el-form :model="formOther" ref="ruleForm" label-width="100px">
-                <el-form-item label="弹幕">
-                  <p class="switch__box">
-                    <el-switch
-                      v-model="formOther.bulletChat"
-                      active-color="#ff4949"
-                      inactive-color="#ccc"
-                      :active-text="bulletChatText"
-                      @change="otherOtherInfo(formOther.bulletChat, 1)"
-                    >
-                    </el-switch>
-                  </p>
-                </el-form-item>
-                <el-form-item label="进度条">
-                  <p class="switch__box">
-                    <el-switch
-                      v-model="formOther.progress"
-                      active-color="#ff4949"
-                      inactive-color="#ccc"
-                      :active-text="progressText"
-                      @change="otherOtherInfo(formOther.progress, 2)"
-                    >
-                    </el-switch>
-                  </p>
-                </el-form-item>
-                <el-form-item label="倍速">
-                  <p class="switch__box">
-                    <el-switch
-                      v-model="formOther.doubleSpeed"
-                      active-color="#ff4949"
-                      inactive-color="#ccc"
-                      :active-text="doubleSpeedText"
-                      @change="otherOtherInfo(formOther.doubleSpeed, 3)"
-                    >
-                    </el-switch>
-                  </p>
-                </el-form-item>
-                <el-form-item label="自动播放">
-                  <p class="switch__box">
-                    <el-switch
-                      v-model="formOther.autoplay"
-                      active-color="#ff4949"
-                      inactive-color="#ccc"
-                      :active-text="autoPlayText"
-                      @change="otherOtherInfo(formOther.autoplay, 4)"
-                    >
-                    </el-switch>
-                  </p>
-                </el-form-item>
-              </el-form>
-            </div>
             <div
-              class="give-white"
-              v-show="!playerOpen"
-              :class="playerOpen ? '' : 'userTop'"
+              class="give-white-doc"
+              v-show="!(docMark_open && playerOpen)"
+              :class="playerOpen ? 'webinarTop' : 'userTop'"
             ></div>
           </div>
         </el-tab-pane>
@@ -505,6 +544,29 @@
           >
         </p>
       </div>
+      <div class="docMark" v-if="activeName == 'second'">
+        <div class="preview">
+          <div class="mark">
+            <div
+              v-for="i of 100"
+              :key="'mark' + i"
+              :style="{
+                color: docMarkOption.color,
+                fontSize: docMarkOption.size + 'px',
+                opacity: docMarkOption.alpha / 100,
+              }"
+            >
+              {{ docMarkOption.docMarkTxt }}
+            </div>
+          </div>
+        </div>
+        <div class="alert">
+          <span>提示：</span>
+          <span>
+            1.设置了文档水印后，文字内容将以水印的形式出现在文档区域中，目前支持PC端、移动wap端。
+          </span>
+        </div>
+      </div>
     </div>
     <begin-play
       :webinarId="$route.params.str"
@@ -544,7 +606,7 @@ import beginPlay from '@/components/beginBtn'
 import { secondToDateZH } from '@/utils/general'
 import controle from './js/control'
 export default {
-  name: 'playerSet',
+  name: 'safeScreenSet',
   mixins: [controle],
   data() {
     const intervalValidate = (rule, value, callback) => {
@@ -584,7 +646,10 @@ export default {
       totalTime: 0,
       scrolling_open: false,
       watermark_open: false,
+      docMark_open: false,
+      hasDelayPremission: false,
       isSpeed: false,
+      webinar_type: 0,
       speed: 1,
       speedText: '倍速',
       speedList: [
@@ -663,6 +728,18 @@ export default {
         displayType: 0,
         position: 1,
       },
+      docMarkOption: {
+        enable: Boolean(this.docMark_open),
+        doc_watermark_type: {
+          text: 0, //固定文本
+          user_id: 1, //观看者ID
+          nick_name: 0, //观看者昵称
+          text_value: '版权所有，盗版必究', //固定文本内容
+        },
+        alpha: 100, // 透明度  100 完全显示   0 隐藏
+        size: 12, // 文字大小
+        color: '', //  文字颜色
+      },
       rules: {
         interval: [
           { required: true, validator: intervalValidate, trigger: 'blur' },
@@ -696,25 +773,11 @@ export default {
         return '开启后，可在播放器中增加图片、水印'
       }
     },
-    progressText() {
-      if (this.formOther.progress) {
-        return '已开启，观看回放时播放器画面显示进度条'
+    docMarkText() {
+      if (this.docMark_open) {
+        return '已开启，可在文档上增加文字水印'
       } else {
-        return '开启后，观看回放时播放器画面显示进度条'
-      }
-    },
-    bulletChatText() {
-      if (this.formOther.bulletChat) {
-        return '已开启，观看页播放器画面显示弹幕功能'
-      } else {
-        return '开启后，观看页播放器画面显示弹幕功能'
-      }
-    },
-    doubleSpeedText() {
-      if (this.formOther.doubleSpeed) {
-        return '已开启，观看回放时播放器画面显示倍速功能'
-      } else {
-        return '开启后，观看回放时播放器画面显示倍速功能'
+        return '开启后，可在文档上增加文字水印'
       }
     },
     reservationDesc() {
@@ -722,13 +785,6 @@ export default {
         return '已开启，使用当前活动播放器设置'
       } else {
         return '开启后，将使用当前活动播放器设置'
-      }
-    },
-    autoPlayText() {
-      if (this.formOther.autoplay) {
-        return '已开启，音视频自动播放'
-      } else {
-        return '开启后，音视频自动播放'
       }
     },
     reservationDisable() {
@@ -905,7 +961,7 @@ export default {
           this.getBaseOtherList()
           if (!this.playerOpen) {
             this.$message({
-              message: '正在使用账号下品牌设置',
+              message: '正在使用账号下防录屏设置',
               showClose: true,
               type: 'warning',
               customClass: 'zdy-info-box',
@@ -948,7 +1004,7 @@ export default {
           req_url: '',
         },
       })
-      let { href } = this.$router.resolve({ path: '/setting/player' })
+      let { href } = this.$router.resolve({ path: '/setting/safeScreen' })
       href += `/${this.$route.params.str}`
       window.open(href, '_blank')
     },
@@ -977,11 +1033,35 @@ export default {
       this.editHorseInfo()
       console.log(color, '??????????????????')
     },
+    // 页面样式色值DOC
+    pageStyleHandleDoc(color) {
+      this.docMarkOption.color = color
+      this.editDocWaterInfo()
+    },
     getFontList() {
       let num = 10
       while (num <= 36) {
         this.fontList.push({ value: num })
         num = num + 2
+      }
+    },
+    // 关闭文档水印
+    closeWaterDocInfo() {
+      if (!this.docMark_open) {
+        this.$vhall_paas_port({
+          k: 100260,
+          data: {
+            business_uid: this.userId,
+            user_id: '',
+            webinar_id: this.$route.params.str,
+            refer: '',
+            s: '',
+            report_extra: {},
+            ref_url: '',
+            req_url: '',
+          },
+        })
+        this.preWatermark(2)
       }
     },
     // 关闭跑马灯
@@ -1028,23 +1108,29 @@ export default {
         this.preWatermark(0)
       }
     },
-    // 关闭或保存其他信息
-    otherOtherInfo(value, index) {
-      let otherArr = [100266, 100268, 100270, 100272]
-      this.$vhall_paas_port({
-        k: value ? otherArr[index - 1] : otherArr[index - 1] + 1,
-        data: {
-          business_uid: this.userId,
-          user_id: '',
-          webinar_id: this.$route.params.str,
-          refer: '',
-          s: '',
-          report_extra: {},
-          ref_url: '',
-          req_url: '',
-        },
+    // 文档水印编辑，实时更新水印
+    editDocWaterInfo() {
+      this.getDocOptionInfo()
+      // this.$Vhallplayer.editMarquee(this.marqueeOption)
+    },
+    getDocOptionInfo() {
+      let userInfo = JSON.parse(sessionOrLocal.get('userInfo'))
+      if (!this.docMarkOption.doc_watermark_type.text_value) {
+        this.docMarkOption.doc_watermark_type.text_value = '版权所有，盗版必究'
+      }
+      let txt =
+        (this.docMarkOption.doc_watermark_type.text
+          ? this.docMarkOption.doc_watermark_type.text_value
+          : '') +
+        (this.docMarkOption.doc_watermark_type.user_id
+          ? userInfo.user_id
+          : '') +
+        (this.docMarkOption.doc_watermark_type.nick_name
+          ? userInfo.nick_name
+          : '')
+      this.docMarkOption = Object.assign({}, this.docMarkOption, {
+        docMarkTxt: txt,
       })
-      this.preOthersOptions()
     },
     getMarqueeOptionInfo() {
       let userInfo = JSON.parse(sessionOrLocal.get('userInfo'))
@@ -1095,6 +1181,18 @@ export default {
           this.formWatermark.img_alpha = Number(res.data.img_alpha)
           this.domain_url = res.data.img_url
           this.watermark_open = Boolean(res.data.watermark_open)
+          this.docMark_open = Boolean(res.data.doc_watermark_open)
+          this.docMarkOption = {
+            enable: Boolean(this.docMark_open),
+            doc_watermark_type: JSON.parse(res.data.doc_watermark_type),
+            alpha: res.data.doc_transparency || 100, // 透明度  100 完全显示   0 隐藏
+            size: res.data.doc_font_size || 12, // 文字大小
+            color: res.data.doc_font_color || '#5a5a5a',
+          }
+          this.getDocOptionInfo()
+          this.$nextTick(() => {
+            this.$refs.pageThemeColorsDoc.initColor(this.docMarkOption.color)
+          })
         }
       })
     },
@@ -1301,20 +1399,58 @@ export default {
         })
         return
       }
+      if (
+        this.docMark_open &&
+        this.docMarkOption.doc_watermark_type.text +
+          this.docMarkOption.doc_watermark_type.user_id +
+          this.docMarkOption.doc_watermark_type.nick_name ===
+          0
+      ) {
+        this.$message({
+          message: `文本类型不能为空`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box',
+        })
+        return
+      }
       this.formWatermark.webinar_id = this.$route.params.str
       this.formWatermark.img_url = this.$parseURL(this.domain_url).path
       this.formWatermark.watermark_open = Number(this.watermark_open)
       this.formWatermark.type = 1
-      this.$fetch('setWatermark', this.$params(this.formWatermark))
+      let params = Object.assign({}, this.formWatermark, {
+        doc_watermark_open: Number(this.docMark_open),
+        doc_watermark_type: JSON.stringify(
+          this.docMarkOption.doc_watermark_type
+        ),
+        doc_font_size: this.docMarkOption.size,
+        doc_font_color: this.docMarkOption.color,
+        doc_transparency: this.docMarkOption.alpha,
+      })
+      this.$fetch('setWatermark', this.$params(params))
         .then((res) => {
-          index === 1 && this.setWaterReportData()
-          this.$message({
-            message: this.watermark_open ? '水印开启成功' : '水印关闭成功',
-            showClose: true,
-            // duration: 0,
-            type: 'success',
-            customClass: 'zdy-info-box',
-          })
+          if (index === 0) {
+            //播放器水印
+            this.$message({
+              message: this.watermark_open ? '保存成功' : '播放器水印关闭成功',
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box',
+            })
+          } else if (index === 2) {
+            //文档水印
+            this.$message({
+              message: this.watermark_open ? '保存成功' : '文档水印关闭成功',
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box',
+            })
+          } else if (index === 1) {
+            this.setWaterReportData()
+          }
           this.getBaseWaterList()
         })
         .catch((res) => {
@@ -1370,45 +1506,6 @@ export default {
           req_url: '',
         },
       })
-    },
-    // 保存播放器其他设置
-    preOthersOptions() {
-      let params = {
-        barrage_button: Number(this.formOther.bulletChat),
-        progress_bar: Number(this.formOther.progress),
-        speed: Number(this.formOther.doubleSpeed),
-        autoplay: Number(this.formOther.autoplay),
-        type: 1,
-        webinar_id: this.$route.params.str,
-      }
-      console.log('params', params)
-      this.$fetch('setOtherOption', { ...params })
-        .then((res) => {
-          if (res.code == 200) {
-            if (this.vm) {
-              this.vm.close()
-            }
-            if (!this.checkEnter) this.messageInfo()
-            let backSettingData = res.data
-            this.$nextTick(() => {
-              console.log('弹幕', this.$Vhallplayer, vp)
-              Number(backSettingData['barrage_button'])
-                ? vp.openBarrage()
-                : vp.closeBarrage()
-            })
-
-            this.checkEnter = false
-          }
-        })
-        .catch((res) => {
-          this.$message({
-            message: res.msg || '设置失败',
-            showClose: true,
-            // duration: 0,
-            type: 'error',
-            customClass: 'zdy-info-box',
-          })
-        })
     },
     //文案提示问题
     messageInfo() {
@@ -1675,7 +1772,6 @@ export default {
       // } else {
       //   this.checkEnter = true
       //   this.getBaseOtherList();
-      //   this.otherOtherInfo(1)
       // }
     },
   },
@@ -1834,6 +1930,7 @@ export default {
       background: rgba(255, 255, 255, 0.5);
       z-index: 9;
     }
+
     .webinarTop {
       top: 80px;
     }
@@ -1841,6 +1938,31 @@ export default {
       top: 20px;
     }
   }
+
+  .block {
+    height: 70px;
+  }
+  .waterSet {
+    .give-white {
+      position: absolute;
+      width: 100%;
+      height: 290px;
+      top: 90px;
+      left: 0;
+      background: rgba(255, 255, 255, 0.5);
+      z-index: 9;
+    }
+    .give-white-doc {
+      position: absolute;
+      width: 100%;
+      height: 370px;
+      top: 510px;
+      left: 0;
+      background: rgba(255, 255, 255, 0.5);
+      z-index: 9;
+    }
+  }
+
   .show-purple {
     width: 400px;
     height: 226px;
@@ -2086,6 +2208,43 @@ export default {
     position: absolute;
     top: -41px;
     left: 0;
+  }
+  .docMark {
+    width: 400px;
+    height: 226px;
+    margin-top: 100px;
+    margin-left: 20px;
+    border-radius: 5px;
+    position: absolute;
+    top: 440px;
+    left: 53%;
+    .preview {
+      width: 400px;
+      height: 226px;
+      background-color: #ccc;
+      overflow: hidden;
+      .mark {
+        width: 800px;
+        height: 400px;
+        transform-origin: center;
+        transform: translate(-186px, -80px) rotate(-30deg);
+        div {
+          text-align: center;
+          display: inline-block;
+          margin: 20px;
+        }
+      }
+    }
+    .alert {
+      width: 100%;
+      margin-top: 15px;
+      span {
+        display: block;
+        color: #999;
+        line-height: 20px;
+        font-size: 14px;
+      }
+    }
   }
 }
 .giftUpload {

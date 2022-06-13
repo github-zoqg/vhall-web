@@ -404,6 +404,22 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
+  else if (metaName === 'safeScreenSet') {// 防录屏设置
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '活动详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '防录屏设置',
+        path: `/live/safeScreenSet/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
    else if (metaName === 'invCard') {// 邀请卡
     return [
       ...CrumbLiveList('liveList'),

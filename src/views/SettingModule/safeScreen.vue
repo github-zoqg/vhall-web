@@ -1,6 +1,6 @@
 <template>
   <div class="prize-card">
-    <pageTitle pageTitle="播放器设置"></pageTitle>
+    <pageTitle pageTitle="防录屏设置"></pageTitle>
     <div class="player-set" style="min-height: 741px">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="防录屏跑马灯" name="first">
@@ -286,7 +286,7 @@
                     </el-switch>
                   </p>
                 </el-form-item>
-                <el-form-item label="文本类型">
+                <el-form-item label="文本类型" required>
                   <el-checkbox
                     v-model="docMarkOption.doc_watermark_type.text"
                     :true-label="1"
@@ -349,10 +349,10 @@
                 </el-form-item>
                 <el-form-item label="文字颜色" prop="color">
                   <color-set
-                    ref="pageThemeColors"
+                    ref="pageThemeColorsDoc"
                     :themeKeys="pageThemeColors"
                     :openSelect="true"
-                    @color="pageStyleHandle"
+                    @color="pageStyleHandleDoc"
                     :colorDefault="docMarkOption.color"
                   ></color-set>
                 </el-form-item>
@@ -520,6 +520,32 @@
           >
         </p>
       </div>
+      <div class="docMark" v-if="activeName == 'second'">
+        <div class="preview">
+          <div class="mark">
+            <div
+              v-for="i of 100"
+              :key="'mark' + i"
+              :style="{
+                color: docMarkOption.color,
+                fontSize: docMarkOption.size + 'px',
+                opacity: docMarkOption.alpha / 100,
+              }"
+            >
+              {{ docMarkOption.docMarkTxt }}
+            </div>
+          </div>
+        </div>
+        <div class="alert">
+          <span>提示：</span>
+          <span>
+            1.设置了文档水印后，文字内容将以水印的形式出现在文档区域中，目前支持PC端、移动wap端。
+          </span>
+          <span>
+            2.无延迟直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -651,13 +677,13 @@ export default {
         enable: Boolean(this.docMark_open),
         doc_watermark_type: {
           text: 0, //固定文本
-          user_id: 0, //观看者ID
+          user_id: 1, //观看者ID
           nick_name: 0, //观看者昵称
           text_value: '版权所有，盗版必究', //固定文本内容
         },
         alpha: 100, // 透明度  100 完全显示   0 隐藏
-        size: 20, // 文字大小
-        color: '#FFFFFF', //  文字颜色
+        size: 12, // 文字大小
+        color: '#5a5a5a', //  文字颜色
       },
       rules: {
         interval: [
@@ -772,6 +798,11 @@ export default {
       this.formHorse.color = color
       this.editHorseInfo()
     },
+    // 页面样式色值DOC
+    pageStyleHandleDoc(color) {
+      this.docMarkOption.color = color
+      this.editDocWaterInfo()
+    },
     getFontList() {
       let num = 10
       while (num <= 36) {
@@ -783,7 +814,7 @@ export default {
     closeWaterDocInfo() {
       if (!this.docMark_open) {
         this.$vhall_paas_port({
-          k: 100645,
+          k: 100674,
           data: {
             business_uid: this.userId,
             user_id: '',
@@ -795,9 +826,8 @@ export default {
             req_url: '',
           },
         })
-        //  this.preFormHorse()
+        this.preWatermark(2)
       }
-      this.editDocWaterInfo()
     },
     // 关闭跑马灯
     closeHorseInfo() {
@@ -826,10 +856,10 @@ export default {
     },
     // 文档水印编辑，实时更新水印
     editDocWaterInfo() {
-      //   this.getMarqueeOptionInfo()
+      this.getDocOptionInfo()
       // this.$Vhallplayer.editMarquee(this.marqueeOption)
     },
-    // 关闭水印
+    // 关闭播放器水印
     openWaterMarkInfo() {
       if (!this.watermark_open) {
         this.$vhall_paas_port({
@@ -847,6 +877,25 @@ export default {
         })
         this.preWatermark(0)
       }
+    },
+    getDocOptionInfo() {
+      let userInfo = JSON.parse(sessionOrLocal.get('userInfo'))
+      if (!this.docMarkOption.doc_watermark_type.text_value) {
+        this.docMarkOption.doc_watermark_type.text_value = '版权所有，盗版必究'
+      }
+      let txt =
+        (this.docMarkOption.doc_watermark_type.text
+          ? this.docMarkOption.doc_watermark_type.text_value
+          : '') +
+        (this.docMarkOption.doc_watermark_type.user_id
+          ? userInfo.user_id
+          : '') +
+        (this.docMarkOption.doc_watermark_type.nick_name
+          ? userInfo.nick_name
+          : '')
+      this.docMarkOption = Object.assign({}, this.docMarkOption, {
+        docMarkTxt: txt,
+      })
     },
     getMarqueeOptionInfo() {
       let userInfo = JSON.parse(sessionOrLocal.get('userInfo'))
@@ -889,6 +938,18 @@ export default {
           this.formWatermark.img_alpha = Number(res.data.img_alpha)
           this.domain_url = res.data.img_url
           this.watermark_open = Boolean(res.data.watermark_open)
+          this.docMark_open = Boolean(res.data.doc_watermark_open)
+          this.docMarkOption = {
+            enable: Boolean(this.docMark_open),
+            doc_watermark_type: JSON.parse(res.data.doc_watermark_type),
+            alpha: res.data.doc_transparency || 100, // 透明度  100 完全显示   0 隐藏
+            size: res.data.doc_font_size || 12, // 文字大小
+            color: res.data.doc_font_color || '#5a5a5a',
+          }
+          this.getDocOptionInfo()
+          this.$nextTick(() => {
+            this.$refs.pageThemeColorsDoc.initColor(this.docMarkOption.color)
+          })
         }
       })
     },
@@ -1081,24 +1142,62 @@ export default {
         })
         return
       }
+      if (
+        this.docMark_open &&
+        this.docMarkOption.doc_watermark_type.text +
+          this.docMarkOption.doc_watermark_type.user_id +
+          this.docMarkOption.doc_watermark_type.nick_name ===
+          0
+      ) {
+        this.$message({
+          message: `文本类型不能为空`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box',
+        })
+        return
+      }
       this.formWatermark.img_url = this.$parseURL(this.domain_url).path
       this.formWatermark.watermark_open = Number(this.watermark_open)
       this.formWatermark.type = 2
-      this.$fetch('setWatermark', this.$params(this.formWatermark))
+      let params = Object.assign({}, this.formWatermark, {
+        doc_watermark_open: Number(this.docMark_open),
+        doc_watermark_type: JSON.stringify(
+          this.docMarkOption.doc_watermark_type
+        ),
+        doc_font_size: this.docMarkOption.size,
+        doc_font_color: this.docMarkOption.color,
+        doc_transparency: this.docMarkOption.alpha,
+      })
+      this.$fetch('setWatermark', this.$params(params))
         .then((res) => {
-          index === 1 && this.setWaterReportData()
-          this.$message({
-            message: this.watermark_open ? '水印开启成功' : '水印关闭成功',
-            showClose: true,
-            // duration: 0,
-            type: 'success',
-            customClass: 'zdy-info-box',
-          })
+          if (index === 0) {
+            //播放器水印
+            this.$message({
+              message: this.watermark_open ? '保存成功' : '播放器水印关闭成功',
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box',
+            })
+          } else if (index === 2) {
+            //文档水印
+            this.$message({
+              message: this.watermark_open ? '保存成功' : '文档水印关闭成功',
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box',
+            })
+          } else if (index === 1) {
+            this.setWaterReportData()
+          }
           this.getBaseWaterList()
         })
         .catch((res) => {
           this.$message({
-            message: res.msg || '保存水印灯失败',
+            message: res.msg || '保存播放器水印灯失败',
             showClose: true,
             // duration: 0,
             type: 'error',
@@ -1542,7 +1641,7 @@ export default {
     .give-white-doc {
       position: absolute;
       width: 100%;
-      height: 620px;
+      height: 370px;
       top: 510px;
       left: 0;
       background: rgba(255, 255, 255, 0.5);
@@ -1794,6 +1893,43 @@ export default {
     position: absolute;
     top: -41px;
     left: 0;
+  }
+  .docMark {
+    width: 400px;
+    height: 226px;
+    margin-top: 100px;
+    margin-left: 20px;
+    border-radius: 5px;
+    position: absolute;
+    top: 440px;
+    left: 53%;
+    .preview {
+      width: 400px;
+      height: 226px;
+      background-color: #ccc;
+      overflow: hidden;
+      .mark {
+        width: 800px;
+        height: 400px;
+        transform-origin: center;
+        transform: translate(-186px, -80px) rotate(-30deg);
+        div {
+          text-align: center;
+          display: inline-block;
+          margin: 20px;
+        }
+      }
+    }
+    .alert {
+      width: 100%;
+      margin-top: 15px;
+      span {
+        display: block;
+        color: #999;
+        line-height: 20px;
+        font-size: 14px;
+      }
+    }
   }
 }
 </style>
