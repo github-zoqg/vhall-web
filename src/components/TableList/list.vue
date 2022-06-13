@@ -249,7 +249,7 @@
               <el-button :key="index"
                 type="text"
                 v-preventReClick
-                :disabled='item.disabledKey && manageTableData[index++][item.disabledKey]==1'
+                :disabled='item.disabledKey && scope.row[item.disabledKey]'
                 @click="handleBtnClick(scope, item)"
                 v-if="checkShowHandle(scope.row, item)">{{ item.name }}</el-button>
             </template>
