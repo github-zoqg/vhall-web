@@ -263,7 +263,7 @@ export default {
           if(res.code == 200){
             this.searchHandler()
             this.$message({
-              message: `标签保存成功`,
+              message: `保存成功`,
               showClose: true,
               type: 'success',
               customClass: 'zdy-info-box'
@@ -314,8 +314,9 @@ export default {
           label_id: row.rows.label_id
         }).then(res=>{
           if(res.code == 200){
+            t.searchHandler()
             t.$message({
-              message: `标签保存成功`,
+              message: `保存成功`,
               showClose: true,
               type: 'success',
               customClass: 'zdy-info-box'
