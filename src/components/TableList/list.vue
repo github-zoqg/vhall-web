@@ -246,6 +246,7 @@
           class="btn-rows">
           <template slot-scope="scope">
             <template v-for="(item, index) in tableRowBtnFun">
+              <!-- disabledKey 需为manageTableData数据item中key值  key由按钮数据tableRowBtnFun定义 -->
               <el-button :key="index"
                 type="text"
                 v-preventReClick

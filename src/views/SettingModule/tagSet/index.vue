@@ -185,7 +185,7 @@ export default {
       ],
       tableColumn: [
         {
-          label: '活动名称',
+          label: '标签名称',
           key: 'name', 
           width: 'auto',
           customTooltip: true
@@ -401,15 +401,18 @@ export default {
       let params= {
         name: this.keyWords
       }
+      let tip;
       if(this.status == 'new'){
         api = 'labelCreate'
+        tip = '标签保存成功'
       } else {
         api = 'labelEdit';
+        tip = '标签修改成功'
         params.label_id = this.selectId
       }
       this.$fetch(api, params).then(res=>{
         if(res.code == 200){
-          this.$message.success('标签保存成功')
+          this.$message.success(tip)
           this.unSureAsyncHandle()
           this.searchHandler()
         }

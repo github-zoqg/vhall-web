@@ -13,7 +13,7 @@
     </pageTitle>
     <!-- 操作栏  -->
       <div class="operaBox" v-if="totalElement || isSearch">
-        <el-dropdown>
+        <el-dropdown v-if='vodPerssion == 1 || isTiming == 1'>
           <el-button type="primary" round size="medium">
             <i class="el-icon-plus"></i>
             创建直播/点播
@@ -24,9 +24,11 @@
             <el-dropdown-item v-if="isTiming == 1" size="medium"  round @click="createLiveAction('3')" class="transparent-btn" v-preventReClick>创建定时直播</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <!-- <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
-        <el-button size="medium"  round @click="createLiveAction('2')" v-if="vodPerssion == 1" class="transparent-btn" v-preventReClick>创建点播</el-button>
-        <el-button v-if="isTiming == 1" size="medium"  round @click="createLiveAction('3')" class="transparent-btn" v-preventReClick>创建定时直播</el-button> -->
+        <span v-else>
+          <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
+          <el-button size="medium"  round @click="createLiveAction('2')" v-if="vodPerssion == 1" class="transparent-btn" v-preventReClick>创建点播</el-button>
+          <el-button v-if="isTiming == 1" size="medium"  round @click="createLiveAction('3')" class="transparent-btn" v-preventReClick>创建定时直播</el-button>
+        </span>
         <div class="searchBox search-tag-box">
           <el-select v-model="labelId" placeholder="全部标签" @change="labelHandler">
             <el-option
@@ -227,10 +229,6 @@ export default {
   methods: {
     // 获取全部标签
     getLabelList(){
-      this.labelList.unshift({
-              name: '全部标签',
-              label_id: ''
-            })
       this.$fetch('labelList', {
           webinar_id: this.keyWords,
           pos: 0,

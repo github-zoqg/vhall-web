@@ -1755,7 +1755,7 @@ export default {
     // 确认选择标签
     sureSelectTag(){
       this.selectTagDialog = false;
-      this.checkedTags = this.checkedTagsBefore;
+      this.checkedTags = JSON.parse(JSON.stringify(this.checkedTagsBefore));
     },
     // 取消选择标签
     unSureSelectTag(){
@@ -2457,6 +2457,9 @@ export default {
       padding: 0 12px;
       background: #F7F7F7;
       border-radius: 4px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
     .notag{
       text-align: center;
