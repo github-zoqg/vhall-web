@@ -37,6 +37,12 @@ const router = [
         meta:{ auth: true, title: '聊天严禁词', name: 'chatMgr', activeMenu: '/setting/chat'},
       },
       {
+        path: 'safeScreen/:str',
+        component: () => import('@/views/SettingModule/safeScreen'),
+        name: 'player',
+        meta:{ auth: true, title: '防录屏设置', name: 'safeScreen', activeMenu: '/setting/safeScreen', auth_key: 'player_config'},
+      },
+      {
         path: '/setting/dev',
         component: () => import('@/views/SettingModule/setting'),
         name: 'dev',
