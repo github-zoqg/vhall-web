@@ -54,7 +54,6 @@
             <i
               class="el-icon-search el-input__icon"
               slot="prefix"
-              @click="searchHandler()"
             >
             </i>
           </VhallInput>
@@ -100,7 +99,7 @@
     
     <!-- 创建标签弹框 -->
     <VhallDialog
-      title="创建"
+      :title="title"
       :visible.sync="createDialog"
       :show-close="false"
       top='20vh'
@@ -210,7 +209,7 @@ export default {
         {
           name: '置顶',
           methodName: 'setTop',
-          disabledKey: 'is_order'
+          disabledKey: 'is_order_one'
         },
         {
           name: '编辑',
@@ -233,6 +232,7 @@ export default {
       createDialog: false,
       status: 'new',// 操作状态
       selectId: '',// 编辑数据id
+      title: ''
     }
   },
   computed: {},
@@ -254,6 +254,7 @@ export default {
         return false;
       }
       this.status = 'new'
+      this.title = '创建'
       this.createDialog = true
     },
     //   重置排序
@@ -291,8 +292,16 @@ export default {
             }
             this.tableList = res.data.list;
             this.totalNum = res.data.total;
-            this.tableList.forEach(item=>{
+            if(this.tableList.length == 0){
+              this.searchHandler({
+                pos: this.query.pos-10,
+              })
+            }
+            this.tableList.forEach((item,ind)=>{
               item.is_quote = item.is_quote ? '是' : '否'
+              if(ind == 0){
+                item.is_order_one = true
+              }
             })
           }
         })
@@ -329,24 +338,15 @@ export default {
     editItem(t,row) {
       t.status = 'edit'
       t.selectId = row.rows.label_id
-      t.$confirm('修改后，直播下的标签引用会同步更新，确认修改？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        customClass: 'zdy-message-box',
-        lockScroll: false,
-        closeOnClickModal: false,
-        closeOnPressEscape: false,
-        cancelButtonClass: 'zdy-confirm-cancel'
-      }).then(() => {
-        t.$fetch('labelGetInfo', {
-            label_id: row.rows.label_id
-          }).then(res=>{
-            if(res.code == 200){
-              t.keyWords = res.data.name
-              t.createDialog = true
-            }
-          })
-      }).catch(() => { });
+      t.$fetch('labelGetInfo', {
+          label_id: row.rows.label_id
+        }).then(res=>{
+          if(res.code == 200){
+            t.keyWords = res.data.name
+            t.title = '编辑'
+            t.createDialog = true
+          }
+        })
     },
     // 删除
     deleteHandle(t,row,arr) {
@@ -404,13 +404,30 @@ export default {
         tip = '标签修改成功'
         params.label_id = this.selectId
       }
-      this.$fetch(api, params).then(res=>{
+      let http = () => this.$fetch(api, params).then(res=>{
         if(res.code == 200){
           this.$message.success(tip)
           this.unSureAsyncHandle()
           this.searchHandler()
         }
+      }).catch(err=>{
+          this.$message.warning(err.msg)
       })
+      if(this.status == 'new'){
+        http()
+      } else {
+        this.$confirm('修改后，直播下的标签引用会同步更新，确认修改？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          closeOnClickModal: false,
+          closeOnPressEscape: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        }).then(() => {
+          http()
+        }).catch(() => { });
+      }
     },
     // 创建取消
     unSureAsyncHandle(){

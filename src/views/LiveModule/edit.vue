@@ -168,7 +168,7 @@
       </template>
       <el-form-item label="直播标签" class="tags_box">
         <div class="tag_name_dom" :class="checkedTags.length?'':'notag'" @click="openTagDia('but')">{{tags_name}}</div> 
-        <el-button type='text' class="tags_edit" @click="openTagDia">编辑</el-button>
+        <el-button type='text' class="tags_edit" @click="openTagDia">设置</el-button>
       </el-form-item>
       <el-form-item class="margin32" :label="`${webinarTypeToZH}封面`">
         <upload
