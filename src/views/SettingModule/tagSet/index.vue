@@ -263,7 +263,7 @@ export default {
           if(res.code == 200){
             this.searchHandler()
             this.$message({
-              message: `保存成功`,
+              message: `重置排序成功`,
               showClose: true,
               type: 'success',
               customClass: 'zdy-info-box'
@@ -328,7 +328,6 @@ export default {
     // 编辑前获取详情
     editItem(t,row) {
       t.status = 'edit'
-      t.createDialog = true
       t.selectId = row.rows.label_id
       t.$confirm('修改后，直播下的标签引用会同步更新，确认修改？', '提示', {
         confirmButtonText: '确定',
@@ -344,12 +343,7 @@ export default {
           }).then(res=>{
             if(res.code == 200){
               t.keyWords = res.data.name
-              t.$message({
-                message: `标签保存成功`,
-                showClose: true,
-                type: 'success',
-                customClass: 'zdy-info-box'
-              });
+              t.createDialog = true
             }
           })
       }).catch(() => { });
