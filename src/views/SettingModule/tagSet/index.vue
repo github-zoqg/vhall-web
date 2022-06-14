@@ -47,7 +47,7 @@
           <VhallInput
             class="search-tag"
             placeholder="请输入标签名称"
-            v-model="keyWords"
+            v-model="searchName"
             v-clearEmoij
             @change="searchHandler"
           >
@@ -227,6 +227,7 @@ export default {
       },
       totalNum: 11,
       keyWords: '',
+      searchName: '',
       checkList: [],
       nullDate: false,
       createDialog: false,
@@ -280,12 +281,12 @@ export default {
       }
       console.log(row,'row')
       this.$fetch('labelList', {
-          name: this.keyWords,
+          name: this.searchName,
           pos: this.query.pos,
           limit: 10,
         }).then(res=>{
           if(res.code == 200){
-            if(!this.keyWords && res.data.total == 0){
+            if(!this.searchName && res.data.total == 0){
               this.nullDate = true
             } else {
               this.nullDate = false
