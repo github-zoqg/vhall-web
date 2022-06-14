@@ -59,7 +59,7 @@
           <VhallInput v-model.trim="form.url" v-clearEmoij placeholder="请输入以http://或https://开头的商品链接" autocomplete="off" ></VhallInput>
         </el-form-item>
         <el-form-item label="淘口令">
-          <VhallInput v-model.trim="form.tao_password" v-clearEmoij placeholder="请输入淘口令" autocomplete="off" ></VhallInput>
+          <VhallInput v-model.trim="form.tao_password" v-clearEmoij placeholder="请输入淘口令" autocomplete="off" show-word-limit :maxlength="200" class="pandding_right"></VhallInput>
         </el-form-item>
         <el-form-item label="店铺链接" prop="shop_url">
           <VhallInput v-model.trim="form.shop_url" v-clearEmoij placeholder="请输入以http://或https://开头的店铺链接" autocomplete="off" ></VhallInput>
