@@ -2469,6 +2469,8 @@ export default {
     .tags_edit{
       margin-left: 14px !important;
       color: #3562FA !important;
+      position: absolute;
+      top: 12px;
     }
   }
   .selectTagDia{
