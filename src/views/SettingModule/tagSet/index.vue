@@ -299,7 +299,7 @@ export default {
             }
             this.tableList.forEach((item,ind)=>{
               item.is_quote = item.is_quote ? '是' : '否'
-              if(ind == 0){
+              if(ind == 0 && this.query.pos == 0){
                 item.is_order_one = true
               }
             })
