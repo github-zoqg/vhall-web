@@ -1389,7 +1389,7 @@ export default {
     },
     // 保存水印
     preWatermark(index) {
-      if (!this.domain_url && this.watermark_open) {
+      if (!this.domain_url && this.watermark_open && index == 1) {
         this.$message({
           message: `水印图片不能为空`,
           showClose: true,
@@ -1404,7 +1404,8 @@ export default {
         this.docMarkOption.doc_watermark_type.text +
           this.docMarkOption.doc_watermark_type.user_id +
           this.docMarkOption.doc_watermark_type.nick_name ===
-          0
+          0 &&
+        index == 1
       ) {
         this.$message({
           message: `文本类型不能为空`,
@@ -1415,19 +1416,56 @@ export default {
         })
         return
       }
-      this.formWatermark.webinar_id = this.$route.params.str
-      this.formWatermark.img_url = this.$parseURL(this.domain_url).path
-      this.formWatermark.watermark_open = Number(this.watermark_open)
-      this.formWatermark.type = 1
-      let params = Object.assign({}, this.formWatermark, {
-        doc_watermark_open: Number(this.docMark_open),
-        doc_watermark_type: JSON.stringify(
-          this.docMarkOption.doc_watermark_type
-        ),
-        doc_font_size: this.docMarkOption.size,
-        doc_font_color: this.docMarkOption.color,
-        doc_transparency: this.docMarkOption.alpha,
-      })
+      let params = {}
+      if (index === 0) {
+        if (!this.watermark_open) {
+          this.formWatermark.img_url = this.$parseURL(this.domain_url).path
+          this.formWatermark.watermark_open = Number(this.watermark_open)
+          this.formWatermark.type = 1
+          params = Object.assign(
+            {},
+            {
+              webinar_id: this.$route.params.str,
+              watermark_open: this.formWatermark.watermark_open,
+              type: 1,
+              img_url: this.formWatermark.img_url,
+              img_alpha: this.formWatermark.img_alpha,
+              img_position: this.formWatermark.img_position,
+            }
+          )
+        }
+      } else if (index === 2) {
+        if (!this.docMark_open) {
+          params = Object.assign(
+            {},
+            {
+              webinar_id: this.$route.params.str,
+              type: 1,
+              doc_watermark_open: Number(this.docMark_open),
+              doc_watermark_type: JSON.stringify(
+                this.docMarkOption.doc_watermark_type
+              ),
+              doc_font_size: this.docMarkOption.size,
+              doc_font_color: this.docMarkOption.color,
+              doc_transparency: this.docMarkOption.alpha,
+            }
+          )
+        }
+      } else {
+        this.formWatermark.img_url = this.$parseURL(this.domain_url).path
+        this.formWatermark.watermark_open = Number(this.watermark_open)
+        this.formWatermark.type = 1
+        params = Object.assign({}, this.formWatermark, {
+          doc_watermark_open: Number(this.docMark_open),
+          doc_watermark_type: JSON.stringify(
+            this.docMarkOption.doc_watermark_type
+          ),
+          doc_font_size: this.docMarkOption.size,
+          doc_font_color: this.docMarkOption.color,
+          doc_transparency: this.docMarkOption.alpha,
+          webinar_id: this.$route.params.str,
+        })
+      }
       this.$fetch('setWatermark', this.$params(params))
         .then((res) => {
           if (index === 0) {
@@ -1449,13 +1487,21 @@ export default {
               customClass: 'zdy-info-box',
             })
           } else if (index === 1) {
+            //播放器水印
+            this.$message({
+              message: '保存成功',
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box',
+            })
             this.setWaterReportData()
           }
-          this.getBaseWaterList()
+          //  this.getBaseWaterList()
         })
         .catch((res) => {
           this.$message({
-            message: res.msg || '保存水印灯失败',
+            message: res.msg || '保存水印失败',
             showClose: true,
             // duration: 0,
             type: 'error',
