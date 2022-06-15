@@ -167,7 +167,12 @@
         </el-form-item>
       </template>
       <el-form-item label="直播标签" class="tags_box">
-        <div class="tag_name_dom" :class="checkedTags.length?'':'notag'" @click="openTagDia('but')">{{tags_name}}</div> 
+        <div class="tag_name_dom" :class="checkedTags.length?'':'notag'" @click="openTagDia('but')">
+          <span v-if='!checkedTags.length'>点击引用标签</span>
+          <span v-else>
+            <span class="name_base" v-for="item in tags_name" :key="item">{{item}}</span>
+          </span>
+        </div> 
         <el-button type='text' class="tags_edit" @click="openTagDia">设置</el-button>
       </el-form-item>
       <el-form-item class="margin32" :label="`${webinarTypeToZH}封面`">
@@ -655,7 +660,7 @@ export default {
         })
       })
       console.log(arr)
-      this.tags_name = arr.join('; ')
+      this.tags_name = arr
     }
   },
   data(){
@@ -809,7 +814,7 @@ export default {
         } // 1固定，表示西班牙语
       },
       webinarDirector: false,    // admin无云导播活动权限
-      tags_name: '点击引用标签',
+      tags_name: [],
       checkedTags: [],  // 选中标签
       checkedTagsBefore: [],  // 选中标签确认前
       selectTagDialog: false,  // 选择标签弹框
@@ -2451,17 +2456,23 @@ export default {
   .tags_box{
     .tag_name_dom{
       width: 92%;
-      height: 40px;
+      line-height: 38px;
       display: inline-block;
       border: 1px solid #ccc;
       padding: 0 12px;
-      background: #F7F7F7;
       border-radius: 4px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+      .name_base{
+        padding: 3px 8px 4px;
+        background: #F2F2F2;
+        border-radius: 4px;
+        margin-right: 8px;
+      }
     }
     .notag{
+      background: #F7F7F7;
       text-align: center;
       color: #666;
       cursor: pointer;
