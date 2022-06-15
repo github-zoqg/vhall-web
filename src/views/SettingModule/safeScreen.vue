@@ -529,10 +529,13 @@
               :style="{
                 color: docMarkOption.color,
                 fontSize: docMarkOption.size + 'px',
+                height: docMarkOption.size + 'px',
                 opacity: docMarkOption.alpha / 100,
               }"
             >
-              {{ docMarkOption.docMarkTxt }}
+              <span v-for="i of 20" :key="'mark-' + i">{{
+                docMarkOption.docMarkTxt
+              }}</span>
             </div>
           </div>
         </div>
@@ -540,9 +543,6 @@
           <span>提示：</span>
           <span>
             1.设置了文档水印后，文字内容将以水印的形式出现在文档区域中，目前支持PC端、移动wap端。
-          </span>
-          <span>
-            2.无延迟直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能
           </span>
         </div>
       </div>
@@ -681,7 +681,7 @@ export default {
           nick_name: 0, //观看者昵称
           text_value: '版权所有，盗版必究', //固定文本内容
         },
-        alpha: 100, // 透明度  100 完全显示   0 隐藏
+        alpha: 50, // 透明度  100 完全显示   0 隐藏
         size: 12, // 文字大小
         color: '#5a5a5a', //  文字颜色
       },
@@ -1951,18 +1951,30 @@ export default {
     left: 53%;
     .preview {
       width: 400px;
-      height: 226px;
-      background-color: #ccc;
+      height: 264px;
+      background: url('../../common/images/waterMark.png') no-repeat center;
+      background-size: contain;
       overflow: hidden;
       .mark {
-        width: 800px;
-        height: 400px;
+        width: 2100px;
+        height: 1500px;
         transform-origin: center;
-        transform: translate(-186px, -80px) rotate(-30deg);
+        transform: translate(-840px, -700px) rotate(-30deg) scale(0.3);
         div {
           text-align: center;
           display: inline-block;
-          margin: 20px;
+          margin: 80px auto;
+          display: flex;
+          overflow: hidden;
+          width: 80%;
+          &:nth-child(odd) {
+            padding: 0 80px;
+            width: 100%;
+          }
+          span {
+            margin: 0 60px;
+            min-width: fit-content;
+          }
         }
       }
     }
