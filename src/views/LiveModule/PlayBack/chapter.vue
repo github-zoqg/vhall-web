@@ -474,7 +474,12 @@ export default {
   methods: {
     toPlaybackList() {
       let path = ''
-      if (this.$route.query.pageKey && this.$route.query.type) {
+      if(this.$route.query.switch_id){
+        this.$router.push({
+          path: `/live/playback/${this.webinar_id}/group/${this.$route.query.switch_id}`
+        })
+      }
+      else if (this.$route.query.pageKey && this.$route.query.type) {
         path = `/live/${this.$route.query.pageKey}/${this.webinar_id}?type=${this.$route.query.type}`
         this.$router.push({
           path: path

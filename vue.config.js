@@ -15,7 +15,7 @@ let cdn = {
   ]
 }
 
-console.warn(process)
+// console.warn(process)
 let publicPath = process.env.VUE_APP_PUBLIC_PATH || './'
 console.warn('配置环境变量----', {
   MODE: process.VUE_CLI_SERVICE,
