@@ -1347,7 +1347,7 @@ export default {
       if (this.liveMode == 6) {
                 // 创建分组直播成功
         this.isChange = false;
-        if (this.title == '创建') {
+        if (this.title == '创建' && !this.isPushVodLanguage) {
           this.$alert(`创建成功，观看密码默认为666666，请前往 <a href="${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${res.data.webinar_type}">【观看限制】</a>更改密码或观看限制`, '提示', {
             confirmButtonText: '我知道了',
             customClass: 'zdy-alert-box zdy-padding',
