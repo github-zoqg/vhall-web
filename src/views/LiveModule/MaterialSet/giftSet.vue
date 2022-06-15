@@ -258,7 +258,7 @@ export default {
       },
       materiaSearchParams: {
         gift_name: '',
-        page_size: 6,
+        page_size: 20,
         page: 1
       },
       maxPage: 0,
