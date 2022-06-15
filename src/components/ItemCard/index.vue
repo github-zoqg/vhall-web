@@ -369,7 +369,7 @@ export default {
             isShow: this.isTrue,
           },
           {
-            icon: 'icon_player@2x',
+            icon: 'color-recording-screen@2x',
             id: 9,
             title: '防录屏设置',
             subText: `设置${this.type == 4 ? '点播' : '直播'}跑马灯水印`,
