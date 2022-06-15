@@ -95,7 +95,7 @@
     </div>
     <div slot="footer" class="dialog-footer" v-show="total || isSearch">
       <div>
-        <p>当前选择 <b>{{ isWarmVideo ? totalWarmSelect.length : tableSelect.length }}</b> 个文件 </p>
+        <p v-show="!isVodVideo">当前选择 <b>{{ isWarmVideo ? totalWarmSelect.length : tableSelect.length }}</b> 个文件 </p>
       </div>
       <span>
         <el-button type="primary" @click="handlerConfirm" :disabled="isWarmVideo ? !totalWarmSelect.length : !tableSelect.length" round size="medium" v-preventReClick>确定</el-button>
@@ -131,6 +131,10 @@ export default {
       default: []
     },
     isWarmVideo: {
+      required: false,
+      default: false
+    },
+    isVodVideo: {
       required: false,
       default: false
     }
@@ -328,18 +332,19 @@ export default {
     // 选择框变化
     handleSelectionChange(val){
       this.tableSelect = val;
-      if (!this.isWarmVideo) return;
-      if (this.selectedList.length == 0) {
-        this.totalWarmSelect = val;
-        return
+      if (this.isVodVideo) {
+         this.docList.forEach((item) => {
+          if (val.length !== 0) {
+            if (item.paas_record_id !== val[[val.length - 1]].paas_record_id) {
+              this.$refs.docList.toggleRowSelection(item, false);
+            }
+          }
+        });
       }
-      //  this.docList.forEach((item) => {
-      //     if (val.length !== 0) {
-      //       if (item.paas_record_id !== val[[val.length - 1]].paas_record_id) {
-      //         this.$refs.docList.toggleRowSelection(item, false);
-      //       }
-      //     }
-      //   });
+      if (this.isWarmVideo && this.selectedList.length == 0) {
+        this.totalWarmSelect = val;
+      }
+
     },
     handlerConfirm(){
       // if (this.tableSelect[0].transcode_status != 1) {
@@ -359,12 +364,15 @@ export default {
         }
         this.$emit('selected', this.totalWarmSelect);
       } else {
-        let tableList = []
-        this.tableSelect.map(item => {
-          tableList.push(item.id)
-        })
-        this.$emit('selected', tableList);
-
+        if (this.isVodVideo) {
+           this.$emit('selected', this.tableSelect[0]);
+        } else {
+          let tableList = []
+          this.tableSelect.map(item => {
+            tableList.push(item.id)
+          })
+          this.$emit('selected', tableList);
+        }
       }
       this.dialogVisible = false;
     },

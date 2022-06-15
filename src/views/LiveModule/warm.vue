@@ -14,6 +14,7 @@
     <div class="content">
       <el-form :model="warmForm" ref="warmForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="视频封面">
+          <span style="color:#999">设置暖场封面后，预告状态将会使用该封面</span>
           <upload
             class="upload__avatar"
             v-model="warmForm.imageUrl"
@@ -34,14 +35,6 @@
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
-          <!-- <el-tooltip v-tooltipMove>
-            <div slot="content">
-              1.上传单个文件最大5G<br/>
-              2.视频格式支持RMVB、MP4、AVI、WMV、MKV、FLV、MOV；上传音频格式支持MP3、WAV<br/>
-              3.上传的视频，不支持剪辑和下载
-            </div>
-            <i class="iconfont-v3 saasicon_help_m tip"></i>
-          </el-tooltip> -->
         </el-form-item>
          <el-form-item label="播放模式" required  prop="playType">
            <el-radio-group v-model="warmForm.playType">
@@ -50,7 +43,10 @@
             </el-radio-group>
         </el-form-item>
         <el-form-item label="选择视频" required prop="selectedList">
-          <el-button size="small" round @click="warmForm.warmFlag && changeVideo()">添加</el-button>
+          <span class="add_video" @click="warmForm.warmFlag && changeVideo()">
+           <i class="iconfont-v3 saasline-plus"></i>
+           添加视频
+          </span>
            <el-tooltip v-tooltipMove>
             <div slot="content">
               1.视频仅支持MP4格式，转码成功后文件大小不超过500M<br/>
@@ -689,11 +685,32 @@ export default {
 .box{
   text-align: center;
 }
+::-webkit-scrollbar{
+  width: 5px !important;
+}
+.add_video{
+  display: inline-block;
+  width: 110px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  text-align: center;
+  color: #000;
+  font-size: 14px;
+  cursor: pointer;
+  i{
+    color: #262626;
+    font-size: 14px;
+  }
+
+}
  .vh-sort-tables{
     position: relative;
     width: 640px;
     font-size: 14px;
     font-weight: 400;
+    margin-top: 16px;
 
 
     &__theader{
@@ -711,16 +728,18 @@ export default {
         box-sizing: border-box;
       }
       &-title{
-        width: 290px;
+        width: 165px;
+        padding: 0 10px;
       }
       &-status{
         width: 120px;
       }
       &-date{
-        width: 200px;
+        width: 160px;
+        padding: 0 10px;
       }
       &-hots{
-        width: 120px;
+        width: 100px;
       }
       &-editor{
         width: 86px;
@@ -728,8 +747,8 @@ export default {
     }
 
     &__tbody{
-      // height: 120px;
-      // overflow-y: scroll;
+      height: 200px;
+      overflow-y: auto;
       &-tr{
         // border: 1px solid #FB3A32;
         border-bottom: 1px solid #E6E6E6;
@@ -754,7 +773,8 @@ export default {
         box-sizing: border-box;
       }
       &-title{
-        width: 288px;
+        width: 165px;
+        padding: 0 10px;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -767,16 +787,17 @@ export default {
       }
 
       &-hots{
-        width: 120px;
+        width: 100px;
       }
       &-status{
         width: 120px;
       }
       &-date{
-        width: 200px;
+        width: 160px;
+        padding: 0 10px;
       }
       &-editor{
-        width: 82px;
+        width: 86px;
         i{
           font-size: 20px;
           margin: 0 5px;

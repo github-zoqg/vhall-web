@@ -327,7 +327,7 @@
 
       </p> -->
     </el-form>
-    <selectMedia ref="selecteMedia" @selected='mediaSelected'></selectMedia>
+    <selectMedia ref="selecteMedia" @selected='mediaSelected' :isVodVideo="true" :selectedList=[]></selectMedia>
     <template v-if="showDialog">
       <el-dialog class="vh-dialog" :visible.sync="showDialog" width="30%" center
       :close-on-press-escape=false>

@@ -543,7 +543,7 @@ export default {
      }
     },
     confirmDelete(id, index) {
-      this.$confirm('是否删除该文件？', '提示', {
+      this.$confirm('删除后将会影响暖场视频的演示和观看，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
