@@ -293,7 +293,7 @@ export default {
             }
             this.tableList = res.data.list;
             this.totalNum = res.data.total;
-            if(this.tableList.length == 0){
+            if(this.tableList.length == 0 && this.query.pos > 0){
               this.searchHandler({
                 pos: this.query.pos-10,
               })
