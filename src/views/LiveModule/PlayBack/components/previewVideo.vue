@@ -231,7 +231,7 @@ export default {
       const parentWidth = document.querySelector('.vhallPlayer-progress-container').offsetWidth
       const markpoints = document.getElementsByClassName('v-p-markpoint')
       const markpointMarks = document.getElementsByClassName('v-p-markpoint__mark')
-      markpoints.forEach((item, index) => {
+      Array.from(markpoints).forEach((item, index) => {
         markpointMarks[index].style.left = 'auto'
         if (item.offsetLeft < 52) {
           markpointMarks[index].style.left = '54px'
