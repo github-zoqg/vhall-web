@@ -9,7 +9,7 @@
     accept="image/x-ms-bmp,image/x-png,image/gif,image/jpeg,image/bmp"
     :on-success='handleuploadSuccess'>
       <div class="box">
-        <div v-if="value">
+        <div v-if="value || domain_url && domain_url.indexOf('aliqr.e.vhall.com/qr.png') == -1">
           <div :style="`width:${widthImg}px;height:${heightImg}px`" class="img-logo"><img :src="domain_url || domainUrl" class="avatar" alt="" @click.stop.prevent="!isFullCover&&fullCover()"/></div>
           <div class="mask" @click="isProduct && refresh($event)" v-if="isFullCover">
             <span v-if="!!$props.coverPic" @click.stop.prevent="coverPage">
