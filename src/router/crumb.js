@@ -690,6 +690,27 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
+  else if(metaName === 'playbackGroupList'){ // 回放管理- 小组视频
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '活动详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '回放管理',
+        path: `/live/playback/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '小组视频',
+        path: `/live/playback/${that.$route.params.str}/group`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
   else if (metaName === 'chapter') {// 章节打点
     return [
      ...CrumbLiveList('liveList'),

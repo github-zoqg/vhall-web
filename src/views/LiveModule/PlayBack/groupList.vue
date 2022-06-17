@@ -1,22 +1,8 @@
 <template>
   <div class="listBox">
-    <pageTitle :pageTitle="title">
-      <div slot class="color999">
-        视频加密后，观看端播放加密视频，详细介绍请查看<span class="msgBlue" @click="openTip">《视频加密介绍》</span>
-      </div>
-    </pageTitle>
-    <div class="noData" v-if="no_show === true">
-      <null-page text="暂未创建回放" nullType="noAuth">
-        <el-button class="length152" round type="primary" @click="toCreate">创建回放</el-button>
-        <el-button v-if="WEBINAR_PES.btn_record" class="length152 transparent-btn" round type="white-primary" @click="toRecord">录制</el-button>
-        <!-- <el-button type="white-primary" class="length152" round @click="openCheckWord" v-if="$route.params.str">资料库</el-button> -->
-      </null-page>
-    </div>
+    <pageTitle :pageTitle="title"></pageTitle>
     <template v-if="no_show === false">
       <div v-if="!isDemand" class="operaBlock">
-        <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
-        <el-button v-if="WEBINAR_PES.btn_record"  class="transparent-btn" size="medium" plain round @click="toRecord">录制</el-button>
-        <el-button size="medium"  class="transparent-btn" round @click="settingHandler">回放设置</el-button>
         <el-button size="medium" class="transparent-btn" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','), 1)">批量删除</el-button>
         <VhallInput
           clearable
@@ -42,13 +28,10 @@
           :data="tableData"
           tooltip-effect="dark"
           style="width: 100%"
-          @selection-change="handleSelectionChange"
-          @cell-mouse-enter="handleCellMouseEnter"
-          @cell-mouse-leave="handleCellMouseLeave">
+          @selection-change="handleSelectionChange">
           <el-table-column
             v-if="!isDemand"
             type="selection"
-            fixed="left"
             :width="isBidScreen ? 55 : 52">
           </el-table-column>
           <el-table-column
@@ -57,46 +40,30 @@
             <template slot-scope="scope">
               {{ scope.row.date }}
               <div class="content">
-                <div class="imageBox">
-                  <div class="imageWrap" v-if="scope.row.transcode_status != 1">
-
-                    <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">生成失败</p>
-                    <p v-else class="statusDesc disabled">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
-                  </div>
-                  <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
-                  <span v-if="!isDemand || liveDetailInfo.webinar_type == 5" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
-                  <div v-if="scope.row.encrypt_status == 2" class="ps jiami">加密</div>
-                  <div class="ps jiami_zhezhao" v-if="scope.row.encrypt_status == 1">
-                    <div class="ps jiamizhong">加密中...</div>
-                  </div>
-                </div>
-                <div class="info">
-                  <el-tooltip  :disabled="!isTextOverflow" placement="top-start" :content="scope.row.name">
-                    <div class="videoName custom-tooltip-content">
-                      {{ scope.row.name}}
-                    </div>
-                  </el-tooltip>
-
-                  <p class="create-time">{{ scope.row.created_at }}</p>
-                  <span v-if="scope.row.doc_status && WEBINAR_PES['ui.record_chapter']" class="tag">章节</span>
-                  <span v-if="scope.row.layout != 0" class="tag">重制</span>
+                <div class="info" @click="preview(scope.row)" style="cursor: pointer;">
+                  <p class="name">{{ scope.row.name }}</p>
+                  <p>第{{scope.row.group_switch_num}}次分组：{{scope.row.group_name}}
+                    <span v-if="scope.row.doc_status && WEBINAR_PES['ui.record_chapter']" class="tag">章节</span>
+                    <span v-if="scope.row.layout != 0" class="tag">重制</span>
+                  </p>
                 </div>
               </div>
             </template>
           </el-table-column>
-          <el-table-column :width="recordType != 3 && recordType != -1 ? 78 : 106">
-            <template slot-scope="{ column, $index }" slot="header">
-              <el-select popper-class="playback-list-popper" v-if="!isDemand" v-model="recordType" @change="typeChange(column, $index)">
-                <el-option
-                  v-for="item in typeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-              <span v-else>视频来源</span>
+         
+          <el-table-column
+            label="状态"
+            :width="isBidScreen ? '' : 91"
+            show-overflow-tooltip>
+            <template slot-scope="scope">
+              <div v-if="scope.row.encrypt_status == 2">加密</div>
+              <div v-else-if="scope.row.encrypt_status == 1">加密中</div>
+              <div v-else-if="scope.row.transcode_status == 1">-</div>
+              <div v-else>
+                <p v-if="scope.row.transcode_status == 2" class="statusDesc" @click="reTranscode(scope.row)">生成失败</p>
+                <p v-else class="statusDesc disabled">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
+              </div>
             </template>
-            <span class="playpackSource" slot-scope="scope">{{scope.row.source | soruceTotext}}</span>
           </el-table-column>
 
           <el-table-column
@@ -104,19 +71,6 @@
             :width="isBidScreen ? '' : 91"
             show-overflow-tooltip>
             <span class="playpackSource" slot-scope="scope">{{scope.row.duration}}</span>
-          </el-table-column>
-
-          <el-table-column
-            v-if="webinarType==6"
-            label="小组视频"
-            :width="isBidScreen ? '' : 108"
-            show-overflow-tooltip>
-            <template slot-scope="scope">
-              <router-link v-if="scope.row.group_record_num>0"
-               :to="`/live/playback/${webinar_id}/group/${scope.row.switch_id}`" style="color:blue;">
-              {{scope.row.group_record_num}}</router-link>
-              <span v-else>-</span>
-            </template>
           </el-table-column>
 
           <el-table-column
@@ -139,7 +93,6 @@
           <el-table-column
             :width="isBidScreen ? 190 : 176"
             label="操作"
-            fixed="right"
             align="left"
           >
             <template slot-scope="scope">
@@ -245,11 +198,7 @@ import { sessionOrLocal } from '@/utils/utils';
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
 import beginPlay from '@/components/beginBtn';
 import EventBus from "@/utils/Events";
-import tableCellTooltip from '@/components/TableList/mixins/tableCellTooltip';
-
 export default {
-  name: 'PlaybackList',
-  mixins: [tableCellTooltip],
   data(){
     return {
       lowerGradeInterval:null,
@@ -303,17 +252,17 @@ export default {
     webinar_id(){
       return this.$route.params.str;
     },
+    switch_id(){
+      return this.$route.params.switch_id;
+    },
     title(){
       if (this.isDemand === '') {
         return ''
       } else if (this.isDemand) {
         return this.liveDetailInfo.webinar_type == 5 ? '视频管理' : '点播管理'
       } else {
-        return '回放管理'
+        return '小组视频'
       }
-    },
-    webinarType(){
-      return this.liveDetailInfo && this.liveDetailInfo.webinar_type;
     }
   },
   created(){
@@ -479,6 +428,7 @@ export default {
     getLiveDetail() {
       this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
         this.liveDetailInfo = res.data;
+        console.log('this.liveDetailInfo:',this.liveDetailInfo)
         if (this.liveDetailInfo.webinar_type == 5 && !this.liveDetailInfo.is_demand) {
           this.isDemand = true
         } else {
@@ -492,7 +442,7 @@ export default {
             { label: '上传', value: '2' }
           ]
         } else {
-          this.handleTipMsgVisible()
+          // this.handleTipMsgVisible()
           this.typeOptions = [
             { label: '全部来源', value: '-1' },
             { label: '回放', value: '0' },
@@ -606,15 +556,15 @@ export default {
     getList(){
       let param = {
         webinar_id: this.webinar_id,
-        user_id: this.userId,
         pos: this.pos,
         limit: this.pageSize,
-        source: this.recordType,
+        switch_id: this.switch_id,
       };
-      param.source == '上传' && (param.source = -1)
       this.keyWords && (param.name = this.keyWords)
+      console.log('param:',param)
       this.loading = true;
-      this.$fetch('playBackList', param).then(res=>{
+      // 获取小组回放列表
+      this.$fetch('getGroupRecordList', param).then(res=>{
         res.data.list.forEach(item => {
           item.transcoding = false
         })
@@ -810,7 +760,8 @@ export default {
         this.$router.push({
           path: `/live/vodreset/${this.webinar_id}`,
           query: {
-            record_id: data.id
+            record_id: data.id,
+            switch_id:this.switch_id
           }
         });
       }
@@ -933,7 +884,8 @@ export default {
             customClass: 'zdy-info-box' // 样式处理
           });
         } else {
-          this.$router.push({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand, pageKey: this.$route.meta.name, type: this.liveDetailInfo.webinar_type}});
+          this.$router.push({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand, pageKey: this.$route.meta.name, type: this.liveDetailInfo.webinar_type, switch_id: this.switch_id}});
+
           // const routeData = this.$router.resolve({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: this.isDemand}});
           // window.open(routeData.href, '_blank');
         }
@@ -951,6 +903,8 @@ export default {
 
     // 发布为点播或定时直播
     publishVodTiming(recordData, index) {
+      console.log('----this.recordData---');
+      console.log(recordData);
       const url = index == 1 ? '/live/vodEdit' : '/live/timeEdit'
       const routerPush = () => {
         this.$router.push({
@@ -965,6 +919,7 @@ export default {
       }
       this.checkTransStatus(recordData.id, routerPush)
     },
+    // 点击弹窗中的“立即发布”按钮
     publishVideo() {
       this.publishDialogVisible = false
       this.publishVodTiming(this.recordData, this.activeIndex)
@@ -1239,7 +1194,7 @@ export default {
     .info{
       margin-left: 12px;
       font-size: 14px;
-      width: 187px;
+      // width: 227px;
       color: #1A1A1A;
       float: left;
       .name{
@@ -1407,20 +1362,6 @@ export default {
     padding:  32px 0;
     text-align: center;
   }
-
-  /deep/ .el-table__body-wrapper::-webkit-scrollbar {
-    width: 6px; // 横向滚动条
-    height: 6px; // 纵向滚动条
-  }
-  /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
-    background-color: #dedede;
-    border-radius: 5px;
-  }
-  /deep/ .el-table__body::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-    border-radius: 5px;
-    background: rgba(255,255,255,1);
-  }
 </style>
 <style lang="less">
   .playback-list-popper {
@@ -1432,8 +1373,5 @@ export default {
   .msgBlue{
     color: #3562FA;
     cursor: pointer;
-  }
-  .el-tooltip__popper {
-    max-width: 376px;
   }
 </style>
