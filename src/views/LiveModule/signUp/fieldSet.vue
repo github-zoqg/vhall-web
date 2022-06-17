@@ -246,17 +246,32 @@
                 ><i class="el-icon-plus"></i>添加其他</el-button>
               </template>
             </div>
-            <el-switch
-              @change="phoneSwitchChange(item)"
-              v-if="item.bottomBtn.includes('phoneValid')"
-              class="swtich"
-              :width='30'
-              :height="16"
-              v-model="item.phoneValide"
-              active-color="#FB3A32"
-              inactive-color="#CECECE"
-              inactive-text="短信验证">
-            </el-switch>
+            <p class="clear_both">
+              <el-switch
+                @change="phoneSwitchChange(item)"
+                v-if="item.bottomBtn.includes('phoneValid')"
+                class="swtich"
+                :width='30'
+                :height="16"
+                v-model="item.phoneValide"
+                active-color="#FB3A32"
+                inactive-color="#CECECE"
+                inactive-text="短信验证">
+              </el-switch>
+            </p>
+            <p class="clear_both" v-if="item.bottomBtn.includes('phoneValid')">
+              <el-switch
+                @change="abroadPhoneSwitchChange(item)"
+                class="swtich"
+                :width='30'
+                :height="16"
+                v-model="item.abroadPhoneValide"
+                active-color="#FB3A32"
+                inactive-color="#CECECE"
+                inactive-text="支持国外手机号报名">
+              </el-switch>
+            </p>
+            <p v-if="item.bottomBtn.includes('phoneValid')" class="font_set">注：国外手机号无法进行短信验证，请悉知</p>
             <el-switch
               @change="requiredSwitchChange(item)"
               v-if="item.bottomBtn.includes('requireSwtich')"
@@ -812,6 +827,11 @@ export default {
     },
     // 短信验证开关
     async phoneSwitchChange(question) {
+      if(question.phoneValide && question.abroadPhoneValide){
+        this.$message.warning('请关闭”支持国外手机号报名“后，开启”短信验证“功能');
+        question.phoneValide = false
+        return false;
+      }
       let isConfirm = true;
       let userId = this.$parent.userId;
       if (!question.phoneValide) {
@@ -838,6 +858,28 @@ export default {
         })
       }
       if (!isConfirm) return false;
+      const options = {
+        question_id: question.question_id,
+        options: JSON.stringify({
+          open_verify: question.phoneValide ? 1 : 0
+        }),
+        subject: question.label,
+        is_must: question.required ? 1: 0
+      };
+      this.questionEdit(options);
+    },
+    // 国外手机号短信验证开关
+    async abroadPhoneSwitchChange(question) {
+      if(question.phoneValide && question.abroadPhoneValide){
+        this.$message.warning('请关闭”短信验证“后，开启”支持国外手机号报名“功能');
+        question.abroadPhoneValide = false
+        return false;
+      }
+      let userId = this.$parent.userId;
+      // this.$vhall_paas_port({
+      //   k: 100139,
+      //   data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      // })
       const options = {
         question_id: question.question_id,
         options: JSON.stringify({
@@ -1030,6 +1072,14 @@ export default {
     margin-top: 9px;
     text-align: right;
     overflow: hidden;
+    .clear_both{
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .font_set{
+      font-size: 14px;
+      color: #666;
+    }
     .addBtn{
       float: left;
       i{
