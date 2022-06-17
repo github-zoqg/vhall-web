@@ -520,7 +520,7 @@ export default {
   vertical-align: sub;
 }
 .warm_submit{
-  margin-top: 50px;
+  margin-top: 32px;
 }
 .wramUp-wrap::v-deep{
   .avatar-uploader .el-upload {
@@ -685,9 +685,6 @@ export default {
 .box{
   text-align: center;
 }
-::-webkit-scrollbar{
-  width: 5px !important;
-}
 .add_video{
   display: inline-block;
   width: 110px;
@@ -747,8 +744,8 @@ export default {
     }
 
     &__tbody{
-      height: 200px;
-      overflow-y: auto;
+      // height: 200px;
+      // overflow-y: auto;
       &-tr{
         // border: 1px solid #FB3A32;
         border-bottom: 1px solid #E6E6E6;
