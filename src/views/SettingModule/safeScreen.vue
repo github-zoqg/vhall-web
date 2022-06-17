@@ -888,10 +888,10 @@ export default {
           ? this.docMarkOption.doc_watermark_type.text_value
           : '') +
         (this.docMarkOption.doc_watermark_type.user_id
-          ? userInfo.user_id
+          ? '-' + userInfo.user_id
           : '') +
         (this.docMarkOption.doc_watermark_type.nick_name
-          ? userInfo.nick_name
+          ? '-' + userInfo.nick_name
           : '')
       this.docMarkOption = Object.assign({}, this.docMarkOption, {
         docMarkTxt: txt,
@@ -1959,11 +1959,11 @@ export default {
         width: 2100px;
         height: 1500px;
         transform-origin: center;
-        transform: translate(-840px, -700px) rotate(-30deg) scale(0.3);
+        transform: translate(-840px, -700px) rotate(-15deg) scale(0.4);
         div {
           text-align: center;
           display: inline-block;
-          margin: 80px auto;
+          margin: 40px auto;
           display: flex;
           overflow: hidden;
           width: 80%;
