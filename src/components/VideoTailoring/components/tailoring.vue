@@ -27,7 +27,7 @@
           <effectiveZone
             v-for="(item, index) in cutTimeList"
             :key="'effectiveZone' + index"
-            :startTime="item.startTime"
+            :startTime="Number(item.startTime)"
             :endTime="item.endTime"
             :videoTime="videoTime"
           ></effectiveZone>
