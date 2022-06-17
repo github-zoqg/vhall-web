@@ -180,9 +180,15 @@
               type: 'success',
               customClass: 'zdy-info-box'
             })
-            this.$router.push({
-              path: `/live/playback/${this.$route.params.str}`,
-            })
+            if (this.$route.query.switch_id) {
+              this.$router.push({
+                path: `/live/playback/${this.$route.params.str}/group/${this.$route.query.switch_id}`,
+              })
+            } else {
+              this.$router.push({
+                path: `/live/playback/${this.$route.params.str}`,
+              })
+            }
           }
         }).catch(err => {
           this.$message({

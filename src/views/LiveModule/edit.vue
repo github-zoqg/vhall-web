@@ -1029,12 +1029,16 @@ export default {
         // this.formData.zdy_inav_num = `1v${Number(this.liveDetailInfo.inav_num) - 1}`;
         this.zdy_inav_num = `1v${Number(this.liveDetailInfo.inav_num) - 1}`;
         if (this.liveDetailInfo.paas_record_id) {
-          this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
-          this.selectMedia.id = this.liveDetailInfo.record_id;
-          this.selectMedia.name = this.liveDetailInfo.record_subject;
+          // 通过回放视频发布点播或定时直播跳转过来的，通过query参数赋值给selectMedia，不重新赋值，否则小组视频会出问题
+          if(!this.selectMedia.id){
+            this.selectMedia.paas_record_id = this.liveDetailInfo.paas_record_id;
+            this.selectMedia.id = this.liveDetailInfo.record_id;
+            this.selectMedia.name = this.liveDetailInfo.record_subject;
+          }
           this.selectMedia.msg_url = this.liveDetailInfo.msg_url || '.mp4';
         }
         if (flag) {
+          // 音频直播 后缀是mp3,其它直播后缀是mp4
           this.selectMedia.msg_url = this.liveDetailInfo.webinar_type == 1 ? '.mp3' : '.mp4';
         }
         //处理云导播到期情况
@@ -1343,7 +1347,7 @@ export default {
       if (this.liveMode == 6) {
                 // 创建分组直播成功
         this.isChange = false;
-        if (this.title == '创建') {
+        if (this.title == '创建' && !this.isPushVodLanguage) {
           this.$alert(`创建成功，观看密码默认为666666，请前往 <a href="${window.location.origin}${process.env.VUE_APP_WEB_KEY}/live/viewerRules/${res.data.webinar_id}?type=${res.data.webinar_type}">【观看限制】</a>更改密码或观看限制`, '提示', {
             confirmButtonText: '我知道了',
             customClass: 'zdy-alert-box zdy-padding',
@@ -1613,7 +1617,6 @@ export default {
     },
     mediaSelected(media){
       this.selectMedia = media;
-      console.log(this.selectMedia);
     }
   },
 };
