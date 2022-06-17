@@ -1707,7 +1707,7 @@ export default {
     // open创建标签
     openCreatTagDia(){
       if(this.tagList.length>=100){
-        this.$message.warning();
+        this.$message.warning('账号下最多创建100个直播标签');
         return false;
       }
       this.tagName = ''
@@ -1751,6 +1751,8 @@ export default {
             this.checkedTagsBefore.push(obj.label_id)
           }
         }
+      }).catch(err=>{
+          this.$message.warning(err.msg)
       })
     },
     // 创建取消

@@ -49,7 +49,7 @@
             placeholder="请输入标签名称"
             v-model="searchName"
             v-clearEmoij
-            @change="searchHandler"
+            @change="searchHandler()"
           >
             <i
               class="el-icon-search el-input__icon"
@@ -251,7 +251,7 @@ export default {
     // 创建标签
     create() {
       if(this.totalNum>=100){
-        this.$message.warning('123');
+        this.$message.warning('账号下最多创建100个直播标签');
         return false;
       }
       this.status = 'new'
@@ -278,6 +278,10 @@ export default {
       if (typeof row == 'object') {
         this.query.pos = row.pos
         this.query.pageNumber = row.pageNum
+      }
+      if(this.searchName){
+        this.query.pos = 0
+        this.$refs.tableListWord.pageInfo.pageNum = 1
       }
       console.log(row,'row')
       this.$fetch('labelList', {

@@ -13,15 +13,15 @@
     </pageTitle>
     <!-- 操作栏  -->
       <div class="operaBox" v-if="totalElement || isSearch">
-        <el-dropdown v-if='vodPerssion == 1 || isTiming == 1'>
+        <el-dropdown v-if='vodPerssion == 1 || isTiming == 1' @command="createLiveAction">
           <el-button type="primary" round size="medium">
             <i class="el-icon-plus"></i>
             创建直播/点播
           </el-button>
           <el-dropdown-menu slot="dropdown" class="dropdown_width">
-            <el-dropdown-item type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-dropdown-item>
-            <el-dropdown-item size="medium"  round @click="createLiveAction('2')" v-if="vodPerssion == 1" class="transparent-btn" v-preventReClick>创建点播</el-dropdown-item>
-            <el-dropdown-item v-if="isTiming == 1" size="medium"  round @click="createLiveAction('3')" class="transparent-btn" v-preventReClick>创建定时直播</el-dropdown-item>
+            <el-dropdown-item type="primary" round command="1" v-preventReClick size="medium" class="length104">创建直播</el-dropdown-item>
+            <el-dropdown-item size="medium"  round command="2" v-if="vodPerssion == 1" class="transparent-btn" v-preventReClick>创建点播</el-dropdown-item>
+            <el-dropdown-item v-if="isTiming == 1" size="medium"  round command="3" class="transparent-btn" v-preventReClick>创建定时直播</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
         <span v-else>
@@ -571,6 +571,7 @@ export default {
     },
     // 创建活动
     createLiveAction(index){
+      console.log('账号下最多创建100个直播标签')
       let userPhone = JSON.parse(sessionOrLocal.get('userInfo')).phone;
       if (!userPhone) {
         this.$alert('您还没有绑定手机，为了保证您的权益，请绑定后再发起直播！', '提示', {

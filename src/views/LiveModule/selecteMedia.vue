@@ -16,12 +16,10 @@
         >
         </i>
       </VhallInput>
-      <el-tooltip class="prize--set" effect="dark" placement="right" v-tooltipMove style="margin-left:5px">
           <i class="iconfont-v3 saasicon_help_m"></i>
-          <div slot="content">
+          <sapn>
             为不影响观看，建议文件分辨率在1280*720p及以下
-          </div>
-      </el-tooltip>
+          </sapn>
       <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
     </div>
     <div v-if="total || isSearch" style="min-height: 300px;">
@@ -434,6 +432,9 @@ export default {
   }
   .search{
     margin-bottom: 16px;
+    .saasicon_help_m{
+      margin-left: 8px;
+    }
     .el-input{
       width: 220px;
       /deep/ .el-input__inner{
