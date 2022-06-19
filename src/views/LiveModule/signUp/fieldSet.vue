@@ -861,7 +861,8 @@ export default {
       const options = {
         question_id: question.question_id,
         options: JSON.stringify({
-          open_verify: question.phoneValide ? 1 : 0
+          open_verify: question.abroadPhoneValide ? 1 : 0,
+          support_foreign_phone: 0
         }),
         subject: question.label,
         is_must: question.required ? 1: 0
@@ -883,7 +884,8 @@ export default {
       const options = {
         question_id: question.question_id,
         options: JSON.stringify({
-          open_verify: question.phoneValide ? 1 : 0
+          open_verify: 0,
+          support_foreign_phone: question.abroadPhoneValide ? 1 : 0
         }),
         subject: question.label,
         is_must: question.required ? 1: 0
