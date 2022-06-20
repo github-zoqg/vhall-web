@@ -16,6 +16,10 @@
         >
         </i>
       </VhallInput>
+       <i class="iconfont-v3 saasicon_help_m"></i>
+          <sapn>
+            为不影响观看，建议文件分辨率在1280*720p及以下
+          </sapn>
       <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
     </div>
     <div v-if="total || isSearch" style="min-height: 300px;">
@@ -31,7 +35,7 @@
         @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
-          width="55">
+          width="45">
         </el-table-column>
         <el-table-column
         show-overflow-tooltip
@@ -47,19 +51,19 @@
         <el-table-column
           prop="created_at"
           label="上传日期"
-          width="180">
+          width="160">
         </el-table-column>
 
         <el-table-column
           label="时长"
           prop="duration"
-          width="100"
+          width="90"
           show-overflow-tooltip>
         </el-table-column>
 
         <el-table-column
           label="进度"
-          width="120"
+          width="110"
           show-overflow-tooltip>
           <template slot-scope="scope">
             <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : 'failer'">{{ scope.row.transcode_status_text }}</span>
@@ -72,7 +76,7 @@
          v-if="isWarmVideo"
           label="转码后大小"
           prop="storage"
-          width="120"
+          width="100"
           show-overflow-tooltip>
         </el-table-column>
 
@@ -167,14 +171,13 @@ export default {
       //获取资料中心的音视频
       if (this.dialogVisible) {
         this.tableSelect = [];
-        this.totalWarmSelect = [];
         this.docList = [];
         this.pageInfo.pageNum = 1;
         this.pageInfo.pos = 0;
-        if (this.$refs.docList) {
-          this.$refs.docList.clearSelection();
-        }
         this.getMediaList();
+        if (this.isWarmVideo) {
+          this.totalWarmSelect = JSON.parse(JSON.stringify(this.selectedList || []));
+        }
       } else {
         this.keyWords = '';
         this.pageInfo.pageNum = 1;
@@ -261,10 +264,6 @@ export default {
           this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
           this.isSearch = this.keyWords ? true : false
           if (this.isWarmVideo) {
-            console.log(this.selectedList, '??!23')
-            if (this.pageInfo.pageNum == 1) {
-              this.totalWarmSelect = JSON.parse(JSON.stringify(this.selectedList || []));
-            }
             this.selectedDefaultList()
           }
         }
@@ -359,7 +358,7 @@ export default {
       // }
       if (this.isWarmVideo) {
         if (this.totalWarmSelect.length > 10) {
-          this.$$message.warn('最多添加10个暖场视频');
+          this.$message.warning('最多添加10个暖场视频');
           return;
         }
         this.$emit('selected', this.totalWarmSelect);
@@ -449,14 +448,14 @@ export default {
       }
       width: 100%;
     }
-    // /deep/.el-dialog__footer{
-    //   padding:24px 32px;
-    // }
+    /deep/.el-table .cell{
+      padding-left: 16px;
+    }
     /deep/ .el-table__body .el-table__row td:nth-child(2) .cell{
-      padding-left: 10px;
+      padding-left: 2px;
     }
     /deep/ thead tr th:nth-child(2) .cell{
-      padding-left: 10px;
+      padding-left: 2px;
     }
     // 滚动条的宽度
     /deep/ .el-table__body-wrapper::-webkit-scrollbar {
