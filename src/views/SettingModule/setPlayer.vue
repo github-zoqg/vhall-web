@@ -768,6 +768,9 @@ export default {
   /deep/.el-radio__input.is-checked + .el-radio__label {
     color: #1a1a1a;
   }
+  /deep/.el-form-item {
+    margin-bottom: 44px;
+  }
   .el-form-item__content {
     position: relative;
   }
@@ -857,13 +860,10 @@ export default {
   }
   .show-purple {
     width: 400px;
-    height: 226px;
-    margin-top: 100px;
-    margin-left: 20px;
     border-radius: 5px;
     position: absolute;
-    top: 20px;
-    left: 53%;
+    top: 39px;
+    left: 54%;
     img {
       width: 400px;
       height: 226px;
