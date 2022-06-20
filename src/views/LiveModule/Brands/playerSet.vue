@@ -630,7 +630,6 @@ export default {
         },
       })
       let { href } = this.$router.resolve({ path: '/setting/player' })
-      href += `/${this.$route.params.str}`
       window.open(href, '_blank')
     },
     choseOtherSpeed(item) {

@@ -1009,7 +1009,6 @@ export default {
         },
       })
       let { href } = this.$router.resolve({ path: '/setting/safeScreen' })
-      href += `/${this.$route.params.str}`
       window.open(href, '_blank')
     },
     choseOtherSpeed(item) {
