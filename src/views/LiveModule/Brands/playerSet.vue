@@ -1053,6 +1053,9 @@ export default {
     position: relative;
     border-radius: 4px;
   }
+  /deep/.el-form-item {
+    margin-bottom: 44px;
+  }
   /deep/.el-tabs__active-bar {
     border-radius: 2px;
   }
@@ -1161,13 +1164,10 @@ export default {
   }
   .show-purple {
     width: 400px;
-    height: 226px;
-    margin-top: 100px;
-    margin-left: 20px;
     border-radius: 5px;
     position: absolute;
-    top: 8px;
-    left: 53%;
+    top: 39px;
+    left: 54%;
     img {
       width: 400px;
       height: 226px;
