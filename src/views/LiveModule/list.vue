@@ -933,6 +933,10 @@ export default {
     .length104{
       width: 140px;
     }
+    .el-dropdown-menu__item{
+      text-align: left;
+    }
+
   }
 </style>
 <style lang="css">

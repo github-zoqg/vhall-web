@@ -376,15 +376,15 @@
     </div>
 
     <!-- 活动标签选择弹框 -->
-    <VhallDialog title="标签引用" :visible.sync="selectTagDialog" :show-close="false" class="zdy-async-dialog selectTagDia" width="480px">
+    <VhallDialog title="标签引用" :visible.sync="selectTagDialog" class="zdy-async-dialog selectTagDia" width="480px">
     <div v-if='tagList.length'>
-      <div>
-        <el-button type="primary" round @click="openCreatTagDia" v-preventReClick size="medium">
-          创建标签
-        </el-button>
-        <span class="creat_tip">直播下最多引用10个标签</span>
-      </div>
       <div class="tag_content">
+        <div class="creat_header">
+          <el-button type="primary" round @click="openCreatTagDia" v-preventReClick size="medium">
+            创建标签
+          </el-button>
+          <span class="creat_tip">直播下最多引用10个标签</span>
+        </div>
         <el-checkbox-group v-model="checkedTagsBefore" :max="10">
           <el-checkbox v-for="tag in tagList" :label="tag.label_id" :key="tag.label_id" class="check_base">
             <span class="tag_base">{{tag.name}}</span>
@@ -405,7 +405,7 @@
     <div></div>
     </VhallDialog>
     <!-- 创建标签弹框 -->
-    <VhallDialog title="创建" :visible.sync="createTagDialog" :show-close="false" class="zdy-async-dialog createTagDia" width="400px">
+    <VhallDialog title="创建" :visible.sync="createTagDialog" class="zdy-async-dialog createTagDia" width="400px">
       <div class="async__body">
         <div class="async__ctx">
           <VhallInput placeholder="请输入标签名称" v-model="tagName" v-clearEmoij show-word-limit maxlength="10"></VhallInput>
@@ -2490,6 +2490,9 @@ export default {
     .el-dialog{
       margin-top: 20vh !important;
     }
+    .el-dialog__body{
+      padding: 0;
+    }
     .el-dialog__title{
       font-weight: bold;
     }
@@ -2503,16 +2506,20 @@ export default {
       margin-left: 8px;
       color: #999;
     }
+    .creat_header{
+      padding-bottom: 20px;
+    }
     .tag_content{
-      margin: 20px 0 0;
+      padding: 0 32px;
       height: 130px;
       overflow: auto;
       .check_base{
-        margin-bottom: 12px;
+        margin: 0 16px 12px 0;
         .tag_base{
           padding: 4px 8px;
           border-radius: 4px;
           background: #F2F2F2;
+          color: #666;
         }
       }
       &::-webkit-scrollbar{
@@ -2528,6 +2535,9 @@ export default {
         color: #FB3A32;
       }
     }
+    .async__footer{
+      padding: 16px 32px 24px !important;
+    }
   }
   .createTagDia{
     .el-dialog{
@@ -2535,6 +2545,9 @@ export default {
     }
     .el-dialog__title{
       font-weight: bold;
+    }
+    .async__footer{
+      padding: 24px 0 !important;
     }
   }
 </style>
