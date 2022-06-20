@@ -49,9 +49,11 @@
             </template>
           </el-table-column>
         <el-table-column
-          prop="created_at"
           label="上传日期"
           width="160">
+          <template slot-scope="scope">
+            <span>{{ scope.row.created_at.substring(0, 16)}}</span>
+          </template>
         </el-table-column>
 
         <el-table-column
@@ -183,7 +185,7 @@ export default {
         this.pageInfo.pageNum = 1;
         this.pageInfo.pos = 0;
         this.totalWarmSelect = [];
-        if (this.$refs.docList) {
+        if (this.docList.length) {
           this.$refs.docList.clearSelection();
         }
       }
@@ -203,14 +205,18 @@ export default {
       }
     },
     closeDialog() {
-      this.$refs.docList.clearSelection();
+      if (this.docList.length) {
+        this.$refs.docList.clearSelection();
+      }
       this.dialogVisible = false;
       this.totalWarmSelect = [];
       this.pageInfo.pageNum = 1;
       this.pageInfo.pos = 0;
     },
     handleClose(done) {
-      this.$refs.docList.clearSelection();
+      if (this.docList.length) {
+        this.$refs.docList.clearSelection();
+      }
       this.dialogVisible = false;
       this.totalWarmSelect = [];
       this.pageInfo.pageNum = 1;
@@ -263,7 +269,7 @@ export default {
           this.total = res.data.total;
           this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
           this.isSearch = this.keyWords ? true : false
-          if (this.isWarmVideo) {
+          if (this.isWarmVideo && this.docList.length) {
             this.selectedDefaultList()
           }
         }
@@ -272,7 +278,7 @@ export default {
     // 默认选择
     selectedDefaultList() {
       this.$nextTick(() => {
-        if (this.totalWarmSelect.length && this.docList.length) {
+        if (this.totalWarmSelect.length) {
           let selectedList = [];
           this.totalWarmSelect.map(item => {
             selectedList.push(item.paas_record_id)
