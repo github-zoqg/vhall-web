@@ -39,7 +39,7 @@ const router = [
       {
         path: 'safeScreen',
         component: () => import('@/views/SettingModule/safeScreen'),
-        name: 'player',
+        name: 'safeScreen',
         meta:{ auth: true, title: '防录屏设置', name: 'safeScreen', activeMenu: '/setting/safeScreen', auth_key: 'player_config'},
       },
       {
