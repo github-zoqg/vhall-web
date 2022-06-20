@@ -553,12 +553,13 @@
               :style="{
                 color: docMarkOption.color,
                 fontSize: docMarkOption.size + 'px',
-                height: docMarkOption.size + 'px',
+                height: docMarkOption.size * 3 + 'px',
+                marginTop: docMarkOption.size + 'px',
                 opacity: docMarkOption.alpha / 100,
               }"
             >
               <span v-for="i of 20" :key="'mark-' + i">{{
-                docMarkOption.docMarkTxt
+                docMarkOption.docMarkTxt.substring(0, 20)
               }}</span>
             </div>
           </div>
@@ -2275,17 +2276,18 @@ export default {
         div {
           text-align: center;
           display: inline-block;
-          margin: 60px auto;
+          margin: 0 auto;
           display: flex;
           overflow: hidden;
-          width: 80%;
-          &:nth-child(odd) {
-            padding: 0 80px;
-            width: 100%;
-          }
+          width: 100%;
           span {
-            margin: 0 60px;
+            display: flex;
+            align-items: flex-start;
+            margin: 0 30px;
             min-width: fit-content;
+            &:nth-child(odd) {
+              align-items: flex-end;
+            }
           }
         }
       }
