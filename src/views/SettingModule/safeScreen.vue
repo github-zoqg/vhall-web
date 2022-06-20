@@ -546,6 +546,7 @@
           </span>
         </div>
       </div>
+      <div class="cut-line" v-if="activeName == 'second'"></div>
     </div>
   </div>
 </template>
@@ -1697,13 +1698,10 @@ export default {
 
   .show-purple {
     width: 400px;
-    height: 226px;
-    margin-top: 100px;
-    margin-left: 20px;
     border-radius: 5px;
     position: absolute;
-    top: 20px;
-    left: 53%;
+    top: 95px;
+    left: 54%;
     img {
       width: 400px;
       height: 226px;
@@ -1942,13 +1940,10 @@ export default {
   }
   .docMark {
     width: 400px;
-    height: 226px;
-    margin-top: 100px;
-    margin-left: 20px;
     border-radius: 5px;
     position: absolute;
-    top: 440px;
-    left: 53%;
+    top: 525px;
+    left: 54%;
     .preview {
       width: 400px;
       height: 264px;
@@ -1963,7 +1958,7 @@ export default {
         div {
           text-align: center;
           display: inline-block;
-          margin: 40px auto;
+          margin: 60px auto;
           display: flex;
           overflow: hidden;
           width: 80%;
@@ -1988,6 +1983,14 @@ export default {
         font-size: 14px;
       }
     }
+  }
+  .cut-line {
+    width: calc(100% - 280px);
+    height: 1px;
+    position: absolute;
+    top: 500px;
+    left: 48px;
+    background-color: #e6e6e6;
   }
 }
 </style>
