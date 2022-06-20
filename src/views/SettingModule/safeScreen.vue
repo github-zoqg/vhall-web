@@ -522,7 +522,7 @@
       </div>
       <div class="docMark" v-if="activeName == 'second'">
         <div class="preview">
-          <div class="mark">
+          <div class="mark" v-if="docMark_open">
             <div
               v-for="i of 100"
               :key="'mark' + i"
@@ -943,7 +943,7 @@ export default {
           this.docMark_open = Boolean(res.data.doc_watermark_open)
           this.docMarkOption = {
             enable: Boolean(this.docMark_open),
-            doc_watermark_type: JSON.parse(res.data.doc_watermark_type),
+            doc_watermark_type: res.data.doc_watermark_type,
             alpha: res.data.doc_transparency || 100, // 透明度  100 完全显示   0 隐藏
             size: res.data.doc_font_size || 12, // 文字大小
             color: res.data.doc_font_color || '#5a5a5a',
