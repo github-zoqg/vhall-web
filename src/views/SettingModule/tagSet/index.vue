@@ -278,12 +278,10 @@ export default {
       if (typeof row == 'object') {
         this.query.pos = row.pos
         this.query.pageNumber = row.pageNum
-      }
-      if(this.searchName){
+      } else {
         this.query.pos = 0
         this.$refs.tableListWord.pageInfo.pageNum = 1
       }
-      console.log(row,'row')
       this.$fetch('labelList', {
           name: this.searchName,
           pos: this.query.pos,

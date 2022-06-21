@@ -14,7 +14,7 @@
     <!-- 操作栏  -->
       <div class="operaBox" v-if="totalElement || isSearch">
         <el-dropdown v-if='vodPerssion == 1 || isTiming == 1' @command="createLiveAction" trigger="click">
-          <el-button type="primary" round size="medium">
+          <el-button type="primary" round size="medium" class="create_but_padding">
             <i class="el-icon-plus"></i>
             创建直播/点播
           </el-button>
@@ -659,6 +659,9 @@ export default {
     overflow: hidden;
     margin-top: 30px;
     margin-bottom: 20px;
+    .create_but_padding{
+      padding: 4px 20px !important;
+    }
     .searchBox{
       float: right;
       .el-select{
@@ -930,6 +933,7 @@ export default {
     max-width: 100%;
   }
   .dropdown_width{
+    left: 287px !important;
     .length104{
       width: 140px;
     }

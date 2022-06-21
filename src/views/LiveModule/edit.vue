@@ -2487,6 +2487,9 @@ export default {
     }
   }
   .selectTagDia{
+    .el-dialog__header{
+      padding: 24px 32px 12px;
+    }
     .el-dialog{
       margin-top: 20vh !important;
     }
@@ -2507,14 +2510,15 @@ export default {
       color: #999;
     }
     .creat_header{
+      padding-top: 12px;
       padding-bottom: 20px;
     }
     .tag_content{
       padding: 0 32px;
-      height: 130px;
+      height: 204px;
       overflow: auto;
       .el-checkbox__input.is-disabled .el-checkbox__inner{
-        background: #e6e6e6;
+        background: rgba(230,230,230,40%);
       }
       .check_base{
         margin: 0 16px 12px 0;
@@ -2539,7 +2543,7 @@ export default {
       }
     }
     .async__footer{
-      padding: 16px 32px 24px !important;
+      padding: 12px 32px 24px !important;
     }
   }
   .createTagDia{
