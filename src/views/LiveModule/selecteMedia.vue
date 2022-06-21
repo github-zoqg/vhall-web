@@ -17,7 +17,7 @@
         </i>
       </VhallInput>
           <i class="iconfont-v3 saasicon_help_m"></i>
-          <sapn>
+          <sapn class="tip_color">
             为不影响观看，建议文件分辨率在1280*720p及以下
           </sapn>
       <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
@@ -434,6 +434,9 @@ export default {
     margin-bottom: 16px;
     .saasicon_help_m{
       margin-left: 8px;
+    }
+    .tip_color{
+      color: #999;
     }
     .el-input{
       width: 220px;
