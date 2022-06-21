@@ -125,23 +125,23 @@ import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   props: {
     videoSize: {
-      required: false,
+      type: String,
       default: ''
     },
     videoType: {
-      required: false,
+      type: String,
       default: ''
     },
     selectedList: {
-      required: false,
-      default: []
+      type: Array,
+      default: ()=>[]
     },
     isWarmVideo: {
-      required: false,
+      type: Boolean,
       default: false
     },
     isVodVideo: {
-      required: false,
+      type: Boolean,
       default: false
     }
   },
@@ -275,14 +275,15 @@ export default {
         }
       });
     },
-    // 默认选择
+    // 默认选中
     selectedDefaultList() {
       this.$nextTick(() => {
         if (this.totalWarmSelect.length) {
           let selectedList = [];
-          this.totalWarmSelect.map(item => {
-            selectedList.push(item.paas_record_id)
+          selectedList = this.totalWarmSelect.map(item => {
+            return item.paas_record_id;
           })
+          // 如果返回的列表已经选过，就默认选中
           this.docList.forEach((item) => {
             if (selectedList.includes(item.paas_record_id)) {
               this.$nextTick(() => {
@@ -301,31 +302,37 @@ export default {
     // 单选
     handleSelection(val, item) {
       if (!this.isWarmVideo || this.selectedList.length == 0) return;
+       // 如果是暖场视频并且已经选过暖场视频，才走下面的选中逻辑
       console.log(this.selectedList, item);
        let selectedList = [];
-        this.totalWarmSelect.map(item => {
-          selectedList.push(item.paas_record_id)
+        selectedList = this.totalWarmSelect.map(item => {
+          return item.paas_record_id;
         })
         if (selectedList.includes(item.paas_record_id)) {
+          // 如果列表存在这个选择的项，就证明取消了选择， 就过滤掉这个
           this.totalWarmSelect = this.totalWarmSelect.filter(items => items.paas_record_id != item.paas_record_id);
         } else {
+          // 如果列表不存在这个选择的项，就证明是新增了
           this.totalWarmSelect.push(item)
         }
     },
     // 全选和取消全选
     handleAllSelection(val) {
       if (!this.isWarmVideo || this.selectedList.length == 0) return;
+       // 如果是暖场视频并且已经选过暖场视频，才走下面的选中逻辑
       let selectedList = [];
-      this.totalWarmSelect.map(item => {
-        selectedList.push(item.paas_record_id)
-      })
+      selectedList = this.totalWarmSelect.map(item => {
+          return item.paas_record_id;
+        })
       if (val.length) {
+        //如果存在长度，就是全选，然后把列表不存在的都加上
         this.docList.forEach(item => {
           if (!selectedList.includes(item.paas_record_id)) {
            this.totalWarmSelect.push(item)
           }
         });
       } else {
+        // 如果不存在长度，就是全都不选，把音视频列表所有的数据去过滤了，只留不存在视频列表的数据
         this.docList.forEach(item => {
           if (selectedList.includes(item.paas_record_id)) {
             this.totalWarmSelect = this.totalWarmSelect.filter(items => items.paas_record_id != item.paas_record_id);
@@ -338,6 +345,7 @@ export default {
     handleSelectionChange(val){
       this.tableSelect = val;
       if (this.isVodVideo) {
+        // 如果是点播或者定时直播、默认只能选择一个
          this.docList.forEach((item) => {
           if (val.length !== 0) {
             if (item.paas_record_id !== val[[val.length - 1]].paas_record_id) {
@@ -346,6 +354,7 @@ export default {
           }
         });
       }
+      // 如果暖场视频一个视频都没选择过，选择框变化就是选中的数据
       if (this.isWarmVideo && this.selectedList.length == 0) {
         this.totalWarmSelect = val;
       }
@@ -370,12 +379,14 @@ export default {
         this.$emit('selected', this.totalWarmSelect);
       } else {
         if (this.isVodVideo) {
+          // 如果是点播或者定时直播、默认只能选择第一个
            this.$emit('selected', this.tableSelect[0]);
         } else {
           let tableList = []
           this.tableSelect.map(item => {
             tableList.push(item.id)
           })
+          // 如果是插播、只要id
           this.$emit('selected', tableList);
         }
       }

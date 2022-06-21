@@ -194,7 +194,7 @@ export default {
       warmFlag: false,
       loading: false,
       isChange: false,
-      videoSize: '500',
+      videoSize: '500.1',
       videoType: 'MP4',
       warmId: '',
       userId: '',
@@ -408,6 +408,7 @@ export default {
       this.warmForm.selectedList.map(item => {
         recordId.push(item.paas_record_id);
       })
+      console.log(recordId, '???12312435')
       if(!recordId.length){
         this.$message({
           message: "请上传暖场视频",

@@ -57,18 +57,18 @@
               </template>
             </el-table-column>
             <el-table-column
-              width="200"
+              width="160"
               prop="created_at"
               label="上传时间">
             </el-table-column>
             <el-table-column
-              width="200"
+              width="100"
               prop="duration"
               label="时长">
             </el-table-column>
             <el-table-column
               prop="transcode_status_text"
-              width="200"
+              width="110"
               label="进度">
               <template slot-scope="scope">
                 <div>
@@ -92,7 +92,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              width="120"
+              width="110"
               prop="storage"
               label="转码后大小">
             </el-table-column>
@@ -653,11 +653,14 @@ export default {
   .layout--right--main();
   .padding-table-list();
   .min-height();
-  /deep/ .el-table__body .el-table__row td:nth-child(2) .cell{
+  /deep/ .el-table .cell{
     padding-left: 10px;
   }
+  /deep/ .el-table__body .el-table__row td:nth-child(2) .cell{
+    padding-left: 2px;
+  }
   /deep/ thead tr th:nth-child(2) .cell{
-    padding-left: 10px;
+    padding-left: 2px;
   }
   /deep/.el-table__row:hover{
    .el-button{
