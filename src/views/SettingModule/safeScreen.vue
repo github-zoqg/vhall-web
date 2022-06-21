@@ -885,18 +885,19 @@ export default {
       if (!this.docMarkOption.doc_watermark_type.text_value) {
         this.docMarkOption.doc_watermark_type.text_value = '版权所有，盗版必究'
       }
-      let txt =
-        (this.docMarkOption.doc_watermark_type.text
-          ? this.docMarkOption.doc_watermark_type.text_value
-          : '') +
-        (this.docMarkOption.doc_watermark_type.user_id
-          ? '-' + userInfo.user_id
-          : '') +
-        (this.docMarkOption.doc_watermark_type.nick_name
-          ? '-' + userInfo.nick_name
-          : '')
+      let waterText = ''
+      let waterText_arr = []
+      this.docMarkOption.doc_watermark_type.text &&
+        waterText_arr.push(this.docMarkOption.doc_watermark_type.text_value)
+      this.docMarkOption.doc_watermark_type.user_id &&
+        userInfo?.user_id &&
+        waterText_arr.push(userInfo.user_id)
+      this.docMarkOption.doc_watermark_type.nick_name &&
+        userInfo?.nick_name &&
+        waterText_arr.push(userInfo.nick_name)
+      waterText = waterText_arr.join('-')
       this.docMarkOption = Object.assign({}, this.docMarkOption, {
-        docMarkTxt: txt,
+        docMarkTxt: waterText,
       })
     },
     getMarqueeOptionInfo() {
