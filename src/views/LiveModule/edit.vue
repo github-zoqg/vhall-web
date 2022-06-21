@@ -2514,11 +2514,15 @@ export default {
       padding-bottom: 20px;
     }
     .tag_content{
-      padding: 0 32px;
+      padding: 0 28px 0 32px;
       height: 204px;
       overflow: auto;
+      margin-right: 4px;
       .el-checkbox__input.is-disabled .el-checkbox__inner{
         background: rgba(230,230,230,40%);
+      }
+      .el-checkbox__label{
+        padding-left: 6px;
       }
       .check_base{
         margin: 0 16px 12px 0;
@@ -2531,7 +2535,7 @@ export default {
       }
       &::-webkit-scrollbar{
         width: 6px;
-        color: #CCC;
+        color: rgba(153,153,153,.3);
       }
     }
     .checked_num{

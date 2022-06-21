@@ -933,9 +933,8 @@ export default {
     max-width: 100%;
   }
   .dropdown_width{
-    left: 287px !important;
     .length104{
-      width: 140px;
+      width: 147px;
     }
     .el-dropdown-menu__item{
       text-align: left;
