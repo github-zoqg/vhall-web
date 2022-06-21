@@ -522,7 +522,7 @@
       </div>
       <div class="docMark" v-if="activeName == 'second'">
         <div class="preview">
-          <div class="mark">
+          <div class="mark" v-if="docMark_open">
             <div
               v-for="i of 100"
               :key="'mark' + i"
@@ -885,18 +885,19 @@ export default {
       if (!this.docMarkOption.doc_watermark_type.text_value) {
         this.docMarkOption.doc_watermark_type.text_value = '版权所有，盗版必究'
       }
-      let txt =
-        (this.docMarkOption.doc_watermark_type.text
-          ? this.docMarkOption.doc_watermark_type.text_value
-          : '') +
-        (this.docMarkOption.doc_watermark_type.user_id
-          ? '-' + userInfo.user_id
-          : '') +
-        (this.docMarkOption.doc_watermark_type.nick_name
-          ? '-' + userInfo.nick_name
-          : '')
+      let waterText = ''
+      let waterText_arr = []
+      this.docMarkOption.doc_watermark_type.text &&
+        waterText_arr.push(this.docMarkOption.doc_watermark_type.text_value)
+      this.docMarkOption.doc_watermark_type.user_id &&
+        userInfo?.user_id &&
+        waterText_arr.push(userInfo.user_id)
+      this.docMarkOption.doc_watermark_type.nick_name &&
+        userInfo?.nick_name &&
+        waterText_arr.push(userInfo.nick_name)
+      waterText = waterText_arr.join('-')
       this.docMarkOption = Object.assign({}, this.docMarkOption, {
-        docMarkTxt: txt,
+        docMarkTxt: waterText,
       })
     },
     getMarqueeOptionInfo() {
@@ -943,7 +944,7 @@ export default {
           this.docMark_open = Boolean(res.data.doc_watermark_open)
           this.docMarkOption = {
             enable: Boolean(this.docMark_open),
-            doc_watermark_type: JSON.parse(res.data.doc_watermark_type),
+            doc_watermark_type: res.data.doc_watermark_type,
             alpha: res.data.doc_transparency || 100, // 透明度  100 完全显示   0 隐藏
             size: res.data.doc_font_size || 12, // 文字大小
             color: res.data.doc_font_color || '#5a5a5a',
