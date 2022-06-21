@@ -2513,6 +2513,9 @@ export default {
       padding: 0 32px;
       height: 130px;
       overflow: auto;
+      .el-checkbox__input.is-disabled .el-checkbox__inner{
+        background: #e6e6e6;
+      }
       .check_base{
         margin: 0 16px 12px 0;
         .tag_base{

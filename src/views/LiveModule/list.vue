@@ -13,7 +13,7 @@
     </pageTitle>
     <!-- 操作栏  -->
       <div class="operaBox" v-if="totalElement || isSearch">
-        <el-dropdown v-if='vodPerssion == 1 || isTiming == 1' @command="createLiveAction">
+        <el-dropdown v-if='vodPerssion == 1 || isTiming == 1' @command="createLiveAction" trigger="click">
           <el-button type="primary" round size="medium">
             <i class="el-icon-plus"></i>
             创建直播/点播
