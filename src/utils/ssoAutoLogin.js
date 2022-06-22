@@ -10,8 +10,11 @@ const ssoAutoLogin = async () => {
     }, {
       credentials: true // 携带cookie 配置
     }).then(res => {
-      if (res.code === 200 && res.data.token) {
-        sessionOrLocal.set('token', res.data.token, 'localStorage')
+      if (res.code === 200) {
+        const data = res.data
+        // 登出操作
+        if (data.login_status === 0) return sessionOrLocal.removeItem('token', 'localStorage')
+        data.token && sessionOrLocal.set('token', data.token, 'localStorage')
       }
     }).finally(() => {
       loaded = true // 不管接口是否成功, 往下执行
