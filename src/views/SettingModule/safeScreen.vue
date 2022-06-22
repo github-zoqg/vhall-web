@@ -545,6 +545,7 @@
           <span>
             1.设置了文档水印后，文字内容将以水印的形式出现在文档区域中，目前支持PC端、移动wap端。
           </span>
+          <span>2.文档水印最多显示20个字，超出的水印内容将不会显示</span>
         </div>
       </div>
       <div class="cut-line" v-if="activeName == 'second'"></div>
@@ -1225,7 +1226,7 @@ export default {
           } else if (index === 2) {
             //文档水印
             this.$message({
-              message: this.watermark_open ? '保存成功' : '文档水印关闭成功',
+              message: this.docMark_open ? '保存成功' : '文档水印关闭成功',
               showClose: true,
               // duration: 0,
               type: 'success',
@@ -1271,7 +1272,21 @@ export default {
           },
         })
       }
-
+      if (this.docMark_open) {
+        this.$vhall_paas_port({
+          k: 100848,
+          data: {
+            business_uid: this.userId,
+            user_id: '',
+            webinar_id: '',
+            refer: '',
+            s: '',
+            report_extra: {},
+            ref_url: '',
+            req_url: '',
+          },
+        })
+      }
       this.$vhall_paas_port({
         k: loactionArr[this.formWatermark.img_position - 1],
         data: {
