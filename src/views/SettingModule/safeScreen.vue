@@ -817,7 +817,7 @@ export default {
     closeWaterDocInfo() {
       if (!this.docMark_open) {
         this.$vhall_paas_port({
-          k: 100674,
+          k: 100850,
           data: {
             business_uid: this.userId,
             user_id: '',
