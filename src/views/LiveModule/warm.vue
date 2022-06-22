@@ -90,9 +90,15 @@
                     <div class="vh-sort-tables__tbody-id">
                       {{ index + 1 }}
                     </div>
-                    <div class="vh-sort-tables__tbody-title" @click.stop="previewVideo(item)">
+                    <el-tooltip placement="top" effect="dark" v-tooltipMove>
+                      <div slot="content">{{ item.record_name || item.name }}</div>
+                      <div class="vh-sort-tables__tbody-title" @click.stop="previewVideo(item)">
+                        {{ item.record_name || item.name }}
+                      </div>
+                    </el-tooltip>
+                    <!-- <div class="vh-sort-tables__tbody-title" @click.stop="previewVideo(item)" >
                       {{ item.record_name || item.name }}
-                    </div>
+                    </div> -->
                     <div class="vh-sort-tables__tbody-date">
                       <template>
                       {{ item.created_at.substring(0, 16) }}
