@@ -586,7 +586,7 @@ export default {
           this.getBaseOtherList()
           if (!this.playerOpen) {
             this.$message({
-              message: '正在使用账号下品牌设置',
+              message: '正在使用账号下播放器设置',
               showClose: true,
               type: 'warning',
               customClass: 'zdy-info-box',
