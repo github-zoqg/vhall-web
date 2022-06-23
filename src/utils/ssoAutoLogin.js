@@ -2,6 +2,7 @@ import fetchData from "@/api/fetch";
 import { sessionOrLocal } from '@/utils/utils'
 import Cookies from 'js-cookie';
 const bizId = 2 // 化蝶的业务线id
+const platform = 17 // 控制台的平台配置
 let loaded = false // 是否已加载
 
 /**
@@ -13,9 +14,12 @@ function verifyCookie() {
   const ssoLoginStatus = Cookies.get('sso_login_status') // 用户在用户中心的状态(1为登录)
   const ssoTokenOrigin = Cookies.get('sso_token_origin') // 用户登录的业务线
   const ssoTokenAfterLogin = Cookies.get('sso_token_after_login') // 用户登录后给予的token(验证防止多次请求)
+  console.log('------------verifyCookie-------------')
+  console.log(ssoToken, ssoLoginStatus, ssoTokenOrigin, ssoTokenAfterLogin)
   if (!ssoToken) return false
   if (ssoLoginStatus != 1) return false
-  if (ssoTokenOrigin == bizId) return false
+  const currentOrigin = `${bizId}_${platform}`
+  if (ssoTokenOrigin == currentOrigin) return false
   return ssoToken !== ssoTokenAfterLogin
 }
 
