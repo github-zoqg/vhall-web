@@ -14,13 +14,15 @@ function verifyCookie() {
   const ssoLoginStatus = Cookies.get('sso_login_status') // 用户在用户中心的状态(1为登录)
   const ssoTokenOrigin = Cookies.get('sso_token_origin') // 用户登录的业务线
   const ssoTokenAfterLogin = Cookies.get('sso_token_after_login') // 用户登录后给予的token(验证防止多次请求)
-  console.log('------------verifyCookie-------------')
+  console.log('------------verifyCookie-------------') //FIXME: 测试用,上线前删除!!
   console.log(ssoToken, ssoLoginStatus, ssoTokenOrigin, ssoTokenAfterLogin)
+  if (ssoLoginStatus != 1) {
+    sessionOrLocal.removeItem('token', 'localStorage')
+    return false
+  }
   if (!ssoToken) return false
-  if (ssoLoginStatus != 1) return false
   const currentOrigin = `${bizId}_${platform}`
-  if (ssoTokenOrigin == currentOrigin) return false
-  return ssoToken !== ssoTokenAfterLogin
+  return !(ssoToken === ssoTokenAfterLogin && ssoTokenOrigin === currentOrigin)
 }
 
 const ssoAutoLogin = async () => {
