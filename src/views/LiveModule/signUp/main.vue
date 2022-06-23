@@ -361,6 +361,7 @@ export default {
     },
     // 添加题目方法（通用）
     addFiled(info, opts){
+      console.log(info, opts,'info, opts')
       let mergeObj;
       let filedJson = getfiledJson({name: info.name, type: info.type});
       // 如果 opts 存在，为初始化赋值
@@ -373,7 +374,9 @@ export default {
           order_num: opts.order_num,
           options: opts.options && JSON.parse(opts.options),
           required: !!opts.is_must,
-          phoneValide: !!(opts.options && JSON.parse(opts.options) && JSON.parse(opts.options).open_verify)
+          phoneValide: !!(opts.options && JSON.parse(opts.options) && JSON.parse(opts.options).open_verify),
+          // 支持国外手机号
+          abroadPhoneValide: !!(opts.options && JSON.parse(opts.options) && JSON.parse(opts.options).support_foreign_phone)
         };
         filedJson = {
           ...filedJson,
