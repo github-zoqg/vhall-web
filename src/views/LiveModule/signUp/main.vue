@@ -361,7 +361,6 @@ export default {
     },
     // 添加题目方法（通用）
     addFiled(info, opts){
-      console.log(info, opts,'info, opts')
       let mergeObj;
       let filedJson = getfiledJson({name: info.name, type: info.type});
       // 如果 opts 存在，为初始化赋值
