@@ -241,7 +241,7 @@ export default {
     PageTitle,
     NullPage
   },
-  created() {
+  mounted() {
     this.searchHandler()
   },
   beforeDestroy() {
