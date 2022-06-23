@@ -1342,7 +1342,6 @@ export default {
         is_timing: this.webinarVideo ? (this.$route.meta.webinarType == 'vod' ? 0 : 1) : '',
         inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webinarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : '',
         is_director: this.selectDirectorMode || 0,
-        label_ids
       };
       if (this.liveMode == 6) {
         data.auto_speak = Number(this.speakSwitch)
@@ -1362,7 +1361,7 @@ export default {
           } else {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
-          this.$fetch(url, this.$params(data)).then(async res=>{
+          this.$fetch(url, Object.assign(this.$params(data),{label_ids})).then(async res=>{
             if (res.code == 200) {
               if(this.selectDirectorMode === 1){
                 //创建或者编辑云导播活动 保存成功后
@@ -1405,6 +1404,9 @@ export default {
               type: 'error',
               customClass: 'zdy-info-box'
             });
+            if(res.code == 512076){
+              this.getTagsList()
+            }
           }).finally(()=>{
             this.loading = false;
           });
