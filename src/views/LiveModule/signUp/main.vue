@@ -373,7 +373,9 @@ export default {
           order_num: opts.order_num,
           options: opts.options && JSON.parse(opts.options),
           required: !!opts.is_must,
-          phoneValide: !!(opts.options && JSON.parse(opts.options) && JSON.parse(opts.options).open_verify)
+          phoneValide: !!(opts.options && JSON.parse(opts.options) && JSON.parse(opts.options).open_verify),
+          // 支持国外手机号
+          abroadPhoneValide: !!(opts.options && JSON.parse(opts.options) && JSON.parse(opts.options).support_foreign_phone)
         };
         filedJson = {
           ...filedJson,

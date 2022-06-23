@@ -138,6 +138,7 @@ export function getfiledJson({name, type}){
           default_type: 2,
           subject: '手机号',
           phoneValide: true,
+          abroadPhoneValide: false,
           disabledEdit: true
         });
 
