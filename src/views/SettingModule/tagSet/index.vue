@@ -101,7 +101,6 @@
     <VhallDialog
       :title="title"
       :visible.sync="createDialog"
-      :show-close="false"
       top='20vh'
       class="zdy-async-dialog"
       width="400px"
@@ -297,15 +296,19 @@ export default {
     editItem(t,row) {
       t.status = 'edit'
       t.selectId = row.rows.label_id
-      t.$fetch('labelGetInfo', {
-          label_id: row.rows.label_id
-        }).then(res=>{
-          if(res.code == 200){
-            t.keyWords = res.data.name
-            t.title = '编辑'
-            t.createDialog = true
-          }
-        })
+      t.createDialog = true
+      t.keyWords = row.rows.name;
+
+      // 扩展列表中没有字段时 须调用接口 
+      // t.$fetch('labelGetInfo', {
+      //     label_id: row.rows.label_id
+      //   }).then(res=>{
+      //     if(res.code == 200){
+      //       t.keyWords = res.data.name
+      //       t.title = '编辑'
+      //       t.createDialog = true
+      //     }
+      //   })
     },
     // 删除
     deleteHandle(t,row,arr) {
