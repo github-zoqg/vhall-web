@@ -135,53 +135,7 @@ export default {
   data() {
     return {
       loading: false,
-      tableList: [
-        {
-          label_id: 59103,
-          name: '赵强 转正述职 PPT .pptx',
-          hash: 'f45295e26a07e59114bc26cbabe3649f',
-          ext: 'pptx',
-          page: 12,
-          size: 717921,
-          converted_page: '12',
-          created_at: '2022-02-18 11:46:49',
-          updated_at: '2022-02-18 11:47:03',
-          is_quote: 200,
-          converted_page_jpeg: '12',
-          status_jpeg: 200,
-          document_id: '0a9798f6'
-        },
-        {
-          label_id: 59028,
-          name: '4bf26b0744fb98e37e358bb7d33363fb.jpeg',
-          hash: '56b6fd80e47b00e6268ca232622dba7d',
-          ext: 'jpeg',
-          page: 1,
-          size: 698058,
-          converted_page: '0',
-          created_at: '2022-01-05 19:01:31',
-          updated_at: '2022-01-05 19:01:32',
-          is_quote: 0,
-          converted_page_jpeg: '1',
-          status_jpeg: 200,
-          document_id: 'ea7e7b67'
-        },
-        {
-          label_id: 59027,
-          name: 'ce3c508a2642609fcc62b5736a3c339a.jpeg',
-          hash: '061974f0f8cfc21fe9e30eb556f507c4',
-          ext: 'jpeg',
-          page: 1,
-          size: 439296,
-          converted_page: '0',
-          created_at: '2022-01-05 19:01:14',
-          updated_at: '2022-01-05 19:01:29',
-          is_quote: 0,
-          converted_page_jpeg: '1',
-          status_jpeg: 200,
-          document_id: '002984ba'
-        }
-      ],
+      tableList: [],
       tableColumn: [
         {
           label: '标签名称',
@@ -225,7 +179,7 @@ export default {
         limit: 10,
         pageNumber: 1
       },
-      totalNum: 11,
+      totalNum: 0,
       keyWords: '',
       searchName: '',
       checkList: [],
@@ -280,7 +234,9 @@ export default {
         this.query.pageNumber = row.pageNum
       } else {
         this.query.pos = 0
-        this.$refs.tableListWord.pageInfo.pageNum = 1
+        if(this.totalNum > 10){
+          this.$refs.tableListWord.pageInfo.pageNum = 1
+        }
       }
       this.$fetch('labelList', {
           name: this.searchName,
