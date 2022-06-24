@@ -343,6 +343,7 @@ export default {
     // 删除图片
     deleteImg() {
       this.warmForm.imageUrl = '';
+      this.domain_url = '';
     }
   }
 };
