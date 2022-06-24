@@ -554,7 +554,7 @@ export default {
         ...retParams,
       }, {
         token: '',
-         credentials: true
+        credentials: true
       }).then(res => {
         this.mobileKey = '';
         this.errorText = '';
