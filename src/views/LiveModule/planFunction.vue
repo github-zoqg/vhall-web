@@ -22,7 +22,10 @@
           <ul class="switch__list">
             <li class="switch__box" v-for="(item, ins) in keyList" :key="`view_`+ins">
               <label class="leve3_title label__r12">{{ item.key_name }}</label>
+              <!-- TODO:支付牌照问题 -->
               <el-switch
+                @click.native="handleSwitchClick(item)"
+                :disabled="item.disabled"
                 v-model="item.value"
                 :active-value="0"
                 :inactive-value="1"
@@ -146,6 +149,12 @@ export default {
     if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
   },
   methods: {
+    // TODO:支付牌照问题
+    handleSwitchClick(item) {
+      if (item.disabled) {
+        this.$message.warning('合规自查中，该功能暂不支持使用')
+      }
+    },
     handleLowerGradeHeart() {
       this.getLowerGradeConfig();
       this.lowerGradeInterval = setInterval(() => {
@@ -274,7 +283,8 @@ export default {
           num: 100085,
           openShow: '开启后，观看页显示打赏功能',
           closeShow: '已开启，观看页显示打赏功能',
-          value: Number(dataVo['ui.hide_reward']) || 0
+          value: Number(dataVo['ui.hide_reward']) || 0,
+          disabled: true // TODO:支付牌照问题
         },
         {
           type: 'ui.watch_hide_like',
@@ -290,7 +300,8 @@ export default {
           num: 100089,
           openShow: '开启后，观看页显示礼物功能',
           closeShow: '已开启，观看页显示礼物功能',
-          value: Number(dataVo['ui.hide_gifts']) || 0
+          value: Number(dataVo['ui.hide_gifts']) || 0,
+          disabled: true // TODO:支付牌照问题
         },
         {
           type: 'ui.watch_hide_share',

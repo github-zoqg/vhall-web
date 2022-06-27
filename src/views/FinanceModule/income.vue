@@ -1,9 +1,10 @@
 <template>
   <div class="account-income">
     <pageTitle pageTitle="账户收益">
-      <div slot="content">
+      <!-- TODO:支付牌照问题 -->
+      <!-- <div slot="content">
         1.账户收益包含直播收益和红包收益<br>2.直播收益：观众对主办方打赏的金额，包含门票、打赏、礼物道具<br>3.红包收益：作为观众身份抢到主办方发送的红包，以及主办方发送红包后未被领取完，会退款到红包收益<br>4.删除活动不影响已统计的历史数据
-      </div>
+      </div> -->
     </pageTitle>
     <div class="detail" @click="accountDetail">提现明细</div>
     <el-row :gutter="10">
@@ -16,8 +17,10 @@
               <h1 class="custom-font-barlow">{{ incomeInfo.live_income | formatMoney }}</h1>
             </div>
             <div class="all-come">
-              <p>可用金额<span class="moneyUnit">(元)</span><span class="withdraw" @click="cash('直播')">{{ incomeInfo.in_live_withdraw ? '提现中' : '提现' }}</span>
-                <el-tooltip effect="dark" placement="right" v-tooltipMove>
+              <!-- TODO:支付牌照问题 -->
+              <p>可用金额<span class="moneyUnit">(元)</span>
+                <!-- <span class="withdraw" @click="cash('直播')">{{ incomeInfo.in_live_withdraw ? '提现中' : '提现' }}</span> -->
+                <!-- <el-tooltip effect="dark" placement="right" v-tooltipMove>
                   <div slot="content">
                    Q1: 平台提现额度为多少？<br>
                     A1: 平台余额1元以上方可提现。线上最大支持单笔提现额度为800元。<br>应国家税务局要求，个人用户单次提现超过800元将产生个人所得税，<br>请发送以下资料至：finance@vhall.com<br>
@@ -32,7 +35,7 @@
                     A4: 在提现周期内不能再次提现，到账后方可重新进行提现操作
                   </div>
                   <i class="iconfont-v3 saasicon_help_m"></i>
-                </el-tooltip>
+                </el-tooltip> -->
               </p>
               <h1 class="custom-font-barlow">{{ incomeInfo.live_balance | formatMoney }}</h1>
             </div>
@@ -48,7 +51,9 @@
               <h1 class="custom-font-barlow">{{ incomeInfo.red_packet_income | formatMoney }}</h1>
             </div>
             <div class="all-come">
-              <p>可用金额<span class="moneyUnit">(元)</span><span class="withdraw" @click="cash('红包')">{{ incomeInfo.in_red_withdraw ? '提现中' : '提现' }}</span>
+              <!-- TODO:支付牌照问题 -->
+              <p>可用金额<span class="moneyUnit">(元)</span>
+                <!-- <span class="withdraw" @click="cash('红包')">{{ incomeInfo.in_red_withdraw ? '提现中' : '提现' }}</span>
                 <el-tooltip effect="dark" placement="right" v-tooltipMove>
                   <div slot="content">
                    Q1: 红包提现额度为多少？<br>
@@ -64,7 +69,7 @@
                     A4: 在提现周期内不能再次提现，到账后方可重新进行提现操作
                   </div>
                    <i class="iconfont-v3 saasicon_help_m"></i>
-                </el-tooltip>
+                </el-tooltip> -->
               </p>
               <h1 class="custom-font-barlow">{{ incomeInfo.red_packet_balance | formatMoney }}</h1>
             </div>

@@ -9,9 +9,10 @@
     <div class="viewer-rules" v-show="liveDetailInfo">
       <el-radio-group v-model="form.verify" @change="handleClick">
         <el-radio :label="0" v-if="liveDetailInfo && liveDetailInfo.webinar_type != 6">免费</el-radio>
-        <el-radio :label="3">付费</el-radio>
+        <!-- TODO:支付牌照问题 -->
+        <el-radio @click.native="handleClickPay" :disabled="true" :label="3">付费</el-radio>
         <el-radio :label="4" v-if="perssionInfo.f_code">邀请码（原F码）</el-radio>
-        <el-radio :label="6" v-if="perssionInfo.f_code">付费/邀请码</el-radio>
+        <el-radio @click.native="handleClickPay" :disabled="true" :label="6" v-if="perssionInfo.f_code">付费/邀请码</el-radio>
         <el-radio :label="1">密码</el-radio>
         <el-radio :label="2" v-if="perssionInfo.white_list">白名单</el-radio>
       </el-radio-group>
@@ -444,6 +445,10 @@ export default {
         }
       }
     },
+    // TODO:支付牌照问题
+    handleClickPay() {
+      this.$message.warning('合规自查中，该功能暂不支持使用')
+    },
     handleClick(tab, event) {
       console.log(tab, event);
       // 每次选项卡切换，之前选择项清空。
@@ -662,7 +667,7 @@ export default {
           message:  res.msg || '设置失败',
           showClose: true,
           // duration: 0,
-          type: 'error',
+          type: res.code == 512999 ? 'warning' : 'error',
           customClass: 'zdy-info-box'
         });
       });
