@@ -252,8 +252,7 @@ export default {
           openShow: '开启后，观看页显示礼物功能',
           closeShow: '已开启，观看页显示礼物功能',
           k: 100625,
-          value: Number(dataVo['ui.hide_gifts']) || 0,
-          disabled: true // TODO:支付牌照问题
+          value: Number(dataVo['ui.hide_gifts']) || 0
         },
         {
           type: 'ui.watch_hide_share',
