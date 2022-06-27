@@ -123,7 +123,7 @@
             :on-error="uploadError"
             :on-preview="uploadPreview"
             :before-upload="beforeUploadHandler"
-            @delete="editParams.img = ''"
+            @delete="editParams.img = '', domain_url = ''"
            >
             <div slot="tip">
               <p>建议尺寸：240*240px，小于2MB</p>

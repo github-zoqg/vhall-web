@@ -23,7 +23,7 @@
             :on-error="uploadError"
             :on-preview="uploadPreview"
             :before-upload="beforeUploadHandler"
-            @delete="logoForm.logo = ''">
+            @delete="logoForm.logo = '', domain_url = ''">
             <div slot="tip">
               <p>建议尺寸：120*44px，小于2M</p>
               <p>支持jpg、gif、png、bmp</p>
