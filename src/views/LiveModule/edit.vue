@@ -1405,7 +1405,9 @@ export default {
               customClass: 'zdy-info-box'
             });
             if(res.code == 512076){
-              this.getTagsList()
+              this.checkedTags = []
+              this.checkedTagsBefore = []
+              this.getTagsList('init')
             }
           }).finally(()=>{
             this.loading = false;
