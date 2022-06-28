@@ -154,7 +154,7 @@ export default {
         },
         {
           label: '是否被引用',
-          key: 'is_quote',
+          key: 'isQuote',
           width: 120
         }
       ],
@@ -256,7 +256,7 @@ export default {
               })
             }
             this.tableList.forEach((item,ind)=>{
-              item.is_quote = item.is_quote ? '是' : '否'
+              item.isQuote = item.is_quote ? '是' : '否'
               if(ind == 0 && this.query.pos == 0){
                 item.is_order_one = true
               }
@@ -312,7 +312,20 @@ export default {
     },
     // 删除
     deleteHandle(t,row,arr) {
-      t.$confirm('删除后，直播下的标签引用关系将会自动去除，确认删除？', '提示', {
+      console.log(row.rows.is_quote,'row.rows.is_quote')
+      if(row.rows.is_quote){
+        t.$confirm('该标签已被引用，不支持删除', '提示', {
+          confirmButtonText: '知道到了',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          showCancelButton: false,
+          closeOnClickModal: false,
+          closeOnPressEscape: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        })
+        return false
+      }
+      t.$confirm('是否删除该标签？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
