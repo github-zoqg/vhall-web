@@ -508,6 +508,7 @@ export default {
       this.editParams.price = ''
       this.dialogVisible = false
       this.$refs.uploadimg.domainUrl = ''
+      this.domain_url = ''
     },
     // 删除礼品
     handleDelete (data, index) {
