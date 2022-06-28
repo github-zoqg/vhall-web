@@ -618,7 +618,7 @@ export default {
         // 这里就按照chrome等新版浏览器来处理
         const a = document.createElement('a')
         a.href = imgUrl
-        a.setAttribute('download', `${this.liveDetail.subject || ''}邀请卡`)
+        a.setAttribute('download', `${this.liveDetail.subject || ''}邀请卡.png`)
         a.click()
       }
       this.$vhall_paas_port({
