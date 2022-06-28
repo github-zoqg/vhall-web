@@ -122,8 +122,6 @@
           <p>查看</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_ban@2x.png" alt=""></label>
-            <!-- <icon icon-class="saasicon_liaotian"></icon> -->
-
             <div class="base-text">
               <span>聊天(条)</span>
               <h1 class="custom-font-barlow">
@@ -140,8 +138,6 @@
           <p >查看</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_Question@2x.png" alt=""></label>
-            <!-- <icon icon-class="saasicon_wenda"></icon> -->
-
             <div class="base-text">
               <span>问答(条)</span>
               <h1 class="custom-font-barlow">
@@ -157,8 +153,6 @@
          <div class="base-item" style="cursor: default;">
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_like@2x.png" alt=""></label>
-            <!-- <icon icon-class="saasicon_dianzan"></icon> -->
-
             <div class="base-text">
               <span>点赞(次)</span>
               <h1 class="custom-font-barlow">
@@ -175,8 +169,6 @@
           <p>查看</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_Sign@2x.png" alt=""></label>
-            <!-- <icon icon-class="saasicon_qiandao"></icon> -->
-
             <div class="base-text">
               <span>签到(人)</span>
               <h1 class="custom-font-barlow">
@@ -193,8 +185,6 @@
           <p>查看</p>
          <div class="base-main">
            <label><img src="../../../../common/images/icon/icon_questionnaire@2x.png" alt=""></label>
-            <!-- <icon icon-class="saasicon_wenjuan"></icon> -->
-
             <div class="base-text">
               <span>问卷(人)</span>
               <h1 class="custom-font-barlow">
@@ -210,9 +200,7 @@
          <div class="base-item" v-if="isStatus!=4&&webinarType!=5" @click="lookOption('抽奖', 100451)">
           <p>查看</p>
           <div class="base-main">
-            <!-- <icon icon-class="saasicon_choujiang"></icon> -->
             <label><img src="../../../../common/images/icon/icon_Lucky draw@2x.png" alt=""></label>
-
             <div class="base-text">
               <span>抽奖(人)</span>
               <h1 class="custom-font-barlow">
@@ -225,15 +213,23 @@
             </div>
           </div>
         </div>
-        <div class="base-item" v-if="isStatus!=4&&webinarType!=5" @click="lookOption('发群红包', 100452)">
+        <div class="base-item" v-if="isStatus!=4&&webinarType!=5" @click="lookOption('现金红包', 100452)">
           <p>查看</p>
          <div class="base-main">
            <label><img src="../../../../common/images/icon/icon_envelope@2x.png" alt=""></label>
-            <!-- <icon icon-class="saasicon_hongbao"></icon> -->
-
             <div class="base-text">
-              <span>发群红包(元)</span>
+              <span>现金红包(元)</span>
               <h1 class="custom-font-barlow">{{ dataInfo.redpacketMoney }}</h1>
+            </div>
+          </div>
+        </div>
+         <div class="base-item" v-if="isStatus!=4&&webinarType!=5" @click="lookOption('口令红包', '')">
+          <p>查看</p>
+         <div class="base-main">
+           <label><img src="../../../../common/images/icon/icon_envelope@2x.png" alt=""></label>
+            <div class="base-text">
+              <span>口令红包(次)</span>
+              <h1 class="custom-font-barlow">{{ dataInfo.codeRedPacketCount }}</h1>
             </div>
           </div>
         </div>
@@ -241,8 +237,6 @@
           <p>导出</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_exceptional@2x.png" alt=""></label>
-            <!-- <icon icon-class="saasicon_dashang"></icon> -->
-
             <div class="base-text">
               <span>打赏(元)</span>
               <h1 class="custom-font-barlow">{{ dataInfo.rewardMoney }}</h1>
@@ -253,8 +247,6 @@
           <p>导出</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_gift@2x.png" alt=""></label>
-            <!-- <icon icon-class="saasicon_liwu"></icon> -->
-
             <div class="base-text">
               <span>礼物(元)</span>
               <h1 class="custom-font-barlow">
@@ -267,7 +259,6 @@
           <p>导出</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_whea@2x.png" alt=""></label>
-
             <div class="base-text">
               <span>连麦(条)</span>
               <h1 class="custom-font-barlow">
@@ -316,6 +307,7 @@ export default {
         recordNum: 0,
         rewardMoney: 0,
         redpacketMoney: 0,
+        codeRedPacketCount: 0,
         gitMoney: 0,
         prizeNum: 0,
         inviteNum: 0,
@@ -423,6 +415,10 @@ export default {
        // 发红包
       this.$fetch('getRedpacketInfo', {webinar_id: this.$route.params.str}).then(res => {
         this.dataInfo.redpacketMoney = res.data.send_amount || 0;
+      });
+      // 口令红包
+      this.$fetch('getCodeRedpacketInfo', {webinar_id: this.$route.params.str}).then(res => {
+        this.dataInfo.codeRedPacketCount = res.data.count || 0;
       });
     },
     // 连麦(条)
@@ -552,10 +548,12 @@ export default {
       })
     },
     lookOption(title, index) {
-      this.$vhall_paas_port({
-        k: index,
-        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
+      if (index) {
+        this.$vhall_paas_port({
+          k: index,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.$router.push({
         path: '/live/interactionDetail',
         query: {
