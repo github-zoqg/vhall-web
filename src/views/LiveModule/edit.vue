@@ -2467,7 +2467,6 @@ export default {
       border-radius: 4px;
       overflow: hidden;
       white-space: nowrap;
-      text-overflow: ellipsis;
       .name_base{
         padding: 3px 8px 4px;
         background: #F2F2F2;

@@ -8,7 +8,7 @@
   >
     <pageTitle pageTitle="标签设置">
       <div slot="content">
-        1.账号下最多创建100个活动分类
+        1.账号下最多创建100个直播标签
         <br />
         2.直播设置中引用标签
         <br />
