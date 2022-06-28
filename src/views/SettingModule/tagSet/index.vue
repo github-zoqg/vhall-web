@@ -312,8 +312,7 @@ export default {
     },
     // 删除
     deleteHandle(t,row,arr) {
-      console.log(row.rows.is_quote,'row.rows.is_quote')
-      if(row.rows.is_quote){
+      if(row && row.rows.is_quote){
         t.$confirm('该标签已被引用，不支持删除', '提示', {
           confirmButtonText: '知道到了',
           customClass: 'zdy-message-box',
