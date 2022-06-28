@@ -420,7 +420,7 @@ export default {
           this.getRedpacketList();
           break;
         case '口令红包':
-          this.tabelColumn= this.packetColumn;
+          this.tabelColumn= this.packetCodeColumn;
           this.isCheckout = false;
           this.tableRowBtnFun = this.inviteBtnFun;
           this.getCodeRedpacketList();
@@ -881,7 +881,12 @@ export default {
         if (!res.data.total) {
           this.nullText = 'nullData';
           this.text = '您还没有发红包记录！';
+        } else {
+           this.tableList.map((item, index) => {
+            item.index = index + 1;
+          })
         }
+
       });
     },
     getTableList(params) {

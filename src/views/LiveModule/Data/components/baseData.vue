@@ -226,7 +226,7 @@
          <div class="base-item" v-if="isStatus!=4&&webinarType!=5" @click="lookOption('口令红包', '')">
           <p>查看</p>
          <div class="base-main">
-           <label><img src="../../../../common/images/icon/icon_envelope@2x.png" alt=""></label>
+           <label><img src="../../../../common/images/icon/codeRedPacket.png" alt=""></label>
             <div class="base-text">
               <span>口令红包(次)</span>
               <h1 class="custom-font-barlow">{{ dataInfo.codeRedPacketCount }}</h1>
