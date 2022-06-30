@@ -356,8 +356,17 @@ export default {
               customClass: 'zdy-info-box'
             });
           }
-        })
-      }).catch(() => { });
+        }).catch((err) => { 
+        if(err.code == 512079){
+          t.$message({
+              message: err.msg,
+              showClose: true,
+              type: 'warning',
+              customClass: 'zdy-info-box'
+            });
+        }
+      })
+      }).catch();
     },
     //   批量删除
     remove() {
