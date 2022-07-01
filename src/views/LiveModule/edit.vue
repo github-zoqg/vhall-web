@@ -1390,19 +1390,19 @@ export default {
       }
     },
     async languageCreate(params) {
-      return await this.$fetch('languageCreate', this.$params({
+      return await this.$fetch('languageCreate', {
         ...params
-      }))
+      })
     },
     async languageEdit(params) {
-      return await this.$fetch('languageEdit', this.$params({
+      return await this.$fetch('languageEdit', {
         ...params
-      }))
+      })
     },
     async languageDel(params) {
-      return await this.$fetch('languageDel', this.$params({
+      return await this.$fetch('languageDel', {
         ...params
-      }))
+      })
     },
     sendLanguage(webinar_id, url) {
       const arrList = []
