@@ -169,7 +169,7 @@
               :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'">
               <icon v-if="scene === 'word' && item.key === 'file_name'"
                 class="word-status"
-                :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}
+                :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row[item.key] == '' && scope.row[item.key]!= 0  ? '- -' : scope.row[item.key] }}
             </p>
           </template>
         </el-table-column>
