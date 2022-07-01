@@ -17,9 +17,8 @@
         </i>
       </VhallInput>
        <i class="iconfont-v3 saasicon_help_m"></i>
-          <sapn>
-            为不影响观看，建议文件分辨率在1280*720p及以下
-          </sapn>
+       <span class="select-video_tip" v-if="isWarmVideo"> 直播下最多支持添加10个暖场视频</span>
+       <span class="select-video_tip" v-else> 为不影响观看，建议文件分辨率在1280*720p及以下</span>
       <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
     </div>
     <div v-if="total || isSearch" style="min-height: 300px;">
@@ -498,6 +497,16 @@ export default {
         display: block;
       }
     }
+  }
+  .saasicon_help_m{
+    padding-left: 5px;
+    font-size: 15px;
+    color: #999;
+  }
+  .select-video_tip{
+    color: #999;
+    font-size: 14px;
+    vertical-align: text-top;
   }
   .statusTag{
     &::before{
