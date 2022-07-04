@@ -169,9 +169,9 @@
       <el-form-item label="直播标签" class="tags_box">
         <div class="tag_name_dom" :class="checkedTags.length?'':'notag'" @click="openTagDia('but')">
           <span v-if='!checkedTags.length'>点击引用标签</span>
-          <span v-else>
+          <div v-else class="tag_box_lineheight">
             <span class="name_base" v-for="item in tags_name" :key="item">{{item}}</span>
-          </span>
+          </div>
         </div> 
         <el-button type='text' class="tags_edit" @click="openTagDia">设置</el-button>
       </el-form-item>
@@ -2469,15 +2469,19 @@ export default {
       line-height: 38px;
       display: inline-block;
       border: 1px solid #ccc;
-      padding: 0 12px;
+      padding: 4px 12px;
       border-radius: 4px;
-      overflow: hidden;
-      white-space: nowrap;
-      .name_base{
-        padding: 3px 8px 4px;
-        background: #F2F2F2;
-        border-radius: 4px;
-        margin-right: 8px;
+      word-break: break-all;
+      .tag_box_lineheight{
+        line-height: 30px;
+        .name_base{
+          display: inline-block;
+          line-height: initial;
+          padding: 3px 8px 4px;
+          background: #F2F2F2;
+          border-radius: 4px;
+          margin-right: 8px;
+        }
       }
     }
     .notag{
