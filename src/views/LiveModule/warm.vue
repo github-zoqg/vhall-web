@@ -373,7 +373,7 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 4;
       if (!isType) {
         this.$message({
-          message: "上传封面图片只能是 ${typeList.join('、')} 格式",
+          message: `上传封面图片只能是 ${typeList.join('、')} 格式`,
           showClose: true,
           // duration: 0,
           type: 'error',
