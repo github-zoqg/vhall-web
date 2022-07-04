@@ -313,6 +313,7 @@ const apis = {
   getSurveyUsageInfo: ['/v3/vss/survey/get-webinar-published-survey-usage', 'GET'], // 获取活动下问卷使用数据概览
   getGiftIncome: ['/v3/interacts/gift/get-gift-income-stat', 'GET'], // 获取礼物收益
   getRedpacketInfo: ['/v3/interacts/redpacket/get-redpacket-overview', 'GET'], // 获取活动下红包统计数据
+  getCodeRedpacketInfo: ['/v3/interacts/pwd-redpacket/get-redpacket-overview', 'GET'], // 获取活动下口令红包统计数据
   getAnswerListInfo: ['/v3/webinars/export/get-total', 'POST'], // 获取 报名表单 -- 试看人数 --- 预约人数  总人数
 
   exportSubscribe: ['/v3/webinars/export/subscribe', 'POST'], //导出 -- 预约
@@ -330,6 +331,7 @@ const apis = {
   deleteAllRecodrder: ['/v3/interacts/qa/batch-delete-qa', 'POST'], // 批量删除提问或者答案
   deleteChatList: ['/v3/interacts/chat/batch-delete-message', 'POST'], //批量删除聊天的消息
   getRedpacketList: ['/v3/interacts/redpacket/get-redpacket-send-recorder', 'GET'], //活动群红包发送记录
+  getCodeRedpacketList: ['/v3/interacts/pwd-redpacket/get-redpacket-send-recorder', 'GET'], //活动口令红包发送记录
   getSignList: ['/v3/interacts/sign/get-sign-stat-list', 'GET'], //获取发起的签到列表
   exportDetailInvite: ['/v3/interacts/invite-card/export-invite-details', 'GET'], //邀请详情导出
   exportInvite: ['/v3/interacts/invite-card/export', 'GET'], //邀请导出
@@ -342,6 +344,9 @@ const apis = {
   exportDetailLottery: ['/v3/vss/lottery/export-lottery-user-detail', 'GET'], //导出-抽奖-详情
   exportRedpacket: ['/v3/interacts/redpacket/export-redpacket-send-recorder', 'GET'], //导出活动群红包发送记录
   exportDetailRedpacket: ['/v3/interacts/redpacket/export-redpacket-receive-recorder', 'GET'], //导出单个红包的领取明细
+
+  exportCodeRedpacket: ['/v3/interacts/pwd-redpacket/export-redpacket-send-recorder', 'GET'], //导出活动口令红包发送记录
+  exportDetailCodeRedpacket: ['/v3/interacts/pwd-redpacket/export-redpacket-receive-recorder', 'GET'], //导出单个口令红包的领取明细
 
   getQuestionDetailList: ['/v3/vss/survey/get-survey-question-detail', 'GET'], //回答问题人数统计
 
@@ -673,7 +678,7 @@ const apis = {
 
   lowerGrade: ['/fault/test/ops_fault_code_publish.json', 'GET'], // 系统降级处理配置文件 线上及测试环境统一使用该域名
   getCustomRoleName: ['/v3/webinars/privilege/get-role-name', 'POST'], // 获取自定义角色名称
-  
+
   saveAgreement: ['/v3/interacts/agreement/save-agreement-info', 'POST'],
   getAgreement: ['/v3/interacts/agreement/get-agreement-info', 'POST']
 };
