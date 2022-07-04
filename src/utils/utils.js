@@ -477,7 +477,8 @@ export function checkAuth(to, from, next, that) {
     // 若无token，专题详情、个人主页亦是可以登录得
     // 清空缓存后的登录页必须通行(否则死循环)
     const pathArr = ['/special/detail', '/user/home', '/login']
-    if (pathArr.includes(to.path)) {
+    const canPass = pathArr.some(path => to.path.indexOf(path) > -1)
+    if (canPass) {
       next();
       NProgress.done();
       return;
