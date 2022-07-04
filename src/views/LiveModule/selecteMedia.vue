@@ -16,7 +16,6 @@
         >
         </i>
       </VhallInput>
-          <i class="iconfont-v3 saasicon_help_m"></i>
           <sapn class="tip_color">
             为不影响观看，建议文件分辨率在1280*720p及以下
           </sapn>
@@ -432,10 +431,8 @@ export default {
   }
   .search{
     margin-bottom: 16px;
-    .saasicon_help_m{
-      margin-left: 8px;
-    }
     .tip_color{
+      margin-left: 8px;
       color: #999;
     }
     .el-input{
