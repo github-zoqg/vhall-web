@@ -30,7 +30,7 @@
           <el-button v-if="isTiming == 1" size="medium"  round @click="createLiveAction('3')" class="transparent-btn" v-preventReClick>创建定时直播</el-button>
         </span>
         <div class="searchBox search-tag-box">
-          <el-select v-model="labelId" placeholder="全部标签" @change="labelHandler">
+          <el-select v-model="labelId" placeholder="全部标签" @change="labelHandler" class="tag_width">
             <el-option
               v-for="item in labelList"
               :key="item.label_id"
@@ -664,6 +664,9 @@ export default {
     }
     .searchBox{
       float: right;
+      .tag_width{
+        width: 182px !important;
+      }
       .el-select{
         &:nth-child(-n+2){
           margin-left: 12px;
