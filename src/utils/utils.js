@@ -293,7 +293,7 @@ export function checkAuth(to, from, next, that) {
       key: getQueryString('user_auth_key'),
       scene_id: scene_id
     };
-    fetchData('callbackUserInfo', params).then(res => {
+    fetchData('callbackUserInfo', params, { credentials: true }).then(res => {
       if (res.data && res.code === 200) {
         // 登录场景下，存储直接登录
         if (Number(scene_id) === 1) {
