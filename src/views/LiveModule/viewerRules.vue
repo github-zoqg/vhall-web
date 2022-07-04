@@ -662,7 +662,7 @@ export default {
           message:  res.msg || '设置失败',
           showClose: true,
           // duration: 0,
-          type: 'error',
+          type: res.code == 512999 ? 'warning' : 'error',
           customClass: 'zdy-info-box'
         });
       });

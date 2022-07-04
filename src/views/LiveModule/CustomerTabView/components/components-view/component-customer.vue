@@ -164,7 +164,7 @@ export default {
         this.units.push({
           ...componentData,
           inSwitch: 1,  // 1， 开启 。 0 关闭
-          rewardSwitch: 1, // 1， 开启 。 0 关闭
+          rewardSwitch: 0, // 1， 开启 。 0 关闭 // TODO:支付牌照问题
           inContent: '',
           rewardContent: '',
           cUid: uuidV1()

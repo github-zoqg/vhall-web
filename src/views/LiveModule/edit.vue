@@ -180,7 +180,7 @@
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHnadler"
-          @delete="formData.imageUrl = ''">
+          @delete="formData.imageUrl = '', formData.domain_url=''">
           <div slot="tip">
             <p>建议尺寸：1280*720px，小于4M</p>
             <p>支持jpg、gif、png、bmp</p>
