@@ -20,7 +20,7 @@
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler"
-          @delete="baseSetForm.avatar = ''">
+          @delete="baseSetForm.avatar = '', domain_url=''">
           <div slot="tip">
             <p>建议尺寸：140*140px</p>
             <p>小于2M</p>

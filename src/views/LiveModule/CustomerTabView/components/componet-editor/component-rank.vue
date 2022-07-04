@@ -4,7 +4,7 @@
       <div class="ranking-title">
         <div class="rank-menu">
             <span :class="{'active': activeIndex == 1}" v-if="info.inSwitch == 1" @click="activeIndex = 1">邀请榜</span>
-            <span :class="{'active': activeIndex == 2}" v-if="info.rewardSwitch == 1" @click="activeIndex = 2">打赏榜</span>
+            <!-- <span :class="{'active': activeIndex == 2}" v-if="info.rewardSwitch == 1" @click="activeIndex = 2">打赏榜</span> -->
         </div>
         <span class="bang-rule" @click="changeRule">排行榜规则<i class="iconfont-v3 saasicon_arrowdown1-copy" v-if="rankRule"></i><i class="iconfont-v3 saasicon_arrowdown1" v-else></i></span>
       </div>
@@ -43,7 +43,7 @@
           height="270"
         ></vEditor>
       </div>
-      <div class="switch-box switch__box">
+      <!-- <div class="switch-box switch__box">
         打赏榜
         <el-switch
           style="marign-left: 5px"
@@ -61,7 +61,7 @@
           v-model="info.rewardContent"
           height="270"
         ></vEditor>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

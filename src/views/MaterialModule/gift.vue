@@ -101,7 +101,7 @@
             :on-preview="uploadPreview"
             :widthImg="231"
             :heightImg="130"
-            @delete="editParams.img = ''"
+            @delete="editParams.img = '', domain_url = ''"
             :before-upload="beforeUploadHandler">
             <div slot="tip">
               <p>建议尺寸：240*240px，小于2MB</p>
@@ -113,7 +113,8 @@
             <VhallInput v-model.trim="editParams.name" v-clearEmoij show-word-limit :maxlength="10" autocomplete="off"  placeholder="请输入礼物名称"></VhallInput>
         </el-form-item>
         <el-form-item label="礼物价格" prop="price">
-            <VhallInput @input="handleInput" v-model.trim.number="editParams.price" autocomplete="off"  :maxlength="10" placeholder="请输入0-9999.99">
+          <!-- TODO:支付牌照问题 -->
+            <VhallInput @input="handleInput" v-model.trim.number="editParams.price" autocomplete="off"  :maxlength="10" placeholder="只允许输入0">
               <span style="padding-left: 10px; padding-top: 1px;" slot="prefix">￥</span>
             </VhallInput>
         </el-form-item>
@@ -142,8 +143,9 @@ export default {
       if (!value) {
         callback(new Error('请输入礼物价格'));
       } else {
-        if (value < 0 || value > 9999.99) {
-          callback && callback('价格必须大于等于0且小于9999.99');
+        // TODO:支付牌照问题
+        if (value != 0) {
+          callback && callback('价格必须等于0');
         } else if (value.length - value.indexOf('.') > 3 && value.indexOf('.') > -1) {
           callback && callback('价格最多支持两位小数');
         } else {
@@ -506,6 +508,7 @@ export default {
       this.editParams.price = ''
       this.dialogVisible = false
       this.$refs.uploadimg.domainUrl = ''
+      this.domain_url = ''
     },
     // 删除礼品
     handleDelete (data, index) {

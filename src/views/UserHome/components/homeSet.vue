@@ -18,7 +18,7 @@
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler"
-          @delete="homeSetInfoForm.homepage_avatar = ''">
+          @delete="homeSetInfoForm.homepage_avatar = '', domain_url = ''">
           <div slot="tip">
             <p>建议尺寸：128*128px，小于2M</p>
             <p>支持jpg、gif、png、bmp</p>
@@ -51,7 +51,7 @@
           :on-error="uploadErrorBg"
           :on-preview="uploadPreviewBg"
           :before-upload="beforeUploadHandlerBg"
-          @delete="homeSetInfoForm.img_url = ''">
+          @delete="homeSetInfoForm.img_url = '', domain_bg_url = ''">
           <div slot="tip">
             <p>建议尺寸：1280*768px，小于2M</p>
             <p>支持jpg、gif、png、bmp</p>
