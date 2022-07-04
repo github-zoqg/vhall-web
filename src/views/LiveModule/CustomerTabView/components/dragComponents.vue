@@ -1,5 +1,5 @@
 <template>
-  <div id="settingBox" :class="['vh-menus-dragComponents', menuBarFixed ? 'isFixed' : '']">
+  <div id="settingBox" :class="['vh-menus-dragComponents', menuBarFixed, menuBarShow]">
     <div class="vh-menus-dragComponents__title" v-if="showBaseComponent">
       基础组件
     </div>
@@ -70,7 +70,8 @@ export default {
       compList: [],
       disableAll: false,
       menuUUID: null,
-      menuBarFixed: false
+      menuBarFixed: '',
+      menuBarShow: 'isShow'
     }
   },
   computed: {
@@ -108,12 +109,48 @@ export default {
   methods: {
     handleScroll () {
       let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+      let scrollLeft = window.pageLOffset || document.documentElement.scrollLeft || document.body.scrollLeft
       let offsetTop = document.querySelector('#settingBox').offsetTop
-      if (scrollTop > offsetTop) {
-        this.menuBarFixed = true
-      } else {
-        this.menuBarFixed = false
+      let offsetLeft = document.querySelector('#settingBox').offsetLeft
+      console.warn('当前左侧滚动距离', scrollLeft, offsetLeft)
+      if (document.body.clientWidth > 1280) {
+        if (scrollTop > offsetTop) {
+          this.menuBarFixed = 'isFixed'
+          if (scrollLeft > 140) {
+            // 隐藏左侧导航
+            this.menuBarShow = 'isHidden'
+          } else {
+            this.menuBarShow = 'isShow'
+          }
+        } else {
+          this.menuBarFixed = ''
+        }
+        return false
       }
+      // 对 1920*1080 屏幕缩放 150% 进行兼容
+      if(scrollTop > this.scrollTop && scrollTop > offsetTop) {
+        // 向下滚
+        this.menuBarFixed = 'isFixedBottom'
+        if (scrollLeft > 140) {
+          // 隐藏左侧导航
+          this.menuBarShow = 'isHidden'
+        } else {
+          this.menuBarShow = 'isShow'
+        }
+      } else if (scrollTop < this.scrollTop && scrollTop > offsetTop) {
+        // 向上滚
+        this.menuBarFixed = 'isFixed'
+        if (scrollLeft > 140) {
+          // 隐藏左侧导航
+          this.menuBarShow = 'isHidden'
+        } else {
+          this.menuBarShow = 'isShow'
+        }
+      } else {
+        this.menuBarFixed = ''
+        this.menuBarShow = 'isShow'
+      }
+      this.scrollTop = scrollTop
     },
     getComponents() {
       this.$fetch('menuTplList', {
@@ -179,6 +216,23 @@ export default {
       position:fixed!important;
       top:70px;
       z-index:999;
+      &.isShow {
+        display: block;
+      }
+      &.isHidden {
+        display: none;
+      }
+    }
+    &.isFixedBottom {
+      position:fixed!important;
+      z-index:999;
+      top:70px;
+      &.isShow {
+        display: block;
+      }
+      &.isHidden {
+        display: none;
+      }
     }
     &__title{
       width: 140px;

@@ -18,9 +18,9 @@ const tooltipMove = (Vue) => {
       el.addEventListener('mouseout', () => {
         let toolTipAll = document.getElementsByClassName('el-tooltip__popper')
         if (toolTipAll && toolTipAll.length > 0) {
-          toolTipAll.forEach((item)=>{
-              item.style.display='none'
-          })
+          for(const item of toolTipAll){
+            item.style.display='none'
+          }
         }
       });
     }

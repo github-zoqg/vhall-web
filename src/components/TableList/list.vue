@@ -103,12 +103,13 @@
             </div>
             <!-- 文档，文件名 -->
             <div v-else-if="scene === 'word' && item.key === 'file_name'">
-              <!-- <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0 && Number(scope.row.file_status) === 1"></i> -->
-              <p class="text">
-                <icon class="word-status"
-                  :icon-class="scope.row.ext | wordStatusCss"></icon>
-                {{ scope.row.file_name }}
-              </p>
+              <el-tooltip :disabled="!isTextOverflow" placement="top-start" :content="scope.row.file_name">
+                <div class="custom-tooltip-content">
+                  <icon class="word-status"
+                    :icon-class="scope.row.ext | wordStatusCss"></icon>
+                  {{ scope.row.file_name }}
+                </div>
+              </el-tooltip>
             </div>
             <!-- 下载中心，生成状态 -->
             <div class="progressBox"
@@ -168,7 +169,7 @@
               :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'">
               <icon v-if="scene === 'word' && item.key === 'file_name'"
                 class="word-status"
-                :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}
+                :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row[item.key] == '' && scope.row[item.key]!= 0  ? '- -' : scope.row[item.key] }}
             </p>
           </template>
         </el-table-column>

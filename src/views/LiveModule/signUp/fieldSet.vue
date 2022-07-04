@@ -246,17 +246,32 @@
                 ><i class="el-icon-plus"></i>添加其他</el-button>
               </template>
             </div>
-            <el-switch
-              @change="phoneSwitchChange(item)"
-              v-if="item.bottomBtn.includes('phoneValid')"
-              class="swtich"
-              :width='30'
-              :height="16"
-              v-model="item.phoneValide"
-              active-color="#FB3A32"
-              inactive-color="#CECECE"
-              inactive-text="短信验证">
-            </el-switch>
+            <p class="clear_both">
+              <el-switch
+                @change="phoneSwitchChange(item)"
+                v-if="item.bottomBtn.includes('phoneValid')"
+                class="swtich"
+                :width='30'
+                :height="16"
+                v-model="item.phoneValide"
+                active-color="#FB3A32"
+                inactive-color="#CECECE"
+                inactive-text="短信验证">
+              </el-switch>
+            </p>
+            <p class="clear_both" v-if="item.bottomBtn.includes('phoneValid')">
+              <el-switch
+                @change="abroadPhoneSwitchChange(item)"
+                class="swtich"
+                :width='30'
+                :height="16"
+                v-model="item.abroadPhoneValide"
+                active-color="#FB3A32"
+                inactive-color="#CECECE"
+                inactive-text="支持国外手机号报名">
+              </el-switch>
+            </p>
+            <p v-if="item.bottomBtn.includes('phoneValid')" class="font_set">注：国外手机号无法进行短信验证，请悉知</p>
             <el-switch
               @change="requiredSwitchChange(item)"
               v-if="item.bottomBtn.includes('requireSwtich')"
@@ -677,7 +692,7 @@ export default {
           type: 'error',
           customClass: 'zdy-info-box'
         });
-      } else if (nodes[0].value.length >= 53) {
+      } else if (nodes[0].value.length + 8 > 100) {
         return this.$message({
           message: '添加隐私协议会超出预览字数，请删减后再添加',
           showClose: true,
@@ -686,6 +701,7 @@ export default {
           customClass: 'zdy-info-box'
         });
       }
+
       let cloneNode = JSON.parse(JSON.stringify(nodes[1]));
       let cloneNode2 = JSON.parse(JSON.stringify(nodes[2]));
       cloneNode.value = "《隐私声明2》";
@@ -717,7 +733,7 @@ export default {
           })
         };
         this.questionEdit(options);
-      }).catch(err => { consoel.log(ree); });
+      }).catch(err => { console.log(err); });
     },
     privacyFormatter(item){
       let text = JSON.parse(JSON.stringify(item[0].value));
@@ -811,6 +827,11 @@ export default {
     },
     // 短信验证开关
     async phoneSwitchChange(question) {
+      if(question.phoneValide && question.abroadPhoneValide){
+        this.$message.warning('请关闭”支持国外手机号报名“后，开启”短信验证“功能');
+        question.phoneValide = false
+        return false;
+      }
       let isConfirm = true;
       let userId = this.$parent.userId;
       if (!question.phoneValide) {
@@ -840,7 +861,31 @@ export default {
       const options = {
         question_id: question.question_id,
         options: JSON.stringify({
-          open_verify: question.phoneValide ? 1 : 0
+          open_verify: question.phoneValide ? 1 : 0,
+          support_foreign_phone: 0
+        }),
+        subject: question.label,
+        is_must: question.required ? 1: 0
+      };
+      this.questionEdit(options);
+    },
+    // 国外手机号短信验证开关
+    async abroadPhoneSwitchChange(question) {
+      if(question.phoneValide && question.abroadPhoneValide){
+        this.$message.warning('请关闭”短信验证“后，开启”支持国外手机号报名“功能');
+        question.abroadPhoneValide = false
+        return false;
+      }
+      let userId = this.$parent.userId;
+      // this.$vhall_paas_port({
+      //   k: 100139,
+      //   data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      // })
+      const options = {
+        question_id: question.question_id,
+        options: JSON.stringify({
+          open_verify: 0,
+          support_foreign_phone: question.abroadPhoneValide ? 1 : 0
         }),
         subject: question.label,
         is_must: question.required ? 1: 0
@@ -1029,6 +1074,14 @@ export default {
     margin-top: 9px;
     text-align: right;
     overflow: hidden;
+    .clear_both{
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .font_set{
+      font-size: 14px;
+      color: #666;
+    }
     .addBtn{
       float: left;
       i{
@@ -1207,6 +1260,10 @@ export default {
 .previewPrivacy{
   font-size: 14px;
   color: #666;
+  /deep/ .el-checkbox__input{
+    padding-top: 18px;
+    vertical-align: top;
+  }
   /deep/ .el-checkbox__input.is-checked+.el-checkbox__label {
     color: #666;
   }
@@ -1217,7 +1274,7 @@ export default {
   }
   p{
     margin: 16px 0 8px 0;
-    display: flex;
+    /* display: flex; */
     align-items: flex-start;
     width: 100%;
     white-space: normal;

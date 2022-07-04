@@ -203,6 +203,7 @@ export default {
     resetLogoUrl() {
       this.$nextTick(()=> {
         this.skinSetForm.bg_url = '';
+        this.domain_url = '';
       });
     },
     initComp() {
