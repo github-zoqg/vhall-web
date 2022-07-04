@@ -48,6 +48,7 @@
             class="search-tag"
             placeholder="请输入标签名称"
             v-model="searchName"
+            clearable
             v-clearEmoij
             @change="searchHandler()"
           >

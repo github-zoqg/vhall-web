@@ -2471,7 +2471,6 @@ export default {
       border: 1px solid #ccc;
       padding: 4px 12px;
       border-radius: 4px;
-      word-break: break-all;
       .tag_box_lineheight{
         line-height: 30px;
         .name_base{
