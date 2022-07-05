@@ -521,6 +521,7 @@
         </p>
       </div>
       <div class="docMark" v-if="activeName == 'second'">
+        <img src="../../common/images/playerTitle.png" />
         <div class="preview">
           <div class="mark" v-if="docMark_open">
             <div
@@ -1635,6 +1636,10 @@ export default {
   /deep/.el-radio {
     margin-right: 20px;
   }
+  /deep/.el-checkbox__input.is-disabled .el-checkbox__inner {
+    background-color: #f7f7f7;
+    border-color: #e6e6e6;
+  }
   .textType {
     width: 360px;
     // text-overflow: -o-ellipsis-lastline;
@@ -1961,6 +1966,13 @@ export default {
     position: absolute;
     top: 525px;
     left: 54%;
+    > img {
+      width: 400px;
+      height: 16px;
+      margin-bottom: -18px;
+      z-index: 9;
+      position: relative;
+    }
     .preview {
       width: 400px;
       height: 264px;
