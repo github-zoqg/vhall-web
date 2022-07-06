@@ -38,7 +38,7 @@
             <el-row :gutter="24" class="lives">
               <el-col class="liveItem" :xs="24" :sm="12" :md="12" :lg="6" :xl="6" v-for="(item, index) in liveList"
                 :key="index" @click.prevent.stop="toDetail(item.webinar_id)">
-                <a class="inner" :href="`${processEnv}/lives/watch/${item.webinar_id}`" target="_blank">
+                <a class="inner" :href="`${VUE_APP_WAP_WATCH}/lives/watch/${item.webinar_id}`" target="_blank">
                   <div class="top">
                     <span class="hot" v-if="item.hide_pv">
                       <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
@@ -75,7 +75,7 @@
 import OldHeader from '@/components/OldHeader';
 import share from './share'
 import Env from '@/api/env.js';
-import { sessionOrLocal } from '@/utils/utils';
+// import { sessionOrLocal } from '@/utils/utils';
 
 export default {
   data() {
@@ -92,7 +92,7 @@ export default {
       totalElement: 0,
       moreLoading: false,
       isNullText: false,
-      processEnv: process.env.VUE_APP_WEB_URL,
+      VUE_APP_WAP_WATCH: process.env.VUE_APP_WAP_WATCH,
       shareVo: {
         url: `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.query.id}`,
         pcUrl: `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.query.id}`

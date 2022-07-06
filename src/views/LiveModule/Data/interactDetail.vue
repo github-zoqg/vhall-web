@@ -1,7 +1,7 @@
 <template>
   <div class="data-detail">
     <pageTitle :pageTitle='title'>
-      <div slot="content" v-if="title == '发群红包'">
+      <div slot="content" v-if="title == '现金红包'">
         主办方发送的红包未领取完时，会在直播结束时退回到财务中心-账户收益-<br>红包收益中。
       </div>
       <div slot="content" v-if="title == '聊天' && $route.query.wType == 6">
@@ -257,7 +257,7 @@ export default {
           key: 'prize_name',
         }
       ],
-      // 发群红包
+      // 现金红包
       packetColumn: [
          {
           label: '序号',
@@ -284,6 +284,28 @@ export default {
         {
           label: '红包类型',
           key: 'typeStr',
+        }
+      ],
+      // 口令红包
+      packetCodeColumn: [
+         {
+          label: '序号',
+          key: 'index',
+          width: 80
+        },
+        {
+          label: '发红包时间',
+          key: 'created_at',
+        },
+        {
+          label: '红包个数',
+          key: 'num',
+          width: 120
+        },
+        {
+          label: '领取人数',
+          key: 'get_user_count',
+          width: 120
         }
       ],
       tableRowBtnFun: [],
@@ -391,11 +413,17 @@ export default {
           this.tableRowBtnFun = this.questnaireBtnFun;
           this.getQuestionInfo();
           break;
-        case '发群红包':
+        case '现金红包':
           this.tabelColumn= this.packetColumn;
           this.isCheckout = false;
           this.tableRowBtnFun = this.inviteBtnFun;
           this.getRedpacketList();
+          break;
+        case '口令红包':
+          this.tabelColumn= this.packetCodeColumn;
+          this.isCheckout = false;
+          this.tableRowBtnFun = this.inviteBtnFun;
+          this.getCodeRedpacketList();
           break;
         default:
           break;
@@ -817,7 +845,7 @@ export default {
           });
         });
     },
-    // 红包列表
+    // 现金红包列表
     getRedpacketList() {
       let pageInfo = this.$refs.tableList.pageInfo;
       pageInfo.pos = pageInfo.pageNum;
@@ -839,13 +867,37 @@ export default {
         })
       });
     },
+     // 红包列表
+    getCodeRedpacketList() {
+      let pageInfo = this.$refs.tableList.pageInfo;
+      pageInfo.pos = pageInfo.pageNum;
+      let formParams = {
+        webinar_id: this.webinarId
+      }
+      let obj = Object.assign({}, pageInfo, formParams);
+      this.$fetch('getCodeRedpacketList', obj).then(res => {
+        this.tableList = res.data.data;
+        this.totalNum = res.data.total;
+        if (!res.data.total) {
+          this.nullText = 'nullData';
+          this.text = '您还没有发红包记录！';
+        } else {
+           this.tableList.map((item, index) => {
+            item.index = index + 1;
+          })
+        }
+
+      });
+    },
     getTableList(params) {
       this.changeColumn(this.title);
     },
     // 导出明细
     reportDetail(that, {rows}) {
-      if (that.title === '发群红包') {
+      if (that.title === '现金红包') {
         that.exportRedpacketDetailInfo(rows.id, rows.type);
+      }else if (that.title === '口令红包') {
+        that.exportCodeRedpacketDetailInfo(rows.id);
       } else if (that.title === '签到') {
         that.exportDetailSignInfo(rows.id);
       } else if (that.title === '邀请排名') {
@@ -889,8 +941,11 @@ export default {
         case '问卷':
           this.exportQuestionInfo();
           break;
-        case '发群红包':
+        case '现金红包':
           this.exportRedpacketInfo();
+          break;
+           case '口令红包':
+          this.exportCodeRedpacketInfo();
           break;
         default:
           break;
@@ -1113,7 +1168,7 @@ export default {
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
-    // 发群红包
+    // 现金红包
     exportRedpacketInfo() {
       this.$fetch('exportRedpacket',{webinar_id: this.webinarId}).then(res => {
         this.$vhall_paas_port({
@@ -1130,13 +1185,49 @@ export default {
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
-     // 发群红包---导出明细
+     // 现金红包---导出明细
     exportRedpacketDetailInfo(uuid, type) {
       this.$fetch('exportDetailRedpacket',{webinar_id: this.webinarId, red_packet_uuid: uuid, type: type}).then(res => {
         this.$vhall_paas_port({
           k: 100474,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      })
+    },
+    // 口令红包--导出全部
+    exportCodeRedpacketInfo() {
+      this.$fetch('exportCodeRedpacket',{webinar_id: this.webinarId}).then(res => {
+        if (res.code === 200) {
+          this.$message({
+            message: `导出申请成功，请去下载中心下载`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.$EventBus.$emit('saas_vs_download_change');
+        } else {
+          this.$message({
+            message: res.msg,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+        }
+      })
+    },
+    // 口令红包--导出明细详情（单个）
+    exportCodeRedpacketDetailInfo(uuid, type) {
+      this.$fetch('exportDetailCodeRedpacket',{webinar_id: this.webinarId, red_packet_uuid: uuid, type: type}).then(res => {
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,
