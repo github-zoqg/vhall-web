@@ -1398,7 +1398,7 @@ export default {
     },
     // 提交活动信息
     postWebinarInfo(data, url, label_ids) {
-      this.$fetch(url, this.$params(data), {label_ids}).then(async res=>{
+      this.$fetch(url, Object.assign(this.$params(data),{label_ids})).then(async res=>{
         if (res.code == 200) {
           if(this.selectDirectorMode === 1){
             //创建或者编辑云导播活动 保存成功后
