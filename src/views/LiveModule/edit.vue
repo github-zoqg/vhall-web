@@ -172,7 +172,7 @@
           <div v-else class="tag_box_lineheight">
             <span class="name_base" v-for="item in tags_name" :key="item">{{item}}</span>
           </div>
-        </div> 
+        </div>
         <el-button type='text' class="tags_edit" @click="openTagDia">设置</el-button>
       </el-form-item>
       <el-form-item class="margin32" :label="`${webinarTypeToZH}封面`">
@@ -329,7 +329,7 @@
         <VhallInput :placeholder="placeholder" :maxlength="!versionType ? '' : '7'" v-show="formData.limitCapacitySwtich" v-model="formData.limitCapacity" class="limitInput" oninput="this.value=this.value.replace(/\D/g, '')" style="display: block"></VhallInput>
       </p>
       <el-form-item class="btnGroup">
-        <el-button type="primary" class="common-button length152" :disabled="isBtnDisabled" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
+        <el-button type="primary" class="common-button length152" :disabled="isBtnDisabled" @click="submitForm('ruleForm')" v-preventReClick="1000" round>保存</el-button>
         <el-button class="length152" @click="resetForm('ruleForm')" round>取消</el-button>
       </el-form-item>
       <!-- <p class="btnGroup">
@@ -416,7 +416,7 @@
         </div>
       </div>
     </VhallDialog>
-     
+
   </div>
 </template>
 
@@ -1345,7 +1345,7 @@ export default {
         no_delay_webinar: this.liveMode == 6 ? 1 : this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status [分组直播默认无延迟]
         is_timing: this.webinarVideo ? (this.$route.meta.webinarType == 'vod' ? 0 : 1) : '',
         inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webinarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : '',
-        is_director: this.selectDirectorMode || 0,
+        is_director: this.selectDirectorMode || 0
       };
       if (this.liveMode == 6) {
         data.auto_speak = Number(this.speakSwitch)
@@ -1365,57 +1365,23 @@ export default {
           } else {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
-          this.$fetch(url, Object.assign(this.$params(data),{label_ids})).then(async res=>{
-            if (res.code == 200) {
-              if(this.selectDirectorMode === 1){
-                //创建或者编辑云导播活动 保存成功后
-                let userId = JSON.parse(sessionOrLocal.get('userId'));
-                this.$vhall_paas_port({
-                  k: 100837,
-                  data: {business_uid: userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-                })
-              }
-              // 若是开启了 - 多语言权限，调用创建多语言接口。否则不调用
-              await this.sendLanguage(res.data.webinar_id, url).then((result) => {
-                console.log('Promise.all --- success', result, res)       // 返回的是个结果数据 [ '3秒后醒来', '2秒后醒来' ]
-                this.loading = false
-                this.renderSave(res)
-              }).catch((error) => {
-                console.log('Promise.all --- error', error)
-                this.loading = false
-                this.$message({
-                  message: error.msg || '操作失败',
-                  showClose: true,
-                  // duration: 0,
-                  type: 'error',
-                  customClass: 'zdy-info-box'
-                });
-              })
-            } else {
-              this.$message({
-                message: res.msg || '操作失败',
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box'
-              });
-            }
-          }).catch(res=>{
-            this.$message({
-              message: res.msg || `操作失败`,
-              showClose: true,
-              // duration: 0,
-              type: 'error',
-              customClass: 'zdy-info-box'
+          // 如果是复制活动，被复制的活动如果是需要付费转成免费，付费/邀请码转成邀请码
+          if (this.title == '复制' && this.liveDetailInfo.verify == 6 || this.liveDetailInfo.verify == 3 ) {
+            const desc = this.liveDetailInfo.verify == 3 ? '根据合规要求，已将付费条件改为免费，如需调整请到观看限制中修改' : '根据合规要求，已将付费+邀请码条件改为邀请码，如需调整请到观看限制中修改'
+            this.$confirm(desc, '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              customClass: 'zdy-message-box',
+              lockScroll: false,
+              cancelButtonClass: 'zdy-confirm-cancel'
+            }).then(() => {
+              this.postWebinarInfo(data, url, label_ids)
+            }).catch(() => {
+              this.loading = false;
             });
-            if(res.code == 512076){
-              this.checkedTags = []
-              this.checkedTagsBefore = []
-              this.getTagsList('init')
-            }
-          }).finally(()=>{
-            this.loading = false;
-          });
+          } else {
+            this.postWebinarInfo(data, url, label_ids)
+          }
           console.log(data);
         } else {
           this.$message({
@@ -1428,6 +1394,60 @@ export default {
           document.documentElement.scrollTop = 0;
           return false;
         }
+      });
+    },
+    // 提交活动信息
+    postWebinarInfo(data, url, label_ids) {
+      this.$fetch(url, this.$params(data), {label_ids}).then(async res=>{
+        if (res.code == 200) {
+          if(this.selectDirectorMode === 1){
+            //创建或者编辑云导播活动 保存成功后
+            let userId = JSON.parse(sessionOrLocal.get('userId'));
+            this.$vhall_paas_port({
+              k: 100837,
+              data: {business_uid: userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
+          // 若是开启了 - 多语言权限，调用创建多语言接口。否则不调用
+          await this.sendLanguage(res.data.webinar_id, url).then((result) => {
+            console.log('Promise.all --- success', result, res)       // 返回的是个结果数据 [ '3秒后醒来', '2秒后醒来' ]
+            this.loading = false
+            this.renderSave(res)
+          }).catch((error) => {
+            console.log('Promise.all --- error', error)
+            this.loading = false
+            this.$message({
+              message: error.msg || '操作失败',
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+          })
+        } else {
+          this.$message({
+            message: res.msg || '操作失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+        }
+      }).catch(res=>{
+        this.$message({
+          message: res.msg || `操作失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        if(res.code == 512076){
+          this.checkedTags = []
+          this.checkedTagsBefore = []
+          this.getTagsList('init')
+        }
+      }).finally(()=>{
+        this.loading = false;
       });
     },
     renderSave(res) {
