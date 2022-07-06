@@ -10,6 +10,8 @@
         3.上传的视频，不支持剪辑和下载
         <br>
         4.视频直播、互动直播支持上传音视频文件，音频直播仅支持上传音频文件
+        <br>
+        5.为不影响观看，建议文件分辨率在1280*720p及以下
       </div>
     </pageTitle>
     <div class="head-operat" v-show="total || isSearch">

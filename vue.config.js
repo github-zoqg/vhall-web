@@ -72,6 +72,7 @@ module.exports = {
   chainWebpack: config=>{
     config.plugin('html').tap(options=>{
       options[0].cdn = cdn
+      options[0].version = process.VUE_CLI_SERVICE.pkg.version
       return options
     })
     // config.plugin('webpack-bundle-analyzer')

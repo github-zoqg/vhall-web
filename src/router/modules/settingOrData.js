@@ -67,6 +67,12 @@ const router = [
         meta:{ auth: true, title: '播放器设置', name: 'playerMgr', activeMenu: '/setting/player', auth_key: 'player_config'},
       },
       {
+        path: 'tagset',
+        component: () => import('@/views/SettingModule/tagSet/index.vue'),
+        name: 'tagset',
+        meta:{ auth: true, title: '标签设置', name: 'tagset', activeMenu: '/setting/tagset'},
+      },
+      {
         path: '/dev/add',
         component: () => import('@/views/SettingModule/Development/appInfo'),
         meta:{ auth: true, title: '新增应用', name: 'devAdd', activeMenu: '/setting/dev', action: 'add'},

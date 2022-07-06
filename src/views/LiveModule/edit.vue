@@ -166,6 +166,15 @@
           </div>
         </el-form-item>
       </template>
+      <el-form-item label="直播标签" class="tags_box">
+        <div class="tag_name_dom" :class="checkedTags.length?'':'notag'" @click="openTagDia('but')">
+          <span v-if='!checkedTags.length'>点击引用标签</span>
+          <div v-else class="tag_box_lineheight">
+            <span class="name_base" v-for="item in tags_name" :key="item">{{item}}</span>
+          </div>
+        </div> 
+        <el-button type='text' class="tags_edit" @click="openTagDia">设置</el-button>
+      </el-form-item>
       <el-form-item class="margin32" :label="`${webinarTypeToZH}封面`">
         <upload
           class="upload__avatar"
@@ -365,6 +374,49 @@
         </div>
       </div>
     </div>
+
+    <!-- 活动标签选择弹框 -->
+    <VhallDialog title="标签引用" :visible.sync="selectTagDialog" class="zdy-async-dialog selectTagDia" width="480px">
+    <div v-if='tagList.length'>
+      <div class="tag_content">
+        <div class="creat_header">
+          <el-button type="primary" round @click="openCreatTagDia" v-preventReClick size="medium">
+            创建标签
+          </el-button>
+          <span class="creat_tip">直播下最多引用10个标签</span>
+        </div>
+        <el-checkbox-group v-model="checkedTagsBefore" :max="10">
+          <el-checkbox v-for="tag in tagList" :label="tag.label_id" :key="tag.label_id" class="check_base">
+            <span class="tag_base">{{tag.name}}</span>
+          </el-checkbox>
+        </el-checkbox-group>
+      </div>
+      <div class="async__footer">
+        <span class="checked_num">当前选中 <span>{{checkedTagsBefore.length}}</span> 个标签</span>
+        <el-button type="primary" size="medium" v-preventReClick @click="sureSelectTag" round>确 定</el-button>
+        <el-button size="medium"  @click="unSureSelectTag"  round>取 消</el-button>
+      </div>
+    </div>
+    <div v-else>
+      <null-page text="您还没有标签，快来创建吧！" nullType="button">
+        <el-button type="primary" round @click="openCreatTagDia" v-preventReClick size="medium" >创建标签</el-button>
+      </null-page>
+    </div>
+    <div></div>
+    </VhallDialog>
+    <!-- 创建标签弹框 -->
+    <VhallDialog title="创建" :visible.sync="createTagDialog" class="zdy-async-dialog createTagDia" width="400px">
+      <div class="async__body">
+        <div class="async__ctx">
+          <VhallInput placeholder="请输入标签名称" v-model="tagName" v-clearEmoij show-word-limit maxlength="10"></VhallInput>
+        </div>
+        <div class="async__footer">
+          <el-button type="primary" size="medium" v-preventReClick @click="sureAsyncHandle" round>确 定</el-button>
+          <el-button size="medium"  @click="unSureAsyncHandle"  round>取 消</el-button>
+        </div>
+      </div>
+    </VhallDialog>
+     
   </div>
 </template>
 
@@ -376,6 +428,7 @@ import selectMedia from './selecteMedia';
 import VEditor from '@/components/Tinymce';
 import { sessionOrLocal } from '@/utils/utils';
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
+import NullPage from '@/views/PlatformModule/Error/nullPage.vue'
 
 export default {
   components: {
@@ -384,7 +437,8 @@ export default {
     selectMedia,
     VEditor,
     VideoPreview,
-    beginPlay
+    beginPlay,
+    NullPage
   },
   computed: {
     rangHourMins() {
@@ -594,6 +648,19 @@ export default {
       handler() {
         this.isChange = true;
       }
+    },
+    checkedTags(val){
+      console.log(val,'checkedTags')
+      let arr = []
+      val.forEach(item=>{
+        this.tagList.forEach(i=>{
+          if(i.label_id == item){
+            arr.push(i.name)
+          }
+        })
+      })
+      console.log(arr)
+      this.tags_name = arr
     }
   },
   data(){
@@ -746,7 +813,14 @@ export default {
           introduce: ''
         } // 1固定，表示西班牙语
       },
-      webinarDirector: false    // admin无云导播活动权限
+      webinarDirector: false,    // admin无云导播活动权限
+      tags_name: [],
+      checkedTags: [],  // 选中标签
+      checkedTagsBefore: [],  // 选中标签确认前
+      selectTagDialog: false,  // 选择标签弹框
+      createTagDialog: false, // 创建标签弹框
+      tagName: '',  // 新建标签名称
+      tagList: [1,2,3,4],   // 所有标签集合
     };
   },
   beforeRouteEnter (to, from, next) {
@@ -847,6 +921,7 @@ export default {
     } else {
       this.webinarDirector = false;
     }
+    this.getTagsList('init')
   },
   beforeDestroy() {
     if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
@@ -1242,6 +1317,13 @@ export default {
         title: this.formData.titleList[0].value || '',
         introduction: this.unescapeHTML((this.formData.contentList[0].value || '').replace("&lt;p&gt;","")) || '<p></p>'
       }
+
+      let abelIdArr = []
+      this.checkedTags.forEach(item=>{
+        abelIdArr.push(item)
+      })
+      let label_ids = abelIdArr.join(',')
+
       let data = {
         webinar_id: this.webinarId || '',
         record_id: this.webinarVideo ? this.selectMedia.id : '',
@@ -1263,7 +1345,7 @@ export default {
         no_delay_webinar: this.liveMode == 6 ? 1 : this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status [分组直播默认无延迟]
         is_timing: this.webinarVideo ? (this.$route.meta.webinarType == 'vod' ? 0 : 1) : '',
         inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webinarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : '',
-        is_director: this.selectDirectorMode || 0
+        is_director: this.selectDirectorMode || 0,
       };
       if (this.liveMode == 6) {
         data.auto_speak = Number(this.speakSwitch)
@@ -1283,7 +1365,7 @@ export default {
           } else {
             url = this.title === '编辑' ? 'liveEdit' : 'createLive';
           }
-          this.$fetch(url, this.$params(data)).then(async res=>{
+          this.$fetch(url, Object.assign(this.$params(data),{label_ids})).then(async res=>{
             if (res.code == 200) {
               if(this.selectDirectorMode === 1){
                 //创建或者编辑云导播活动 保存成功后
@@ -1326,6 +1408,11 @@ export default {
               type: 'error',
               customClass: 'zdy-info-box'
             });
+            if(res.code == 512076){
+              this.checkedTags = []
+              this.checkedTagsBefore = []
+              this.getTagsList('init')
+            }
           }).finally(()=>{
             this.loading = false;
           });
@@ -1617,8 +1704,80 @@ export default {
     },
     mediaSelected(media){
       this.selectMedia = media;
+      console.log(this.selectMedia);
+    },
+
+    // open标签编辑
+    openTagDia(type){
+      if(type == 'but' && this.checkedTags.length) return false;
+      this.selectTagDialog = true
+    },
+    // open创建标签
+    openCreatTagDia(){
+      if(this.tagList.length>=100){
+        this.$message.warning('账号下最多创建100个直播标签');
+        return false;
+      }
+      this.tagName = ''
+      this.createTagDialog = true
+    },
+    // 获取标签列表
+    getTagsList(data){
+      return this.$fetch('labelList', {
+        // 编辑使用params 复制使用query
+          webinar_id: this.$route.params.id || this.$route.query.id,
+          pos: 0,
+          limit: 100,
+        }).then(res=>{
+          if(res.code == 200){
+            this.tagList = res.data.list;
+            // 初始化时同步一次选中数据
+            if(data == 'init'){
+              this.tagList.forEach(item => {
+                if(item.is_check){
+                  this.checkedTags.push(item.label_id)
+                  this.checkedTagsBefore.push(item.label_id)
+                }
+              });
+            }
+          }
+        })
+    },
+    // 创建保存
+    sureAsyncHandle(){
+      let params= {
+        name: this.tagName
+      }
+      this.$fetch('labelCreate', params).then(async res=>{
+        if(res.code == 200){
+          this.$message.success('标签保存成功')
+          this.unSureAsyncHandle()
+          await this.getTagsList()
+          console.log(this.checkedTagsBefore)
+          if(this.checkedTagsBefore.length < 10){
+            let obj = this.tagList.find( item => item.name == this.tagName )
+            this.checkedTagsBefore.push(obj.label_id)
+          }
+        }
+      }).catch(err=>{
+          this.$message.warning(err.msg)
+      })
+    },
+    // 创建取消
+    unSureAsyncHandle(){
+      this.createTagDialog = false
+    },
+    // 确认选择标签
+    sureSelectTag(){
+      this.selectTagDialog = false;
+      this.checkedTags = JSON.parse(JSON.stringify(this.checkedTagsBefore));
+    },
+    // 取消选择标签
+    unSureSelectTag(){
+      this.checkedTagsBefore = this.checkedTags
+      this.selectTagDialog = false;
     }
-  },
+  }
 };
 </script>
 
@@ -2303,5 +2462,113 @@ export default {
   }
   .zdy-alert-box.zdy-padding {
     padding-bottom: 0!important;
+  }
+  .tags_box{
+    .tag_name_dom{
+      width: 92%;
+      line-height: 38px;
+      display: inline-block;
+      border: 1px solid #ccc;
+      padding: 4px 12px;
+      border-radius: 4px;
+      .tag_box_lineheight{
+        line-height: 30px;
+        .name_base{
+          display: inline-block;
+          line-height: initial;
+          padding: 3px 8px 4px;
+          background: #F2F2F2;
+          border-radius: 4px;
+          margin-right: 8px;
+        }
+      }
+    }
+    .notag{
+      background: #F7F7F7;
+      text-align: center;
+      color: #666;
+      cursor: pointer;
+    }
+    .tags_edit{
+      margin-left: 14px !important;
+      color: #3562FA !important;
+      position: absolute;
+      top: 12px;
+    }
+  }
+  .selectTagDia{
+    .el-dialog__header{
+      padding: 24px 32px 12px;
+    }
+    .el-dialog{
+      margin-top: 20vh !important;
+    }
+    .el-dialog__body{
+      padding: 0;
+    }
+    .el-dialog__title{
+      font-weight: bold;
+    }
+    .null-page{
+      margin-top: 35px !important;
+    }
+    .createActive{
+      padding-bottom: 40px;
+    }
+    .creat_tip{
+      margin-left: 8px;
+      color: #999;
+    }
+    .creat_header{
+      padding-top: 12px;
+      padding-bottom: 20px;
+    }
+    .tag_content{
+      padding: 0 28px 0 32px;
+      height: 204px;
+      overflow: auto;
+      margin-right: 4px;
+      .el-checkbox__input.is-disabled .el-checkbox__inner{
+        background: rgba(230,230,230,40%);
+      }
+      .el-checkbox__label{
+        padding-left: 6px;
+      }
+      .check_base{
+        margin: 0 16px 12px 0;
+        .tag_base{
+          padding: 4px 8px;
+          border-radius: 4px;
+          background: #F2F2F2;
+          color: #666;
+        }
+      }
+      &::-webkit-scrollbar{
+        width: 6px;
+        color: rgba(153,153,153,.3);
+      }
+    }
+    .checked_num{
+      float: left;
+      display: block;
+      line-height: 36px;
+      &:first-child > span{
+        color: #FB3A32;
+      }
+    }
+    .async__footer{
+      padding: 12px 32px 24px !important;
+    }
+  }
+  .createTagDia{
+    .el-dialog{
+      margin-top: 30vh !important;
+    }
+    .el-dialog__title{
+      font-weight: bold;
+    }
+    .async__footer{
+      padding: 24px 0 !important;
+    }
   }
 </style>
