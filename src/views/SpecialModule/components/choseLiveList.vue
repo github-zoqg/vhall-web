@@ -220,6 +220,10 @@ export default {
     height: 335px;
     margin-bottom: 10px;
   }
+  /deep/.el-scrollbar{
+    overflow: auto;
+    overflow-x: hidden;
+  }
   // .head-btn{
   //   width: 100%;
   //   /deep/.el-input__inner{
