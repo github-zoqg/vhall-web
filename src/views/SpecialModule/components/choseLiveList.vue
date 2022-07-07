@@ -217,12 +217,8 @@ export default {
   padding: 16px 0 0 32px;
   overflow: hidden;
   .material-box {
-    height: 335px;
+    height: 328px;
     margin-bottom: 10px;
-  }
-  /deep/.el-scrollbar{
-    overflow: auto;
-    overflow-x: hidden;
   }
   // .head-btn{
   //   width: 100%;
