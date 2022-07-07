@@ -13,11 +13,32 @@
     </pageTitle>
     <!-- 操作栏  -->
       <div class="operaBox" v-if="totalElement || isSearch">
-        <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
-        <el-button size="medium"  round @click="createLiveAction('2')" v-if="vodPerssion == 1" class="transparent-btn" v-preventReClick>创建点播</el-button>
-        <el-button v-if="isTiming == 1" size="medium"  round @click="createLiveAction('3')" class="transparent-btn" v-preventReClick>创建定时直播</el-button>
+        <el-dropdown v-if='vodPerssion == 1 || isTiming == 1' @command="createLiveAction" trigger="click">
+          <el-button type="primary" round size="medium" class="create_but_padding">
+            <i class="el-icon-plus"></i>
+            创建直播/点播
+          </el-button>
+          <el-dropdown-menu slot="dropdown" class="dropdown_width">
+            <el-dropdown-item type="primary" round command="1" v-preventReClick size="medium" class="length104">创建直播</el-dropdown-item>
+            <el-dropdown-item size="medium"  round command="2" v-if="vodPerssion == 1" class="transparent-btn" v-preventReClick>创建点播</el-dropdown-item>
+            <el-dropdown-item v-if="isTiming == 1" size="medium"  round command="3" class="transparent-btn" v-preventReClick>创建定时直播</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+        <span v-else>
+          <el-button type="primary" round @click="createLiveAction('1')" v-preventReClick size="medium" class="length104">创建直播</el-button>
+          <el-button size="medium"  round @click="createLiveAction('2')" v-if="vodPerssion == 1" class="transparent-btn" v-preventReClick>创建点播</el-button>
+          <el-button v-if="isTiming == 1" size="medium"  round @click="createLiveAction('3')" class="transparent-btn" v-preventReClick>创建定时直播</el-button>
+        </span>
         <div class="searchBox search-tag-box">
-          <el-select v-model="liveStatus" placeholder="全部" @change="liveHandler">
+          <el-select v-model="labelId" placeholder="全部标签" @change="labelHandler" class="tag_width">
+            <el-option
+              v-for="item in labelList"
+              :key="item.label_id"
+              :label="item.name"
+              :value="item.label_id">
+            </el-option>
+          </el-select>
+          <el-select v-model="liveStatus" placeholder="全部状态" @change="liveHandler">
             <el-option
               v-for="item in statusOptions"
               :key="item.value+item.label"
@@ -151,7 +172,7 @@ export default {
       totalElement: 0,
       liveDropDownVisible: false,
       statusOptions: [
-        { label: '全部', value: 0 },
+        { label: '全部状态', value: 0 },
         { label: '预告', value: 2 },
         { label: '直播', value: 1 },
         { label: '结束', value: 3 },
@@ -165,6 +186,8 @@ export default {
       loading: true,
       liveList: [],
       isTiming: 0,  //是否有定时直播权限
+      labelList: [],
+      labelId: ''
     };
   },
   computed: {
@@ -195,6 +218,7 @@ export default {
     const permission = SAAS_VS_PES ? SAAS_VS_PES['no.delay.webinar'] : 0
     this.isDelay = permission == 1 ? true : false
     console.log('>>>>>>>10', this.isDelay)
+    this.getLabelList()
   },
   beforeDestroy() {
     if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
@@ -203,6 +227,33 @@ export default {
   //   this.handleLowerGradeHeart()
   // },
   methods: {
+    // 获取全部标签
+    getLabelList(){
+      this.$fetch('labelList', {
+          webinar_id: this.keyWords,
+          pos: 0,
+          limit: 100,
+        }).then(res=>{
+          if(res.code == 200){
+            this.labelList = res.data.list;
+            this.labelList.unshift({
+              name: '全部标签',
+              label_id: ''
+            })
+          }
+        })
+    },
+    // 选择标签
+    labelHandler() {
+      this.searchHandler()
+      if (this.liveStatus) {
+        let livesType = [100050, 100049, 100051, 100052, 100053]
+        this.$vhall_paas_port({
+          k: livesType[this.liveStatus - 1],
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
+    },
     handleLowerGradeHeart() {
       this.getLowerGradeConfig();
       // this.lowerGradeInterval = setInterval(() => {
@@ -362,7 +413,8 @@ export default {
         limit: this.pageSize,
         order_type: this.orderBy,
         title: this.keyWords,
-        webinar_state: this.liveStatus
+        webinar_state: this.liveStatus,
+        label_id: this.labelId
       };
       this.loading = true;
       this.$fetch('liveList', this.$params(data)).then(res=>{
@@ -519,6 +571,7 @@ export default {
     },
     // 创建活动
     createLiveAction(index){
+      console.log('账号下最多创建100个直播标签')
       let userPhone = JSON.parse(sessionOrLocal.get('userInfo')).phone;
       if (!userPhone) {
         this.$alert('您还没有绑定手机，为了保证您的权益，请绑定后再发起直播！', '提示', {
@@ -606,13 +659,20 @@ export default {
     overflow: hidden;
     margin-top: 30px;
     margin-bottom: 20px;
+    .create_but_padding{
+      padding: 4px 20px !important;
+    }
     .searchBox{
       float: right;
+      .tag_width{
+        width: 182px !important;
+      }
       .el-select{
-        &:nth-child(1){
+        &:nth-child(-n+2){
+          margin-left: 12px;
           width: 120px;
         }
-        &:nth-child(2){
+        &:nth-child(3){
           width: 175px;
           margin-left: 12px;
           margin-right: 20px;
@@ -874,6 +934,15 @@ export default {
 <style lang="less">
  .el-tooltip__popper {
     max-width: 100%;
+  }
+  .dropdown_width{
+    .length104{
+      width: 147px;
+    }
+    .el-dropdown-menu__item{
+      text-align: left;
+    }
+
   }
 </style>
 <style lang="css">

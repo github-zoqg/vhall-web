@@ -56,13 +56,13 @@
          <VhallInput v-model.trim="form.discount_price" placeholder="请输入价格" autocomplete="off" :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></VhallInput>
         </el-form-item>
         <el-form-item label="商品链接" prop="url">
-          <VhallInput v-model.trim="form.url" v-clearEmoij placeholder="请输入以http://或https://开头的商品链接" autocomplete="off" ></VhallInput>
+          <VhallInput v-model.trim="form.url" v-clearEmoij placeholder="请输入以http://或https://开头的商品链接" autocomplete="off" show-word-limit :maxlength="200"></VhallInput>
         </el-form-item>
         <el-form-item label="淘口令">
-          <VhallInput v-model.trim="form.tao_password" v-clearEmoij placeholder="请输入淘口令" autocomplete="off" ></VhallInput>
+          <VhallInput v-model.trim="form.tao_password" v-clearEmoij placeholder="请输入淘口令" autocomplete="off" show-word-limit :maxlength="200"></VhallInput>
         </el-form-item>
         <el-form-item label="店铺链接" prop="shop_url">
-          <VhallInput v-model.trim="form.shop_url" v-clearEmoij placeholder="请输入以http://或https://开头的店铺链接" autocomplete="off" ></VhallInput>
+          <VhallInput v-model.trim="form.shop_url" v-clearEmoij placeholder="请输入以http://或https://开头的店铺链接" autocomplete="off" show-word-limit :maxlength="200"></VhallInput>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" round class="length152" v-preventReClick @click="onSubmit">保存</el-button>
