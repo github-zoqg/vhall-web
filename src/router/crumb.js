@@ -147,7 +147,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'
@@ -158,7 +158,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.id}`,
         isClick: true
       },{
@@ -173,7 +173,7 @@ export function CrumbSet(metaName, that) {
     return [
      ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.id}`,
         query: that.$route.query,
         isClick: true
@@ -189,7 +189,7 @@ export function CrumbSet(metaName, that) {
     return [
      ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.id}`,
         query: that.$route.query,
         isClick: true
@@ -216,7 +216,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -232,7 +232,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -248,7 +248,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -264,7 +264,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -280,7 +280,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -296,7 +296,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -312,7 +312,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -328,7 +328,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -344,7 +344,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -360,7 +360,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -376,7 +376,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -392,7 +392,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -408,7 +408,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -424,7 +424,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -440,7 +440,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -456,7 +456,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -472,7 +472,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -488,7 +488,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -504,7 +504,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -520,7 +520,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -536,7 +536,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -552,7 +552,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -568,7 +568,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.query.webinarId}`,
         isClick: true
       },
@@ -593,7 +593,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -609,7 +609,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -630,7 +630,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -646,7 +646,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -662,7 +662,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -678,7 +678,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -699,7 +699,7 @@ export function CrumbSet(metaName, that) {
     return [
      ...CrumbLiveList('liveList'),
      {
-      title: '活动详情',
+      title: '直播详情',
       path: `/live/detail/${that.$route.params.str}`,
       isClick: true
     },
@@ -720,7 +720,7 @@ export function CrumbSet(metaName, that) {
     return [
      ...CrumbLiveList('liveList'),
      {
-      title: '活动详情',
+      title: '直播详情',
       path: `/live/detail/${that.$route.params.str}`,
       isClick: true
     },
@@ -741,7 +741,7 @@ export function CrumbSet(metaName, that) {
     return [
      ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },{
@@ -756,7 +756,7 @@ export function CrumbSet(metaName, that) {
     return [
      ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },{
@@ -771,7 +771,7 @@ export function CrumbSet(metaName, that) {
     return [
      ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -792,7 +792,7 @@ export function CrumbSet(metaName, that) {
     return [
      ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -808,7 +808,7 @@ export function CrumbSet(metaName, that) {
     return [
      ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -824,7 +824,7 @@ export function CrumbSet(metaName, that) {
     return [
      ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
@@ -840,7 +840,7 @@ export function CrumbSet(metaName, that) {
     return [
      ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.query.id}`,
         isClick: true
       },
@@ -863,7 +863,7 @@ export function CrumbSet(metaName, that) {
     return [
      ...CrumbLiveList('liveList'),
       {
-        title: '活动详情',
+        title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
       },
