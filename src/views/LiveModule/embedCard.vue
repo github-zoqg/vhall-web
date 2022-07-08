@@ -130,17 +130,15 @@
         >
       </p> -->
       <div class="title_text">
-        <div>启动第三方推流</div>
-        <p class="switch__box">
-          <el-switch
-            v-model="streamOpen"
-            active-color="#FB3A32"
-            inactive-color="#CECECE"
-            @change="closeStreamOpen"
-            :active-text="reservationDesc"
-          >
-          </el-switch>
-        </p>
+        <div class="title">启动第三方推流</div>
+        <el-switch
+          v-model="streamOpen"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          @change="closeStreamOpen"
+          :active-text="reservationDesc"
+        >
+        </el-switch>
       </div>
       <div class="head-operat" v-show="total">
         <el-button
@@ -167,6 +165,9 @@
           :tabelColumnLabel="tabelColumn"
           :tableRowBtnFun="tableRowBtnFun"
           :width="150"
+          max-height="500"
+          :isCheckout="false"
+          :needPagination="false"
           :totalNum="total"
           @onHandleBtnClick="onHandleBtnClick"
           @getTableList="getTableList"
@@ -196,7 +197,7 @@
       v-if="$route.query.type != 5 && webinarState != 4"
     ></begin-play>
     <el-dialog
-      :title="editParams.gift_id ? '编辑推流地址' : '创建推流地址'"
+      :title="editParams.stream_id ? '编辑推流地址' : '创建推流地址'"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
@@ -219,23 +220,28 @@
             placeholder="请输入平台名称"
           ></VhallInput>
         </el-form-item>
-        <el-form-item label="礼物价格" prop="price">
+        <el-form-item label="推流地址" prop="url">
           <VhallInput
             @input="handleInput"
-            v-model.trim.number="editParams.price"
+            v-model="editParams.url"
             autocomplete="off"
-            :maxlength="10"
-            placeholder="只允许输入0"
+            placeholder="请输入推流地址"
           >
           </VhallInput>
+        </el-form-item>
+        <el-form-item label="推流类型" prop="type">
+          <el-radio-group v-model="editParams.type">
+            <el-radio :label="1">国内推流</el-radio>
+            <el-radio :label="2">海外推流</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button
-          :disabled="!editParams.name || !editParams.price"
+          :disabled="!editParams.url || !editParams.type"
           type="primary"
           size="medium"
-          @click="handleUpdateGift"
+          @click="handleUpdateStream"
           round
           >确定</el-button
         >
@@ -259,18 +265,13 @@ export default {
     //流地址校验
     const urlValidate = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('请输入礼物价格'))
+        callback(new Error('请输入推流地址'))
       } else {
-        // TODO:支付牌照问题
-        if (value != 0) {
-          callback && callback('价格必须等于0')
-        } else if (
-          value.length - value.indexOf('.') > 3 &&
-          value.indexOf('.') > -1
-        ) {
-          callback && callback('价格最多支持两位小数')
-        } else {
+        const reg = /^(rtmp:\/\/)|(rtmps:\/\/)/g
+        if (reg.test(value)) {
           callback()
+        } else {
+          callback && callback('推流的协议头URL scheme支持rtmp,rtmps')
         }
       }
     }
@@ -289,28 +290,27 @@ export default {
       tableData: [],
       tabelColumn: [
         {
-          label: '图片',
-          key: 'img',
-          width: 120,
-        },
-        {
-          label: '商品名称',
+          label: '平台名称',
           key: 'name',
         },
         {
-          label: '单价',
+          label: '推流地址',
+          key: 'name',
+        },
+        {
+          label: '推流类型',
           key: 'price',
           width: 120,
         },
         {
-          label: '优惠价',
-          key: 'discount_price',
+          label: '推流状态',
+          key: 'price',
           width: 120,
         },
         {
-          label: '上下架',
+          label: '是否推流',
           key: 'watch',
-          width: 80,
+          width: 120,
         },
       ],
       tableRowBtnFun: [
@@ -318,16 +318,14 @@ export default {
         { name: '删除', methodName: 'del' },
       ],
       editParams: {
-        gift_id: '',
-        img: '',
+        stream_id: '',
         name: '',
-        price: '',
+        url: '',
+        type: 1,
       },
       dialogVisible: false, // 新建流
       rules: {
-        name: [{ required: true, validator: this.validTitle, trigger: 'blur' }],
-        img: [{ required: true, message: '请输入礼物图片', trigger: 'change' }],
-        price: [{ required: true, validator: urlValidate, trigger: 'blur' }],
+        url: [{ required: true, validator: urlValidate, trigger: 'blur' }],
       },
       streamOpen: true, //启动第三方推流
     }
@@ -449,10 +447,11 @@ export default {
       methodsCombin[val.type](this, val)
     },
     getTableList(params) {
-      let pageInfo = this.$refs.tableStreamList.pageInfo //获取分页信息
-      if (params == 'search') {
-        pageInfo.pageNum = 1
-        pageInfo.pos = 0
+      // let pageInfo = this.$refs.tableStreamList.pageInfo //获取分页信息
+      let pageInfo = {
+        pageNum: 1,
+        pos: 0,
+        limit: 30,
       }
       let obj = {
         ...pageInfo,
@@ -576,7 +575,7 @@ export default {
                   customClass: 'zdy-info-box',
                 })
                 this.checkedGoodsId = []
-                this.getTableList('delete')
+                this.getTableList()
               }
             })
             .catch((res) => {
@@ -611,7 +610,7 @@ export default {
       }
     },
     // 处理编辑新建
-    handleUpdateGift() {
+    handleUpdateStream() {
       this.$refs.editParamsForm.validate((valid) => {
         if (valid) {
           let price = Number(this.editParams.price)
@@ -822,6 +821,24 @@ export default {
     background: #fff;
     padding: 24px 20px;
     border-radius: 4px;
+    .title_text {
+      display: flex;
+      align-items: center;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      .title {
+        margin-right: 20px;
+      }
+    }
+    .head-operat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .data-list {
+      min-height: 500px;
+    }
   }
   h3 {
     font-weight: normal;
