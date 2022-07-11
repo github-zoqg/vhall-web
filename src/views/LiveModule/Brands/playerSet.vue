@@ -354,7 +354,7 @@ export default {
         paas_record_id:
           process.env.VUE_APP_NODE_ENV === 'production'
             ? 'd57f42f4'
-            : '68e25cad',
+            : '52b2be4a',
       },
       marqueeOption: {
         enable: Boolean(this.scrolling_open),
