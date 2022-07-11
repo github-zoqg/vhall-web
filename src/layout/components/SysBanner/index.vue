@@ -53,7 +53,11 @@ export default {
     /*
     * 点击文字跳转
     */
-    onOpenLink() {},
+    onOpenLink() {
+      if (this.textBanner.link) {
+        window.open(this.textBanner.link, "_blank");
+      }
+    },
     scrollImgLeft(){
       const that = this
       const speed = 50

@@ -122,7 +122,7 @@
     <div class="advert-banner">
       <!-- 广告位 -->
       <div class="banner-download" v-if="imageBanner && imageBanner.content && imageBanner.is_valid == 1">
-        <div class="ad-web">
+        <div :class="['ad-web', {'is-cursor': imageBanner && imageBanner.link }]" @click="onOpenLink">
           <img :src="`${imageBanner.content}?x-oss-process=image/resize,m_pad,h_126,w_224,image/crop,w_224,h_126`" alt="暂无图片"/>
         </div>
       </div>
@@ -475,6 +475,11 @@ export default {
       }).catch(e=>{
         console.log(e);
       });
+    },
+    onOpenLink() {
+      if (this.imageBanner.link) {
+        window.open(this.imageBanner.link, "_blank");
+      }
     }
   }
 };
@@ -643,6 +648,9 @@ export default {
             width: 100%;
             height: 100%;
             border-radius: 4px;
+          }
+          &.is-cursor {
+            cursor: pointer;
           }
         }
       }
