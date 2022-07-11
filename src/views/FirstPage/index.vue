@@ -121,7 +121,7 @@
     </div>
     <div class="advert-banner">
       <!-- 广告位 -->
-      <div class="banner-download" v-if="imageBanner && imageBanner.content">
+      <div class="banner-download" v-if="imageBanner && imageBanner.content && imageBanner.is_valid == 1">
         <div class="ad-web">
           <img :src="`${imageBanner.content}?x-oss-process=image/resize,m_pad,h_126,w_224,image/crop,w_224,h_126`" alt="暂无图片"/>
         </div>
@@ -152,7 +152,7 @@
       <div :class="[
         'data-document',
         {
-          'is-show-banner': imageBanner && imageBanner.content
+          'is-show-banner': imageBanner && imageBanner.content && imageBanner.is_valid == 1
         }]">
         <h2>文档中心<a href="https://saas-doc.vhall.com/document/document/index" target="_blank" @click="documentCenter(0)">更多</a></h2>
         <p><a href="https://saas-doc.vhall.com/docs/show/947" target="_blank" @click="documentCenter(1)">API文档</a></p>
@@ -734,7 +734,7 @@ export default {
       .data-document{
         background: #fff;
         // height: calc(100% - 590px);
-        height: 270x;
+        height: 270px;
         &.is-show-banner {
           height: 180px;
         }
