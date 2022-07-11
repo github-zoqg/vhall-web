@@ -16,9 +16,9 @@
         >
         </i>
       </VhallInput>
-          <sapn class="tip_color">
-            为不影响观看，建议文件分辨率在1280*720p及以下
-          </sapn>
+       <!-- <i class="iconfont-v3 saasicon_help_m"></i> -->
+       <span class="select-video_tip" v-if="isWarmVideo"> 直播下最多支持添加10个暖场视频</span>
+       <span class="select-video_tip" v-else> 为不影响观看，建议文件分辨率在1280*720p及以下</span>
       <el-button type="primary" @click="uploadHandler" round size="medium">上传</el-button>
     </div>
     <div v-if="total || isSearch" style="min-height: 300px;">
@@ -29,10 +29,12 @@
         style="width: 100%"
         max-height="300"
         v-loadMore="moreLoadData"
+        @select="handleSelection"
+        @select-all="handleAllSelection"
         @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
-          width="55">
+          width="45">
         </el-table-column>
         <el-table-column
         show-overflow-tooltip
@@ -46,21 +48,23 @@
             </template>
           </el-table-column>
         <el-table-column
-          prop="created_at"
           label="上传日期"
-          width="180">
+          width="160">
+          <template slot-scope="scope">
+            <span>{{ scope.row.created_at.substring(0, 16)}}</span>
+          </template>
         </el-table-column>
 
         <el-table-column
           label="时长"
           prop="duration"
-          width="100"
+          width="90"
           show-overflow-tooltip>
         </el-table-column>
 
         <el-table-column
           label="进度"
-          width="120"
+          width="110"
           show-overflow-tooltip>
           <template slot-scope="scope">
             <span class="statusTag" :class="scope.row.transcode_status == 1 ? 'success' : 'failer'">{{ scope.row.transcode_status_text }}</span>
@@ -69,9 +73,17 @@
           </template>
         </el-table-column>
 
+         <el-table-column
+         v-if="isWarmVideo"
+          label="转码后大小"
+          prop="storage"
+          width="100"
+          show-overflow-tooltip>
+        </el-table-column>
+
         <el-table-column
           label="操作"
-          width="80"
+          width="70"
           align="left"
           show-overflow-tooltip>
           <template slot-scope="scope">
@@ -88,11 +100,11 @@
     </div>
     <div slot="footer" class="dialog-footer" v-show="total || isSearch">
       <div>
-        <p v-if="videoSet">当前选择 <b>{{ tableSelect.length }}</b> 个文件</p>
+        <p v-show="!isVodVideo">当前选择 <b>{{ isWarmVideo ? totalWarmSelect.length : tableSelect.length }}</b> 个文件 </p>
       </div>
       <span>
-        <el-button type="primary" @click="handlerConfirm" :disabled="!tableSelect.length" round size="medium" v-preventReClick>确定</el-button>
-        <el-button @click="dialogVisible = false" round size="medium">取消</el-button>
+        <el-button type="primary" @click="handlerConfirm" :disabled="isWarmVideo ? !totalWarmSelect.length : !tableSelect.length" round size="medium" v-preventReClick>确定</el-button>
+        <el-button @click="closeDialog" round size="medium">取消</el-button>
       </span>
     </div>
   </el-dialog>
@@ -112,15 +124,23 @@ import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
   props: {
     videoSize: {
-      required: false,
+      type: String,
       default: ''
     },
     videoType: {
-      required: false,
+      type: String,
       default: ''
     },
-    videoSet: { //是否是转播文件
-      required: false,
+    selectedList: {
+      type: Array,
+      default: ()=>[]
+    },
+    isWarmVideo: {
+      type: Boolean,
+      default: false
+    },
+    isVodVideo: {
+      type: Boolean,
       default: false
     }
   },
@@ -138,6 +158,7 @@ export default {
         pageNum: 1
       },
       totalPages: 0,
+      totalWarmSelect: [],
       tableSelect: [],
       keyWords:''
     };
@@ -155,10 +176,17 @@ export default {
         this.pageInfo.pageNum = 1;
         this.pageInfo.pos = 0;
         this.getMediaList();
+        if (this.isWarmVideo) {
+          this.totalWarmSelect = JSON.parse(JSON.stringify(this.selectedList || []));
+        }
       } else {
         this.keyWords = '';
         this.pageInfo.pageNum = 1;
         this.pageInfo.pos = 0;
+        this.totalWarmSelect = [];
+        if (this.docList.length) {
+          this.$refs.docList.clearSelection();
+        }
       }
     }
   },
@@ -175,7 +203,21 @@ export default {
         return date
       }
     },
+    closeDialog() {
+      if (this.docList.length) {
+        this.$refs.docList.clearSelection();
+      }
+      this.dialogVisible = false;
+      this.totalWarmSelect = [];
+      this.pageInfo.pageNum = 1;
+      this.pageInfo.pos = 0;
+    },
     handleClose(done) {
+      if (this.docList.length) {
+        this.$refs.docList.clearSelection();
+      }
+      this.dialogVisible = false;
+      this.totalWarmSelect = [];
       this.pageInfo.pageNum = 1;
       this.pageInfo.pos = 0;
       done();
@@ -226,18 +268,84 @@ export default {
           this.total = res.data.total;
           this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
           this.isSearch = this.keyWords ? true : false
+          if (this.isWarmVideo && this.docList.length) {
+            this.selectedDefaultList()
+          }
         }
       });
+    },
+    // 默认选中
+    selectedDefaultList() {
+      this.$nextTick(() => {
+        if (this.totalWarmSelect.length) {
+          let selectedList = [];
+          selectedList = this.totalWarmSelect.map(item => {
+            return item.paas_record_id;
+          })
+          // 如果返回的列表已经选过，就默认选中
+          this.docList.forEach((item) => {
+            if (selectedList.includes(item.paas_record_id)) {
+              this.$nextTick(() => {
+                this.$refs.docList.toggleRowSelection(item, true);
+              })
+            }
+          });
+        }
+      })
     },
     preVidio(rows) {
       this.videoParam = rows;
       this.showDialog = true;
       console.log(rows);
     },
+    // 单选
+    handleSelection(val, item) {
+      if (!this.isWarmVideo || this.selectedList.length == 0) return;
+       // 如果是暖场视频并且已经选过暖场视频，才走下面的选中逻辑
+      console.log(this.selectedList, item);
+       let selectedList = [];
+        selectedList = this.totalWarmSelect.map(item => {
+          return item.paas_record_id;
+        })
+        if (selectedList.includes(item.paas_record_id)) {
+          // 如果列表存在这个选择的项，就证明取消了选择， 就过滤掉这个
+          this.totalWarmSelect = this.totalWarmSelect.filter(items => items.paas_record_id != item.paas_record_id);
+        } else {
+          // 如果列表不存在这个选择的项，就证明是新增了
+          this.totalWarmSelect.push(item)
+        }
+    },
+    // 全选和取消全选
+    handleAllSelection(val) {
+      if (!this.isWarmVideo || this.selectedList.length == 0) return;
+       // 如果是暖场视频并且已经选过暖场视频，才走下面的选中逻辑
+      let selectedList = [];
+      selectedList = this.totalWarmSelect.map(item => {
+          return item.paas_record_id;
+        })
+      if (val.length) {
+        //如果存在长度，就是全选，然后把列表不存在的都加上
+        this.docList.forEach(item => {
+          if (!selectedList.includes(item.paas_record_id)) {
+           this.totalWarmSelect.push(item)
+          }
+        });
+      } else {
+        // 如果不存在长度，就是全都不选，把音视频列表所有的数据去过滤了，只留不存在视频列表的数据
+        this.docList.forEach(item => {
+          if (selectedList.includes(item.paas_record_id)) {
+            this.totalWarmSelect = this.totalWarmSelect.filter(items => items.paas_record_id != item.paas_record_id);
+          }
+        });
+      }
+
+    },
+    // 选择框变化
     handleSelectionChange(val){
       this.tableSelect = val;
-      if (!this.videoSet) {
-        this.docList.forEach((item) => {
+      if (this.isVodVideo) {
+        // 如果是点播或者定时直播、默认只能选择一个
+         this.docList.forEach((item) => {
           if (val.length !== 0) {
             if (item.paas_record_id !== val[[val.length - 1]].paas_record_id) {
               this.$refs.docList.toggleRowSelection(item, false);
@@ -245,6 +353,11 @@ export default {
           }
         });
       }
+      // 如果暖场视频一个视频都没选择过，选择框变化就是选中的数据
+      if (this.isWarmVideo && this.selectedList.length == 0) {
+        this.totalWarmSelect = val;
+      }
+
     },
     handlerConfirm(){
       // if (this.tableSelect[0].transcode_status != 1) {
@@ -257,14 +370,24 @@ export default {
       //   });
       //   return;
       // }
-      if (this.videoSet) {
-        let tableList = []
-        this.tableSelect.map(item => {
-          tableList.push(item.id)
-        })
-        this.$emit('selected', tableList);
+      if (this.isWarmVideo) {
+        if (this.totalWarmSelect.length > 10) {
+          this.$message.warning('最多添加10个暖场视频');
+          return;
+        }
+        this.$emit('selected', this.totalWarmSelect);
       } else {
-        this.$emit('selected', this.tableSelect[0]);
+        if (this.isVodVideo) {
+          // 如果是点播或者定时直播、默认只能选择第一个
+           this.$emit('selected', this.tableSelect[0]);
+        } else {
+          let tableList = []
+          this.tableSelect.map(item => {
+            tableList.push(item.id)
+          })
+          // 如果是插播、只要id
+          this.$emit('selected', tableList);
+        }
       }
       this.dialogVisible = false;
     },
@@ -341,14 +464,14 @@ export default {
       }
       width: 100%;
     }
-    // /deep/.el-dialog__footer{
-    //   padding:24px 32px;
-    // }
+    /deep/.el-table .cell{
+      padding-left: 16px;
+    }
     /deep/ .el-table__body .el-table__row td:nth-child(2) .cell{
-      padding-left: 10px;
+      padding-left: 2px;
     }
     /deep/ thead tr th:nth-child(2) .cell{
-      padding-left: 10px;
+      padding-left: 2px;
     }
     // 滚动条的宽度
     /deep/ .el-table__body-wrapper::-webkit-scrollbar {
@@ -374,6 +497,17 @@ export default {
         display: block;
       }
     }
+  }
+  .saasicon_help_m{
+    padding-left: 5px;
+    font-size: 15px;
+    color: #999;
+  }
+  .select-video_tip{
+    color: #999;
+    padding-left: 5px;
+    font-size: 14px;
+    vertical-align: text-top;
   }
   .statusTag{
     &::before{
@@ -431,10 +565,6 @@ export default {
   }
   .search{
     margin-bottom: 16px;
-    .tip_color{
-      margin-left: 8px;
-      color: #999;
-    }
     .el-input{
       width: 220px;
       /deep/ .el-input__inner{
