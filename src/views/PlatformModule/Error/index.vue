@@ -20,7 +20,7 @@
       </div>
     </div>
     <!-- 无服务 -->
-    <div class="container sysUnder" v-else="$route.params.str === 'sysUnder'">
+    <div class="container sysUnder" v-else-if="$route.params.str === 'sysUnder'">
       <div class="left-section sysUnder">
         <div class="inner-content">
           <h1  class="heading">系统正在升级中…</h1>
