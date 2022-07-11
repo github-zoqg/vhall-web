@@ -1,5 +1,5 @@
 <template>
-  <div class="sys-banner-layout" v-if="textBanner && textBanner.is_valid == 1 && !textBannerIsClose">
+  <div class="sys-banner-layout" v-if="$route.meta.name == 'sysHome' && textBanner && textBanner.is_valid == 1 && !textBannerIsClose">
     <div class="sys-banner-left">
       <icon style="color:#FB3A32" class="sys-banner-ting" :icon-class="'saasicon_yangshengqion'"></icon>
     </div>
@@ -90,20 +90,31 @@ export default {
       scroll_div.onmouseout = function(){
         that.MyMar = setInterval(Marquee,speed)
       }
+    },
+    async initPage() {
+      console.log('$route-------name', this.$route.meta.name)
+      await this.getBannerInfo()
+      const oldTextBannerId = window.localStorage.getItem('text-banner-close-id')
+      if (oldTextBannerId && oldTextBannerId.toString() == this.textBanner.id.toString()) {
+        // 若当前本地存储永久关闭的id跟当前返回的相等，界面不展示
+        this.textBannerIsClose = true
+      } else {
+        this.textBannerIsClose = false
+      }
+      if (this.textBanner && this.textBanner.is_valid == 1 && !this.textBannerIsClose) {
+        // 按照字数执行，是否滚动
+        this.scrollImgLeft()
+      }
     }
   },
   async mounted() {
-    await this.getBannerInfo()
-    const oldTextBannerId = window.localStorage.getItem('text-banner-close-id')
-    if (oldTextBannerId && oldTextBannerId.toString() == this.textBanner.id.toString()) {
-      // 若当前本地存储永久关闭的id跟当前返回的相等，界面不展示
-      this.textBannerIsClose = true
-    } else {
-      this.textBannerIsClose = false
-    }
-    if (this.textBanner && this.textBanner.is_valid == 1 && !this.textBannerIsClose) {
-      // 按照字数执行，是否滚动
-      this.scrollImgLeft()
+    this.initPage()
+  },
+  watch: {
+    '$route'() {
+      if (this.$route.meta.name === 'sysHome') {
+        this.initPage()
+      }
     }
   }
 };
