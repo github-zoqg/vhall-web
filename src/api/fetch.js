@@ -132,7 +132,6 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
       api = `${process.env.VUE_APP_BASE_URL}${api}`;
     }
   }
-
   return fetch(api, option).then((res) => {
     return res.json();
   }).then(res => {

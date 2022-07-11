@@ -123,81 +123,85 @@
     </div>
     <div class="thirdMethod" v-if="$route.query.type != 6">
       <h3>第三方渠道推广嵌入</h3>
-      <!--  <div class="third-list"></div>
-      <p class="third-text">
-        提示：目前微吼已支持在各大平台进行同步直播<a @click="goEmbedForm">
-          填写推广需求表</a
-        >
-      </p> -->
-      <div class="title_text">
-        <div class="title">启动第三方推流</div>
-        <el-switch
-          v-model="streamOpen"
-          active-color="#FB3A32"
-          inactive-color="#CECECE"
-          @change="closeStreamOpen"
-          :active-text="reservationDesc"
-        >
-        </el-switch>
-      </div>
-      <div class="head-operat" v-show="total">
-        <el-button
-          type="primary"
-          size="medium"
-          round
-          @click="addStream"
-          v-preventReClick
-          >创建推流地址</el-button
-        >
-        <el-button
-          type="primary"
-          size="medium"
-          round
-          @click="refreshStream"
-          v-preventReClick
-          >刷新推流状态</el-button
-        >
-      </div>
-      <div class="stream-list" v-show="total">
-        <table-list
-          ref="tableStreamList"
-          :manageTableData="tableData"
-          :tabelColumnLabel="tabelColumn"
-          :tableRowBtnFun="tableRowBtnFun"
-          :width="150"
-          max-height="500"
-          :isCheckout="false"
-          :needPagination="false"
-          :totalNum="total"
-          @onHandleBtnClick="onHandleBtnClick"
-          @getTableList="getTableList"
-          @switchChange="onSwitchChange"
-        >
-        </table-list>
-        <noData :nullType="'search'" v-if="!total"></noData>
-      </div>
-      <div class="empty" v-show="!total">
-        <noData
-          :nullType="'nullData'"
-          :text="'您还没有创建推流地址，快来创建吧！'"
-        >
+      <template v-if="btn_thirdway_push">
+        <div class="title_text">
+          <div class="title">启动第三方推流</div>
+          <el-switch
+            v-model="streamOpen"
+            active-color="#FB3A32"
+            inactive-color="#CECECE"
+            @change="closeStreamOpen"
+            :active-text="reservationDesc"
+          >
+          </el-switch>
+        </div>
+        <div class="head-operat" v-show="total">
           <el-button
             type="primary"
+            size="medium"
             round
-            class="length152"
             @click="addStream"
             v-preventReClick
             >创建推流地址</el-button
           >
-        </noData>
-      </div>
+          <el-button
+            type="primary"
+            size="medium"
+            round
+            @click="refreshStream"
+            v-preventReClick
+            >刷新推流状态</el-button
+          >
+        </div>
+        <div class="stream-list" v-show="total">
+          <table-list
+            ref="tableStreamList"
+            :manageTableData="tableData"
+            :tabelColumnLabel="tabelColumn"
+            :tableRowBtnFun="tableRowBtnFun"
+            :width="150"
+            max-height="500"
+            :isCheckout="false"
+            :needPagination="false"
+            :totalNum="total"
+            @onHandleBtnClick="onHandleBtnClick"
+            @getTableList="getTableList"
+            @switchChange="onSwitchChange"
+          >
+          </table-list>
+          <noData :nullType="'search'" v-if="!total"></noData>
+        </div>
+        <div class="empty" v-show="!total">
+          <noData
+            :nullType="'nullData'"
+            :text="'您还没有创建推流地址，快来创建吧！'"
+          >
+            <el-button
+              type="primary"
+              round
+              class="length152"
+              @click="addStream"
+              v-preventReClick
+              >创建推流地址</el-button
+            >
+          </noData>
+        </div>
+      </template>
+      <template v-else>
+        <div class="third-list"></div>
+        <p class="third-text">
+          提示：目前微吼已支持在各大平台进行同步直播<a @click="goEmbedForm">
+            填写推广需求表</a
+          >
+        </p>
+      </template>
     </div>
     <begin-play
       :webinarId="$route.params.str"
       v-if="$route.query.type != 5 && webinarState != 4"
     ></begin-play>
     <el-dialog
-      :title="editParams.stream_id ? '编辑推流地址' : '创建推流地址'"
+      :title="editParams.push_id ? '编辑推流地址' : '创建推流地址'"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
@@ -210,9 +214,9 @@
         ref="editParamsForm"
         :rules="rules"
       >
-        <el-form-item label="平台名称" prop="name">
+        <el-form-item label="平台名称" prop="platform">
           <VhallInput
-            v-model="editParams.name"
+            v-model="editParams.platform"
             v-clearEmoij
             show-word-limit
             :maxlength="10"
@@ -220,30 +224,29 @@
             placeholder="请输入平台名称"
           ></VhallInput>
         </el-form-item>
-        <el-form-item label="推流地址" prop="url">
+        <el-form-item label="推流地址" prop="dest_url">
           <VhallInput
-            @input="handleInput"
-            v-model="editParams.url"
+            v-model="editParams.dest_url"
             autocomplete="off"
             placeholder="请输入推流地址"
           >
           </VhallInput>
         </el-form-item>
-        <el-form-item label="推流类型" prop="type">
-          <el-radio-group v-model="editParams.type">
-            <el-radio :label="1">国内推流</el-radio>
-            <el-radio :label="2">海外推流</el-radio>
+        <el-form-item label="推流类型" prop="oversea">
+          <el-radio-group v-model="editParams.oversea">
+            <el-radio :label="0">国内推流</el-radio>
+            <el-radio :label="1">海外推流</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button
-          :disabled="!editParams.url || !editParams.type"
+          :disabled="!editParams.dest_url"
           type="primary"
           size="medium"
           @click="handleUpdateStream"
           round
-          >确定</el-button
+          >保存</el-button
         >
         <el-button size="medium" @click="handleCancelEdit" round
           >取消</el-button
@@ -271,7 +274,7 @@ export default {
         if (reg.test(value)) {
           callback()
         } else {
-          callback && callback('推流的协议头URL scheme支持rtmp,rtmps')
+          callback && callback('请输入正确的推流地址')
         }
       }
     }
@@ -318,14 +321,14 @@ export default {
         { name: '删除', methodName: 'del' },
       ],
       editParams: {
-        stream_id: '',
-        name: '',
-        url: '',
-        type: 1,
+        push_id: '', //推流id
+        platform: '', //platform
+        dest_url: '', //第三方推流地址
+        oversea: 0, //推流类型：1-海外，0-国内（默认）
       },
       dialogVisible: false, // 新建流
       rules: {
-        url: [{ required: true, validator: urlValidate, trigger: 'blur' }],
+        dest_url: [{ required: true, validator: urlValidate, trigger: 'blur' }],
       },
       streamOpen: true, //启动第三方推流
     }
@@ -341,6 +344,19 @@ export default {
         return '已开启，即将直播数据推送到第三方平台'
       } else {
         return '开启后，即将直播数据推送到第三方平台'
+      }
+    },
+    // admin有无权限logo替换 嵌入推广
+    btn_thirdway_push() {
+      //  webinar.director 1:有无延迟权限  0:无权限
+      if (
+        JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))[
+          'btn_thirdway_push'
+        ] == '1'
+      ) {
+        return true
+      } else {
+        return true
       }
     },
   },
@@ -441,30 +457,27 @@ export default {
       this.dialogVisible = true
     },
     //刷新流状态
-    refreshStream() {},
+    refreshStream() {
+      this.getTableList()
+    },
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods
       methodsCombin[val.type](this, val)
     },
-    getTableList(params) {
+    getTableList() {
       // let pageInfo = this.$refs.tableStreamList.pageInfo //获取分页信息
-      let pageInfo = {
-        pageNum: 1,
-        pos: 0,
-        limit: 30,
-      }
       let obj = {
-        ...pageInfo,
         webinar_id: this.$route.params.str,
       }
-      this.$fetch('goodsGet', this.$params(obj))
+      this.$fetch('getStreamPushList', this.$params(obj))
         .then((res) => {
-          let tableData = res.data.goods_list
+          this.streamOpen = !!res.data.status
+          let tableData = res.data.list || []
           tableData.map((item) => {
             item.watch = Boolean(!item.status)
             item.img = item.img_url
           })
-          this.total = res.data.total
+          this.total = res.data.list.length
           this.tableData = tableData
         })
         .catch((e) => {
@@ -472,172 +485,78 @@ export default {
         })
     },
     onSwitchChange(option) {
-      this.$vhall_paas_port({
-        k: option.watch ? 100395 : 100396,
-        data: {
-          business_uid: this.userId,
-          user_id: '',
-          webinar_id: this.$route.params.str,
-          refer: '',
-          s: '',
-          report_extra: {},
-          ref_url: '',
-          req_url: '',
-        },
+      this.$fetch('updateStreamPush', {
+        webinar_id: this.$route.params.str,
+        push_id: option.push_id,
+        status: option.watch ? 1 : 0,
       })
-      if (option.watch) {
-        this.$fetch('goodsEnable', {
-          webinar_id: this.$route.params.str,
-          goods_id: option.goods_id,
+        .then((res) => {
+          if (this.vm) {
+            this.vm.close()
+          }
+          // this.messageInfo('上架设置成功')
+          this.getTableList()
         })
-          .then((res) => {
-            if (this.vm) {
-              this.vm.close()
-            }
-            this.messageInfo('上架设置成功')
-            this.getTableList()
-            console.log(res)
+        .catch((res) => {
+          this.$message({
+            message: res.msg || '上架设置失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box',
           })
-          .catch((res) => {
-            this.$message({
-              message: res.msg || '上架设置失败',
-              showClose: true,
-              // duration: 0,
-              type: 'error',
-              customClass: 'zdy-info-box',
-            })
-            this.getTableList()
-            console.log(res)
-          })
-      } else {
-        // 下架处理
-        this.$fetch('goodsDisable', {
-          webinar_id: this.$route.params.str,
-          goods_id: option.goods_id,
+          this.getTableList()
         })
-          .then((res) => {
-            if (this.vm) {
-              this.vm.close()
-            }
-            this.messageInfo('下架设置成功')
-            this.getTableList()
-            console.log(res)
-          })
-          .catch((res) => {
-            this.$message({
-              message: res.msg || '下架设置失败',
-              showClose: true,
-              // duration: 0,
-              type: 'error',
-              customClass: 'zdy-info-box',
-            })
-            console.log(res)
-          })
-      }
     },
     // 删除
     del(that, { rows }) {
-      that.delConfirm(rows.goods_id, 2)
+      that.delConfirm(rows.push_id)
     },
-    delConfirm(id, index) {
+    delConfirm(id) {
       this.$confirm('删除后，正在推流的画面将会中断，是否确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel',
-      })
-        .then(() => {
-          this.$fetch('goodsBatchDel', {
-            webinar_id: this.$route.params.str,
-            goods_ids: id,
-          })
-            .then((res) => {
-              if (res.code == 200) {
-                this.$vhall_paas_port({
-                  k: index === 1 ? 100394 : 100393,
-                  data: {
-                    business_uid: this.userId,
-                    user_id: '',
-                    webinar_id: this.$route.params.str,
-                    refer: '',
-                    s: '',
-                    report_extra: {},
-                    ref_url: '',
-                    req_url: '',
-                  },
-                })
-                this.$message({
-                  message: `删除成功`,
-                  showClose: true,
-                  // duration: 0,
-                  type: 'success',
-                  customClass: 'zdy-info-box',
-                })
-                this.checkedGoodsId = []
-                this.getTableList()
-              }
-            })
-            .catch((res) => {
+      }).then(() => {
+        this.$fetch('deleteStreamPush', {
+          webinar_id: this.$route.params.str,
+          push_id: id,
+        })
+          .then((res) => {
+            if (res.code == 200) {
               this.$message({
-                message: res.msg || `删除失败, 请下架后删除`,
+                message: `删除成功`,
                 showClose: true,
                 // duration: 0,
-                type: 'error',
+                type: 'success',
                 customClass: 'zdy-info-box',
               })
-            })
-        })
-        .catch(() => {
-          this.$message({
-            message: `已取消删除`,
-            showClose: true,
-            // duration: 0,
-            type: 'info',
-            customClass: 'zdy-info-box',
-          })
-        })
-    },
-    // 编辑
-    edit(that, { rows }) {
-      if (!rows.status) {
-        that.$alert('商品已上架，如需编辑请先做下架处理', '提示', {
-          confirmButtonText: '我知道了',
-          customClass: 'zdy-message-box',
-          lockScroll: false,
-        })
-        return
-      }
-    },
-    // 处理编辑新建
-    handleUpdateStream() {
-      this.$refs.editParamsForm.validate((valid) => {
-        if (valid) {
-          let price = Number(this.editParams.price)
-          if (price || price == 0) {
-            if (price < 0 || price > 9999.99) {
-              this.$message({
-                message: `价格必须介于0-9999.99之间`,
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box',
-              })
-              return
+              this.getTableList()
             }
-            price = Math.floor(price * 100) / 100
-            this.editParams.price = price.toFixed(2)
-          } else {
+          })
+          .catch((res) => {
             this.$message({
-              message: `请输入正确礼物价格`,
+              message: res.msg || `删除失败`,
               showClose: true,
               // duration: 0,
               type: 'error',
               customClass: 'zdy-info-box',
             })
-            return
-          }
-          if (this.editParams.gift_id) {
+          })
+      })
+    },
+    // 编辑
+    edit(that, { rows }) {
+      this.editParams.push_id = rows.push_id
+      this.dialogVisible = true
+    },
+    // 处理编辑新建
+    handleUpdateStream() {
+      this.$refs.editParamsForm.validate((valid) => {
+        if (valid) {
+          if (this.editParams.push_id) {
             // 编辑
             this.handleEdit()
           } else {
@@ -649,151 +568,92 @@ export default {
     },
     // 编辑
     handleEdit() {
-      this.$confirm('对礼物的更改会同步到资料库，确定保存当前更改？', '提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        customClass: 'zdy-message-box',
-        lockScroll: false,
-        cancelButtonClass: 'zdy-confirm-cancel',
-      }).then(() => {
-        this.$fetch('updateGiftInfo', {
-          ...this.editParams,
-          room_id: this.room_id,
-        })
-          .then((res) => {
-            if (res.code == 200) {
-              this.$vhall_paas_port({
-                k: 100399,
-                data: {
-                  business_uid: this.userId,
-                  user_id: '',
-                  webinar_id: this.$route.params.str,
-                  refer: '',
-                  s: '',
-                  report_extra: {},
-                  ref_url: '',
-                  req_url: '',
-                },
-              })
-              this.$message({
-                message: `编辑成功`,
-                showClose: true,
-                // duration: 0,
-                type: 'success',
-                customClass: 'zdy-info-box',
-              })
-              this.getTableList()
-              this.queryMateriaGifts()
-              this.handleCancelEdit()
-            }
-          })
-          .catch((err) => {
-            if (err.code == 513001) {
-              this.$message({
-                message: `直播中禁止编辑礼物`,
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box',
-              })
-            } else {
-              this.$message({
-                message: err.msg,
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box',
-              })
-            }
-            this.handleCancelEdit()
-          })
+      this.$fetch('updateStreamPush', {
+        ...this.editParams,
+        webinar_id: this.$route.params.str,
       })
+        .then((res) => {
+          if (res.code == 200) {
+            this.$message({
+              message: `推流地址保存成功`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box',
+            })
+            this.getTableList()
+            this.handleCancelEdit()
+          }
+        })
+        .catch((err) => {
+          this.$message({
+            message: err.msg || `推流地址保存失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box',
+          })
+        })
     },
     // 创建
     handleCreate() {
-      this.$confirm('对礼物的更改会同步到资料库，确定保存当前更改？', '提示', {
-        confirmButtonText: '确认',
-        cancelButtonText: '取消',
-        customClass: 'zdy-message-box',
-        lockScroll: false,
-        cancelButtonClass: 'zdy-confirm-cancel',
-      }).then(() => {
-        this.$fetch('createWebinarGift', {
-          ...this.editParams,
-          room_id: this.room_id,
-        })
-          .then((res) => {
-            if (res.code == 200) {
-              this.$vhall_paas_port({
-                k: 100398,
-                data: {
-                  business_uid: this.userId,
-                  user_id: '',
-                  webinar_id: this.$route.params.str,
-                  refer: '',
-                  s: '',
-                  report_extra: {},
-                  ref_url: '',
-                  req_url: '',
-                },
-              })
-              this.$message({
-                message: `创建成功`,
-                showClose: true,
-                // duration: 0,
-                type: 'success',
-                customClass: 'zdy-info-box',
-              })
-              this.getTableList()
-              this.handleCancelEdit()
-            }
-          })
-          .catch((res) => {
+      this.$fetch('createStreamPush', {
+        ...this.editParams,
+        webinar_id: this.$route.params.str,
+      })
+        .then((res) => {
+          if (res.code == 200) {
             this.$message({
-              message: res.msg || `创建失败`,
+              message: `推流地址创建成功`,
               showClose: true,
               // duration: 0,
-              type: 'error',
+              type: 'success',
               customClass: 'zdy-info-box',
             })
+            this.getTableList()
+            this.handleCancelEdit()
+          }
+        })
+        .catch((res) => {
+          this.$message({
+            message: res.msg || `推流地址创建失败`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box',
           })
-      })
+        })
     },
     // 取消编辑
     handleCancelEdit() {
-      this.editParams.gift_id = ''
-      this.editParams.name = ''
-      this.editParams.price = ''
+      this.editParams.push_id = ''
+      this.editParams.platform = ''
+      this.editParams.dest_url = ''
+      this.editParams.oversea = 0
       this.dialogVisible = false
     },
     closeStreamOpen() {
       let params = {
         webinar_id: this.$route.params.str,
-        permission_key: 'is_player_cofig',
-        status: Number(this.playerOpen),
+        status: Number(this.streamOpen),
       }
       console.log('当前参数传递：', params)
-      this.$fetch('planFunctionEdit', params)
+      this.$fetch('updateStreamPushEnabled', params)
         .then((res) => {
-          this.$vhall_paas_port({
-            k: this.playerOpen ? 100227 : 100228,
-            data: {
-              business_uid: this.userId,
-              user_id: '',
-              webinar_id: this.$route.params.str,
-              refer: '',
-              s: '',
-              report_extra: {},
-              ref_url: '',
-              req_url: '',
-            },
-          })
-          if (!this.playerOpen) {
-            this.$message({
-              message: '正在使用账号下品牌设置',
-              showClose: true,
-              type: 'warning',
-              customClass: 'zdy-info-box',
+          //关闭时提交
+          if (!this.streamOpen) {
+            this.$vhall_paas_port({
+              k: 100852,
+              data: {
+                business_uid: this.userId,
+                user_id: '',
+                webinar_id: this.$route.params.str,
+                refer: '',
+                s: '',
+                report_extra: {},
+                ref_url: '',
+                req_url: '',
+              },
             })
           }
         })
