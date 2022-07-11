@@ -1,13 +1,17 @@
 <template>
   <div class="sys-banner-layout" v-if="textBanner && textBanner.is_valid == 1 && !textBannerIsClose">
-    <icon style="color:#FB3A32" class="sys-banner-ting" :icon-class="'saasicon_yangshengqion'"></icon>
+    <div class="sys-banner-left">
+      <icon style="color:#FB3A32" class="sys-banner-ting" :icon-class="'saasicon_yangshengqion'"></icon>
+    </div>
     <div @click="onOpenLink" id="sysTextBannerNotice">
       <span id="scroll_begin">{{textBanner ? textBanner.content || '' : '' }}</span>
       <span id="scroll_end"></span>
     </div>
-    <span @click="onCloseTextBanner" class="sys-banner-close">
-      <icon style="color:#595959" :icon-class="'saasicon_close'" ></icon>
-    </span>
+    <div class="sys-banner-right">
+      <span @click="onCloseTextBanner" class="sys-banner-close">
+        <icon style="color:#595959" :icon-class="'saasicon_close'" ></icon>
+      </span>
+    </div>
   </div>
 </template>
 <script>
@@ -114,12 +118,25 @@ export default {
   z-index: 99;
   display: flex;
   justify-content: space-around;
-  padding: 0 24px;
   align-items: center;
+  .sys-banner-left {
+    width: 48px;
+    height: 48px;
+    padding-left: 24px;
+    line-height: 48px;
+    background: linear-gradient(24.56deg, #FFECEA 14.15%, #F9ECF1 83.55%);
+    box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
+  }
+  .sys-banner-right {
+    width: 44px;
+    height: 48px;
+    padding-right: 24px;
+    line-height: 48px;
+    background: linear-gradient(23.16deg, #F6ECF6 13.52%, #EFECFE 83.56%);
+    box-shadow: -1px 0px 4px rgba(0, 0, 0, 0.1);
+  }
   div {
     width: 100%;
-    margin-left: 8px;
-    margin-right: 8px;
     font-family: 'PingFang SC';
     font-style: normal;
     font-weight: 400;
@@ -148,6 +165,7 @@ export default {
   .sys-banner-close {
     cursor: pointer;
     margin-top: -2px;
+    margin-left: 8px;
   }
 }
 </style>
