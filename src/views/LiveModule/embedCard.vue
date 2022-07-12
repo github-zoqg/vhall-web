@@ -122,19 +122,19 @@
       </div>
     </div>
     <div class="thirdMethod" v-if="$route.query.type != 6">
-      <h3>第三方渠道推广嵌入</h3>
+      <div class="title_text">
+        <h3>第三方渠道嵌入</h3>
+        <el-switch
+          v-if="btn_thirdway_push"
+          v-model="streamOpen"
+          active-color="#FB3A32"
+          inactive-color="#CECECE"
+          @change="closeStreamOpen"
+          :active-text="reservationDesc"
+        >
+        </el-switch>
+      </div>
       <template v-if="btn_thirdway_push">
-        <div class="title_text">
-          <div class="title">启动第三方推流</div>
-          <el-switch
-            v-model="streamOpen"
-            active-color="#FB3A32"
-            inactive-color="#CECECE"
-            @change="closeStreamOpen"
-            :active-text="reservationDesc"
-          >
-          </el-switch>
-        </div>
         <div class="head-operat" v-show="total">
           <el-button
             type="primary"
@@ -144,14 +144,7 @@
             v-preventReClick
             >创建推流地址</el-button
           >
-          <el-button
-            type="primary"
-            size="medium"
-            round
-            @click="refreshStream"
-            v-preventReClick
-            >刷新推流状态</el-button
-          >
+          <span class="refresh" @click="refreshStream">刷新推流状态</span>
         </div>
         <div class="stream-list" v-show="total">
           <table-list
@@ -201,7 +194,7 @@
       v-if="$route.query.type != 5 && webinarState != 4"
     ></begin-play>
     <el-dialog
-      :title="editParams.push_id ? '编辑推流地址' : '创建推流地址'"
+      :title="editParams.push_id ? '编辑' : '创建'"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
@@ -681,23 +674,48 @@ export default {
     background: #fff;
     padding: 24px 20px;
     border-radius: 4px;
+    position: relative;
     .title_text {
       display: flex;
       align-items: center;
-      margin-top: 20px;
-      margin-bottom: 20px;
-      .title {
-        margin-right: 20px;
+      margin-bottom: 24px;
+      h3 {
+        margin-right: 8px;
+        font-size: 16px;
+        color: #1a1a1a;
+      }
+      /deep/.el-switch__core {
+        width: 28px !important;
+        height: 16px;
+      }
+      /deep/ .el-switch__label span {
+        font-size: 14px;
+        color: #999999;
+      }
+      /deep/.el-switch__core:after {
+        width: 12px;
+        height: 12px;
+      }
+      /deep/.el-switch.is-checked .el-switch__core::after {
+        margin-left: -13px;
+      }
+      /deep/.el-switch__label--right {
+        margin-left: 8px;
       }
     }
     .head-operat {
       display: flex;
-      justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+      .refresh {
+        font-size: 14px;
+        color: #3b67f9;
+        margin-left: 12px;
+        cursor: pointer;
+      }
     }
-    .data-list {
-      min-height: 500px;
+    .stream-list {
+      height: 504px;
     }
   }
   h3 {
