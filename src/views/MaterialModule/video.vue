@@ -57,18 +57,18 @@
               </template>
             </el-table-column>
             <el-table-column
-              width="200"
+              width="160"
               prop="created_at"
               label="上传时间">
             </el-table-column>
             <el-table-column
-              width="200"
+              width="100"
               prop="duration"
               label="时长">
             </el-table-column>
             <el-table-column
               prop="transcode_status_text"
-              width="200"
+              width="110"
               label="进度">
               <template slot-scope="scope">
                 <div>
@@ -90,6 +90,11 @@
                   </p>
                 </div>
               </template>
+            </el-table-column>
+            <el-table-column
+              width="110"
+              prop="storage"
+              label="转码后大小">
             </el-table-column>
             <el-table-column
               width="150"
@@ -538,7 +543,7 @@ export default {
      }
     },
     confirmDelete(id, index) {
-      this.$confirm('是否删除该文件？', '提示', {
+      this.$confirm('删除后将会影响暖场视频的演示和观看，确认删除？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         customClass: 'zdy-message-box',
@@ -648,11 +653,14 @@ export default {
   .layout--right--main();
   .padding-table-list();
   .min-height();
-  /deep/ .el-table__body .el-table__row td:nth-child(2) .cell{
+  /deep/ .el-table .cell{
     padding-left: 10px;
   }
+  /deep/ .el-table__body .el-table__row td:nth-child(2) .cell{
+    padding-left: 2px;
+  }
   /deep/ thead tr th:nth-child(2) .cell{
-    padding-left: 10px;
+    padding-left: 2px;
   }
   /deep/.el-table__row:hover{
    .el-button{
