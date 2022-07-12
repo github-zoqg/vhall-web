@@ -1,9 +1,9 @@
 <template>
-  <div class="sys-banner-layout" v-if="$route.meta.name == 'sysHome' && textBanner && textBanner.is_valid == 1 && !textBannerIsClose">
+  <div class="sys-banner-layout" v-if="isShowBanner">
     <div class="sys-banner-left">
       <icon style="color:#FB3A32" class="sys-banner-ting" :icon-class="'saasicon_yangshengqion'"></icon>
     </div>
-    <div @click="onOpenLink" id="sysTextBannerNotice">
+    <div @click="onOpenLink" id="sysTextBannerNotice" :class="textBanner && textBanner.link ? 'sys-banner-center' : ''">
       <span id="scroll_begin">{{textBanner ? textBanner.content || '' : '' }}</span>
       <span id="scroll_end"></span>
     </div>
@@ -13,11 +13,23 @@
       </span>
     </div>
   </div>
+  <!-- <div :class="textBanner && textBanner.link ? 'sys-banner-center' : ''">
+    <div @click="onOpenLink" class="sys-banner-tips">
+      <span class="sys-banner-text">{{textBanner ? textBanner.content || '' : '' }}</span>
+    </div>
+  </div> -->
 </template>
 <script>
 import Env from '@/api/env';
 export default {
   name: 'SysBanner',
+  beforeRouteUpdate(to,from,next){
+    console.log(to,from,next)
+    if(to.fullPath != from.fullPath){
+      next()
+      this.initPage()()
+    }
+  },
   data(){
     return {
       env: Env,
@@ -65,13 +77,6 @@ export default {
     scrollImgLeft(){
       const that = this
       const speed = 50
-      try {
-        if (that.MyMar) {
-          clearInterval(that.MyMar)
-        }
-      } catch(e) {
-        console.log(e)
-      }
       that.MyMar = null
       const scroll_begin = document.getElementById('scroll_begin')
       const scroll_end = document.getElementById('scroll_end')
@@ -101,20 +106,18 @@ export default {
       } else {
         this.textBannerIsClose = false
       }
-      if (this.textBanner && this.textBanner.is_valid == 1 && !this.textBannerIsClose) {
+      if (this.textBanner && this.textBanner.is_valid == 1 && !this.textBannerIsClose && this.textBanner.content && this.textBanner.content.length > 114) {
         // 按照字数执行，是否滚动
         this.scrollImgLeft()
       }
     }
   },
-  async mounted() {
+  mounted() {
     this.initPage()
   },
-  watch: {
-    '$route'() {
-      if (this.$route.meta.name === 'sysHome') {
-        this.initPage()
-      }
+  computed: {
+    isShowBanner: function() {
+      return this.$route.meta.name == 'sysHome' && this.textBanner && this.textBanner.is_valid == 1 && !this.textBannerIsClose
     }
   }
 };
@@ -135,16 +138,12 @@ export default {
     height: 48px;
     padding-left: 24px;
     line-height: 48px;
-    background: linear-gradient(24.56deg, #FFECEA 14.15%, #F9ECF1 83.55%);
-    box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1);
   }
   .sys-banner-right {
     width: 44px;
     height: 48px;
     padding-right: 24px;
     line-height: 48px;
-    background: linear-gradient(23.16deg, #F6ECF6 13.52%, #EFECFE 83.56%);
-    box-shadow: -1px 0px 4px rgba(0, 0, 0, 0.1);
   }
   div {
     width: 100%;
@@ -170,13 +169,31 @@ export default {
       line-height: 20px;
     }
   }
-  .sys-banner-ting {
-    margin-top: -2px;
+  .sys-banner-center {
+    cursor: pointer;
   }
   .sys-banner-close {
     cursor: pointer;
-    margin-top: -2px;
     margin-left: 8px;
   }
 }
+/* .sys-banner-tips {
+  width: 600px;
+  overflow: hidden;
+  box-sizing: border-box;
+  .sys-banner-text {
+    transform: translateX(0%);
+    white-space: nowrap;
+    display: inline-block;
+    animation: 60s sysLoop linear infinite normal;
+  }
+}
+@keyframes sysLoop {
+  0% {
+    transform: translateX(600px);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+} */
 </style>
