@@ -123,7 +123,7 @@
       <!-- 广告位 -->
       <div class="banner-download" v-if="imageBanner && imageBanner.content && imageBanner.is_valid == 1">
         <div :class="['ad-web', {'is-cursor': imageBanner && imageBanner.link }]" @click="onOpenLink">
-          <img :src="`${imageBanner.content}?x-oss-process=image/resize,m_pad,h_126,w_224,image/crop,w_224,h_126`" alt="暂无图片"/>
+          <img :src="`${imageBanner.content}?x-oss-process=image/resize,w_224,h_126,m_lfit`" alt="图片无法展示"/>
         </div>
       </div>
       <div class="web-download">
