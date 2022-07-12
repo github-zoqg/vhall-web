@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont-v3"; /* Project id 2212678 */
-  src: url('iconfont.woff2?t=1636515512217') format('woff2'),
-       url('iconfont.woff?t=1636515512217') format('woff'),
-       url('iconfont.ttf?t=1636515512217') format('truetype');
+  src: url('iconfont.woff2?t=1655293543035') format('woff2'),
+       url('iconfont.woff?t=1655293543035') format('woff'),
+       url('iconfont.ttf?t=1655293543035') format('truetype');
 }
 
 .iconfont-v3 {
@@ -11,6 +11,50 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.saasline-plus:before {
+  content: "\e88b";
+}
+
+.saasicon-right:before {
+  content: "\e6cd";
+}
+
+.saasicon-error:before {
+  content: "\e6ce";
+}
+
+.saasicon-play:before {
+  content: "\e6cf";
+}
+
+.saasicon-wrong:before {
+  content: "\e6d0";
+}
+
+.saasicon-microphoneon:before {
+  content: "\e6d1";
+}
+
+.saasicon-volumeon:before {
+  content: "\e6d2";
+}
+
+.saasicon-choice:before {
+  content: "\e6d3";
+}
+
+.saasicon-pause:before {
+  content: "\e6d4";
+}
+
+.saasicon-video:before {
+  content: "\e6d5";
+}
+
+.saasicon-help:before {
+  content: "\e6d6";
 }
 
 .saasbofangqi_suoxiao:before {
