@@ -898,6 +898,25 @@ export function CrumbSet(metaName, that) {
 
   else if (metaName === 'specialList') {// 专题列表
     return CrumbLiveList('specialList');
+  } else if (metaName === 'specialData') {
+    return [
+      {
+        title: '专题管理',
+        path: '/special',
+        isClick: false,
+        redirect: 'noRedirect'
+      },
+      {
+        title: '专题列表',
+        path: '/special/list',
+        isClick: true
+      },
+      {
+        title: '查看数据',
+        path: '/special/data',
+        isClick: true
+      }
+    ]
   }
   else if (metaName === 'specialEdit') {// 创建专题、编辑专题
     return that.$route.query.id ? [
@@ -930,6 +949,78 @@ export function CrumbSet(metaName, that) {
         isClick: true
       }
     ];
+  } else if (metaName === 'specialViewer') {
+    return that.$route.query.id ? [
+      {
+        title: '专题管理',
+        path: '/special',
+        isClick: false,
+        redirect: 'noRedirect'
+      },
+      {
+        title: '编辑专题',
+        path: '/special/edit',
+        isClick: true
+      },
+      {
+        title: '观看限制',
+        path: '/special/viewer',
+        isClick: true
+      }
+    ] : [
+      {
+        title: '专题管理',
+        path: '/special',
+        isClick: false,
+        redirect: 'noRedirect'
+      },
+      {
+        title: '创建专题',
+        path: '/special/edit',
+        isClick: true
+      },
+      {
+        title: '观看限制',
+        path: '/special/viewer',
+        isClick: true
+      }
+    ]
+  } else if (metaName === 'specialSignup') {
+    return that.$route.query.id ? [
+      {
+        title: '专题管理',
+        path: '/special',
+        isClick: false,
+        redirect: 'noRedirect'
+      },
+      {
+        title: '编辑专题',
+        path: '/special/edit',
+        isClick: true
+      },
+      {
+        title: '报名表单',
+        path: '/special/signup',
+        isClick: true
+      }
+    ] : [
+      {
+        title: '专题管理',
+        path: '/special',
+        isClick: false,
+        redirect: 'noRedirect'
+      },
+      {
+        title: '创建专题',
+        path: '/special/edit',
+        isClick: true
+      },
+      {
+        title: '报名表单',
+        path: '/special/signup',
+        isClick: true
+      }
+    ]
   }
 
   /** 资料管理 **/

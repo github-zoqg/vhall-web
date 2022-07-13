@@ -56,12 +56,11 @@
             :active-text="homeDesc">
           </el-switch>
       </p>
-      <el-form-item label="观看限制" required>
-        <el-radio-group v-model="formData.viewer">
-          <el-radio :label="1">无统一限制，采用直播自己的</el-radio> <br/>
-          <el-radio :label="2">统一观看限制，各直播自己的失效</el-radio>  <br/>
-          <el-radio :label="3">统一报名表单，各直播自己的失效</el-radio>
-        </el-radio-group>
+      <el-form-item label="观看限制" required v-if="this.$route.query.id">
+        <el-radio v-model="formData.viewer" :label="1">无统一限制，采用直播自己的</el-radio> <br/>
+        <el-radio v-model="formData.viewer" :label="2">统一观看限制，各直播自己的失效</el-radio><br/>
+        <el-radio v-model="formData.viewer" :label="3">统一报名表单，各直播自己的失效</el-radio>
+        <div v-if="formData.viewer>1"><el-button type="primary" size="small" v-preventReClick round @click="goSetViewer">去设置</el-button></div>
       </el-form-item>
       <el-form-item label="专题目录" required>
         <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
@@ -152,6 +151,7 @@
       @cacelSelect="showActiveSelect = false"
       @selectedEvent="doSelectedActives"
     ></chose-actives>
+    <choseViewerRule ref="subjectRule"></choseViewerRule>
   </div>
 </template>
 
@@ -162,6 +162,7 @@ import upload from '@/components/Upload/main';
 import VEditor from '@/components/Tinymce';
 import Env from "@/api/env";
 import ChoseActives from './components/choseLiveList'
+import choseViewerRule from './components/ruleDialog.vue'
 import { sessionOrLocal } from "@/utils/utils";
 
 export default {
@@ -170,7 +171,8 @@ export default {
     VEditor,
     upload,
     ChoseActives,
-    draggable
+    draggable,
+    choseViewerRule
   },
   computed: {
     reservationDesc(){
@@ -246,23 +248,23 @@ export default {
       }
     }
   },
-  beforeRouteLeave(to, from, next) {
-    // 离开页面前判断信息是否修改
-    if (!this.isChange) {
-      next()
-      return false;
-    }
-    this.$confirm(`取消将不保存此页面的内容？`, '提示', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      customClass: 'zdy-message-box',
-      lockScroll: false,
-      cancelButtonClass: 'zdy-confirm-cancel'
-    }).then(() => {
-        next()
-    }).catch(() => {
-    });
-  },
+  // beforeRouteLeave(to, from, next) {
+  //   // 离开页面前判断信息是否修改
+  //   if (!this.isChange) {
+  //     next()
+  //     return false;
+  //   }
+  //   this.$confirm(`取消将不保存此页面的内容？`, '提示', {
+  //     confirmButtonText: '确定',
+  //     cancelButtonText: '取消',
+  //     customClass: 'zdy-message-box',
+  //     lockScroll: false,
+  //     cancelButtonClass: 'zdy-confirm-cancel'
+  //   }).then(() => {
+  //       next()
+  //   }).catch(() => {
+  //   });
+  // },
   methods: {
     // 获取专题 - 详情
     initInfo() {
@@ -290,7 +292,11 @@ export default {
         }
       })
     },
-
+    goSetViewer() {
+      this.$router.push({
+        path: `/special/${this.formData.viewer == 2 ? 'viewer' : 'signup'}/${this.$route.query.id}`
+      })
+    },
     sendData(content) {
       this.formData.content = content;
       console.log(content, "1111111111111111");
@@ -353,6 +359,11 @@ export default {
 
     submitForm(formName) {
     window.cd = this.formData
+    if (!this.$route.query.id) {
+      this.$refs.subjectRule.visible = true;
+      return;
+    }
+
       if (!this.formData.content) {
         this.$message({
           message: `请输入专题简介`,
