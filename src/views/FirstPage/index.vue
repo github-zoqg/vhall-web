@@ -123,7 +123,11 @@
       <!-- 广告位 -->
       <div class="banner-download" v-if="imageBanner && imageBanner.content && imageBanner.is_valid == 1">
         <div :class="['ad-web', {'is-cursor': imageBanner && imageBanner.link }]" @click="onOpenLink">
-          <img :src="`${imageBanner.content}?x-oss-process=image/resize,w_224,h_126,m_lfit`" alt="图片无法展示"/>
+          <el-image :src="`${imageBanner.content}?x-oss-process=image/resize,w_224,h_126,m_lfit`" fit="contain">
+            <div slot="error" class="image-slot">
+              <i class="el-icon-picture-outline"></i>
+            </div>
+          </el-image>
         </div>
       </div>
       <div class="web-download">
@@ -644,13 +648,20 @@ export default {
         .ad-web{
           height: 126px;
           height: 126px;
-          img{
+         /*  img{
             width: 100%;
             height: 100%;
             border-radius: 4px;
-          }
+          } */
           &.is-cursor {
             cursor: pointer;
+          }
+          .el-image {
+            width: 100%;
+            height: 100%;
+            -o-object-fit: cover;
+            object-fit: cover;
+            border-radius: 4px;
           }
         }
       }
