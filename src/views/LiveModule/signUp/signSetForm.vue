@@ -1,69 +1,60 @@
 <template>
-  <div class="signup-main">
-    <div class="head">
-      <pageTitle pageTitle="报名表单">
-        <div class="switchBox">
-          <el-switch
-            class="swtich"
-            v-model="signUpSwtich"
-            active-color="#FB3A32"
-            inactive-color="#CECECE"
-            @change="switchRegForm"
-            :active-text="signUpSwtichDesc">
-          </el-switch>
-        </div>
-        <div class="headBtnGroup">
-          <el-button round size="medium" class="transparent-btn" @click="openDialog('theme')">设置</el-button>
-          <el-button round size="medium"  class="transparent-btn" @click="openDialog('share')">分享</el-button>
-          <el-button type="primary" round size="medium" @click="showSignUp">预览</el-button>
-        </div>
-      </pageTitle>
-      <div class="signup-main-center">
-        <!-- tab切换 -->
-        <el-tabs v-model="tabType" @tab-click="handleClick">
-          <el-tab-pane label="表单设置" name="form"></el-tab-pane>
-          <el-tab-pane label="用户报名" name="user"></el-tab-pane>
-        </el-tabs>
-        <!-- 报名表单 -->
-        <sign-set-form v-if="tabType ==='form'"></sign-set-form>
-        <user-manage v-else></user-manage>
-      </div>
+  <div id="settingBox" class="settingBox clearFix">
+    <ul :class="['options', menuBarFixed]" v-show="rightComponent !='signUpForm'">
+      <template v-for="(item, key, index) in setOptions">
+        <section :class="['block', index == 1 ? 'block-bto' : '']" :key="key">{{key}}</section>
+        <li
+          :class="{
+            item: true,
+            active: item.isActive || item.name && questionArr.some(qes => qes.name == item.name)
+          }"
+          v-for="item in item"
+          :key="item.label"
+          @click="addFiled(item)"
+        >
+          <!-- <icon :class="item.icon"></icon> -->
+          <icon class="icon" :icon-class="item.icon"></icon>
+          <span>{{item.label}}</span>
+        </li>
+      </template>
+      <div class="disable_wrap" v-if="!signUpSwtich"></div>
+    </ul>
+    <div class="rightView">
+      <!-- 表单编辑组件 -->
+      <fieldSet
+        ref="fieldSet"
+        :baseInfo="baseInfo"
+        v-show="rightComponent == 'fieldSet'"
+        :questionArr.sync="questionArr"
+        :signUpSwtich="signUpSwtich"
+        :regionalOptions="regionalOptions"
+        @setBaseInfo="setBaseInfo"
+      ></fieldSet>
+      <!-- 表单预览组件 -->
+      <signUpForm
+        :baseInfo="baseInfo"
+        v-if="rightComponent == 'signUpForm'"
+        :questionArr.sync="questionArr"
+        @closeSignUp="closePreview"
+      ></signUpForm>
+      <!-- <div class="disable_wrap" v-if="!signUpSwtich"></div> -->
     </div>
-    <shareDialog
-      :baseInfo="baseInfo"
-      @setBaseInfo="setBaseInfo"
-      ref="share"
-    ></shareDialog>
-    <themeSet
-      :baseInfo="baseInfo"
-      @setBaseInfo="setBaseInfo"
-      ref="theme"
-    ></themeSet>
-    <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
   </div>
 </template>
 
 <script>
-import PageTitle from '@/components/PageTitle';
-import shareDialog from './shareDialog';
-import themeSet from './themeSet';
+import fieldSet from './fieldSet';
+import signUpForm from './components/signUpForm.vue';
 import {getfiledJson} from './util';
 import { sessionOrLocal } from '@/utils/utils';
-import beginPlay from '@/components/beginBtn';
-import SignSetForm from './signSetForm';
-import UserManage from './userManage';
 export default {
   components: {
-    PageTitle,
-    shareDialog,
-    themeSet,
-    beginPlay,
-    SignSetForm,
-    UserManage
+    fieldSet,
+    signUpForm
   },
   data(){
     return {
-      tabType: 'form', // form-表单；user-用户
+      tabTyp: 'form', // form-表单；user-用户
       webinar_id: this.$route.params.str,
       signUpSwtich: false,
       baseInfo: {
@@ -138,9 +129,7 @@ export default {
     }
   },
   created(){
-    this.userId = JSON.parse(sessionOrLocal.get('userId'));
-    this.getBaseInfo();
-    this.getQuestionList();
+    this.initComp()
   },
   mounted() {
     window.addEventListener('scroll', this.handleScroll)
@@ -149,8 +138,10 @@ export default {
     window.removeEventListener('scroll', this.handleScroll)
   },
   methods: {
-    // 切换tab
-    handleClick(tab, event) {
+    initComp(){
+      this.userId = JSON.parse(sessionOrLocal.get('userId'));
+      this.getBaseInfo();
+      this.getQuestionList();
     },
     handleScroll () {
       let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
@@ -574,10 +565,6 @@ export default {
     /deep/ .el-switch.is-checked .el-switch__core::after {
       margin-left: -13px;
     }
-  }
-  .signup-main-center {
-    min-height: 612px;
-    background: #ffffff;
   }
   /deep/ .el-switch__label--right,/deep/ .el-switch__label--left{
     color: #999999;
