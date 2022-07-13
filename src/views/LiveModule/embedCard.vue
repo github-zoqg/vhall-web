@@ -255,6 +255,9 @@ import { sessionOrLocal } from '@/utils/utils'
 import noData from '@/views/PlatformModule/Error/nullPage'
 import beginPlay from '@/components/beginBtn'
 import Env from '@/api/env'
+
+const PushStatus = ['未推流', '推流中', '推流失败']
+
 export default {
   name: 'embedCard',
   data() {
@@ -287,20 +290,20 @@ export default {
       tabelColumn: [
         {
           label: '平台名称',
-          key: 'name',
+          key: 'platform',
         },
         {
           label: '推流地址',
-          key: 'name',
+          key: 'dest_url',
         },
         {
           label: '推流类型',
-          key: 'price',
+          key: 'overseaTxt',
           width: 120,
         },
         {
           label: '推流状态',
-          key: 'price',
+          key: 'pushStatusTxt',
           width: 120,
         },
         {
@@ -349,7 +352,7 @@ export default {
       ) {
         return true
       } else {
-        return true
+        return false
       }
     },
   },
@@ -467,8 +470,9 @@ export default {
           this.streamOpen = !!res.data.status
           let tableData = res.data.list || []
           tableData.map((item) => {
-            item.watch = Boolean(!item.status)
-            item.img = item.img_url
+            item.watch = Boolean(item.status)
+            item.overseaTxt = item.oversea ? '海外' : '国内'
+            item.pushStatusTxt = PushStatus[item.push_status]
           })
           this.total = res.data.list.length
           this.tableData = tableData
@@ -542,8 +546,11 @@ export default {
     },
     // 编辑
     edit(that, { rows }) {
-      this.editParams.push_id = rows.push_id
-      this.dialogVisible = true
+      that.editParams.push_id = rows.push_id
+      that.editParams.platform = rows.platform
+      that.editParams.dest_url = rows.dest_url
+      that.editParams.oversea = rows.oversea
+      that.dialogVisible = true
     },
     // 处理编辑新建
     handleUpdateStream() {
