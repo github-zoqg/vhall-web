@@ -23,13 +23,6 @@
 import Env from '@/api/env';
 export default {
   name: 'SysBanner',
-  beforeRouteUpdate(to,from,next){
-    console.log(to,from,next)
-    if(to.fullPath != from.fullPath){
-      next()
-      this.initPage()()
-    }
-  },
   data(){
     return {
       env: Env,
@@ -118,6 +111,13 @@ export default {
   computed: {
     isShowBanner: function() {
       return this.$route.meta.name == 'sysHome' && this.textBanner && this.textBanner.is_valid == 1 && !this.textBannerIsClose
+    }
+  },
+  watch: {
+    '$route'() {
+      if (this.$route.meta.name == 'sysHome') {
+        this.initPage()
+      }
     }
   }
 };
