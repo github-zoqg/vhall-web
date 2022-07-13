@@ -67,7 +67,20 @@ import noData from '@/views/PlatformModule/Error/nullPage';
 import { sessionOrLocal } from '@/utils/utils';
 
 export default {
-  props: ['checkedList'],
+  props: {
+    // 选中的数组
+    checkedList: {
+      required: true,
+      type: Array,
+      default: () => []
+    },
+    // 选中的总数
+    checkedTotal: {
+      required: true,
+      type:Number,
+      default: 0
+    }
+  },
   data() {
     return {
       hasDelayPermission: false,
@@ -94,6 +107,7 @@ export default {
     noData
   },
   created() {
+    this.selectedOption = this.checkedList.length && JSON.parse(JSON.stringify(this.checkedList || []))
     this.getActiveList();
   },
 
@@ -160,6 +174,7 @@ export default {
           this.total = res.data.total
           this.maxPage = Math.ceil(res.data.total / this.pageInfo.limit);
           this.loading = false;
+          this.syncCheckStatus()
         } else {
           this.loading = false
         }
@@ -193,7 +208,18 @@ export default {
     doSelect(item) {
       console.log( item )
       item.checked = !item.checked;
-      this.selectedOption = this.activeList.filter(item => item.checked);
+      if (this.checkedList.length > 0) {
+        const checkedIds = this.checkedList.map((item) => {
+          return item.webinar_id || item.id
+        })
+        if (item.checked && !checkedIds.includes(item.webinar_id)) {
+          this.selectedOption.push(item)
+        } else {
+          this.selectedOption.splice(item, 1)
+        }
+      } else {
+        this.selectedOption = this.activeList.filter(item => item.checked);
+      }
     },
 
     saveSelect() {

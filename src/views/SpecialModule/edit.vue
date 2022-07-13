@@ -155,6 +155,7 @@
     <chose-actives
       v-if="showActiveSelect"
       :checkedList="formData.selectedActives"
+      :checkedTotal="formData.total"
       @cacelSelect="showActiveSelect = false"
       @selectedEvent="doSelectedActives"
     ></chose-actives>
@@ -204,6 +205,7 @@ export default {
         content: '',
         hot: true,
         home: true,
+        total:0
       },
       subject_id: '',
       subjectInfo: {
@@ -281,7 +283,7 @@ export default {
           res.data.webinar_subject.cover && (this.formData.imageUrl = res.data.webinar_subject.cover)
           this.formData.domain_url = res.data.webinar_subject.cover;
           this.formData.content = res.data.webinar_subject.intro
-
+          this.formData.total = res.data.webinar_subject.webinar_num;
           // 配置项
           this.formData.home = res.data.webinar_subject.is_open ? false : true // 是否显示个人主页
           this.formData.hot = Boolean(res.data.webinar_subject.hide_pv) // 是否显示 人气
