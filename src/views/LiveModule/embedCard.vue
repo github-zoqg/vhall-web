@@ -780,5 +780,8 @@ export default {
     background-position: 0 0;
     background-size: 100% 100%;
   }
+  /deep/.el-dialog__footer {
+    padding: 0 32px 24px;
+  }
 }
 </style>
