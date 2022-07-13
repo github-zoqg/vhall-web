@@ -38,18 +38,7 @@
           :active-text="reservationDesc">
         </el-switch>
       </p>
-      <!-- <el-form-item label="预约人数">
-        <p class="switch__box">
-          <el-switch
-            v-model="formData.reservation"
-            active-color="#FB3A32"
-            inactive-color="#CECECE"
-            :active-text="reservationDesc">
-          </el-switch>
-        </p>
-      </el-form-item> -->
-      <!-- <el-form-item label="专题热度"> -->
-        <p class="switch__box">
+      <p class="switch__box">
           <el-switch
             v-model="formData.hot"
             active-color="#FB3A32"
@@ -57,10 +46,8 @@
             inactive-text="专题热度"
             :active-text="hotDesc">
           </el-switch>
-        </p>
-      <!-- </el-form-item> -->
-      <!-- <el-form-item label="关联主页"> -->
-        <p class="switch__box">
+      </p>
+      <p class="switch__box">
           <el-switch
             v-model="formData.home"
             active-color="#FB3A32"
@@ -68,8 +55,14 @@
             inactive-text="关联主页"
             :active-text="homeDesc">
           </el-switch>
-        </p>
-      <!-- </el-form-item> -->
+      </p>
+      <el-form-item label="观看限制" required>
+        <el-radio-group v-model="formData.viewer">
+          <el-radio :label="1">无统一限制，采用直播自己的</el-radio> <br/>
+          <el-radio :label="2">统一观看限制，各直播自己的失效</el-radio>  <br/>
+          <el-radio :label="3">统一报名表单，各直播自己的失效</el-radio>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item label="专题目录" required>
         <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
         <div class="vh-sort-tables" v-show="formData.selectedActives.length">
@@ -199,6 +192,7 @@ export default {
       formData: {
         selectedActives: [],
         title: '',
+        viewer: 1,
         reservation: true,
         imageUrl: '',
         domain_url:'',

@@ -51,14 +51,17 @@
               <p class="liveTime">{{item.created_at | unitTime }}</p>
             </div>
             <p class="liveOpera">
-              <el-tooltip class="item" effect="dark" content="编辑" placement="top" v-tooltipMove>
+              <el-tooltip class="item item_right" effect="dark" content="编辑" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-pencil1" @click.prevent.stop="editSpecialInfo(item.id)"></i>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="预览" placement="top" v-tooltipMove>
+              <el-tooltip class="item item_right" effect="dark" content="预览" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-eye1" @click.prevent.stop="specialDetail(item)"></i>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="分享" placement="top" v-tooltipMove>
+              <el-tooltip class="item item_right" effect="dark" content="分享" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-share1" @click.prevent.stop="toShare(item.id)"></i>
+              </el-tooltip>
+               <el-tooltip class="item item_right" effect="dark" content="数据" placement="top" v-tooltipMove>
+                <i class="iconfont-v3 saasicon_xiangqing" @click.prevent.stop="toDataReport(item.id)"></i>
               </el-tooltip>
               <el-tooltip class="item isDelete" effect="dark" content="删除" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-trash" @click.prevent.stop="deleteHandle(item.id)"></i>
@@ -266,6 +269,11 @@ export default {
       this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${id}`;
       // this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail?id=${id}`;
       this.shareVo.pcUrl = `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${id}`;
+    },
+    // 数据页面
+    toDataReport(id) {
+      const { href } = this.$router.resolve({path:'/special/data',query: {id: id, title: '查看数据'}});
+      window.open(href, '_blank');
     },
     // 预览页面
     specialDetail(item) {
@@ -549,8 +557,11 @@ export default {
           i{
            cursor: pointer;
            font-size: 18px;
-           &:nth-child(2){
-              padding: 0 20px;
+           &.item_right{
+             padding: 0 10px;
+            }
+            &:first-child{
+              padding-left: 0;
             }
           }
           .el-dropdown{

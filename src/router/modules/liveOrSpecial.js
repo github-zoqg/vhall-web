@@ -323,6 +323,21 @@ const router = [
         path: 'edit',
         component: () => import('@/views/SpecialModule/edit'),
         meta: { auth: true, title: '创建专题', name: 'specialEdit', level: 2, activeMenu: '/special/edit', auth_key: 'subject_manager' }
+      },
+      {
+        path: 'data',
+        component: () => import('@/views/SpecialModule/data'),
+        meta: { auth: true, title: '查看数据', name: 'specialData', level: 2, activeMenu: '/special/data', auth_key: 'subject_manager' }
+      },
+      {
+        path: 'viewer',
+        component: () => import('@/views/SpecialModule/viewer'),
+        meta: { auth: true, title: '观看限制', name: 'specialViewer', level: 2, activeMenu: '/special/viewer', auth_key: 'subject_manager' }
+      },
+      {
+        path: 'signup',
+        component: () => import('@/views/SpecialModule/signup/index'),
+        meta: { auth: true, title: '报名表单', name: 'specialSignup', level: 2, activeMenu: '/special/signup', auth_key: 'subject_manager' }
       }
     ]
   },
