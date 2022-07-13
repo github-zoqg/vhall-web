@@ -36,7 +36,7 @@
 
     <el-row :gutter="24" class="lives" v-show="totalElement">
       <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
-        <router-link :to="{path:'/special/edit', query: {id: item.id, title: '编辑'}}" target="_blank" class="inner">
+        <router-link :to="{path: `/special/edit/${item.id}`, query: {title: '编辑'}}" target="_blank" class="inner">
           <!-- @click="editSpecialInfo(item.id)" -->
           <div class="top">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
@@ -256,7 +256,7 @@ export default {
         k: 100496,
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-      const { href } = this.$router.resolve({path:'/special/edit',query: {id: id, title: '编辑'}});
+      const { href } = this.$router.resolve({path: `/special/edit/${id}`,query: {title: '编辑'}});
       window.open(href, '_blank');
     },
     toShare(id) {
@@ -272,7 +272,7 @@ export default {
     },
     // 数据页面
     toDataReport(id) {
-      const { href } = this.$router.resolve({path:'/special/data',query: {id: id, title: '查看数据'}});
+      const { href } = this.$router.resolve({path:`/special/data/${id}`,query: {title: '查看数据'}});
       window.open(href, '_blank');
     },
     // 预览页面

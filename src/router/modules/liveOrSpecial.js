@@ -325,21 +325,27 @@ const router = [
         meta: { auth: true, title: '创建专题', name: 'specialEdit', level: 2, activeMenu: '/special/edit', auth_key: 'subject_manager' }
       },
       {
-        path: 'data',
+        path: 'edit/:id',
+        component: () => import('@/views/SpecialModule/edit'),
+        meta: { auth: true, title: '编辑专题', name: 'specialEdit', level: 2, activeMenu: '/special/list', auth_key: 'subject_manager' },
+        hidden: true
+      },
+      {
+        path: 'data/:id',
         component: () => import('@/views/SpecialModule/data'),
-        meta: { auth: true, title: '查看数据', name: 'specialData', level: 2, activeMenu: '/special/edit', auth_key: 'subject_manager' },
+        meta: { auth: true, title: '查看数据', name: 'specialData', level: 2, activeMenu: '/special/list', auth_key: 'subject_manager' },
         hidden: true
       },
       {
-        path: 'viewer/:id?',
+        path: 'viewer/:id',
         component: () => import('@/views/SpecialModule/viewer'),
-        meta: { auth: true, title: '观看限制', name: 'specialViewer', level: 2, activeMenu: '/special/edit', auth_key: 'subject_manager' },
+        meta: { auth: true, title: '观看限制', name: 'specialViewer', level: 2, activeMenu: '/special/list', auth_key: 'subject_manager' },
         hidden: true
       },
       {
-        path: 'signup/:id?',
+        path: 'signup/:id',
         component: () => import('@/views/SpecialModule/signup/index'),
-        meta: { auth: true, title: '报名表单', name: 'specialSignup', level: 2, activeMenu: '/special/edit', auth_key: 'subject_manager' },
+        meta: { auth: true, title: '报名表单', name: 'specialSignup', level: 2, activeMenu: '/special/list', auth_key: 'subject_manager' },
         hidden: true
       }
     ]

@@ -17,6 +17,7 @@
 </template>
 <script>
 export default {
+  prop: ['subject_id'],
   data() {
     return {
       visible: false,
@@ -31,7 +32,7 @@ export default {
       } else {
         this.visible = false;
         this.$router.push({
-          path: `/special/${this.formData.viewer == 2 ? 'viewer' : 'signup'}`
+          path: `/special/${this.formData.viewer == 2 ? 'viewer' : 'signup'}/${this.subject_id}`
         })
       }
     }

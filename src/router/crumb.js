@@ -933,7 +933,7 @@ export function CrumbSet(metaName, that) {
       },
       {
         title: '编辑专题',
-        path: '/special/edit',
+        path: `/special/edit/${that.$route.params.id}`,
         isClick: true
       }
     ] : [
@@ -950,7 +950,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   } else if (metaName === 'specialViewer') {
-    return that.$route.query.id ? [
+    return [
       {
         title: '专题管理',
         path: '/special',
@@ -959,24 +959,7 @@ export function CrumbSet(metaName, that) {
       },
       {
         title: '编辑专题',
-        path: '/special/edit',
-        isClick: true
-      },
-      {
-        title: '观看限制',
-        path: '/special/viewer',
-        isClick: true
-      }
-    ] : [
-      {
-        title: '专题管理',
-        path: '/special',
-        isClick: false,
-        redirect: 'noRedirect'
-      },
-      {
-        title: '创建专题',
-        path: '/special/edit',
+        path:  `/special/edit/${that.$route.params.id}`,
         isClick: true
       },
       {
@@ -986,7 +969,7 @@ export function CrumbSet(metaName, that) {
       }
     ]
   } else if (metaName === 'specialSignup') {
-    return that.$route.query.id ? [
+    return [
       {
         title: '专题管理',
         path: '/special',
@@ -995,24 +978,7 @@ export function CrumbSet(metaName, that) {
       },
       {
         title: '编辑专题',
-        path: '/special/edit',
-        isClick: true
-      },
-      {
-        title: '报名表单',
-        path: '/special/signup',
-        isClick: true
-      }
-    ] : [
-      {
-        title: '专题管理',
-        path: '/special',
-        isClick: false,
-        redirect: 'noRedirect'
-      },
-      {
-        title: '创建专题',
-        path: '/special/edit',
+        path: `/special/edit/${that.$route.params.id}`,
         isClick: true
       },
       {

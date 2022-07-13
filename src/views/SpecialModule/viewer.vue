@@ -140,7 +140,7 @@
       <!-- 保存 -->
       <div class="subject-viewer_save">
         <el-form label-width="82px">
-          <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="saveSubjectviewer">保 存</el-button>
+          <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="saveSubjectViewer">保 存</el-button>
         </el-form>
       </div>
       <VhallDialog :visible='visiblePreview' title="权限验证" width='400px' @close="visiblePreview = false;">
@@ -260,8 +260,116 @@ export default {
       this.showPwd = false;
     },
     // 保存
-    saveSubjectviewer() {
+    saveSubjectViewer() {
+      const verify = this.subjectForm.verify;
+      switch (verify) {
+        case 0:
+          this.saveFreeParams(verify);
+          break;
+        case 1:
+          this.savePwdParams(verify);
+          break;
+        case 2:
+          this.saveWhiteParams(verify);
+          break;
+        case 4:
+          this.saveCodeParams(verify);
+          break;
 
+      }
+    },
+    // 0:免费参数
+    saveFreeParams(verify) {
+      let params = {
+          subject_id: this.subjectForm.subject_id,
+          verify: verify,
+        }
+      this.saveSubjectInfo(params)
+    },
+    // 1:密码参数
+    savePwdParams(verify) {
+      this.$refs.pwdForm.validate((valid) => {
+        if(valid) {
+          let params = {
+            subject_id: this.subjectForm.subject_id,
+            verify: verify,
+            password: this.pwdForm.password,
+            password_verify: this.pwdForm.placeholder || '请输入密码',
+            is_preview: this.subjectForm.is_preview,
+            preview_time: this.subjectForm.is_preview ? this.subjectForm.preview_time : undefined
+          }
+          this.saveSubjectInfo(params)
+        }
+      });
+    },
+    // 2:白名单参数
+    saveWhiteParams(verify) {
+      let flag = this.whiteId !== null && this.whiteId !== undefined && this.whiteId !== '';
+      if (!flag) {
+        this.$message({
+          message:  `请选择观众组`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return;
+      }
+      let params = {
+        webinar_id: this.subjectForm.subject_id,
+        verify: verify,
+        white_id: this.whiteId,
+        is_preview: this.subjectForm.is_preview,
+        preview_time: this.subjectForm.is_preview ? this.subjectForm.preview_time : undefined,
+        white_verify: this.white_verify || '请输入手机号/邮箱/工号'
+      }
+      this.saveSubjectInfo(params)
+    },
+    saveCodeParams(verify) {
+      if (!this.codeNum) {
+        this.$message({
+          message:  `您暂无邀请码，请生成后保存`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+        return;
+      }
+      this.$refs.formCode.validate((valid) => {
+        if(valid) {
+          let params = {
+            subject_id: this.subjectForm.subject_id,
+            verify: verify,
+            fcode_verify: this.formCode.placeholder || '请输入邀请码',
+            is_preview: this.subjectForm.is_preview,
+            preview_time: this.subjectForm.is_preview ? this.subjectForm.preview_time : undefined
+          }
+          this.saveSubjectInfo(params)
+        }
+      });
+    },
+    saveSubjectInfo(params) {
+      this.$fetch('viewerSetSave', this.$params(params)).then(res => {
+        this.$message({
+          message:  `设置成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$router.push({
+          path: `/special/edit/${this.$route.params.id}`
+        })
+      }).catch(res =>{
+         this.$message({
+          message:  res.msg || '设置失败',
+          showClose: true,
+          // duration: 0,
+          type: res.code == 512999 ? 'warning' : 'error',
+          customClass: 'zdy-info-box'
+        });
+      });
     },
     // 选择白名单
     selectGroup(item) {

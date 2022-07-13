@@ -56,7 +56,7 @@
             :active-text="homeDesc">
           </el-switch>
       </p>
-      <el-form-item label="观看限制" required v-if="this.$route.query.id">
+      <el-form-item label="观看限制" required v-if="this.$route.params.id">
         <el-radio v-model="formData.viewer" :label="1">无统一限制，采用直播自己的</el-radio> <br/>
         <el-radio v-model="formData.viewer" :label="2">统一观看限制，各直播自己的失效</el-radio><br/>
         <el-radio v-model="formData.viewer" :label="3">统一报名表单，各直播自己的失效</el-radio>
@@ -151,7 +151,7 @@
       @cacelSelect="showActiveSelect = false"
       @selectedEvent="doSelectedActives"
     ></chose-actives>
-    <choseViewerRule ref="subjectRule"></choseViewerRule>
+    <choseViewerRule ref="subjectRule" :subject_id="subject_id"></choseViewerRule>
   </div>
 </template>
 
@@ -221,7 +221,7 @@ export default {
     window.scrollTo(0,0)
   },
   mounted() {
-    if (this.$route.query.id) {
+    if (this.$route.params.id) {
       this.initInfo()
     }
   },
@@ -269,7 +269,7 @@ export default {
     // 获取专题 - 详情
     initInfo() {
       this.$fetch('subjectInfo', {
-        subject_id: this.$route.query.id
+        subject_id: this.$route.params.id
       }).then(res => {
         if (res.code == 200) {
           this.subjectInfo = {...res.data.webinar_subject};
@@ -294,7 +294,7 @@ export default {
     },
     goSetViewer() {
       this.$router.push({
-        path: `/special/${this.formData.viewer == 2 ? 'viewer' : 'signup'}/${this.$route.query.id}`
+        path: `/special/${this.formData.viewer == 2 ? 'viewer' : 'signup'}/${this.$route.params.id}`
       })
     },
     sendData(content) {
@@ -358,12 +358,7 @@ export default {
     },
 
     submitForm(formName) {
-    window.cd = this.formData
-    if (!this.$route.query.id) {
-      this.$refs.subjectRule.visible = true;
-      return;
-    }
-
+      window.cd = this.formData
       if (!this.formData.content) {
         this.$message({
           message: `请输入专题简介`,
@@ -403,13 +398,13 @@ export default {
           }
 
           this.loading = true;
-          let url = this.$route.query.id ? 'subjectEdit' : 'subjectCreate';
+          let url = this.$route.params.id ? 'subjectEdit' : 'subjectCreate';
 
           if(url == 'subjectEdit') {
             data.id = this.subject_id
           }
           this.$fetch(url, data).then(res=>{
-            if (!this.$route.query.id) {
+            if (!this.$route.params.id) {
               let refer = this.$route.query.refer || 2
               this.$vhall_paas_port({
                 k: 100489,
@@ -421,7 +416,7 @@ export default {
               this.setReportData(webinar_ids.length)
               this.subject_id = res.data.subject_id;
               this.$message({
-                message: this.$route.query.id ? '编辑成功' : `创建成功`,
+                message: this.$route.params.id ? '编辑成功' : `创建成功`,
                 showClose: true,
                 // duration: 0,
                 type: 'success',
@@ -429,14 +424,18 @@ export default {
               });
               // 保存或创建成功重置更改状态
               this.isChange = false
+              if (!this.$route.params.id) {
+                this.$refs.subjectRule.visible = true;
+                return;
+              }
               console.log(res);
-              setTimeout(()=>{
-                this.$router.push({path: '/special'});
-              }, 500);
+              // setTimeout(()=>{
+              //   this.$router.push({path: '/special'});
+              // }, 500);
             }
           }).catch(error=>{
             this.$message({
-              message: this.$route.query.id ? '编辑失败' : `创建失败，${error.msg}`,
+              message: this.$route.params.id ? '编辑失败' : `创建失败，${error.msg}`,
               showClose: true,
               // duration: 0,
               type: 'error',
