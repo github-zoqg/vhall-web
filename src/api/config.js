@@ -59,11 +59,11 @@ const apis = {
   viewAdv: ['/v3/interacts/recommend-adv/view-adv', 'GET'], //查看单条广告详情 •••
 
   //推广嵌入
-  getStreamPushList: ['/99/v3/webinars/stream/get-push-list', 'GET','mock'], //获取推流列表
-  updateStreamPushEnabled: ['/99/v3/webinars/stream/push-enabled', 'POST','mock'], //是否启动第三方推流
-  createStreamPush: ['/99/v3/webinars/stream/create-push', 'POST','mock'], //创建推流地址
-  updateStreamPush: ['/99/v3/webinars/stream/update-push', 'POST','mock'], //编辑推流地址
-  deleteStreamPush: ['/99/v3/webinars/stream/delete-push', 'POST','mock'], //删除推流地址
+  getStreamPushList: ['/v3/webinars/stream/get-push-list', 'GET'], //获取推流列表
+  updateStreamPushEnabled: ['/v3/webinars/stream/push-enabled', 'POST'], //是否启动第三方推流
+  createStreamPush: ['/v3/webinars/stream/create-push', 'POST'], //创建推流地址
+  updateStreamPush: ['/v3/webinars/stream/update-push', 'POST'], //编辑推流地址
+  deleteStreamPush: ['/v3/webinars/stream/delete-push', 'POST'], //删除推流地址
 
   //播放器设置
   setScrolling: ['/v3/interacts/players/set-scrolling-screen-config', 'POST'], //直播设置_设置播放器跑马灯 •••
@@ -687,7 +687,7 @@ const apis = {
 
   saveAgreement: ['/v3/interacts/agreement/save-agreement-info', 'POST'],
   getAgreement: ['/v3/interacts/agreement/get-agreement-info', 'POST'],
-  
+
   // 设置中心-标签设置
   labelCreate: ['/v3/webinars/label/create', 'POST'],
   labelList: ['/v3/webinars/label/get-list', 'POST'],
