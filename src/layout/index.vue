@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { throttle } from 'lodash';
 import { Navbar, Sidebar, AppMain } from './components';
 export default {
   components: { Sidebar, Navbar, AppMain },
@@ -47,22 +48,22 @@ export default {
     window.removeEventListener("scroll", this.handleScroll);
   },
   methods: {
-    handleScroll() {
+    handleScroll: throttle(function(event) {
       let scrollHeight = document.documentElement.scrollTop || document.body.scrollTop; //滚动高度
       if (scrollHeight > 40) {
         this.showShadow = true;
       } else {
         this.showShadow = false;
       }
-    }
+    }, 300)
   }
 };
 </script>
 
 <style lang="less" scoped>
-@color_f7: #F7F7F7;
-@color_1A: #1A1A1A;
-@color_ff: #FFFFFF;
+@color_f7: #f7f7f7;
+@color_1A: #1a1a1a;
+@color_ff: #ffffff;
 /*头部*/
 .header__nav {
   background: @color_ff;
@@ -73,7 +74,7 @@ export default {
   z-index: 100;
   height: 64px;
 }
-.show-shadow{
+.show-shadow {
   box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.05);
 }
 /*主体*/

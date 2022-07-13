@@ -29,7 +29,6 @@
   </div>
 </template>
 <script>
-import {VHall_Questionnaire_Service, VHall_Questionnaire_Const} from './js/questionnaire_service';
 import { sessionOrLocal } from '@/utils/utils';
 export default {
   data() {

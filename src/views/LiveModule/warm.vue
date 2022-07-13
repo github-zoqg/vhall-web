@@ -13,7 +13,117 @@
     </pageTitle>
     <div class="content">
       <el-form :model="warmForm" ref="warmForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="选择视频" required>
+        <el-form-item label="视频封面">
+          <span style="color:#999">设置暖场封面后，预告状态将会使用该封面</span>
+          <upload
+            class="upload__avatar"
+            v-model="warmForm.imageUrl"
+            :domain_url="domain_url"
+            :saveData="{
+              path: 'users/logo-imgs',
+              type: 'image',
+            }"
+            :disabled='!warmForm.warmFlag'
+            :on-success="handleUploadSuccess"
+            :on-progress="uploadProcess"
+            :on-error="uploadError"
+            :on-preview="uploadPreview"
+            :before-upload="beforeUploadHandler"
+            @delete="warmForm.warmFlag && deleteImg()">
+            <div slot="tip">
+              <p>建议尺寸：1280*720px，小于4M</p>
+              <p>支持jpg、gif、png、bmp</p>
+            </div>
+          </upload>
+        </el-form-item>
+         <el-form-item label="播放模式" required  prop="playType">
+           <el-radio-group v-model="warmForm.playType">
+              <el-radio :label="1">单次播放</el-radio>
+              <el-radio :label="2">循环播放</el-radio>
+            </el-radio-group>
+        </el-form-item>
+        <el-form-item label="选择视频" required prop="selectedList">
+          <span class="add_video" @click="warmForm.warmFlag && changeVideo()">
+           <i class="iconfont-v3 saasline-plus"></i>
+           添加视频
+          </span>
+           <el-tooltip v-tooltipMove>
+            <div slot="content">
+              1.视频仅支持MP4格式，转码成功后文件大小不超过500M<br/>
+              2.上传视频标题不能带有特殊字符和空格，需转码完成才能预览和观看<br/>
+              3.点播、音频直播不支持暖场视频<br/>
+              4.最多支持添加10个暖场视频
+            </div>
+            <i class="iconfont-v3 saasicon_help_m tip"></i>
+          </el-tooltip>
+          <div class="vh-sort-tables" v-show="warmForm.selectedList.length">
+            <div class="vh-sort-tables__theader">
+              <div class="vh-sort-tables__theader-id">
+                序号
+              </div>
+              <div class="vh-sort-tables__theader-title">
+                视频名称
+              </div>
+              <div class="vh-sort-tables__theader-date">
+                上传日期
+              </div>
+              <div class="vh-sort-tables__theader-hots">
+                时长
+              </div>
+              <div class="vh-sort-tables__theader-status">
+                转码后大小
+              </div>
+              <div class="vh-sort-tables__theader-editor">
+                操作
+              </div>
+            </div>
+             <div class="vh-sort-tables__tbody">
+                <draggable
+                :list="warmForm.selectedList"
+                chosenClass="vh-sort-tables__tbody-selected"
+                >
+                  <div
+                  class="vh-sort-tables__tbody-tr"
+                  v-for="(item, index) in warmForm.selectedList"
+                  :key="index"
+                  >
+                    <div class="vh-sort-tables__tbody-id">
+                      {{ index + 1 }}
+                    </div>
+                    <el-tooltip placement="top" effect="dark" v-tooltipMove>
+                      <div slot="content">{{ item.record_name || item.name }}</div>
+                      <div class="vh-sort-tables__tbody-title" @click.stop="previewVideo(item)">
+                        {{ item.record_name || item.name }}
+                      </div>
+                    </el-tooltip>
+                    <!-- <div class="vh-sort-tables__tbody-title" @click.stop="previewVideo(item)" >
+                      {{ item.record_name || item.name }}
+                    </div> -->
+                    <div class="vh-sort-tables__tbody-date">
+                      <template>
+                      {{ item.created_at.substring(0, 16) }}
+                      </template>
+                    </div>
+                    <div class="vh-sort-tables__tbody-hots">
+                      {{ item.duration }}
+                    </div>
+                    <div class="vh-sort-tables__tbody-status">
+                      {{ item.storage }}
+                    </div>
+                    <div class="vh-sort-tables__tbody-editor">
+                      <el-tooltip class="item" effect="dark" content="删除" placement="top" v-tooltipMove>
+                        <i class="iconfont-v3 saasicon-trash" @click.prevent.stop="deleteSpecial(item.paas_record_id)"></i>
+                      </el-tooltip>
+                      <el-tooltip class="item" effect="dark" content="移动" placement="top" v-tooltipMove>
+                        <i class="iconfont-v3 saasicon_move"></i>
+                      </el-tooltip>
+                    </div>
+                  </div>
+                </draggable>
+              </div>
+          </div>
+        </el-form-item>
+        <!-- <el-form-item label="选择视频" required>
           <div class="selet-video" @mouseenter="showMenu" @mouseleave="hiddenMenu">
             <div class="mediaSlot" v-if="!selectMedia.paas_record_id" @click="warmForm.warmFlag && changeVideo()">
               <div class="picInco">
@@ -38,42 +148,15 @@
               </div>
             </div>
           </div>
-        </el-form-item>
-        <!-- <el-form-item label="播放模式" required  prop="resource">
-           <el-radio-group v-model="warmForm.resource">
-              <el-radio label="单次播放" :disabled='!warmFlag'></el-radio>
-            </el-radio-group>
         </el-form-item> -->
-        <el-form-item label="视频封面">
-          <upload
-            class="upload__avatar"
-            v-model="warmForm.imageUrl"
-            :domain_url="domain_url"
-            :saveData="{
-              path: 'users/logo-imgs',
-              type: 'image',
-            }"
-            :disabled='!warmForm.warmFlag'
-            :on-success="handleUploadSuccess"
-            :on-progress="uploadProcess"
-            :on-error="uploadError"
-            :on-preview="uploadPreview"
-            :before-upload="beforeUploadHandler"
-            @delete="warmForm.warmFlag && deleteImg()">
-            <div slot="tip">
-              <p>建议尺寸：1280*720px，小于4M</p>
-              <p>支持jpg、gif、png、bmp</p>
-            </div>
-          </upload>
-        </el-form-item>
-        <el-form-item>
+        <el-form-item class="warm_submit">
           <el-button round class="length152" :disabled='!warmForm.warmFlag' type="primary" @click="submitForm('warmForm')" v-preventReClick>提交</el-button>
         </el-form-item>
       </el-form>
       <div class="white-box" v-show="!warmForm.warmFlag">
       </div>
     </div>
-    <selectMedias ref="selecteMedia" @selected='mediaSelected' :videoSize="videoSize" :videoType="videoType" @closeWarm="closeWarm"></selectMedias>
+    <selectMedias ref="selecteMedia" :isWarmVideo="true" @selected='mediaSelected' :selectedList="warmVideoList" :videoSize="videoSize" :videoType="videoType" @closeWarm="closeWarm"></selectMedias>
     <!-- 预览 -->
     <template v-if="showDialog">
       <div class="preview-wrap">
@@ -91,6 +174,7 @@ import PageTitle from '@/components/PageTitle';
 import Upload from '@/components/Upload/main';
 import beginPlay from '@/components/beginBtn';
 import selectMedias from './selecteMedia';
+import draggable from "vuedraggable";
 import {sessionOrLocal} from "@/utils/utils";
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 export default {
@@ -99,7 +183,8 @@ export default {
     Upload,
     selectMedias,
     VideoPreview,
-    beginPlay
+    beginPlay,
+    draggable
   },
    watch: {
     warmForm: {
@@ -115,7 +200,7 @@ export default {
       warmFlag: false,
       loading: false,
       isChange: false,
-      videoSize: '200',
+      videoSize: '500.1',
       videoType: 'MP4',
       warmId: '',
       userId: '',
@@ -124,10 +209,17 @@ export default {
       warmForm: {
         record_id: '',
         imageUrl: '',
+        playType: 1,
+        selectedList:[],
         warmFlag: false
       },
       domain_url: ''
     };
+  },
+  computed: {
+    warmVideoList() {
+      return JSON.parse(JSON.stringify(this.warmForm.selectedList || []))
+    }
   },
   created() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -206,12 +298,14 @@ export default {
           this.warmId = res.data.warm_id;
           this.domain_url = res.data.img_url;
           this.warmForm.imageUrl = res.data.img_url;
-          if (res.data.record_id) {
-            this.selectMedia.paas_record_id = res.data.record_id;
-            this.selectMedia.name = res.data.record_name;
-            this.selectMedia.msg_url = '.mp4';
-          }
-          this.warmForm.record_id = res.data.record_id;
+          this.warmForm.playType = res.data.player_type || 1;
+          this.warmForm.selectedList = res.data.record_list || [];
+          // if (res.data.record_id) {
+          //   this.selectMedia.paas_record_id = res.data.record_id;
+          //   this.selectMedia.name = res.data.record_name;
+          //   this.selectMedia.msg_url = '.mp4';
+          // }
+          // this.warmForm.record_id = res.data.record_id;
           // 重置修改状态
           setTimeout(() => {
             this.isChange = false
@@ -222,12 +316,40 @@ export default {
     changeVideo() {
       this.$refs.selecteMedia.dialogVisible = true;
     },
-    mediaSelected(media){
-      this.selectMedia = media;
-      this.warmForm.record_id = media.paas_record_id;
+    deleteSpecial(id) {
+      this.$confirm('删除后将会影响暖场视频的演示和观看，确认删除？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel'
+      }).then(() => {
+        this.warmForm.selectedList.map((item, index) => {
+          if (item.paas_record_id === id) {
+            this.warmForm.selectedList.splice(index, 1)
+          }
+        })
+      })
+    },
+    mediaSelected(selectedActives){
+      this.warmForm.selectedList = selectedActives.map(item => {
+        return {
+          record_name: item.name || item.record_name,
+          duration: item.duration,
+          paas_record_id: item.paas_record_id,
+          created_at: item.created_at,
+          storage: item.storage
+        }
+      });
+       console.log(selectedActives,this.warmForm.selectedList, '???134')
+      // let id = 'paas_record_id';
+      // this.warmForm.selectedList = selectedActives.reduce((all, next) => all.some((atom) => atom[id] == next[id]) ? all : [...all, next],[]);
     },
     // 预览
-    previewVideo() {
+    previewVideo(item) {
+      this.selectMedia.paas_record_id = item.paas_record_id;
+      this.selectMedia.name = item.record_name || item.name;
+      this.selectMedia.msg_url = '.mp4';
       this.showDialog = true;
     },
     // 删除
@@ -251,7 +373,7 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 4;
       if (!isType) {
         this.$message({
-          message: "上传封面图片只能是 ${typeList.join('、')} 格式",
+          message: `上传封面图片只能是 ${typeList.join('、')} 格式`,
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -288,7 +410,12 @@ export default {
       console.log('uploadPreview', file);
     },
     submitForm(){
-      if(this.warmForm.record_id == ''){
+      let recordId = [];
+      this.warmForm.selectedList.map(item => {
+        recordId.push(item.paas_record_id);
+      })
+      console.log(recordId, '???12312435')
+      if(!recordId.length){
         this.$message({
           message: "请上传暖场视频",
           showClose: true,
@@ -297,16 +424,17 @@ export default {
           customClass: 'zdy-info-box'
         });
       }else{
-        this.saveWarmInfo();
+        this.saveWarmInfo(recordId);
       }
     },
-    saveWarmInfo() {
+    saveWarmInfo(recordId) {
       let params = {
         is_open_warm_video: Number(this.warmForm.warmFlag),
         img_url:  this.warmForm.imageUrl,
+        player_type: this.warmForm.playType,
         webinar_id: this.$route.params.str,
         warm_id: this.warmId,
-        record_id: this.warmForm.record_id
+        record_id: recordId.join(',')
       }
       this.$fetch('warnEdit', this.$params(params)).then(res => {
         if (this.warmForm.imageUrl) {
@@ -363,6 +491,10 @@ export default {
     z-index: 9;
   }
 }
+.saasicon_help_m{
+  margin-left: 5px;
+  color: #999;
+}
 /deep/.upload__avatar{
   .mask{
     top:0;
@@ -394,6 +526,9 @@ export default {
 .el-role-switch{
   margin-left: 8px;
   vertical-align: sub;
+}
+.warm_submit{
+  margin-top: 32px;
 }
 .wramUp-wrap::v-deep{
   .avatar-uploader .el-upload {
@@ -558,6 +693,127 @@ export default {
 .box{
   text-align: center;
 }
+.add_video{
+  display: inline-block;
+  width: 110px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  text-align: center;
+  color: #000;
+  font-size: 14px;
+  cursor: pointer;
+  i{
+    color: #262626;
+    font-size: 14px;
+  }
+
+}
+ .vh-sort-tables{
+    position: relative;
+    width: 640px;
+    font-size: 14px;
+    font-weight: 400;
+    margin-top: 16px;
+
+
+    &__theader{
+      height: 40px;
+      line-height: 40px;
+      background: #F7F7F7;
+      color: #666666;
+      display: flex;
+      &>div{
+        display: inline-block;
+      }
+      &-id{
+        width: 77px;
+        padding-left: 24px;
+        box-sizing: border-box;
+      }
+      &-title{
+        width: 165px;
+        padding: 0 10px;
+      }
+      &-status{
+        width: 120px;
+      }
+      &-date{
+        width: 160px;
+        padding: 0 10px;
+      }
+      &-hots{
+        width: 100px;
+      }
+      &-editor{
+        width: 86px;
+      }
+    }
+
+    &__tbody{
+      // height: 200px;
+      // overflow-y: auto;
+      &-tr{
+        // border: 1px solid #FB3A32;
+        border-bottom: 1px solid #E6E6E6;
+        height: 40px;
+        line-height: 40px;
+        font-size: 14px;
+        color: #1A1A1A;
+        word-break: keep-all;
+        display: flex;
+        &>div{
+          display: inline-block;
+          vertical-align: top;
+        }
+      }
+      &-selected {
+        border: 1px solid #FB3A32;
+      }
+
+      &-id{
+        width: 77px;
+        padding-left: 24px;
+        box-sizing: border-box;
+      }
+      &-title{
+        width: 165px;
+        padding: 0 10px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-break: break-all;
+        cursor: pointer;
+        color: #3562FA;
+        &:hover{
+          color: #FB3A32;
+        }
+      }
+
+      &-hots{
+        width: 100px;
+      }
+      &-status{
+        width: 120px;
+      }
+      &-date{
+        width: 160px;
+        padding: 0 10px;
+      }
+      &-editor{
+        width: 86px;
+        i{
+          font-size: 20px;
+          margin: 0 5px;
+          cursor: pointer;
+          &:hover{
+            color: #FB3A32;
+          }
+        }
+      }
+    }
+  }
 
 
 </style>
