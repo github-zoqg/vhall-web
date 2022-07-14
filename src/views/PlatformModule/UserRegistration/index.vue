@@ -81,17 +81,7 @@
       <null-page class="search-no-data" :height="0" v-if="userDao && userDao.total === 0"></null-page>
     </div>
     <!-- 快速报名 -->
-    <VhallDialog
-      width="460px"
-      :visible.sync="addUserVisible"
-      title="快速报名"
-      class="user-add-dialog"
-      append-to-body>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click.prevent.stop="saveAddUser" size="medium" round>确 定</el-button>
-        <el-button @click="cancelAddUser" size="medium" round>取 消</el-button>
-      </span>
-    </VhallDialog>
+    <add-user-form :visible="addUserVisible" @close="cancelAddUser"></add-user-form>
     <!-- 导入报名用户excel -->
     <VhallDialog title="导入用户"
       :visible.sync="importFileShow"
@@ -164,11 +154,14 @@
 <script>
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
 import FileUpload from '@/components/FileUpload/main';
+import AddUserForm from './components/addUserForm.vue';
+
 export default {
   name: "roleList.vue",
   components: {
     NullPage,
-    FileUpload
+    FileUpload,
+    AddUserForm
   },
   data() {
     return {
@@ -257,9 +250,6 @@ export default {
     // 关闭-快速报名弹窗
     cancelAddUser(){
       this.addUserVisible = false;
-    },
-    // 保存
-    saveAddUser() {
     },
     // 获取列表数据
     getUserRegistrationList(row) {
