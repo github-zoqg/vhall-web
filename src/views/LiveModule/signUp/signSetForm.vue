@@ -152,6 +152,7 @@ export default {
         } else {
           this.menuBarFixed = ''
         }
+        this.$emit('changeTabsFixed', this.menuBarFixed)
         return false
       }
       // 对 1920*1080 屏幕缩放 150% 进行兼容
@@ -164,6 +165,7 @@ export default {
       } else {
         this.menuBarFixed = ''
       }
+      this.$emit('changeTabsFixed', this.menuBarFixed)
       this.scrollTop = scrollTop
     },
     // 切换组件
@@ -610,13 +612,13 @@ export default {
     position: relative;
     .isFixed {
       position:fixed!important;
-      top:70px;
+      top: 125px;
       z-index:999;
     }
     .isFixedBottom {
       position:fixed!important;
       z-index:999;
-      top:70px;
+      top: 115px;
       section{
         &.block{
           display: none;
@@ -627,11 +629,14 @@ export default {
       width: 170px;
       float: left;
       position: relative;
+      padding-top: 10px;
+      background: #ffffff;
       .block{
         font-size: 16px;
         color: #666666;
         height: 40px;
         line-height: 40px;
+        padding-left: 21px;
       }
       .block-bto{
         margin-top: 10px;
@@ -643,6 +648,7 @@ export default {
         height: 40px;
         line-height: 40px;
         cursor: pointer;
+        padding-left: 21px;
         &:hover {
           color: #FB3A32!important;
           i{
@@ -675,6 +681,11 @@ export default {
       width: calc(100% - 170px);
       float: right;
       position: relative;
+      background: #F7F7F7;
+      padding-top: 16px;
+      .fieldSetBox {
+        margin-left: 20px;
+      }
     }
     .disable_wrap{
       position: absolute;

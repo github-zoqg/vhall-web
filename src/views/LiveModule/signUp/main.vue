@@ -11,6 +11,9 @@
             @change="switchRegForm"
             :active-text="signUpSwtichDesc">
           </el-switch>
+          <span class="sign-switch-desc">
+            {{ signUpSwtich ? '已开启' : '开启后'}}，如直播关联专题，届时会以专题鉴权为准，请点<a href="javascript:void(0)" @click="showDetailDialog">查看详情</a>确认此表单是否生效。
+          </span>
         </div>
         <div class="headBtnGroup">
           <el-button round size="medium" class="transparent-btn" @click="openDialog('theme')">设置</el-button>
@@ -20,13 +23,15 @@
       </pageTitle>
       <div class="signup-main-center">
         <!-- tab切换 -->
-        <el-tabs v-model="tabType" @tab-click="handleClick">
-          <el-tab-pane label="表单设置" name="form"></el-tab-pane>
-          <el-tab-pane label="用户报名" name="user"></el-tab-pane>
-        </el-tabs>
+        <div id="signTabsDom" class="signup-tabs-layout">
+          <el-tabs v-model="tabType" @tab-click="handleClick" :class="[menuBarFixed]">
+            <el-tab-pane label="表单设置" name="form"></el-tab-pane>
+            <el-tab-pane label="用户报名" name="user"></el-tab-pane>
+          </el-tabs>
+        </div>
         <!-- 报名表单 -->
-        <sign-set-form v-if="tabType ==='form'"></sign-set-form>
-        <user-manage v-else></user-manage>
+        <sign-set-form  ref="signSetFormDom" v-if="tabType ==='form'" @changeTabsFixed="changeTabsFixed"></sign-set-form>
+        <user-manage ref="userManageDom" v-else :webinar_id="webinar_id"></user-manage>
       </div>
     </div>
     <shareDialog
@@ -108,9 +113,9 @@ export default {
   computed: {
     signUpSwtichDesc(){
       if(this.signUpSwtich){
-        return '已开启，观看直播需要填写报名表单';
+        return '';// '已开启，观看直播需要填写报名表单';
       }else{
-        return '开启后，观看直播需要填写报名表单';
+        return '';// '开启后，观看直播需要填写报名表单';
       }
     },
     ques() {
@@ -139,41 +144,29 @@ export default {
   },
   created(){
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
-    this.getBaseInfo();
-    this.getQuestionList();
   },
   mounted() {
-    window.addEventListener('scroll', this.handleScroll)
+    if (this.$route.query.tab == 2) {
+      this.tabType = 'user'
+      this.$refs.userManageDom && this.$refs.userManageDom.initComp()
+    } else {
+      this.tabType = 'form'
+      this.$refs.signSetFormDom && this.$refs.signSetFormDom.initComp()
+    }
   },
   beforeDestroy() {
-    window.removeEventListener('scroll', this.handleScroll)
   },
   methods: {
     // 切换tab
     handleClick(tab, event) {
+      let tabCount = this.tabType === 'form' ? 1 : this.tabType === 'user' ? 2 : 0;
+      this.$router.push({path: `/live/signup/${this.$route.params.str}`, query: {
+        ...this.$route.query,
+        tab: tabCount
+      }})
     },
-    handleScroll () {
-      let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
-      let offsetTop = document.querySelector('#settingBox').offsetTop
-      if (document.body.clientWidth > 1280) {
-        if (scrollTop > offsetTop) {
-          this.menuBarFixed = 'isFixed'
-        } else {
-          this.menuBarFixed = ''
-        }
-        return false
-      }
-      // 对 1920*1080 屏幕缩放 150% 进行兼容
-      if(scrollTop > this.scrollTop && scrollTop > offsetTop) {
-        // 向下滚
-        this.menuBarFixed = 'isFixedBottom'
-      } else if (scrollTop < this.scrollTop && scrollTop > offsetTop) {
-        // 向上滚
-        this.menuBarFixed = 'isFixed'
-      } else {
-        this.menuBarFixed = ''
-      }
-      this.scrollTop = scrollTop
+    changeTabsFixed(menuBarFixed) {
+      this.menuBarFixed = menuBarFixed;
     },
     // 切换组件
     closePreview() {
@@ -556,7 +549,9 @@ export default {
         })
       }
       this.$refs[ref].dialogVisible = true;
-    }
+    },
+    // 打开报名表单详情弹窗说明
+    showDetailDialog() {}
   }
 };
 </script>
@@ -574,10 +569,38 @@ export default {
     /deep/ .el-switch.is-checked .el-switch__core::after {
       margin-left: -13px;
     }
+    .isTabFixedBottom {
+      position: fixed!important;
+      z-index: 1000;
+      top: 60px;
+      background: #ffffff;
+      width: 100%;
+    }
   }
   .signup-main-center {
     min-height: 612px;
     background: #ffffff;
+    .signup-tabs-layout {
+      .isFixed {
+        width: 100%;
+        background: #ffffff;
+        position:fixed!important;
+        top:60px;
+        z-index: 1000;
+      }
+      .isFixedBottom {
+        width: 100%;
+        background: #ffffff;
+        position:fixed!important;
+        z-index: 1000;
+        top:60px;
+        section{
+          &.block{
+            display: none;
+          }
+        }
+      }
+    }
   }
   /deep/ .el-switch__label--right,/deep/ .el-switch__label--left{
     color: #999999;
@@ -591,6 +614,21 @@ export default {
   .switchBox{
     display: inline-flex;
     height: 100%;
+    .sign-switch-desc {
+      color: #999999;
+      display: inline-block;
+      line-height: 20px;
+      margin: 0 0;
+      padding: 0 0;
+      height: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      vertical-align: middle;
+      margin-left: 10px;
+      a {
+        color: #3562FA;
+      }
+    }
   }
   .headBtnGroup{
     float: right;
