@@ -57,10 +57,10 @@
           </el-switch>
       </p>
       <el-form-item label="观看限制" required v-if="this.$route.params.id">
-        <el-radio v-model="formData.viewer" :label="1">无统一限制，采用直播自己的</el-radio> <br/>
-        <el-radio v-model="formData.viewer" :label="2">统一观看限制，各直播自己的失效</el-radio><br/>
-        <el-radio v-model="formData.viewer" :label="3">统一报名表单，各直播自己的失效</el-radio>
-        <div v-if="formData.viewer>1"><el-button type="primary" size="small" v-preventReClick round @click="goSetViewer">去设置</el-button></div>
+        <el-radio v-model="formData.viewer" :label="0">无统一限制，采用直播自己的</el-radio> <br/>
+        <el-radio v-model="formData.viewer" :label="1">统一观看限制，各直播自己的失效</el-radio><br/>
+        <el-radio v-model="formData.viewer" :label="2">统一报名表单，各直播自己的失效</el-radio>
+        <!-- <div v-if="formData.viewer>1"><el-button type="primary" size="small" v-preventReClick round @click="goSetViewer">去设置</el-button></div> -->
       </el-form-item>
       <el-form-item label="专题目录" required>
         <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
@@ -140,7 +140,8 @@
         </div>
       </el-form-item>
       <el-form-item label="">
-        <el-button type="primary" class="length152" :disabled="!formData.title" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
+        <el-button type="primary" class="length152" v-if="this.$route.params.id" :disabled="!formData.title" @click="submitForm('ruleForm', 1)" v-preventReClick round>保存</el-button>
+        <el-button type="primary" class="length152" :disabled="!formData.title" @click="submitForm('ruleForm', 2)" v-preventReClick round>{{this.$route.params.id ? '设置权限' : '下一步'}}</el-button>
         <el-button class="length152"  @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
       </el-form-item>
     </el-form>
@@ -151,7 +152,6 @@
       @cacelSelect="showActiveSelect = false"
       @selectedEvent="doSelectedActives"
     ></chose-actives>
-    <choseViewerRule ref="subjectRule" :subject_id="subject_id"></choseViewerRule>
   </div>
 </template>
 
@@ -162,7 +162,7 @@ import upload from '@/components/Upload/main';
 import VEditor from '@/components/Tinymce';
 import Env from "@/api/env";
 import ChoseActives from './components/choseLiveList'
-import choseViewerRule from './components/ruleDialog.vue'
+
 import { sessionOrLocal } from "@/utils/utils";
 
 export default {
@@ -172,7 +172,6 @@ export default {
     upload,
     ChoseActives,
     draggable,
-    choseViewerRule
   },
   computed: {
     reservationDesc(){
@@ -194,14 +193,14 @@ export default {
       formData: {
         selectedActives: [],
         title: '',
-        viewer: 1,
+        viewer: 0,
         reservation: true,
         imageUrl: '',
         domain_url:'',
         content: '',
         hot: true,
         home: true,
-        total:0
+        total: 0
       },
       subject_id: '',
       subjectInfo: {
@@ -284,7 +283,7 @@ export default {
           this.formData.home = res.data.webinar_subject.is_open ? false : true // 是否显示个人主页
           this.formData.hot = Boolean(res.data.webinar_subject.hide_pv) // 是否显示 人气
           this.formData.reservation = Boolean(res.data.webinar_subject.hide_appointment) // 是否显示预约人数
-
+          this.formData.viewer = res.data.webinar_subject.subject_verify;
           // 重置修改状态
           setTimeout(() => {
             this.isChange = false
@@ -294,7 +293,7 @@ export default {
     },
     goSetViewer() {
       this.$router.push({
-        path: `/special/${this.formData.viewer == 2 ? 'viewer' : 'signup'}/${this.$route.params.id}`
+        path: `/special/${this.formData.viewer == 1 ? 'viewer' : 'signup'}/${this.$route.params.id}`
       })
     },
     sendData(content) {
@@ -356,8 +355,8 @@ export default {
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
-
-    submitForm(formName) {
+    // 下一步：2； 保存：1
+    submitForm(formName, index) {
       window.cd = this.formData
       if (!this.formData.content) {
         this.$message({
@@ -391,6 +390,7 @@ export default {
             is_private: this.formData.home ? 0 : 1,
             hide_appointment: Number(this.formData.reservation),
             hide_pv: Number(this.formData.hot),
+            subject_verify: this.formData.viewer
           };
 
           if (webinar_ids.length) {
@@ -424,9 +424,11 @@ export default {
               });
               // 保存或创建成功重置更改状态
               this.isChange = false
-              if (!this.$route.params.id) {
-                this.$refs.subjectRule.visible = true;
-                return;
+              if (index == 1) {
+                this.$router.push({path: '/special'});
+              } else {
+                let subject_id = this.subject_id || this.$route.params.id;
+                this.$router.push({path: `/special/viewer/${subject_id}`});
               }
               console.log(res);
               // setTimeout(()=>{

@@ -118,6 +118,14 @@ const apis = {
   subjectInfo: ['/v3/webinars/subject/info', 'POST'], // 获取专题详情接口(专题预览)
   subjectDel: ['/v3/webinars/subject/delete', 'POST'], // 专题删除接口 •••
   btachSubject: ['/v3/webinars/subject/get-batch-info', 'POST'],
+
+  // 专题鉴权
+  subjectCheck: ['/v3/webinars/subject/check-edit-subject', 'POST'], //专题修改前请求判断活动是否与其他专题重合
+  createSubjectCode: ['/v3/webinars/subject/post-generate-fcode', 'POST'], //创建f码
+  downloadSubjectCode: ['/v3/webinars/subject/export-fcode', 'POST'], //邀请码下载
+  createSubjectVerify: ['/v3/webinars/subject/save-verify', 'POST'], //专题观看限制保存接口
+
+
   // 角色邀请
   privilegeInfo:  ['/v3/webinars/privilege/info', 'POST'], // 获取活动角色配置接口  √
   privilegeOpen:  ['/v3/webinars/privilege/open-privilege', 'POST'], // 开启关闭角色开关  √
@@ -680,7 +688,7 @@ const apis = {
 
   saveAgreement: ['/v3/interacts/agreement/save-agreement-info', 'POST'],
   getAgreement: ['/v3/interacts/agreement/get-agreement-info', 'POST'],
-  
+
   // 设置中心-标签设置
   labelCreate: ['/v3/webinars/label/create', 'POST'],
   labelList: ['/v3/webinars/label/get-list', 'POST'],

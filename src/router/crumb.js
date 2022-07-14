@@ -919,7 +919,7 @@ export function CrumbSet(metaName, that) {
     ]
   }
   else if (metaName === 'specialEdit') {// 创建专题、编辑专题
-    return that.$route.query.id ? [
+    return that.$route.params.id ? [
       {
         title: '专题管理',
         path: '/special',
@@ -958,12 +958,7 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       },
       {
-        title: '编辑专题',
-        path:  `/special/edit/${that.$route.params.id}`,
-        isClick: true
-      },
-      {
-        title: '观看限制',
+        title: '观看鉴权',
         path: '/special/viewer',
         isClick: true
       }
@@ -977,8 +972,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       },
       {
-        title: '编辑专题',
-        path: `/special/edit/${that.$route.params.id}`,
+        title: '观看鉴权',
+        path: `/special/viewer/${that.$route.params.id}`,
         isClick: true
       },
       {
