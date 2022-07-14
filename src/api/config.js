@@ -680,7 +680,7 @@ const apis = {
 
   saveAgreement: ['/v3/interacts/agreement/save-agreement-info', 'POST'],
   getAgreement: ['/v3/interacts/agreement/get-agreement-info', 'POST'],
-  
+
   // 设置中心-标签设置
   labelCreate: ['/v3/webinars/label/create', 'POST'],
   labelList: ['/v3/webinars/label/get-list', 'POST'],
@@ -688,7 +688,10 @@ const apis = {
   labelDelete: ['/v3/webinars/label/delete', 'POST'],
   labelEdit: ['/v3/webinars/label/edit', 'POST'],
   labelResetOrder: ['/v3/webinars/label/reset-order', 'POST'],
-  labelTop: ['/v3/webinars/label/top', 'POST']
+  labelTop: ['/v3/webinars/label/top', 'POST'],
+
+  // 首页-广告
+  getBannerSetInfo: ['/v3/interacts/banner/get-banner', 'GET']
 };
 
 const getApi = api => {
