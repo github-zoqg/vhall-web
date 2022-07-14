@@ -188,6 +188,7 @@
           >
         </p>
       </template>
+      <div class="give-white" v-show="!streamOpen"></div>
     </div>
     <begin-play
       :webinarId="$route.params.str"
@@ -207,9 +208,9 @@
         ref="editParamsForm"
         :rules="rules"
       >
-        <el-form-item label="平台名称" prop="platform">
+        <el-form-item label="平台名称" prop="pf_name">
           <VhallInput
-            v-model="editParams.platform"
+            v-model="editParams.pf_name"
             v-clearEmoij
             show-word-limit
             :maxlength="10"
@@ -290,7 +291,7 @@ export default {
       tabelColumn: [
         {
           label: '平台名称',
-          key: 'platform',
+          key: 'pf_name',
         },
         {
           label: '推流地址',
@@ -318,7 +319,7 @@ export default {
       ],
       editParams: {
         push_id: '', //推流id
-        platform: '', //platform
+        pf_name: '', //pf_name
         dest_url: '', //第三方推流地址
         oversea: 0, //推流类型：1-海外，0-国内（默认）
       },
@@ -547,7 +548,7 @@ export default {
     // 编辑
     edit(that, { rows }) {
       that.editParams.push_id = rows.push_id
-      that.editParams.platform = rows.platform
+      that.editParams.pf_name = rows.pf_name
       that.editParams.dest_url = rows.dest_url
       that.editParams.oversea = rows.oversea
       that.dialogVisible = true
@@ -627,7 +628,7 @@ export default {
     // 取消编辑
     handleCancelEdit() {
       this.editParams.push_id = ''
-      this.editParams.platform = ''
+      this.editParams.pf_name = ''
       this.editParams.dest_url = ''
       this.editParams.oversea = 0
       this.dialogVisible = false
@@ -642,6 +643,12 @@ export default {
         .then((res) => {
           //关闭时提交
           if (!this.streamOpen) {
+            this.tableData.map((item) => {
+              if (item.push_status == 1) {
+                item.push_status = 0
+              }
+              item.pushStatusTxt = PushStatus[item.push_status]
+            })
             this.$vhall_paas_port({
               k: 100852,
               data: {
@@ -655,6 +662,8 @@ export default {
                 req_url: '',
               },
             })
+          } else {
+            this.getTableList()
           }
         })
         .catch((res) => {
@@ -723,6 +732,15 @@ export default {
     }
     .stream-list {
       height: 504px;
+    }
+    .give-white {
+      position: absolute;
+      width: 100%;
+      height: 570px;
+      top: 60px;
+      left: 0;
+      background: rgba(255, 255, 255, 0.5);
+      z-index: 9;
     }
   }
   h3 {
