@@ -689,7 +689,8 @@ const apis = {
   labelEdit: ['/v3/webinars/label/edit', 'POST'],
   labelResetOrder: ['/v3/webinars/label/reset-order', 'POST'],
   labelTop: ['/v3/webinars/label/top', 'POST'],
-
+  // 首页-广告
+  getBannerSetInfo: ['/v3/interacts/banner/get-banner', 'GET'],
   // 报名用户
   userRegistrationList: ['/v3/webinars/registration-form/get-list', 'POST'], // 用户报名-列表
   userRegistrationAdd: ['/v3/webinars/registration-form/import-one', 'POST'], // 用户报名-快速报名
