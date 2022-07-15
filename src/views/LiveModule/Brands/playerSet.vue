@@ -254,7 +254,7 @@
                     <span @click="choseSpeed">{{ speedText}}</span>
                   </div>
                   <div class="barrage-box">
-                    <i class="iconfont-v3 saasdanmukai_icon" v-if="formOther.bulletChat"></i>
+                    <i class="iconfont-v3 saasline-barrage-off" v-if="formOther.bulletChat"></i>
                     <!-- <i class="iconfont-v3 saasdanmuguan_icon" v-if="!formOther.bulletChat"></i> -->
                   </div>
                   <div class="volume-box">
@@ -1576,7 +1576,7 @@ export default {
           .barrage-box{
             display: inline-block;
             i{
-              font-size: 22px;
+              font-size: 16px;
               vertical-align: middle;
             }
           }
