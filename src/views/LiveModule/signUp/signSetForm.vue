@@ -39,6 +39,16 @@
       ></signUpForm>
       <!-- <div class="disable_wrap" v-if="!signUpSwtich"></div> -->
     </div>
+    <shareDialog
+      :baseInfo="baseInfo"
+      @setBaseInfo="setBaseInfo"
+      ref="share"
+    ></shareDialog>
+    <themeSet
+      :baseInfo="baseInfo"
+      @setBaseInfo="setBaseInfo"
+      ref="theme"
+    ></themeSet>
   </div>
 </template>
 
@@ -47,15 +57,29 @@ import fieldSet from './fieldSet';
 import signUpForm from './components/signUpForm.vue';
 import {getfiledJson} from './util';
 import { sessionOrLocal } from '@/utils/utils';
+import shareDialog from './shareDialog';
+import themeSet from './themeSet';
 export default {
   components: {
     fieldSet,
-    signUpForm
+    signUpForm,
+    shareDialog,
+    themeSet
+  },
+  props: {
+    // 活动ID
+    webinar_id: {
+      type: [Number, String],
+      default: 0
+    },
+    // 专题ID
+    subject_id: {
+      type: [Number, String],
+      default: 0
+    }
   },
   data(){
     return {
-      tabTyp: 'form', // form-表单；user-用户
-      webinar_id: this.$route.params.str,
       signUpSwtich: false,
       baseInfo: {
         open_link: 0,
@@ -129,7 +153,7 @@ export default {
     }
   },
   created(){
-    this.initComp()
+
   },
   mounted() {
     window.addEventListener('scroll', this.handleScroll)
@@ -138,7 +162,40 @@ export default {
     window.removeEventListener('scroll', this.handleScroll)
   },
   methods: {
-    initComp(){
+    // 切换开关的时候，修改展示字段状态
+    setSwitchStatus(signUpSwtich) {
+      this.signUpSwtich = signUpSwtich
+    },
+    // 更改表单基本信息的方法（通用）
+    setBaseInfo(options, callback) {
+      this.baseInfo = {
+        ...this.baseInfo,
+        ...options,
+      };
+      const keyMap = {
+        title: 'form_title',
+        intro: 'form_introduce',
+        cover: 'form_cover',
+        theme_color: 'form_theme_color',
+        tab_verify_title: 'form_tab_verify_title',
+        tab_form_title: 'form_tab_register_title',
+        open_link: 'is_independent_link',
+      }
+      const opts = {}
+      for(let item in options) {
+        opts[keyMap[item]] = options[item]
+      }
+      this.$fetch('regFromUpdate', {
+        webinar_id: this.webinar_id,
+        ...opts
+      }).then(res => {
+        console.log(res);
+        callback && callback();
+      }).catch(err => {
+        console.log(err);
+      });
+    },
+    initComp() {
       this.userId = JSON.parse(sessionOrLocal.get('userId'));
       this.getBaseInfo();
       this.getQuestionList();
@@ -295,35 +352,6 @@ export default {
         k: 100188  ,
         data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-    },
-    // 更改表单基本信息的方法（通用）
-    setBaseInfo(options, callback) {
-      this.baseInfo = {
-        ...this.baseInfo,
-        ...options,
-      };
-      const keyMap = {
-        title: 'form_title',
-        intro: 'form_introduce',
-        cover: 'form_cover',
-        theme_color: 'form_theme_color',
-        tab_verify_title: 'form_tab_verify_title',
-        tab_form_title: 'form_tab_register_title',
-        open_link: 'is_independent_link',
-      }
-      const opts = {}
-      for(let item in options) {
-        opts[keyMap[item]] = options[item]
-      }
-      this.$fetch('regFromUpdate', {
-        webinar_id: this.webinar_id,
-        ...opts
-      }).then(res => {
-        console.log(res);
-        callback && callback();
-      }).catch(err => {
-        console.log(err);
-      });
     },
     // 添加题目方法（通用）
     addFiled(info, opts){
@@ -555,19 +583,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .signup-main {
-    /deep/ .el-switch__core{
-      height: 16px;
-      width: 28px!important;
-      &:after {
-        width: 12px;
-        height: 12px;
-      }
-    }
-    /deep/ .el-switch.is-checked .el-switch__core::after {
-      margin-left: -13px;
-    }
-  }
   /deep/ .el-switch__label--right,/deep/ .el-switch__label--left{
     color: #999999;
     pointer-events: none;
@@ -576,37 +591,6 @@ export default {
   .swtich{
     margin-left: 12px;
     vertical-align: sub;
-  }
-  .switchBox{
-    display: inline-flex;
-    height: 100%;
-  }
-  .headBtnGroup{
-    float: right;
-    /* /deep/.el-button {
-      background: transparent;
-      &:hover {
-        background: #FB3A32;
-        border: 1px solid #FB3A32;
-      }
-      &:active {
-        background: #E2332C;
-        border: 1px solid #E2332C;
-      }
-      &.is-disabled {
-        border: 1px solid #E6E6E6;
-        background: transparent;
-        color: #B3B3B3;
-        &:hover,&:active {
-          background: transparent;
-        }
-      }
-    } */
-
-  }
-  .titleBox{
-    display: block!important;
-    line-height: 40px;
   }
   .settingBox{
     position: relative;
@@ -697,7 +681,7 @@ export default {
       background-color: rgba(255, 255, 255, 0.5)
     }
     .options .disable_wrap{
-      background: #F7F7F7;
+      background: #ffffff;
       opacity: 0.5;
     }
   }
