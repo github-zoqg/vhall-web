@@ -327,7 +327,7 @@ export default {
       rules: {
         dest_url: [{ required: true, validator: urlValidate, trigger: 'blur' }],
       },
-      streamOpen: true, //启动第三方推流
+      streamOpen: false, //默认关闭，启动第三方推流
     }
   },
   components: {
@@ -443,11 +443,24 @@ export default {
     addStream() {
       if (this.total > 30) {
         this.$message({
-          message: '流最大数量为30，请删除后再进行操作',
+          message: '活动下最多创建30路推流',
           showClose: true,
           // duration: 0,
-          type: 'error',
+          type: 'warning',
           customClass: 'zdy-info-box',
+        })
+        this.$vhall_paas_port({
+          k: 100853,
+          data: {
+            business_uid: this.userId,
+            user_id: '',
+            webinar_id: this.$route.params.str,
+            refer: '',
+            s: '',
+            report_extra: {},
+            ref_url: '',
+            req_url: '',
+          },
         })
         return
       }
@@ -620,7 +633,7 @@ export default {
             message: res.msg || `推流地址创建失败`,
             showClose: true,
             // duration: 0,
-            type: 'error',
+            type: 'warning',
             customClass: 'zdy-info-box',
           })
         })
