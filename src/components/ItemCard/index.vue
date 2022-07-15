@@ -194,8 +194,10 @@ export default {
         { icon: 'icon_languages@2x', id: 9, title: '多语言链接', subText: `获取多语言观看链接及二维码`, type: 100845, path: `/live/langCard/${this.$route.params.str}`, isShow: perssionInfo.multilingual==1 && this.webinarType != 6}
       ],
       this.brandList = [
-        { icon: 'icon_brand@2x', id: 1, title: '品牌设置', subText: '设置观看页品牌信息', type: 100066, path: `/live/brandSet/${this.$route.params.str}`,isShow: perssionInfo['ui.brand_setting'] > 0 || perssionInfo.webinar_skins > 0 || perssionInfo['watch.viewing_protocol'] > 0},
-        { icon: 'icon_custom@2x', id: 2, title: '自定义菜单', subText: '自定义观看页菜单栏', type: 100067, path: `/live/customTab/${this.$route.params.str}`,isShow: this.isTrue},
+        // TODO: 埋点需要确认 type的值
+        { icon: 'icon_brand@2x', id: 1, title: '直播间装修', subText: '设置直播间的主题和布局', type: 100066, path: `/live/livingSet/${this.$route.params.str}`,isShow: true},
+        // { icon: 'icon_brand@2x', id: 1, title: '品牌设置', subText: '设置观看页品牌信息', type: 100066, path: `/live/brandSet/${this.$route.params.str}`,isShow: perssionInfo['ui.brand_setting'] > 0 || perssionInfo.webinar_skins > 0 || perssionInfo['watch.viewing_protocol'] > 0},
+        // { icon: 'icon_custom@2x', id: 2, title: '自定义菜单', subText: '自定义观看页菜单栏', type: 100067, path: `/live/customTab/${this.$route.params.str}`,isShow: this.isTrue},
         { icon: 'icon_player@2x',id: 3, title: '播放器设置', subText: `设置${this.type == 4 ? '点播' :'直播'}跑马灯水印`, type: 100068, path: `/live/playerSet/${this.$route.params.str}`,isShow: perssionInfo.player_config==1},
         { icon: 'icon_invitation@2x', id: 4, title: '邀请卡', subText: `用于${this.type == 4 ? '点播' :'直播'}邀请或裂变分享`, type: 100069, path: `/live/invCard/${this.$route.params.str}`,isShow: perssionInfo.btn_invite==1},
         { icon: 'icon_advertising@2x', id: 5, title: '广告', subText: '设置观看页广告位信息', type: 100070, path: `/live/advertCard/${this.$route.params.str}`,isShow: perssionInfo.ad_recommend==1},

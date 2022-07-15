@@ -138,6 +138,12 @@ const router = [
         hidden: true
       },
       {
+        path: 'livingSet/:str(\\d+)',
+        component: () => import('@/views/LiveModule/Brands/livingSetting'),
+        meta:{ auth: true, title: '直播间设置', name: 'livingSet', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'brandSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/brandSet'),
         meta:{ auth: true, title: '品牌设置', name: 'brandSet', activeMenu: '/live/list'},

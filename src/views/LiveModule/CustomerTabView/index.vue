@@ -1,6 +1,10 @@
 <template>
   <div class="vh-customer-menu-wrap">
-    <page-title
+    <div class="vh-customer-menu-btns">
+      <span @click="workHelp" class="link__left">使用帮助</span>
+      <el-button type="primary" :disabled = 'buttonDis' style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab" >保存</el-button>
+    </div>
+    <!-- <page-title
       style="position: relative"
       pageTitle="自定义菜单"
     >
@@ -9,7 +13,7 @@
         <span @click="workHelp" class="link__left">使用帮助</span>
         <el-button type="primary" :disabled = 'buttonDis' style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab" >保存</el-button>
       </div>
-    </page-title>
+    </page-title> -->
     <div class="vh-customer-menu-contentBox">
       <div class="vh-customer-menu-contentBox__components">
         <drag-components></drag-components>
@@ -112,7 +116,7 @@ export default {
     this.qrCode = `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`
     this.link = `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`
     this.userId = sessionOrLocal.get('userId')
-    this.getInitMenus()
+    this.initComp()
   },
 
   methods: {
@@ -140,7 +144,7 @@ export default {
       });
     },
 
-    getInitMenus() {
+    initComp() {
       this.activeIndex = 0
       this.$fetch('customMenuList', {
         webinar_id: this.$route.params.str
@@ -207,7 +211,7 @@ export default {
           this.showWatch = true
           this.deleteStack = []
           this.$nextTick(() => {
-            this.getInitMenus()
+            this.initComp()
           })
         }
       }).catch(res=>{
@@ -365,9 +369,13 @@ export default {
     overflow: hidden;
   }
   .vh-customer-menu-btns{
-    position: absolute;
-    right: 10px;
-    top: 0;
+    margin: 24px 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    // position: absolute;
+    // right: 10px;
+    // top: 0;
   }
   .link__left {
     font-size: 14px;
