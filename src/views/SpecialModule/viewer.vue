@@ -12,9 +12,9 @@
           <div class="viewer_header_title">专题观看限制</div>
           <el-radio-group v-model="subjectForm.verify">
             <el-radio :label="0">免费</el-radio>
-            <el-radio :label="4" v-if="perssionInfo.f_code">邀请码（原F码）</el-radio>
+            <el-radio :label="4">邀请码（原F码）</el-radio>
             <el-radio :label="1">密码</el-radio>
-            <el-radio :label="2" v-if="perssionInfo.white_list">白名单</el-radio>
+            <el-radio :label="2">白名单</el-radio>
           </el-radio-group>
         </div>
         <div class="viewer_container">
@@ -41,7 +41,7 @@
                   <VhallInput v-model.trim="formCode.placeholder" class="code_btn" autocomplete="off" placeholder="请输入邀请码" :maxlength="30" show-word-limit></VhallInput>
                   <span class="code_tip" @click="openDialog(formCode.placeholder|| '请输入邀请码')">查看效果</span>
                 </el-form-item>
-                <el-form-item label="试看" v-if="perssionInfo.btn_preview">
+                <el-form-item label="试看">
                   <div class="switch__box">
                     <el-switch
                       v-model="subjectForm.is_preview"
@@ -77,7 +77,7 @@
                   <VhallInput v-model.trim="pwdForm.placeholder" class="code_btn" autocomplete="off" placeholder="请输入密码" :maxlength="30" show-word-limit></VhallInput>
                   <span class="code_tip" @click="openDialog(pwdForm.placeholder || '请输入密码')">查看效果</span>
                 </el-form-item>
-                <el-form-item label="试看" v-if="perssionInfo.btn_preview">
+                <el-form-item label="试看">
                   <div class="switch__box">
                     <el-switch
                       v-model="subjectForm.is_preview"
@@ -120,7 +120,7 @@
                   </li>
                 </ul>
               </el-form-item>
-              <el-form-item label="试看" v-if="perssionInfo.btn_preview">
+              <el-form-item label="试看">
                 <div class="switch__box">
                   <el-switch
                     v-model="subjectForm.is_preview"
@@ -237,7 +237,6 @@ export default {
       showText: '',
       stash:'',
       checkSubjectList: [],
-      perssionInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')), //账号下权限
       timeOption: [
         {
           label: '5分钟',
@@ -430,9 +429,9 @@ export default {
           customClass: 'zdy-info-box'
         });
         if (this.subject_verify == 2) {
-          this.$router.push({path: `/special/signup/${this.$route.params.id}`})
+          this.$router.push({path: `/subject/signup/${this.$route.params.id}`})
         } else {
-          this.$router.push({ path: `/special/list`})
+          this.$router.push({ path: `/subject/list`})
         }
 
       }).catch(res =>{

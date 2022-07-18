@@ -898,87 +898,107 @@ export function CrumbSet(metaName, that) {
 
   else if (metaName === 'specialList') {// 专题列表
     return CrumbLiveList('specialList');
-  } else if (metaName === 'specialData') {
-    return [
-      {
-        title: '专题管理',
-        path: '/special',
-        isClick: false,
-        redirect: 'noRedirect'
-      },
-      {
-        title: '专题列表',
-        path: '/special/list',
-        isClick: true
-      },
-      {
-        title: '查看数据',
-        path: '/special/data',
-        isClick: true
-      }
-    ]
   }
-  else if (metaName === 'specialEdit') {// 创建专题、编辑专题
+  else if (metaName === 'subjectEdit') {// 创建专题、编辑专题
     return that.$route.params.id ? [
       {
         title: '专题管理',
-        path: '/special',
+        path: '/subject',
         isClick: false,
         redirect: 'noRedirect'
       },
       {
         title: '专题列表',
-        path: '/special/list',
+        path: '/subject/list',
+        isClick: true
+      },
+      {
+        title: '专题详情',
+        path: `/subject/details/${that.$route.params.id}`,
         isClick: true
       },
       {
         title: '编辑专题',
-        path: `/special/edit/${that.$route.params.id}`,
+        path: `/subject/edit/${that.$route.params.id}`,
         isClick: true
       }
     ] : [
       {
         title: '专题管理',
-        path: '/special',
+        path: '/subject',
         isClick: false,
         redirect: 'noRedirect'
       },
       {
         title: '创建专题',
-        path: '/special/edit',
+        path: '/subject/edit',
         isClick: true
       }
     ];
-  } else if (metaName === 'specialViewer') {
+  } else if (metaName === 'subjectViewer') {
     return [
       {
         title: '专题管理',
-        path: '/special',
+        path: '/subject',
         isClick: false,
         redirect: 'noRedirect'
       },
       {
-        title: '观看鉴权',
-        path: '/special/viewer',
+        title: '专题列表',
+        path: '/subject/list',
+        isClick: true
+      },
+      {
+        title: '专题详情',
+        path: `/subject/details/${that.$route.params.id}`,
+        isClick: true
+      },
+      {
+        title: '鉴权设置',
+        path: '/subject/viewer',
         isClick: true
       }
     ]
-  } else if (metaName === 'specialSignup') {
+  } else if (metaName === 'subjectDetails') {
     return [
       {
         title: '专题管理',
-        path: '/special',
+        path: '/subject',
         isClick: false,
         redirect: 'noRedirect'
       },
       {
-        title: '观看鉴权',
-        path: `/special/viewer/${that.$route.params.id}`,
+        title: '专题列表',
+        path: '/subject/list',
         isClick: true
       },
       {
-        title: '报名表单',
-        path: '/special/signup',
+        title: '专题详情',
+        path: `/subject/details/${that.$route.params.id}`,
+        isClick: true
+      }
+    ]
+  } else if (metaName === 'subjectData') {
+    return [
+      {
+        title: '专题管理',
+        path: '/subject',
+        isClick: false,
+        redirect: 'noRedirect'
+      },
+      {
+        title: '专题列表',
+        path: '/subject/list',
+        isClick: true
+      },
+      {
+        title: '专题详情',
+        path: `/subject/details/${that.$route.params.id}`,
+        isClick: true
+      },
+      {
+        title: '导出数据',
+        path: '/subject/data',
         isClick: true
       }
     ]

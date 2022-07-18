@@ -4,6 +4,7 @@
       <!-- <div slot="content">
         可联系客服开通“单点观看”功能，即开启付费/邀请码/白名单后，一个账号仅允许同时一台设备观看直播。
       </div> -->
+      <div class="limit_detail" @click="toDetail">若直播关联专题，以专题鉴权模式为准。<span>查看详情</span></div>
     </pageTitle>
     <!-- 内容区域 -->
     <div class="viewer-rules" v-show="liveDetailInfo">
@@ -251,6 +252,14 @@
         <el-button type="primary" round @click="visible = false;" class="button_size">确定</el-button>
       </div>
     </VhallDialog>
+    <VhallDialog :visible='limitVisible' title="直播关联专题详情" width='400px' @close="limitVisible = false;">
+      <div class="limit_tip">
+        本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《客户的力量》</span> ，该专题提供统一的观看限制- 白名单，本直播观看限制 <span class="color_red">失效</span> 。
+      </div>
+      <div slot='footer'>
+        <el-button type="primary" size="medium" round @click="limitVisible = false;">确定</el-button>
+      </div>
+    </VhallDialog>
   </div>
 </template>
 
@@ -392,7 +401,9 @@ export default {
       hide_subscribe: true,  // 预约状态
       showPwd: false,
       stash:'',               // 仅占位用
-      liveDetailInfo: null
+      liveDetailInfo: null,
+      limitVisible: false,
+      subject_id: '' // 活动对应的专题
     };
   },
   methods: {
@@ -623,6 +634,22 @@ export default {
         }
       }
     },
+    toDetail() {
+      this.limitVisible = true
+      // this.$alert('本直播不属于任何专题，本次设置的观看限制生效', '提示', {
+      //   confirmButtonText: '确定',
+      //   customClass: 'zdy-message-box',
+      //   callback: action => {}
+      // });
+        // this.$alert('本直播属于多个专题，这些专题无统一的观看限制，本直播观看限制生效', '提示', {
+      //   confirmButtonText: '确定',
+      //   customClass: 'zdy-message-box',
+      //   callback: action => {}
+      // });
+    },
+    goSubjectDetail() {
+      this.$router.push({path: `/subject/details/${this.subject_id}`})
+    },
     getReportData() {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
       let limitType = [100097, 100101, 100102, 100098, 100099, '', 100100]
@@ -844,6 +871,14 @@ export default {
   height: 16px;
   background: #fff;
   text-align: right;
+}
+.limit_detail{
+  font-size: 14px;
+  color: #999;
+  span{
+    color: #3562fa;
+    cursor: pointer;
+  }
 }
 .viewer-rules {
   /deep/.el-radio__inner{
@@ -1157,5 +1192,16 @@ export default {
 }
 .pr60 /deep/.el-input__inner{
   padding-right: 65px !important;
+}
+.limit_tip{
+  font-size: 16px;
+  line-height: 22px;
+  .color_blue{
+    color: #3562fa;
+    cursor: pointer;
+  }
+  .color_red{
+    color: #FB3A32;
+  }
 }
 </style>

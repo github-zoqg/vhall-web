@@ -293,7 +293,7 @@ export default {
     },
     goSetViewer() {
       this.$router.push({
-        path: `/special/${this.formData.viewer == 1 ? 'viewer' : 'signup'}/${this.$route.params.id}`
+        path: `/subject/${this.formData.viewer == 1 ? 'viewer' : 'signup'}/${this.$route.params.id}`
       })
     },
     sendData(content) {
@@ -425,10 +425,10 @@ export default {
               // 保存或创建成功重置更改状态
               this.isChange = false
               if (index == 1) {
-                this.$router.push({path: '/special'});
+                this.$router.push({path: '/subject'});
               } else {
                 let subject_id = this.subject_id || this.$route.params.id;
-                this.$router.push({path: `/special/viewer/${subject_id}`});
+                this.$router.push({path: `/subject/viewer/${subject_id}`});
               }
               console.log(res);
               // setTimeout(()=>{
@@ -502,15 +502,15 @@ export default {
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
-            this.$router.push({path:'/special/list'});
+            this.$router.push({path:'/subject/list'});
         }).catch(() => {
           });
       } else {
-         this.$router.push({path:'/special/list'});
+         this.$router.push({path:'/subject/list'});
       }
     },
     resetForm(formName) {
-      this.$router.push({path:'/special/list'});
+      this.$router.push({path:'/subject/list'});
     },
     deleteImg() {
       this.formData.imageUrl = '';

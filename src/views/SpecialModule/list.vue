@@ -36,7 +36,7 @@
 
     <el-row :gutter="24" class="lives" v-show="totalElement">
       <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
-        <router-link :to="{path: `/special/edit/${item.id}`, query: {title: '编辑'}}" target="_blank" class="inner">
+        <router-link :to="{path: `/subject/details/${item.id}`}" target="_blank" class="inner">
           <!-- @click="editSpecialInfo(item.id)" -->
           <div class="top">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
@@ -51,18 +51,18 @@
               <p class="liveTime">{{item.created_at | unitTime }}</p>
             </div>
             <p class="liveOpera">
-              <el-tooltip class="item item_right" effect="dark" content="编辑" placement="top" v-tooltipMove>
+              <!-- <el-tooltip class="item item_right" effect="dark" content="编辑" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-pencil1" @click.prevent.stop="editSpecialInfo(item.id)"></i>
-              </el-tooltip>
+              </el-tooltip> -->
               <el-tooltip class="item item_right" effect="dark" content="预览" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-eye1" @click.prevent.stop="specialDetail(item)"></i>
               </el-tooltip>
               <el-tooltip class="item item_right" effect="dark" content="分享" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-share1" @click.prevent.stop="toShare(item.id)"></i>
               </el-tooltip>
-               <el-tooltip class="item item_right" effect="dark" content="数据" placement="top" v-tooltipMove>
+               <!-- <el-tooltip class="item item_right" effect="dark" content="数据" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon_xiangqing" @click.prevent.stop="toDataReport(item.id)"></i>
-              </el-tooltip>
+              </el-tooltip> -->
               <el-tooltip class="item isDelete" effect="dark" content="删除" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-trash" @click.prevent.stop="deleteHandle(item.id)"></i>
               </el-tooltip>
@@ -77,7 +77,7 @@
     <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
      <div class="no-live" v-show="!totalElement">
       <noData :nullType="nullText" :text="text">
-        <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建', refer: 1}})" v-if="nullText==='nullData'">创建专题</el-button>
+        <el-button type="primary" round @click="$router.push({path:'/subject/edit',query: {title: '创建', refer: 1}})" v-if="nullText==='nullData'">创建专题</el-button>
       </noData>
     </div>
    <share ref="share" :shareVo="shareVo"></share>
@@ -103,6 +103,7 @@ import share from './components/share'
 import introduceShow from './components/moduleTutorial'
 import {sessionOrLocal} from "@/utils/utils";
 export default {
+  name: 'specialList',
   data() {
     return {
       hasDelayPermission: 0,
@@ -256,7 +257,7 @@ export default {
         k: 100496,
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-      const { href } = this.$router.resolve({path: `/special/edit/${id}`,query: {title: '编辑'}});
+      const { href } = this.$router.resolve({path: `/subject/edit/${id}`,query: {title: '编辑'}});
       window.open(href, '_blank');
     },
     toShare(id) {
@@ -272,7 +273,7 @@ export default {
     },
     // 数据页面
     toDataReport(id) {
-      const { href } = this.$router.resolve({path:`/special/data/${id}`,query: {title: '查看数据'}});
+      const { href } = this.$router.resolve({path:`/subject/data/${id}`,query: {title: '查看数据'}});
       window.open(href, '_blank');
     },
     // 预览页面
