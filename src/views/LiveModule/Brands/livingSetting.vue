@@ -28,7 +28,7 @@ import livingSet from '../components/livingSet.vue'
 import beginPlay from '@/components/beginBtn';
 import {sessionOrLocal} from "@/utils/utils";
 export default {
-  name: 'LivingSetting',
+  name: 'livingSetting',
   data() {
     return {
       tabType: 'livingSet',
@@ -47,7 +47,7 @@ export default {
   },
   created() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'))
-    this.$refs[`livingSet`].initComp();
+    // this.$refs[`livingSet`].initComp();
   },
   methods: {
     handleClick(tab, event) {

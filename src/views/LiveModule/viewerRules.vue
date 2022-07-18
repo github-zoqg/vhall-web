@@ -4,6 +4,7 @@
       <!-- <div slot="content">
         可联系客服开通“单点观看”功能，即开启付费/邀请码/白名单后，一个账号仅允许同时一台设备观看直播。
       </div> -->
+      <div class="setting_detail" @click="toSettingDetail" v-if="tabType=='viewingProtocol'">查看账号下观看协议设置</div>
     </pageTitle>
     <!-- 内容区域 -->
     <div class="viewer-rules_container">
@@ -335,6 +336,7 @@ export default {
       viewerDao: {},
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       perssionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
+      perssionWebInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')), //账号下配置项
       form: {
         webinar_id: this.$route.params.str,
         verify: 0,
@@ -707,6 +709,20 @@ export default {
       */
       this.whiteId = item.id;
     },
+    toSettingDetail() {
+      // 针对某一个活动，开启了观看协议
+      if (this.perssionWebInfo['watch.viewing_protocol'] == 0) {
+        this.$alert('尊敬的用户，您的账号无此权限。如需使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询', '提示', {
+          confirmButtonText: '我知道了',
+          lockScroll: false,
+          customClass: 'zdy-message-box',
+          callback: action => {}
+        });
+        return;
+      }
+      const { href } = this.$router.resolve({path:'/setting/protocol'});
+      window.open(href, '_blank');
+    },
     formatInput() {
       this.$nextTick(() => {
       })
@@ -854,6 +870,11 @@ export default {
   height: 16px;
   background: #fff;
   text-align: right;
+}
+.setting_detail{
+  color: #3562FA;
+  cursor: pointer;
+  font-size: 14px;
 }
 .viewer-rules {
   padding: 49px 56px 40px 56px;
