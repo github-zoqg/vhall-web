@@ -123,9 +123,9 @@
     </div>
     <div class="thirdMethod" v-if="$route.query.type != 6">
       <div class="title_text">
-        <h3>第三方渠道嵌入</h3>
+        <h3>第三方渠道推广嵌入</h3>
         <el-switch
-          v-if="btn_thirdway_push"
+          v-if="btn_thirdway_push && total"
           v-model="streamOpen"
           active-color="#FB3A32"
           inactive-color="#CECECE"
@@ -166,6 +166,7 @@
         </div>
         <div class="empty" v-show="!total">
           <noData
+            :height="63"
             :nullType="'nullData'"
             :text="'您还没有创建推流地址，快来创建吧！'"
           >
@@ -188,7 +189,7 @@
           >
         </p>
       </template>
-      <div class="give-white" v-show="!streamOpen"></div>
+      <div class="give-white" v-show="!streamOpen && total"></div>
     </div>
     <begin-play
       :webinarId="$route.params.str"
@@ -484,7 +485,7 @@ export default {
           this.streamOpen = !!res.data.status
           let tableData = res.data.list || []
           tableData.map((item) => {
-            item.watch = item.status
+            item.watch = Boolean(item.status)
             item.pf_name = item.pf_name ? item.pf_name : '——'
             item.overseaTxt = item.oversea ? '海外' : '国内'
             item.pushStatusTxt = PushStatus[item.push_status]
