@@ -74,5 +74,8 @@ export default {
       font-size: 14px;
       cursor: pointer;
     }
+    &_container {
+      background: #fff;
+    }
   }
 </style>

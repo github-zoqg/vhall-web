@@ -6,6 +6,8 @@ import router from './router';
 import clipboard from 'clipboard'
 // import VueTinymce from '@packy-tang/vue-tinymce/src/main';
 
+import vueCropper from 'vue-cropper'
+
 import vuescroll from 'vuescroll';
 import PaasPort from '@vhall/paas-report-data'
 
@@ -79,6 +81,7 @@ Vue.prototype.$parseURL = parseURL; // 去除域名//*/upload/
 Vue.prototype.$img = require('./common/images/small.png');
 Vue.prototype.$checkUploadType = checkUploadType; // 验证上传格式
 Vue.use(ELEMENT);
+Vue.use(vueCropper);
 import './utils/message';
 // Vue.use(vhallSaas, {
 //   config: {
