@@ -292,6 +292,7 @@ export default {
         {
           label: '平台名称',
           key: 'pf_name',
+          width: 200,
         },
         {
           label: '推流地址',
@@ -475,7 +476,6 @@ export default {
       methodsCombin[val.type](this, val)
     },
     getTableList() {
-      // let pageInfo = this.$refs.tableStreamList.pageInfo //获取分页信息
       let obj = {
         webinar_id: this.$route.params.str,
       }
@@ -484,7 +484,8 @@ export default {
           this.streamOpen = !!res.data.status
           let tableData = res.data.list || []
           tableData.map((item) => {
-            item.watch = Boolean(item.status)
+            item.watch = item.status
+            item.pf_name = item.pf_name ? item.pf_name : '——'
             item.overseaTxt = item.oversea ? '海外' : '国内'
             item.pushStatusTxt = PushStatus[item.push_status]
           })
@@ -505,12 +506,11 @@ export default {
           if (this.vm) {
             this.vm.close()
           }
-          // this.messageInfo('上架设置成功')
           this.getTableList()
         })
         .catch((res) => {
           this.$message({
-            message: res.msg || '上架设置失败',
+            message: res.msg,
             showClose: true,
             // duration: 0,
             type: 'error',
