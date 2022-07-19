@@ -155,6 +155,7 @@
             :width="150"
             max-height="500"
             :isCheckout="false"
+            :showStatusPoint="false"
             :needPagination="false"
             :totalNum="total"
             @onHandleBtnClick="onHandleBtnClick"
@@ -189,7 +190,7 @@
           >
         </p>
       </template>
-      <div class="give-white" v-show="!streamOpen && total"></div>
+      <!--   <div class="give-white" v-show="!streamOpen && total"></div> -->
     </div>
     <begin-play
       :webinarId="$route.params.str"
@@ -268,7 +269,7 @@ export default {
       if (!value) {
         callback(new Error('请输入推流地址'))
       } else {
-        const reg = /^(rtmp:\/\/)|(rtmps:\/\/)/g
+        const reg = /^(rtmp:\/\/.+)|(rtmps:\/\/.+)/g
         if (reg.test(value)) {
           callback()
         } else {
@@ -306,7 +307,7 @@ export default {
         },
         {
           label: '推流状态',
-          key: 'pushStatusTxt',
+          key: 'status',
           width: 120,
         },
         {
@@ -487,8 +488,9 @@ export default {
           tableData.map((item) => {
             item.watch = Boolean(item.status)
             item.pf_name = item.pf_name ? item.pf_name : '——'
-            item.overseaTxt = item.oversea ? '海外' : '国内'
-            item.pushStatusTxt = PushStatus[item.push_status]
+            item.overseaTxt = item.oversea ? '海外推流' : '国内推流'
+            item.statusText = PushStatus[item.push_status]
+            item.status = item.push_status
           })
           this.total = res.data.list.length
           this.tableData = tableData
@@ -658,10 +660,11 @@ export default {
           //关闭时提交
           if (!this.streamOpen) {
             this.tableData.map((item) => {
-              if (item.push_status == 1) {
+              if (item.push_status == 1 || item.push_status == 2) {
                 item.push_status = 0
+                item.statusText = PushStatus[item.push_status]
+                item.status = 0
               }
-              item.pushStatusTxt = PushStatus[item.push_status]
             })
             this.$vhall_paas_port({
               k: 100852,
@@ -692,7 +695,11 @@ export default {
   },
 }
 </script>
-
+<style lang="less">
+.el-tooltip__popper {
+  max-width: 80%;
+}
+</style>
 <style lang="less" scoped>
 .embed-card {
   /deep/.el-input__inner {
@@ -755,6 +762,10 @@ export default {
       left: 0;
       background: rgba(255, 255, 255, 0.5);
       z-index: 9;
+    }
+
+    /deep/.el-table .el-table__row .el-tooltip .status2 {
+      color: #fb3a32;
     }
   }
   h3 {
