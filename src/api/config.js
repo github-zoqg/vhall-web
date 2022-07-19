@@ -696,7 +696,10 @@ const apis = {
   labelDelete: ['/v3/webinars/label/delete', 'POST'],
   labelEdit: ['/v3/webinars/label/edit', 'POST'],
   labelResetOrder: ['/v3/webinars/label/reset-order', 'POST'],
-  labelTop: ['/v3/webinars/label/top', 'POST']
+  labelTop: ['/v3/webinars/label/top', 'POST'],
+
+  // 首页-广告
+  getBannerSetInfo: ['/v3/interacts/banner/get-banner', 'GET']
 };
 
 const getApi = api => {
