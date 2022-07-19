@@ -1,11 +1,11 @@
 <template>
   <div class="living-setting">
     <div class="living-setting_form">
-       <el-form :model="livingForm" ref="livingForm" label-width="100px">
-          <el-form-item label="主题色">
+       <vh-form :model="livingForm" ref="livingForm" label-width="100px">
+          <vh-form-item label="主题色">
             <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors  :colorDefault="livingForm.pageStyle"></color-set>
-          </el-form-item>
-          <el-form-item label="主题背景" prop="theme_url">
+          </vh-form-item>
+          <vh-form-item label="主题背景" prop="theme_url">
             <upload
               class="upload__living"
               v-model="livingForm.theme_url"
@@ -27,37 +27,37 @@
                 <p>支持jpg、gif、png、bmp</p>
               </div>
             </upload>
-          </el-form-item>
-          <el-form-item label="模糊程度">
-            <el-slider v-model="livingForm.theme_vague" style="width: 315px"></el-slider>
+          </vh-form-item>
+          <vh-form-item label="模糊程度">
+            <vh-slider v-model="livingForm.theme_vague" style="width: 315px"></vh-slider>
             <span class="isNum">{{livingForm.theme_vague}}%</span>
-          </el-form-item>
-          <el-form-item label="亮度">
-            <el-slider v-model="livingForm.theme_light" style="width: 315px"></el-slider>
+          </vh-form-item>
+          <vh-form-item label="亮度">
+            <vh-slider v-model="livingForm.theme_light" style="width: 315px"></vh-slider>
             <span class="isNum">{{livingForm.theme_light}}%</span>
-          </el-form-item>
-          <el-form-item label="聊天布局">
-             <el-radio-group v-model="livingForm.chatLayout">
-              <el-radio :label="0">上下显示</el-radio>
-              <el-radio :label="1">左右显示</el-radio>
-            </el-radio-group>
-          </el-form-item>
+          </vh-form-item>
+          <vh-form-item label="聊天布局">
+             <vh-radio-group v-model="livingForm.chatLayout">
+              <vh-radio :label="0">上下显示</vh-radio>
+              <vh-radio :label="1">左右显示</vh-radio>
+            </vh-radio-group>
+          </vh-form-item>
           <p>-以下设置对pc端和移动端同时生效-</p>
-          <el-form-item label="视频区【连麦】布局">
+          <vh-form-item label="视频区【连麦】布局">
 
-          </el-form-item>
-           <el-form-item label="视频区底色">
+          </vh-form-item>
+           <vh-form-item label="视频区底色">
 
-          </el-form-item>
-          <!-- <el-form-item label="">
-            <el-button type="primary" v-preventReClick round @click.prevent.stop="skinSetSave">保 存</el-button>
-          </el-form-item> -->
-        </el-form>
+          </vh-form-item>
+          <!-- <vh-form-item label="">
+            <vh-button type="primary" v-preventReClick round @click.prevent.stop="skinSetSave">保 存</vh-button>
+          </vh-form-item> -->
+        </vh-form>
     </div>
     <div class="living-setting_opera">
-      <el-button size="medium" round v-preventReClick>恢复默认</el-button>
-      <el-button type="white-medium" size="medium" round v-preventReClick @click="goPreviewLiving">预览</el-button>
-      <el-button type="primary" size="medium" round v-preventReClick>保存</el-button>
+      <vh-button size="medium" round v-preventReClick>恢复默认</vh-button>
+      <vh-button type="white-medium" size="medium" round v-preventReClick @click="goPreviewLiving">预览</vh-button>
+      <vh-button type="primary" size="medium" round v-preventReClick>保存</vh-button>
     </div>
     <living-preview ref="livingPreview"></living-preview>
     <cropper ref="livingCropper"></cropper>

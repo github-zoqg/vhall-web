@@ -6,5 +6,14 @@ module.exports = {
   presets: [
     '@vue/cli-plugin-babel/preset'
   ],
-  plugins:[...transformRemoveConsolePlugin]
+  plugins:[
+    ...transformRemoveConsolePlugin,
+    [
+      "component",
+      {
+        "libraryName": "@vhall/vhall-ui",
+        "styleLibraryName": "theme-chalk"
+      }
+    ]
+  ]
 };

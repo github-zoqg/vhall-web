@@ -33,6 +33,7 @@ Vue.prototype.$clipboard = clipboard
 import EventBus from './utils/Events';
 import {copy, dealObjectValue, domainCovert, parseURL, checkUploadType, sessionOrLocal} from './utils/utils';
 // element-ui 样式重置
+import '@vhall/vhall-ui/lib/theme-chalk/index.css';
 import ELEMENT from 'element-ui';
 import '@/common/css/theme/index.css';
 import '@/components/Icon/index';
@@ -108,6 +109,10 @@ window.SAAS_V3_COL = {
 
 // 微吼默认标题
 window.SAAS_vhall_title = "微吼-直播,网络直播,视频直播,在线教育平台,视频直播平台,网络直播系统,中国最大的网络直播互动平台";
+
+// vh-ui注册
+import vhallUiConfig from './vhall-ui.config';
+vhallUiConfig.forEach(item => Vue.use(item))
 
 // 组件扩展
 import SPagination from '@/components/Spagination/main';
