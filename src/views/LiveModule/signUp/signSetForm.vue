@@ -67,15 +67,15 @@ export default {
     themeSet
   },
   props: {
-    // 活动ID
-    webinar_id: {
+    // 活动ID 或者 专题ID，跟signUpPageType字段组合使用
+    webinarOrSubjectId: {
       type: [Number, String],
       default: 0
     },
-    // 专题ID
-    subject_id: {
+    // 报名表单类型：webinar--活动；subject--专题
+    signUpPageType: {
       type: [Number, String],
-      default: 0
+      default: ''
     }
   },
   data(){
@@ -162,6 +162,15 @@ export default {
     window.removeEventListener('scroll', this.handleScroll)
   },
   methods: {
+    // 设置接口入参，是活动维度 还是 专题维度
+    setParamsIdByRoute(params) {
+      if (this.signUpPageType === 'webinar') {
+        params.webinar_id = this.webinarOrSubjectId
+      } else if (this.signUpPageType === 'subject') {
+        params.subject_id = this.webinarOrSubjectId
+      }
+      return params
+    },
     // 切换开关的时候，修改展示字段状态
     setSwitchStatus(signUpSwtich) {
       this.signUpSwtich = signUpSwtich
@@ -185,8 +194,9 @@ export default {
       for(let item in options) {
         opts[keyMap[item]] = options[item]
       }
+
       this.$fetch('regFromUpdate', {
-        webinar_id: this.webinar_id,
+        ...this.setParamsIdByRoute({}),
         ...opts
       }).then(res => {
         console.log(res);
@@ -231,9 +241,7 @@ export default {
     },
     // 获取表单基本信息
     getBaseInfo() {
-      this.$fetch('regFromGet', {
-        webinar_id: this.webinar_id
-      }).then(res => {
+      this.$fetch('regFromGet', this.setParamsIdByRoute({})).then(res => {
         if (res.code === 200) {
           this.baseInfo = res.data;
           this.signUpSwtich = res.data.enable_status == '0' ? false : true;
@@ -251,9 +259,7 @@ export default {
           return value1 - value2;
         };
       }
-      this.$fetch('regQListGet', {
-        webinar_id: this.webinar_id
-      }).then(res => {
+      this.$fetch('regQListGet', this.setParamsIdByRoute({})).then(res => {
         // 按照 order_num 从小到大排序
         const list = res.data.ques_list.sort(compare('order_num'));
         list.forEach(element => {
@@ -307,43 +313,6 @@ export default {
         });
       }).catch(err => {
         console.log(err);
-      });
-    },
-    // 开启\关闭报名表单开关
-    switchRegForm(value) {
-      const url = value ? 'regFromEnable' : 'regFromDisable';
-      const behaviour = value ? '开启' : '关闭';
-      this.$fetch(url, {
-        webinar_id: this.webinar_id
-      }).then(res => {
-        if (res.code === 200) {
-          this.$vhall_paas_port({
-            k: value ? 100137 : 100138,
-            data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-          })
-          this.$message({
-            message:  `报名表单${ behaviour }成功`,
-            showClose: true, // 是否展示关闭按钮
-            type: 'success', //  提示类型
-            customClass: 'zdy-info-box' // 样式处理
-          });
-        }
-      }).catch(err => {
-        if (err.code == 512800) {
-          this.$message({
-            message:  '报名表单不能与白名单同时开启',
-            showClose: true, // 是否展示关闭按钮
-            type: 'error', //  提示类型
-            customClass: 'zdy-info-box' // 样式处理
-          });
-        } else {
-          this.$message({
-            message:  `报名表单${ behaviour }失败`,
-            showClose: true, // 是否展示关闭按钮
-            type: 'error', //  提示类型
-            customClass: 'zdy-info-box' // 样式处理
-          });
-        }
       });
     },
     showSignUp() {
@@ -450,7 +419,7 @@ export default {
 
       // 添加的是题目
       let options = {
-        webinar_id: this.webinar_id,
+        ...this.setParamsIdByRoute({}), // 活动ID 或者 专题ID
         type: filedJson.reqType,
         default_type: filedJson.default_type,
         subject: filedJson.label,
@@ -543,7 +512,7 @@ export default {
           }, '');
           question_ids = question_ids.substring(0, question_ids.length - 1);
           this.$fetch('regQSort', {
-            webinar_id: this.webinar_id,
+            ...this.setParamsIdByRoute({}), // 活动ID 或者 专题ID
             question_ids
           }).then(res => {
             console.log(res);
@@ -558,7 +527,7 @@ export default {
     // 添加一个隐私协议
     addPrivacy() {
       const options = {
-        webinar_id: this.webinar_id,
+        ...this.setParamsIdByRoute({}), // 活动ID 或者 专题ID
         content: '我们根据《隐私声明》保护您填写的所有信息',
         color_text: '《隐私声明》',
         url: ''

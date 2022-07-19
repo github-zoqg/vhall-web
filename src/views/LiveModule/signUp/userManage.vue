@@ -1,6 +1,6 @@
 <template>
   <div class="user-manage">
-    <user-registration :webinar_id="webinar_id"></user-registration>
+    <user-registration :webinarOrSubjectId="webinarOrSubjectId" :signUpPageType="signUpPageType"></user-registration>
   </div>
 </template>
 
@@ -11,15 +11,15 @@ export default {
     UserRegistration
   },
   props: {
-    // 活动ID
-    webinar_id: {
+    // 活动ID 或者 专题ID，跟signUpPageType字段组合使用
+    webinarOrSubjectId: {
       type: [Number, String],
       default: 0
     },
-    // 专题ID
-    subject_id: {
+    // 报名表单类型：webinar--活动；subject--专题
+    signUpPageType: {
       type: [Number, String],
-      default: 0
+      default: ''
     }
   },
   data(){

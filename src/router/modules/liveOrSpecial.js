@@ -323,7 +323,13 @@ const router = [
         path: 'edit',
         component: () => import('@/views/SpecialModule/edit'),
         meta: { auth: true, title: '创建专题', name: 'specialEdit', level: 2, activeMenu: '/special/edit', auth_key: 'subject_manager' }
-      }
+      },
+      {
+        path: 'signup/:str(\\d+)',
+        component: () => import('@/views/LiveModule/signUp/main'),
+        meta:{ auth: true, title: '报名表单', name: 'specialSignUp', activeMenu: '/special/list'},
+        hidden: true
+      },
     ]
   },
   {

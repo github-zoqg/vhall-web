@@ -64,15 +64,15 @@ export default {
       type: Boolean,
       default: false
     },
-    // 活动ID
-    webinar_id: {
+    // 活动ID 或者 专题ID，跟signUpPageType字段组合使用
+    webinarOrSubjectId: {
       type: [Number, String],
       default: 0
     },
-    // 专题ID
-    subject_id: {
+    // 报名表单类型：webinar--活动；subject--专题
+    signUpPageType: {
       type: [Number, String],
-      default: 0
+      default: ''
     }
   },
   data() {
@@ -90,6 +90,15 @@ export default {
     }
   },
   methods: {
+    // 设置接口入参，是活动维度 还是 专题维度
+    setParamsIdByRoute(params) {
+      if (this.signUpPageType === 'webinar') {
+        params.webinar_id = this.webinarOrSubjectId
+      } else if (this.signUpPageType === 'subject') {
+        params.subject_id = this.webinarOrSubjectId
+      }
+      return params
+    },
     // 删除单条记录
     removeItem(index) {
       if (index !== -1) {
@@ -182,12 +191,7 @@ export default {
       let params = {
         import: JSON.stringify(saveData)
       }
-      if (this.webinar_id) {
-        params.webinar_id = this.webinar_id
-      } else if (this.subject_id) {
-        params.subject_id = this.subject_id // 跟活动ID传值，二选一
-      }
-      this.$fetch('userRegistrationAdd', params).then(resV => {
+      this.$fetch('userRegistrationAdd', this.setParamsIdByRoute(params)).then(resV => {
         if (resV && resV.code == 200 && resV.data) {
           this.messageInfo('保存成功', 'success')
           this.$emit('close', 'closeAndLoading')

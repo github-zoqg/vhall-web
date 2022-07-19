@@ -81,9 +81,10 @@
       <null-page class="search-no-data" :height="0" v-if="userDao && userDao.total === 0"></null-page>
     </div>
     <!-- 快速报名 -->
-    <add-user-form v-if="addUserVisible" :visible="addUserVisible" :webinar_id="webinar_id" @close="cancelAddUser"></add-user-form>
+    <add-user-form v-if="addUserVisible" :visible="addUserVisible" :webinarOrSubjectId="webinarOrSubjectId" :signUpPageType="signUpPageType"
+     @close="cancelAddUser"></add-user-form>
     <!-- 导入报名用户excel -->
-    <import-dialog v-if="importVisible" :visible="importVisible" :webinar_id="webinar_id" @close="cancelImport"></import-dialog>
+    <import-dialog v-if="importVisible" :visible="importVisible" :webinarOrSubjectId="webinarOrSubjectId" :signUpPageType="signUpPageType" @close="cancelImport"></import-dialog>
   </div>
 </template>
 
@@ -100,15 +101,15 @@ export default {
     ImportDialog
   },
   props: {
-    // 活动ID
-    webinar_id: {
+    // 活动ID 或者 专题ID，跟signUpPageType字段组合使用
+    webinarOrSubjectId: {
       type: [Number, String],
       default: 0
     },
-    // 专题ID
-    subject_id: {
+    // 报名表单类型：webinar--活动；subject--专题
+    signUpPageType: {
       type: [Number, String],
-      default: 0
+      default: ''
     }
   },
   data() {
@@ -165,6 +166,15 @@ export default {
     };
   },
   methods: {
+    // 设置接口入参，是活动维度 还是 专题维度
+    setParamsIdByRoute(params) {
+      if (this.signUpPageType === 'webinar') {
+        params.webinar_id = this.webinarOrSubjectId
+      } else if (this.signUpPageType === 'subject') {
+        params.subject_id = this.webinarOrSubjectId
+      }
+      return params
+    },
     checkoutList(newValue) {
       if(!newValue){
         this.initQueryUserList()
@@ -243,16 +253,7 @@ export default {
     },
     // 导出报名用户
     downloadHandle() {
-      let params = null
-      if (this.webinar_id) {
-        params = { webinar_id: this.webinar_id }
-      } else if (this.subject_id) {
-        params = { subject_id: this.subject_id }
-      } else {
-        console.log('没有入参，不能导出')
-        return
-      }
-      this.$fetch('exportForm', params).then(res => {
+      this.$fetch('exportForm', this.setParamsIdByRoute({})).then(res => {
         if (this.vm) {
           this.vm.close();
         }

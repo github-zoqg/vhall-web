@@ -31,19 +31,21 @@
         </div>
         <!-- 报名表单 -->
         <sign-set-form ref="signSetFormDom" v-show="tabType ==='form'"
-          :webinar_id="webinar_id"
+          :webinarOrSubjectId="webinarOrSubjectId"
+          :signUpPageType="signUpPageType"
           :signUpSwtich="signUpSwtich"
           @changeTabsFixed="changeTabsFixed"></sign-set-form>
-        <user-manage ref="userManageDom" v-if="tabType === 'user'" :webinar_id="webinar_id"></user-manage>
+        <user-manage ref="userManageDom" v-if="tabType === 'user'"
+          :signUpPageType="signUpPageType"
+          :webinarOrSubjectId="webinarOrSubjectId"></user-manage>
       </div>
     </div>
-    <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
+    <begin-play  :webinarId="webinarOrSubjectId" v-if="$route.query.type != 5 && webinarState!=4 && signUpPageType == 'webinar'"></begin-play>
   </div>
 </template>
 
 <script>
 import PageTitle from '@/components/PageTitle';
-import {getfiledJson} from './util';
 import { sessionOrLocal } from '@/utils/utils';
 import beginPlay from '@/components/beginBtn';
 import SignSetForm from './signSetForm';
@@ -58,7 +60,6 @@ export default {
   data(){
     return {
       tabType: 'form', // form-表单；user-用户
-      webinar_id: this.$route.params.str,
       signUpSwtich: false,
       baseInfo: {
         open_link: 0,
@@ -73,6 +74,28 @@ export default {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")), // 活动状态
       menuBarFixed: ''
     };
+  },
+  computed: {
+    signUpPageType() {
+      if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) {
+        // 活动
+        return 'webinar'
+      } else if (window.location.href.indexOf('/special/signup/') != -1 || window.location.href.indexOf('/special/entryform') != -1) {
+        // 专题
+        return 'subject'
+      } else {
+        return ''
+      }
+    },
+    webinarOrSubjectId() {
+      if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/special/signup/') != -1) {
+        return this.$route.params.str
+      } else if (window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/special/entryform') != -1) {
+        return this.$route.params.id || this.$route.params.str
+      } else {
+        return ''
+      }
+    }
   },
   created(){
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -90,6 +113,15 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    // 设置接口入参，是活动维度 还是 专题维度
+    setParamsIdByRoute(params) {
+      if (this.signUpPageType === 'webinar') {
+        params.webinar_id = this.$route.params.str
+      } else if (this.signUpPageType === 'subject') {
+        params.subject_id = this.$route.params.str
+      }
+      return params
+    },
     // 切换tab
     handleClick(tab, event) {
       let tabCount = this.tabType === 'form' ? 1 : this.tabType === 'user' ? 2 : 0;
@@ -104,9 +136,7 @@ export default {
     },
     // 获取表单基本信息
     getBaseInfo() {
-      this.$fetch('regFromGet', {
-        webinar_id: this.webinar_id
-      }).then(res => {
+      this.$fetch('regFromGet', this.setParamsIdByRoute({})).then(res => {
         if (res.code === 200) {
           this.baseInfo = res.data;
           this.signUpSwtich = res.data.enable_status == '0' ? false : true;
@@ -119,14 +149,14 @@ export default {
     switchRegForm(value) {
       const url = value ? 'regFromEnable' : 'regFromDisable';
       const behaviour = value ? '开启' : '关闭';
-      this.$fetch(url, {
-        webinar_id: this.webinar_id
-      }).then(res => {
+      this.$fetch(url, this.setParamsIdByRoute({})).then(res => {
         if (res.code === 200) {
-          this.$vhall_paas_port({
-            k: value ? 100137 : 100138,
-            data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-          })
+          if (this.signUpPageType === 'webinar') {
+            this.$vhall_paas_port({
+              k: value ? 100137 : 100138,
+              data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
           this.$message({
             message:  `报名表单${ behaviour }成功`,
             showClose: true, // 是否展示关闭按钮
