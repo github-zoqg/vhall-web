@@ -1223,19 +1223,6 @@ export default {
       height: 0;
     }
   }
-  /deep/ .el-table__body-wrapper::-webkit-scrollbar {
-    width: 6px; // 横向滚动条
-    height: 6px; // 纵向滚动条
-  }
-  /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
-    background-color: #dedede;
-    border-radius: 5px;
-  }
-  /deep/ .el-table__body::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    background: rgba(255, 255, 255, 1);
-  }
 }
 .row__container {
   display: flex;
@@ -1255,31 +1242,6 @@ export default {
     overflow-y: auto;
     position: relative;
     left: 6px;
-    // 滚动条的宽度
-    &::-webkit-scrollbar {
-      width: 6px; // 横向滚动条
-      height: 6px; // 纵向滚动条 必写
-    }
-    // 滚动条的滑块
-    &::-webkit-scrollbar-thumb {
-      border-radius: 3px;
-      transition: all 0.3s;
-      cursor: pointer;
-      // display: none;
-      // margin-left: 6px;
-      background-color: #cccccc;
-      &:hover {
-        background-color: #cccccc;
-      }
-      &:active {
-        background-color: #cccccc;
-      }
-    }
-    &:hover {
-      &::-webkit-scrollbar-thumb {
-        display: block;
-      }
-    }
   }
   li {
     list-style-type: none;

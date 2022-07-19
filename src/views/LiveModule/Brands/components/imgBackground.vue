@@ -1,55 +1,41 @@
 <template>
-  <VhallDialog
-    title="选择封面背景"
-    :visible.sync="dialogVisible"
-    :close-on-click-modal="false"
-    style="overflow: hidden;"
-    width="670px"
-  >
+  <VhallDialog title="选择封面背景" :visible.sync="dialogVisible" :close-on-click-modal="false" style="overflow: hidden;"
+    width="670px">
     <el-scrollbar class="scrollbar scroll-modify">
       <div class="background-list">
         <div :class="['list-item', isType === 0 ? 'active' : '']" @click.stop="domain_url && choseBackground(-1)">
-          <upload
-            v-model="imageUrl"
-            :domain_url="domain_url"
-            :saveData="{
+          <upload v-model="imageUrl" :domain_url="domain_url" :saveData="{
                path: 'interacts/invite-card-imgs',
                type: 'image',
-            }"
-            :on-success="handleuploadSuccess"
-            :on-progress="uploadProcess"
-            :on-error="uploadError"
-            :on-preview="uploadPreview"
-            :restPic="true"
-            @delete="daleteImg()"
-            @fullCover="choseBackground(-1)"
-            :isFullCover="false"
-            :widthImg="138"
-            :heightImg="138"
-            @handleFileChange="handleFileChange"
+            }" :on-success="handleuploadSuccess" :on-progress="uploadProcess" :on-error="uploadError"
+            :on-preview="uploadPreview" :restPic="true" @delete="daleteImg()" @fullCover="choseBackground(-1)"
+            :isFullCover="false" :widthImg="138" :heightImg="138" @handleFileChange="handleFileChange"
             :before-upload="beforeUploadHnadler">
             <div slot="tip">
               <p>建议尺寸：750*1334px,小于4M</p>
               <p>支持jpg、png、bmp</p>
             </div>
           </upload>
-          <label  class="img-tangle" v-if="isType === 0"><img src="../../../../common/images/icon-choose.png" alt=""></label>
+          <label class="img-tangle" v-if="isType === 0"><img src="../../../../common/images/icon-choose.png"
+              alt=""></label>
           <!-- <label class="img-tangle" v-show="isType==0">
             <i class="el-icon-check"></i>
           </label> -->
         </div>
-        <div :class="['list-item', 'list-imgs', 'is-success', isType === index + 1 ? 'active' : '']" v-for="(item, index) in fileList" :key="index">
-          <label  class="img-tangle" v-if="isType === index + 1"><img src="../../../../common/images/icon-choose.png" alt=""></label>
+        <div :class="['list-item', 'list-imgs', 'is-success', isType === index + 1 ? 'active' : '']"
+          v-for="(item, index) in fileList" :key="index">
+          <label class="img-tangle" v-if="isType === index + 1"><img src="../../../../common/images/icon-choose.png"
+              alt=""></label>
           <!-- <label class="img-tangle" v-if="isType === index + 1">
             <i class="el-icon-check"></i>
           </label> -->
-          <img :src="item" alt="" class="bgImg" @click="choseBackground(index)"/>
+          <img :src="item" alt="" class="bgImg" @click="choseBackground(index)" />
         </div>
       </div>
     </el-scrollbar>
     <div slot="footer" class="dialog-footer">
-      <el-button round  size="medium" v-preventReClick type="primary" @click.prevent.stop="changePic">选 择</el-button>
-      <el-button round size="medium"  @click.prevent.stop="dialogVisible = false">取 消</el-button>
+      <el-button round size="medium" v-preventReClick type="primary" @click.prevent.stop="changePic">选 择</el-button>
+      <el-button round size="medium" @click.prevent.stop="dialogVisible = false">取 消</el-button>
     </div>
   </VhallDialog>
 </template>
@@ -82,17 +68,17 @@ export default {
   },
   props: ['url', 'type'],
   watch: {
-   dialogVisible() {
-     if (this.dialogVisible) {
-        this.domain_url  = this.url || '';
+    dialogVisible() {
+      if (this.dialogVisible) {
+        this.domain_url = this.url || '';
         this.imageUrl = this.url;
         if (this.imageUrl) {
           this.isType = 0;
         } else {
           this.isType = this.type
         }
-     }
-   }
+      }
+    }
   },
   methods: {
     choseBackground(index) {
@@ -111,7 +97,7 @@ export default {
     handleuploadSuccess(res, file) {
       console.log(res, file);
       // this.imageUrl = URL.createObjectURL(file.raw);
-      if(res.data) {
+      if (res.data) {
         let domain_url = res.data.domain_url || ''
         let file_url = res.data.file_url || '';
         this.imageUrl = file_url;
@@ -119,7 +105,7 @@ export default {
         this.isType = 0;
       }
     },
-    beforeUploadHnadler(file){
+    beforeUploadHnadler(file) {
       console.log(file);
       const typeList = ['png', 'jpeg', 'bmp'];
       console.log(file.type.toLowerCase())
@@ -148,10 +134,10 @@ export default {
       }
       return isType && isLt2M;
     },
-    uploadProcess(event, file, fileList){
+    uploadProcess(event, file, fileList) {
       console.log('uploadProcess', event, file, fileList);
     },
-    uploadError(err, file, fileList){
+    uploadError(err, file, fileList) {
       console.log('uploadError', err, file, fileList);
       this.$message({
         message: `背景图片上传失败`,
@@ -161,7 +147,7 @@ export default {
         customClass: 'zdy-info-box'
       });
     },
-    uploadPreview(file){
+    uploadPreview(file) {
       console.log('uploadPreview', file);
     },
     handleFileChange(file) {
@@ -173,15 +159,12 @@ export default {
 <style lang="less" scoped>
 .scroll-modify {
   overflow: inherit;
-  /deep/.el-scrollbar__wrap::-webkit-scrollbar {
-    display: none;
+  /deep/.el-scrollbar__bar {
+    right: -29px;
   }
-    /deep/.el-scrollbar__bar {
-      right:-29px;
-    }
 }
-/deep/.el-upload--picture-card{
-  .tips p{
+/deep/.el-upload--picture-card {
+  .tips p {
     transform: scale(0.95);
     line-height: 14px;
   }
@@ -205,13 +188,15 @@ export default {
     transition: all 0.15s ease-in;
     &.active {
       border: 1px solid #fb3a32;
-      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
-      /deep/.el-upload--picture-card{
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08),
+        0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+      /deep/.el-upload--picture-card {
         border: 0;
       }
     }
     &:hover {
-      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
+      box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08),
+        0px 2px 4px 0px rgba(0, 0, 0, 0.02);
     }
     &:nth-of-type(4n) {
       margin-right: 0;
@@ -220,14 +205,14 @@ export default {
       width: 100%;
       border-radius: 4px;
     }
-    .img-tangle{
+    .img-tangle {
       position: absolute;
       right: 0;
-      top:0;
+      top: 0;
       width: 20px;
       height: 20px;
       font-size: 0;
-      img{
+      img {
         width: 100%;
         height: 100%;
       }
@@ -239,7 +224,7 @@ export default {
       }
     }
   }
-  .list-imgs{
+  .list-imgs {
     position: relative;
     // .img-tangle{
     //   position: absolute;
@@ -260,14 +245,14 @@ export default {
     // }
   }
 }
-/deep/.el-dialog__footer{
+/deep/.el-dialog__footer {
   text-align: left;
 }
 .dialog-footer {
   // padding-top: 24px;
   text-align: right;
-  /deep/button.el-button{
-    &:last-child{
+  /deep/button.el-button {
+    &:last-child {
       margin-left: 12px;
     }
   }
