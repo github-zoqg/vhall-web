@@ -293,7 +293,7 @@ export default {
       tabelColumn: [
         {
           label: '平台名称',
-          key: 'pf_name',
+          key: 'pf_txt',
           width: 200,
         },
         {
@@ -477,7 +477,7 @@ export default {
       let methodsCombin = this.$options.methods
       methodsCombin[val.type](this, val)
     },
-    getTableList() {
+    getTableList(excludeItem) {
       let obj = {
         webinar_id: this.$route.params.str,
       }
@@ -485,12 +485,19 @@ export default {
         .then((res) => {
           this.streamOpen = !!res.data.status
           let tableData = res.data.list || []
-          tableData.map((item) => {
-            item.watch = Boolean(item.status)
-            item.pf_name = item.pf_name ? item.pf_name : '——'
-            item.overseaTxt = item.oversea ? '海外推流' : '国内推流'
-            item.statusText = PushStatus[item.push_status]
-            item.status = item.push_status
+          tableData.map((item, index) => {
+            if (
+              !excludeItem ||
+              (excludeItem && excludeItem.push_id != item.push_id)
+            ) {
+              item.watch = Boolean(item.status)
+              item.pf_txt = item.pf_name ? item.pf_name : '——'
+              item.overseaTxt = item.oversea ? '海外推流' : '国内推流'
+              item.statusText = PushStatus[item.push_status]
+              item.status = item.push_status
+            } else {
+              tableData[index] = excludeItem
+            }
           })
           this.total = res.data.list.length
           this.tableData = tableData
@@ -509,7 +516,13 @@ export default {
           if (this.vm) {
             this.vm.close()
           }
-          this.getTableList()
+          let box = res.data
+          box.watch = Boolean(res.data.status)
+          box.pf_txt = res.data.pf_name ? res.data.pf_name : '——'
+          box.overseaTxt = res.data.oversea ? '海外推流' : '国内推流'
+          box.statusText = PushStatus[res.data.push_status]
+          box.status = res.data.push_status
+          this.getTableList(box)
         })
         .catch((res) => {
           this.$message({
@@ -591,6 +604,12 @@ export default {
       })
         .then((res) => {
           if (res.code == 200) {
+            let box = res.data
+            box.watch = Boolean(res.data.status)
+            box.pf_txt = res.data.pf_name ? res.data.pf_name : '——'
+            box.overseaTxt = res.data.oversea ? '海外推流' : '国内推流'
+            box.statusText = PushStatus[res.data.push_status]
+            box.status = res.data.push_status
             this.$message({
               message: `推流地址保存成功`,
               showClose: true,
@@ -598,7 +617,7 @@ export default {
               type: 'success',
               customClass: 'zdy-info-box',
             })
-            this.getTableList()
+            this.getTableList(box)
             this.handleCancelEdit()
           }
         })
