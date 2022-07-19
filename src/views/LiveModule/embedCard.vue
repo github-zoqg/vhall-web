@@ -121,7 +121,16 @@
         </p>
       </div>
     </div>
-    <div class="thirdMethod" v-if="$route.query.type != 6">
+    <div
+      class="thirdMethod"
+      v-if="
+        $route.query.type != 6 ||
+        ($route.query.type == 6 &&
+          btn_thirdway_push &&
+          liveInfo &&
+          liveInfo.is_demand != 1)
+      "
+    >
       <div class="title_text">
         <h3>第三方渠道推广嵌入</h3>
         <el-switch
@@ -134,7 +143,17 @@
         >
         </el-switch>
       </div>
-      <template v-if="btn_thirdway_push">
+      <template
+        v-if="
+          btn_thirdway_push &&
+          liveInfo &&
+          liveInfo.is_demand != 1 &&
+          (liveInfo.webinar_type == 1 ||
+            liveInfo.webinar_type == 2 ||
+            liveInfo.webinar_type == 3 ||
+            liveInfo.webinar_type == 6)
+        "
+      >
         <div class="head-operat" v-show="total">
           <el-button
             type="primary"
@@ -331,6 +350,7 @@ export default {
         dest_url: [{ required: true, validator: urlValidate, trigger: 'blur' }],
       },
       streamOpen: false, //默认关闭，启动第三方推流
+      liveInfo: null,
     }
   },
   components: {
@@ -363,11 +383,20 @@ export default {
   created() {
     this.userId = sessionOrLocal.get('userId')
     this.isInteract = this.$route.query.type
+    this.getInit()
   },
   mounted() {
     this.getTableList()
   },
   methods: {
+    getInit() {
+      this.$fetch('getWebinarInfo', {
+        webinar_id: this.$route.params.str,
+      }).then((res) => {
+        console.log(res.data)
+        this.liveInfo = res.data
+      })
+    },
     goForm(url, index) {
       this.$vhall_paas_port({
         k: index === 1 ? 100189 : 100190,
@@ -771,7 +800,10 @@ export default {
       }
     }
     .stream-list {
-      height: 504px;
+      max-height: 504px;
+      /deep/.data-list {
+        min-height: auto;
+      }
     }
     .give-white {
       position: absolute;
