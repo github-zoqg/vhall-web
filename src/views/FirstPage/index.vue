@@ -120,6 +120,16 @@
       </div>
     </div>
     <div class="advert-banner">
+      <!-- 广告位 -->
+      <div class="banner-download" v-if="imageBanner && imageBanner.content && imageBanner.is_valid == 1">
+        <div :class="['ad-web', {'is-cursor': imageBanner && imageBanner.link }]" @click="onOpenLink">
+          <el-image :src="`${imageBanner.content}?x-oss-process=image/resize,w_224,h_126,m_lfit`" fit="contain">
+            <div slot="error" class="image-slot">
+              <i class="el-icon-picture-outline"></i>
+            </div>
+          </el-image>
+        </div>
+      </div>
       <div class="web-download">
         <div class="ad-web">
           <!-- <img src="https://t-alistatic01.e.vhall.com/upload/interacts/screen-imgs/202101/27/f8/27f8fcd59013845ef0c3774e9af93b4f.png?x-oss-process=image/resize,w_225,m_lfit" alt=""> -->
@@ -143,7 +153,11 @@
         </div>
         <a href="http://e.vhall.com/app" class="download-btn" target="_blank" @click="download('app')">立即下载</a>
       </div>
-      <div class="data-document">
+      <div :class="[
+        'data-document',
+        {
+          'is-show-banner': imageBanner && imageBanner.content && imageBanner.is_valid == 1
+        }]">
         <h2>文档中心<a href="https://saas-doc.vhall.com/document/document/index" target="_blank" @click="documentCenter(0)">更多</a></h2>
         <p><a href="https://saas-doc.vhall.com/docs/show/947" target="_blank" @click="documentCenter(1)">API文档</a></p>
         <p><a href="https://saas-doc.vhall.com/docs/show/1176" target="_blank" @click="documentCenter(2)">JSSDK文档</a></p>
@@ -224,7 +238,8 @@ export default {
       isOld: false,
       openSys: false,
       showDelay: false,
-      payNoticeVisible: true // TODO:支付牌照问题
+      payNoticeVisible: true, // TODO:支付牌照问题
+      imageBanner: null
     };
   },
   components: {
@@ -247,6 +262,10 @@ export default {
     // sessionOrLocal.get('openSys') || false // 用户迁移完成弹窗状态
   },
   created() {
+    // 图片广告
+    this.$EventBus.$on('saas_vs_image_banner', data => {
+      this.imageBanner = data
+    })
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     if (this.userId) {
       window.sessionStorage.setItem('userId', this.userId)
@@ -460,6 +479,11 @@ export default {
       }).catch(e=>{
         console.log(e);
       });
+    },
+    onOpenLink() {
+      if (this.imageBanner.link) {
+        window.open(this.imageBanner.link, "_blank");
+      }
     }
   }
 };
@@ -614,6 +638,33 @@ export default {
           border: 1px solid #FB3A32;
         }
       }
+      .banner-download{
+        height: 126px;
+        background: #fff;
+        border-radius: 4px;
+        position: relative;
+        width: 100%;
+        margin-bottom: 10px;
+        .ad-web{
+          height: 126px;
+          height: 126px;
+         /*  img{
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+          } */
+          &.is-cursor {
+            cursor: pointer;
+          }
+          .el-image {
+            width: 100%;
+            height: 100%;
+            -o-object-fit: cover;
+            object-fit: cover;
+            border-radius: 4px;
+          }
+        }
+      }
       .web-download{
         height: 279px;
         background: #fff;
@@ -703,6 +754,9 @@ export default {
         background: #fff;
         // height: calc(100% - 590px);
         height: 270px;
+        &.is-show-banner {
+          height: 180px;
+        }
         border-radius: 4px;
         h2{
           font-size: 16px;
