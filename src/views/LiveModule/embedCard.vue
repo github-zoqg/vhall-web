@@ -220,6 +220,7 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      @closed="handleCancelEdit"
       custom-class="create-stream"
       width="468px"
     >
@@ -384,10 +385,9 @@ export default {
     this.userId = sessionOrLocal.get('userId')
     this.isInteract = this.$route.query.type
     this.getInit()
-  },
-  mounted() {
     this.getTableList()
   },
+  mounted() {},
   methods: {
     getInit() {
       this.$fetch('getWebinarInfo', {
