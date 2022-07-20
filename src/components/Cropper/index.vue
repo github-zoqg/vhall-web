@@ -12,8 +12,8 @@
         ></vue-cropper>
       </div>
       <div class="cropper_content_btn">
-        <vh-button type="primary" size="medium" round v-preventReClick>确定</vh-button>
-        <vh-button size="medium" round v-preventReClick>取消</vh-button>
+        <vh-button  size="medium" type="primary" round v-preventReClick>确定</vh-button>
+        <vh-button size="medium" round v-preventReClick >取消</vh-button>
       </div>
     </div>
   </el-dialog>

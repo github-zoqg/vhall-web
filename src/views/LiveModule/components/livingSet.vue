@@ -56,7 +56,7 @@
         </vh-form>
     </div>
     <div class="living-setting_opera">
-      <vh-button size="medium" round v-preventReClick>恢复默认</vh-button>
+      <vh-button size="medium" round v-preventReClick @click="resetForm">恢复默认</vh-button>
       <vh-button type="white-medium" size="medium" round v-preventReClick @click="goPreviewLiving">预览</vh-button>
       <vh-button type="primary" size="medium" round v-preventReClick>保存</vh-button>
     </div>
@@ -101,6 +101,12 @@ export default {
   methods: {
     initComp(){
       console.log('我是初始化接口')
+    },
+    resetForm() {
+      let obj = {
+        src: 'https://t-alistatic01.e.vhall.com/upload/interacts/screen-imgs/202207/d0/e7/d0e737b7c30eced4bc498a93e647eae6.jpg'
+      }
+      this.$refs.livingCropper.showModel(obj)
     },
     goPreviewLiving(){
       this.$refs.livingPreview.dialogVisible = true
@@ -184,13 +190,13 @@ export default {
     }
   }
   .upload__living{
-        /deep/.el-upload--picture-card {
-          width: 400px;
-          height: 130px;
-        }
-        /deep/.box > div {
-          width: 400px;
-          height: 130px;
-        }
-      }
+    /deep/.el-upload--picture-card {
+      width: 400px;
+      height: 130px;
+    }
+    /deep/.box > div {
+      width: 400px;
+      height: 130px;
+    }
+  }
 </style>
