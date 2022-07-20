@@ -13,6 +13,9 @@ let cdn = {
     // '//cnstatic01.e.vhall.com/3rdlibs/common-libs/ui-frame/element-UI.js',
     '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.4-beta.1/questionnaire_service.js',
   ],
+  css: [
+    'https://vhallstatic.oss-cn-beijing.aliyuncs.com/common-static/middle/vhall-ui/v1.0.4/theme-chalk/index.css'
+  ]
 }
 
 // console.warn(process)
