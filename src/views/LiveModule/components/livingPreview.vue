@@ -4,20 +4,20 @@
     :visible.sync="dialogVisible"
     :close-on-click-modal=false
     :close-on-press-escape=false
-    width="520px"
+    width="518px"
   >
     <div class="living_preview">
       <div class="living_preview_wap">
-        <span class="wap_title">移动端H5:</span>
-        <span class="wap_code"><img :src="h5WapLink" alt=""></span>
+        <p class="wap_code"><img :src="h5WapLink" alt=""></p>
+        <span class="wap_title">手机扫码预览</span>
       </div>
       <div class="living_preview_pc">
-        <span class="pc_title">PC观看页:</span>
         <span class="pc_address">
-          <el-input id="copy-val" v-model="link" style="width: 200px"></el-input>
-          <el-button round size="small" type="primary" data-clipboard-target="#copy-val" class="copy-preview" @click="doCopy">复制</el-button>
-          <el-button round size="small" @click="openLink">打开页面</el-button>
+          <vh-input id="copy-val" size="medium" v-model="link" style="width: 350px">
+            <vh-button size="small" slot="append" data-clipboard-target="#copy-val" class="copy-preview" icon="el-icon-copy-document" @click="doCopy"></vh-button>
+          </vh-input>
         </span>
+        <vh-button size="medium"  type="primary" @click="openLink">打开页面</vh-button>
       </div>
     </div>
   </el-dialog>
@@ -67,18 +67,25 @@ export default {
 <style lang="less" scoped>
   .living_preview{
     &_wap{
-      margin-bottom: 24px;
+      margin-bottom: 20px;
+      width: 100%;
+      height: 190px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
       .wap_title{
         font-size: 14px;
-        color: #1a1a1a;
-        padding-right: 12px;
+        color: #595959;
+        line-height: 22px;
       }
       .wap_code{
         display: inline-block;
-        width: 120px;
-        height: 120px;
+        width: 132px;
+        height: 132px;
         border-radius: 4px;
-        vertical-align: top;
         img{
           width: 100%;
           height: 100%;
@@ -87,11 +94,8 @@ export default {
       }
     }
     &_pc{
-      padding-bottom: 32px;
-      .pc_title{
-        padding-right: 12px;
-      }
-      .el-input{
+      padding-bottom: 24px;
+      .pc_address{
         padding-right: 8px;
       }
     }

@@ -1,10 +1,14 @@
-import { Button, Slider, Radio, Form, FormItem, RadioGroup } from '@vhall/vhall-ui';
+import { Button, Slider, Radio, Input, Form, FormItem, RadioGroup, RadioButton, Tabs, TabPane } from '@vhall/vhall-ui';
 
 export default [
   Button,
   Slider,
   Radio,
+  Input,
   Form,
   FormItem,
-  RadioGroup
+  RadioGroup,
+  RadioButton,
+  Tabs,
+  TabPane
 ]

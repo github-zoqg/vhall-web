@@ -70,8 +70,8 @@ export default {
       }
     }
     &_btn {
-      height: 50px;
       display: flex;
+      justify-content: flex-end;
     }
   }
 </style>
