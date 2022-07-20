@@ -354,6 +354,7 @@ export default {
       streamOpen: false, //默认关闭，启动第三方推流
       liveInfo: null,
       loaded: false,
+      btn_thirdway_push: false, //    admin有无权限logo替换 嵌入推广
     }
   },
   components: {
@@ -369,25 +370,13 @@ export default {
         return '开启后，即将直播数据推送到第三方平台'
       }
     },
-    // admin有无权限logo替换 嵌入推广
-    btn_thirdway_push() {
-      //  webinar.director 1:有无延迟权限  0:无权限
-      if (
-        JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))[
-          'btn_thirdway_push'
-        ] == '1'
-      ) {
-        return true
-      } else {
-        return false
-      }
-    },
   },
   created() {
     this.userId = sessionOrLocal.get('userId')
     this.isInteract = this.$route.query.type
     this.getInit()
     this.getTableList()
+    this.getPermission(this.$route.params.str)
   },
   mounted() {},
   methods: {
@@ -732,7 +721,14 @@ export default {
               },
             })
           } else {
-            this.getTableList()
+            // this.getTableList()
+            this.tableData.map((item) => {
+              if (item.watch) {
+                item.push_status = 1
+                item.statusText = PushStatus[item.push_status]
+                item.status = 1
+              }
+            })
           }
         })
         .catch((res) => {
@@ -742,6 +738,39 @@ export default {
             type: 'error',
             customClass: 'zdy-info-box',
           })
+        })
+    },
+    getPermission(id) {
+      // 活动权限
+      this.$fetch('planFunctionGet', {
+        webinar_id: id,
+        webinar_user_id: this.userId,
+        scene_id: 1,
+      })
+        .then((res) => {
+          if (res.code == 200) {
+            if (res.data.permissions) {
+              sessionOrLocal.set(
+                'WEBINAR_PES',
+                res.data.permissions,
+                'localStorage'
+              )
+              let perssionInfo = JSON.parse(
+                sessionOrLocal.get('WEBINAR_PES', 'localStorage')
+              )
+              this.btn_thirdway_push =
+                perssionInfo['btn_thirdway_push'] &&
+                perssionInfo['btn_thirdway_push'] == 1
+                  ? true
+                  : false
+            } else {
+              sessionOrLocal.removeItem('WEBINAR_PES')
+            }
+          }
+        })
+        .catch((e) => {
+          console.log(e)
+          sessionOrLocal.removeItem('SAAS_VS_PES')
         })
     },
   },
