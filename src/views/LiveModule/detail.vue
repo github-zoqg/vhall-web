@@ -837,7 +837,7 @@ export default {
         } else {
           this.$router.push({
             path: item.path,
-            query: { type: this.liveDetailInfo.webinar_type },
+            query: item.path == `/live/signup/${this.$route.params.str}` ? { type: this.liveDetailInfo.webinar_type, tab: 1 }: { type: this.liveDetailInfo.webinar_type },
           })
         }
       } else {
