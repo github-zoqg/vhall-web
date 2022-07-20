@@ -1,8 +1,8 @@
 <template>
   <div class="signup-main">
     <div class="head">
-      <pageTitle pageTitle="报名表单">
-        <div class="switchBox">
+      <pageTitle :pageTitle="signUpPageType === 'webinar' ? '报名表单' : ''">
+        <div class="switchBox" v-if="signUpPageType === 'webinar'">
           <el-switch
             class="swtich"
             v-model="signUpSwtich"
@@ -85,7 +85,7 @@ export default {
       if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) {
         // 活动
         return 'webinar'
-      } else if (window.location.href.indexOf('/special/signup/') != -1 || window.location.href.indexOf('/special/entryform') != -1) {
+      } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/subject/signup/') != -1 || window.location.href.indexOf('/subject/entryform') != -1) {
         // 专题
         return 'subject'
       } else {
@@ -93,9 +93,9 @@ export default {
       }
     },
     webinarOrSubjectId() {
-      if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/special/signup/') != -1) {
+      if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/subject/signup/') != -1) {
         return this.$route.params.str
-      } else if (window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/special/entryform') != -1) {
+      } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/subject/entryform') != -1) {
         return this.$route.params.id || this.$route.params.str
       } else {
         return ''
@@ -104,6 +104,14 @@ export default {
   },
   created(){
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    if (this.signUpPageType === 'subject') {
+      // 专题下是否开启，只要引用了报名表单，默认就是开启的
+      this.signUpSwtich = true
+      // 更新表单组件里的字段展示
+      this.$nextTick(() => {
+        this.$refs.signSetFormDom && this.$refs.signSetFormDom.setSwitchStatus(this.signUpSwtich)
+      })
+    }
     this.getBaseInfo()
   },
   mounted() {
@@ -122,18 +130,23 @@ export default {
     setParamsIdByRoute(params) {
       if (this.signUpPageType === 'webinar') {
         params.webinar_id = this.$route.params.str
-      } else if (this.signUpPageType === 'subject') {
+      } else if (this.signUpPageType === 'subject' && window.location.href.indexOf('/subject/viewer/') == -1) {
         params.subject_id = this.$route.params.str
+      } else if (this.signUpPageType === 'subject' && window.location.href.indexOf('/subject/viewer/') != -1) {
+        params.subject_id = this.$route.params.id
       }
       return params
     },
     // 切换tab
     handleClick(tab, event) {
-      let tabCount = this.tabType === 'form' ? 1 : this.tabType === 'user' ? 2 : 0;
-      this.$router.push({path: `/live/signup/${this.$route.params.str}`, query: {
-        ...this.$route.query,
-        tab: tabCount
-      }})
+      if (this.signUpPageType === 'webinar') {
+        // 如果是活动，左右切换
+        let tabCount = this.tabType === 'form' ? 1 : this.tabType === 'user' ? 2 : 0;
+        this.$router.push({path: `/live/signup/${this.$route.params.str}`, query: {
+          ...this.$route.query,
+          tab: tabCount
+        }})
+      }
     },
     // 切换tab的时候是否定位
     changeTabsFixed(menuBarFixed) {
@@ -144,7 +157,10 @@ export default {
       this.$fetch('regFromGet', this.setParamsIdByRoute({})).then(res => {
         if (res.code === 200) {
           this.baseInfo = res.data;
-          this.signUpSwtich = res.data.enable_status == '0' ? false : true;
+          if (this.signUpPageType === 'webinar') {
+            // 活动下是否开启，通过接口拿取
+            this.signUpSwtich = res.data.enable_status == '0' ? false : true;
+          }
         }
       }).catch(err => {
         console.log(err);
