@@ -8,6 +8,7 @@
           <vh-form-item label="主题背景" prop="theme_url">
             <upload
               class="upload__living"
+              id="living_cropper"
               v-model="livingForm.theme_url"
               :domain_url="domain_url"
               :saveData="{
@@ -60,7 +61,7 @@
       <vh-button type="primary" size="medium" round v-preventReClick>保存</vh-button>
     </div>
     <living-preview ref="livingPreview"></living-preview>
-    <cropper ref="livingCropper"></cropper>
+    <cropper ref="livingCropper" cropperDom="living_cropper"></cropper>
   </div>
 </template>
 <script>
@@ -114,7 +115,7 @@ export default {
       console.log(res, file);
       if(res.data) {
         let obj = {
-          img: res.data.domain_url,
+          src: res.data.domain_url,
           url: res.data.file_url
         }
         this.$refs.livingCropper.showModel(obj)
@@ -150,6 +151,9 @@ export default {
           customClass: 'zdy-info-box'
         });
         return false;
+      }
+      let obj = {
+        src: file.name
       }
       return isType && isLt2M;
     },
