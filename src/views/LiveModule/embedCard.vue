@@ -475,7 +475,7 @@ export default {
     },
     // 新建流
     addStream() {
-      if (this.total > 30) {
+      if (this.total >= 30) {
         this.$message({
           message: '活动下最多创建30路推流',
           showClose: true,
