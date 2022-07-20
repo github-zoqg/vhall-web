@@ -124,11 +124,12 @@
     <div
       class="thirdMethod"
       v-if="
-        $route.query.type != 6 ||
-        ($route.query.type == 6 &&
-          btn_thirdway_push &&
-          liveInfo &&
-          liveInfo.is_demand != 1)
+        loaded &&
+        ($route.query.type != 6 ||
+          ($route.query.type == 6 &&
+            btn_thirdway_push &&
+            liveInfo &&
+            liveInfo.is_demand != 1))
       "
     >
       <div class="title_text">
@@ -352,6 +353,7 @@ export default {
       },
       streamOpen: false, //默认关闭，启动第三方推流
       liveInfo: null,
+      loaded: false,
     }
   },
   components: {
@@ -530,8 +532,10 @@ export default {
           })
           this.total = res.data.list.length
           this.tableData = tableData
+          this.loaded = true
         })
         .catch((e) => {
+          this.loaded = true
           console.log(e)
         })
     },
