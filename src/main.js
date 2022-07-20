@@ -33,7 +33,7 @@ Vue.prototype.$clipboard = clipboard
 import EventBus from './utils/Events';
 import {copy, dealObjectValue, domainCovert, parseURL, checkUploadType, sessionOrLocal} from './utils/utils';
 // element-ui 样式重置
-import '@vhall/vhall-ui/lib/theme-chalk/index.css';
+// import '@vhall/vhall-ui/lib/theme-chalk/index.css';
 import ELEMENT from 'element-ui';
 import '@/common/css/theme/index.css';
 import '@/components/Icon/index';

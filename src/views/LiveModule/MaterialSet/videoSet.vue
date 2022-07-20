@@ -143,7 +143,7 @@
     <selectMedia ref="selecteMedia" @selected='mediaSelected' :videoType="videoSetType"></selectMedia>
     <!-- 预览功能 -->
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center
+      <el-dialog class="vh-saas-dialog" :visible.sync="showDialog" :before-close='closeBefore' width="30%" center
       :close-on-click-modal=true
       :close-on-press-escape=false>
       <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
@@ -828,7 +828,7 @@ export default {
   ::v-deep .el-dialog--center .el-dialog__body{
     padding: 0px 10px 10px;
   }
-  .vh-dialog{
+  .vh-saas-dialog{
     /deep/ .el-dialog {
       width: 624px!important;
       background: transparent!important;
