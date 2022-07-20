@@ -7,6 +7,8 @@
         <el-radio v-model="subject_verify" :label="1" @change="changeViewer">统一观看限制，各直播自己的失效</el-radio><br/>
         <el-radio v-model="subject_verify" :label="2" @change="changeViewer">统一报名表单，各直播自己的失效</el-radio>
       </div>
+      <!-- 报名表单 -->
+      <sign-up-main v-if="isLoadSignUp"></sign-up-main>
       <template v-if="subject_verify==1">
         <div class="viewer_header">
           <div class="viewer_header_title">专题观看限制</div>
@@ -147,8 +149,8 @@
           </template>
         </div>
       </template>
-      <!-- 保存 -->
-      <div class="subject-viewer_save">
+      <!-- 保存（报名表单展示的时候，用报名表单的按钮） -->
+      <div class="subject-viewer_save" v-if="!isLoadSignUp">
         <el-form label-width="82px">
           <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="saveSubjectViewer">{{subject_verify==2 ? '下一步' : '保 存'}}</el-button>
         </el-form>
@@ -174,6 +176,8 @@
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 import checkViewer from './components/checkDialog.vue'
+import SignUpMain from '../LiveModule/signUp/main.vue';
+
 export default {
   data() {
     let checkNums = (rule, value, callback) => {
@@ -255,11 +259,13 @@ export default {
           value: 20
         }
       ],
+      isLoadSignUp: false, // 是否加载报名表单
     }
   },
   components: {
     PageTitle,
-    checkViewer
+    checkViewer,
+    SignUpMain
   },
   created() {
     this.initInfo();
