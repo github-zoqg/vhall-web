@@ -42,7 +42,7 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-select placeholder="是否观看" round v-model="query.is_enter" @change="initQueryUserList">
+        <el-select placeholder="是否观看" round v-model="query.is_enter" @change="initQueryUserList" v-if="signUpPageType ==='webinar'">
           <el-option value="">是否观看</el-option>
           <el-option
             v-for="item in [{
@@ -127,7 +127,7 @@ export default {
         list: []
       },
       isHandle: false, // 是否有操作项
-      userTableColumn: [
+      baseTableColumn: [
         {
           label: '用户信息',
           key: 'name',
@@ -164,6 +164,17 @@ export default {
       /*--------------------导入用户参数定义--------------------*/
       importVisible: false
     };
+  },
+  computed: {
+    userTableColumn() {
+      if (this.signUpPageType === 'webinar') {
+        return this.baseTableColumn
+      } else {
+        return this.baseTableColumn.filter(item => {
+          return item.key !== 'is_enter_str'
+        })
+      }
+    }
   },
   methods: {
     // 设置接口入参，是活动维度 还是 专题维度
