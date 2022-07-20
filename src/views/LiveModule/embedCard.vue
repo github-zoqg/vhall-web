@@ -721,7 +721,14 @@ export default {
               },
             })
           } else {
-            this.getTableList()
+            // this.getTableList()
+            this.tableData.map((item) => {
+              if (item.watch) {
+                item.push_status = 1
+                item.statusText = PushStatus[item.push_status]
+                item.status = 1
+              }
+            })
           }
         })
         .catch((res) => {
