@@ -9,11 +9,11 @@
             active-color="#FB3A32"
             inactive-color="#CECECE"
             @change="switchRegForm"
-            :active-text="signUpSwtich ? '已开启，观看直播需要填写报名表单' : '开启后，观看直播需要填写报名表单'">
+            active-text="">
           </el-switch>
-          <!-- <span class="sign-switch-desc">
+          <span class="sign-switch-desc">
             {{ signUpSwtich ? '已开启' : '开启后'}}，如直播关联专题，届时会以专题鉴权为准，请点<a href="javascript:void(0)" @click="showDetailDialog">查看详情</a>确认此表单是否生效。
-          </span> -->
+          </span>
         </div>
         <div class="headBtnGroup">
           <el-button round size="medium" class="transparent-btn" @click="openDialog('theme')">设置</el-button>
@@ -41,6 +41,8 @@
       </div>
     </div>
     <begin-play  :webinarId="webinarOrSubjectId" v-if="$route.query.type != 5 && webinarState!=4 && signUpPageType == 'webinar'"></begin-play>
+    <!-- 直播关联专题详情 -->
+    <subject-show-dialog v-if="subjectShowVisible && signUpPageType === 'webinar'" :webinarOrSubjectId="webinarOrSubjectId" :signUpPageType="signUpPageType" :dialogVisible="subjectShowVisible" @close="closeDetailDialog"></subject-show-dialog>
   </div>
 </template>
 
@@ -50,12 +52,14 @@ import { sessionOrLocal } from '@/utils/utils';
 import beginPlay from '@/components/beginBtn';
 import SignSetForm from './signSetForm';
 import UserManage from './userManage';
+import SubjectShowDialog from './subjectShowDialog.vue';
 export default {
   components: {
     PageTitle,
     beginPlay,
     SignSetForm,
-    UserManage
+    UserManage,
+    SubjectShowDialog
   },
   data(){
     return {
@@ -72,7 +76,8 @@ export default {
       },
       userId: '',
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")), // 活动状态
-      menuBarFixed: ''
+      menuBarFixed: '',
+      subjectShowVisible: false
     };
   },
   computed: {
@@ -199,7 +204,12 @@ export default {
       })
     },
     // 打开报名表单详情弹窗说明
-    showDetailDialog() {}
+    showDetailDialog() {
+      this.subjectShowVisible = true
+    },
+    closeDetailDialog() {
+      this.subjectShowVisible = false
+    }
   }
 };
 </script>
@@ -304,6 +314,9 @@ export default {
   .titleBox{
     display: block!important;
     line-height: 40px;
+    /deep/.pageTitle {
+      line-height: 40px;
+    }
   }
   .settingBox{
     position: relative;
