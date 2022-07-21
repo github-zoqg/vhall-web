@@ -39,7 +39,13 @@
       </div>
       <div class="form_item">
         <p class="form_item_title">主题背景</p>
-        <input type="file"  accept="image/*" @change="setImage" id="image" />
+        <upload class="upload__living">
+          <div slot="tip">
+            <p>建议尺寸：1920*1080px，小于4M</p>
+            <p>支持jpg、gif、png、bmp</p>
+          </div>
+        </upload>
+        <!-- <input type="file"  accept="image/jpg,image/jpeg,image/png,image/gif,image/bmp" @change="setImage" id="image" /> -->
         <!-- <upload
           class="upload__living"
           id="living_cropper"
@@ -106,7 +112,7 @@
       </div>
       <div class="form_item">
         <p class="form_item_title">视频区背景</p>
-        <upload
+        <!-- <upload
           class="upload__living"
           id="living_cropper"
           v-model="livingForm.video_url"
@@ -127,7 +133,7 @@
             <p>建议尺寸：1920*1080px，小于4M</p>
             <p>支持jpg、gif、png、bmp</p>
           </div>
-        </upload>
+        </upload> -->
       </div>
       <div class="form_item">
         <span class="vague_theme">模糊程度</span>
@@ -146,7 +152,7 @@
 </template>
 <script>
 import livingPreview from './livingPreview.vue';
-import Upload from '@/components/Upload/main';
+import Upload from '@/components/UploadImage/index';
 import ColorSet from '@/components/ColorSelect';
 import cropper from '@/components/Cropper'
 export default {
@@ -453,16 +459,6 @@ export default {
           }
         }
       }
-    }
-  }
-  .upload__living{
-    /deep/.el-upload--picture-card {
-      width: 228px;
-      height: 128px;
-    }
-    /deep/.box > div {
-      width: 228px;
-      height: 128px;
     }
   }
 </style>
