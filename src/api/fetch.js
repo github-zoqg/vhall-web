@@ -133,6 +133,11 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
     }
   }
 
+  // 对跨域携带cookie进行处理
+  if (header.credentials) {
+    option.credentials = 'include'
+  }
+  console.log(option, headers)
   return fetch(api, option).then((res) => {
     return res.json();
   }).then(res => {
