@@ -254,7 +254,9 @@
     </VhallDialog>
     <VhallDialog :visible='limitVisible' title="直播关联专题详情" width='400px' @close="limitVisible = false;">
       <div class="limit_tip">
-        本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《客户的力量》</span> ，该专题提供统一的观看限制- 白名单，本直播观看限制 <span class="color_red">失效</span> 。
+        本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ subjectInfo.subject_title }}》</span> ，
+        <span v-if="subjectInfo.subject_type==1">该专题无统一的观看限制，本直播观看限制生效。</span>
+        <span v-else>该专题提供统一的观看限制- {{handleFormat()}}，本直播观看限制 <span class="color_red">失效</span>。</span>
       </div>
       <div slot='footer'>
         <el-button type="primary" size="medium" round @click="limitVisible = false;">确定</el-button>
@@ -403,7 +405,12 @@ export default {
       stash:'',               // 仅占位用
       liveDetailInfo: null,
       limitVisible: false,
-      subject_id: '' // 活动对应的专题
+      subjectInfo: {
+        subject_verify: '', //专题鉴权
+        subject_type: '', // 绑定
+        subject_title: '', //专题标题
+        subject_id: '' // 活动对应的专题
+      }
     };
   },
   methods: {
@@ -491,6 +498,13 @@ export default {
             is_preview: is_preview, // 是否开启试看（1-试看；0-否；）
             preview_time: is_preview > 0 ? preview_time : 5 // 试看时长-分钟计，若已经设置过反显。若未设置过默认为5
           };
+          this.subjectInfo = {
+            subject_verify: res.data.subject_verify, //专题鉴权
+            subject_type: res.data.subject_type, // 绑定
+            subject_title: res.data.subject_title, //专题标题
+            parent_verify: res.data.parent_verify,
+            subject_id: res.data.subject_id // 活动对应的专题
+          }
           this.whiteId = verify === 2 ? white_id : null;
           console.log(this.form, '当前');
           // 表单选项初始化
@@ -635,20 +649,34 @@ export default {
       }
     },
     toDetail() {
-      this.limitVisible = true
-      // this.$alert('本直播不属于任何专题，本次设置的观看限制生效', '提示', {
-      //   confirmButtonText: '确定',
-      //   customClass: 'zdy-message-box',
-      //   callback: action => {}
-      // });
-        // this.$alert('本直播属于多个专题，这些专题无统一的观看限制，本直播观看限制生效', '提示', {
-      //   confirmButtonText: '确定',
-      //   customClass: 'zdy-message-box',
-      //   callback: action => {}
-      // });
+      // 有绑定
+      if (this.subjectInfo.subject_type) {
+        // 有绑定 并且专题有鉴权
+        if (this.subjectInfo.subject_verify) {
+          this.limitVisible = true
+        } else {
+          // 有绑定，但是专题鉴权是无限制
+          if (this.subjectInfo.subject_type == 1) {
+            this.$alert('本直播属于多个专题，这些专题无统一的观看限制，本直播观看限制生效', '提示', {
+              confirmButtonText: '确定',
+              customClass: 'zdy-message-box',
+              callback: action => {}
+            });
+          } else {
+            this.limitVisible = true;
+          }
+        }
+      } else {
+        // 无绑定
+        this.$alert('本直播不属于任何专题，本次设置的观看限制生效', '提示', {
+          confirmButtonText: '确定',
+          customClass: 'zdy-message-box',
+          callback: action => {}
+        });
+      }
     },
     goSubjectDetail() {
-      this.$router.push({path: `/subject/details/${this.subject_id}`})
+      this.$router.push({path: `/subject/details/${this.subjectInfo.subject_id}`})
     },
     getReportData() {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -727,6 +755,30 @@ export default {
     formatInput() {
       this.$nextTick(() => {
       })
+    },
+    // 格式化鉴权格式
+    handleFormat() {
+      let ret = '';
+      if (this.subjectInfo.subject_verify == 1) {
+        const verify = this.subjectInfo.parent_verify;
+        switch (verify) {
+          case 0:
+            ret = '免费'
+            break;
+          case 1:
+            ret = '密码'
+            break;
+          case 2:
+            ret = '白名单'
+            break;
+          case 4:
+            ret = '邀请码（原F码）'
+            break;
+        }
+      } else {
+        ret = '报名表单'
+      }
+      return ret;
     },
     // 验证码生成
     fCodeExecute(formName) {

@@ -267,25 +267,24 @@ export default {
   methods: {
     // 获取信息
     initInfo() {
-      this.$fetch('subjectInfo', {
+      this.$fetch('subjectVerifyInfo', {
         subject_id: this.$route.params.id
       }).then(res => {
         if (res.code == 200) {
-          const { verify_data } = res.data.webinar_subject;
-          this.subject_verify = res.data.webinar_subject.subject_verify;
-          this.groupList = verify_data.white_list;
-          this.subjectForm.verify = verify_data.verify;
-          this.subjectForm.is_preview = verify_data.is_preview;
-          this.subjectForm.preview_time = verify_data.preview_time;
-          if (verify_data.verify == 1) {
-            this.pwdForm.password = verify_data.password;
-            this.pwdForm.placeholder = verify_data.placeholder;
-          } else if (verify_data.verify == 4) {
-            this.formCode.code = verify_data.fcodes;
-            this.formCode.placeholder = verify_data.fcode_verify
-          } else if (verify_data.verify == 2) {
-            this.whiteId = verify_data.white_id;
-            this.white_verify = verify_data.white_verify; //白名单提示语
+          this.subject_verify = res.data.subject_verify;
+          this.groupList = res.data.white_list;
+          this.subjectForm.verify = res.data.verify;
+          this.subjectForm.is_preview = res.data.is_preview;
+          this.subjectForm.preview_time = res.data.preview_time;
+          if (res.data.verify == 1) {
+            this.pwdForm.password = res.data.password;
+            this.pwdForm.placeholder = res.data.password_verify;
+          } else if (res.data.verify == 4) {
+            this.formCode.code = res.data.fcodes;
+            this.formCode.placeholder = res.data.fcode_verify
+          } else if (res.data.verify == 2) {
+            this.whiteId = res.data.white_id;
+            this.white_verify = res.data.white_verify; //白名单提示语
           }
         }
       })

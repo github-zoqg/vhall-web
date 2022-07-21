@@ -124,6 +124,7 @@ const apis = {
   createSubjectCode: ['/v3/webinars/subject/post-generate-fcode', 'POST'], //创建f码
   downloadSubjectCode: ['/v3/webinars/subject/export-fcode', 'POST'], //邀请码下载
   createSubjectVerify: ['/v3/webinars/subject/save-verify', 'POST'], //专题观看限制保存接口
+  subjectVerifyInfo: ['/v3/webinars/subject/get-verify', 'POST'], //专题观看限制获取接口
 
 
   // 角色邀请
