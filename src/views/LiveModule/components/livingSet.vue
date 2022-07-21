@@ -238,18 +238,32 @@ export default {
     choseMicrophone(index) {
       this.livingForm.microphone = index;
     },
+    getObjectURL(file) {
+        var url = null ;
+        if (window.createObjectURL!=undefined) { // basic
+          url = window.createObjectURL(file) ;
+        } else if (window.URL!=undefined) { // mozilla(firefox)
+          url = window.URL.createObjectURL(file) ;
+        } else if (window.webkitURL!=undefined) { // webkit or chrome
+          url = window.webkitURL.createObjectURL(file) ;
+        }
+        return url ;
+    },
+
     setImage(e) {
       let file = e.target.files[0];
-      console.log(file)
-      let obj = {}
-      this.reader = '';
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        let typeArr = file.type.toLowerCase().split('/');
-        obj.src = event.target.result;
-        this.$refs.livingCropper.showModel(obj)
-        console.log(event, typeArr, '??13142353')
-      }
+      console.log('上传图片file对象',file)
+      const url = this.getObjectURL(file)
+      this.$refs.livingCropper.showModel(url)
+      // let obj = {}
+      // this.reader = '';
+      // const reader = new FileReader();
+      // reader.onload = (event) => {
+      //   let typeArr = file.type.toLowerCase().split('/');
+      //   obj.src = event.target.result;
+      //   this.$refs.livingCropper.showModel(obj)
+      //   console.log(event, typeArr, '??13142353')
+      // }
     },
     handleUploadSuccess(res, file){
       console.log(res, file);

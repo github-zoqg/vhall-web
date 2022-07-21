@@ -43,7 +43,7 @@ export default {
     showModel(obj) {
       console.log(obj, '???1111233456')
       this.dialogVisible = true;
-      this.option.src = obj.src;
+      this.option.src = obj;
     },
     cropperSure() {
       this.cropperImgUrl = this.$refs.cropper.getCroppedCanvas().toDataURL();
