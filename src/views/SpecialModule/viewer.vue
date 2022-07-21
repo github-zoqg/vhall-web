@@ -298,7 +298,7 @@ export default {
           if (res.data.length) {
             this.subject_verify = 0;
             this.checkSubjectList = res.data;
-            this.$refs.checkViewer = true;
+            this.$refs.checkViewer.checkVisible = true;
           }
         }
       }).catch(res =>{
