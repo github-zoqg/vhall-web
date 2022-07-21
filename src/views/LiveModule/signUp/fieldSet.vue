@@ -447,37 +447,31 @@ export default {
     },
     // 保存表单
     sureQuestionnaire() {
-      let userId = this.$parent.userId;
-      console.log(this.renderQuestion)
-      this.renderQuestion.filter(item => item.name !== 'name').map(item => {
-        if (this.signUpPageType === 'webinar') {
+      if (this.signUpPageType === 'webinar') {
+        let userId = this.$parent.userId;
+        console.log(this.renderQuestion)
+        this.renderQuestion.filter(item => item.name !== 'name').map(item => {
           this.$vhall_paas_port({
             k: item.reporType,
             data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
           })
-        }
-        if (item.reqType !== 6) {
-          if (this.signUpPageType === 'webinar') {
+          if (item.reqType !== 6) {
             this.$vhall_paas_port({
               k: item.required ? item.reporType + 1 : item.reporType + 2,
               data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
           }
-        }
-        if (item.reqType === 4) {
-          if (this.signUpPageType === 'webinar') {
+          if (item.reqType === 4) {
             this.$vhall_paas_port({
               k: item.reporType + 4,
               data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {num: item.nodes.length}, ref_url: '', req_url: ''}
             })
-          }
-        } else if (item.reqType === 2 || item.reqType === 3) {
-          let other = 0;
-          let total = item.nodes[0].children.length;
-          if (total > 0) {
-            other = item.nodes[0].children.filter(items => items.other).length
-          }
-          if (this.signUpPageType === 'webinar') {
+          } else if (item.reqType === 2 || item.reqType === 3) {
+            let other = 0;
+            let total = item.nodes[0].children.length;
+            if (total > 0) {
+              other = item.nodes[0].children.filter(items => items.other).length
+            }
             this.$vhall_paas_port({
               k: item.reporType + 4,
               data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '',  s: '', report_extra: {num: total - other}, ref_url: '', req_url: ''}
@@ -487,14 +481,40 @@ export default {
               data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {num: other}, ref_url: '', req_url: ''}
             })
           }
-        }
-      })
-      this.$message({
-        message: `保存成功`,
-        showClose: true,
-        // duration: 0,
-        type: 'success',
-        customClass: 'zdy-info-box'
+        })
+        this.$message({
+          message: `保存成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+      } else {
+        // 专题下，点击保存
+        this.saveSubjectViews()
+      }
+    },
+    // 保存观看限制，专题关系
+    saveSubjectViews() {
+      this.$fetch('createSubjectVerify', {
+        subject_id: this.webinarOrSubjectId,
+        subject_verify: 2 // 0无限制 1观看限制 2报名表单 只给控制台使用
+      }).then(res => {
+        this.$message({
+          message:  `设置成功`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+      }).catch(res =>{
+        this.$message({
+          message:  res.msg || '设置失败',
+          showClose: true,
+          // duration: 0,
+          type: res.code == 512999 ? 'warning' : 'error',
+          customClass: 'zdy-info-box'
+        });
       });
     },
     // 添加一个题目选项

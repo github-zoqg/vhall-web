@@ -8,14 +8,12 @@
       -->
     <div class="tip_content" v-if="resultVo && resultVo.count == 0">本直播不属于任何专题，本次设置的报名表单生效，观看直播需要填写此报名表单。</div>
     <div class="tip_content" v-else-if="resultVo && resultVo.count == 1">
-      本直播属于专题<span class="color_red cursor_pointer" v-if="resultVo && resultVo.subjectList" @click="goSubjectDetail(resultVo.subjectList[0].subject_id)">《{{resultVo.subjectList[0].subject || '未知'}}》</span>，该专题提供统一的{{ verifyText }}，本直播报名表单失效。
+      本直播属于专题<span class="color_red cursor_pointer" v-if="resultVo && resultVo.subjectList" @click="goSubjectDetail(resultVo.subjectList[0].subject_id)">《{{ subjectTitle }}》</span>，该专题提供统一的{{ verifyText }}，本直播报名表单失效。
     </div>
     <div class="tip_content" v-else-if="resultVo && resultVo.count > 1">本直播属于多个专题，这些专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。</div>
     <div class="tip_content" v-else>依据活动ID获取其归属专题信息失败，请联系管理员</div>
     <div slot='footer'>
-      <el-button type="primary" size="medium" round @click="goSubjectDetail(resultVo.subjectList[0].subject_id)" v-if="resultVo && resultVo.count == 1">去专题</el-button>
-      <el-button type="primary" size="medium" round @click="closeDialog" v-else>确定</el-button>
-      <el-button size="medium" round @click="closeDialog">取消</el-button>
+      <el-button type="primary" size="medium" round @click="closeDialog">我知道了</el-button>
     </div>
   </VhallDialog>
 </template>
@@ -63,6 +61,20 @@ export default {
       } else {
         // 无内容，默认占位
         return '观看限制-免费'
+      }
+    },
+    subjectTitle() {
+      if (this.resultVo && this.resultVo.subjectList) {
+        if (this.resultVo.subjectList[0].subject && this.resultVo.subjectList[0].subject.length > 10) {
+          return this.resultVo.subjectList[0].subject.substr(0, 10) + '...'
+        } else if (this.resultVo.subjectList[0].subject) {
+          return this.resultVo.subjectList[0].subject
+        } else {
+          return '--'
+        }
+      } else {
+        // 无内容，默认占位
+        return '--'
       }
     }
   },
