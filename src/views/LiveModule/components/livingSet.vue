@@ -425,7 +425,7 @@ export default {
         }
         &_lay {
           display: flex;
-          align-content: center;
+          align-items: center;
           justify-content: space-around;
           >div{
             text-align: center;
