@@ -306,6 +306,7 @@ export default {
             this.checkSubjectList = res.data;
             this.$refs.checkViewer = true;
           }
+          // TODO isLoadSignUp 报名表单可设置
         }
       }).catch(res =>{
          this.subject_verify = 0;
@@ -434,7 +435,7 @@ export default {
           customClass: 'zdy-info-box'
         });
         if (this.subject_verify == 2) {
-          this.$router.push({path: `/subject/signup/${this.$route.params.id}`})
+          // TODO 控制 isLoadSignUp 展示报名表单设置 this.$router.push({path: `/subject/signup/${this.$route.params.id}`})
         } else {
           this.$router.push({ path: `/subject/list`})
         }
