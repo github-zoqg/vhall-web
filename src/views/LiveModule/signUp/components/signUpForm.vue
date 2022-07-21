@@ -258,7 +258,9 @@
   // import DevicePixelRatio from '@/utils/devicePixelRatio'
   export default {
     created() {
-      this.getWebinarType();
+      if (this.signUpPageType == 'webinar') {
+        this.getWebinarType();
+      }
       this.getBaseInfo();
       this.getQuestionList();
     },
@@ -432,14 +434,33 @@
       },
       countyList() {
         return this.counties[this.city]
+      },
+      signUpPageType() {
+        if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) {
+          // 活动
+          return 'webinar'
+        } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/subject/signup/') != -1 || window.location.href.indexOf('/subject/entryform') != -1) {
+          // 专题
+          return 'subject'
+        } else {
+          return ''
+        }
+      },
+      webinarOrSubjectId() {
+        if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/subject/signup/') != -1) {
+          return this.$route.params.str
+        } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/subject/entryform') != -1) {
+          return this.$route.params.id || this.$route.params.str
+        } else {
+          return ''
+        }
       }
     },
     data() {
       return {
         Env: Env,
-        webinar_id: this.$route.params.id || this.$route.params.str,
         isEntryForm: this.$route.path.startsWith('/entryform'), // 是否是独立表单
-        isPreview: this.$route.path.startsWith('/live/signup'),
+        isPreview: this.$route.path.startsWith('/live/signup') || this.$route.path.startsWith('/subject/viewer'),
         isSubscribe: 0,
         colorIndex: 'red',
         tabs: 0,
@@ -513,16 +534,25 @@
       // new DevicePixelRatio('#signFormBox');
     },
     methods: {
+      // 设置接口入参，是活动维度 还是 专题维度
+      setParamsIdByRoute(params) {
+        if (this.signUpPageType === 'webinar') {
+          params.webinar_id = this.webinarOrSubjectId
+        } else if (this.signUpPageType === 'subject') {
+          params.subject_id = this.webinarOrSubjectId
+        }
+        return params
+      },
       handleAutoCloseSelect() {
-        this.$refs.autoCloseRefFlag.forEach(item => {
-          item.blur()
+        this.$nextTick(() => {
+          this.$refs.autoCloseRefFlag &&  this.$refs.autoCloseRefFlag.forEach(item => {
+            item.blur()
+          })
         })
       },
       // 获取当前活动类型
       getWebinarType() {
-        this.$fetch('watchInit', {
-          webinar_id: this.webinar_id
-        }).then(res => {
+        this.$fetch('watchInit', this.setParamsIdByRoute({})).then(res => {
           this.isSubscribe = res.data.webinar.type == 2 ? 1 : 2
           this.tabs = res.data.webinar.type == 2 ? 1 : 2
         })
@@ -561,9 +591,7 @@
       },
       // 获取表单基本信息
       getBaseInfo() {
-        this.$fetch('regFromGet', {
-          webinar_id: this.webinar_id
-        }).then(res => {
+        this.$fetch('regFromGet', this.setParamsIdByRoute({})).then(res => {
           if (res.code === 200) {
             this.baseInfo = res.data;
             this.$nextTick(() => {
@@ -621,7 +649,7 @@
         // 获取短信验证码
         if (this.mobileKey) {
           this.$fetch('regSendVerifyCode', {
-            webinar_id: this.webinar_id,
+            ...this.setParamsIdByRoute({}), // 活动ID 或者 专题ID
             phone: phone,
             captcha: this.mobileKey,
           }).then(() => {
@@ -674,23 +702,27 @@
           }
         });
       },
-      // 获取当前活动状态，如果直播中，跳转到直播间
+      // 验证 or  提交答案后，逻辑跳转处理
+      renderEndToPage() {
+        if (this.signUpPageType === 'webinar') {
+          this.getWebinarStatus()
+        }
+      },
+       // 获取当前活动状态，如果直播中，跳转到直播间
       getWebinarStatus() {
-        this.$fetch('watchInit', {
-          webinar_id: this.webinar_id
-        }).then(res => {
+        this.$fetch('watchInit', this.setParamsIdByRoute({})).then(res => {
           // const type = res.data.webinar.type
           const status = res.data.status
           if (res.code == 200) {
             if (res.data.status == 'live') {
               this.$router.push({
-                path: `/live/watch/${this.webinar_id}`
+                path: `/live/watch/${this.webinarOrSubjectId || this.$route.params.id || this.$route.params.str}`
               })
             } else {
               // 如果预约或结束，跳转到预约页
               if(this.isEntryForm) {
                 this.$router.push({
-                  path: `/subscribe/${this.webinar_id}`
+                  path: `/subscribe/${this.webinarOrSubjectId || this.$route.params.id || this.$route.params.str}`
                 })
               } else {
                 this.$router.go(0)
@@ -705,7 +737,7 @@
           if (valid) {
             this.formHandler()
             const options = {
-              webinar_id: this.webinar_id,
+              ...this.setParamsIdByRoute({}), // 活动ID 或者 专题ID
               form: JSON.stringify(this.answer),
             }
             this.isPhoneValidate && (options.verify_code = this.form.code);
@@ -716,8 +748,8 @@
                 res.data.visit_id && sessionStorage.setItem("visitor_id", res.data.visit_id);
                 // 报名成功的操作，跳转到直播间
                 this.closePreview()
-                // 判断当前直播状态，进行相应的跳转
-                this.getWebinarStatus()
+                // 提交答案后，逻辑跳转处理
+                this.renderEndToPage()
               }
             }).catch(err => {
               if (err.code == 512809 || err.code == 512570) {
@@ -732,8 +764,8 @@
                 // res.data.visit_id && sessionStorage.setItem("visitor_id", res.data.visit_id);
                 // 报名成功的操作，跳转到直播间
                 this.closePreview()
-                // 判断当前直播状态，进行相应的跳转
-                this.getWebinarStatus()
+                // 提交答案后，逻辑跳转处理
+                this.renderEndToPage()
               }
             })
           } else {
@@ -746,7 +778,7 @@
         this.$refs['verifyForm'].validate((valid) => {
           if (valid) {
             const options = {
-              webinar_id: this.webinar_id,
+              ...this.setParamsIdByRoute({}), // 活动ID 或者 专题ID
               phone: this.verifyForm.phone,
               verify_code: this.verifyForm.code,
             }
@@ -758,8 +790,8 @@
                   // 已报名，跳转到直播间
                   this.closePreview()
                   res.data.visit_id && sessionStorage.setItem('visitor_id', res.data.visit_id)
-                  // 判断当前直播状态，进行相应的跳转
-                  this.getWebinarStatus()
+                  // 验证提交答案后，逻辑跳转处理
+                  this.renderEndToPage()
                 } else {
                   this.$message.warning('请先报名！');
                   this.tabs = 1;
@@ -923,9 +955,7 @@
             return value1 - value2;
           };
         }
-        this.$fetch('regQListGet', {
-          webinar_id: this.webinar_id
-        }).then(res => {
+        this.$fetch('regQListGet', this.setParamsIdByRoute({})).then(res => {
           // 按照 order_num 从小到大排序
           const list = res.data.ques_list.sort(compare('order_num'));
           !this.isPreview && (this.currentPhone = res.data.phone);

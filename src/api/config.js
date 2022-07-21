@@ -698,9 +698,16 @@ const apis = {
   labelEdit: ['/v3/webinars/label/edit', 'POST'],
   labelResetOrder: ['/v3/webinars/label/reset-order', 'POST'],
   labelTop: ['/v3/webinars/label/top', 'POST'],
-
   // 首页-广告
-  getBannerSetInfo: ['/v3/interacts/banner/get-banner', 'GET']
+  getBannerSetInfo: ['/v3/interacts/banner/get-banner', 'GET'],
+  // 报名用户
+  userRegistrationList: ['/v3/webinars/registration-form/get-list', 'POST'], // 用户报名-列表
+  userRegistrationAdd: ['/v3/webinars/registration-form/import-one', 'POST'], // 用户报名-快速报名
+  userRegistrationCheckImport: ['/v3/webinars/registration-form/check-import', 'POST'], // 用户报名-检测导入数据
+  userRegistrationImport: ['/v3/webinars/registration-form/import', 'POST'], // 用户报名-导入数据
+  userRegistrationImportProgress: ['/v3/webinars/registration-form/import-progress', 'POST'], // 用户报名-导入数据结果（轮询）
+  userRegistrationExportFail: ['/v3/webinars/registration-form/export-fail', 'POST'], // 用户报名-导出失效数据
+  getSubjectByWebinarId: ['/v3/webinars/subject/get-list-webinar-id', 'POST'] // 活动下-报名表单，依据活动ID获取专题内容信息
 };
 
 const getApi = api => {
