@@ -18,13 +18,6 @@
   dependencies:
     "@jridgewell/trace-mapping" "^0.3.0"
 
-"@ant-design/colors@^6.0.0":
-  version "6.0.0"
-  resolved "https://registry.npmmirror.com/@ant-design/colors/-/colors-6.0.0.tgz#9b9366257cffcc47db42b9d0203bb592c13c0298"
-  integrity sha512-qAZRvPzfdWHtfameEGP2Qvuf838NhergR35o+EuVyB5XvSA98xod5r4utvi4TJ3ywmevm290g9nsCG5MryrdWQ==
-  dependencies:
-    "@ctrl/tinycolor" "^3.4.0"
-
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.16.7":
   version "7.16.7"
   resolved "https://registry.npmmirror.com/@babel/code-frame/-/code-frame-7.16.7.tgz#44416b6bd7624b998f5b1af5d470856c40138789"
@@ -1076,11 +1069,6 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@ctrl/tinycolor@^3.4.0":
-  version "3.4.1"
-  resolved "https://registry.npmmirror.com/@ctrl/tinycolor/-/tinycolor-3.4.1.tgz#75b4c27948c81e88ccd3a8902047bcd797f38d32"
-  integrity sha512-ej5oVy6lykXsvieQtqZxCOaLT+xD4+QNarq78cIYISHmZXshCvROLudpQN3lfL8G0NL7plMSSK+zlyvCaIJ4Iw==
-
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.npmmirror.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -1649,19 +1637,6 @@
   integrity sha512-MtA5ARLPUURhCkZeAwWdLAJi7Rk5oz/bLm4h9KIDQKyFgqjhzgtZty/2T/ipT/qD0e4+qreJQdwGdp0iZvZOfA==
   dependencies:
     vue "^2.5.2"
-
-"@vhall/vhall-ui@^1.0.4":
-  version "1.0.4"
-  resolved "http://192.168.66.26:4873/@vhall%2fvhall-ui/-/vhall-ui-1.0.4.tgz#78bfcc61b75b89e05ecad93de2f383f6c3b2aa12"
-  integrity sha512-o2UBB9FjJNw+/fKZavsUzXBLMrbdCeC63pC76D5mtsWMRvAchpVbAZmeNggKPb9vEQYFYwSsnIwYl4rXCK2kpA==
-  dependencies:
-    "@ant-design/colors" "^6.0.0"
-    async-validator "~1.8.1"
-    babel-helper-vue-jsx-merge-props "^2.0.0"
-    deepmerge "^1.2.0"
-    normalize-wheel "^1.0.1"
-    resize-observer-polyfill "^1.5.0"
-    throttle-debounce "^1.0.1"
 
 "@vue/babel-helper-vue-jsx-merge-props@^1.2.1":
   version "1.2.1"
