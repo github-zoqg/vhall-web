@@ -16,6 +16,9 @@
         <header class="header__nav" :class="showShadow ? 'show-shadow' : ''">
           <navbar />
         </header>
+        <!-- 系统通知 -->
+        <sys-banner />
+        <!-- 主体内容 -->
         <section class="section__main">
           <app-main />
         </section>
@@ -26,9 +29,9 @@
 
 <script>
 import { throttle } from 'lodash';
-import { Navbar, Sidebar, AppMain } from './components';
+import { Navbar, Sidebar, AppMain, SysBanner } from './components';
 export default {
-  components: { Sidebar, Navbar, AppMain },
+  components: { Sidebar, Navbar, AppMain, SysBanner },
   data() {
     return {
       openSidebar: true,
