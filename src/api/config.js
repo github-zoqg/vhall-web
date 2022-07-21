@@ -260,6 +260,7 @@ const apis = {
 
   //首页
   getInfo: ['/v3/users/user/get-info', 'POST'], //获取用户信息（昵称、头像等）场景1：控制台首页 / 场景2：控制台账户信息页  √
+  ssoAutoLogin:  ['/v3/users/user/auto-login', 'POST'], // sso自动登录
 
   //用户RBAC
   getRoleRbacList: ['/v3/users/roles/list', 'GET'], //角色- 列表
