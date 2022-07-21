@@ -439,7 +439,7 @@
         if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) {
           // 活动
           return 'webinar'
-        } else if (window.location.href.indexOf('/special/signup/') != -1 || window.location.href.indexOf('/special/entryform') != -1) {
+        } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/subject/signup/') != -1 || window.location.href.indexOf('/subject/entryform') != -1) {
           // 专题
           return 'subject'
         } else {
@@ -447,9 +447,9 @@
         }
       },
       webinarOrSubjectId() {
-        if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/special/signup/') != -1) {
+        if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/subject/signup/') != -1) {
           return this.$route.params.str
-        } else if (window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/special/entryform') != -1) {
+        } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/subject/entryform') != -1) {
           return this.$route.params.id || this.$route.params.str
         } else {
           return ''
@@ -460,7 +460,7 @@
       return {
         Env: Env,
         isEntryForm: this.$route.path.startsWith('/entryform'), // 是否是独立表单
-        isPreview: this.$route.path.startsWith('/live/signup'),
+        isPreview: this.$route.path.startsWith('/live/signup') || this.$route.path.startsWith('/subject/viewer'),
         isSubscribe: 0,
         colorIndex: 'red',
         tabs: 0,
