@@ -76,6 +76,7 @@ export default {
     }
     &_container {
       background: #fff;
+      // padding: 12px 24px;
     }
   }
 </style>

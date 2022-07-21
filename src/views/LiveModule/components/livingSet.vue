@@ -1,64 +1,141 @@
 <template>
   <div class="living-setting">
-    <div class="living-setting_form">
-       <vh-form :model="livingForm" ref="livingForm" label-width="100px">
-          <vh-form-item label="主题色">
-            <color-set ref="pageThemeColors"  :themeKeys=pageThemeColors  :colorDefault="livingForm.pageStyle"></color-set>
-          </vh-form-item>
-          <vh-form-item label="主题背景" prop="theme_url">
-            <upload
-              class="upload__living"
-              id="living_cropper"
-              v-model="livingForm.theme_url"
-              :domain_url="domain_url"
-              :saveData="{
-                path: pathUrl,
-                type: 'image',
-              }"
-              :on-success="handleUploadSuccess"
-              :on-progress="uploadProcess"
-              :on-error="uploadError"
-              :on-preview="uploadPreview"
-              :heightImg="130"
-              :widthImg="231"
-              :before-upload="beforeUploadHandler"
-              @delete="resetLogoUrl">
-              <div slot="tip">
-                <p>建议尺寸：1920*1080px，小于4M</p>
-                <p>支持jpg、gif、png、bmp</p>
-              </div>
-            </upload>
-          </vh-form-item>
-          <vh-form-item label="模糊程度">
-            <vh-slider v-model="livingForm.theme_vague" style="width: 315px"></vh-slider>
-            <span class="isNum">{{livingForm.theme_vague}}%</span>
-          </vh-form-item>
-          <vh-form-item label="亮度">
-            <vh-slider v-model="livingForm.theme_light" style="width: 315px"></vh-slider>
-            <span class="isNum">{{livingForm.theme_light}}%</span>
-          </vh-form-item>
-          <vh-form-item label="聊天布局">
-             <vh-radio-group v-model="livingForm.chatLayout">
-              <vh-radio :label="0">上下显示</vh-radio>
-              <vh-radio :label="1">左右显示</vh-radio>
-            </vh-radio-group>
-          </vh-form-item>
-          <p>-以下设置对pc端和移动端同时生效-</p>
-          <vh-form-item label="视频区【连麦】布局">
-
-          </vh-form-item>
-           <vh-form-item label="视频区底色">
-
-          </vh-form-item>
-          <!-- <vh-form-item label="">
-            <vh-button type="primary" v-preventReClick round @click.prevent.stop="skinSetSave">保 存</vh-button>
-          </vh-form-item> -->
-        </vh-form>
+    <div class="living-setting_type">
+      <div class="type_item" v-for="(item, index) in themeTypeList" :key="index">
+        <span>{{ item.title }}</span>
+        <p :class="item.isActive ? 'active' : ''" @click="activeTheme(item)"></p>
+      </div>
     </div>
-    <div class="living-setting_opera">
-      <vh-button size="medium" round v-preventReClick @click="resetForm">恢复默认</vh-button>
-      <vh-button type="white-medium" size="medium" round v-preventReClick @click="goPreviewLiving">预览</vh-button>
-      <vh-button type="primary" size="medium" round v-preventReClick>保存</vh-button>
+    <div class="living-setting_preview">
+      <div class="preview_btn">
+        <vh-radio-group v-model="livingPreview" size="small">
+          <vh-radio-button round :label="1">PC预览</vh-radio-button>
+          <vh-radio-button round :label="2">手机预览</vh-radio-button>
+        </vh-radio-group>
+      </div>
+      <div class="preview_box">
+        <div class="preview_box_pc">
+          <div class="preview_type">
+            <vh-radio-group v-model="livingPcPreviewType" size="small">
+            <vh-radio-button round :label="1">直播间</vh-radio-button>
+            <vh-radio-button round :label="2">引导页</vh-radio-button>
+          </vh-radio-group>
+          </div>
+        </div>
+        <div class="preview_box_wap"></div>
+      </div>
+    </div>
+    <div class="living-setting_form">
+      <div class="living-setting_form_opera">
+        <vh-button size="small" plain type="info" round v-preventReClick @click="resetForm">恢复默认</vh-button>
+        <vh-button size="small" plain type="info" round v-preventReClick @click="goPreviewLiving">预览</vh-button>
+        <vh-button type="primary" size="small" round v-preventReClick>保存</vh-button>
+      </div>
+      <div class="form_item">
+        <p class="form_item_title">主题色</p>
+        <color-set ref="pageThemeColors" :isShowMain="false"  :themeKeys=pageThemeColors  :colorDefault="livingForm.pageStyle"></color-set>
+      </div>
+      <div class="form_item">
+        <p class="form_item_title">主题背景</p>
+        <upload
+          class="upload__living"
+          id="living_cropper"
+          v-model="livingForm.theme_url"
+          :domain_url="domain_url"
+          :saveData="{
+            path: pathUrl,
+            type: 'image',
+          }"
+          :on-success="handleUploadSuccess"
+          :on-progress="uploadProcess"
+          :on-error="uploadError"
+          :on-preview="uploadPreview"
+          :heightImg="130"
+          :widthImg="231"
+          :before-upload="beforeUploadHandler"
+          @delete="resetLogoUrl">
+          <div slot="tip">
+            <p>建议尺寸：1920*1080px，小于4M</p>
+            <p>支持jpg、gif、png、bmp</p>
+          </div>
+        </upload>
+      </div>
+      <div class="form_item">
+        <span class="vague_theme">模糊程度</span>
+        <vh-slider v-model="livingForm.theme_vague" style="width: 131px"></vh-slider>
+        <span class="vague_num">{{livingForm.theme_vague}}%</span>
+      </div>
+      <div class="form_item">
+        <span class="vague_theme">背景亮度</span>
+        <vh-slider v-model="livingForm.theme_light" style="width: 131px"></vh-slider>
+        <span class="vague_num">{{livingForm.theme_light}}%</span>
+      </div>
+      <div class="form_item">
+        <span class="vague_theme">聊天布局</span>
+        <vh-radio-group v-model="livingForm.chatLayout" size="mini">
+          <vh-radio-button round :label="1">上下显示</vh-radio-button>
+          <vh-radio-button round :label="2">左右显示</vh-radio-button>
+        </vh-radio-group>
+      </div>
+      <div class="form_item_br">
+        以下设置对PC端和移动端同时生效～
+      </div>
+      <div class="form_item">
+        <p class="form_item_title">视频区【连麦】布局</p>
+        <div class="form_item_lay">
+          <div class="item_lay">
+            <p></p>
+            <span>主次浮窗</span>
+          </div>
+          <div class="item_lay">
+            <p></p>
+            <span>主次平铺</span>
+          </div>
+          <div class="item_lay">
+            <p></p>
+            <span>均匀排列</span>
+          </div>
+        </div>
+      </div>
+      <div class="form_item">
+        <p class="form_item_title">视频区底色</p>
+        <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors"  :colorDefault="livingForm.videoStyle"></color-set>
+      </div>
+      <div class="form_item">
+        <p class="form_item_title">视频区背景</p>
+        <upload
+          class="upload__living"
+          id="living_cropper"
+          v-model="livingForm.video_url"
+          :domain_url="video_url"
+          :saveData="{
+            path: pathUrl,
+            type: 'image',
+          }"
+          :on-success="handleUploadSuccess"
+          :on-progress="uploadProcess"
+          :on-error="uploadError"
+          :on-preview="uploadPreview"
+          :heightImg="130"
+          :widthImg="231"
+          :before-upload="beforeUploadHandler"
+          @delete="resetLogoUrl">
+          <div slot="tip">
+            <p>建议尺寸：1920*1080px，小于4M</p>
+            <p>支持jpg、gif、png、bmp</p>
+          </div>
+        </upload>
+      </div>
+      <div class="form_item">
+        <span class="vague_theme">模糊程度</span>
+        <vh-slider v-model="livingForm.video_vague" style="width: 131px"></vh-slider>
+        <span class="vague_num">{{livingForm.video_vague}}%</span>
+      </div>
+      <div class="form_item">
+        <span class="vague_theme">背景亮度</span>
+        <vh-slider v-model="livingForm.video_light" style="width: 131px"></vh-slider>
+        <span class="vague_num">{{livingForm.video_light}}%</span>
+      </div>
     </div>
     <living-preview ref="livingPreview"></living-preview>
     <cropper ref="livingCropper" cropperDom="living_cropper"></cropper>
@@ -73,14 +150,45 @@ export default {
   name: 'livingSet',
   data() {
     return {
-      pageThemeColors: ['1A1A1A', 'FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
+      themeTypeList: [
+        {
+          title: '简洁白',
+          url: '',
+          isActive: true
+        },
+        {
+          title: '炫酷黑',
+          url: '',
+          isActive: false
+        },
+        {
+          title: '科技蓝',
+          url: '',
+          isActive: false
+        },
+        {
+          title: '喜庆红',
+          url: '',
+          isActive: false
+        },
+      ],
+      pageThemeColors: ['FFFFFF', '1A1A1A', 'FB2626', 'D9A90B', '1E4EDC'],
+      videoColors: ['000000', '262626', '595959', '8F8F8F', 'D9D9D9'],
       domain_url: '',
+      video_url: '',
+      livingPreview: 1,
+      livingPcPreviewType: 1,
       livingForm: {
-        pageStyle: '#1A1A1A',
+        pageStyle: '#FFFFFF',
+        videoStyle: '#000000',
         theme_url: '',
         theme_vague: 60,
         theme_light: 50,
-        chatLayout: 0
+        chatLayout: 1,
+        microphone: 1, //连麦布局
+        video_url: '',
+        video_vague: 100,
+        video_light: 90
       }
     }
   },
@@ -101,6 +209,12 @@ export default {
   methods: {
     initComp(){
       console.log('我是初始化接口')
+    },
+    activeTheme(item) {
+      this.themeTypeList.map(item => {
+        return item.isActive = false
+      })
+      item.isActive = true;
     },
     resetForm() {
       let obj = {
@@ -184,19 +298,115 @@ export default {
 </script>
 <style lang="less" scoped>
   .living-setting{
-    padding-top: 32px;
+    padding-top: 16px;
+    display: flex;
+    &_type{
+      display: flex;
+      flex-direction: column;
+      padding-top: 64px;
+      width: 240px;
+      padding-left: 24px;
+      .type_item{
+        padding-bottom: 24px;
+        span{
+          color: #262626;
+        }
+        p{
+          margin-top: 12px;
+          width: 192px;
+          height: 108px;
+          background: #d9d9d9;
+          border-radius: 4px;
+          border: 1px solid transparent;
+          cursor: pointer;
+          &.active {
+            border: 1px solid #fb3a32;
+          }
+        }
+      }
+    }
+    &_preview{
+      width: calc(100% - 516px);
+      .preview_btn{
+        text-align: center;
+      }
+      .preview_box{
+        margin-top: 16px;
+        width: 100%;
+        height: 500px;
+        padding-right: 24px;
+        &_pc{
+          height: 500px;
+          background: #d9d9d9;
+        }
+      }
+    }
     &_form{
-
+      width: 276px;
+      padding-right: 24px;
+      &_opera{
+        // text-align: center;
+        padding-bottom: 40px;
+      }
+      .form_item{
+        padding-bottom: 24px;
+        &_title, .vague_theme{
+          margin-bottom: 10px;
+          color: #262626;
+          font-size: 14px;
+          line-height: 20px;
+        }
+        .vh-slider{
+          display: inline-block;
+          vertical-align: middle;
+        }
+        .vague_theme{
+          padding-right: 12px;
+        }
+        .vague_num{
+          padding-left: 10px;
+          font-size: 14px;
+          color: #595959;
+        }
+        &_br{
+          color: #8c8c8c;
+          font-size: 14px;
+          line-height: 22px;
+          padding: 8px 0 24px 0;
+          text-align: center;
+          border-top: 1px solid #f0f0f0;
+        }
+        &_lay {
+          display: flex;
+          align-content: center;
+          justify-content: space-around;
+          >div{
+            text-align: center;
+          }
+          p{
+            width: 68px;
+            height: 46px;
+            border-radius: 4px;
+            background: #d9d9d9;
+            margin-bottom: 5px;
+          }
+          span{
+            font-size: 12px;
+            color: #666;
+            line-height: 18px;
+          }
+        }
+      }
     }
   }
   .upload__living{
     /deep/.el-upload--picture-card {
-      width: 400px;
-      height: 130px;
+      width: 228px;
+      height: 128px;
     }
     /deep/.box > div {
-      width: 400px;
-      height: 130px;
+      width: 228px;
+      height: 128px;
     }
   }
 </style>
