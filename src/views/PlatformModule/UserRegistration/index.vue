@@ -1,10 +1,15 @@
 <template>
-  <div class="vmp-user-registration"  v-loading="loading"
+  <div :class="['vmp-user-registration', {
+    'gray-theme': signUpPageType === 'subject' && isDataPage
+  }]"  v-loading="loading"
     element-loading-text="加载中，请稍候"
     element-loading-background="rgba(255,255,255,.9)">
     <!-- 全部无结果 -->
     <div class="all-no-data" v-if="userDao && userDao.total === 0  && !query.keyword">
-      <null-page nullType="nullData" text="暂无数据" :height="0">
+      <null-page nullType="nullData" text="暂无专题数据，请去专题下的直播活动查看数据吧！" :height="0"  v-if="signUpPageType === 'subject' && isDataPage">
+        <el-button type="primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="addUserDialog">我知道了</el-button>
+      </null-page>
+      <null-page nullType="nullData" text="暂无数据" :height="0" v-else>
         <el-button type="primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="addUserDialog">快速报名</el-button>
         <el-button type="white-primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="importUserDialog">导入</el-button>
       </null-page>
@@ -15,8 +20,8 @@
       <div class="list--search">
         <el-button size="medium" type="primary" round @click.prevent.stop="addUserDialog">快速报名</el-button>
         <!-- 若当前是知学云账号，不展示用量分配按钮, extends_remark 为1时表示 知学云账号-->
-        <el-button size="medium" plain round @click.prevent.stop="importUserDialog">导入</el-button>
-        <el-button size="medium" round @click="downloadHandle">导出</el-button>
+        <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" plain round @click.prevent.stop="importUserDialog">导入</el-button>
+        <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" round @click="downloadHandle">导出</el-button>
         <VhallInput placeholder="搜索手机号/姓名" v-model="query.keyword"
                   clearable
                   @clear="initQueryUserList"
@@ -60,7 +65,7 @@
         </el-select>
       </div>
       <!-- 有消息内容 -->
-      <div>
+      <div class="list-table-panel">
         <!-- 表格与分页 -->
         <table-list
           ref="userTable"
@@ -71,7 +76,7 @@
           :totalNum="userDao.total||0"
           :needPagination=true
           width="150px"
-          max-height="auto"
+          max-height="520px"
           scene="accountList"
           @getTableList="getUserRegistrationList"
         >
@@ -117,6 +122,7 @@ export default {
       vm: null,
       /*--------------------列表部分参数定义--------------------*/
       loading: false,
+      isDataPage: location.href.indexOf('/subject/data/') != -1,
       query: {
         pos: 0,
         limit: 20,
@@ -390,6 +396,18 @@ export default {
       &.el-date-editor--daterange {
         padding-right: 10px;
       }
+    }
+  }
+}
+.vmp-user-registration{
+  &.gray-theme {
+    .all-no-data {
+      /* 基于外边框已经有距离： padding: 24px 24px 24px 24px; */
+      padding-top: 137px;
+    }
+    .list-table-panel {
+      background: #ffffff;
+      padding: 24px 24px;
     }
   }
 }
