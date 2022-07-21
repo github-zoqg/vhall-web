@@ -79,6 +79,7 @@ export default {
             }
             .color_blue{
               color: #3562FA;
+              cursor: pointer;
             }
           }
         }

@@ -4,8 +4,8 @@
     <div class="subject-viewer_container">
       <div class="subject-viewer_choose">
         <el-radio v-model="subject_verify" :label="0">无统一限制，采用直播自己的</el-radio> <br/>
-        <el-radio v-model="subject_verify" :label="1" @change="changeViewer">统一观看限制，各直播自己的失效</el-radio><br/>
-        <el-radio v-model="subject_verify" :label="2" @change="changeViewer">统一报名表单，各直播自己的失效</el-radio>
+        <el-radio v-model="subject_verify" :label="1" @change="changeViewer(1)">统一观看限制，各直播自己的失效</el-radio><br/>
+        <el-radio v-model="subject_verify" :label="2" @change="changeViewer(2)">统一报名表单，各直播自己的失效</el-radio>
       </div>
       <!-- 报名表单 -->
       <sign-up-main v-if="isLoadSignUp"></sign-up-main>
@@ -152,7 +152,7 @@
       <!-- 保存（报名表单展示的时候，用报名表单的按钮） -->
       <div class="subject-viewer_save" v-if="!isLoadSignUp">
         <el-form label-width="82px">
-          <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="saveSubjectViewer">{{subject_verify==2 ? '下一步' : '保 存'}}</el-button>
+          <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="saveSubjectViewer">保 存</el-button>
         </el-form>
       </div>
       <VhallDialog :visible='visiblePreview' title="权限验证" width='400px' @close="visiblePreview = false;">
@@ -296,7 +296,7 @@ export default {
       })
     },
     // 检测是否可以选中权限
-    changeViewer() {
+    changeViewer(index) {
       this.$fetch('subjectCheck', {
         subject_id: this.$route.params.id
       }).then(res => {
@@ -305,6 +305,8 @@ export default {
             this.subject_verify = 0;
             this.checkSubjectList = res.data;
             this.$refs.checkViewer.checkVisible = true;
+          } else {
+            this.subject_verify = index;
           }
         }
       }).catch(res =>{
@@ -356,6 +358,7 @@ export default {
     saveFreeParams(verify) {
       let params = {
           subject_id: this.subjectForm.subject_id,
+          subject_verify: this.subject_verify,
           verify: verify,
         }
       this.saveSubjectInfo(params)
@@ -366,6 +369,7 @@ export default {
         if(valid) {
           let params = {
             subject_id: this.subjectForm.subject_id,
+            subject_verify: this.subject_verify,
             verify: verify,
             password: this.pwdForm.password,
             password_verify: this.pwdForm.placeholder || '请输入密码',
@@ -391,6 +395,7 @@ export default {
       }
       let params = {
         webinar_id: this.subjectForm.subject_id,
+        subject_verify: this.subject_verify,
         verify: verify,
         white_id: this.whiteId,
         is_preview: this.subjectForm.is_preview,
@@ -415,6 +420,7 @@ export default {
         if(valid) {
           let params = {
             subject_id: this.subjectForm.subject_id,
+            subject_verify: this.subject_verify,
             verify: verify,
             fcode_verify: this.formCode.placeholder || '请输入邀请码',
             is_preview: this.subjectForm.is_preview,

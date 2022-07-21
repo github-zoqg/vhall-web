@@ -56,12 +56,6 @@
             :active-text="homeDesc">
           </el-switch>
       </p>
-      <el-form-item label="观看限制" required v-if="this.$route.params.id">
-        <el-radio v-model="formData.viewer" :label="0">无统一限制，采用直播自己的</el-radio> <br/>
-        <el-radio v-model="formData.viewer" :label="1">统一观看限制，各直播自己的失效</el-radio><br/>
-        <el-radio v-model="formData.viewer" :label="2">统一报名表单，各直播自己的失效</el-radio>
-        <!-- <div v-if="formData.viewer>1"><el-button type="primary" size="small" v-preventReClick round @click="goSetViewer">去设置</el-button></div> -->
-      </el-form-item>
       <el-form-item label="专题目录" required>
         <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
         <div class="vh-sort-tables" v-show="formData.selectedActives.length">
@@ -140,8 +134,7 @@
         </div>
       </el-form-item>
       <el-form-item label="">
-        <el-button type="primary" class="length152" v-if="this.$route.params.id" :disabled="!formData.title" @click="submitForm('ruleForm', 1)" v-preventReClick round>保存</el-button>
-        <el-button type="primary" class="length152" :disabled="!formData.title" @click="submitForm('ruleForm', 2)" v-preventReClick round>{{this.$route.params.id ? '设置权限' : '下一步'}}</el-button>
+        <el-button type="primary" class="length152" :disabled="!formData.title" @click="submitForm('ruleForm')" v-preventReClick round>保存</el-button>
         <el-button class="length152"  @click="resetForm('ruleForm')" v-preventReClick round>取消</el-button>
       </el-form-item>
     </el-form>
@@ -193,14 +186,14 @@ export default {
       formData: {
         selectedActives: [],
         title: '',
-        viewer: 0,
         reservation: true,
         imageUrl: '',
         domain_url:'',
         content: '',
         hot: true,
         home: true,
-        total: 0
+        total: 0,
+        viewer: 0
       },
       subject_id: '',
       subjectInfo: {
@@ -247,23 +240,23 @@ export default {
       }
     }
   },
-  // beforeRouteLeave(to, from, next) {
-  //   // 离开页面前判断信息是否修改
-  //   if (!this.isChange) {
-  //     next()
-  //     return false;
-  //   }
-  //   this.$confirm(`取消将不保存此页面的内容？`, '提示', {
-  //     confirmButtonText: '确定',
-  //     cancelButtonText: '取消',
-  //     customClass: 'zdy-message-box',
-  //     lockScroll: false,
-  //     cancelButtonClass: 'zdy-confirm-cancel'
-  //   }).then(() => {
-  //       next()
-  //   }).catch(() => {
-  //   });
-  // },
+  beforeRouteLeave(to, from, next) {
+    // 离开页面前判断信息是否修改
+    if (!this.isChange) {
+      next()
+      return false;
+    }
+    this.$confirm(`取消将不保存此页面的内容？`, '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      customClass: 'zdy-message-box',
+      lockScroll: false,
+      cancelButtonClass: 'zdy-confirm-cancel'
+    }).then(() => {
+        next()
+    }).catch(() => {
+    });
+  },
   methods: {
     // 获取专题 - 详情
     initInfo() {
@@ -289,11 +282,6 @@ export default {
             this.isChange = false
           }, 300)
         }
-      })
-    },
-    goSetViewer() {
-      this.$router.push({
-        path: `/subject/${this.formData.viewer == 1 ? 'viewer' : 'signup'}/${this.$route.params.id}`
       })
     },
     sendData(content) {
@@ -355,8 +343,8 @@ export default {
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
-    // 下一步：2； 保存：1
-    submitForm(formName, index) {
+    // 保存
+    submitForm(formName) {
       window.cd = this.formData
       if (!this.formData.content) {
         this.$message({
@@ -424,12 +412,8 @@ export default {
               });
               // 保存或创建成功重置更改状态
               this.isChange = false
-              if (index == 1) {
-                this.$router.push({path: '/subject'});
-              } else {
-                let subject_id = this.subject_id || this.$route.params.id;
-                this.$router.push({path: `/subject/viewer/${subject_id}`});
-              }
+              let subject_id = this.subject_id || this.$route.params.id;
+              this.$router.push({path: `/subject/details/${subject_id}`});
               console.log(res);
               // setTimeout(()=>{
               //   this.$router.push({path: '/special'});
