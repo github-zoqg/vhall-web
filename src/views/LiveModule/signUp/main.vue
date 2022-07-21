@@ -12,7 +12,7 @@
             active-text="">
           </el-switch>
           <span class="sign-switch-desc">
-            {{ signUpSwtich ? '已开启' : '开启后'}}，如直播关联专题，届时会以专题鉴权为准，请点<a href="javascript:void(0)" @click="showDetailDialog">查看详情</a>确认此表单是否生效。
+            {{ signUpSwtich ? '已开启' : '开启后'}}，若直播关联专题，以专题鉴权为准。<a href="javascript:void(0)" @click="showDetailDialog">查看详情</a>
           </span>
         </div>
         <div class="headBtnGroup">
