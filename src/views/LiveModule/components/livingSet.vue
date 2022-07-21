@@ -2,8 +2,10 @@
   <div class="living-setting">
     <div class="living-setting_type">
       <div class="type_item" v-for="(item, index) in themeTypeList" :key="index">
-        <span>{{ item.title }}</span>
-        <p :class="item.isActive ? 'active' : ''" @click="activeTheme(item)"></p>
+        <span class="type_item_title">{{ item.title }}</span>
+        <p class="type_item_check" :class="item.isActive ? 'active' : ''" @click="activeTheme(item)">
+          <span class="checked_img" v-if="item.isActive"><img src="../../../common/images/icon-choose.png" alt=""></span>
+        </p>
       </div>
     </div>
     <div class="living-setting_preview">
@@ -16,7 +18,7 @@
       <div class="preview_box">
         <div class="preview_box_pc">
           <div class="preview_type">
-            <vh-radio-group v-model="livingPcPreviewType" size="small">
+            <vh-radio-group v-model="livingPcPreviewType" size="mini">
             <vh-radio-button round :label="1">直播间</vh-radio-button>
             <vh-radio-button round :label="2">引导页</vh-radio-button>
           </vh-radio-group>
@@ -27,8 +29,8 @@
     </div>
     <div class="living-setting_form">
       <div class="living-setting_form_opera">
-        <vh-button size="small" plain type="info" round v-preventReClick @click="resetForm">恢复默认</vh-button>
-        <vh-button size="small" plain type="info" round v-preventReClick @click="goPreviewLiving">预览</vh-button>
+        <vh-button size="small" plain round v-preventReClick @click="resetForm">恢复默认</vh-button>
+        <vh-button size="small" plain  round v-preventReClick @click="goPreviewLiving">预览</vh-button>
         <vh-button type="primary" size="small" round v-preventReClick>保存</vh-button>
       </div>
       <div class="form_item">
@@ -37,7 +39,8 @@
       </div>
       <div class="form_item">
         <p class="form_item_title">主题背景</p>
-        <upload
+        <input type="file"  accept="image/*" @change="setImage" id="image" />
+        <!-- <upload
           class="upload__living"
           id="living_cropper"
           v-model="livingForm.theme_url"
@@ -58,7 +61,7 @@
             <p>建议尺寸：1920*1080px，小于4M</p>
             <p>支持jpg、gif、png、bmp</p>
           </div>
-        </upload>
+        </upload> -->
       </div>
       <div class="form_item">
         <span class="vague_theme">模糊程度</span>
@@ -83,16 +86,16 @@
       <div class="form_item">
         <p class="form_item_title">视频区【连麦】布局</p>
         <div class="form_item_lay">
-          <div class="item_lay">
-            <p></p>
+          <div class="item_lay" @click="choseMicrophone(1)">
+            <p :class="livingForm.microphone == 1 ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
             <span>主次浮窗</span>
           </div>
-          <div class="item_lay">
-            <p></p>
+          <div class="item_lay" @click="choseMicrophone(2)">
+            <p :class="livingForm.microphone == 2 ? 'active' : ''"><img src="./image/main_2.png" alt=""></p>
             <span>主次平铺</span>
           </div>
-          <div class="item_lay">
-            <p></p>
+          <div class="item_lay" @click="choseMicrophone(3)">
+            <p :class="livingForm.microphone == 3 ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
             <span>均匀排列</span>
           </div>
         </div>
@@ -189,7 +192,8 @@ export default {
         video_url: '',
         video_vague: 100,
         video_light: 90
-      }
+      },
+      reader: ''
     }
   },
   components: {
@@ -230,6 +234,22 @@ export default {
         this.livingForm.theme_url = '';
         this.domain_url = '';
       });
+    },
+    choseMicrophone(index) {
+      this.livingForm.microphone = index;
+    },
+    setImage(e) {
+      let file = e.target.files[0];
+      console.log(file)
+      let obj = {}
+      this.reader = '';
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        let typeArr = file.type.toLowerCase().split('/');
+        obj.src = event.target.result;
+        this.$refs.livingCropper.showModel(obj)
+        console.log(event, typeArr, '??13142353')
+      }
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
@@ -272,9 +292,12 @@ export default {
         });
         return false;
       }
-      let obj = {
-        src: file.name
-      }
+      // let obj = {
+      //   src: file.name
+      //   // src: 'https://t-alistatic01.e.vhall.com/upload/interacts/screen-imgs/202207/d0/e7/d0e737b7c30eced4bc498a93e647eae6.jpg'
+      // }
+      // this.$refs.livingCropper.showModel(obj)
+      // return;
       return isType && isLt2M;
     },
     uploadProcess(event, file, fileList){
@@ -308,10 +331,10 @@ export default {
       padding-left: 24px;
       .type_item{
         padding-bottom: 24px;
-        span{
+        &_title{
           color: #262626;
         }
-        p{
+        &_check{
           margin-top: 12px;
           width: 192px;
           height: 108px;
@@ -321,6 +344,16 @@ export default {
           cursor: pointer;
           &.active {
             border: 1px solid #fb3a32;
+          }
+          .checked_img{
+            float: right;
+            width: 24px;
+            height: 24px;
+            img{
+              width: 100%;
+              height: 100%;
+              object-fit: scale-down;
+            }
           }
         }
       }
@@ -382,13 +415,22 @@ export default {
           justify-content: space-around;
           >div{
             text-align: center;
+            cursor: pointer;
           }
           p{
             width: 68px;
             height: 46px;
             border-radius: 4px;
-            background: #d9d9d9;
             margin-bottom: 5px;
+            border: 1px solid transparent;
+            img{
+              width: 100%;
+              height: 100%;
+              object-fit: scale-down;
+            }
+            &.active{
+              border: 1px solid #FB2626;
+            }
           }
           span{
             font-size: 12px;

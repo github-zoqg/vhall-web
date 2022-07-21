@@ -4,16 +4,17 @@
     :visible.sync="dialogVisible"
     :close-on-click-modal=false
     :close-on-press-escape=false
-    width="800px">
+    width="480px">
     <div class="cropper_content">
       <div class="cropper_content_box">
-        <vue-cropper ref="cropper"
+        <vue-cropper ref="cropper" class="cropper_img"
+          :aspect-ratio="1"
           :src="option.src"
         ></vue-cropper>
       </div>
       <div class="cropper_content_btn">
-        <vh-button  size="medium" type="primary" round v-preventReClick>确定</vh-button>
-        <vh-button size="medium" round v-preventReClick >取消</vh-button>
+        <vh-button  size="medium" type="primary" round v-preventReClick @click="cropperSure">确定</vh-button>
+        <vh-button size="medium" round v-preventReClick @click="resetCropper">取消</vh-button>
       </div>
     </div>
   </el-dialog>
@@ -25,7 +26,12 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      cropperImgUrl: '',
       option: {
+        style: {
+          'height': '234px',
+          'object-fit': 'scale-down'
+        },
         src: ''
       }
     }
@@ -37,39 +43,31 @@ export default {
     showModel(obj) {
       console.log(obj, '???1111233456')
       this.dialogVisible = true;
-      this.option.src = obj.src
+      this.option.src = obj.src;
     },
-    initCropper() {
-      let image = document.getElementById(this.cropperDom);
-      this.cropper = new Cropper(image, {
-        guides: true,
-        dragMode: 'move', // 移动
-        aspectRatio: 420 / 213, //设置裁剪容器的比例
-        minContainerHeight: 319.5,
-        minContainerWidth: 630,
-        zoomOnWheel: true, // 是否允许通过鼠标滚轮来缩放图片
-        background: true, // 是否在容器上显示网格背景
-        rotatable: false, // 是否允许旋转图片
-        ready() {
-          this.cropper.crop();
-        }
-      })
+    cropperSure() {
+      this.cropperImgUrl = this.$refs.cropper.getCroppedCanvas().toDataURL();
+      console.log(this.cropperImgUrl, '???!2314')
+    },
+    resetCropper() {
+      this.$refs.cropper.reset()
     }
   }
 }
 </script>
 <style lang="less" scoped>
   .cropper_content{
-    height: 500px;
+    // height: 300px;
     &_box{
-      height: 441px;
-      img{
+      height: 234px;
+      width: 100%;
+      .cropper_img{
+        height: 234px;
         width: 100%;
-        height: 100%;
-        object-fit: scale-down;
       }
     }
     &_btn {
+      padding: 20px 0;
       display: flex;
       justify-content: flex-end;
     }
