@@ -150,6 +150,12 @@ const router = [
         hidden: true
       },
       {
+        path: 'safeScreenSet/:str(\\d+)',
+        component: () => import('@/views/LiveModule/Brands/safeScreenSet'),
+        meta:{ auth: true, title: '防录屏设置', name: 'safeScreenSet', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'playerSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/playerSet'),
         meta:{ auth: true, title: '播放器设置', name: 'playerSet', activeMenu: '/live/list'},
