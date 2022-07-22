@@ -3,7 +3,7 @@
     element-loading-text="加载中，请稍候"
     element-loading-background="rgba(255,255,255,.9)">
     <!-- 全部无结果 -->
-    <div class="all-no-data" v-if="userDao && userDao.total === 0  && !query.keyword">
+    <div class="all-no-data" v-if="userDao && userDao.total === 0  && query.keyword == '' && query.is_enter =='' && query.type == ''">
       <null-page nullType="nullData" text="暂无数据" :height="0">
         <el-button type="primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="addUserDialog">快速报名</el-button>
         <el-button type="white-primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="importUserDialog">导入</el-button>
@@ -50,7 +50,7 @@
               label: '是'
             },
             {
-              value: 2,
+              value: 0,
               label: '否'
             }]"
             :key="'v_' + item.value"
@@ -120,7 +120,10 @@ export default {
       query: {
         pos: 0,
         limit: 20,
-        pageNumber: 1
+        pageNumber: 1,
+        // is_enter: '',
+        // type: '',
+        // keyword: ''
       },
       userDao: {
         total: 0,
@@ -209,11 +212,11 @@ export default {
         this.query.pageNumber = row.pageNum;
       }
       this.loading = true;
-      this.$fetch('userRegistrationList', this.$params(this.query)).then(res =>{
+      this.$fetch('userRegistrationList', this.$params(this.setParamsIdByRoute(this.query))).then(res =>{
         this.loading = false;
         if (res && res.code === 200 && res.data && res.data.list) {
           res.data.list.map(item => {
-            item.entry_source_str = item.entry_source == 1 ? '线上报名': '线下';
+            item.entry_source_str = item.entry_source == 2 || item.entry_source == 3 ? '导入': '线上报名';
             item.is_enter_str = item.is_enter == 1 ? '是': '否'
             item.name = item.name || '--'
             item.phone = item.phone || '--'
