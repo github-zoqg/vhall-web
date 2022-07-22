@@ -71,7 +71,7 @@
           :totalNum="userDao.total||0"
           :needPagination=true
           width="150px"
-          max-height="auto"
+          max-height="520px"
           scene="accountList"
           @getTableList="getUserRegistrationList"
         >
@@ -245,7 +245,7 @@ export default {
     initQueryUserList() {
       this.query.pos = 0;
       this.query.pageNumber = 1;
-      this.query.limit = 10;
+      this.query.limit = 20;
       // 表格切换到第一页
       this.$nextTick(() => {
         if (this.$refs.userTable) {
