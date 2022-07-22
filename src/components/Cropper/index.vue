@@ -46,20 +46,10 @@ export default {
       this.option.src = obj;
     },
     cropperSure() {
-      this.cropperImgUrl = this.$refs.cropper.getCroppedCanvas().toBlob(blob => {
-        const formData = new FormData();
-        let files = new window.File([blob], '12345', {
-            type: blob.type
-          })
-        console.log(blob)
-        formData.append('croppedImage', files, 'example.png');
+      this.cropperData = this.$refs.cropper.getData()
+      // const fileObj = this.dataURLtoFile(this.cropperImgUrl)
+      this.$emit('cropComplete', this.cropperData)
 
-        this.$fetch('uploadImage', {
-          path: 'interacts/screen-imgs/202207',
-          type: 'image',
-          resfile: files
-        })
-      });
       console.log(this.cropperImgUrl, '???!2314')
     },
     resetCropper() {

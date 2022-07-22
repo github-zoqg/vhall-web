@@ -19,9 +19,10 @@
         <div class="preview_box_pc">
           <div class="preview_type">
             <vh-radio-group v-model="livingPcPreviewType" size="mini">
-            <vh-radio-button round :label="1">直播间</vh-radio-button>
-            <vh-radio-button round :label="2">引导页</vh-radio-button>
-          </vh-radio-group>
+              <vh-radio-button round :label="1">直播间</vh-radio-button>
+              <vh-radio-button round :label="2">引导页</vh-radio-button>
+            </vh-radio-group>
+            <img v-if="resultImg.src" :src="resultImg.src" alt="">
           </div>
         </div>
         <div class="preview_box_wap"></div>
@@ -39,14 +40,14 @@
       </div>
       <div class="form_item">
         <p class="form_item_title">主题背景</p>
-        <upload class="upload__living">
+        <!-- <upload class="upload__living">
           <div slot="tip">
             <p>建议尺寸：1920*1080px，小于4M</p>
             <p>支持jpg、gif、png、bmp</p>
           </div>
-        </upload>
+        </upload> -->
         <!-- <input type="file"  accept="image/jpg,image/jpeg,image/png,image/gif,image/bmp" @change="setImage" id="image" /> -->
-        <!-- <upload
+        <upload
           class="upload__living"
           id="living_cropper"
           v-model="livingForm.theme_url"
@@ -67,7 +68,7 @@
             <p>建议尺寸：1920*1080px，小于4M</p>
             <p>支持jpg、gif、png、bmp</p>
           </div>
-        </upload> -->
+        </upload>
       </div>
       <div class="form_item">
         <span class="vague_theme">模糊程度</span>
@@ -147,12 +148,12 @@
       </div>
     </div>
     <living-preview ref="livingPreview"></living-preview>
-    <cropper ref="livingCropper" cropperDom="living_cropper"></cropper>
+    <cropper @cropComplete="cropComplete" ref="livingCropper" cropperDom="living_cropper"></cropper>
   </div>
 </template>
 <script>
 import livingPreview from './livingPreview.vue';
-import Upload from '@/components/UploadImage/index';
+import Upload from '@/components/Upload/main';
 import ColorSet from '@/components/ColorSelect';
 import cropper from '@/components/Cropper'
 export default {
@@ -199,7 +200,10 @@ export default {
         video_vague: 100,
         video_light: 90
       },
-      reader: ''
+      reader: '',
+      resultImg: {
+        src: ''
+      }
     }
   },
   components: {
@@ -217,6 +221,12 @@ export default {
     this.initComp()
   },
   methods: {
+    cropComplete(cropedData) {
+      console.log(cropedData)
+      this.imgInfo.src += `?x-oss-process=image/crop,x_${cropedData.x.toFixed()},y_${cropedData.y.toFixed()},w_${cropedData.width.toFixed()},h_${cropedData.height.toFixed()}`
+      console.log(this.imgInfo.src)
+      this.resultImg.src = this.imgInfo.src
+    },
     initComp(){
       console.log('我是初始化接口')
     },
@@ -244,33 +254,6 @@ export default {
     choseMicrophone(index) {
       this.livingForm.microphone = index;
     },
-    getObjectURL(file) {
-        var url = null ;
-        if (window.createObjectURL!=undefined) { // basic
-          url = window.createObjectURL(file) ;
-        } else if (window.URL!=undefined) { // mozilla(firefox)
-          url = window.URL.createObjectURL(file) ;
-        } else if (window.webkitURL!=undefined) { // webkit or chrome
-          url = window.webkitURL.createObjectURL(file) ;
-        }
-        return url ;
-    },
-
-    setImage(e) {
-      let file = e.target.files[0];
-      console.log('上传图片file对象',file)
-      const url = this.getObjectURL(file)
-      this.$refs.livingCropper.showModel(url)
-      // let obj = {}
-      // this.reader = '';
-      // const reader = new FileReader();
-      // reader.onload = (event) => {
-      //   let typeArr = file.type.toLowerCase().split('/');
-      //   obj.src = event.target.result;
-      //   this.$refs.livingCropper.showModel(obj)
-      //   console.log(event, typeArr, '??13142353')
-      // }
-    },
     handleUploadSuccess(res, file){
       console.log(res, file);
       if(res.data) {
@@ -278,7 +261,8 @@ export default {
           src: res.data.domain_url,
           url: res.data.file_url
         }
-        this.$refs.livingCropper.showModel(obj)
+        this.imgInfo = obj
+        this.$refs.livingCropper.showModel(obj.src)
         // let domain_url = res.data.domain_url || ''
         // let file_url = res.data.file_url || '';
         // this.livingForm.theme_url = file_url;
