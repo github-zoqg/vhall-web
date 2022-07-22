@@ -375,17 +375,36 @@ export default {
     this.userId = sessionOrLocal.get('userId')
     this.isInteract = this.$route.query.type
     this.getInit()
-    this.getTableList()
-    this.getPermission(this.$route.params.str)
   },
   mounted() {},
   methods: {
+    getRoomInfo() {
+      this.requestRoomInfo().then((res) => {
+        this.dealRoomInfo(res)
+      })
+    },
+    dealRoomInfo(res) {
+      this.liveInfo = res.data
+    },
     getInit() {
-      this.$fetch('getWebinarInfo', {
-        webinar_id: this.$route.params.str,
-      }).then((res) => {
-        console.log(res.data)
-        this.liveInfo = res.data
+      const p1 = this.requestPermission()
+      const p2 = this.requestTableList()
+      const p3 = this.requestRoomInfo()
+      Promise.allSettled([p1, p2, p3])
+        .then((res) => {
+          console.log(res)
+          this.dealPermission(res[0].value)
+          this.dealTableList(res[1].value)
+          this.dealRoomInfo(res[2].value)
+          this.loaded = true
+        })
+        .catch((error) => {
+          this.loaded = true
+        })
+    },
+    requestRoomInfo(id) {
+      return this.$fetch('getWebinarInfo', {
+        webinar_id: id || this.$route.params.str,
       })
     },
     goForm(url, index) {
@@ -497,36 +516,37 @@ export default {
       let methodsCombin = this.$options.methods
       methodsCombin[val.type](this, val)
     },
-    getTableList(excludeItem) {
+    requestTableList(webinar_id) {
       let obj = {
-        webinar_id: this.$route.params.str,
+        webinar_id: webinar_id || this.$route.params.str,
       }
-      this.$fetch('getStreamPushList', this.$params(obj))
-        .then((res) => {
-          this.streamOpen = !!res.data.status
-          let tableData = res.data.list || []
-          tableData.map((item, index) => {
-            if (
-              !excludeItem ||
-              (excludeItem && excludeItem.push_id != item.push_id)
-            ) {
-              item.watch = Boolean(item.status)
-              item.pf_txt = item.pf_name ? item.pf_name : '——'
-              item.overseaTxt = item.oversea ? '海外推流' : '国内推流'
-              item.statusText = PushStatus[item.push_status]
-              item.status = item.push_status
-            } else {
-              tableData[index] = excludeItem
-            }
-          })
-          this.total = res.data.list.length
-          this.tableData = tableData
-          this.loaded = true
-        })
-        .catch((e) => {
-          this.loaded = true
-          console.log(e)
-        })
+      return this.$fetch('getStreamPushList', this.$params(obj))
+    },
+    getTableList(excludeItem) {
+      this.requestTableList().then((res) => {
+        this.dealTableList(res, excludeItem)
+      })
+    },
+    dealTableList(res, excludeItem) {
+      this.streamOpen = !!res.data.status
+      let tableData = res.data.list || []
+      tableData.map((item, index) => {
+        if (
+          !excludeItem ||
+          (excludeItem && excludeItem.push_id != item.push_id)
+        ) {
+          item.watch = Boolean(item.status)
+          item.pf_txt = item.pf_name ? item.pf_name : '——'
+          item.overseaTxt = item.oversea ? '海外推流' : '国内推流'
+          item.statusText = PushStatus[item.push_status]
+          item.status = item.push_status
+        } else {
+          tableData[index] = excludeItem
+        }
+      })
+      this.total = res.data.list.length
+      this.tableData = tableData
+      this.loaded = true
     },
     onSwitchChange(option) {
       this.$fetch('updateStreamPush', {
@@ -742,36 +762,28 @@ export default {
     },
     getPermission(id) {
       // 活动权限
-      this.$fetch('planFunctionGet', {
-        webinar_id: id,
+      this.requestPermission(id).then((res) => {
+        this.dealPermission(res)
+      })
+    },
+    dealPermission(res) {
+      if (res.code == 200) {
+        if (res.data.permissions) {
+          let perssionInfo = JSON.parse(res.data.permissions)
+          this.btn_thirdway_push =
+            perssionInfo['btn_thirdway_push'] &&
+            perssionInfo['btn_thirdway_push'] == 1
+              ? true
+              : false
+        }
+      }
+    },
+    requestPermission(id) {
+      return this.$fetch('planFunctionGet', {
+        webinar_id: id || this.$route.params.str,
         webinar_user_id: this.userId,
         scene_id: 1,
       })
-        .then((res) => {
-          if (res.code == 200) {
-            if (res.data.permissions) {
-              sessionOrLocal.set(
-                'WEBINAR_PES',
-                res.data.permissions,
-                'localStorage'
-              )
-              let perssionInfo = JSON.parse(
-                sessionOrLocal.get('WEBINAR_PES', 'localStorage')
-              )
-              this.btn_thirdway_push =
-                perssionInfo['btn_thirdway_push'] &&
-                perssionInfo['btn_thirdway_push'] == 1
-                  ? true
-                  : false
-            } else {
-              sessionOrLocal.removeItem('WEBINAR_PES')
-            }
-          }
-        })
-        .catch((e) => {
-          console.log(e)
-          sessionOrLocal.removeItem('SAAS_VS_PES')
-        })
     },
   },
 }
