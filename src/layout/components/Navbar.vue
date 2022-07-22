@@ -182,7 +182,7 @@ export default {
     },
     logout() {
       let out_url = sessionOrLocal.get('SAAS_V3_CTRL_OUT', 'localStorage');
-      this.$fetch('loginOut', {}).then(res =>{
+      this.$fetch('loginOut', {}, { credentials: true }).then(res =>{
         this.$vhall_paas_port({
           k: 100832,
           data: {business_uid: this.userInfo.user_id, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}

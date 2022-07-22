@@ -553,7 +553,8 @@ export default {
       this.$fetch('loginInfo', {
         ...retParams,
       }, {
-        token: ''
+        token: '',
+        credentials: true
       }).then(res => {
         this.mobileKey = '';
         this.errorText = '';
