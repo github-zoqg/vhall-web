@@ -3,13 +3,13 @@
     <pageTitle pageTitle="设置观看鉴权模式"></pageTitle>
     <div class="subject-viewer_container">
       <div class="subject-viewer_choose">
-        <el-radio v-model="subject_verify" :label="0">无统一限制，采用直播自己的</el-radio> <br/>
+        <el-radio v-model="subject_verify" :label="0" @change="changeViewer(0)">无统一限制，采用直播自己的</el-radio> <br/>
         <el-radio v-model="subject_verify" :label="1" @change="changeViewer(1)">统一观看限制，各直播自己的失效</el-radio><br/>
         <el-radio v-model="subject_verify" :label="2" @change="changeViewer(2)">统一报名表单，各直播自己的失效</el-radio>
       </div>
       <!-- 报名表单 -->
       <sign-up-main v-if="isLoadSignUp"></sign-up-main>
-      <template v-if="subject_verify==1">
+      <template v-if="isVerifyLimit">
         <div class="viewer_header">
           <div class="viewer_header_title">专题观看限制</div>
           <el-radio-group v-model="subjectForm.verify">
@@ -150,7 +150,7 @@
         </div>
       </template>
       <!-- 保存（报名表单展示的时候，用报名表单的按钮） -->
-      <div class="subject-viewer_save" v-if="!isLoadSignUp">
+      <div class="subject-viewer_save" v-if="subject_verify != 2">
         <el-form label-width="82px">
           <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="saveSubjectViewer">保 存</el-button>
         </el-form>
@@ -259,6 +259,7 @@ export default {
           value: 20
         }
       ],
+      isVerifyLimit: false,
       isLoadSignUp: false, // 是否加载报名表单
     }
   },
@@ -278,6 +279,9 @@ export default {
       }).then(res => {
         if (res.code == 200) {
           this.subject_verify = res.data.subject_verify;
+          if (res.data.subject_verify) {
+            res.data.subject_verify == 1 ? this.isVerifyLimit = true : this.isLoadSignUp = true
+          }
           this.groupList = res.data.white_list;
           this.subjectForm.verify = res.data.verify;
           this.subjectForm.is_preview = res.data.is_preview;
@@ -297,6 +301,11 @@ export default {
     },
     // 检测是否可以选中权限
     changeViewer(index) {
+      if (!index) {
+        this.isVerifyLimit = false;
+        this.isLoadSignUp = false;
+        return;
+      }
       this.$fetch('subjectCheck', {
         subject_id: this.$route.params.id
       }).then(res => {
@@ -307,8 +316,14 @@ export default {
             this.$refs.checkViewer.checkVisible = true;
           } else {
             this.subject_verify = index;
+            if (index == 1) {
+              this.isVerifyLimit = true
+              this.isLoadSignUp = false
+            } else {
+              this.isVerifyLimit = false
+              this.isLoadSignUp = true
+            }
           }
-          // TODO isLoadSignUp 报名表单可设置
         }
       }).catch(res =>{
          this.subject_verify = 0;
@@ -554,8 +569,9 @@ export default {
       padding: 49px 56px 40px 56px;
       .viewer_header{
         &_title{
-          color: #000;
-          padding: 12px 0 24px 0;
+          color: #1A1A1A;
+          padding: 24px 0;
+          font-weight: 500;
         }
 
       }
@@ -677,7 +693,7 @@ export default {
       }
     }
     &_save{
-      margin-top: 40px;
+      margin-top: 8px;
     }
     &_dialog{
       position: relative;

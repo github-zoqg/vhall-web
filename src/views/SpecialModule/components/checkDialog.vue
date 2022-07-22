@@ -10,8 +10,8 @@
     <div class="choose-viewer_container">
       <div class="subject_check">
         <div class="check_title">
-          本专题下有 <span>{{ 0 || checkList.length }}</span> 个直播被其他专题使用，请从其他专题移除后再更改观看限制
-          <p>以下直播被其他专题使用，请前往专题去移除。详情如下:</p>
+          本专题下有 <span>{{ 0 || checkList.length }}</span> 个直播被重复使用，先移除重复直播才可统一设置观看权限。
+          <p>详情如下:</p>
         </div>
         <div class="check_list">
           <div class="check_list_item" v-for="(item, index) in checkList" :key="index">
@@ -42,7 +42,7 @@ export default {
   methods: {
     goEditSubject(id) {
       this.$router.push({path: `/subject/edit/${id}`, query: {
-        check: true
+        title: '编辑'
       }})
     }
   }
@@ -62,24 +62,25 @@ export default {
             color: #fb3a32;
           }
           p{
-            margin-top: 32px;
-            padding-bottom: 5px;
+            margin-top: 24px;
+            padding-bottom: 8px;
           }
         }
         .check_list{
           height: 285px;
           overflow: auto;
           &_item{
-            line-height: 28px;
+            line-height: 30px;
             font-size: 14px;
             color: #666;
             span{
               color: #1a1a1a;
-              font-weight: 600;
+              font-weight: 500;
             }
             .color_blue{
               color: #3562FA;
               cursor: pointer;
+              font-weight: 400;
             }
           }
         }

@@ -58,6 +58,7 @@
       </p>
       <el-form-item label="专题目录" required>
         <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
+        <span class="form_tip" v-if="$route.params.id">标红活动在其他专题重复使用</span>
         <div class="vh-sort-tables" v-show="formData.selectedActives.length">
           <div class="vh-sort-tables__theader">
             <div class="vh-sort-tables__theader-id">
@@ -86,6 +87,7 @@
             >
               <div
                 class="vh-sort-tables__tbody-tr"
+                :class="item.auto_record == 1 ? 'tr_active' : ''"
                 v-for="(item, index) in formData.selectedActives"
                 :key="item.webinar_id"
                 >
@@ -97,23 +99,9 @@
                 </div>
                 <div class="vh-sort-tables__tbody-status">
                   <template>
+                    <span :class="'statusTag tag_' + item.webinar_state"></span>
                    {{ item.webinar_state | actionText }}
                   </template>
-                  <!-- <template v-if="item.webinar_type == 1">
-                    直播
-                  </template>
-                  <template v-if="item.webinar_type == 2">
-                    预告
-                  </template>
-                  <template v-if="item.webinar_type == 3">
-                    结束
-                  </template>
-                  <template v-if="item.webinar_type == 4">
-                    点播
-                  </template>
-                  <template v-if="item.webinar_type == 5">
-                    回放
-                  </template> -->
                 </div>
                 <div class="vh-sort-tables__tbody-hots">
                   {{ item.pv | formatNum }}
@@ -642,6 +630,11 @@ export default {
       height: 180px;
     }
   }
+  .form_tip{
+    margin-left: 8px;
+    color: #999;
+    font-size: 14px;
+  }
  /* .editBox {
     padding: 0px 40px;
   }
@@ -700,6 +693,9 @@ export default {
         font-size: 14px;
         color: #1A1A1A;
         word-break: keep-all;
+        &.tr_active{
+          background: rgba(251, 58, 50, 0.1);
+        }
         &>div{
           display: inline-block;
           vertical-align: top;
@@ -722,9 +718,9 @@ export default {
         word-break: break-all;
         cursor: pointer;
         color: #3562FA;
-        &:hover{
-          color: #FB3A32;
-        }
+        // &:hover{
+        //   color: #FB3A32;
+        // }
       }
       &-status{
         width: 88px;
@@ -742,6 +738,28 @@ export default {
             color: #FB3A32;
           }
         }
+      }
+      .statusTag{
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 4px;
+      }
+      .tag_1{
+        background: #FB3A32;
+      }
+      .tag_2{
+        background: #3562FA;
+      }
+      .tag_3{
+        background: #999;
+      }
+      .tag_4{
+        background: #fa9a32;
+      }
+      .tag_5{
+        background: #14BA6A;
       }
     }
   }

@@ -254,12 +254,12 @@
     </VhallDialog>
     <VhallDialog :visible='limitVisible' title="直播关联专题详情" width='400px' @close="limitVisible = false;">
       <div class="limit_tip">
-        本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ subjectInfo.subject_title }}》</span> ，
+        本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ subjectInfo.subject_title | titleFormat }}》</span> ，
         <span v-if="subjectInfo.subject_type==1">该专题无统一的观看限制，本直播观看限制生效。</span>
-        <span v-else>该专题提供统一的观看限制- {{handleFormat()}}，本直播观看限制 <span class="color_red">失效</span>。</span>
+        <span v-else>该专题提供统一的观看限制- {{handleFormat()}}，本直播观看限制失效。</span>
       </div>
       <div slot='footer'>
-        <el-button type="primary" size="medium" round @click="limitVisible = false;">确定</el-button>
+        <el-button type="primary" size="medium" round @click="limitVisible = false;">知道了</el-button>
       </div>
     </VhallDialog>
   </div>
@@ -277,6 +277,11 @@ export default {
   components: {
     PageTitle,
     beginPlay
+  },
+  filters: {
+    titleFormat(val){
+      return val < 10 ? val : val + '...'
+    }
   },
   // 无极版、标准版、新享版 没有邀请码 付费 白名单 试看 权限 按钮-试看
   data() {
@@ -658,7 +663,7 @@ export default {
           // 有绑定，但是专题鉴权是无限制
           if (this.subjectInfo.subject_type == 1) {
             this.$alert('本直播属于多个专题，这些专题无统一的观看限制，本直播观看限制生效', '提示', {
-              confirmButtonText: '确定',
+              confirmButtonText: '知道了',
               customClass: 'zdy-message-box',
               callback: action => {}
             });
@@ -669,7 +674,7 @@ export default {
       } else {
         // 无绑定
         this.$alert('本直播不属于任何专题，本次设置的观看限制生效', '提示', {
-          confirmButtonText: '确定',
+          confirmButtonText: '知道了',
           customClass: 'zdy-message-box',
           callback: action => {}
         });
@@ -1246,7 +1251,7 @@ export default {
   padding-right: 65px !important;
 }
 .limit_tip{
-  font-size: 16px;
+  font-size: 14px;
   line-height: 22px;
   .color_blue{
     color: #3562fa;

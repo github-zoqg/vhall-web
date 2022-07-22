@@ -10,6 +10,7 @@
       :before-close="cancelSelect"
       custom-class="choose-gift"
     >
+      <div class="subject_tip">若专题统一鉴权，当前列表只展示未关联任何专题的直播活动</div>
       <VhallInput style="width: 230px" v-model="keyword" v-clearEmoij placeholder="请输入直播标题或者直播ID" @keyup.enter.native="inputChange"  @clear="inputChange" class="head-btn search resetRightBrn" clearable>
         <i slot="prefix" class="el-icon-search el-input__icon" :class="{'disabled': !keyword}" @click="inputChange(true)"></i>
       </VhallInput>
@@ -184,7 +185,7 @@ export default {
     // 同步 选中状态
     syncCheckStatus() {
       if (this.checkedList.length > 0) {
-      const checked = this.checkedList.map((item) => {
+      const checked = this.selectedOption.map((item) => {
         return item.webinar_id || item.id
       })
       this.activeList = this.activeList.map((item) => {
@@ -209,7 +210,7 @@ export default {
       console.log( item )
       item.checked = !item.checked;
       if (this.checkedList.length > 0) {
-        const checkedIds = this.checkedList.map((item) => {
+        const checkedIds = this.selectedOption.map((item) => {
           return item.webinar_id || item.id
         })
         if (item.checked && !checkedIds.includes(item.webinar_id)) {
@@ -383,6 +384,12 @@ export default {
         }
     }
   }
+}
+.subject_tip{
+  position: absolute;
+  top: 32px;
+  left: 120px;
+  color: #999;
 }
 .control{
   padding: 24px 32px;

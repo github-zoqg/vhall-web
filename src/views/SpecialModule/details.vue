@@ -2,15 +2,15 @@
   <div class="subject-detail">
     <!-- 专题详情页 -->
     <pageTitle pageTitle="专题详情"></pageTitle>
-    <el-row :gutter="16" class="subject-detail_info">
-      <el-col :span="18" :lg="18" :md="24" :sm="24" :xs="24">
+    <div class="subject-detail_info">
+      <div class="subject_left">
         <div class="info_inner">
           <div class="info_inner_thumb">
             <img :src="subjectDetailInfo.cover" alt="" />
           </div>
           <div class="info_inner_base">
             <div class="hidden_hover">
-              <p class="mainColor font-20">
+              <p class="mainColor">
                 {{ subjectDetailInfo.title }}
               </p>
               <p class="title_hover">{{ subjectDetailInfo.title }}</p>
@@ -18,7 +18,7 @@
             <p class="info_limit">
               观看限制：
               <span v-if="subjectDetailInfo.subject_verify==1">统一观看限制，各直播自己的失效</span>
-              <span v-if="subjectDetailInfo.subject_verify==2">统一报名表单，各直播自己的失效</span>
+              <span v-else-if="subjectDetailInfo.subject_verify==2">统一报名表单，各直播自己的失效</span>
               <span v-else>无统一的观看限制，采用直播自己的</span>
             </p>
             <p class="info_button">
@@ -27,18 +27,18 @@
             </p>
           </div>
         </div>
-      </el-col>
-      <el-col :span="6" :lg="6" :md="24" :sm="24" :xs="24" class="subject-detail_intro" style="padding-right: 4px">
+      </div>
+      <div class="subject_right">
         <div class="intro_inner">
           <div class="intro_inner_code">
-            <img :src="env.staticLinkVo.aliQr + shareVo.url" alt="">
+            <img :src="subjectWapLink" alt="">
           </div>
           <div class="intro_inner_down">
-            <el-button type="primary" size="medium" round >下载二维码</el-button>
+            <el-button type="primary" size="medium" round @click="downErCode">下载二维码</el-button>
           </div>
         </div>
-      </el-col>
-    </el-row>
+      </div>
+    </div>
     <itemCard></itemCard>
     <share ref="share" :shareVo="shareVo"></share>
   </div>
@@ -59,8 +59,8 @@ export default {
   data() {
     return {
       hasDelayPermission: 0,
-      env: Env,
       subject_id: this.$route.params.id,
+      subjectWapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.params.id}`,
       shareVo: {
         pcUrl: ''
       },
@@ -84,6 +84,30 @@ export default {
         }
       })
     },
+    // 下载二维码
+    downErCode() {
+      const activeName = this.subjectDetailInfo.title
+        let image = new Image()
+        // 解决跨域 Canvas 污染问题
+        image.setAttribute('crossOrigin', 'anonymous')
+        image.onload = function () {
+          let canvas = document.createElement('canvas')
+          // canvas.width = image.width
+          // canvas.height = image.height
+          canvas.width = 217
+          canvas.height = 217
+          let context = canvas.getContext('2d')
+          context.drawImage(image, 0, 0, 217, 217)
+          // context.drawImage(image, 0, 0, image.width, image.height)
+          let url = canvas.toDataURL('image/png') //得到图片的base64编码数据
+          let a = document.createElement('a') // 生成一个a元素
+          let event = new MouseEvent('click') // 创建一个单击事件
+          a.download = `${activeName || 'code'}专题二维码.png` // 设置图片名称
+          a.href = url // 将生成的URL设置为a.href属性
+          a.dispatchEvent(event) // 触发a的单击事件
+        }
+        image.src = this.subjectWapLink;
+      },
     previewSubject() {
       window.open(`${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.params.id}&delay=${this.hasDelayPermission}`, '_blank')
     },
@@ -101,6 +125,11 @@ export default {
   .subject-detail{
     &_info{
       height: 223px;
+      display: flex;
+      .subject_left{
+        width: calc(100% - 272px);
+        flex: 1;
+      }
       .info_inner {
         background: #fff;
         width: 100%;
@@ -108,6 +137,7 @@ export default {
         padding: 24px;
         display: flex;
         border-radius: 4px;
+        position: relative;
         &_thumb{
           width: 312px;
           height: 175px;
@@ -128,6 +158,18 @@ export default {
             font-size: 14px;
             line-height: 28px;
           }
+          .mainColor{
+            font-size: 20px;
+            color: #1a1a1a;
+            width: 100%;
+            overflow: hidden;
+            word-break: break-all;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            position: relative;
+          }
           .hidden_hover:hover .title_hover {
             display: block;
           }
@@ -146,6 +188,10 @@ export default {
             z-index: 100;
             display: none;
           }
+          .info_limit{
+            color: #666;
+            padding-top: 8px;
+          }
         }
         .tag {
           border-radius: 20px;
@@ -155,31 +201,35 @@ export default {
           margin-right: 8px;
         }
       }
-    }
-    &_intro {
-      height: 223px;
-      overflow: auto;
-      .intro_inner{
+      .subject_right{
+        height: 223px;
+        width: 248px;
         background: #fff;
-        width: 100%;
-        height: 100%;
-        padding: 12px;
         border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        &_code{
-          width: 132px;
-          height: 132px;
-          img{
-            width: 100%;
-            height: 100%;
-            object-fit: scale-down;
+        margin-left: 24px;
+        .intro_inner{
+          background: #fff;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          &_code{
+            width: 132px;
+            height: 132px;
+            img{
+              width: 100%;
+              height: 100%;
+              object-fit: scale-down;
+            }
           }
-        }
-        &_down{
-          margin-top: 10px;
+          &_down{
+            margin-top: 10px;
+            button.el-button.el-button--medium{
+              padding: 4px 23px;
+            }
+          }
         }
       }
     }

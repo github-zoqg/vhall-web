@@ -34,7 +34,7 @@ export default {
     return {
       settingList: [
         {icon: 'icon_information@2x', id: 1, title: '基本信息', subText: '编辑专题基本信息', path: `/subject/edit/${this.$route.params.id}`},
-         {icon: 'icon_information@2x', id: 2, title: '观看限制', subText: '设置专题观看限制', path: `/subject/viewer/${this.$route.params.id}`},
+         {icon: 'icon_watch@2x', id: 2, title: '观看限制', subText: '设置专题观看限制', path: `/subject/viewer/${this.$route.params.id}`},
       ]
     }
   },
