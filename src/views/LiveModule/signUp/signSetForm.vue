@@ -1,6 +1,6 @@
 <template>
   <div id="settingBox" class="settingBox clearFix">
-    <ul :class="['options', menuBarFixed]" v-show="rightComponent !='signUpForm'">
+    <ul :class="['options', menuBarFixed]" v-show="tabType === 'form' && rightComponent !='signUpForm'">
       <template v-for="(item, key, index) in setOptions">
         <section :class="['block', index == 1 ? 'block-bto' : '']" :key="key">{{key}}</section>
         <li
@@ -19,7 +19,7 @@
       </template>
       <div class="disable_wrap" v-if="!signUpSwtich"></div>
     </ul>
-    <div class="rightView">
+    <div class="rightView" v-show="tabType === 'form'">
       <!-- 表单编辑组件 -->
       <fieldSet
         ref="fieldSet"
@@ -30,20 +30,22 @@
         :regionalOptions="regionalOptions"
         @setBaseInfo="setBaseInfo"
       ></fieldSet>
-      <!-- 表单预览组件 -->
-      <signUpForm
-        :baseInfo="baseInfo"
-        v-if="rightComponent == 'signUpForm'"
-        :questionArr.sync="questionArr"
-        @closeSignUp="closePreview"
-      ></signUpForm>
       <!-- <div class="disable_wrap" v-if="!signUpSwtich"></div> -->
     </div>
+    <!-- 表单预览组件 -->
+    <signUpForm
+      :baseInfo="baseInfo"
+      v-if="rightComponent == 'signUpForm'"
+      :questionArr.sync="questionArr"
+      @closeSignUp="closePreview"
+    ></signUpForm>
+    <!-- 分享 -->
     <shareDialog
       :baseInfo="baseInfo"
       @setBaseInfo="setBaseInfo"
       ref="share"
     ></shareDialog>
+    <!-- 设置 -->
     <themeSet
       :baseInfo="baseInfo"
       @setBaseInfo="setBaseInfo"
@@ -75,6 +77,10 @@ export default {
     // 报名表单类型：webinar--活动；subject--专题
     signUpPageType: {
       type: [Number, String],
+      default: ''
+    },
+    tabType: {
+      type: String,
       default: ''
     }
   },
@@ -153,7 +159,6 @@ export default {
     }
   },
   created(){
-
   },
   mounted() {
     window.addEventListener('scroll', this.handleScroll)
