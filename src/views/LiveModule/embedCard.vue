@@ -711,54 +711,57 @@ export default {
       this.dialogVisible = false
     },
     closeStreamOpen() {
-      let params = {
-        webinar_id: this.$route.params.str,
-        status: Number(this.streamOpen),
-      }
-      console.log('当前参数传递：', params)
-      this.$fetch('updateStreamPushEnabled', params)
-        .then((res) => {
-          //关闭时提交
-          if (!this.streamOpen) {
-            this.tableData.map((item) => {
-              if (item.push_status == 1 || item.push_status == 2) {
-                item.push_status = 0
-                item.statusText = PushStatus[item.push_status]
-                item.status = 0
-              }
-            })
-            this.$vhall_paas_port({
-              k: 100852,
-              data: {
-                business_uid: this.userId,
-                user_id: '',
-                webinar_id: this.$route.params.str,
-                refer: '',
-                s: '',
-                report_extra: {},
-                ref_url: '',
-                req_url: '',
-              },
-            })
-          } else {
-            // this.getTableList()
-            this.tableData.map((item) => {
-              if (item.watch && this.liveInfo.webinar_state == 1) {
-                item.push_status = 1
-                item.statusText = PushStatus[item.push_status]
-                item.status = 1
-              }
-            })
-          }
-        })
-        .catch((res) => {
-          this.$message({
-            message: res.msg || `操作失败`,
-            showClose: true,
-            type: 'error',
-            customClass: 'zdy-info-box',
+      this.requestRoomInfo().then((res) => {
+        this.dealRoomInfo(res)
+        let params = {
+          webinar_id: this.$route.params.str,
+          status: Number(this.streamOpen),
+        }
+        console.log('当前参数传递：', params)
+        this.$fetch('updateStreamPushEnabled', params)
+          .then((res) => {
+            //关闭时提交
+            if (!this.streamOpen) {
+              this.tableData.map((item) => {
+                if (item.push_status == 1 || item.push_status == 2) {
+                  item.push_status = 0
+                  item.statusText = PushStatus[item.push_status]
+                  item.status = 0
+                }
+              })
+              this.$vhall_paas_port({
+                k: 100852,
+                data: {
+                  business_uid: this.userId,
+                  user_id: '',
+                  webinar_id: this.$route.params.str,
+                  refer: '',
+                  s: '',
+                  report_extra: {},
+                  ref_url: '',
+                  req_url: '',
+                },
+              })
+            } else {
+              // this.getTableList()
+              this.tableData.map((item) => {
+                if (item.watch && this.liveInfo.webinar_state == 1) {
+                  item.push_status = 1
+                  item.statusText = PushStatus[item.push_status]
+                  item.status = 1
+                }
+              })
+            }
           })
-        })
+          .catch((res) => {
+            this.$message({
+              message: res.msg || `操作失败`,
+              showClose: true,
+              type: 'error',
+              customClass: 'zdy-info-box',
+            })
+          })
+      })
     },
     getPermission(id) {
       // 活动权限
