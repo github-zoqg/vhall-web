@@ -30,16 +30,18 @@
           </el-tabs>
         </div>
         <!-- 报名表单 -->
-        <sign-set-form ref="signSetFormDom" v-show="tabType ==='form'"
+        <sign-set-form ref="signSetFormDom"
           :webinarOrSubjectId="webinarOrSubjectId"
           :signUpPageType="signUpPageType"
           :signUpSwtich="signUpSwtich"
+          :tabType="tabType"
           @changeTabsFixed="changeTabsFixed"></sign-set-form>
         <user-manage ref="userManageDom" v-if="tabType === 'user'"
           :signUpPageType="signUpPageType"
           :webinarOrSubjectId="webinarOrSubjectId"></user-manage>
       </div>
     </div>
+    <!-- 开播按钮 -->
     <begin-play  :webinarId="webinarOrSubjectId" v-if="$route.query.type != 5 && webinarState!=4 && signUpPageType == 'webinar'"></begin-play>
     <!-- 直播关联专题详情 -->
     <subject-show-dialog v-if="subjectShowVisible && signUpPageType === 'webinar'" :webinarOrSubjectId="webinarOrSubjectId" :signUpPageType="signUpPageType" :dialogVisible="subjectShowVisible" @close="closeDetailDialog"></subject-show-dialog>
@@ -112,15 +114,14 @@ export default {
         this.$refs.signSetFormDom && this.$refs.signSetFormDom.setSwitchStatus(this.signUpSwtich)
       })
     }
-    this.getBaseInfo()
   },
-  mounted() {
+  async mounted() {
+    this.$refs.signSetFormDom && this.$refs.signSetFormDom.initComp()
     if (this.$route.query.tab == 2) {
       this.tabType = 'user'
       this.$refs.userManageDom && this.$refs.userManageDom.initComp()
     } else {
       this.tabType = 'form'
-      this.$refs.signSetFormDom && this.$refs.signSetFormDom.initComp()
     }
   },
   beforeDestroy() {

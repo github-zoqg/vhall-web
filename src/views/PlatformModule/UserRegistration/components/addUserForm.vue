@@ -83,8 +83,8 @@ export default {
         {
           name: '',
           phone: '',
-          name_error: false,
-          phone_error: false
+          name_error: '',
+          phone_error: ''
         }
       ]
     }
@@ -110,8 +110,8 @@ export default {
       this.list.push( {
         name: '',
         phone: '',
-        name_error: false,
-        phone_error: false
+        name_error: '',
+        phone_error: ''
       })
       // 滚动到table最后
       this.$nextTick(() => {
@@ -132,8 +132,8 @@ export default {
       } else {
         // 判断当前是否存在重复数据
         let phoneList = []
-        this.list.map((item, index) => {
-          // console.warn(item, phoneList)
+        this.list.map(item => {
+          console.warn(item, phoneList)
           if (phoneList.includes(item.phone)) {
             item.phone_error = '手机号不能重复'
           } else {
@@ -194,6 +194,7 @@ export default {
       this.$fetch('userRegistrationAdd', this.setParamsIdByRoute(params)).then(resV => {
         if (resV && resV.code == 200 && resV.data) {
           this.messageInfo('保存成功', 'success')
+          this.list = []
           this.$emit('close', 'closeAndLoading')
         } else {
           this.messageInfo(resV.msg || '保存失败', 'error')

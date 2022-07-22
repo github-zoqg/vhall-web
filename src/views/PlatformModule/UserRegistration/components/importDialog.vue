@@ -53,12 +53,13 @@
           <span class="down-span-text" v-show="importResult && importResult.fail > 0" @click="downErrorHandle">下载查看无效数据</span>
         </p>
         <div class="dialog-right-btn dialog-footer">
-          <a class="down-a-btn" href="http://cnstatic01.e.vhall.com/static/download/%E9%A2%84%E6%8A%A5%E5%90%8D%E6%A8%A1%E6%9D%BF.xlsx">下载模板</a>
+          <a class="down-a-btn" @click="downloadTemplate">下载模板</a>
           <el-button type="primary"
             @click="saveUserList"
             size="medium"
             round
-            :disabled="fileResult === 'error' || !isUploadEnd  || saveLoading">确定</el-button>
+            :disabled="fileResult === 'error' || !isUploadEnd  || saveLoading"
+            :loading="saveLoading">{{ saveLoading ? '执行中' : '确定' }}</el-button>
           <el-button @click="cancelImport"
             size="medium"
             round>关闭</el-button>
@@ -100,7 +101,7 @@ export default {
         text: '请选择模板文件'
       },
       percent: 0,
-      downloadUrl: 'https://cnstatic01.e.vhall.com/static/download/%E6%8A%A5%E5%90%8D%E5%AF%BC%E5%85%A5.xlsx',
+      downloadUrl: ['production', 'pre'].includes(process.env.VUE_APP_NODE_ENV) ?  'https://cnstatic01.e.vhall.com/upload/webinars/form-user-docs/2c/d8/2cd89b70a87219d823516fa589e8111e.xlsx' : 'https://t-alistatic01.e.vhall.com/upload/webinars/form-user-docs/2c/d8/2cd89b70a87219d823516fa589e8111e.xlsx',
       fileUrl: '', // 文件地址
       fileResult: '', // 文件上传结果
       importResult: null,
@@ -126,6 +127,20 @@ export default {
         params.subject_id = this.webinarOrSubjectId
       }
       return params
+    },
+    // 下载模板
+    downloadTemplate() {
+      const xHttp = new window.XMLHttpRequest();
+      xHttp.open('GET', this.downloadUrl, true);
+      xHttp.responseType = 'blob';
+      xHttp.onload = () => {
+        const url = window.URL.createObjectURL(xHttp.response);
+        const aDom = document.createElement('a');
+        aDom.href = url;
+        aDom.download = '报名表单.xlsx';
+        aDom.click();
+      }
+      xHttp.send();
     },
     // 关闭导入
     cancelImport() {
@@ -184,9 +199,9 @@ export default {
       }
       this.checkImportTimer = setTimeout(function() {
         clearTimeout(that.checkImportTimer);
-        // 若未得到理想轮询结果，到时间后自动停止轮询
+        // 若未得到理想轮询结果，5分钟后自动停止轮询
         that.stopPolling();
-      }, 60000);
+      }, 300000);
     },
     stopPolling() {
       this.pollingTimerVo = {};
@@ -199,8 +214,8 @@ export default {
       const pollingFn = async function() {
         // 若发现setTimeout存在，即退出
         if (!that.pollingTimerVo[id]) return;
-        const progressResult = await this.$fetch('userRegistrationImportProgress', {
-          key: type === 'import' ? this.checkImportKey : this.saveImportKey
+        const progressResult = await that.$fetch('userRegistrationImportProgress', {
+          key: type === 'import' ? that.checkImportKey : that.saveImportKey
         }); // 模拟请求
         if (progressResult && progressResult.code == 200) {
           if (progressResult.data.status == 2) {
@@ -208,25 +223,25 @@ export default {
             that.stopPolling();
             that.checkImportTimer && clearTimeout(that.checkImportTimer);
             if (type === 'import') {
-              this.isUploadEnd = true;
-              this.fileResult = 'success';
-              this.uploadResult = {
+              that.isUploadEnd = true;
+              that.fileResult = 'success';
+              that.uploadResult = {
                 status: 'success',
                 text: '检测成功'
               }
-              this.importResult = {
+              that.importResult = {
                 success: progressResult.data.success_count,
                 fail: progressResult.data.fail_count
               };
-              if (this.$refs.viewerUpload) {
-                this.$refs.viewerUpload.setError('');
+              if (that.$refs.viewerUpload) {
+                that.$refs.viewerUpload.setError('');
               }
             } else {
-              this.importFileShow = false;
-              this.isUploadEnd = false;
-              this.saveLoading = false
-              this.fileUrl = '';
-              this.uploadResult = {
+              that.importFileShow = false;
+              that.isUploadEnd = false;
+              that.saveLoading = false
+              that.fileUrl = '';
+              that.uploadResult = {
                 status: 'start',
                 text: '请上传文件'
               }
@@ -236,20 +251,20 @@ export default {
             that.stopPolling();
             that.checkImportTimer && clearTimeout(that.checkImportTimer);
             if (type === 'import') {
-              this.isUploadEnd = true;
-              this.fileResult = 'error';
-              this.uploadResult = {
+              that.isUploadEnd = true;
+              that.fileResult = 'error';
+              that.uploadResult = {
                 status: 'error',
-                text: progressResult.msg
+                text: progressResult.msg || `${type === 'import' ? '预检' : '导入'}失败，请重新上传`
               }
-              this.importResult = null;
-              if (this.$refs.viewerUpload) {
-                this.$refs.viewerUpload.setError(res.msg || `${type === 'import' ? '预检' : '导入'}失败，请重新上传`);
+              that.importResult = null;
+              if (that.$refs.viewerUpload) {
+                that.$refs.viewerUpload.setError(progressResult.msg || `${type === 'import' ? '预检' : '导入'}失败，请重新上传`);
               }
             } else {
-              this.saveLoading = false
-              this.$message({
-                message: res.msg || '导入观众信息失败',
+              that.saveLoading = false
+              that.$message({
+                message: progressResult.msg || '导入观众信息失败',
                 showClose: true,
                 // duration: 0,
                 type: 'error',
@@ -260,7 +275,7 @@ export default {
             // 未开始 or 进行中
           }
         }
-        setTimeout(pollingFn, 10000); // 10秒一轮询
+        setTimeout(pollingFn, 15000); // 15秒一轮询
       };
       pollingFn();
     },
@@ -316,7 +331,7 @@ export default {
       // this.$message.error(`文件上传失败`);
       this.uploadResult = {
         status: 'error',
-        text: '文件上传失败'
+        text: err.msg || '文件上传失败'
       }
       this.fileResult = 'error';
     },
@@ -338,7 +353,7 @@ export default {
     /* 调用报名导入，预检/导入时候，入参组装 */
     getImportOrSaveParams(fileUrl) {
       let params = {
-        file_url: fileUrl
+        file: fileUrl
       }
       return this.setParamsIdByRoute(params)
     },
