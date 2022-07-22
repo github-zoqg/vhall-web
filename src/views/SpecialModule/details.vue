@@ -30,7 +30,12 @@
       </el-col>
       <el-col :span="6" :lg="6" :md="24" :sm="24" :xs="24" class="subject-detail_intro" style="padding-right: 4px">
         <div class="intro_inner">
-          <div class="text" v-html="subjectDetailInfo.intro"></div>
+          <div class="intro_inner_code">
+            <img :src="env.staticLinkVo.aliQr + shareVo.url" alt="">
+          </div>
+          <div class="intro_inner_down">
+            <el-button type="primary" size="medium" round >下载二维码</el-button>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -43,6 +48,7 @@ import PageTitle from '@/components/PageTitle'
 import itemCard from './components/itemCard.vue'
 import share from './components/share.vue'
 import {sessionOrLocal} from "@/utils/utils";
+import Env from "@/api/env";
 export default {
   name: 'subjectDetails',
   components: {
@@ -53,6 +59,7 @@ export default {
   data() {
     return {
       hasDelayPermission: 0,
+      env: Env,
       subject_id: this.$route.params.id,
       shareVo: {
         pcUrl: ''
@@ -158,28 +165,21 @@ export default {
         height: 100%;
         padding: 12px;
         border-radius: 4px;
-        .text {
-          color: #1a1a1a;
-          height: calc(100% - 592px);
-          word-break: break-all;
-          line-height: 1.5;
-          padding: 0 24px;
-          strong {
-            font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        &_code{
+          width: 132px;
+          height: 132px;
+          img{
+            width: 100%;
+            height: 100%;
+            object-fit: scale-down;
           }
-          p {
-            font-style: normal;
-            padding: 5px 0;
-            font-size: 14px;
-            img {
-              width: 120px;
-              height: 120px;
-              margin: 5px 0;
-            }
-          }
-          .show-link {
-            color: #3562fa;
-          }
+        }
+        &_down{
+          margin-top: 10px;
         }
       }
     }
