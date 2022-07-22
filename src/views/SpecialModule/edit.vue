@@ -489,12 +489,14 @@ export default {
       this.formData.domain_url = '';
     },
     doSelectedActives (selectedActives) {
-      selectedActives.map(item => {
-        this.formData.selectedActives.push(item);
-      })
-      let id = 'webinar_id';
-      this.formData.selectedActives = this.formData.selectedActives.reduce((all, next) => all.some((atom) => atom[id] == next[id]) ? all : [...all, next],[]);
+      this.formData.selectedActives = selectedActives;
       this.showActiveSelect = false
+      // selectedActives.map(item => {
+      //   this.formData.selectedActives.push(item);
+      // })
+      // let id = 'webinar_id';
+      // this.formData.selectedActives = this.formData.selectedActives.reduce((all, next) => all.some((atom) => atom[id] == next[id]) ? all : [...all, next],[]);
+      // this.showActiveSelect = false
     },
     // 删除事件
     deleteSpecial(id) {

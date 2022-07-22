@@ -109,6 +109,7 @@ export default {
   },
   created() {
     this.selectedOption = this.checkedList.length && JSON.parse(JSON.stringify(this.checkedList || []))
+    console.log(this.selectedOption, '???123124')
     this.getActiveList();
   },
 
@@ -216,7 +217,7 @@ export default {
         if (item.checked && !checkedIds.includes(item.webinar_id)) {
           this.selectedOption.push(item)
         } else {
-          this.selectedOption.splice(item, 1)
+          this.selectedOption = this.selectedOption.filter(items => items.webinar_id != item.webinar_id || items.id != item.id);
         }
       } else {
         this.selectedOption = this.activeList.filter(item => item.checked);
@@ -224,8 +225,8 @@ export default {
     },
 
     saveSelect() {
-      const checkedActives = this.activeList.filter(item => item.checked)
-      this.$emit('selectedEvent', checkedActives)
+      // const checkedActives = this.activeList.filter(item => item.checked)
+      this.$emit('selectedEvent', this.selectedOption)
     },
 
     cancelSelect() {
