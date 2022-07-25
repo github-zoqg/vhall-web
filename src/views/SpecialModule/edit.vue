@@ -655,6 +655,7 @@ export default {
     width: 640px;
     font-size: 14px;
     font-weight: 400;
+    margin-top: 10px;
 
 
     &__theader{
