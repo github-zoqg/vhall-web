@@ -388,7 +388,7 @@ export default {
       if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) {
         // 活动
         return 'webinar'
-      } else if (window.location.href.indexOf('/special/signup/') != -1 || window.location.href.indexOf('/special/entryform') != -1) {
+      } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/special/signup/') != -1 || window.location.href.indexOf('/special/entryform') != -1) {
         // 专题
         return 'subject'
       } else {
@@ -398,7 +398,7 @@ export default {
     webinarOrSubjectId() {
       if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/special/signup/') != -1) {
         return this.$route.params.str
-      } else if (window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/special/entryform') != -1) {
+      } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/special/entryform') != -1) {
         return this.$route.params.id || this.$route.params.str
       } else {
         return ''
@@ -495,27 +495,41 @@ export default {
       }
     },
     // 保存观看限制，专题关系
-    saveSubjectViews() {
-      this.$fetch('createSubjectVerify', {
-        subject_id: this.webinarOrSubjectId,
-        subject_verify: 2 // 0无限制 1观看限制 2报名表单 只给控制台使用
-      }).then(res => {
+    async saveSubjectViews() {
+      const verifyInfo = await this.$fetch('subjectVerifyInfo', {
+        subject_id: this.webinarOrSubjectId
+      }).catch(res => {
         this.$message({
-          message:  `设置成功`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-      }).catch(res =>{
-        this.$message({
-          message:  res.msg || '设置失败',
+          message:  res.msg || '获取专题观看限制失败',
           showClose: true,
           // duration: 0,
           type: res.code == 512999 ? 'warning' : 'error',
           customClass: 'zdy-info-box'
         });
-      });
+      })
+      if (verifyInfo && verifyInfo.code == 200 && verifyInfo.data) {
+        this.$fetch('createSubjectVerify', {
+          subject_id: this.webinarOrSubjectId,
+          subject_verify: 2, // 0无限制 1观看限制 2报名表单 只给控制台使用
+          verify: verifyInfo.data.verify
+        }).then(res => {
+          this.$message({
+            message:  `设置成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+        }).catch(res =>{
+          this.$message({
+            message:  res.msg || '设置失败',
+            showClose: true,
+            // duration: 0,
+            type: res.code == 512999 ? 'warning' : 'error',
+            customClass: 'zdy-info-box'
+          });
+        });
+      }
     },
     // 添加一个题目选项
     addOption(data, other){

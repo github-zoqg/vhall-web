@@ -1019,22 +1019,6 @@ export function CrumbSet(metaName, that) {
       }
     ]
   }
-  else if (metaName === 'specialSignUp') {// 报名表单
-    return [
-      ...CrumbLiveList('specialList'),
-      {
-        title: '专题详情',
-        path: `/special/detail/${that.$route.params.str}`,
-        isClick: true
-      },
-      {
-        title: '报名表单',
-        path: `/special/signup/${that.$route.params.str}`,
-        isClick: false,
-        redirect: 'noRedirect'
-      }
-    ];
-  }
 
   /** 资料管理 **/
   else if (metaName === 'wordMgr') {// 资料-文档

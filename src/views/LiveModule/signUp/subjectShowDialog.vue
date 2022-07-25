@@ -6,11 +6,11 @@
       // 被XXX专题绑定，本次观看限制失效： 本直播属于专题《客户的力量》，该专题提供统一的观看限制-白名单，本直播报名表单失效。
       // 被XXX专题绑定，被设置统一报名表单，本次失效： 本直播属于专题《客户的力量》，该专题提供统一的报名表单，本直播报名表单失效。
       -->
-    <div class="tip_content" v-if="resultVo && resultVo.count == 0">本直播不属于任何专题，本次设置的报名表单生效，观看直播需要填写此报名表单。</div>
-    <div class="tip_content" v-else-if="resultVo && resultVo.count == 1">
-      本直播属于专题<span class="color_red cursor_pointer" v-if="resultVo && resultVo.subjectList" @click="goSubjectDetail(resultVo.subjectList[0].subject_id)">《{{ subjectTitle }}》</span>，该专题提供统一的{{ verifyText }}，本直播报名表单失效。
+    <div class="tip_content" v-if="resultVo && resultVo.total == 0">本直播不属于任何专题，本次设置的报名表单生效，观看直播需要填写此报名表单。</div>
+    <div class="tip_content" v-else-if="resultVo && resultVo.total == 1">
+      本直播属于专题<span class="color_red cursor_pointer" v-if="resultVo && resultVo.list" @click="goSubjectDetail(resultVo.list[0].subject_id)">《{{ subjectTitle }}》</span>，该专题提供统一的{{ verifyText }}，本直播报名表单失效。
     </div>
-    <div class="tip_content" v-else-if="resultVo && resultVo.count > 1">本直播属于多个专题，这些专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。</div>
+    <div class="tip_content" v-else-if="resultVo && resultVo.total > 1">本直播属于多个专题，这些专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。</div>
     <div class="tip_content" v-else>依据活动ID获取其归属专题信息失败，请联系管理员</div>
     <div slot='footer'>
       <el-button type="primary" size="medium" round @click="closeDialog">我知道了</el-button>
@@ -46,14 +46,14 @@ export default {
   },
   computed: {
     verifyText() {
-      if (this.resultVo && this.resultVo.subjectList) {
-        if (this.resultVo.subjectList[0].subject_verify === 2) {
+      if (this.resultVo && this.resultVo.list) {
+        if (this.resultVo.list[0].subject_verify == 2) {
           return '报名表单'
-        } else if (this.resultVo.subjectList[0].subject_verify === 1 && this.resultVo.subjectList[0].verify == 1) {
+        } else if (this.resultVo.list[0].subject_verify == 1 && this.resultVo.list[0].verify == 1) {
           return '观看限制-密码'
-        } else if (this.resultVo.subjectList[0].subject_verify === 1 && this.resultVo.subjectList[0].verify == 2) {
+        } else if (this.resultVo.list[0].subject_verify == 1 && this.resultVo.list[0].verify == 2) {
           return '观看限制-白名单'
-        } else if (this.resultVo.subjectList[0].subject_verify === 1 && this.resultVo.subjectList[0].verify == 4) {
+        } else if (this.resultVo.list[0].subject_verify == 1 && this.resultVo.list[0].verify == 4) {
           return '观看限制-验证码'
         } else {
           return '观看限制-免费'
@@ -64,11 +64,11 @@ export default {
       }
     },
     subjectTitle() {
-      if (this.resultVo && this.resultVo.subjectList) {
-        if (this.resultVo.subjectList[0].subject && this.resultVo.subjectList[0].subject.length > 10) {
-          return this.resultVo.subjectList[0].subject.substr(0, 10) + '...'
-        } else if (this.resultVo.subjectList[0].subject) {
-          return this.resultVo.subjectList[0].subject
+      if (this.resultVo && this.resultVo.list) {
+        if (this.resultVo.list[0].title && this.resultVo.list[0].title.length > 10) {
+          return this.resultVo.list[0].title.substr(0, 10) + '...'
+        } else if (this.resultVo.list[0].title) {
+          return this.resultVo.list[0].title
         } else {
           return '--'
         }

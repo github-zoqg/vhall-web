@@ -44,6 +44,8 @@
       :baseInfo="baseInfo"
       @setBaseInfo="setBaseInfo"
       ref="share"
+      :signUpPageType="signUpPageType"
+      :webinarOrSubjectId="webinarOrSubjectId"
     ></shareDialog>
     <!-- 设置 -->
     <themeSet
@@ -249,7 +251,16 @@ export default {
       this.$fetch('regFromGet', this.setParamsIdByRoute({})).then(res => {
         if (res.code === 200) {
           this.baseInfo = res.data;
-          this.signUpSwtich = res.data.enable_status == '0' ? false : true;
+          if (this.signUpPageType === 'subject') {
+            // 专题下是否开启，只要引用了报名表单，默认就是开启的
+            this.signUpSwtich = true
+            // 更新表单组件里的字段展示
+            this.$nextTick(() => {
+              this.$refs.signSetFormDom && this.$refs.signSetFormDom.setSwitchStatus(this.signUpSwtich)
+            })
+          } else {
+              this.signUpSwtich = res.data.enable_status == '0' ? false : true;
+          }
         }
       }).catch(err => {
         console.log(err);

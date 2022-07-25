@@ -211,18 +211,19 @@ export default {
       const that = this;
       const id = this.pollingTimerId++;
       this.pollingTimerVo[id] = true;
-      const pollingFn = async function() {
+      const pollingFn = async function(typeNew) {
+        console.log('当前触发监听的type', typeNew)
         // 若发现setTimeout存在，即退出
         if (!that.pollingTimerVo[id]) return;
         const progressResult = await that.$fetch('userRegistrationImportProgress', {
-          key: type === 'import' ? that.checkImportKey : that.saveImportKey
+          key: typeNew === 'import' ? that.checkImportKey : that.saveImportKey
         }); // 模拟请求
         if (progressResult && progressResult.code == 200) {
           if (progressResult.data.status == 2) {
             // 预检/导入 完成
             that.stopPolling();
             that.checkImportTimer && clearTimeout(that.checkImportTimer);
-            if (type === 'import') {
+            if (typeNew === 'import') {
               that.isUploadEnd = true;
               that.fileResult = 'success';
               that.uploadResult = {
@@ -230,8 +231,8 @@ export default {
                 text: '检测成功'
               }
               that.importResult = {
-                success: progressResult.data.success_count,
-                fail: progressResult.data.fail_count
+                success: progressResult.data.success,
+                fail: progressResult.data.fail
               };
               if (that.$refs.viewerUpload) {
                 that.$refs.viewerUpload.setError('');
@@ -250,16 +251,16 @@ export default {
             // 预检/导入 失败（轮询不在继续，直接终止）
             that.stopPolling();
             that.checkImportTimer && clearTimeout(that.checkImportTimer);
-            if (type === 'import') {
+            if (typeNew === 'import') {
               that.isUploadEnd = true;
               that.fileResult = 'error';
               that.uploadResult = {
                 status: 'error',
-                text: progressResult.msg || `${type === 'import' ? '预检' : '导入'}失败，请重新上传`
+                text: progressResult.msg || `${typeNew === 'import' ? '预检' : '导入'}失败，请重新上传`
               }
               that.importResult = null;
               if (that.$refs.viewerUpload) {
-                that.$refs.viewerUpload.setError(progressResult.msg || `${type === 'import' ? '预检' : '导入'}失败，请重新上传`);
+                that.$refs.viewerUpload.setError(progressResult.msg || `${typeNew === 'import' ? '预检' : '导入'}失败，请重新上传`);
               }
             } else {
               that.saveLoading = false
@@ -275,9 +276,9 @@ export default {
             // 未开始 or 进行中
           }
         }
-        setTimeout(pollingFn, 15000); // 15秒一轮询
+        setTimeout(pollingFn(typeNew), 15000); // 15秒一轮询
       };
-      pollingFn();
+      pollingFn(type);
     },
     // 文件上传成功 & 文档预检
     uploadSuccess(res, file) {
