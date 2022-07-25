@@ -58,6 +58,13 @@ const apis = {
   deleteAdv: ['/v3/interacts/recommend-adv/batch-delete-adv', 'POST'], //批量删除广告 √
   viewAdv: ['/v3/interacts/recommend-adv/view-adv', 'GET'], //查看单条广告详情 •••
 
+  //推广嵌入
+  getStreamPushList: ['/v3/webinars/stream/get-push-list', 'GET'], //获取推流列表
+  updateStreamPushEnabled: ['/v3/webinars/stream/push-enabled', 'POST'], //是否启动第三方推流
+  createStreamPush: ['/v3/webinars/stream/create-push', 'POST'], //创建推流地址
+  updateStreamPush: ['/v3/webinars/stream/update-push', 'POST'], //编辑推流地址
+  deleteStreamPush: ['/v3/webinars/stream/delete-push', 'POST'], //删除推流地址
+
   //播放器设置
   setScrolling: ['/v3/interacts/players/set-scrolling-screen-config', 'POST'], //直播设置_设置播放器跑马灯 •••
   setWatermark: ['/v3/interacts/players/set-watermark-config', 'POST'], //从资料库保存到活动 •••
