@@ -135,7 +135,13 @@
       <div class="title_text">
         <h3>第三方渠道推广嵌入</h3>
         <el-switch
-          v-if="btn_thirdway_push && total"
+          v-if="btn_thirdway_push && total &&
+          liveInfo &&
+          liveInfo.is_demand != 1 &&
+          (liveInfo.webinar_type == 1 ||
+            liveInfo.webinar_type == 2 ||
+            liveInfo.webinar_type == 3 ||
+            liveInfo.webinar_type == 6)"
           v-model="streamOpen"
           active-color="#FB3A32"
           inactive-color="#CECECE"
