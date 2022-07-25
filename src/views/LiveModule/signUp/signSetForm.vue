@@ -44,6 +44,8 @@
       :baseInfo="baseInfo"
       @setBaseInfo="setBaseInfo"
       ref="share"
+      :signUpPageType="signUpPageType"
+      :webinarOrSubjectId="webinarOrSubjectId"
     ></shareDialog>
     <!-- 设置 -->
     <themeSet

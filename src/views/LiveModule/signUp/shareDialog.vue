@@ -41,7 +41,7 @@
               <li><i @click="shareWX"></i><p>微信</p></li>
             </ul>
             <div class="inputCode">
-              <el-input  v-model="sinaLink" class="input-with-select" id="linkBox"></el-input>
+              <el-input v-model="sinaLink" class="input-with-select" id="linkBox"></el-input>
               <span @click="copy">复制</span>
             </div>
             <p class="sub">「报名来源」需在地址最后边增加：?refer=值</p>
@@ -73,6 +73,16 @@ export default {
   props: {
     baseInfo: {
       type: Object,
+    },
+    // 活动ID 或者 专题ID，跟signUpPageType字段组合使用
+    webinarOrSubjectId: {
+      type: [Number, String],
+      default: 0
+    },
+    // 报名表单类型：webinar--活动；subject--专题
+    signUpPageType: {
+      type: [Number, String],
+      default: ''
     }
   },
   data(){
@@ -82,8 +92,6 @@ export default {
       shareSwtich: true,
       wxUrl: '',
       wxUrls: `${Env.staticLinkVo.aliQr}`,
-      link: `${process.env.VUE_APP_WAP_WATCH}/lives/entryform/${this.$route.params.str}`,
-      sinaLink: `${process.env.VUE_APP_WAP_WATCH}/lives/entryform/${this.$route.params.str}`,
     };
   },
   watch:{
@@ -95,16 +103,34 @@ export default {
       immediate: true
     }
   },
+  computed: {
+    link() {
+      if (this.signUpPageType === 'subject') {
+        return `${process.env.VUE_APP_WAP_WATCH}/subject/entryform/${this.webinarOrSubjectId}`
+      } else {
+        return `${process.env.VUE_APP_WAP_WATCH}/lives/entryform/${this.webinarOrSubjectId}`
+      }
+    },
+    sinaLink() {
+      if (this.signUpPageType === 'subject') {
+        return `${process.env.VUE_APP_WAP_WATCH}/subject/entryform/${this.webinarOrSubjectId}`
+      } else {
+        return `${process.env.VUE_APP_WAP_WATCH}/lives/entryform/${this.webinarOrSubjectId}`
+      }
+    }
+  },
   methods: {
     copy(){
       const input = document.getElementById('linkBox');
       input.select();
       document.execCommand('copy');
       let userId = this.$parent.userId
-      this.$vhall_paas_port({
-        k: 100187,
-        data: {business_uid: userId, user_id: '', webinar_id: this.$parent.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
+      if (this.signUpPageType === 'webinar') {
+        this.$vhall_paas_port({
+          k: 100187,
+          data: {business_uid: userId, user_id: '', webinar_id: this.$parent.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.$message({
         message: `复制成功`,
         showClose: true,
@@ -117,10 +143,12 @@ export default {
     switchExtraForm(value) {
       const val = value ? 1 : 0;
       let userId = this.$parent.userId
-      this.$vhall_paas_port({
-        k: value ? 100185 : 100186,
-        data: {business_uid: userId, user_id: '', webinar_id: this.$parent.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
+      if (this.signUpPageType === 'webinar') {
+        this.$vhall_paas_port({
+          k: value ? 100185 : 100186,
+          data: {business_uid: userId, user_id: '', webinar_id: this.$parent.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.$emit('setBaseInfo', { open_link: val } );
     },
     shareQQ() {

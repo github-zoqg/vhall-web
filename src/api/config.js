@@ -708,7 +708,7 @@ const apis = {
   userRegistrationImport: ['/v3/webinars/registration-form/import', 'POST'], // 用户报名-导入数据
   userRegistrationImportProgress: ['/v3/webinars/registration-form/import-progress', 'POST'], // 用户报名-导入数据结果（轮询）
   userRegistrationExportFail: ['/v3/webinars/registration-form/export-fail', 'POST'], // 用户报名-导出失效数据
-  getSubjectByWebinarId: ['/v3/webinars/subject/get-list-webinar-id', 'POST'] // 活动下-报名表单，依据活动ID获取专题内容信息
+  getSubjectByWebinarId: ['/v3/webinars/subject/get-list-by-webinar-id', 'POST'] // 活动下-报名表单，依据活动ID获取专题内容信息
 };
 
 const getApi = api => {

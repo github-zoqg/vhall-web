@@ -5,9 +5,9 @@
     element-loading-text="加载中，请稍候"
     element-loading-background="rgba(255,255,255,.9)">
     <!-- 全部无结果 -->
-    <div class="all-no-data" v-if="userDao && userDao.total === 0  && query.keyword == '' && query.is_enter =='' && query.type == ''">
+    <div class="all-no-data" v-if="isDefaultShow">
       <null-page nullType="nullData" text="暂无专题数据，请去专题下的直播活动查看数据吧！" :height="0"  v-if="signUpPageType === 'subject' && isDataPage">
-        <el-button type="primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="addUserDialog">我知道了</el-button>
+        <el-button type="primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="toSubjectDetail">我知道了</el-button>
       </null-page>
       <null-page nullType="nullData" text="暂无数据" :height="0" v-else>
         <el-button type="primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="addUserDialog">快速报名</el-button>
@@ -127,9 +127,9 @@ export default {
         pos: 0,
         limit: 20,
         pageNumber: 1,
-        // is_enter: '',
-        // type: '',
-        // keyword: ''
+        is_enter: '',
+        type: '',
+        keyword: ''
       },
       userDao: {
         total: 0,
@@ -183,6 +183,13 @@ export default {
           return item.key !== 'is_enter_str'
         })
       }
+    },
+    isDefaultShow() {
+      if (this.signUpPageType === 'webinar') {
+        return this.userDao && this.userDao.total === 0 && this.query.keyword == '' && this.query.is_enter =='' && this.query.type == ''
+      } else {
+        return this.userDao && this.userDao.total === 0 && this.query.keyword == '' && this.query.type == ''
+      }
     }
   },
   methods: {
@@ -210,6 +217,12 @@ export default {
       if (type === 'closeAndLoading') {
         this.initQueryUserList()
       }
+    },
+    // 跳转专题详情页
+    toSubjectDetail() {
+      this.$router.push({
+        path: `/subject/details/${this.$route.params.id}`
+      })
     },
     // 获取列表数据
     getUserRegistrationList(row) {
@@ -411,6 +424,11 @@ export default {
     .list-table-panel {
       background: #ffffff;
       padding: 24px 24px;
+    }
+    /deep/.search-no-data {
+      padding-top: 60px;
+      background: #FFFFFF;
+      padding-bottom: 120px;
     }
   }
 }
