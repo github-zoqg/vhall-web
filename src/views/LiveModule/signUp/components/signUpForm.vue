@@ -260,6 +260,9 @@
     created() {
       if (this.signUpPageType == 'webinar') {
         this.getWebinarType();
+      } else {
+        this.isSubscribe = 1
+        this.tabs = 1
       }
       this.getBaseInfo();
       this.getQuestionList();
@@ -552,9 +555,10 @@
       },
       // 获取当前活动类型
       getWebinarType() {
-        this.$fetch('watchInit', this.setParamsIdByRoute({})).then(res => {
-          this.isSubscribe = res.data.webinar.type == 2 ? 1 : 2
-          this.tabs = res.data.webinar.type == 2 ? 1 : 2
+        this.$fetch('getWebinarInfo', this.setParamsIdByRoute({})).then(res => {
+          // webinar_state  1直播 2预约 3结束 4点播 5回放
+          this.isSubscribe = res.data.webinar_state == 2 ? 1 : 2
+          this.tabs = res.data.webinar_state == 2 ? 1 : 2
         })
       },
       handleUnfold(val) {
