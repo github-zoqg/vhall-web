@@ -282,10 +282,13 @@ export default {
             customClass: 'zdy-info-box'
           });
           this.recordId = res.data.record_id;
-          // 保存需要重置 isNew 的状态，导出不需要
-          this.isNew = false;
-          this.recordName = this.titleEdit;
-          this.getPlayBackInfo(res.data.record_id);
+          this._tryCount = 0
+          this.getRecordInfo(this.recordId).then(res => {
+            // 保存需要重置 isNew 的状态，导出不需要
+            this.isNew = false;
+            this.recordName = this.titleEdit;
+            this.getPlayBackInfo(res.data.record_id);
+          })
         }
         this.editLoading = false;
         this.titleEdit = '';
@@ -399,6 +402,26 @@ export default {
         }
         this.playerParams.otherOption.report_extra = res.data.report_data.report_extra
         this.dataReady = true;
+      })
+    },
+    // 每隔1s查询一次info接口，如果点播文件转码完成，开始播放
+    getRecordInfo(recordId) {
+      this._tryCount++
+      return new Promise((resolve, reject) => {
+        this.$fetch('recordInfo', {
+          record_id: recordId
+        }).then(res => {
+          if (res.code == 200 && res.data.transcode_status == 1) {
+            resolve(res)
+          } else {
+            if (this._tryCount > 15) {
+              return reject('timeout')
+            }
+            setTimeout(() => {
+              this.getRecordInfo(recordId).then(resolve).catch(reject)
+            }, 1000)
+          }
+        })
       })
     },
     saveVideoHandler (param) {
