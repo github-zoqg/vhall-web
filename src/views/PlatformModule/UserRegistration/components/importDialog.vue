@@ -6,7 +6,7 @@
       @close="cancelImport">
       <div class="upload-dialog-content">
         <file-upload ref="viewerUpload"
-          v-model="fileUrl"
+          v-model.trim="fileUrl"
           @delete="deleteFile"
           :saveData="{
               path: pathUrl,
@@ -50,17 +50,18 @@
         </file-upload>
         <p class="uploadtips">
           <span>注：单个文件不超过10000条数据，数据较大时拆分上传手机号和 姓名必填，否则将视为无效数据</span>
-          <span class="down-span-text" v-show="importResult && importResult.fail > 0" @click="downErrorHandle">下载查看无效数据</span>
+          <span class="down-span-text" v-show="importResult && importResult.fail > 0" @click.prevent.stop="downErrorHandle">下载查看无效数据</span>
         </p>
         <div class="dialog-right-btn dialog-footer">
           <a class="down-a-btn" @click="downloadTemplate">下载模板</a>
           <el-button type="primary"
-            @click="saveUserList"
+            v-preventReClick
+            @click.prevent.stop="saveUserList"
             size="medium"
             round
             :disabled="fileResult === 'error' || !isUploadEnd  || saveLoading"
             :loading="saveLoading">{{ saveLoading ? '执行中' : '确定' }}</el-button>
-          <el-button @click="cancelImport"
+          <el-button v-preventReClick @click.prevent.stop="cancelImport"
             size="medium"
             round>关闭</el-button>
         </div>
@@ -193,10 +194,10 @@ export default {
     // 轮询结果 type：import-导入；save-保存
     intervalCheck(type) {
       let that = this
-      this.startPolling(type);
       if (this.checkImportTimer) {
         clearTimeout(this.checkImportTimer);
       }
+      this.startPolling(type);
       this.checkImportTimer = setTimeout(function() {
         clearTimeout(that.checkImportTimer);
         // 若未得到理想轮询结果，5分钟后自动停止轮询
@@ -212,7 +213,7 @@ export default {
       const id = this.pollingTimerId++;
       this.pollingTimerVo[id] = true;
       const pollingFn = async function(typeNew) {
-        console.log('当前触发监听的type', typeNew)
+        console.log('当前触发监听的type', typeNew, that.pollingTimerVo[id])
         // 若发现setTimeout存在，即退出
         if (!that.pollingTimerVo[id]) return;
         const progressResult = await that.$fetch('userRegistrationImportProgress', {
@@ -238,7 +239,7 @@ export default {
                 that.$refs.viewerUpload.setError('');
               }
             } else {
-              that.importFileShow = false;
+              that.visibleTemp = false;
               that.isUploadEnd = false;
               that.saveLoading = false
               that.fileUrl = '';
@@ -246,6 +247,8 @@ export default {
                 status: 'start',
                 text: '请上传文件'
               }
+              // 导入成功，关闭弹窗，刷新列表
+              that.$emit('success')
             }
           } else if (progressResult.data.status == 3) {
             // 预检/导入 失败（轮询不在继续，直接终止）
@@ -276,6 +279,7 @@ export default {
             // 未开始 or 进行中
           }
         }
+        console.log('看看当前几秒轮询一次', id)
         setTimeout(pollingFn(typeNew), 15000); // 15秒一轮询
       };
       pollingFn(type);

@@ -41,7 +41,7 @@
               <li><i @click="shareWX"></i><p>微信</p></li>
             </ul>
             <div class="inputCode">
-              <el-input v-model="sinaLink" class="input-with-select" id="linkBox"></el-input>
+              <el-input v-model.trim="sinaLink" class="input-with-select" id="linkBox"></el-input>
               <span @click="copy">复制</span>
             </div>
             <p class="sub">「报名来源」需在地址最后边增加：?refer=值</p>

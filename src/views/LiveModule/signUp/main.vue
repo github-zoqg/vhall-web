@@ -18,9 +18,9 @@
           </span>
         </div>
         <div class="headBtnGroup">
-          <el-button round size="medium" class="transparent-btn" @click="openDialog('theme')">设置</el-button>
-          <el-button round size="medium"  class="transparent-btn" @click="openDialog('share')">分享</el-button>
-          <el-button type="primary" round size="medium" @click="showSignUp">预览</el-button>
+          <el-button round size="medium" class="transparent-btn" v-preventReClick @click.prevent.stop="openDialog('theme')">设置</el-button>
+          <el-button round size="medium"  class="transparent-btn" v-preventReClick @click.prevent.stop="openDialog('share')">分享</el-button>
+          <el-button type="primary" round size="medium" v-preventReClick @click.prevent.stop="showSignUp">预览</el-button>
         </div>
       </pageTitle>
       <div class="signup-main-center">
@@ -106,16 +106,9 @@ export default {
       }
     }
   },
-  created(){
+  async created(){
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
-    if (this.signUpPageType === 'subject') {
-      // 专题下是否开启，只要引用了报名表单，默认就是开启的
-      this.signUpSwtich = true
-      // 更新表单组件里的字段展示
-      this.$nextTick(() => {
-        this.$refs.signSetFormDom && this.$refs.signSetFormDom.setSwitchStatus(this.signUpSwtich)
-      })
-    }
+    await this.getBaseInfo();
   },
   async mounted() {
     this.$refs.signSetFormDom && this.$refs.signSetFormDom.initComp()
@@ -160,8 +153,10 @@ export default {
       this.$fetch('regFromGet', this.setParamsIdByRoute({})).then(res => {
         if (res.code === 200) {
           this.baseInfo = res.data;
-          if (this.signUpPageType === 'webinar') {
-            // 活动下是否开启，通过接口拿取
+          if (this.signUpPageType === 'subject') {
+            // 专题下是否开启，只要引用了报名表单，默认就是开启的
+            this.signUpSwtich = true
+          } else {
             this.signUpSwtich = res.data.enable_status == '0' ? false : true;
           }
         }

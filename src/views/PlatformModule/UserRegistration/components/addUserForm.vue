@@ -9,7 +9,7 @@
       @close="cancelAddUser"
       append-to-body>
       <!-- 一级表单 -->
-      <el-button type="primary" round size="mini" class="add-btn" @click.prevent.stop="addItem"><i class="iconfont-v3 saasline-plus" @click.prevent="removeItem(item)"></i>添加</el-button>
+      <el-button type="primary" round size="mini" class="add-btn" v-preventReClick @click.prevent.stop="addItem"><i class="iconfont-v3 saasline-plus"></i>添加</el-button>
       <el-table
         ref="addTable"
         :data="list"
@@ -50,8 +50,8 @@
       </el-table>
       <p class="add-user-notice">注：此报名通道会导致用户信息的不完整，手机号和姓名必填</p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click.prevent.stop="saveAddUser" size="medium" round>确 定</el-button>
-        <el-button @click="cancelAddUser" size="medium" round>取 消</el-button>
+        <el-button type="primary" v-preventReClick @click.prevent.stop="saveAddUser" size="medium" round>确 定</el-button>
+        <el-button @click.prevent.stop="cancelAddUser" v-preventReClick size="medium" round>取 消</el-button>
       </span>
     </VhallDialog>
   </div>

@@ -17,7 +17,7 @@
           <span>{{item.label}}</span>
         </li>
       </template>
-      <div class="disable_wrap" v-if="!signUpSwtich"></div>
+      <div class="disable_wrap" v-if="!signUpSwtichTwo"></div>
     </ul>
     <div class="rightView" v-show="tabType === 'form'">
       <!-- 表单编辑组件 -->
@@ -26,11 +26,11 @@
         :baseInfo="baseInfo"
         v-show="rightComponent == 'fieldSet'"
         :questionArr.sync="questionArr"
-        :signUpSwtich="signUpSwtich"
+        :signUpSwtich="signUpSwtichTwo"
         :regionalOptions="regionalOptions"
         @setBaseInfo="setBaseInfo"
       ></fieldSet>
-      <!-- <div class="disable_wrap" v-if="!signUpSwtich"></div> -->
+      <!-- <div class="disable_wrap" v-if="!signUpSwtichTwo"></div> -->
     </div>
     <!-- 表单预览组件 -->
     <signUpForm
@@ -84,11 +84,15 @@ export default {
     tabType: {
       type: String,
       default: ''
+    },
+    signUpSwtich: {
+      type: Boolean,
+      default: false
     }
   },
   data(){
     return {
-      signUpSwtich: false,
+      signUpSwtichTwo: false,
       baseInfo: {
         open_link: 0,
         theme_color: 'red',
@@ -130,7 +134,7 @@ export default {
   },
   computed: {
     signUpSwtichDesc(){
-      if(this.signUpSwtich){
+      if(this.signUpSwtichTwo){
         return '已开启，观看直播需要填写报名表单';
       }else{
         return '开启后，观看直播需要填写报名表单';
@@ -161,6 +165,7 @@ export default {
     }
   },
   created(){
+    this.signUpSwtichTwo = this.signUpSwtich
   },
   mounted() {
     window.addEventListener('scroll', this.handleScroll)
@@ -180,7 +185,7 @@ export default {
     },
     // 切换开关的时候，修改展示字段状态
     setSwitchStatus(signUpSwtich) {
-      this.signUpSwtich = signUpSwtich
+      this.signUpSwtichTwo = signUpSwtich
     },
     // 更改表单基本信息的方法（通用）
     setBaseInfo(options, callback) {
@@ -253,13 +258,9 @@ export default {
           this.baseInfo = res.data;
           if (this.signUpPageType === 'subject') {
             // 专题下是否开启，只要引用了报名表单，默认就是开启的
-            this.signUpSwtich = true
-            // 更新表单组件里的字段展示
-            this.$nextTick(() => {
-              this.$refs.signSetFormDom && this.$refs.signSetFormDom.setSwitchStatus(this.signUpSwtich)
-            })
+            this.signUpSwtichTwo = true
           } else {
-              this.signUpSwtich = res.data.enable_status == '0' ? false : true;
+            this.signUpSwtichTwo = res.data.enable_status == '0' ? false : true;
           }
         }
       }).catch(err => {

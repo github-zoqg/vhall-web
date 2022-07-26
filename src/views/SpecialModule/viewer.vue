@@ -366,7 +366,8 @@ export default {
       } else {
         let params = {
           subject_id: this.subjectForm.subject_id,
-          subject_verify: this.subject_verify == 2 ? 2 : 0
+          subject_verify: this.subject_verify == 2 ? 2 : 0,
+          verify: 0
         }
         this.saveSubjectInfo(params);
       }
