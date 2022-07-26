@@ -10,7 +10,7 @@
             v-model="signUpSwtich"
             active-color="#FB3A32"
             inactive-color="#CECECE"
-            @change="switchRegForm"
+            @change="handleChangeSwitchRegForm"
             active-text="">
           </el-switch>
           <span class="sign-switch-desc">
@@ -52,7 +52,7 @@
 
 <script>
 import PageTitle from '@/components/PageTitle';
-import { sessionOrLocal } from '@/utils/utils';
+import { sessionOrLocal, debounce } from '@/utils/utils';
 import beginPlay from '@/components/beginBtn';
 import SignSetForm from './signSetForm';
 import UserManage from './userManage';
@@ -81,7 +81,8 @@ export default {
       userId: '',
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")), // 活动状态
       menuBarFixed: '',
-      subjectShowVisible: false
+      subjectShowVisible: false,
+      vm: null
     };
   },
   computed: {
@@ -110,7 +111,7 @@ export default {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     await this.getBaseInfo();
   },
-  async mounted() {
+  mounted() {
     this.$refs.signSetFormDom && this.$refs.signSetFormDom.initComp()
     if (this.$route.query.tab == 2) {
       this.tabType = 'user'
@@ -164,24 +165,41 @@ export default {
         console.log(err);
       });
     },
+    //文案提示问题
+    messageInfo(title, type) {
+      if (this.vm) {
+        this.vm.close()
+      }
+      this.vm = this.$message({
+        showClose: true,
+        duration: 2000,
+        message: title,
+        type: type,
+        customClass: 'zdy-info-box'
+      });
+    },
+    //确定防抖
+    handleChangeSwitchRegForm(value) {
+      const oldValue = value
+      this.signUpSwtich = !value
+      debounce(async () => {
+        await this.switchRegForm(oldValue);
+      }, 500)
+    },
     // 开启\关闭报名表单开关
-    switchRegForm(value) {
+    async switchRegForm(value) {
       const url = value ? 'regFromEnable' : 'regFromDisable';
       const behaviour = value ? '开启' : '关闭';
       this.$fetch(url, this.setParamsIdByRoute({})).then(res => {
         if (res.code === 200) {
           if (this.signUpPageType === 'webinar') {
+            this.signUpSwtich = value;
             this.$vhall_paas_port({
               k: value ? 100137 : 100138,
               data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
           }
-          this.$message({
-            message:  `报名表单${ behaviour }成功`,
-            showClose: true, // 是否展示关闭按钮
-            type: 'success', //  提示类型
-            customClass: 'zdy-info-box' // 样式处理
-          });
+          this.messageInfo(`报名表单${ behaviour }成功`, 'success')
           // 更新表单组件里的字段展示
           this.$nextTick(() => {
             this.$refs.signSetFormDom && this.$refs.signSetFormDom.setSwitchStatus(this.signUpSwtich)
@@ -189,19 +207,10 @@ export default {
         }
       }).catch(err => {
         if (err.code == 512800) {
-          this.$message({
-            message:  '报名表单不能与白名单同时开启',
-            showClose: true, // 是否展示关闭按钮
-            type: 'error', //  提示类型
-            customClass: 'zdy-info-box' // 样式处理
-          });
+          this.signUpSwtich = !value;
+          this.messageInfo('报名表单不能与白名单同时开启', 'error')
         } else {
-          this.$message({
-            message:  `报名表单${ behaviour }失败`,
-            showClose: true, // 是否展示关闭按钮
-            type: 'error', //  提示类型
-            customClass: 'zdy-info-box' // 样式处理
-          });
+          this.messageInfo(`报名表单${ behaviour }失败`, 'error')
         }
       });
     },

@@ -614,6 +614,14 @@ export default {
           return;
         }
       }
+      if (formName === 'whiteForm') {
+        try {
+          // 设置白名单的时候，每次点击保存之前，先获取下活动是否设置过报名表单
+          await this.getLiveDetail()
+        } catch(e) {
+          console.log(e)
+        }
+      }
       // 若是当前白名单，开启了报名表单，直接提示不可和白名单直接使用。
       if (formName === 'whiteForm' && Number(this.liveDetailInfo.reg_form) === 1) {
         this.$message({
@@ -847,8 +855,8 @@ export default {
       this.audienceGet();
     },
     // 获取基本信息
-    getLiveDetail(id) {
-      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+    getLiveDetail() {
+      return this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         this.liveDetailInfo = res.data;
         console.log(this.liveDetailInfo)
       }).catch(res=>{
