@@ -89,7 +89,7 @@
     <add-user-form v-if="addUserVisible" :visible="addUserVisible" :webinarOrSubjectId="webinarOrSubjectId" :signUpPageType="signUpPageType"
      @close="cancelAddUser"></add-user-form>
     <!-- 导入报名用户excel -->
-    <import-dialog v-if="importVisible" :visible="importVisible" :webinarOrSubjectId="webinarOrSubjectId" :signUpPageType="signUpPageType" @close="cancelImport"></import-dialog>
+    <import-dialog v-if="importVisible" :visible="importVisible" :webinarOrSubjectId="webinarOrSubjectId" :signUpPageType="signUpPageType" @close="cancelImport" @success="successImport"></import-dialog>
   </div>
 </template>
 
@@ -275,11 +275,11 @@ export default {
       })
     },
     //文案提示问题
-    messageInfo() {
+    messageInfo(message) {
       this.vm = this.$message({
         showClose: true,
         duration: 2000,
-        message: '导出申请成功，请去下载中心下载',
+        message: message,
         type: 'success',
         customClass: 'zdy-info-box'
       });
@@ -290,7 +290,7 @@ export default {
         if (this.vm) {
           this.vm.close();
         }
-        this.messageInfo()
+        this.messageInfo('导出申请成功，请去下载中心下载')
         this.$EventBus.$emit('saas_vs_download_change');
       })
     },
@@ -301,6 +301,12 @@ export default {
     // 关闭导入用户名称
     cancelImport() {
       this.importVisible = false
+    },
+    // 导入成功
+    successImport() {
+      this.importVisible = false
+      this.messageInfo('导入成功')
+      this.initQueryUserList()
     }
   },
   mounted() {

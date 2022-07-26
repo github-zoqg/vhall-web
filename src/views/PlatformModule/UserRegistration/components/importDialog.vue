@@ -193,10 +193,10 @@ export default {
     // 轮询结果 type：import-导入；save-保存
     intervalCheck(type) {
       let that = this
-      this.startPolling(type);
       if (this.checkImportTimer) {
         clearTimeout(this.checkImportTimer);
       }
+      this.startPolling(type);
       this.checkImportTimer = setTimeout(function() {
         clearTimeout(that.checkImportTimer);
         // 若未得到理想轮询结果，5分钟后自动停止轮询
@@ -212,7 +212,7 @@ export default {
       const id = this.pollingTimerId++;
       this.pollingTimerVo[id] = true;
       const pollingFn = async function(typeNew) {
-        console.log('当前触发监听的type', typeNew)
+        console.log('当前触发监听的type', typeNew, that.pollingTimerVo[id])
         // 若发现setTimeout存在，即退出
         if (!that.pollingTimerVo[id]) return;
         const progressResult = await that.$fetch('userRegistrationImportProgress', {
@@ -238,7 +238,8 @@ export default {
                 that.$refs.viewerUpload.setError('');
               }
             } else {
-              that.importFileShow = false;
+              that.visibleTemp = false;
+              this.fileUrl = null;
               that.isUploadEnd = false;
               that.saveLoading = false
               that.fileUrl = '';
@@ -246,6 +247,7 @@ export default {
                 status: 'start',
                 text: '请上传文件'
               }
+              // 导入成功，关闭弹窗，刷新列表
             }
           } else if (progressResult.data.status == 3) {
             // 预检/导入 失败（轮询不在继续，直接终止）
@@ -276,6 +278,7 @@ export default {
             // 未开始 or 进行中
           }
         }
+        console.log('看看当前几秒轮询一次', id)
         setTimeout(pollingFn(typeNew), 15000); // 15秒一轮询
       };
       pollingFn(type);
