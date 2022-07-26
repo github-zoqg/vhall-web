@@ -8,7 +8,7 @@
       -->
     <div class="tip_content" v-if="resultVo && resultVo.total == 0">本直播不属于任何专题，本次设置的报名表单生效，观看直播需要填写此报名表单。</div>
     <div class="tip_content" v-else-if="resultVo && resultVo.total == 1">
-      本直播属于专题<span class="color_red cursor_pointer" v-if="resultVo && resultVo.list" @click="goSubjectDetail(resultVo.list[0].subject_id)">《{{ subjectTitle }}》</span>，该专题提供统一的{{ verifyText }}，本直播报名表单失效。
+      本直播属于专题<span class="color_red cursor_pointer" v-if="resultVo && resultVo.list" @click="goSubjectDetail(resultVo.list[0].subject_id)">《{{ subjectTitle }}》</span>，{{ verifyText === '' ? '该专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。' : `该专题提供统一的${verifyText}，本直播报名表单失效。`}}
     </div>
     <div class="tip_content" v-else-if="resultVo && resultVo.total > 1">本直播属于多个专题，这些专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。</div>
     <div class="tip_content" v-else>依据活动ID获取其归属专题信息失败，请联系管理员</div>
@@ -55,12 +55,13 @@ export default {
           return '观看限制-白名单'
         } else if (this.resultVo.list[0].subject_verify == 1 && this.resultVo.list[0].verify == 4) {
           return '观看限制-验证码'
-        } else {
+        } else if (this.resultVo.list[0].subject_verify == 1 && this.resultVo.list[0].verify == 0) {
           return '观看限制-免费'
+        } else {
+          return ''
         }
       } else {
-        // 无内容，默认占位
-        return '观看限制-免费'
+        return ''
       }
     },
     subjectTitle() {
