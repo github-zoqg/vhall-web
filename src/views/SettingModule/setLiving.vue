@@ -36,7 +36,7 @@ export default {
   },
   created() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'))
-    this.$refs[`livingSet`].initComp();
+    // this.$refs[`livingSet`].initComp();
   },
   methods: {
     handleClick(tab, event) {
