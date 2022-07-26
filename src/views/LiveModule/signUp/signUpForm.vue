@@ -36,12 +36,12 @@
               </el-checkbox>
             </template> -->
             <template v-for="(nodes, nodeIndex) in formItem.nodes" v-else>
-              <el-input v-if="formItem.type=='input'"  :key="`${formIndex}-${nodeIndex}`" v-model="nodes.value" v-bind="nodes.props"></el-input>
+              <el-input v-if="formItem.type=='input'"  :key="`${formIndex}-${nodeIndex}`" v-model.trim="nodes.value" v-bind="nodes.props"></el-input>
               <!-- 单选类型 -->
               <el-radio-group v-model="nodes.value" v-bind="nodes.props" v-else-if="formItem.type=='radio'" :key='`${formIndex}-${nodeIndex}`'>
                 <el-radio v-for="(radioItem, raionIndex) in nodes.children" :key="`${formIndex}-${nodeIndex}-${raionIndex}`" :label="radioItem.value || `选项${raionIndex+1}`">
                   {{radioItem.other ? "其他" : radioItem.value}}
-                  <el-input v-if="radioItem.other" maxlength="50" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model="radioItem.value" ></el-input>
+                  <el-input v-if="radioItem.other" maxlength="50" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model.trim="radioItem.value" ></el-input>
                   <br/>
                 </el-radio>
               </el-radio-group>
@@ -49,7 +49,7 @@
               <el-checkbox-group v-model="nodes.value" v-bind="nodes.props" v-else-if="formItem.type=='checkBox'" :key='`${formIndex}-${nodeIndex}`'>
                 <el-checkbox v-for="(radioItem, raionIndex) in nodes.children" :key="`${formIndex}-${nodeIndex}-${raionIndex}`" :label="radioItem.value || `选项${raionIndex+1}`">
                   {{radioItem.other ? "其他" : radioItem.value}}
-                  <el-input v-if="radioItem.other" maxlength="50" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model="radioItem.value" :class="{noFull: !!radioItem.other, radioInput: true}">
+                  <el-input v-if="radioItem.other" maxlength="50" show-word-limit :placeholder="`选项${raionIndex+1}`" v-model.trim="radioItem.value" :class="{noFull: !!radioItem.other, radioInput: true}">
                     <i class="el-icon-remove-outline removeIcon" slot="suffix" @click="deleteOptions(node.children, raionIndex)"></i>
                   </el-input>
                   <br/>
@@ -65,7 +65,7 @@
           </el-form-item>
           <el-form-item key="code" prop="code">
             <el-input v-model.trim="form.code" auto-complete="off" placeholder="请输入验证码">
-              <el-button class="no-border" size="mini" slot="append" @click="getDyCode('phone')">{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
+              <el-button class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="getDyCode('phone')">{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
             </el-input>
           </el-form-item>
           <el-form-item
@@ -100,11 +100,11 @@
           </el-form-item>
           <el-form-item key="code" prop="code">
             <el-input v-model.trim="form.code" auto-complete="off" placeholder="验证码">
-              <el-button class="no-border" size="mini" slot="append" @click="getDyCode('phone')">{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
+              <el-button class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="getDyCode('phone')">{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
             </el-input>
           </el-form-item>
         </el-form>
-        <el-button round type="primary" @click="submitForm">{{ tabs == 1 ? '报名' : '提交' }}</el-button>
+        <el-button round type="primary" v-preventReClick @click.prevent.stop="submitForm">{{ tabs == 1 ? '报名' : '提交' }}</el-button>
       </template>
       <!-- 验证块 -->
     </article>

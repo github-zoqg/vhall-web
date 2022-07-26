@@ -6,7 +6,7 @@
       @close="cancelImport">
       <div class="upload-dialog-content">
         <file-upload ref="viewerUpload"
-          v-model="fileUrl"
+          v-model.trim="fileUrl"
           @delete="deleteFile"
           :saveData="{
               path: pathUrl,
@@ -50,17 +50,18 @@
         </file-upload>
         <p class="uploadtips">
           <span>注：单个文件不超过10000条数据，数据较大时拆分上传手机号和 姓名必填，否则将视为无效数据</span>
-          <span class="down-span-text" v-show="importResult && importResult.fail > 0" @click="downErrorHandle">下载查看无效数据</span>
+          <span class="down-span-text" v-show="importResult && importResult.fail > 0" @click.prevent.stop="downErrorHandle">下载查看无效数据</span>
         </p>
         <div class="dialog-right-btn dialog-footer">
           <a class="down-a-btn" @click="downloadTemplate">下载模板</a>
           <el-button type="primary"
-            @click="saveUserList"
+            v-preventReClick
+            @click.prevent.stop="saveUserList"
             size="medium"
             round
             :disabled="fileResult === 'error' || !isUploadEnd  || saveLoading"
             :loading="saveLoading">{{ saveLoading ? '执行中' : '确定' }}</el-button>
-          <el-button @click="cancelImport"
+          <el-button v-preventReClick @click.prevent.stop="cancelImport"
             size="medium"
             round>关闭</el-button>
         </div>
@@ -239,7 +240,6 @@ export default {
               }
             } else {
               that.visibleTemp = false;
-              this.fileUrl = null;
               that.isUploadEnd = false;
               that.saveLoading = false
               that.fileUrl = '';
@@ -248,6 +248,7 @@ export default {
                 text: '请上传文件'
               }
               // 导入成功，关闭弹窗，刷新列表
+              that.$emit('success')
             }
           } else if (progressResult.data.status == 3) {
             // 预检/导入 失败（轮询不在继续，直接终止）

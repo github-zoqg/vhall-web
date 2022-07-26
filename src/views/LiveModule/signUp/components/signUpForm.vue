@@ -48,7 +48,7 @@
                       v-if="question.type == 0 && question.default_type == 2"
                       :maxlength="question.type == 0 ? '' : 60"
                       :show-word-limit="question.type != 0"
-                      v-model.number="form[question.id]"
+                      v-model.number.trim="form[question.id]"
                       type="number"
                       autocomplete="off"
                       :placeholder="placeholderList[question.default_type] || '请输入'"></VhallInput>
@@ -56,7 +56,7 @@
                       v-else
                       :maxlength="question.type == 0 ? '' : 60"
                       :show-word-limit="question.type != 0"
-                      v-model="form[question.id]"
+                      v-model.trim="form[question.id]"
                       autocomplete="off"
                       :placeholder="placeholderList[question.default_type] || '请输入'"></VhallInput>
                   </template>
@@ -89,7 +89,7 @@
                               placeholder="请输入描述内容"
                               v-show="form[question.id] == radioItem.id"
                               style="margin-top: 10px;"
-                              v-model="form[`${question.id}${radioItem.id}`]"
+                              v-model.trim="form[`${question.id}${radioItem.id}`]"
                               class="radioInput"
                             ></VhallInput>
                           </template>
@@ -117,7 +117,7 @@
                             autocomplete="off"
                             v-show="form[question.id].some(id => id == checkItem.id)"
                             style="margin-top: 10px;"
-                            v-model="form[`${question.id}${checkItem.id}`]"
+                            v-model.trim="form[`${question.id}${checkItem.id}`]"
                             class="radioInput"
                           ></VhallInput>
                         </template>
@@ -143,7 +143,7 @@
                   >
                     <el-row :gutter="20">
                       <el-col :span="question.colNum">
-                        <VhallInput v-show="false" v-model="form[question.id]" autocomplete="off" ></VhallInput>
+                        <VhallInput v-show="false" v-model.trim="form[question.id]" autocomplete="off" ></VhallInput>
                         <el-select ref="autoCloseRefFlag" v-model="province" @change="regionalChange('province')" placeholder="请选择省份">
                           <el-option
                             v-for="opt in provinces"
@@ -189,7 +189,8 @@
                       <el-button
                         :disabled="time !== 60 || isPreview"
                         class="no-border" size="mini"
-                        @click="getDyCode(true)"
+                        v-preventReClick
+                        @click.prevent.stop="getDyCode(true)"
                       >{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
                     </el-col>
                   </el-row>
@@ -203,7 +204,7 @@
                   </template>
                 </el-form-item>
                 <div class="btnBox">
-                  <el-button style="margin-top: 11px;" :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitForm">报名</el-button>
+                  <el-button style="margin-top: 11px;" :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click.prevent.stop="submitForm">报名</el-button>
                 </div>
               </el-form>
             </template>
@@ -231,13 +232,14 @@
                         :disabled="verifyTime !== 60 || isPreview"
                         class="no-border"
                         size="mini"
-                        @click="getDyCode(false)"
+                        v-preventReClick
+                        @click.prevent.stop="getDyCode(false)"
                       >{{ verifyTime === 60 ? '发送验证码' : `${verifyTime}s` }}</el-button>
                     </el-col>
                   </el-row>
                 </el-form-item>
                 <div class="btnBox">
-                  <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitVerify">提交</el-button>
+                  <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click.prevent.stop="submitVerify">提交</el-button>
                 </div>
               </el-form>
             </template>

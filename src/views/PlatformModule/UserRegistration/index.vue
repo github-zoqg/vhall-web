@@ -20,9 +20,9 @@
       <div class="list--search">
         <el-button size="medium" type="primary" round @click.prevent.stop="addUserDialog">快速报名</el-button>
         <!-- 若当前是知学云账号，不展示用量分配按钮, extends_remark 为1时表示 知学云账号-->
-        <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" plain round @click.prevent.stop="importUserDialog">导入</el-button>
-        <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" round @click="downloadHandle">导出</el-button>
-        <VhallInput placeholder="搜索手机号/姓名" v-model="query.keyword"
+        <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" plain round v-preventReClick @click.prevent.stop="importUserDialog">导入</el-button>
+        <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" round v-preventReClick @click.prevent.stop="downloadHandle">导出</el-button>
+        <VhallInput placeholder="搜索手机号/姓名" v-model.trim="query.keyword"
                   clearable
                   @clear="initQueryUserList"
                   class="search-query"
@@ -31,7 +31,7 @@
                   @keyup.enter.native="initQueryUserList">
           <i class="el-icon-search el-input__icon" slot="prefix" @click="initQueryUserList"></i>
         </VhallInput>
-        <el-select placeholder="报名方式" round v-model="query.type" @change="initQueryUserList">
+        <el-select placeholder="报名方式" round v-model.trim="query.type" @change="initQueryUserList">
           <el-option value="">报名方式</el-option>
           <el-option
             v-for="item in [{
@@ -47,7 +47,7 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-select placeholder="是否观看" round v-model="query.is_enter" @change="initQueryUserList" v-if="signUpPageType ==='webinar'">
+        <el-select placeholder="是否观看" round v-model.trim="query.is_enter" @change="initQueryUserList" v-if="signUpPageType ==='webinar'">
           <el-option value="">是否观看</el-option>
           <el-option
             v-for="item in [{
