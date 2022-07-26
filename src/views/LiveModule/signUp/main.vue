@@ -18,9 +18,9 @@
           </span>
         </div>
         <div class="headBtnGroup">
-          <el-button round size="medium" class="transparent-btn" @click="openDialog('theme')">设置</el-button>
-          <el-button round size="medium"  class="transparent-btn" @click="openDialog('share')">分享</el-button>
-          <el-button type="primary" round size="medium" @click="showSignUp">预览</el-button>
+          <el-button round size="medium" class="transparent-btn" v-preventReClick @click.prevent.stop="openDialog('theme')">设置</el-button>
+          <el-button round size="medium"  class="transparent-btn" v-preventReClick @click.prevent.stop="openDialog('share')">分享</el-button>
+          <el-button type="primary" round size="medium" v-preventReClick @click.prevent.stop="showSignUp">预览</el-button>
         </div>
       </pageTitle>
       <div class="signup-main-center">

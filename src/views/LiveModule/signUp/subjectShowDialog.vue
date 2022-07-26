@@ -13,7 +13,7 @@
     <div class="tip_content" v-else-if="resultVo && resultVo.total > 1">本直播属于多个专题，这些专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。</div>
     <div class="tip_content" v-else>依据活动ID获取其归属专题信息失败，请联系管理员</div>
     <div slot='footer'>
-      <el-button type="primary" size="medium" round @click="closeDialog">我知道了</el-button>
+      <el-button type="primary" size="medium" round v-preventReClick @click.prevent.stop="closeDialog">我知道了</el-button>
     </div>
   </VhallDialog>
 </template>

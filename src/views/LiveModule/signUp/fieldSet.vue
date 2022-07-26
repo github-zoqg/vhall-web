@@ -8,7 +8,7 @@
         maxlength="50"
         show-word-limit
         placeholder="请输入表单标题"
-        v-model="title"
+        v-model.trim="title"
         v-clearEmoij
         @change="baseInfoChange('title')"
       ></VhallInput>
@@ -19,7 +19,7 @@
       <VhallInput
         :maxlength="500"
         autocomplete="off"
-        v-model="intro"
+        v-model.trim="intro"
         show-word-limit
         placeholder="请输入表单简介"
         type="textarea"
@@ -34,7 +34,7 @@
       <p class="label">表单头图</p>
       <upload
         :domain_url="imageUrl"
-        v-model="imageUrl"
+        v-model.trim="imageUrl"
         :on-success="productLoadSuccess"
         :before-upload="beforeUploadHandler"
         :restPic="true"
@@ -82,7 +82,7 @@
               autocomplete="off"
               show-word-limit
               placeholder="请输入题目"
-              v-model="item.label"
+              v-model.trim="item.label"
               v-clearEmoij
               class="radioInput titleInput"
               @change="subjectChange(item)"
@@ -97,7 +97,7 @@
             >
               <VhallInput
                 :disabled="item.disabledEdit"
-                v-model="node.value"
+                v-model.trim="node.value"
                 v-bind="node.props"
                 show-word-limit
                 autocomplete="off"
@@ -151,7 +151,7 @@
                   autocomplete="off"
                   show-word-limit
                   placeholder="选项"
-                  v-model="radioItem.value"
+                  v-model.trim="radioItem.value"
                   class="radioInput"
                   :class="{'radioGender': item.reqType == 0 && item.default_type == 4}"
                 >
@@ -195,7 +195,7 @@
                   autocomplete="off"
                   show-word-limit
                   placeholder="选项"
-                  v-model="radioItem.value"
+                  v-model.trim="radioItem.value"
                   class="radioInput"
                   @change="chooseOptChange(item, radioItem)"
                 >
@@ -235,14 +235,15 @@
               <el-button
                 type="text"
                 v-if="item.bottomBtn.includes('addBtn')"
-                @click="addOption(item)"
+                v-preventReClick
+                @click.prevent.stop="addOption(item)"
               ><i class="el-icon-plus"></i>添加选项</el-button>
               <template v-if="item.bottomBtn.includes('addOther')">
                 <span class="line"></span>
                 <el-button
-                  el-button
+                  v-preventReClick
                   type="text"
-                  @click="addOption(item, 'other')"
+                  @click.prevent.stop="addOption(item, 'other')"
                 ><i class="el-icon-plus"></i>添加其他</el-button>
               </template>
             </div>
@@ -305,7 +306,7 @@
       </transition-group>
     </draggable>
     <section class="viewItem sureBtn">
-      <el-button :disabled="!signUpSwtich" round type="primary" @click="sureQuestionnaire">保存</el-button>
+      <el-button :disabled="!signUpSwtich" round type="primary" v-preventReClick @click.prevent.stop="sureQuestionnaire">保存</el-button>
     </section>
   </div>
 </template>
