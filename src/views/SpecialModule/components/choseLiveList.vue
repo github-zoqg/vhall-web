@@ -80,6 +80,12 @@ export default {
       required: true,
       type:Number,
       default: 0
+    },
+    // 专题权限
+    checkAuth: {
+      required: true,
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -155,6 +161,7 @@ export default {
       let params = {
         title: this.keyword,
         order_type: 1,
+        is_subject: this.checkAuth > 0 ? 1 : 0,
         webinar_state: 0,
         ...this.pageInfo
       }

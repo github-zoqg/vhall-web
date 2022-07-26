@@ -1,5 +1,5 @@
 <template>
-  <div class="subject-viewer">
+  <div class="subject-viewer"  v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)">
     <pageTitle pageTitle="设置观看鉴权模式"></pageTitle>
     <div class="subject-viewer_container">
       <div class="subject-viewer_choose">
@@ -201,6 +201,7 @@ export default {
       }
     };
     return {
+      loading: true,
       subject_verify: 0,
       subjectForm: {
         subject_id: this.$route.params.id,
@@ -279,13 +280,14 @@ export default {
       }).then(res => {
         if (res.code == 200) {
           this.subject_verify = res.data.subject_verify;
+          this.loading = false;
           if (res.data.subject_verify) {
             res.data.subject_verify == 1 ? this.isVerifyLimit = true : this.isLoadSignUp = true
           }
           this.groupList = res.data.white_list;
           this.subjectForm.verify = res.data.verify;
-          this.subjectForm.is_preview = res.data.is_preview;
-          this.subjectForm.preview_time = res.data.preview_time;
+          this.subjectForm.is_preview = Boolean(res.data.is_preview);
+          this.subjectForm.preview_time = this.subjectForm.is_preview ? res.data.preview_time : 5;
           if (res.data.verify == 1) {
             this.pwdForm.password = res.data.password;
             this.pwdForm.placeholder = res.data.password_verify;
@@ -390,7 +392,7 @@ export default {
             verify: verify,
             password: this.pwdForm.password,
             password_verify: this.pwdForm.placeholder || '请输入密码',
-            is_preview: this.subjectForm.is_preview,
+            is_preview: Number(this.subjectForm.is_preview),
             preview_time: this.subjectForm.is_preview ? this.subjectForm.preview_time : undefined
           }
           this.saveSubjectInfo(params)
@@ -411,11 +413,11 @@ export default {
         return;
       }
       let params = {
-        webinar_id: this.subjectForm.subject_id,
+        subject_id: this.subjectForm.subject_id,
         subject_verify: this.subject_verify,
         verify: verify,
         white_id: this.whiteId,
-        is_preview: this.subjectForm.is_preview,
+        is_preview: Number(this.subjectForm.is_preview),
         preview_time: this.subjectForm.is_preview ? this.subjectForm.preview_time : undefined,
         white_verify: this.white_verify || '请输入手机号/邮箱/工号'
       }
@@ -440,7 +442,7 @@ export default {
             subject_verify: this.subject_verify,
             verify: verify,
             fcode_verify: this.formCode.placeholder || '请输入邀请码',
-            is_preview: this.subjectForm.is_preview,
+            is_preview: Number(this.subjectForm.is_preview),
             preview_time: this.subjectForm.is_preview ? this.subjectForm.preview_time : undefined
           }
           this.saveSubjectInfo(params)
