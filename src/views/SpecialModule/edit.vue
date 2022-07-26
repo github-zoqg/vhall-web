@@ -87,7 +87,7 @@
             >
               <div
                 class="vh-sort-tables__tbody-tr"
-                :class="item.auto_record == 1 ? 'tr_active' : ''"
+                :class="$route.params.id && item.auto_record == 1 ? 'tr_active' : ''"
                 v-for="(item, index) in formData.selectedActives"
                 :key="item.webinar_id"
                 >
