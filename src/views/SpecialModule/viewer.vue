@@ -413,7 +413,7 @@ export default {
         return;
       }
       let params = {
-        webinar_id: this.subjectForm.subject_id,
+        subject_id: this.subjectForm.subject_id,
         subject_verify: this.subject_verify,
         verify: verify,
         white_id: this.whiteId,

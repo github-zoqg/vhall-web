@@ -87,7 +87,7 @@
             >
               <div
                 class="vh-sort-tables__tbody-tr"
-                :class="$route.params.id && item.auto_record == 1 ? 'tr_active' : ''"
+                :class="$route.params.id && item.is_coincide == 1 ? 'tr_active' : ''"
                 v-for="(item, index) in formData.selectedActives"
                 :key="item.webinar_id"
                 >
@@ -130,6 +130,7 @@
       v-if="showActiveSelect"
       :checkedList="formData.selectedActives"
       :checkedTotal="formData.total"
+      :checkAuth="formData.viewer"
       @cacelSelect="showActiveSelect = false"
       @selectedEvent="doSelectedActives"
     ></chose-actives>
@@ -264,7 +265,7 @@ export default {
           this.formData.home = res.data.webinar_subject.is_open ? false : true // 是否显示个人主页
           this.formData.hot = Boolean(res.data.webinar_subject.hide_pv) // 是否显示 人气
           this.formData.reservation = Boolean(res.data.webinar_subject.hide_appointment) // 是否显示预约人数
-          this.formData.viewer = res.data.webinar_subject.subject_verify;
+          this.formData.viewer = Number(res.data.webinar_subject.subject_verify);
           // 重置修改状态
           setTimeout(() => {
             this.isChange = false
