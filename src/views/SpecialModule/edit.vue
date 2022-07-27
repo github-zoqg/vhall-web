@@ -254,7 +254,7 @@ export default {
       }).then(res => {
         if (res.code == 200) {
           this.subjectInfo = {...res.data.webinar_subject};
-          this.formData.selectedActives = Array.from(res.data.webinar_subject.webinar_list)
+          this.formData.selectedActives = Array.from(res.data.webinar_subject.webinar_list) || []
           this.subject_id = res.data.webinar_subject.id
           this.formData.title = res.data.webinar_subject.title
           res.data.webinar_subject.cover && (this.formData.imageUrl = res.data.webinar_subject.cover)

@@ -280,7 +280,7 @@ export default {
   },
   filters: {
     titleFormat(val){
-      return val < 10 ? val : val + '...'
+      return val.length < 10 ? val : val + '...'
     }
   },
   // 无极版、标准版、新享版 没有邀请码 付费 白名单 试看 权限 按钮-试看

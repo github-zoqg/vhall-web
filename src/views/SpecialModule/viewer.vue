@@ -499,7 +499,6 @@ export default {
           // 更新已生成邀请码数量
           this.codeNum = res.data.code_count;
         }).catch(res => {
-          console.log(e);
           this.$message({
             message:  res.msg || '生成失败',
             showClose: true,

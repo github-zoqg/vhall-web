@@ -55,7 +55,7 @@
         </div>
       </div>
       <div class="control">
-        <span>当前选中<span class="choosed-num"> {{selectedOption.length}} </span>个直播</span>
+        <span>当前选中<span class="choosed-num"> {{ selectedOption.length }} </span>个直播</span>
         <div class="control-btn" style="text-align: right;">
           <el-button @click="saveSelect" v-preventReClick :disabled="!selectedOption.length" type="primary" round>确定</el-button>
           <el-button @click="cancelSelect" round>取消</el-button>
@@ -114,7 +114,7 @@ export default {
     noData
   },
   created() {
-    this.selectedOption = this.checkedList.length && JSON.parse(JSON.stringify(this.checkedList || []))
+    this.selectedOption = this.checkedList.length && JSON.parse(JSON.stringify(this.checkedList)) || []
     console.log(this.selectedOption, '???123124')
     this.getActiveList();
   },
@@ -134,8 +134,9 @@ export default {
         })
       }
       this.activeList = [];
-      // this.activeList.map(item => item.checked = false);
-      this.selectedOption = [];
+      if(!this.checkedList.length) {
+        this.selectedOption = [];
+      }
       this.pageInfo = {
         pos: 0,
         page: 1,
