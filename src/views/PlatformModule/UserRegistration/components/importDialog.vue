@@ -194,16 +194,13 @@ export default {
     // 轮询结果 type：import-导入；save-保存
     intervalCheck(type) {
       let that = this
+      this.intervalType = type
       if (this.checkImportTimer) {
         clearTimeout(this.checkImportTimer);
       }
       this.startPolling(type);
       this.checkImportTimer = setTimeout(function() {
-        if (that.checkImportTimer) {
-          clearTimeout(that.checkImportTimer);
-        }
-        // 若未得到理想轮询结果，5分钟后自动停止轮询
-        that.stopPolling();
+        that.clearPageTimes();
       }, 300000);
     },
     stopPolling() {
@@ -215,18 +212,17 @@ export default {
       const id = this.pollingTimerId++;
       this.pollingTimerVo[id] = true;
       const pollingFn = async function() {
-        console.log('当前触发监听的type', type, that.pollingTimerVo[id])
+        console.log('当前触发监听的type', that.intervalType, that.pollingTimerVo[id])
         // 若发现setTimeout存在，即退出
         if (!that.pollingTimerVo[id]) return;
         const progressResult = await that.$fetch('userRegistrationImportProgress', {
-          key: type === 'import' ? that.checkImportKey : that.saveImportKey
+          key: that.intervalType === 'import' ? that.checkImportKey : that.saveImportKey
         }); // 模拟请求
         if (progressResult && progressResult.code == 200) {
           if (progressResult.data.status == 2) {
             // 预检/导入 完成
-            that.stopPolling();
-            that.checkImportTimer && clearTimeout(that.checkImportTimer);
-            if (type === 'import') {
+            that.clearPageTimes();
+            if (that.intervalType === 'import') {
               that.isUploadEnd = true;
               that.fileResult = 'success';
               that.uploadResult = {
@@ -254,20 +250,17 @@ export default {
             }
           } else if (progressResult.data.status == 3) {
             // 预检/导入 失败（轮询不在继续，直接终止）
-            that.stopPolling();
-            if (that.checkImportTimer) {
-              clearTimeout(that.checkImportTimer);
-            }
-            if (type === 'import') {
+            that.clearPageTimes();
+            if (that.intervalType === 'import') {
               that.isUploadEnd = true;
               that.fileResult = 'error';
               that.uploadResult = {
                 status: 'error',
-                text: progressResult.msg || `${type === 'import' ? '预检' : '导入'}失败，请重新上传`
+                text: progressResult.msg || `${that.intervalType === 'import' ? '预检' : '导入'}失败，请重新上传`
               }
               that.importResult = null;
               if (that.$refs.viewerUpload) {
-                that.$refs.viewerUpload.setError(progressResult.msg || `${type === 'import' ? '预检' : '导入'}失败，请重新上传`);
+                that.$refs.viewerUpload.setError(progressResult.msg || `${that.intervalType === 'import' ? '预检' : '导入'}失败，请重新上传`);
               }
             } else {
               that.saveLoading = false
@@ -311,11 +304,7 @@ export default {
     },
     /* 报名导入预检-失败处理（代码冗余缩短） */
     renderCheckImportError(msg, type, isSetError) {
-      if (that.checkImportTimer) {
-        clearTimeout(that.checkImportTimer);
-      }
-      // 若未得到理想轮询结果，5分钟后自动停止轮询
-      that.stopPolling();
+      this.clearPageTimes();
       this.isUploadEnd = true;
       this.fileResult = 'error';
       this.uploadResult = {
@@ -407,6 +396,14 @@ export default {
         type: 'error',
         customClass: 'zdy-info-box'
       });
+    },
+    // 清除定时器
+    clearPageTimes() {
+      if (this.checkImportTimer) {
+        clearTimeout(this.checkImportTimer);
+      }
+      // 若未得到理想轮询结果，5分钟后自动停止轮询
+      this.stopPolling();
     }
   },
   created() {
@@ -418,7 +415,11 @@ export default {
       this.importResult = null;
     }
   },
-  mounted() {}
+  mounted() {},
+  beforeDestroy() {
+    this.clearPageTimes();
+  }
+
 }
 </script>
 <style scoped lang="less">
