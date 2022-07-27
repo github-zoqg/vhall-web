@@ -40,11 +40,11 @@ export default {
   },
   methods: {
     blockHandler(item) {
-      this.reportData(item.k);
+      // this.reportData(item.k);
       this.$router.push({path: item.path, query: {title: item.id == 1 ? '编辑' : undefined}})
     },
     handleData() {
-      this.reportData(100860);
+      // this.reportData(100860);
       this.$router.push({path: `/subject/data/${this.$route.params.id}`})
     },
     reportData(k) {
