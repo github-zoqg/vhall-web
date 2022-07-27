@@ -59,6 +59,7 @@ export default {
   data() {
     return {
       hasDelayPermission: 0,
+      userId:JSON.parse(sessionOrLocal.get("userId")),
       subject_id: this.$route.params.id,
       subjectWapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.params.id}`,
       shareVo: {
@@ -82,6 +83,23 @@ export default {
           this.subjectDetailInfo = {...res.data.webinar_subject};
           this.subject_id = res.data.webinar_subject.id
         }
+      })
+    },
+    reportData(k) {
+      this.$vhall_paas_port({
+        k: k,
+        data: {
+          business_uid: this.userId,
+          user_id: '',
+          webinar_id: '',
+          refer: '',
+          s: '',
+          report_extra: {
+            subject_id: this.$route.params.id
+          },
+          ref_url: '',
+          req_url: '',
+        },
       })
     },
     // 下载二维码

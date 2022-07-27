@@ -473,6 +473,35 @@ export default {
         });
       });
     },
+    // 上报数据
+    setReportData() {
+      let k;
+      let reportArr = [1000860, 1000861, 1000862, '', 1000863]
+      if (this.subject_verify == 1) {
+        let index = Number(this.subjectForm.verify);
+        k = reportArr[index]
+      } else {
+        k = this.subject_verify == 2 ? 100023 : 1000456
+      }
+      this.reportData(k)
+    },
+    reportData(k) {
+      this.$vhall_paas_port({
+        k: k,
+        data: {
+          business_uid: this.userId,
+          user_id: '',
+          webinar_id: '',
+          refer: '',
+          s: '',
+          report_extra: {
+            subject_id: this.$route.params.id
+          },
+          ref_url: '',
+          req_url: '',
+        },
+      })
+    },
     // 选择白名单
     selectGroup(item) {
       this.whiteId = item.group_id;
