@@ -391,7 +391,7 @@ export default {
             subject_verify: this.subject_verify,
             verify: verify,
             password: this.pwdForm.password,
-            password_verify: this.pwdForm.placeholder || '请输入密码',
+            password_verify: this.pwdForm.placeholder,
             is_preview: Number(this.subjectForm.is_preview),
             preview_time: this.subjectForm.is_preview ? this.subjectForm.preview_time : undefined
           }
@@ -419,7 +419,7 @@ export default {
         white_id: this.whiteId,
         is_preview: Number(this.subjectForm.is_preview),
         preview_time: this.subjectForm.is_preview ? this.subjectForm.preview_time : undefined,
-        white_verify: this.white_verify || '请输入手机号/邮箱/工号'
+        white_verify: this.white_verify
       }
       this.saveSubjectInfo(params)
     },
@@ -441,7 +441,7 @@ export default {
             subject_id: this.subjectForm.subject_id,
             subject_verify: this.subject_verify,
             verify: verify,
-            fcode_verify: this.formCode.placeholder || '请输入邀请码',
+            fcode_verify: this.formCode.placeholder,
             is_preview: Number(this.subjectForm.is_preview),
             preview_time: this.subjectForm.is_preview ? this.subjectForm.preview_time : undefined
           }
