@@ -74,6 +74,7 @@
           :manageTableData="userDao.list||[]"
           :tabelColumnLabel="userTableColumn"
           :totalNum="userDao.total||0"
+          :pageLimit=query.limit
           :needPagination=true
           width="150px"
           max-height="520px"

@@ -53,13 +53,13 @@
           <span class="down-span-text" v-show="importResult && importResult.fail > 0" @click.prevent.stop="downErrorHandle">下载查看无效数据</span>
         </p>
         <div class="dialog-right-btn dialog-footer">
-          <a class="down-a-btn" @click="downloadTemplate">下载模板</a>
+          <a href="javascript:void(0);" class="down-a-btn" @click="downloadTemplate">下载模板</a>
           <el-button type="primary"
             v-preventReClick
             @click.prevent.stop="saveUserList"
             size="medium"
             round
-            :disabled="fileResult === 'error' || !isUploadEnd  || saveLoading"
+            :disabled="fileResult === 'error' || !isUploadEnd  || saveLoading || importResult.success == 0"
             :loading="saveLoading">{{ saveLoading ? '执行中' : '确定' }}</el-button>
           <el-button v-preventReClick @click.prevent.stop="cancelImport"
             size="medium"
@@ -199,7 +199,9 @@ export default {
       }
       this.startPolling(type);
       this.checkImportTimer = setTimeout(function() {
-        clearTimeout(that.checkImportTimer);
+        if (that.checkImportTimer) {
+          clearTimeout(that.checkImportTimer);
+        }
         // 若未得到理想轮询结果，5分钟后自动停止轮询
         that.stopPolling();
       }, 300000);
@@ -212,19 +214,19 @@ export default {
       const that = this;
       const id = this.pollingTimerId++;
       this.pollingTimerVo[id] = true;
-      const pollingFn = async function(typeNew) {
-        console.log('当前触发监听的type', typeNew, that.pollingTimerVo[id])
+      const pollingFn = async function() {
+        console.log('当前触发监听的type', type, that.pollingTimerVo[id])
         // 若发现setTimeout存在，即退出
         if (!that.pollingTimerVo[id]) return;
         const progressResult = await that.$fetch('userRegistrationImportProgress', {
-          key: typeNew === 'import' ? that.checkImportKey : that.saveImportKey
+          key: type === 'import' ? that.checkImportKey : that.saveImportKey
         }); // 模拟请求
         if (progressResult && progressResult.code == 200) {
           if (progressResult.data.status == 2) {
             // 预检/导入 完成
             that.stopPolling();
             that.checkImportTimer && clearTimeout(that.checkImportTimer);
-            if (typeNew === 'import') {
+            if (type === 'import') {
               that.isUploadEnd = true;
               that.fileResult = 'success';
               that.uploadResult = {
@@ -253,17 +255,19 @@ export default {
           } else if (progressResult.data.status == 3) {
             // 预检/导入 失败（轮询不在继续，直接终止）
             that.stopPolling();
-            that.checkImportTimer && clearTimeout(that.checkImportTimer);
-            if (typeNew === 'import') {
+            if (that.checkImportTimer) {
+              clearTimeout(that.checkImportTimer);
+            }
+            if (type === 'import') {
               that.isUploadEnd = true;
               that.fileResult = 'error';
               that.uploadResult = {
                 status: 'error',
-                text: progressResult.msg || `${typeNew === 'import' ? '预检' : '导入'}失败，请重新上传`
+                text: progressResult.msg || `${type === 'import' ? '预检' : '导入'}失败，请重新上传`
               }
               that.importResult = null;
               if (that.$refs.viewerUpload) {
-                that.$refs.viewerUpload.setError(progressResult.msg || `${typeNew === 'import' ? '预检' : '导入'}失败，请重新上传`);
+                that.$refs.viewerUpload.setError(progressResult.msg || `${type === 'import' ? '预检' : '导入'}失败，请重新上传`);
               }
             } else {
               that.saveLoading = false
@@ -280,9 +284,9 @@ export default {
           }
         }
         console.log('看看当前几秒轮询一次', id)
-        setTimeout(pollingFn(typeNew), 15000); // 15秒一轮询
+        setTimeout(pollingFn, 15000); // 15秒一轮询
       };
-      pollingFn(type);
+      pollingFn();
     },
     // 文件上传成功 & 文档预检
     uploadSuccess(res, file) {
@@ -307,6 +311,11 @@ export default {
     },
     /* 报名导入预检-失败处理（代码冗余缩短） */
     renderCheckImportError(msg, type, isSetError) {
+      if (that.checkImportTimer) {
+        clearTimeout(that.checkImportTimer);
+      }
+      // 若未得到理想轮询结果，5分钟后自动停止轮询
+      that.stopPolling();
       this.isUploadEnd = true;
       this.fileResult = 'error';
       this.uploadResult = {
@@ -389,6 +398,7 @@ export default {
     },
     /* 报名导入-失败处理（代码冗余缩短） */
     renderSaveError(msg) {
+
       this.saveLoading = false
       this.$message({
         message: msg || '导入观众信息失败',
@@ -492,7 +502,6 @@ export default {
   }
   a.down-a-btn {
     float: left;
-    display: inline-block;
     text-decoration: none;
     font-style: normal;
     font-weight: 400;
