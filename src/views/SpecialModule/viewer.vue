@@ -451,19 +451,18 @@ export default {
     },
     saveSubjectInfo(params) {
       this.$fetch('createSubjectVerify', params).then(res => {
-        this.$message({
-          message:  `设置成功`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        if (this.subject_verify == 2) {
-          // TODO 控制 isLoadSignUp 展示报名表单设置 this.$router.push({path: `/subject/signup/${this.$route.params.id}`})
-        } else {
-          this.$router.push({ path: `/subject/list`})
+        if (res.code === 200) {
+          this.$message({
+            message:  `设置成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          if (this.subject_verify == 2) {
+            // TODO 控制 isLoadSignUp 展示报名表单设置 this.$router.push({path: `/subject/signup/${this.$route.params.id}`})
+          }
         }
-
       }).catch(res =>{
          this.$message({
           message:  res.msg || '设置失败',
