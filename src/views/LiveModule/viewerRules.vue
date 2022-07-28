@@ -254,9 +254,17 @@
     </VhallDialog>
     <VhallDialog :visible='limitVisible' title="直播关联专题详情" width='400px' @close="limitVisible = false;">
       <div class="limit_tip">
-        本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ subjectInfo.subject_title | titleFormat }}》</span> ，
-        <span v-if="subjectInfo.subject_type==1">该专题无统一的观看限制，本直播观看限制生效。</span>
-        <span v-else>该专题提供统一的观看限制- {{handleFormat()}}，本直播观看限制失效。</span>
+        <template v-if="subjectInfo.subject_type==1">
+          <span>本直播属于多个专题，这些专题无统一的观看限制，本直播观看限制 <span class="color_blue">生效</span></span>
+        </template>
+        <template v-else-if="subjectInfo.subject_type==2">
+          本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ subjectInfo.subject_title | titleFormat }}》</span> ，
+          <span v-if="subjectInfo.subject_verify">该专题提供统一的观看限制- {{handleFormat()}}，本直播观看限制<span class="color_red">失效</span>。</span>
+          <span v-else>该专题无统一的观看限制，本直播观看限制 <span class="color_blue">生效</span>。</span>
+        </template>
+        <template v-else>
+         <span>本直播不属于任何专题，本次设置的观看限制 <span class="color_blue">生效</span></span>
+        </template>
       </div>
       <div slot='footer'>
         <el-button type="primary" size="medium" round @click="limitVisible = false;">知道了</el-button>
@@ -663,30 +671,7 @@ export default {
     },
     toDetail() {
       // 有绑定
-      if (this.subjectInfo.subject_type) {
-        // 有绑定 并且专题有鉴权
-        if (this.subjectInfo.subject_verify) {
-          this.limitVisible = true
-        } else {
-          // 有绑定，但是专题鉴权是无限制
-          if (this.subjectInfo.subject_type == 1) {
-            this.$alert('本直播属于多个专题，这些专题无统一的观看限制，本直播观看限制生效', '提示', {
-              confirmButtonText: '知道了',
-              customClass: 'zdy-message-box',
-              callback: action => {}
-            });
-          } else {
-            this.limitVisible = true;
-          }
-        }
-      } else {
-        // 无绑定
-        this.$alert('本直播不属于任何专题，本次设置的观看限制生效', '提示', {
-          confirmButtonText: '知道了',
-          customClass: 'zdy-message-box',
-          callback: action => {}
-        });
-      }
+      this.limitVisible = true;
     },
     goSubjectDetail() {
       this.$router.push({path: `/subject/details/${this.subjectInfo.subject_id}`})

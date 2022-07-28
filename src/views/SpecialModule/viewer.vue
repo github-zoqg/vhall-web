@@ -241,6 +241,7 @@ export default {
       showPwd: false,
       showText: '',
       stash:'',
+      isCheckSubjectAuth: false,
       checkSubjectList: [],
       timeOption: [
         {
@@ -281,6 +282,8 @@ export default {
         if (res.code == 200) {
           this.subject_verify = res.data.subject_verify;
           this.loading = false;
+          // 判断专题是否能设置鉴权
+          this.checkSubjectAuth();
           if (res.data.subject_verify) {
             res.data.subject_verify == 1 ? this.isVerifyLimit = true : this.isLoadSignUp = true
           }
@@ -301,30 +304,18 @@ export default {
         }
       })
     },
-    // 检测是否可以选中权限
-    changeViewer(index) {
-      if (!index) {
-        this.isVerifyLimit = false;
-        this.isLoadSignUp = false;
-        return;
-      }
+    // 判断是否可以设置专题鉴权
+    checkSubjectAuth(){
       this.$fetch('subjectCheck', {
         subject_id: this.$route.params.id
       }).then(res => {
         if (res.code === 200) {
           if (res.data.length) {
             this.subject_verify = 0;
+            this.isCheckSubjectAuth = true;
             this.checkSubjectList = res.data;
-            this.$refs.checkViewer.checkVisible = true;
           } else {
-            this.subject_verify = index;
-            if (index == 1) {
-              this.isVerifyLimit = true
-              this.isLoadSignUp = false
-            } else {
-              this.isVerifyLimit = false
-              this.isLoadSignUp = true
-            }
+            this.isCheckSubjectAuth = false;
           }
         }
       }).catch(res =>{
@@ -337,6 +328,27 @@ export default {
           customClass: 'zdy-info-box'
         });
       });
+    },
+    // 检测是否可以选中权限
+    changeViewer(index) {
+      if (!index) {
+        this.isVerifyLimit = false;
+        this.isLoadSignUp = false;
+        return;
+      }
+      if (this.isCheckSubjectAuth) {
+        this.subject_verify = 0;
+        this.$refs.checkViewer.checkVisible = true;
+      } else {
+        this.subject_verify = index;
+        if (index == 1) {
+          this.isVerifyLimit = true
+          this.isLoadSignUp = false
+        } else {
+          this.isVerifyLimit = false
+          this.isLoadSignUp = true
+        }
+      }
     },
     // 打开查看效果预览
     openDialog(placeholder) {
