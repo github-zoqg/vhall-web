@@ -252,22 +252,22 @@
         <el-button type="primary" round @click="visible = false;" class="button_size">确定</el-button>
       </div>
     </VhallDialog>
-    <VhallDialog :visible='limitVisible' title="直播关联专题详情" width='400px' @close="limitVisible = false;">
+    <VhallDialog :visible='limitVisible' title="提示" width='400px' @close="limitVisible = false;">
       <div class="limit_tip">
         <template v-if="subjectInfo.subject_type==1">
-          <span>本直播属于多个专题，这些专题无统一的观看限制，本直播观看限制 <span class="color_blue">生效</span></span>
+          <span>本直播属于多个专题，这些专题无统一的观看限制，本直播观看限制生效</span>
         </template>
         <template v-else-if="subjectInfo.subject_type==2">
           本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ subjectInfo.subject_title | titleFormat }}》</span> ，
-          <span v-if="subjectInfo.subject_verify">该专题提供统一的观看限制- {{handleFormat()}}，本直播观看限制<span class="color_red">失效</span>。</span>
-          <span v-else>该专题无统一的观看限制，本直播观看限制 <span class="color_blue">生效</span>。</span>
+          <span v-if="subjectInfo.subject_verify">该专题提供统一的观看限制- {{handleFormat()}}，本直播观看限制失效。</span>
+          <span v-else>该专题无统一的观看限制，本直播观看限制生效。</span>
         </template>
         <template v-else>
-         <span>本直播不属于任何专题，本次设置的观看限制 <span class="color_blue">生效</span></span>
+         <span>本直播不属于任何专题，本次设置的观看限制生效。</span>
         </template>
       </div>
       <div slot='footer'>
-        <el-button type="primary" size="medium" round @click="limitVisible = false;">知道了</el-button>
+        <el-button type="primary" size="medium" round @click="limitVisible = false;">我知道了</el-button>
       </div>
     </VhallDialog>
   </div>
