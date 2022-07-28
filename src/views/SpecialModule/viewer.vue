@@ -202,7 +202,7 @@ export default {
     };
     return {
       loading: true,
-      userId:JSON.parse(sessionOrLocal.get("userId")),
+      userId: sessionOrLocal.get("userId"),
       subject_verify: 0,
       subjectForm: {
         subject_id: this.$route.params.id,
