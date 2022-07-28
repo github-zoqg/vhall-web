@@ -290,6 +290,7 @@ export default {
           this.groupList = res.data.white_list;
           this.subjectForm.verify = res.data.verify;
           this.subjectForm.is_preview = res.data.is_preview;
+          this.codeNum = res.data.fcodes;
           this.subjectForm.preview_time = this.subjectForm.is_preview ? res.data.preview_time : 5;
           if (res.data.verify == 1) {
             this.pwdForm.password = res.data.password;
