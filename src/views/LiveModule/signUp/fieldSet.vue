@@ -497,22 +497,21 @@ export default {
     },
     // 保存观看限制，专题关系
     async saveSubjectViews() {
-      const verifyInfo = await this.$fetch('subjectVerifyInfo', {
-        subject_id: this.webinarOrSubjectId
-      }).catch(res => {
-        this.$message({
-          message:  res.msg || '获取专题观看限制失败',
-          showClose: true,
-          // duration: 0,
-          type: res.code == 512999 ? 'warning' : 'error',
-          customClass: 'zdy-info-box'
-        });
-      })
-      if (verifyInfo && verifyInfo.code == 200 && verifyInfo.data) {
+      // const verifyInfo = await this.$fetch('subjectVerifyInfo', {
+      //   subject_id: this.webinarOrSubjectId
+      // }).catch(res => {
+      //   this.$message({
+      //     message:  res.msg || '获取专题观看限制失败',
+      //     showClose: true,
+      //     // duration: 0,
+      //     type: res.code == 512999 ? 'warning' : 'error',
+      //     customClass: 'zdy-info-box'
+      //   });
+      // })
+      // if (verifyInfo && verifyInfo.code == 200 && verifyInfo.data) {
         this.$fetch('createSubjectVerify', {
           subject_id: this.webinarOrSubjectId,
-          subject_verify: 2, // 0无限制 1观看限制 2报名表单 只给控制台使用
-          verify: verifyInfo.data.verify
+          subject_verify: 2 // 0无限制 1观看限制 2报名表单 只给控制台使用
         }).then(res => {
           this.$message({
             message:  `设置成功`,
@@ -521,6 +520,21 @@ export default {
             type: 'success',
             customClass: 'zdy-info-box'
           });
+          // 专题上报
+          this.$vhall_paas_port({
+            k: k,
+            data: {
+              business_uid: JSON.parse(sessionOrLocal.get("userId")),
+              user_id: '',
+              webinar_id: '',
+              subject_id: this.webinarOrSubjectId,
+              refer: '',
+              s: '',
+              report_extra: {},
+              ref_url: '',
+              req_url: '',
+            },
+          })
         }).catch(res =>{
           this.$message({
             message:  res.msg || '设置失败',
@@ -530,7 +544,7 @@ export default {
             customClass: 'zdy-info-box'
           });
         });
-      }
+      // }
     },
     // 添加一个题目选项
     addOption(data, other){
