@@ -29,22 +29,24 @@
   </div>
 </template>
 <script>
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   data() {
     return {
+      userId:JSON.parse(sessionOrLocal.get("userId")),
       settingList: [
-        {icon: 'icon_information@2x', id: 1, title: '基本信息', subText: '编辑专题基本信息', path: `/subject/edit/${this.$route.params.id}`, k: 100858},
-         {icon: 'icon_watch@2x', id: 2, title: '观看限制', subText: '设置专题观看限制', path: `/subject/viewer/${this.$route.params.id}`, k: 100859},
+        {icon: 'icon_information@2x', id: 1, title: '基本信息', subText: '编辑专题基本信息', path: `/subject/edit/${this.$route.params.id}`, k: 100856},
+         {icon: 'icon_watch@2x', id: 2, title: '观看限制', subText: '设置专题观看限制', path: `/subject/viewer/${this.$route.params.id}`, k: 100858},
       ]
     }
   },
   methods: {
     blockHandler(item) {
-      // this.reportData(item.k);
+      this.reportData(item.k);
       this.$router.push({path: item.path, query: {title: item.id == 1 ? '编辑' : undefined}})
     },
     handleData() {
-      // this.reportData(100860);
+      this.reportData(100865);
       this.$router.push({path: `/subject/data/${this.$route.params.id}`})
     },
     reportData(k) {
@@ -54,11 +56,10 @@ export default {
           business_uid: this.userId,
           user_id: '',
           webinar_id: '',
+          subject_id: this.$route.params.id,
           refer: '',
           s: '',
-          report_extra: {
-            subject_id: this.$route.params.id
-          },
+          report_extra:{},
           ref_url: '',
           req_url: '',
         },

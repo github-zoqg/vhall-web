@@ -92,11 +92,10 @@ export default {
           business_uid: this.userId,
           user_id: '',
           webinar_id: '',
+          subject_id: this.$route.params.id,
           refer: '',
           s: '',
-          report_extra: {
-            subject_id: this.$route.params.id
-          },
+          report_extra: {},
           ref_url: '',
           req_url: '',
         },
@@ -104,7 +103,8 @@ export default {
     },
     // 下载二维码
     downErCode() {
-      const activeName = this.subjectDetailInfo.title
+      this.reportData(100857);
+      const activeName = this.subjectDetailInfo.title;
         let image = new Image()
         // 解决跨域 Canvas 污染问题
         image.setAttribute('crossOrigin', 'anonymous')
@@ -127,9 +127,11 @@ export default {
         image.src = this.subjectWapLink;
       },
     previewSubject() {
+      this.reportData(100854);
       window.open(`${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.params.id}&delay=${this.hasDelayPermission}`, '_blank')
     },
     shareSubject() {
+      this.reportData(100855);
       this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.params.id}`;
       // this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail?id=${id}`;
       this.shareVo.pcUrl = `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.params.id}`;

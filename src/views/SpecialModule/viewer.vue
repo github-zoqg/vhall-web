@@ -202,6 +202,7 @@ export default {
     };
     return {
       loading: true,
+      userId:JSON.parse(sessionOrLocal.get("userId")),
       subject_verify: 0,
       subjectForm: {
         subject_id: this.$route.params.id,
@@ -379,8 +380,7 @@ export default {
       } else {
         let params = {
           subject_id: this.subjectForm.subject_id,
-          subject_verify: this.subject_verify == 2 ? 2 : 0,
-          verify: 0
+          subject_verify: this.subject_verify == 2 ? 2 : 0
         }
         this.saveSubjectInfo(params);
       }
@@ -465,6 +465,7 @@ export default {
     saveSubjectInfo(params) {
       this.$fetch('createSubjectVerify', params).then(res => {
         if (res.code === 200) {
+          this.setReportData()
           this.$message({
             message:  `设置成功`,
             showClose: true,
@@ -489,27 +490,23 @@ export default {
     // 上报数据
     setReportData() {
       let k;
-      let reportArr = [1000860, 1000861, 1000862, '', 1000863]
+      let reportArr = [100860, 100861, 100862, '', 100863]
       if (this.subject_verify == 1) {
         let index = Number(this.subjectForm.verify);
         k = reportArr[index]
       } else {
-        k = this.subject_verify == 2 ? 100023 : 1000456
+        k = this.subject_verify == 2 ? 100864 : 100859
       }
-      this.reportData(k)
-    },
-    reportData(k) {
       this.$vhall_paas_port({
         k: k,
         data: {
           business_uid: this.userId,
           user_id: '',
           webinar_id: '',
+          subject_id: this.$route.params.id,
           refer: '',
           s: '',
-          report_extra: {
-            subject_id: this.$route.params.id
-          },
+          report_extra: {},
           ref_url: '',
           req_url: '',
         },

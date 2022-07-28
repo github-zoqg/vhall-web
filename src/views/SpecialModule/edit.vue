@@ -385,7 +385,7 @@ export default {
               let refer = this.$route.query.refer || 2
               this.$vhall_paas_port({
                 k: 100489,
-                data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: refer, s: '', report_extra: {}, ref_url: '', req_url: ''}
+                data: {business_uid: this.userId, user_id: '', webinar_id: '',subject_id: '', refer: refer, s: '', report_extra: {}, ref_url: '', req_url: ''}
               })
             }
 
@@ -439,24 +439,24 @@ export default {
       if (this.formData.imageUrl) {
         this.$vhall_paas_port({
           k: 100498,
-          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', subject_id: this.$route.params.id || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
       }
       this.$vhall_paas_port({
         k: this.formData.reservation ? 100499 : 100500,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', subject_id: this.$route.params.id || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({
         k: this.formData.hot ? 100501 : 100502,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', subject_id: this.$route.params.id || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({
         k: this.formData.home ? 100503 : 100504,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', subject_id: this.$route.params.id || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({
         k: 100505,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {vip:len}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', subject_id: this.$route.params.id || '', refer: '', s: '', report_extra: {vip:len}, ref_url: '', req_url: ''}
       })
     },
     // 判断是否填写数据
@@ -548,7 +548,7 @@ export default {
     updateDrag(e) {
       this.$vhall_paas_port({
         k: 100506,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', subject_id: this.$route.params.id || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
     },
     dragEnd(e) {
