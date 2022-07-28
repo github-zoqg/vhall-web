@@ -134,7 +134,7 @@ export default {
         let phoneList = []
         this.list.map(item => {
           console.warn(item, phoneList)
-          if (phoneList.includes(item.phone)) {
+          if (item.phone !== '' && phoneList.includes(item.phone)) {
             item.phone_error = '手机号不能重复'
           } else {
             phoneList.push(item.phone)
