@@ -1,7 +1,7 @@
 <template>
-  <div class="subject-viewer"  v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)">
-    <pageTitle pageTitle="设置观看鉴权模式"></pageTitle>
-    <div class="subject-viewer_container">
+  <div class="subject-viewer">
+    <pageTitle pageTitle="设置观看限制"></pageTitle>
+    <div class="subject-viewer_container"  v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)">
       <div class="subject-viewer_choose">
         <el-radio v-model="subject_verify" :label="0" @change="changeViewer(0)">无统一限制，采用直播自己的</el-radio> <br/>
         <el-radio v-model="subject_verify" :label="1" @change="changeViewer(1)">统一观看限制，各直播自己的失效</el-radio><br/>

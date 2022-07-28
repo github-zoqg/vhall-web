@@ -258,7 +258,7 @@
           <span>本直播属于多个专题，这些专题无统一的观看限制，本直播观看限制生效</span>
         </template>
         <template v-else-if="subjectInfo.subject_type==2">
-          本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ subjectInfo.subject_title | titleFormat }}》</span> ，
+          本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ titleFormat() }}》</span> ，
           <span v-if="subjectInfo.subject_verify">该专题提供统一的观看限制- {{handleFormat()}}，本直播观看限制失效。</span>
           <span v-else>该专题无统一的观看限制，本直播观看限制生效。</span>
         </template>
@@ -285,11 +285,6 @@ export default {
   components: {
     PageTitle,
     beginPlay
-  },
-  filters: {
-    titleFormat(val){
-      return val.length < 10 ? val : val + '...'
-    }
   },
   // 无极版、标准版、新享版 没有邀请码 付费 白名单 试看 权限 按钮-试看
   data() {
@@ -674,7 +669,7 @@ export default {
       this.limitVisible = true;
     },
     goSubjectDetail() {
-      this.$router.push({path: `/subject/details/${this.subjectInfo.subject_id}`})
+      window.open(`${process.env.VUE_APP_WAP_WATCH}/subject/edit/${this.subjectInfo.subject_id}?title=编辑`, '_blank')
     },
     getReportData() {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -753,6 +748,10 @@ export default {
     formatInput() {
       this.$nextTick(() => {
       })
+    },
+    titleFormat() {
+      let val = this.subjectInfo.subject_title;
+      return val.length < 10 ? val : val.substr(0, 10) + '...'
     },
     // 格式化鉴权格式
     handleFormat() {

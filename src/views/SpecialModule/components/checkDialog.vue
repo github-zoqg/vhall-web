@@ -41,9 +41,7 @@ export default {
   },
   methods: {
     goEditSubject(id) {
-      this.$router.push({path: `/subject/edit/${id}`, query: {
-        title: '编辑'
-      }})
+      window.open(`${process.env.VUE_APP_WAP_WATCH}/subject/edit/${id}?title=编辑`, '_blank')
     }
   }
 }
