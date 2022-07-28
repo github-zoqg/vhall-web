@@ -1,6 +1,8 @@
 <template>
   <el-upload
-    class="file-uploader"
+    :class="['file-uploader ', {
+      'is-upload-disabled': disabled
+    }]"
     v-bind="$props"
     :headers="headersVo"
     :data=saveData
@@ -100,6 +102,10 @@ export default {
     value: {
       type: String,
       default: ''
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     },
     restPic: {
       type: [Function, Boolean],
@@ -240,6 +246,13 @@ export default {
     img{
       // width: 100%;
       height: 100%;
+    }
+  }
+  .is-upload-disabled {
+    .a-upload:hover {
+      .mask {
+        display: none;
+      }
     }
   }
   .mask{
