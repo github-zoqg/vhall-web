@@ -90,7 +90,7 @@ export default {
           width: 'auto'
         },
         {
-          label: '所属活动',
+          label: '所属活动 / 专题',
           key: 'webinar_name',
           width: 200
         },
@@ -239,6 +239,7 @@ export default {
           item.fileStatusCss = ['wating', 'success', 'failer'][item['file_status']];
           item.fileStatusStr = ['生成中', '生成成功', '生成失败'][item['file_status']]; // 0:初始(生成中),1:生成成功2:生成失败
           item.percentage = 90;
+          item.webinar_name = item.webinar_name || '--'
           let dow_urlArr = item.dow_url.split('.');
           item.ext = dow_urlArr[dow_urlArr.length - 1];
         });
