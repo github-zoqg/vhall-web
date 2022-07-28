@@ -34,7 +34,11 @@
           </vh-radio-group>
         </div>
         <div class="preview_container">
-          <div class="preview_box_pc" :style="{backgroundImage: `url(${domain_url})`}">
+          <div class="preview_box_pc">
+            <div class="pc_bg">
+              <img :src="domain_url" alt="">
+            </div>
+
           </div>
           <div class="preview_box_wap"></div>
         </div>
@@ -479,9 +483,22 @@ export default {
         &_pc{
           width: 100%;
           height: 460px;
-          background-color: #d9d9d9;
-          background-size: 100% 100%;
-          background-repeat: no-repeat;
+          background-color: #1a1a1a;
+          position: relative;
+          .pc_bg{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            img{
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+          }
+          // background-size: 100% 100%;
+          // background-repeat: no-repeat;
           // filter: blur(60px);
         }
       }
