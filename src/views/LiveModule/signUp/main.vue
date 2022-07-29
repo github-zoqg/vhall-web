@@ -3,7 +3,7 @@
   'signup-main',
   {'subject-signup': signUpPageType === 'subject'}]">
     <div class="head">
-      <pageTitle :pageTitle="signUpPageType === 'webinar' ? '报名表单' : ''">
+      <pageTitle pageTitle="报名表单">
         <div class="switchBox" v-if="signUpPageType === 'webinar'">
           <el-switch
             class="swtich"
@@ -254,6 +254,18 @@ export default {
       width: 100%;
     }
     &.subject-signup {
+      .titleBox {
+        padding-top: 16px;
+        .fieldSetBox {
+          margin-left: 0;
+        }
+        .pageTitle {
+          line-height: 36px;
+        }
+      }
+      /deep/.viewItem {
+        margin-bottom: 0;
+      }
       .signup-tabs-layout {
         background: #F7F7F7;
         border-radius: 4px 4px 0 0;

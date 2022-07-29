@@ -313,6 +313,7 @@
 
 <script>
 import draggable from "vuedraggable";
+import { sessionOrLocal } from '@/utils/utils';
 import upload from '@/components/Upload/main';
 import Env from "@/api/env";
 import defaultHeader from './images/formHeader.png'
@@ -526,6 +527,7 @@ export default {
             },
           })
         }).catch(res => {
+          console.log(res)
           this.$message({
             message:  res.msg || '设置失败',
             showClose: true,
