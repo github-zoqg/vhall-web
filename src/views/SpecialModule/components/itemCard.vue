@@ -16,8 +16,8 @@
     </section>
     <section>
       <p class="subject">数据</p>
-      <div class="subjectOuter" @click="handleData">
-        <div class="sunjectInner">
+      <div class="subjectOuter">
+        <div class="sunjectInner" @click="handleData">
           <span><img src="../../../common/images/icon/icon_data@2x.png" alt=""></span>
           <div class="desc">
             <p class="mainText">导出数据</p>
