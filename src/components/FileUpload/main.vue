@@ -129,7 +129,9 @@ export default {
       this.fileName = file.name;
       if(response.code !== 200) {
         this.errText = '上传失败，请重新上传';
-        this.onError(response, file, fileList);
+        if (typeof this.onError === 'function') {
+          this.onError && this.onError(response, file, fileList)
+        }
       } else {
         this.errText = '';
         console.log(this.$props);

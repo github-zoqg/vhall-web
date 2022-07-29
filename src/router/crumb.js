@@ -970,7 +970,7 @@ export function CrumbSet(metaName, that) {
         isClick: true
       },
       {
-        title: '鉴权设置',
+        title: '观看限制',
         path: '/subject/viewer',
         isClick: true
       }
