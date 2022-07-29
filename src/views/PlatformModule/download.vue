@@ -90,7 +90,7 @@ export default {
           width: 'auto'
         },
         {
-          label: '所属活动 / 专题',
+          label: '所属活动',
           key: 'webinar_name',
           width: 200
         },
