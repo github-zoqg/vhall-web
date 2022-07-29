@@ -321,8 +321,11 @@ export default {
         .fieldSetBox {
           margin-left: 0;
         }
-        .pageTitle {
+        /deep/.pageTitle {
           line-height: 36px;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 500;
         }
       }
       /deep/.viewItem {
