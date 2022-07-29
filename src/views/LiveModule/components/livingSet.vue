@@ -38,7 +38,61 @@
             <div class="pc_bg">
               <img :src="domain_url" alt="">
             </div>
-
+            <div class="pc_container">
+              <div class="pc_header">
+                <div class="header_left">
+                  <div class="left_logo"><img src="../../../common/images/sys/logo@2x.png" alt=""></div>
+                  <div class="left_title">
+                    <p class="title">30分钟直播运营实操-教你从0-1快速上手</p>
+                    <p class="host">主办方：直播研究院 &nbsp;&nbsp;  2022-06-24 14:30</p>
+                  </div>
+                </div>
+                <div class="header_right">
+                  <div class="right_icon">
+                    <span><i class="iconfont-v3 saasicon_guanzhu"></i> 关注</span>
+                    <span><i class="iconfont-v3 saasicon-share"></i> 分享</span>
+                  </div>
+                  <div class="right_login"><span><img src="../../../common/images/avatar.png" alt=""></span> 登录</div>
+                </div>
+              </div>
+              <div class="pc_watch">
+                <div class="watch_left">
+                  <div class="left_top"></div>
+                  <div class="left_bottom">
+                    <span>
+                      <i class="iconfont-v3 saasicon_Settings1"></i> 设置 &nbsp;
+                      <i class="iconfont-v3 saasicon_account1"></i> 12314 &nbsp;
+                      <i class="iconfont-v3 saasredu_icon"></i> 345671 &nbsp;
+                    </span>
+                    <span>12314235</span>
+                  </div>
+                </div>
+                <div class="watch_right">
+                  <div class="right_top"></div>
+                  <div class="right_bottom">
+                    <div class="right_bottom_chat">
+                      <div class="chat_tab">
+                        <p>聊天</p>
+                        <span></span>
+                      </div>
+                      <div class="chat_box">
+                        <div class="chat_box_item">
+                          <div class="item_img">
+                            <p><img src="../../../common/images/avatar.png" alt=""></p>
+                          </div>
+                          <div class="item_chat">
+                            <p class="chat_role"><span>主持人</span> 问老师</p>
+                            <p class="chat_title">欢迎线上的各位小伙伴～</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="right_bottom_send"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="pc_footer">微吼提供技术支持 ｜ 反馈与举报</div>
+            </div>
           </div>
           <div class="preview_box_wap"></div>
         </div>
@@ -462,7 +516,7 @@ export default {
       }
     }
     &_preview{
-      width: calc(100% - 430px);
+      width: 944px;
       .preview_btn{
         text-align: center;
       }
@@ -481,8 +535,8 @@ export default {
           padding: 12px 32px;
         }
         &_pc{
-          width: 100%;
-          height: 460px;
+          width: 880px;
+          height: 529px;
           background-color: #1a1a1a;
           position: relative;
           .pc_bg{
@@ -497,9 +551,206 @@ export default {
               object-fit: cover;
             }
           }
-          // background-size: 100% 100%;
-          // background-repeat: no-repeat;
-          // filter: blur(60px);
+          .pc_container{
+            position: relative;
+            width: 100%;
+            height: 100%;
+            .pc_header{
+              height: 48px;
+              width: 100%;
+              padding: 0 16px;
+              background: #262626;
+              display: flex;
+              align-items: center;
+              color: #f0f0f0;
+              justify-content: space-between;
+              .header_left{
+                display: flex;
+                align-items: center;
+                .left_logo{
+                  width: 60px;
+                  height: 40px;
+                  margin-right: 12px;
+                  img{
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                  }
+                }
+                .left_title{
+                  .title{
+                    color: #E6E6E6;
+                    font-size: 12px;
+                    line-height: 20px;
+                  }
+                  .host{
+                    color: #A6A6A6;
+                    font-size: 14px;
+                    transform: scale(0.8);
+                    transform-origin: center left;
+                  }
+                }
+              }
+              .header_right{
+                display: flex;
+                align-items: center;
+                .right_icon{
+                  color: #A6A6A6;
+                  font-size: 12px;
+                  span{
+                    padding-right: 10px;
+                  }
+                }
+                .right_login{
+                  font-size: 12px;
+                  color: #A6A6A6;
+                  padding-left: 14px;
+                  span{
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    vertical-align: middle;
+                    img{
+                      width: 100%;
+                      height: 100%;
+                      border-radius: 50%;
+                      object-fit: contain;
+                    }
+                  }
+                }
+              }
+            }
+            .pc_watch{
+              width: 100%;
+              padding: 0 55px;
+              margin: 12px 0;
+              height: 400px;
+              display: flex;
+              .watch_left{
+                width: calc(100% - 174px);
+                height: 100%;
+                .left_top{
+                  width: 100%;
+                  height: calc(100% - 28px);
+                  background-color: #fb3a32;
+                  border-radius: 4px 4px 0 0;
+                }
+                .left_bottom{
+                  width: 100%;
+                  height: 28px;
+                  background-color: #2a2a2a;
+                  border-radius: 0 0 4px 4px;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  padding: 0 12px;
+                  span{
+                    font-size: 14px;
+                    color: #A6A6A6;
+                    transform: scale(0.8);
+                    transform-origin: center left;
+                  }
+                }
+              }
+              .watch_right{
+                width: 165px;
+                height: 100%;
+                margin-left: 9px;
+                .right_top{
+                  width: 100%;
+                  height: 93px;
+                  background: blue;
+                  border-radius: 4px 4px 0 0;
+                }
+                .right_bottom{
+                  width: 100%;
+                  height: calc(100% - 93px);
+                  background: #2a2a2a;
+                  border-radius: 0 0 4px 4px;
+                  &_chat{
+                    width: 100%;
+                    .chat_tab{
+                      height: 21px;
+                      width: 100%;
+                      padding: 0 10px;
+                      background: #2a2a2a;
+                      position: relative;
+                      border-bottom: 1px solid #1a1a1a;
+                      p{
+                        color: #FB2626;
+                        font-size: 12px;
+                        line-height: 18px;
+                        transform: scale(0.8);
+                        transform-origin: center left;
+                      }
+                      span{
+                        position: absolute;
+                        display: inline-block;
+                        width: 21px;
+                        height: 2px;
+                        bottom: 1px;
+                        left: 10px;
+                        border-radius: 4px;
+                        background: #FB2626;
+                        // border-bottom: 1px solid #FB2626;
+                      }
+                    }
+                    .chat_box{
+                      width: 100%;
+                      padding: 0 10px;
+                      margin-top: 8px;
+                      &_item{
+                        display: flex;
+                        .item_img{
+                          p{
+                            display: inline-block;
+                            width: 24px;
+                            height: 24px;
+                            border-radius: 50%;
+                            transform: scale(0.8);
+                            transform-origin: top left;
+                            img{
+                              width: 100%;
+                              height: 100%;
+                              border-radius: 50%;
+                              object-fit: scale-down;
+                            }
+                          }
+                        }
+                        .item_chat{
+                          .chat_role{
+                            font-size: 14px;
+                            transform: scale(0.8);
+                            transform-origin: top left;
+                            color: #737373;
+                            span{
+                              color: #FB2626;
+                            }
+                          }
+                        }
+                        .chat_title{
+                          font-size: 14px;
+                          color: #fff;
+                          line-height: 20px;
+                          padding: 2px 5px;
+                          transform: scale(0.8);
+                          transform-origin: center left;
+                          background: rgba(255, 255, 255, 0.08);
+                          border-radius: 6px;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            .pc_footer{
+              text-align: center;
+              font-size: 12px;
+              color: #666;
+            }
+          }
         }
       }
     }
@@ -572,6 +823,15 @@ export default {
         &_video{
           justify-content: flex-start;
         }
+      }
+    }
+    @media (max-width: 1366px) {
+      .preview_box_pc{
+        transform: scale(0.6);
+        transform-origin: top left;
+      }
+      .living-setting_preview{
+        width: 594px;
       }
     }
   }
