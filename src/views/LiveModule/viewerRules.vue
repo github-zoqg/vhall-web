@@ -259,8 +259,11 @@
         </template>
         <template v-else-if="subjectInfo.subject_type==2">
           本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ titleFormat() }}》</span> ，
-          <span v-if="subjectInfo.subject_verify">该专题提供统一的观看限制- {{handleFormat()}}，本直播观看限制失效。</span>
-          <span v-else>该专题无统一的观看限制，本直播观看限制生效。</span>
+          <span>该专题提供统一的观看限制- {{ handleFormat() }}，本直播观看限制失效。</span>
+        </template>
+        <template v-else-if="subjectInfo.subject_type==3">
+          本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ titleFormat() }}》</span> ，
+          <span>该专题无统一的观看限制，本直播观看限制生效。</span>
         </template>
         <template v-else>
          <span>本直播不属于任何专题，本次设置的观看限制生效。</span>
