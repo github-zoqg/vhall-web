@@ -9,14 +9,15 @@
           v-model.trim="fileUrl"
           @delete="deleteFile"
           :saveData="{
-              path: pathUrl,
-              type: 'exel',
+            path: pathUrl,
+            type: 'exel',
           }"
           :on-success="uploadSuccess"
           :on-progress="uploadProcess"
           :on-error="uploadError"
           :on-preview="uploadPreview"
-          :before-upload="beforeUploadHandler">
+          :before-upload="beforeUploadHandler"
+          :disabled="isUploadDisabled">
           <div slot="upload-result">
             <!-- 状态1： 有上传过文件，后面重新删除等-变为未上传 -->
             <p slot="tip"
@@ -117,6 +118,9 @@ export default {
   computed: {
     pathUrl: function() {
       return `webinars/form-user-docs`;
+    },
+    isUploadDisabled: function() {
+      return this.uploadResult.status === 'progress'
     }
   },
   methods: {
@@ -493,6 +497,7 @@ export default {
       font-size: 14px;
       line-height: 20px;
       color: #3562FA;
+      cursor: pointer;
     }
   }
 

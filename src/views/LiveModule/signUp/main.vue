@@ -239,6 +239,14 @@ export default {
 
 <style lang="less" scoped>
   .signup-main {
+    /deep/.el-tabs__item {
+      height: 48px;
+      line-height: 48px;
+    }
+    /deep/.el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+      padding-left: 22px;
+      padding-right: 2px;
+    }
     /deep/ .el-switch__core{
       height: 16px;
       width: 28px!important;
@@ -306,23 +314,24 @@ export default {
     user-select: none;
   }
   .swtich{
-    margin-left: 12px;
     vertical-align: sub;
   }
   .switchBox{
     display: inline-flex;
     height: 100%;
     .sign-switch-desc {
-      color: #999999;
-      display: inline-block;
+      font-family: 'PingFang SC';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
       line-height: 20px;
+      color: #666666;
+      display: inline-block;
       margin: 0 0;
       padding: 0 0;
       height: 20px;
-      font-size: 14px;
-      font-weight: 500;
       vertical-align: middle;
-      margin-left: 10px;
+      margin-left: 4px;
       a {
         color: #3562FA;
       }
@@ -354,6 +363,7 @@ export default {
   .titleBox{
     display: block!important;
     line-height: 40px;
+    margin-bottom: 22px;
     /deep/.pageTitle {
       line-height: 40px;
     }
