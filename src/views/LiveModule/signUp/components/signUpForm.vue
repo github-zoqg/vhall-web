@@ -190,7 +190,7 @@
                         :disabled="time !== 60 || isPreview"
                         class="no-border" size="mini"
                         v-preventReClick
-                        @click.prevent.stop="getDyCode(true)"
+                        @click="getDyCode(true)"
                       >{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
                     </el-col>
                   </el-row>
@@ -204,7 +204,7 @@
                   </template>
                 </el-form-item>
                 <div class="btnBox">
-                  <el-button style="margin-top: 11px;" :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click.prevent.stop="submitForm">报名</el-button>
+                  <el-button style="margin-top: 11px;" :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click="submitForm">报名</el-button>
                 </div>
               </el-form>
             </template>
@@ -233,13 +233,13 @@
                         class="no-border"
                         size="mini"
                         v-preventReClick
-                        @click.prevent.stop="getDyCode(false)"
+                        @click="getDyCode(false)"
                       >{{ verifyTime === 60 ? '发送验证码' : `${verifyTime}s` }}</el-button>
                     </el-col>
                   </el-row>
                 </el-form-item>
                 <div class="btnBox">
-                  <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click.prevent.stop="submitVerify">提交</el-button>
+                  <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click="submitVerify">提交</el-button>
                 </div>
               </el-form>
             </template>
@@ -439,26 +439,6 @@
       },
       countyList() {
         return this.counties[this.city]
-      },
-      signUpPageType() {
-        if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) {
-          // 活动
-          return 'webinar'
-        } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/subject/signup/') != -1 || window.location.href.indexOf('/subject/entryform') != -1) {
-          // 专题
-          return 'subject'
-        } else {
-          return ''
-        }
-      },
-      webinarOrSubjectId() {
-        if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/subject/signup/') != -1) {
-          return this.$route.params.str
-        } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/subject/entryform') != -1) {
-          return this.$route.params.id || this.$route.params.str
-        } else {
-          return ''
-        }
       }
     },
     data() {
@@ -532,7 +512,17 @@
         colNum: 8,
         regionalId: '',
         isVerifyCodeErr: false,
-        overflowStatus: 0 // 文本溢出的状态，0 未溢出；1 溢出未展开；2溢出展开
+        overflowStatus: 0, // 文本溢出的状态，0 未溢出；1 溢出未展开；2溢出展开
+        signUpPageType: (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) ? 'webinar'
+        : (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/subject/entryform') != -1) ? 'subject'
+        : '',
+        webinarOrSubjectId:
+          (window.location.href.indexOf('/live/signup/') != -1)
+          ? this.$route.params.str :
+          (
+            (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/subject/entryform') != -1)
+            ? (this.$route.params.id || this.$route.params.str) : ''
+          )
       };
     },
     mounted() {
@@ -549,10 +539,8 @@
         return params
       },
       handleAutoCloseSelect() {
-        this.$nextTick(() => {
-          this.$refs.autoCloseRefFlag &&  this.$refs.autoCloseRefFlag.forEach(item => {
-            item.blur()
-          })
+        this.$refs.autoCloseRefFlag &&  this.$refs.autoCloseRefFlag.forEach(item => {
+          item.blur()
         })
       },
       // 获取当前活动类型

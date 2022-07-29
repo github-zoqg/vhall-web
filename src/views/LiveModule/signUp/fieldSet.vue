@@ -235,15 +235,15 @@
               <el-button
                 type="text"
                 v-if="item.bottomBtn.includes('addBtn')"
-                v-preventReClick
-                @click.prevent.stop="addOption(item)"
+                v-preventReOneClick
+                @click="addOption(item)"
               ><i class="el-icon-plus"></i>添加选项</el-button>
               <template v-if="item.bottomBtn.includes('addOther')">
                 <span class="line"></span>
                 <el-button
-                  v-preventReClick
+                  v-preventReOneClick
                   type="text"
-                  @click.prevent.stop="addOption(item, 'other')"
+                  @click="addOption(item, 'other')"
                 ><i class="el-icon-plus"></i>添加其他</el-button>
               </template>
             </div>
@@ -306,7 +306,7 @@
       </transition-group>
     </draggable>
     <section class="viewItem sureBtn">
-      <el-button :disabled="!signUpSwtich" round type="primary" v-preventReClick @click.prevent.stop="sureQuestionnaire">保存</el-button>
+      <el-button :disabled="!signUpSwtich" round type="primary" v-preventReClick @click="sureQuestionnaire">保存</el-button>
     </section>
   </div>
 </template>
@@ -373,7 +373,17 @@ export default {
       regionalLevel: {
         1: true, // 市
         2: true // 区/县
-      }
+      },
+      signUpPageType: (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) ? 'webinar'
+        : (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/subject/entryform') != -1) ? 'subject'
+        : '',
+      webinarOrSubjectId:
+        (window.location.href.indexOf('/live/signup/') != -1)
+        ? this.$route.params.str :
+        (
+          (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/subject/entryform') != -1)
+          ? (this.$route.params.id || this.$route.params.str) : ''
+        )
     };
   },
   computed: {
@@ -384,26 +394,6 @@ export default {
         disabled: false,
         ghostClass: "ghost"
       };
-    },
-    signUpPageType() {
-      if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) {
-        // 活动
-        return 'webinar'
-      } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/special/signup/') != -1 || window.location.href.indexOf('/special/entryform') != -1) {
-        // 专题
-        return 'subject'
-      } else {
-        return ''
-      }
-    },
-    webinarOrSubjectId() {
-      if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/special/signup/') != -1) {
-        return this.$route.params.str
-      } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/special/entryform') != -1) {
-        return this.$route.params.id || this.$route.params.str
-      } else {
-        return ''
-      }
     }
   },
   filters: {
@@ -448,52 +438,52 @@ export default {
     },
     // 保存表单
     sureQuestionnaire() {
-      if (this.signUpPageType === 'webinar') {
-        let userId = this.$parent.userId;
-        console.log(this.renderQuestion)
-        this.renderQuestion.filter(item => item.name !== 'name').map(item => {
+      if (this.signUpPageType === 'subject') {
+        // 专题下，点击保存，后续专属于活动的上报等不触发
+        this.saveSubjectViews()
+        return
+      }
+      let userId = this.$parent.userId;
+      console.log(this.renderQuestion)
+      this.renderQuestion.filter(item => item.name !== 'name').map(item => {
+        this.$vhall_paas_port({
+          k: item.reporType,
+          data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        if (item.reqType !== 6) {
           this.$vhall_paas_port({
-            k: item.reporType,
+            k: item.required ? item.reporType + 1 : item.reporType + 2,
             data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
           })
-          if (item.reqType !== 6) {
-            this.$vhall_paas_port({
-              k: item.required ? item.reporType + 1 : item.reporType + 2,
-              data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-            })
+        }
+        if (item.reqType === 4) {
+          this.$vhall_paas_port({
+            k: item.reporType + 4,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {num: item.nodes.length}, ref_url: '', req_url: ''}
+          })
+        } else if (item.reqType === 2 || item.reqType === 3) {
+          let other = 0;
+          let total = item.nodes[0].children.length;
+          if (total > 0) {
+            other = item.nodes[0].children.filter(items => items.other).length
           }
-          if (item.reqType === 4) {
-            this.$vhall_paas_port({
-              k: item.reporType + 4,
-              data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {num: item.nodes.length}, ref_url: '', req_url: ''}
-            })
-          } else if (item.reqType === 2 || item.reqType === 3) {
-            let other = 0;
-            let total = item.nodes[0].children.length;
-            if (total > 0) {
-              other = item.nodes[0].children.filter(items => items.other).length
-            }
-            this.$vhall_paas_port({
-              k: item.reporType + 4,
-              data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '',  s: '', report_extra: {num: total - other}, ref_url: '', req_url: ''}
-            })
-            this.$vhall_paas_port({
-              k: item.reporType + 5,
-              data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {num: other}, ref_url: '', req_url: ''}
-            })
-          }
-        })
-        this.$message({
-          message: `保存成功`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-      } else {
-        // 专题下，点击保存
-        this.saveSubjectViews()
-      }
+          this.$vhall_paas_port({
+            k: item.reporType + 4,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '',  s: '', report_extra: {num: total - other}, ref_url: '', req_url: ''}
+          })
+          this.$vhall_paas_port({
+            k: item.reporType + 5,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {num: other}, ref_url: '', req_url: ''}
+          })
+        }
+      })
+      this.$message({
+        message: `保存成功`,
+        showClose: true,
+        // duration: 0,
+        type: 'success',
+        customClass: 'zdy-info-box'
+      });
     },
     // 保存观看限制，专题关系
     async saveSubjectViews() {
@@ -522,9 +512,9 @@ export default {
           });
           // 专题上报
           this.$vhall_paas_port({
-            k: k,
+            k: '100864',
             data: {
-              business_uid: JSON.parse(sessionOrLocal.get("userId")),
+              business_uid: sessionOrLocal.get("userId"),
               user_id: '',
               webinar_id: '',
               subject_id: this.webinarOrSubjectId,
@@ -535,7 +525,7 @@ export default {
               req_url: '',
             },
           })
-        }).catch(res =>{
+        }).catch(res => {
           this.$message({
             message:  res.msg || '设置失败',
             showClose: true,

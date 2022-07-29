@@ -1,6 +1,8 @@
 <template>
   <el-upload
-    class="file-uploader"
+    :class="['file-uploader ', {
+      'is-upload-disabled': disabled
+    }]"
     v-bind="$props"
     :headers="headersVo"
     :data=saveData
@@ -101,6 +103,10 @@ export default {
       type: String,
       default: ''
     },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     restPic: {
       type: [Function, Boolean],
       default: null
@@ -123,7 +129,9 @@ export default {
       this.fileName = file.name;
       if(response.code !== 200) {
         this.errText = '上传失败，请重新上传';
-        this.onError(response, file, fileList);
+        if (typeof this.onError === 'function') {
+          this.onError && this.onError(response, file, fileList)
+        }
       } else {
         this.errText = '';
         console.log(this.$props);
@@ -240,6 +248,13 @@ export default {
     img{
       // width: 100%;
       height: 100%;
+    }
+  }
+  .is-upload-disabled {
+    .a-upload:hover {
+      .mask {
+        display: none;
+      }
     }
   }
   .mask{

@@ -1,5 +1,5 @@
 <template>
-  <VhallDialog :visible='visible' title="直播关联专题详情" width='400px' @close="closeDialog" class="subject-show-dialog">
+  <VhallDialog :visible='visible' title="提示" width='400px' @close="closeDialog" class="subject-show-dialog">
     <!--
       // 直播没有绑定任何专题： 本直播不属于任何专题，本次设置的报名表单生效，观看直播需要填写此报名表单。
       // 绑定专题但没有设置观看限制： 本直播属于专题《客户的力量》，该专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。

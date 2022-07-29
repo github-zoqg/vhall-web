@@ -26,10 +26,8 @@ export default {
     return {}
   },
   created(){
-    this.initComp()
   },
   methods: {
-    initComp() {}
   }
 };
 </script>

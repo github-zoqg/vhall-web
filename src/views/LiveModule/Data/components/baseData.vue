@@ -479,18 +479,7 @@ export default {
     },
     //报名表单导出
     exportAnswer() {
-      let params = {}
-      if (window.location.href.indexOf('/live/interactionData') != -1) {
-        // 活动下的报名表单导出
-        params = {webinar_id: this.$route.params.str}
-      } else if (window.location.href.indexOf('/special/interactionData') != -1) {
-        // 专题下的报名表单导出 - 暂时未用到
-        params = {subject_id: this.$route.params.str}
-      } else {
-        console.log('非活动下，亦非专题下报名表单导出，不触发')
-        return
-      }
-      this.$fetch('exportForm',).then(res => {
+      this.$fetch('exportForm',{webinar_id: this.$route.params.str}).then(res => {
         this.$vhall_paas_port({
           k: 100443,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}

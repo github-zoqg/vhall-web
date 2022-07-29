@@ -82,30 +82,18 @@ export default {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")), // 活动状态
       menuBarFixed: '',
       subjectShowVisible: false,
-      vm: null
+      vm: null,
+      signUpPageType: (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) ? 'webinar'
+        : (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/subject/entryform') != -1) ? 'subject'
+        : '',
+      webinarOrSubjectId:
+        (window.location.href.indexOf('/live/signup/') != -1)
+        ? this.$route.params.str :
+        (
+          (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/subject/entryform') != -1)
+          ? (this.$route.params.id || this.$route.params.str) : ''
+        )
     };
-  },
-  computed: {
-    signUpPageType() {
-      if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) {
-        // 活动
-        return 'webinar'
-      } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/subject/signup/') != -1 || window.location.href.indexOf('/subject/entryform') != -1) {
-        // 专题
-        return 'subject'
-      } else {
-        return ''
-      }
-    },
-    webinarOrSubjectId() {
-      if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/subject/signup/') != -1) {
-        return this.$route.params.str
-      } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/subject/entryform') != -1) {
-        return this.$route.params.id || this.$route.params.str
-      } else {
-        return ''
-      }
-    }
   },
   async created(){
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -115,7 +103,7 @@ export default {
     this.$refs.signSetFormDom && this.$refs.signSetFormDom.initComp()
     if (this.$route.query.tab == 2) {
       this.tabType = 'user'
-      this.$refs.userManageDom && this.$refs.userManageDom.initComp()
+      // 暂不需要 this.$refs.userManageDom && this.$refs.userManageDom.initComp()
     } else {
       this.tabType = 'form'
     }
@@ -239,6 +227,14 @@ export default {
 
 <style lang="less" scoped>
   .signup-main {
+    /deep/.el-tabs__item {
+      height: 48px;
+      line-height: 48px;
+    }
+    /deep/.el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+      padding-left: 22px;
+      padding-right: 2px;
+    }
     /deep/ .el-switch__core{
       height: 16px;
       width: 28px!important;
@@ -306,23 +302,24 @@ export default {
     user-select: none;
   }
   .swtich{
-    margin-left: 12px;
     vertical-align: sub;
   }
   .switchBox{
     display: inline-flex;
     height: 100%;
     .sign-switch-desc {
-      color: #999999;
-      display: inline-block;
+      font-family: 'PingFang SC';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
       line-height: 20px;
+      color: #666666;
+      display: inline-block;
       margin: 0 0;
       padding: 0 0;
       height: 20px;
-      font-size: 14px;
-      font-weight: 500;
       vertical-align: middle;
-      margin-left: 10px;
+      margin-left: 4px;
       a {
         color: #3562FA;
       }
@@ -354,6 +351,7 @@ export default {
   .titleBox{
     display: block!important;
     line-height: 40px;
+    margin-bottom: 22px;
     /deep/.pageTitle {
       line-height: 40px;
     }
