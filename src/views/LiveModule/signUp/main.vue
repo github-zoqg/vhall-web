@@ -82,30 +82,18 @@ export default {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")), // 活动状态
       menuBarFixed: '',
       subjectShowVisible: false,
-      vm: null
+      vm: null,
+      signUpPageType: (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) ? 'webinar'
+        : (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/subject/entryform') != -1) ? 'subject'
+        : '',
+      webinarOrSubjectId:
+        (window.location.href.indexOf('/live/signup/') != -1)
+        ? this.$route.params.str :
+        (
+          (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/subject/entryform') != -1)
+          ? (this.$route.params.id || this.$route.params.str) : ''
+        )
     };
-  },
-  computed: {
-    signUpPageType() {
-      if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) {
-        // 活动
-        return 'webinar'
-      } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/subject/signup/') != -1 || window.location.href.indexOf('/subject/entryform') != -1) {
-        // 专题
-        return 'subject'
-      } else {
-        return ''
-      }
-    },
-    webinarOrSubjectId() {
-      if (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/subject/signup/') != -1) {
-        return this.$route.params.str
-      } else if (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/subject/entryform') != -1) {
-        return this.$route.params.id || this.$route.params.str
-      } else {
-        return ''
-      }
-    }
   },
   async created(){
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -115,7 +103,7 @@ export default {
     this.$refs.signSetFormDom && this.$refs.signSetFormDom.initComp()
     if (this.$route.query.tab == 2) {
       this.tabType = 'user'
-      this.$refs.userManageDom && this.$refs.userManageDom.initComp()
+      // 暂不需要 this.$refs.userManageDom && this.$refs.userManageDom.initComp()
     } else {
       this.tabType = 'form'
     }

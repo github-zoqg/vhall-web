@@ -92,6 +92,8 @@ export default {
       shareSwtich: true,
       wxUrl: '',
       wxUrls: `${Env.staticLinkVo.aliQr}`,
+      link: `${process.env.VUE_APP_WAP_WATCH}${this.signUpPageType === 'subject' ? '/subject/entryform/' : '/lives/entryform/'}${this.webinarOrSubjectId}`,
+      sinaLink: `${process.env.VUE_APP_WAP_WATCH}${this.signUpPageType === 'subject' ? '/subject/entryform/' : '/lives/entryform/'}${this.webinarOrSubjectId}`
     };
   },
   watch:{
@@ -101,22 +103,6 @@ export default {
       },
       deep: true,
       immediate: true
-    }
-  },
-  computed: {
-    link() {
-      if (this.signUpPageType === 'subject') {
-        return `${process.env.VUE_APP_WAP_WATCH}/subject/entryform/${this.webinarOrSubjectId}`
-      } else {
-        return `${process.env.VUE_APP_WAP_WATCH}/lives/entryform/${this.webinarOrSubjectId}`
-      }
-    },
-    sinaLink() {
-      if (this.signUpPageType === 'subject') {
-        return `${process.env.VUE_APP_WAP_WATCH}/subject/entryform/${this.webinarOrSubjectId}`
-      } else {
-        return `${process.env.VUE_APP_WAP_WATCH}/lives/entryform/${this.webinarOrSubjectId}`
-      }
     }
   },
   methods: {

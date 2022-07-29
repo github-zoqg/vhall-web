@@ -71,6 +71,7 @@
   </div>
 </template>
 <script>
+import StaticFileUrlsMap from '../../../../api/StaticFileUrl.js'
 import FileUpload from '@/components/FileUpload/main';
 export default {
   name: "CompImportDialog",
@@ -103,7 +104,7 @@ export default {
         text: '请选择模板文件'
       },
       percent: 0,
-      downloadUrl: ['production', 'pre'].includes(process.env.VUE_APP_NODE_ENV) ?  'https://cnstatic01.e.vhall.com/upload/webinars/form-user-docs/2c/d8/2cd89b70a87219d823516fa589e8111e.xlsx' : 'https://t-alistatic01.e.vhall.com/upload/webinars/form-user-docs/2c/d8/2cd89b70a87219d823516fa589e8111e.xlsx',
+      downloadUrl: StaticFileUrlsMap.getSignDownTemplateUrl(process.env.VUE_APP_NODE_ENV, true), // 下载模板地址
       fileUrl: '', // 文件地址
       fileResult: '', // 文件上传结果
       importResult: null,
@@ -205,7 +206,7 @@ export default {
       this.startPolling(type);
       this.checkImportTimer = setTimeout(function() {
         that.clearPageTimes();
-      }, 300000);
+      }, 120000); // 2分钟之后失效
     },
     stopPolling() {
       this.pollingTimerVo = {};
@@ -281,9 +282,13 @@ export default {
           }
         }
         console.log('看看当前几秒轮询一次', id)
-        setTimeout(pollingFn, 15000); // 15秒一轮询
+        setTimeout(pollingFn, 5000); // 5秒一轮询
       };
-      pollingFn();
+      // 第一次调用预检的时候，5秒后再轮询第一次
+      const timerTemp = setTimeout(() => {
+        timerTemp && clearTimeout(timerTemp)
+        pollingFn();
+      }, 5000)
     },
     // 文件上传成功 & 文档预检
     uploadSuccess(res, file) {
