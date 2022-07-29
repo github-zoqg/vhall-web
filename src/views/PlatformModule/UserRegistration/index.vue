@@ -7,7 +7,6 @@
     <!-- 全部无结果 -->
     <div class="all-no-data" v-if="isDefaultShow">
       <null-page nullType="nullData" text="暂无专题数据，请去专题下的直播活动查看数据吧！" :height="0"  v-if="signUpPageType === 'subject' && isDataPage">
-        <el-button type="primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="toSubjectDetail">我知道了</el-button>
       </null-page>
       <null-page nullType="nullData" text="暂无数据" :height="0" v-else>
         <el-button type="primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="addUserDialog">快速报名</el-button>

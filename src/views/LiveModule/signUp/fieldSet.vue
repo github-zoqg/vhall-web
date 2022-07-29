@@ -235,13 +235,13 @@
               <el-button
                 type="text"
                 v-if="item.bottomBtn.includes('addBtn')"
-                v-preventReClick
+                v-preventReOneClick
                 @click="addOption(item)"
               ><i class="el-icon-plus"></i>添加选项</el-button>
               <template v-if="item.bottomBtn.includes('addOther')">
                 <span class="line"></span>
                 <el-button
-                  v-preventReClick
+                  v-preventReOneClick
                   type="text"
                   @click="addOption(item, 'other')"
                 ><i class="el-icon-plus"></i>添加其他</el-button>
@@ -512,9 +512,9 @@ export default {
           });
           // 专题上报
           this.$vhall_paas_port({
-            k: k,
+            k: '100864',
             data: {
-              business_uid: JSON.parse(sessionOrLocal.get("userId")),
+              business_uid: sessionOrLocal.get("userId"),
               user_id: '',
               webinar_id: '',
               subject_id: this.webinarOrSubjectId,
@@ -525,7 +525,7 @@ export default {
               req_url: '',
             },
           })
-        }).catch(res =>{
+        }).catch(res => {
           this.$message({
             message:  res.msg || '设置失败',
             showClose: true,
