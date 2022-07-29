@@ -168,10 +168,14 @@ export default {
     this.signUpSwtichTwo = this.signUpSwtich
   },
   mounted() {
-    window.addEventListener('scroll', this.handleScroll)
+    if (this.signUpPageType === 'webinar') {
+      window.addEventListener('scroll', this.handleScroll)
+    }
   },
   beforeDestroy() {
-    window.removeEventListener('scroll', this.handleScroll)
+    if (this.signUpPageType === 'webinar') {
+      window.removeEventListener('scroll', this.handleScroll)
+    }
   },
   methods: {
     // 设置接口入参，是活动维度 还是 专题维度
