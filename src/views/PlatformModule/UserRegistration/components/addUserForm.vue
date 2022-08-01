@@ -107,7 +107,7 @@ export default {
       }
       const pattern = /^[0-9]*$/ // 正整数的正则表达式
       if (!pattern.test(value.phone)) {
-        value.phone = value.phone.slice(0, value.phone.length - 1)
+        value.phone = ''
       }
     },
     // 删除单条记录
