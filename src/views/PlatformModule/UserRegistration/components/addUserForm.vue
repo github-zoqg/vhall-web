@@ -195,13 +195,14 @@ export default {
     },
     // 保存 - 快速表单内容
     saveAddUser() {
+      // 输入框验证
+      this.list.forEach(item => {
+        this.checkItem(item)
+      })
       // 判断数据未填写完成的
       let nullList = this.list.filter(item => item.name && item.phone)
       if (nullList && nullList.length != this.list.length) {
         this.messageInfo('请填写后保存')
-        this.list.forEach(item => {
-          this.checkItem(item)
-        })
         return
       }
       // 验证数据填写未通过的
@@ -235,13 +236,14 @@ export default {
     // 快速报名保存 - 异常处理
     renderErrorInfo(resV) {
       if (resV.code == 512825) {
+        this.messageInfo(resV.msg || '保存失败')
         const repeatPhones = resV.data.list.map(item => {
           return item.phone
         })
         // 格式化错误提示
         this.list.map(item => {
-          if (item.phone.includes(repeatPhones)) {
-            item.phone_error = '请输入手机号'
+          if (repeatPhones.includes(item.phone)) {
+            item.phone_error = '手机号重复'
           } else {
             item.phone_error = ''
           }
