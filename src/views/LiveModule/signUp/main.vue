@@ -28,7 +28,7 @@
         <div id="signTabsDom" class="signup-tabs-layout">
           <el-tabs v-model="tabType" @tab-click="handleClick" :class="[menuBarFixed]">
             <el-tab-pane label="表单设置" name="form"></el-tab-pane>
-            <el-tab-pane label="用户报名" name="user"></el-tab-pane>
+            <el-tab-pane label="报名用户" name="user"></el-tab-pane>
           </el-tabs>
         </div>
         <!-- 报名表单 -->
