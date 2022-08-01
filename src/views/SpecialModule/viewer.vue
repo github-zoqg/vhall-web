@@ -8,11 +8,11 @@
         <el-radio v-model="subject_verify" :label="2" @change="changeViewer(2)">统一报名表单，各直播自己的失效</el-radio>
       </div>
       <!-- 报名表单 -->
-      <sign-up-main v-if="isLoadSignUp"></sign-up-main>
-      <template v-if="isVerifyLimit">
+      <sign-up-main v-if="subject_verify==2"></sign-up-main>
+      <template v-if="subject_verify==1">
         <div class="viewer_header">
           <div class="viewer_header_title">专题观看限制</div>
-          <el-radio-group v-model="subjectForm.verify">
+          <el-radio-group v-model="subjectForm.verify" @change="handleClick">
             <el-radio :label="0">免费</el-radio>
             <el-radio :label="4">邀请码（原F码）</el-radio>
             <el-radio :label="1">密码</el-radio>
@@ -26,7 +26,7 @@
               观看无需任何验证，即可观看直播
             </div>
           </template>
-          <template v-if="subjectForm.verify == 4">
+          <div v-show="subjectForm.verify == 4">
             <!-- 邀请码（原F码）4-->
             <div class="viewer_container_code">
               <el-form :model="formCode" ref="formCode" :rules="codeFormRules"  label-width="82px">
@@ -67,9 +67,9 @@
               </el-form-item>
               </el-form>
             </div>
-          </template>
-          <template v-if="subjectForm.verify == 1">
-            <!-- 免费 密码 -->
+          </div>
+          <div v-show="subjectForm.verify == 1">
+            <!-- 密码 -->
             <div class="viewer_container_password">
               <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="70px">
                 <el-form-item label="观看密码" prop="password">
@@ -103,8 +103,8 @@
               </el-form-item>
               </el-form>
             </div>
-          </template>
-          <template v-if="subjectForm.verify == 2">
+          </div>
+          <div v-show="subjectForm.verify == 2">
             <!-- 白名单 2 -->
             <div class="viewer_container_white">
               <el-form label-width="82px">
@@ -146,7 +146,7 @@
               </el-form-item>
             </el-form>
             </div>
-          </template>
+          </div>
         </div>
       </template>
       <!-- 保存（报名表单展示的时候，用报名表单的按钮） -->
@@ -261,9 +261,7 @@ export default {
           label: '20分钟',
           value: 20
         }
-      ],
-      isVerifyLimit: false,
-      isLoadSignUp: false, // 是否加载报名表单
+      ]
     }
   },
   components: {
@@ -282,12 +280,8 @@ export default {
       }).then(res => {
         if (res.code == 200) {
           this.subject_verify = res.data.subject_verify;
-          this.loading = false;
           // 判断专题是否能设置鉴权
           this.checkSubjectAuth();
-          if (res.data.subject_verify) {
-            res.data.subject_verify == 1 ? this.isVerifyLimit = true : this.isLoadSignUp = true
-          }
           this.groupList = res.data.white_list;
           this.subjectForm.verify = res.data.verify;
           this.subjectForm.is_preview = res.data.is_preview;
@@ -306,12 +300,26 @@ export default {
         }
       })
     },
+    handleClick(tab, event) {
+      // 每次选项卡切换，之前选择项清空。
+      this.subjectForm.verify = tab || 0;
+      console.log(tab, this.subjectForm.verify);
+      this.pwdForm.password = '';
+      this.pwdForm.placeholder = '';
+      this.formCode.placeholder = '';
+      this.formCode.code = '';
+      this.white_verify  = '';
+      this.whiteId = '';
+      this.subjectForm.is_preview = 0;
+      this.subjectForm.preview_time = 0;
+    },
     // 判断是否可以设置专题鉴权
     checkSubjectAuth(){
       this.$fetch('subjectCheck', {
         subject_id: this.$route.params.id
       }).then(res => {
         if (res.code === 200) {
+          this.loading = false;
           if (res.data.length) {
             this.subject_verify = 0;
             this.isCheckSubjectAuth = true;
@@ -334,8 +342,7 @@ export default {
     // 检测是否可以选中权限
     changeViewer(index) {
       if (!index) {
-        this.isVerifyLimit = false;
-        this.isLoadSignUp = false;
+        this.subject_verify = 0;
         return;
       }
       if (this.isCheckSubjectAuth) {
@@ -343,13 +350,6 @@ export default {
         this.$refs.checkViewer.checkVisible = true;
       } else {
         this.subject_verify = index;
-        if (index == 1) {
-          this.isVerifyLimit = true
-          this.isLoadSignUp = false
-        } else {
-          this.isVerifyLimit = false
-          this.isLoadSignUp = true
-        }
       }
     },
     // 打开查看效果预览
