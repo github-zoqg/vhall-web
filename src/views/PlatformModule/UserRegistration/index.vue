@@ -286,7 +286,17 @@ export default {
     },
     // 导出报名用户
     downloadHandle() {
-      this.$fetch('exportForm', this.setParamsIdByRoute({})).then(res => {
+      let params = {
+        type: this.query.type,
+        keyword: this.query.keyword
+      }
+      if (this.signUpPageType === 'subject') {
+        params.is_enter = this.query.is_enter
+      }
+      this.$fetch('exportForm', {
+        ...this.setParamsIdByRoute({}),
+        ...params
+      }).then(res => {
         if (this.vm) {
           this.vm.close();
         }
