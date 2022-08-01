@@ -30,8 +30,9 @@
             <div :class="['table-item-column', {
               'error': scope.row.phone_error
             }]">
-              <VhallInput v-model.trim="scope.row.phone" autocomplete="off" placeholder="请输入手机号" :maxlength="15" show-word-limit @blur="checkItem(scope.row, scope.$index)"></VhallInput>
+              <VhallInput v-model.trim="scope.row.phone" @input="handleInput(scope.row)" autocomplete="off" placeholder="请输入手机号" :maxlength="15" show-word-limit @blur="checkItem(scope.row, scope.$index)"></VhallInput>
             </div>
+            <!-- {{scope.row.phone_error}} -->
           </template>
         </el-table-column>
         <el-table-column
@@ -40,7 +41,7 @@
             <div :class="['table-item-column', {
               'error': scope.row.name_error
             }]">
-              <VhallInput v-model.trim="scope.row.name" autocomplete="off" placeholder="请输入姓名" :maxlength="30" show-word-limit @blur="checkItem(scope.row, scope.$index)"></VhallInput>
+              <VhallInput v-model.trim="scope.row.name" v-clearEmoij autocomplete="off" placeholder="请输入姓名" :maxlength="30" show-word-limit @blur="checkItem(scope.row, scope.$index)"></VhallInput>
               <div class="table-item-btn" v-if="scope.$index !== 0">
                 <i class="iconfont-v3 saasicon_delete" @click.prevent="removeItem(scope.$index)"></i>
               </div>
@@ -99,6 +100,16 @@ export default {
       }
       return params
     },
+    // 输入限制，只能输入0-9数字
+    handleInput(value) {
+      if (value.phone.length == 0) {
+        return;
+      }
+      const pattern = /^[0-9]*$/ // 正整数的正则表达式
+      if (!pattern.test(value.phone)) {
+        value.phone = value.phone.slice(0, value.phone.length - 1)
+      }
+    },
     // 删除单条记录
     removeItem(index) {
       if (index !== -1) {
@@ -130,18 +141,33 @@ export default {
       } else if (!/^[0-9]{1,15}$/.exec(row.phone)){
         row.phone_error = '手机号格式有误'
       } else {
+        row.phone_error = ''
         // 判断当前是否存在重复数据
-        let phoneList = []
-        this.list.map(item => {
-          console.warn(item, phoneList)
-          if (item.phone !== '' && phoneList.includes(item.phone)) {
-            item.phone_error = '手机号不能重复'
-          } else {
-            phoneList.push(item.phone)
-            item.phone_error = ''
-          }
-        })
+        this.checkRepeatPhone(row)
       }
+    },
+    // 判断手机号是否重复
+    checkRepeatPhone(row) {
+      // 获取是否重复数据
+      const phones = this.list.map(item => item.phone)
+      let countPhones = phones.reduce(function (allPhone, phone) {
+        if (phone in allPhone) {
+          allPhone[phone]++;
+        }
+        else {
+          allPhone[phone] = 1;
+        }
+        return allPhone;
+      }, {});
+      console.log('当前是否具备重复数据', countPhones)
+      // 格式化每行效果
+      this.list.forEach(item => {
+        if (countPhones[item.phone] > 1) {
+          item.phone_error = '手机号重复'
+        } else {
+          item.phone_error = ''
+        }
+      })
     },
     // 验证姓名
     checkName(row, index) {
@@ -173,6 +199,9 @@ export default {
       let nullList = this.list.filter(item => item.name && item.phone)
       if (nullList && nullList.length != this.list.length) {
         this.messageInfo('请填写后保存')
+        this.list.forEach(item => {
+          this.checkItem(item)
+        })
         return
       }
       // 验证数据填写未通过的
@@ -197,12 +226,30 @@ export default {
           this.list = []
           this.$emit('close', 'closeAndLoading')
         } else {
-          this.messageInfo(resV.msg || '保存失败', 'error')
+          this.renderErrorInfo(resV)
         }
       }).catch(resV => {
-        this.messageInfo(resV.msg || '保存失败', 'error')
+        this.renderErrorInfo(resV)
       });
     },
+    // 快速报名保存 - 异常处理
+    renderErrorInfo(resV) {
+      if (resV.code == 512825) {
+        const repeatPhones = resV.data.list.map(item => {
+          return item.phone
+        })
+        // 格式化错误提示
+        this.list.map(item => {
+          if (item.phone.includes(repeatPhones)) {
+            item.phone_error = '请输入手机号'
+          } else {
+            item.phone_error = ''
+          }
+        })
+      } else {
+        this.messageInfo(resV.msg || '保存失败', 'error')
+      }
+    }
   },
   created() {
     // 外层控制内层dialog是否开启
