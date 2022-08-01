@@ -9,7 +9,7 @@
       @close="cancelAddUser"
       append-to-body>
       <!-- 一级表单 -->
-      <el-button type="primary" round size="mini" class="add-btn" v-preventReClick @click.prevent.stop="addItem"><i class="iconfont-v3 saasline-plus"></i>添加</el-button>
+      <el-button type="primary" round size="mini" class="add-btn" v-preventReOneClick @click.prevent.stop="addItem"><i class="iconfont-v3 saasline-plus"></i>添加</el-button>
       <el-table
         ref="addTable"
         :data="list"
