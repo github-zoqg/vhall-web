@@ -3,7 +3,7 @@
   'signup-main',
   {'subject-signup': signUpPageType === 'subject'}]">
     <div class="head">
-      <pageTitle :pageTitle="signUpPageType === 'webinar' ? '报名表单' : ''">
+      <pageTitle pageTitle="报名表单">
         <div class="switchBox" v-if="signUpPageType === 'webinar'">
           <el-switch
             class="swtich"
@@ -28,7 +28,7 @@
         <div id="signTabsDom" class="signup-tabs-layout">
           <el-tabs v-model="tabType" @tab-click="handleClick" :class="[menuBarFixed]">
             <el-tab-pane label="表单设置" name="form"></el-tab-pane>
-            <el-tab-pane label="用户报名" name="user"></el-tab-pane>
+            <el-tab-pane label="报名用户" name="user"></el-tab-pane>
           </el-tabs>
         </div>
         <!-- 报名表单 -->
@@ -43,6 +43,9 @@
           :webinarOrSubjectId="webinarOrSubjectId"></user-manage>
       </div>
     </div>
+    <section class="subject-save-btn sureBtn" v-if="signUpPageType === 'subject'">
+      <el-button :disabled="!signUpSwtich" round type="primary" v-preventReClick @click="sureQuestionnaire">保存</el-button>
+    </section>
     <!-- 开播按钮 -->
     <begin-play  :webinarId="webinarOrSubjectId" v-if="$route.query.type != 5 && webinarState!=4 && signUpPageType == 'webinar'"></begin-play>
     <!-- 直播关联专题详情 -->
@@ -220,6 +223,65 @@ export default {
     },
     closeDetailDialog() {
       this.subjectShowVisible = false
+    },
+    // 保存
+    sureQuestionnaire() {
+      if (this.signUpPageType === 'subject') {
+        // 专题下，点击保存，后续专属于活动的上报等不触发
+        this.saveSubjectViews()
+      }
+    },
+        // 保存观看限制，专题关系
+    async saveSubjectViews() {
+      // const verifyInfo = await this.$fetch('subjectVerifyInfo', {
+      //   subject_id: this.webinarOrSubjectId
+      // }).catch(res => {
+      //   this.$message({
+      //     message:  res.msg || '获取专题观看限制失败',
+      //     showClose: true,
+      //     // duration: 0,
+      //     type: res.code == 512999 ? 'warning' : 'error',
+      //     customClass: 'zdy-info-box'
+      //   });
+      // })
+      // if (verifyInfo && verifyInfo.code == 200 && verifyInfo.data) {
+        this.$fetch('createSubjectVerify', {
+          subject_id: this.webinarOrSubjectId,
+          subject_verify: 2 // 0无限制 1观看限制 2报名表单 只给控制台使用
+        }).then(res => {
+          this.$message({
+            message:  `设置成功`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          // 专题上报
+          this.$vhall_paas_port({
+            k: '100864',
+            data: {
+              business_uid: sessionOrLocal.get("userId"),
+              user_id: '',
+              webinar_id: '',
+              subject_id: this.webinarOrSubjectId,
+              refer: '',
+              s: '',
+              report_extra: {},
+              ref_url: '',
+              req_url: '',
+            },
+          })
+        }).catch(res => {
+          console.log(res)
+          this.$message({
+            message:  res.msg || '设置失败',
+            showClose: true,
+            // duration: 0,
+            type: res.code == 512999 ? 'warning' : 'error',
+            customClass: 'zdy-info-box'
+          });
+        });
+      // }
     }
   }
 };
@@ -254,6 +316,21 @@ export default {
       width: 100%;
     }
     &.subject-signup {
+      .titleBox {
+        padding-top: 16px;
+        .fieldSetBox {
+          margin-left: 0;
+        }
+        /deep/.pageTitle {
+          line-height: 36px;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 500;
+        }
+      }
+      /deep/.viewItem {
+        margin-bottom: 0;
+      }
       .signup-tabs-layout {
         background: #F7F7F7;
         border-radius: 4px 4px 0 0;
@@ -440,5 +517,7 @@ export default {
       opacity: 0.5;
     }
   }
-
+  .subject-save-btn {
+    margin-top: 32px;
+  }
 </style>

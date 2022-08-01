@@ -305,7 +305,7 @@
         </li>
       </transition-group>
     </draggable>
-    <section class="viewItem sureBtn">
+    <section class="viewItem sureBtn" v-if="signUpPageType === 'webinar'">
       <el-button :disabled="!signUpSwtich" round type="primary" v-preventReClick @click="sureQuestionnaire">保存</el-button>
     </section>
   </div>
@@ -439,8 +439,6 @@ export default {
     // 保存表单
     sureQuestionnaire() {
       if (this.signUpPageType === 'subject') {
-        // 专题下，点击保存，后续专属于活动的上报等不触发
-        this.saveSubjectViews()
         return
       }
       let userId = this.$parent.userId;
@@ -484,57 +482,6 @@ export default {
         type: 'success',
         customClass: 'zdy-info-box'
       });
-    },
-    // 保存观看限制，专题关系
-    async saveSubjectViews() {
-      // const verifyInfo = await this.$fetch('subjectVerifyInfo', {
-      //   subject_id: this.webinarOrSubjectId
-      // }).catch(res => {
-      //   this.$message({
-      //     message:  res.msg || '获取专题观看限制失败',
-      //     showClose: true,
-      //     // duration: 0,
-      //     type: res.code == 512999 ? 'warning' : 'error',
-      //     customClass: 'zdy-info-box'
-      //   });
-      // })
-      // if (verifyInfo && verifyInfo.code == 200 && verifyInfo.data) {
-        this.$fetch('createSubjectVerify', {
-          subject_id: this.webinarOrSubjectId,
-          subject_verify: 2 // 0无限制 1观看限制 2报名表单 只给控制台使用
-        }).then(res => {
-          this.$message({
-            message:  `设置成功`,
-            showClose: true,
-            // duration: 0,
-            type: 'success',
-            customClass: 'zdy-info-box'
-          });
-          // 专题上报
-          this.$vhall_paas_port({
-            k: '100864',
-            data: {
-              business_uid: sessionOrLocal.get("userId"),
-              user_id: '',
-              webinar_id: '',
-              subject_id: this.webinarOrSubjectId,
-              refer: '',
-              s: '',
-              report_extra: {},
-              ref_url: '',
-              req_url: '',
-            },
-          })
-        }).catch(res => {
-          this.$message({
-            message:  res.msg || '设置失败',
-            showClose: true,
-            // duration: 0,
-            type: res.code == 512999 ? 'warning' : 'error',
-            customClass: 'zdy-info-box'
-          });
-        });
-      // }
     },
     // 添加一个题目选项
     addOption(data, other){

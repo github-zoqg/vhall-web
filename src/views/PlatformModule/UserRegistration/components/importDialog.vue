@@ -50,7 +50,7 @@
             v-if="uploadResult && uploadResult.status === 'start' && !fileUrl">请使用模版上传文件</p>
         </file-upload>
         <p class="uploadtips">
-          <span>注：单个文件不超过10000条数据，数据较大时拆分上传手机号和 姓名必填，否则将视为无效数据</span>
+          <span>注：单个文件不超过10000条数据，数据较大时拆分上传，手机号和 姓名必填，否则将视为无效数据</span>
           <span class="down-span-text" v-show="importResult && importResult.fail > 0" @click.prevent.stop="downErrorHandle">下载查看无效数据</span>
         </p>
         <div class="dialog-right-btn dialog-footer">

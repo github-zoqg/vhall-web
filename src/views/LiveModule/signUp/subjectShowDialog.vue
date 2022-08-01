@@ -86,7 +86,9 @@ export default {
     },
     getVerifyInfo() {
       this.$fetch('getSubjectByWebinarId', {
-        webinar_id: this.webinarOrSubjectId
+        webinar_id: this.webinarOrSubjectId,
+        pos: 0,
+        limit: 2
       }).then(resV => {
         if (resV && resV.code == 200 && resV.data) {
           this.resultVo = resV.data

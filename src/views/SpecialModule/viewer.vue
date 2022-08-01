@@ -2,6 +2,7 @@
   <div class="subject-viewer">
     <pageTitle pageTitle="设置观看限制"></pageTitle>
     <div class="subject-viewer_container"  v-loading="loading" element-loading-text="加载中，请稍候" element-loading-background="rgba(255,255,255,.9)">
+      <div class="viewer_header_title_top">观看权限</div>
       <div class="subject-viewer_choose">
         <el-radio v-model="subject_verify" :label="0" @change="changeViewer(0)">无统一限制，采用直播自己的</el-radio> <br/>
         <el-radio v-model="subject_verify" :label="1" @change="changeViewer(1)">统一观看限制，各直播自己的失效</el-radio><br/>
@@ -11,7 +12,7 @@
       <sign-up-main v-if="subject_verify==2"></sign-up-main>
       <template v-if="subject_verify==1">
         <div class="viewer_header">
-          <div class="viewer_header_title">专题观看限制</div>
+          <div class="viewer_header_title">观看限制</div>
           <el-radio-group v-model="subjectForm.verify" @change="handleClick">
             <el-radio :label="0">免费</el-radio>
             <el-radio :label="4">邀请码（原F码）</el-radio>
@@ -603,12 +604,15 @@ export default {
       border-radius: 4px;
       overflow: hidden;
       min-height: 544px;
-      padding: 49px 56px 40px 56px;
+      padding: 48px 56px 40px 56px;
       .viewer_header{
         &_title{
           color: #1A1A1A;
           padding: 24px 0;
           font-weight: 500;
+          &_top {
+            padding: 0 0 20px 0;
+          }
         }
 
       }
