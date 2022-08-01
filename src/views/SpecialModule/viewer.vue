@@ -9,7 +9,7 @@
         <el-radio v-model="subject_verify" :label="2" @change="changeViewer(2)">统一报名表单，各直播自己的失效</el-radio>
       </div>
       <!-- 报名表单 -->
-      <sign-up-main v-if="isLoadSignUp"></sign-up-main>
+      <sign-up-main v-if="subject_verify == 2 && isLoadSignUp"></sign-up-main>
       <template v-if="isVerifyLimit">
         <div class="viewer_header">
           <div class="viewer_header_title">观看限制</div>
