@@ -938,30 +938,6 @@ export default {
   width: 100%;
   /deep/ .intro-input .el-textarea__inner{
     max-height: 200px;
-    // 滚动条的宽度
-    &::-webkit-scrollbar {
-      width: 6px; // 横向滚动条
-      height: 6px; // 纵向滚动条 必写
-    }
-    // 滚动条的滑块
-    &::-webkit-scrollbar-thumb {
-      border-radius: 3px;
-      transition: all 0.3s;
-      cursor: pointer;
-      display: none;
-      background-color: #cccccc;
-      &:hover {
-        background-color: #cccccc;
-      }
-      &:active {
-        background-color: #cccccc;
-      }
-    }
-    &:hover {
-      &::-webkit-scrollbar-thumb {
-        display: block;
-      }
-    }
   }
 }
 .viewItem{
