@@ -1407,20 +1407,6 @@ export default {
     padding:  32px 0;
     text-align: center;
   }
-
-  /deep/ .el-table__body-wrapper::-webkit-scrollbar {
-    width: 6px; // 横向滚动条
-    height: 6px; // 纵向滚动条
-  }
-  /deep/ .el-table__body-wrapper::-webkit-scrollbar-thumb {
-    background-color: #dedede;
-    border-radius: 5px;
-  }
-  /deep/ .el-table__body::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-    border-radius: 5px;
-    background: rgba(255,255,255,1);
-  }
 </style>
 <style lang="less">
   .playback-list-popper {

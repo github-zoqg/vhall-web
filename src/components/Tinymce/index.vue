@@ -203,8 +203,6 @@ export default {
 <style lang="less" scoped>
 /deep/ .tox-statusbar{
   display: none !important;
-  .blue{
-  }
 }
 // /deep/.tox-tinymce{
 //   padding-bottom: 25px !important;
@@ -220,27 +218,6 @@ export default {
   background: #e6e6e6;
   color: #666!important;
 }
-/deep/.tox-sidebar-wrap{
-  /deep/.tox-edit-area__iframe {
-    ::-webkit-scrollbar{
-      width: 6px;
-      height: 10px;
-      background-color: #F5F5F5;
-    }
-    /*定义滚动条轨道 内阴影+圆角*/
-    ::-webkit-scrollbar-track{
-      border-radius: 5px;
-      background-color: #F5F5F5;
-    }
-    /*定义滑块 内阴影+圆角*/
-    ::-webkit-scrollbar-thumb{
-      border-radius: 5px;
-      background-color: #ccc;
-    }
-  }
-
-}
-
 .vh-editor-wrapbox{
   position: relative;
   /deep/ .tox-tinymce{
