@@ -10,16 +10,16 @@
     <div class="viewer-rules_container">
       <el-tabs v-model="tabType" @tab-click="handleClick">
         <el-tab-pane label="观看限制" name="viewerLimit"></el-tab-pane>
-        <el-tab-pane label="观看协议" name="viewingProtocol" v-if="perssionInfo['watch.viewing_protocol'] > 0"></el-tab-pane>
+        <el-tab-pane label="观看协议" name="viewingProtocol" v-if="permissionInfo['watch.viewing_protocol'] > 0"></el-tab-pane>
       </el-tabs>
       <div class="viewer-rules" v-show="liveDetailInfo && tabType === 'viewerLimit'">
         <el-radio-group v-model="form.verify" @change="handleClick">
           <el-radio :label="0" v-if="liveDetailInfo && liveDetailInfo.webinar_type != 6">免费</el-radio>
           <el-radio :label="3">付费</el-radio>
-          <el-radio :label="4" v-if="perssionInfo.f_code">邀请码（原F码）</el-radio>
-          <el-radio :label="6" v-if="perssionInfo.f_code">付费/邀请码</el-radio>
+          <el-radio :label="4" v-if="permissionInfo.f_code">邀请码（原F码）</el-radio>
+          <el-radio :label="6" v-if="permissionInfo.f_code">付费/邀请码</el-radio>
           <el-radio :label="1">密码</el-radio>
-          <el-radio :label="2" v-if="perssionInfo.white_list">白名单</el-radio>
+          <el-radio :label="2" v-if="permissionInfo.white_list">白名单</el-radio>
         </el-radio-group>
         <!-- 选值区域 -->
         <div class="viewer-rules-content">
@@ -47,7 +47,7 @@
                   <!-- <template slot="append">元</template> -->
                 </VhallInput>
               </el-form-item>
-              <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
+              <el-form-item label="试看" class="switch__height" v-if="permissionInfo.btn_preview">
                 <div class="switch__box">
                   <el-switch
                     v-model="form.is_preview"
@@ -88,7 +88,7 @@
                 <!-- <el-input type="text" placeholder="请输入邀请码" v-model="fCodeForm.fcode_verify" maxlength="30" show-word-limit></el-input> -->
                 <span class="pl10 color-3562FA cursor" @click="openDialog(fCodeForm.fcode_verify|| '请输入邀请码')">查看效果</span>
               </el-form-item>
-              <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
+              <el-form-item label="试看" class="switch__height" v-if="permissionInfo.btn_preview">
                 <div class="switch__box">
                   <el-switch
                     v-model="form.is_preview"
@@ -134,7 +134,7 @@
                 <!-- <el-input type="text" placeholder="请输入邀请码" v-model="fCodePayForm.fee_verify" maxlength="30" show-word-limit ></el-input> -->
                 <span class="pl10 color-3562FA cursor" @click="openDialog(fCodePayForm.fee_verify || '请输入邀请码')">查看效果</span>
               </el-form-item>
-              <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
+              <el-form-item label="试看" class="switch__height" v-if="permissionInfo.btn_preview">
                 <div class="switch__box">
                   <el-switch
                     v-model="form.is_preview"
@@ -169,7 +169,7 @@
                 <!-- <el-input type="text" placeholder="请输入密码" v-model="pwdForm.password_verify" maxlength="30" show-word-limit ></el-input> -->
                 <span class="pl10 color-3562FA cursor" @click="openDialog(pwdForm.password_verify || '请输入密码')">查看效果</span>
               </el-form-item>
-              <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
+              <el-form-item label="试看" class="switch__height" v-if="permissionInfo.btn_preview">
                 <div class="switch__box">
                   <el-switch
                     v-model="form.is_preview"
@@ -211,7 +211,7 @@
                   </li>
                 </ul>
               </el-form-item>
-              <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
+              <el-form-item label="试看" class="switch__height" v-if="permissionInfo.btn_preview">
                 <div class="switch__box">
                   <el-switch
                     v-model="form.is_preview"
@@ -243,7 +243,7 @@
           </el-form>
         </div>
       </div>
-      <viewing-protocol ref="viewingProtocolComp" type="1" :tabType="tabType" v-if="perssionInfo['watch.viewing_protocol'] > 0 && tabType === 'viewingProtocol'"></viewing-protocol>
+      <viewing-protocol ref="viewingProtocolComp" type="1" :tabType="tabType" v-if="permissionInfo['watch.viewing_protocol'] > 0 && tabType === 'viewingProtocol'"></viewing-protocol>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
     <VhallDialog :visible='visible' title="权限验证" width='400px' @close="visible = false;">
@@ -335,7 +335,7 @@ export default {
       lowerGradeInterval: null,
       viewerDao: {},
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
-      perssionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
+      permissionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
       perssionWebInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')), //账号下配置项
       form: {
         webinar_id: this.$route.params.str,

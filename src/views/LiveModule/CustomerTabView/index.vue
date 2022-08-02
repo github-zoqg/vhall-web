@@ -364,6 +364,7 @@ export default {
     position: relative;
   }
   .vh-customer-menu-wrap{
+    padding: 0 32px;
     min-height: 530px;
     height: 100%;
     overflow: hidden;
@@ -416,7 +417,7 @@ export default {
   }
   .vh-customer-menu-contentBox{
     overflow: hidden;
-    background: #F7F7F7;
+    // background: #F7F7F7;
     .vh-customer-menu-contentBox__components{
       height: 100%;
       float: left;

@@ -557,7 +557,6 @@ export default {
   .living-setting{
     padding-top: 16px;
     display: flex;
-    // height: 100%;
     &_type{
       display: flex;
       flex-direction: column;
@@ -600,7 +599,7 @@ export default {
       .preview_box{
         margin-top: 16px;
         width: 100%;
-        // height: 800px;
+        // height: 100%;
         margin-right: 24px;
         background: #f0f0f0;
         .preview_type{
@@ -626,11 +625,11 @@ export default {
           .pc_container{
             position: relative;
             width: 100%;
-            // height: 480px;
+            height: 495px;
             z-index: 0;
             .pc_bg{
               width: 100%;
-              height: 480px;
+              height: 100%;
               position: absolute;
               top: 0;
               left: 0;
@@ -725,7 +724,7 @@ export default {
               width: 100%;
               padding: 0 55px;
               margin-top: 12px;
-              height: 362px;
+              // height: 362px;
               display: flex;
               .watch_left{
                 width: calc(100% - 174px);
@@ -994,7 +993,7 @@ export default {
             .pc_subscribe{
               margin-top: 12px;
               padding: 0 55px;
-              height: 447px;
+              // height: 447px;
               &_bg{
                 width: 100%;
                 height: 380px;

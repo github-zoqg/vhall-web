@@ -104,7 +104,7 @@ export default {
     window.removeEventListener('scroll', this.handleScroll)
   },
   mounted() {
-    window.addEventListener('scroll', this.handleScroll)
+    // window.addEventListener('scroll', this.handleScroll)
   },
   methods: {
     handleScroll () {
@@ -210,7 +210,7 @@ export default {
   .vh-menus-dragComponents{
     width: 140px;
     height: 100%;
-    background: #F7F7F7;
+    background: #fff;
     user-select: none;
     &.isFixed {
       position:fixed!important;

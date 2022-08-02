@@ -48,5 +48,9 @@ export default {
 </script>
 <style lang="less" scoped>
   .setting-living{
+    &_container{
+      background: #fff;
+      height: 100%;
+    }
   }
 </style>

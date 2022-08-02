@@ -1,13 +1,24 @@
 <template>
   <div class="living_setting">
     <pageTitle pageTitle="直播间设置">
-      <p class="living_setting_tip" @click="toSettingDetail">查看账号下直播间设置</p>
+      <div class="living_setting_tip">
+        <p class="switch__box" v-show="tabType!='customSet'">
+        <el-switch
+          v-model="livingSettingOpen"
+          active-color="#999"
+          inactive-color="#999"
+          @change="closeLivingSettingOpen"
+          :active-text="reservationDesc">
+        </el-switch>
+        <span @click="toSettingDetail">查看账号下品牌直播间设置</span>
+      </p>
+      </div>
     </pageTitle>
     <div class="living_setting_container">
       <el-tabs v-model="tabType" @tab-click="handleClick">
         <el-tab-pane label="直播间设置" name="livingSet"></el-tab-pane>
         <el-tab-pane label="自定义菜单" name="customSet"></el-tab-pane>
-        <el-tab-pane label="标识设置" name="signSet" v-if="perssionInfo['ui.brand_setting'] > 0"></el-tab-pane>
+        <el-tab-pane label="标识设置" name="signSet" v-if="permissionInfo['ui.brand_setting'] > 0"></el-tab-pane>
       </el-tabs>
       <!-- 设置区域 -->
       <!-- 直播间设置 -->
@@ -15,7 +26,7 @@
       <!-- 自定义菜单 -->
       <customer-tab ref="customSet" v-show="tabType === 'customSet'"></customer-tab>
       <!-- 标识设置 -->
-      <sign-set ref="signSet" v-show="tabType === 'signSet'"  v-if="perssionInfo['ui.brand_setting'] > 0"></sign-set>
+      <sign-set ref="signSet" v-show="tabType === 'signSet'"  v-if="permissionInfo['ui.brand_setting'] > 0" :brandConfig="livingSettingOpen"></sign-set>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
   </div>
@@ -32,7 +43,9 @@ export default {
   data() {
     return {
       tabType: 'livingSet',
-      perssionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
+      livingSettingOpen: false,
+      type: 2,
+      permissionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
       webinarState: JSON.parse(sessionOrLocal.get("webinarState"))
     }
   },
@@ -44,23 +57,71 @@ export default {
     beginPlay
   },
   computed: {
+    reservationDesc() {
+      if(this.livingSettingOpen){
+        return '已开启，使用当前活动【直播间设置】和【标识设置】';
+      }else{
+        return "开启后，将使用当前活动【直播间设置】和【标识设置】";
+      }
+    }
   },
   created() {
-    this.userId = JSON.parse(sessionOrLocal.get('userId'))
-    // this.$refs[`livingSet`].initComp();
+    this.userId = sessionOrLocal.get('userId');
+    this.getPermission();
   },
   methods: {
     handleClick(tab, event) {
-      console.log(this.tabType, event);
+      console.log(this.tab, event, this.tabType);
       this.$refs[this.tabType].initComp();
+    },
+    // 获取配置项
+    getPermission() {
+      this.$fetch('planFunctionGet', {webinar_id: this.$route.params.str, webinar_user_id:  this.userId, scene_id: 1}).then(res => {
+        if(res.code == 200) {
+          let permissions = JSON.parse(res.data.permissions)
+          // this.permissionInfo = permissions;
+          this.livingSettingOpen = Boolean(permissions['is_brand_cofig'] == 1)
+          this.type = this.livingSettingOpen ? 1 : 2;
+          this.$refs[this.tabType].initComp();
+        }
+      }).catch(e => {});
+    },
+    closeLivingSettingOpen() {
+       let params = {
+        webinar_id: this.$route.params.str,
+        permission_key: 'is_brand_cofig',
+        status: Number(this.livingSettingOpen)
+      };
+      console.log('当前参数传递：', params);
+      this.$fetch('planFunctionEdit', params).then(res => {
+        if (this.livingSettingOpen) {
+          this.type = 1;
+        } else {
+          this.type = 2;
+          this.$message({
+            message:"正在使用账号下品牌设置",
+            showClose: true,
+            type: 'warning',
+            customClass: 'zdy-info-box'
+          });
+        }
+        this.$refs[this.tabType].initComp();
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `操作失败`,
+          showClose: true,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      });
     },
     // 查看账号下设置
     toSettingDetail() {
       // TODO: 上报问题
-      this.$vhall_paas_port({
-        k: 100198,
-        data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
+      // this.$vhall_paas_port({
+      //   k: 100198,
+      //   data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+      // })
       const { href } = this.$router.resolve({path:'/setting/living'});
       window.open(href, '_blank');
     },
@@ -70,9 +131,19 @@ export default {
 <style lang="less" scoped>
   .living_setting{
     &_tip{
-      color: #3562fa;
+      color: #999;
       font-size: 14px;
-      cursor: pointer;
+      span{
+        color: #3562FA;
+        cursor: pointer;
+        vertical-align: middle;
+      }
+      /deep/.el-switch__label {
+        color: #999;
+        &.is-active{
+          color: #999;
+        }
+      }
     }
     &_container {
       background: #fff;
