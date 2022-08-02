@@ -34,7 +34,7 @@
           </vh-radio-group>
         </div>
         <div class="preview_container">
-          <div class="preview_box_pc">
+          <div class="preview_box_pc" v-if="livingPreview==1">
             <div class="pc_header_tag">
               <img src="./image/living/browser@2x.png" alt="">
             </div>
@@ -164,10 +164,12 @@
                   <div class="font_right">已预约 <span class="color_red">233</span> 人<span class="btn">立即预约</span></div>
                 </div>
               </div>
-              <div class="pc_footer">微吼提供技术支持 ｜ 反馈与举报</div>
+              <div class="pc_footer" v-if="livingPcPreviewType==1">微吼提供技术支持 ｜ 反馈与举报</div>
             </div>
           </div>
-          <div class="preview_box_wap"></div>
+          <div class="preview_box_wap" v-else>
+
+          </div>
         </div>
       </div>
     </div>
@@ -216,80 +218,82 @@
         <vh-slider v-model="livingForm.theme_light" style="width: 131px" :max="20"></vh-slider>
         <span class="vague_num">{{livingForm.theme_light}}</span>
       </div>
-      <div class="form_item" v-if="livingPreview == '1'">
+      <div class="form_item" v-if="(livingPreview == '1' && livingPcPreviewType==1)">
         <span class="vague_theme">聊天布局</span>
         <vh-radio-group v-model="livingForm.chatLayout" size="mini">
           <vh-radio-button round :label="1">上下显示</vh-radio-button>
           <vh-radio-button round :label="2">左右显示</vh-radio-button>
         </vh-radio-group>
       </div>
-      <div class="form_item_br">
-        以下设置对PC端和移动端同时生效～
-      </div>
-      <div class="form_item">
-        <p class="form_item_title">视频区【连麦】布局</p>
-        <div class="form_item_lay">
-          <div class="item_lay" @click="choseMicrophone(1)">
-            <p :class="livingForm.microphone == 1 ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
-            <span>主次浮窗</span>
-          </div>
-          <div class="item_lay" @click="choseMicrophone(2)">
-            <p :class="livingForm.microphone == 2 ? 'active' : ''"><img src="./image/main_2.png" alt=""></p>
-            <span>主次平铺</span>
-          </div>
-          <div class="item_lay" @click="choseMicrophone(3)">
-            <p :class="livingForm.microphone == 3 ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
-            <span>均匀排列</span>
+      <template v-if="livingPcPreviewType==1">
+        <div class="form_item_br">
+          以下设置对PC端和移动端同时生效～
+        </div>
+        <div class="form_item">
+          <p class="form_item_title">视频区【连麦】布局</p>
+          <div class="form_item_lay">
+            <div class="item_lay" @click="choseMicrophone(1)">
+              <p :class="livingForm.microphone == 1 ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
+              <span>主次浮窗</span>
+            </div>
+            <div class="item_lay" @click="choseMicrophone(2)">
+              <p :class="livingForm.microphone == 2 ? 'active' : ''"><img src="./image/main_2.png" alt=""></p>
+              <span>主次平铺</span>
+            </div>
+            <div class="item_lay" @click="choseMicrophone(3)">
+              <p :class="livingForm.microphone == 3 ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
+              <span>均匀排列</span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="form_item" v-if="livingPreview == '2'">
-        <p class="form_item_title">视频区【连麦 + 演示】布局</p>
-        <div class="form_item_lay form_item_video">
-          <div class="item_lay">
-            <p class="active"><img src="./image/main_1.png" alt=""></p>
-            <span>上下模式</span>
+        <div class="form_item" v-if="livingPreview == 2 && livingPcPreviewType==1">
+          <p class="form_item_title">视频区【连麦 + 演示】布局</p>
+          <div class="form_item_lay form_item_video">
+            <div class="item_lay">
+              <p class="active"><img src="./image/main_1.png" alt=""></p>
+              <span>上下模式</span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="form_item">
-        <p class="form_item_title">视频区底色</p>
-        <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors"  :colorDefault="livingForm.videoStyle"></color-set>
-      </div>
-      <div class="form_item">
-        <p class="form_item_title">视频区背景</p>
-        <upload
-          class="upload__living"
-          v-model="livingForm.video_url"
-          :domain_url="livingForm.video_url"
-          :saveData="{
-            path: pathUrl,
-            type: 'image',
-          }"
-          :on-success="handleUploadVideoSuccess"
-          :on-progress="uploadProcess"
-          :on-error="uploadError"
-          :on-preview="uploadPreview"
-          :heightImg="130"
-          :widthImg="231"
-          :before-upload="beforeUploadHandler"
-          @delete="resetLogoUrl">
-          <div slot="tip">
-            <p>建议尺寸：1920*1080px，小于4M</p>
-            <p>支持jpg、gif、png、bmp</p>
-          </div>
-        </upload>
-      </div>
-      <div class="form_item">
-        <span class="vague_theme">模糊程度</span>
-        <vh-slider v-model="livingForm.video_vague" style="width: 131px" :max="10"></vh-slider>
-        <span class="vague_num">{{livingForm.video_vague}}</span>
-      </div>
-      <div class="form_item">
-        <span class="vague_theme">背景亮度</span>
-        <vh-slider v-model="livingForm.video_light" style="width: 131px" :max="20"></vh-slider>
-        <span class="vague_num">{{livingForm.video_light}}</span>
-      </div>
+        <div class="form_item">
+          <p class="form_item_title">视频区底色</p>
+          <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors"  :colorDefault="livingForm.videoStyle"></color-set>
+        </div>
+        <div class="form_item">
+          <p class="form_item_title">视频区背景</p>
+          <upload
+            class="upload__living"
+            v-model="livingForm.video_url"
+            :domain_url="livingForm.video_url"
+            :saveData="{
+              path: pathUrl,
+              type: 'image',
+            }"
+            :on-success="handleUploadVideoSuccess"
+            :on-progress="uploadProcess"
+            :on-error="uploadError"
+            :on-preview="uploadPreview"
+            :heightImg="130"
+            :widthImg="231"
+            :before-upload="beforeUploadHandler"
+            @delete="resetLogoUrl">
+            <div slot="tip">
+              <p>建议尺寸：1920*1080px，小于4M</p>
+              <p>支持jpg、gif、png、bmp</p>
+            </div>
+          </upload>
+        </div>
+        <div class="form_item">
+          <span class="vague_theme">模糊程度</span>
+          <vh-slider v-model="livingForm.video_vague" style="width: 131px" :max="10"></vh-slider>
+          <span class="vague_num">{{livingForm.video_vague}}</span>
+        </div>
+        <div class="form_item">
+          <span class="vague_theme">背景亮度</span>
+          <vh-slider v-model="livingForm.video_light" style="width: 131px" :max="20"></vh-slider>
+          <span class="vague_num">{{livingForm.video_light}}</span>
+        </div>
+      </template>
     </div>
     <living-preview ref="livingPreview"></living-preview>
     <cropper @cropComplete="cropComplete" ref="livingCropper" cropperDom="living_cropper"></cropper>
@@ -622,11 +626,11 @@ export default {
           .pc_container{
             position: relative;
             width: 100%;
-            height: 480px;
+            // height: 480px;
             z-index: 0;
             .pc_bg{
               width: 100%;
-              height: 100%;
+              height: 480px;
               position: absolute;
               top: 0;
               left: 0;
@@ -721,7 +725,7 @@ export default {
               width: 100%;
               padding: 0 55px;
               margin-top: 12px;
-              // height: 362px;
+              height: 362px;
               display: flex;
               .watch_left{
                 width: calc(100% - 174px);
@@ -990,6 +994,7 @@ export default {
             .pc_subscribe{
               margin-top: 12px;
               padding: 0 55px;
+              height: 447px;
               &_bg{
                 width: 100%;
                 height: 380px;
