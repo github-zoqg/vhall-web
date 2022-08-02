@@ -45,9 +45,10 @@
               <p class="p-right">上传成功，共检测到{{importResult && importResult.success}}条有效数据，{{importResult && importResult.fail}}条无效数据</p>
             </div>
           </div>
-          <!-- 状态1： 未上传 -->
-          <p slot="tip"
-            v-if="uploadResult && uploadResult.status === 'start' && !fileUrl">请使用模版上传文件</p>
+          <!-- 状态5： 未上传 -->
+          <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && !fileUrl">请使用模版上传文件</p>
+          <!-- 状态6：上传失败，后端有报错 -->
+          <p slot="tip" class="p-error" v-if="uploadResult && uploadResult.status === 'error' && !fileUrl">{{uploadResult.text}}</p>
         </file-upload>
         <p class="uploadtips">
           <span>注：单个文件不超过10000条数据，数据较大时拆分上传，手机号和 姓名必填，否则将视为无效数据</span>
