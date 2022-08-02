@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     goEditSubject(id) {
-      window.open(`${process.env.VUE_APP_WAP_WATCH}/subject/edit/${id}?title=编辑`, '_blank')
+      window.open(`${process.env.VUE_APP_WEB_URL}/subject/edit/${id}?title=编辑`, '_blank')
     }
   }
 }

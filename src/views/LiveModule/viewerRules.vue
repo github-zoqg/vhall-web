@@ -669,7 +669,7 @@ export default {
       this.limitVisible = true;
     },
     goSubjectDetail() {
-      window.open(`${process.env.VUE_APP_WAP_WATCH}/subject/edit/${this.subjectInfo.subject_id}?title=编辑`, '_blank')
+      window.open(`${process.env.VUE_APP_WEB_URL}/subject/edit/${this.subjectInfo.subject_id}?title=编辑`, '_blank')
     },
     getReportData() {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
