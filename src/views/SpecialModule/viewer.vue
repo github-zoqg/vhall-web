@@ -13,7 +13,7 @@
       <template v-if="subject_verify==1">
         <div class="viewer_header">
           <div class="viewer_header_title">观看限制</div>
-          <el-radio-group v-model="subjectForm.verify" @change="handleClick">
+          <el-radio-group v-model="subjectForm.verify">
             <el-radio :label="0">免费</el-radio>
             <el-radio :label="4">邀请码（原F码）</el-radio>
             <el-radio :label="1">密码</el-radio>
@@ -27,7 +27,7 @@
               观看无需任何验证，即可观看直播
             </div>
           </template>
-          <div v-show="subjectForm.verify == 4">
+          <div v-if="subjectForm.verify == 4" key="4">
             <!-- 邀请码（原F码）4-->
             <div class="viewer_container_code">
               <el-form :model="formCode" ref="formCode" :rules="codeFormRules"  label-width="82px">
@@ -69,7 +69,7 @@
               </el-form>
             </div>
           </div>
-          <div v-show="subjectForm.verify == 1">
+          <div v-if="subjectForm.verify == 1" key="1">
             <!-- 密码 -->
             <div class="viewer_container_password">
               <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="70px">
@@ -105,7 +105,7 @@
               </el-form>
             </div>
           </div>
-          <div v-show="subjectForm.verify == 2">
+          <div v-if="subjectForm.verify == 2" key="2">
             <!-- 白名单 2 -->
             <div class="viewer_container_white">
               <el-form label-width="82px">
