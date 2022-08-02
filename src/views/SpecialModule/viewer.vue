@@ -182,7 +182,9 @@ import SignUpMain from '../LiveModule/signUp/main.vue';
 export default {
   data() {
     let checkNums = (rule, value, callback) => {
-     if (!value) {
+     if (this.codeNum > 0) {
+        callback();
+      } else if (!value) {
         return callback(new Error('邀请码数量1-1000'));
       } else if (value > 1000 || value < 1) {
         return callback(new Error('邀请码数量1-1000'));
