@@ -50,6 +50,7 @@
     "vue-router": "^3.2.0",
     "vuedraggable": "^2.24.3",
     "vuescroll": "^4.17.0",
+    "css-vars-ponyfill": "^2.4.7",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {

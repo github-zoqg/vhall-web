@@ -340,7 +340,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
-  else if (metaName === 'livingSet') {// 直播间设置
+  else if (metaName === 'livingSetting') {// 直播间设置
     return [
       ...CrumbLiveList('liveList'),
       {
