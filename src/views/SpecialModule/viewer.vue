@@ -326,7 +326,7 @@ export default {
           if (res.data.length) {
             this.subject_verify = 0;
             this.isCheckSubjectAuth = true;
-            this.checkSubjectList = res.data;
+            this.checkSubjectList = res.data.list;
           } else {
             this.isCheckSubjectAuth = false;
           }
