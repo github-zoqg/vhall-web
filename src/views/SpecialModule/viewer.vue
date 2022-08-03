@@ -419,7 +419,7 @@ export default {
     },
     // 2:白名单参数
     saveWhiteParams(verify) {
-      let flag = this.whiteId !== null && this.whiteId !== undefined && this.whiteId !== '';
+      let flag = this.whiteId !== null && this.whiteId !== undefined && this.whiteId !== '' && this.whiteId !== 0;
       if (!flag) {
         this.$message({
           message:  `请选择观众组`,
