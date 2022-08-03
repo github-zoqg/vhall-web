@@ -580,7 +580,7 @@ export default {
         });
       } else if(formName === 'whiteForm') {
         /*flag = this.whiteIds.length > 0;*/
-        flag = this.whiteId !== null && this.whiteId !== undefined && this.whiteId !== '';
+        flag = this.whiteId !== null && this.whiteId !== undefined && this.whiteId !== '' && this.whiteId !== 0;
         if (!flag) {
           this.$message({
             message:  `请选择观众组`,
