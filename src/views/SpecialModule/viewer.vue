@@ -323,7 +323,7 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           this.loading = false;
-          if (res.data.length) {
+          if (res.data.list.length) {
             this.subject_verify = 0;
             this.isCheckSubjectAuth = true;
             this.checkSubjectList = res.data.list;
