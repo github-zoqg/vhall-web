@@ -17,10 +17,17 @@
     <div class="all-yes-data" v-else>
       <!-- 搜索 -->
       <div class="list--search">
-        <el-button size="medium" type="primary" round @click.prevent.stop="addUserDialog">快速报名</el-button>
-        <!-- 若当前是知学云账号，不展示用量分配按钮, extends_remark 为1时表示 知学云账号-->
-        <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" plain round v-preventReClick @click.prevent.stop="importUserDialog">导入</el-button>
-        <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" round v-preventReClick @click.prevent.stop="downloadHandle">导出</el-button>
+        <!-- 专题下，导出数据页效果 -->
+        <template v-if="signUpPageType === 'subject' && isDataPage">
+          <el-button size="medium" type="primary" round v-preventReClick @click.prevent.stop="downloadHandle" v-if="signUpPageType === 'subject' && isDataPage">导出</el-button>
+          <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" round @click.prevent.stop="addUserDialog">快速报名</el-button>
+          <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" plain round v-preventReClick @click.prevent.stop="importUserDialog">导入</el-button>
+        </template>
+        <template v-else>
+          <el-button size="medium" type="primary" round @click.prevent.stop="addUserDialog">快速报名</el-button>
+          <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" plain round v-preventReClick @click.prevent.stop="importUserDialog">导入</el-button>
+          <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" round v-preventReClick @click.prevent.stop="downloadHandle" v-if="!(signUpPageType === 'subject' && isDataPage)">导出</el-button>
+        </template>
         <VhallInput placeholder="搜索手机号/姓名" v-model.trim="query.keyword"
                   clearable
                   @clear="initQueryUserList"

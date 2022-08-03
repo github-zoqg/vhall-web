@@ -318,6 +318,8 @@ export default {
     &.subject-signup {
       .titleBox {
         padding-top: 16px;
+        margin-bottom: 24px;
+        line-height: 36px;
         .fieldSetBox {
           margin-left: 0;
         }
@@ -330,6 +332,17 @@ export default {
       }
       /deep/.viewItem {
         margin-bottom: 0;
+        padding: 24px 24px;
+        .label {
+          font-style: normal;
+          font-weight: 400;
+          font-size: 16px;
+          line-height: 22px;
+          margin-bottom: 16px;
+        }
+        .bottomBtn {
+          margin-top: 8px;
+        }
       }
       .signup-tabs-layout {
         background: #F7F7F7;
@@ -344,6 +357,10 @@ export default {
       /deep/.settingBox {
         .rightView {
           background: #ffffff;
+          padding-top: 0;
+          .fieldSetBox {
+            margin-left: 0;
+          }
         }
       }
     }
