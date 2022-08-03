@@ -169,7 +169,7 @@
           <el-button type="primary" round @click="visiblePreview = false;" class="button_size">确定</el-button>
         </div>
       </VhallDialog>
-      <checkViewer :checkList="checkSubjectList" ref="checkViewer"></checkViewer>
+      <checkViewer :checkList="checkSubjectList" ref="checkViewer" :total="checkTotal"></checkViewer>
     </div>
   </div>
 </template>
@@ -246,6 +246,7 @@ export default {
       showText: '',
       stash:'',
       isCheckSubjectAuth: false,
+      checkTotal: 0,
       checkSubjectList: [],
       timeOption: [
         {
@@ -323,8 +324,9 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           this.loading = false;
-          if (res.data.list.length) {
+          if (res.data.total) {
             this.subject_verify = 0;
+            this.checkTotal = res.data.total;
             this.isCheckSubjectAuth = true;
             this.checkSubjectList = res.data.list;
           } else {

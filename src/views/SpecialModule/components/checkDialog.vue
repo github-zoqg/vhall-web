@@ -10,7 +10,7 @@
     <div class="choose-viewer_container">
       <div class="subject_check">
         <div class="check_title">
-          本专题下有 <span>{{ 0 || checkList.length }}</span> 个直播被重复使用，先移除重复直播才可统一设置观看权限。
+          本专题下有 <span>{{ total || 0 }}</span> 个直播被重复使用，先移除重复直播才可统一设置观看权限。
           <p>详情如下:</p>
         </div>
         <div class="check_list">
@@ -32,6 +32,10 @@ export default {
     checkList: {
       type: Array,
       default: ()=>[]
+    },
+    total: {
+      type: Number,
+      default: 0
     }
   },
   data() {

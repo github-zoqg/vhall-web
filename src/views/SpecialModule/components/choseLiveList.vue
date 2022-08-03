@@ -161,6 +161,7 @@ export default {
       const userId = sessionStorage.getItem('userId')
       let params = {
         title: this.keyword,
+        subject_id: this.$route.params.id || undefined,
         order_type: 1,
         is_subject: this.checkAuth > 0 ? 1 : 2,
         webinar_state: 0,
