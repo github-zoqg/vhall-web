@@ -36,7 +36,7 @@
 
     <el-row :gutter="24" class="lives" v-show="totalElement">
       <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
-        <router-link :to="{path: `/subject/details/${item.id}`}" target="_blank" class="inner">
+        <router-link :to="{ path: item.is_new_version == 1 ? `/subject/details/${item.id}` : `/subject/edit/${item.id}?title=编辑`}" target="_blank" class="inner">
           <!-- @click="editSpecialInfo(item.id)" -->
           <div class="top">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->

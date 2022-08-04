@@ -1,6 +1,8 @@
 <template>
   <div class="editBox">
-    <pageTitle :pageTitle="`${$route.query.title || '创建'}专题`"></pageTitle>
+    <pageTitle :pageTitle="`${$route.query.title || '创建'}专题`">
+      <div class="title_text" v-if="!isOldSubject">该专题是旧版系统创建，不能设置统一的观看限制。</div>
+    </pageTitle>
     <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="80px">
       <el-form-item label="专题标题" prop="title">
         <VhallInput v-model="formData.title" v-clearEmoij :maxlength="100" autocomplete="off" placeholder="请输入专题标题" show-word-limit></VhallInput>
@@ -185,8 +187,7 @@ export default {
         viewer: 0
       },
       subject_id: '',
-      subjectInfo: {
-      },
+      isOldSubject: false,
       userId:JSON.parse(sessionOrLocal.get("userId")),
       loading: false,
       webinarIds: [],
@@ -253,7 +254,7 @@ export default {
         subject_id: this.$route.params.id
       }).then(res => {
         if (res.code == 200) {
-          this.subjectInfo = {...res.data.webinar_subject};
+          this.isOldSubject = Boolean(res.data.webinar_subject.is_new_version);
           this.formData.selectedActives = Array.from(res.data.webinar_subject.webinar_list) || []
           this.subject_id = res.data.webinar_subject.id
           this.formData.title = res.data.webinar_subject.title
@@ -587,6 +588,10 @@ export default {
   }
   /deep/.el-upload--picture-card i.saasicon_shangchuan{
     font-size: 40px;
+  }
+  .title_text{
+    color: #999;
+    font-size: 14px;
   }
   .switch__box{
     line-height: 35px;
