@@ -1,0 +1,606 @@
+<template>
+  <div class="living_preview_pc">
+    <div class="pc_header_tag">
+      <img src="./image/living/browser@2x.png" alt="">
+    </div>
+    <div class="pc_container">
+      <div class="pc_bg" v-if="domainUrl">
+        <img :src="domainUrl" alt="">
+      </div>
+      <div class="pc_header">
+        <div class="header_left">
+          <div class="left_logo"><img src="./image/living/logo@2x.png" alt=""></div>
+          <div class="left_title">
+            <p class="title">30分钟直播运营实操-教你从0-1快速上手 <span v-if="type==1"><img src="./image/living/living.png" alt=""></span><span v-if="type==2"><img src="./image/living/subscribe.png" alt=""></span> </p>
+            <p class="host">主办方：直播研究院 &nbsp;&nbsp;  2022-06-24 14:30</p>
+          </div>
+        </div>
+        <div class="header_right">
+          <div class="right_icon">
+            <span><i class="iconfont-v3 saasicon_guanzhu"></i> 关注</span>
+            <span><i class="iconfont-v3 saasicon-share"></i> 分享</span>
+          </div>
+          <div class="right_login"><span><img src="./image/living/avatar@2x.png" alt=""></span> 登录</div>
+        </div>
+      </div>
+      <div class="pc_watch" v-if="type==1">
+        <div class="watch_left">
+          <div class="left_top">
+            <!-- 均匀 -->
+            <!-- <div class="left_top__even">
+              <span><img src="./image/living/layout1.png" alt=""></span>
+              <span><img src="./image/living/layout5.png" alt=""></span>
+            </div> -->
+            <!-- 浮窗 -->
+            <!-- <div class="left_top__float">
+              <div class="imgs">
+                <span><img src="./image/living/layout2.png" alt=""></span>
+                <span><img src="./image/living/layout3.png" alt=""></span>
+              </div>
+            </div> -->
+            <!-- 平铺 -->
+            <div class="left_top__tiling">
+              <div class="host">
+                <img src="./image/living/layout1.png" alt="">
+              </div>
+              <div class="imgs">
+                <span><img src="./image/living/layout2.png" alt=""></span>
+                <span><img src="./image/living/layout3.png" alt=""></span>
+                <span><img src="./image/living/layout4.png" alt=""></span>
+                <span><img src="./image/living/layout5.png" alt=""></span>
+              </div>
+            </div>
+          </div>
+          <div class="left_bottom">
+            <span class="left_bottom_setting">
+              <i class="iconfont-v3 saasicon_Settings1"></i> 设置 &nbsp;
+              <i class="iconfont-v3 saasline-user"></i> 12314 &nbsp;
+              <i class="iconfont-v3 saasredu_icon"></i> 345671 &nbsp;
+            </span>
+            <span class="left_bottom_tools"><img src="./image/living/tools@2x.png" alt=""></span>
+          </div>
+        </div>
+        <div class="watch_right">
+          <div class="right_top">
+            <img src="./image/living/ppt.png" alt="">
+          </div>
+          <div class="right_bottom">
+            <div class="right_bottom_chat">
+              <div class="chat_tab">
+                <p>聊天</p>
+                <span></span>
+              </div>
+              <div class="chat_box">
+                <div class="chat_box_item chat_box_top">
+                  <div class="item_img">
+                    <p><img src="./image/living/chat1.png" alt=""></p>
+                  </div>
+                  <div class="item_chat">
+                    <p class="chat_role"><span class="host">主持人</span> 蒋老师</p>
+                    <p class="chat_title">欢迎线上的各位小伙伴～</p>
+                  </div>
+                </div>
+                <div class="chat_box_item chat_box_top">
+                  <div class="item_img">
+                    <p><img src="./image/living/layout3.png" alt=""></p>
+                  </div>
+                  <div class="item_chat">
+                    <p class="chat_role">邓浩杰</p>
+                    <p class="chat_title">期待已久的运营直播实操课～～</p>
+                  </div>
+                </div>
+                <div class="chat_box_item">
+                  <div class="item_img">
+                    <p><img src="../../../common/images/avatar.png" alt=""></p>
+                  </div>
+                  <div class="item_chat">
+                    <p class="chat_role">王觉</p>
+                    <p class="chat_title">30分钟直播运营实操特训营，终于开营啦，快来加入吧</p>
+                  </div>
+                </div>
+                  <div class="chat_box_item">
+                  <div class="item_img">
+                    <p><img src="./image/living/layout2.png" alt=""></p>
+                  </div>
+                  <div class="item_chat">
+                    <p class="chat_role"><span class="ass">助理</span> 小助理</p>
+                    <p class="chat_title">获取PPT，请添加官方企微哦～</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="right_bottom_send">
+              <div class="icon">
+                <i class="iconfont-v3 saasline-expression"></i>
+                <i class="iconfont-v3 saasa-line-zhikanzhubanfang"></i>
+              </div>
+              <div class="send">
+                <p><span>参与聊天</span></p>
+                <span class="send_msg"><i class="iconfont-v3 saasline-send"></i></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pc_subscribe" v-else>
+        <div class="pc_subscribe_bg"></div>
+        <div class="pc_subscribe_bottom">
+          <div class="font_scale">距离开播 <span class="color_bold">10</span> 天<span class="color_bold">08</span> 时<span class="color_bold">46</span> 分<span class="color_bold">25</span> 秒</div>
+          <div class="font_right">已预约 <span class="color_red">233</span> 人<span class="btn">立即预约</span></div>
+        </div>
+      </div>
+      <div class="pc_footer" v-if="type==1">微吼提供技术支持 ｜ 反馈与举报</div>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  props: {
+    type: {
+      // 是直播页还是引导页
+      type: Number,
+      default: 1
+    },
+    // 主题背景
+    domainUrl: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+    }
+  }
+}
+</script>
+<style lang="less" scoped>
+  .living_preview_pc{
+    .pc_header_tag{
+      width: 100%;
+      height: 32px;
+      border-radius: 8px 8px 0 0;
+      img{
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+    .pc_container{
+      position: relative;
+      width: 100%;
+      height: 495px;
+      z-index: 0;
+      background-color: var(--background_color_primary);
+      border-radius: 0 0 4px 4px;
+      .pc_bg{
+        width: 100%;
+        height: 100%;
+        border-radius: 0 0 4px 4px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        img{
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 0 0 4px 4px;
+        }
+      }
+      .pc_header{
+        height: 48px;
+        width: 100%;
+        padding: 0 16px;
+        background: var(--background_color_regular);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .header_left{
+          display: flex;
+          align-items: center;
+          .left_logo{
+            width: 50px;
+            height: 30px;
+            margin-right: 12px;
+            img{
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+            }
+          }
+          .left_title{
+            .title{
+              color: var(--color_text_regular);
+              font-size: 12px;
+              line-height: 20px;
+              span{
+                display: inline-block;
+                width: 34px;
+                height: 12px;
+                img{
+                  width: 100%;
+                  height: 100%;
+                  object-fit: contain;
+                }
+              }
+            }
+            .host{
+              color: var(--color_text_secondary);
+              font-size: 14px;
+              transform: scale(0.8);
+              transform-origin: center left;
+            }
+          }
+        }
+        .header_right{
+          display: flex;
+          align-items: center;
+          .right_icon{
+            color: var(--color_text_secondary);
+            font-size: 12px;
+            span{
+              padding-right: 10px;
+            }
+            i{
+              vertical-align: text-bottom;
+            }
+          }
+          .right_login{
+            font-size: 12px;
+            color: var(--color_text_secondary);
+            padding-left: 14px;
+            line-height: 24px;
+            span{
+              display: inline-block;
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              vertical-align: middle;
+              img{
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                object-fit: contain;
+              }
+            }
+          }
+        }
+      }
+      .pc_watch{
+        width: 100%;
+        padding: 0 55px;
+        margin-top: 12px;
+        // height: 362px;
+        display: flex;
+        .watch_left{
+          width: calc(100% - 174px);
+          height: 100%;
+          .left_top{
+            width: 100%;
+            height: 334px;
+            background: var(--background_color_default);
+            border-radius: 4px 4px 0 0;
+            &__even{
+              display: flex;
+              height: 100%;
+              justify-content: center;
+              align-items: center;
+              span{
+                display: inline-block;
+                width: 298px;
+                height: 167px;
+                img{
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                }
+              }
+            }
+            &__float{
+              width: 100%;
+              height: 100%;
+              position: relative;
+              background: url('./image/living/layout1.png') no-repeat 50% 50%;
+              .imgs{
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                height: 84px;
+                span{
+                  display: inline-block;
+                  width: 149px;
+                  height: 84px;
+                  img{
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                  }
+                }
+              }
+            }
+            &__tiling{
+              .host{
+                width: 446px;
+                height: 250px;
+                margin: 0 auto;
+                img{
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                }
+              }
+              .imgs{
+                display: flex;
+                span{
+                  display: inline-block;
+                  width: 149px;
+                  height: 84px;
+                  img{
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                  }
+                }
+              }
+            }
+          }
+          .left_bottom{
+            width: 100%;
+            height: 28px;
+            background: var(--background_color_regular);
+            border-radius: 0 0 4px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 10px;
+            &_setting{
+              font-size: 14px;
+              color: var(--color_text_secondary);
+              transform: scale(0.8);
+              transform-origin: center left;
+            }
+            &_tools{
+              display: inline-block;
+              width: 112px;
+              height: 20px;
+              transform: scale(0.9);
+              transform-origin: center right;
+              img{
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+              }
+            }
+          }
+        }
+        .watch_right{
+          width: 165px;
+          margin-left: 9px;
+          .right_top{
+            width: 100%;
+            height: 93px;
+            border-radius: 4px 4px 0 0;
+            img{
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+              border-radius: 4px 4px 0 0;
+            }
+          }
+          .right_bottom{
+            width: 100%;
+            height: 269px;
+            background: var(--background_color_regular);
+            position: relative;
+            border-radius: 0 0 4px 4px;
+            &_chat{
+              width: 100%;
+              .chat_tab{
+                height: 21px;
+                width: 100%;
+                padding: 0 10px;
+                background: var(--background_color_regular);
+                position: relative;
+                border-bottom: 1px solid #1a1a1a;
+                p{
+                  color: var(--color_text_active);
+                  font-size: 14px;
+                  line-height: 19px;
+                  transform: scale(0.6);
+                  transform-origin: center left;
+                }
+                span{
+                  position: absolute;
+                  display: inline-block;
+                  width: 15px;
+                  height: 2px;
+                  bottom: 0;
+                  left: 10px;
+                  border-radius: 4px;
+                  background: var(--background_color_active);
+                }
+              }
+            .chat_box{
+              width: 100%;
+              padding: 0 10px;
+              margin-top: 8px;
+              &_item{
+                display: flex;
+                margin-bottom: -14px;
+                &.chat_box_top{
+                  margin-bottom: -2px;
+                }
+                .item_img{
+                  p{
+                    display: inline-block;
+                    width: 28px;
+                    height: 28px;
+                    border-radius: 50%;
+                    transform: scale(0.5);
+                    transform-origin: top left;
+                    img{
+                      width: 100%;
+                      height: 100%;
+                      border-radius: 50%;
+                      object-fit: cover;
+                    }
+                  }
+                }
+                .item_chat{
+                  margin-left: -8px;
+                  .chat_role{
+                    font-size: 16px;
+                    transform: scale(0.5);
+                    transform-origin: top left;
+                    color: var(--color_text_chatName);
+                    .host{
+                      color: #FB2626;
+                      padding: 1px 4px;
+                      border-radius: 6px;
+                      background: rgba(251,38,38, 0.15);
+                    }
+                    .ass{
+                      color: #0A7FF5;
+                      padding: 1px 4px;
+                      border-radius: 6px;
+                      background: rgba(10,127,245, 0.15);
+                    }
+                  }
+                }
+                .chat_title{
+                  color: var(--color_text_primary);
+                  line-height: 22px;
+                  padding: 2px 5px;
+                  transform: scale(0.5);
+                  font-size: 16px;
+                  transform-origin: top left;
+                  background: var(--background_color_chatBg);
+                  border-radius: 6px;
+                  margin-right: -115px;
+                }
+              }
+            }
+          }
+          &_send{
+            width: 100%;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 40px;
+            background: var(--background_color_regular);
+            border-top: 1px solid #1a1a1a;
+            padding: 2px 8px;
+            color: var(--color_text_send);
+            border-radius: 0 0 4px 4px;
+            .icon{
+              font-size: 18px;
+              transform: scale(0.5);
+              transform-origin: top left;
+              i{
+                padding-right: 8px;
+              }
+            }
+            .send{
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-top: -6px;
+              p{
+                width: 125px;
+                height: 20px;
+                border-radius: 20px;
+                background: var(--background_color_primary);
+                padding-left: 9px;
+                span{
+                  display: inline-block;
+                  font-size: 16px;
+                  line-height: 40px;
+                  transform: scale(0.5);
+                  transform-origin: top left;
+                }
+              }
+              &_msg{
+                width: 20px;
+                height: 20px;
+                display: inline-block;
+                line-height: 40px;
+                background: var(--background_color_primary);
+                border-radius: 50%;
+                text-align: center;
+                i{
+                  display: inline-block;
+                  font-size: 18px;
+                  transform: scale(0.5);
+                  transform-origin: top center;
+                }
+
+              }
+            }
+          }
+        }
+        }
+      }
+      .pc_subscribe{
+        margin-top: 12px;
+        padding: 0 55px;
+        // height: 447px;
+        &_bg{
+          width: 100%;
+          height: 380px;
+          border-radius: 4px 4px 0 0;
+          background: url('./image/living/ppt.png') no-repeat 50% 50%;
+        }
+        &_bottom{
+          width: 100%;
+          height: 32px;
+          border-radius:  0 0 4px 4px;
+          background: var(--background_color_regular);
+          padding: 0 12px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 12px;
+          color:var(--color_text_regular);
+          line-height: 32px;
+          .font_scale{
+            font-size: 20px;
+            transform: scale(0.5);
+            transform-origin: center left;
+          }
+          .color_bold{
+            font-size: 40px;
+            font-weight: 500;
+            padding-left: 10px;
+          }
+          .color_red{
+            color:var(--color_text_active);
+            display: inline-block;
+          }
+          .font_right{
+            font-size: 20px;
+            transform: scale(0.5);
+            transform-origin: center right;
+          }
+          .btn{
+            display: inline-block;
+            width: 128px;
+            height: 44px;
+            border-radius: 18px;
+            background: var(--background_color_active);
+            color: var(--color_text_primary);
+            margin-left: 20px;
+            line-height: 44px;
+            text-align: center;
+          }
+        }
+      }
+      .pc_footer{
+        text-align: center;
+        font-size: 12px;
+        line-height: 18px;
+        margin-top: 8px;
+        color: var(--color_text_footer);
+      }
+    }
+}
+</style>
