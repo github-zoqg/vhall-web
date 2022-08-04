@@ -34,6 +34,6 @@ export default {
 
 <style lang="less" scoped>
 .user-manage {
-  padding: 24px 24px;
+  padding: 24px 24px 40px 24px;
 }
 </style>
