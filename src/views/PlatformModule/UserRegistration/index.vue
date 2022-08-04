@@ -19,9 +19,9 @@
       <div class="list--search">
         <!-- 专题下，导出数据页效果 -->
         <template v-if="signUpPageType === 'subject' && isDataPage">
-          <el-button size="medium" type="primary" round v-preventReClick @click.prevent.stop="downloadHandle" v-if="signUpPageType === 'subject' && isDataPage">导出</el-button>
           <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" round @click.prevent.stop="addUserDialog">快速报名</el-button>
           <el-button size="medium" :class="signUpPageType === 'subject' && isDataPage ? 'transparent-btn' : ''" plain round v-preventReClick @click.prevent.stop="importUserDialog">导入</el-button>
+          <el-button size="medium" type="primary" round v-preventReClick @click.prevent.stop="downloadHandle" v-if="signUpPageType === 'subject' && isDataPage">导出</el-button>
         </template>
         <template v-else>
           <el-button size="medium" type="primary" round @click.prevent.stop="addUserDialog">快速报名</el-button>
@@ -83,7 +83,7 @@
           :pageLimit=query.limit
           :needPagination=true
           width="150px"
-          max-height="520px"
+          max-height="504px"
           scene="accountList"
           @getTableList="getUserRegistrationList"
         >
@@ -346,7 +346,7 @@ export default {
 /deep/.all-yes-data {
   .data-list {
     .el-table {
-      margin-bottom: 40px;
+      margin-bottom: 32px;
       .cell{
         line-height: 25px;
       }
@@ -354,7 +354,7 @@ export default {
   }
 }
 /deep/.search-no-data {
-  padding-top: 148px;
+  padding-top: 128px;
   .search {
     padding-bottom: 0;
   }
@@ -439,6 +439,9 @@ export default {
   }
 }
 .vmp-user-registration{
+  /deep/.el-table {
+    margin-bottom: 32px;
+  }
   &.gray-theme {
     .all-no-data {
       /* 基于外边框已经有距离： padding: 24px 24px 24px 24px; */
@@ -446,7 +449,7 @@ export default {
     }
     .list-table-panel {
       background: #ffffff;
-      padding: 24px 24px;
+      padding: 24px 24px 40px 24px;
     }
     /deep/.search-no-data {
       padding-top: 60px;
