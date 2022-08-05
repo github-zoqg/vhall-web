@@ -587,7 +587,7 @@ export default {
       // 创建，webinar_id 取值 ''，不查活动下权限
       const webinar_id = this.$route.params.id || this.$route.query.id
       if (webinar_id) {
-        return JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'))['multilingual'] == '1'
+        return this.WEBINAR_PES && this.WEBINAR_PES['multilingual'] == '1'
       } else {
         return JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['multilingual'] == '1'
       }
@@ -821,6 +821,8 @@ export default {
       createTagDialog: false, // 创建标签弹框
       tagName: '',  // 新建标签名称
       tagList: [1,2,3,4],   // 所有标签集合
+      SAAS_VS_PES: null,
+      WEBINAR_PES: null
     };
   },
   beforeRouteEnter (to, from, next) {
@@ -859,7 +861,6 @@ export default {
     });
   },
   async created(){
-
     const path = this.$route.path
     console.log('>>>>>>>>11111', path)
     if (path.indexOf('/live/vodEdit') != -1 ||path.indexOf('/live/timeEdit') != -1  ) {
@@ -867,7 +868,12 @@ export default {
     }
     this.versionType = JSON.parse(sessionOrLocal.get('versionType'));
     window.scrollTo(0,0);
-    this.planFunctionGet()
+    // 获取活动维度下 - 配置项开关集合 - 通过地址栏参数传递活动ID
+    console.log('>>>>>>>>当前活动-配置项开关内容(创建/编辑中调用)', this.$route.params.id)
+    await this.getConfigListIsOpen('webinar', 1, this.$route.params.id)
+    // 获取活动维度下 - 具体配置项值 - 通过地址栏参数传递活动ID
+    console.log('>>>>>>>>当前活动-配置项值(创建/编辑中调用)')
+    await this.getConfigListIsOpen('webinar', 2, this.$route.params.id)
     if (this.$route.query.id || this.$route.params.id) {
       this.webinarId = this.$route.query.id || this.$route.params.id;
       if(this.$route.query.id){
@@ -1022,32 +1028,46 @@ export default {
         });
       }
     },
-    // 获取可配置选项
-    planFunctionGet() {
+    // 获取配置项开关 / 具体配置项值
+    getConfigListIsOpen(type = 'user', scene = 1, webinar_id = '') {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
-      let params = {
-        webinar_id: this.$route.params.str || '',
-        webinar_user_id: userId,
-        scene_id: 2
-      }
-      return this.$fetch('planFunctionGet', this.$params(params)).then(res=>{
-        // 数据渲染
-        if (res.data && res.code == 200) {
-          const data = JSON.parse(res.data.permissions)
-          this.hasDelayPermission = data['no.delay.webinar'] && data['no.delay.webinar'] == 1 ? true : false
-          if (!this.hasDelayPermission) {
-            this.selectDelayMode = 'common'
-          }
-          this.speakerMaxNum = data['speaker_max_num'] || ''
-          if (Number(this.$route.query.type) !== 2) {
-            // 不是编辑，默认设置值如此
-            // this.formData.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
-            this.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
-          }
-          // this.handleLowerGradeHeart()
+      let params = {}
+      if (type === 'webinar') {
+        params = {
+          webinar_id: webinar_id,
+          webinar_user_id: userId,
+          scene_id: scene,
         }
-      }).catch(res =>{
-        console.log(res);
+      } else {
+        params = {}
+      }
+      return this.$fetch('planFunctionGet', this.$params(params),{
+        'gray-id': userId
+      }).then(res => {
+        if (res && res.code === 200 && res.data.permissions) {
+          const data = JSON.parse(res.data.permissions)
+          if (type === 'webinar' && scene == 1) {
+            // 设置活动全部权限
+            this.WEBINAR_PES = data
+          } else if (type === 'webinar' && scene == 2) {
+            // 数据渲染
+            this.hasDelayPermission = data['no.delay.webinar'] && data['no.delay.webinar'] == 1 ? true : false
+            if (!this.hasDelayPermission) {
+              this.selectDelayMode = 'common'
+            }
+            this.speakerMaxNum = data['speaker_max_num'] || ''
+            if (Number(this.$route.query.type) !== 2) {
+              // 不是编辑，默认设置值如此
+              // this.formData.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
+              this.zdy_inav_num = data['speaker_max_num'] > 1 ? `1v${Number(data['speaker_max_num'])-1}` : '1v1'
+            }
+            // this.handleLowerGradeHeart()
+          } else {
+            this.SAAS_VS_PES = data
+          }
+        }
+      }).catch(e => {
+        console.log('刷新等情况下获取活动下接口配置项情况，异常不做任何处理')
       });
     },
     covertMaxNum(keyNum) {
