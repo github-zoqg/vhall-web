@@ -2,7 +2,7 @@
   <div class="living-setting">
     <div class="living-setting_type">
       <template v-if="livingPreview==1">
-        <div class="type_item" v-for="(item, index) in themeTypeList" :key="index">
+        <div class="type_item" v-for="(item, index) in themePcTypeList" :key="index">
           <span class="type_item_title">{{ item.title }}</span>
           <p class="type_item_check" :class="item.isActive ? 'active' : ''" @click="activeTheme(item)">
             <span class="checked_img" v-if="item.isActive"><img src="../../../common/images/icon-choose.png" alt=""></span>
@@ -35,7 +35,7 @@
         </div>
         <div class="preview_container">
           <div class="preview_box_pc" v-if="livingPreview==1">
-            <pc-preview :type="livingPcPreviewType" :domainUrl="domain_pc_url"></pc-preview>
+            <pc-preview :type="livingPcPreviewType" :domainUrl="domain_pc_url" :livingForm="livingForm" :videoUrl="video_url"></pc-preview>
           </div>
           <div class="preview_box_wap" v-else>
             <wap-preview :type="livingPcPreviewType"></wap-preview>
@@ -55,7 +55,7 @@
         <div class="form_item">
           <p class="form_item_title">主题色</p>
           <div class="theme_colors">
-            <span v-for="(item, index) in pageThemeColors" :key="index" :class="livingPcForm.style == index + 1 ? 'active' : ''" :style="{backgroundColor:item}" @click="changePcTheme(index)"></span>
+            <span v-for="(item, index) in pageThemeColors" :key="index" :class="livingPcForm.bgColor == index + 1 ? 'active' : ''" :style="{backgroundColor:item}" @click="changePcTheme(index)"></span>
           </div>
         </div>
         <div class="form_item">
@@ -63,8 +63,8 @@
           <upload
             class="upload__living"
             id="living_cropper"
-            v-model="livingPcForm.theme_url"
-            :domain_url="livingPcForm.theme_url"
+            v-model="livingPcForm.background"
+            :domain_url="livingPcForm.background"
             :saveData="{
               path: pathUrl,
               type: 'image',
@@ -85,13 +85,13 @@
         </div>
         <div class="form_item">
           <span class="vague_theme">模糊程度</span>
-          <vh-slider v-model="livingPcForm.theme_vague" style="width: 131px" :max="10"></vh-slider>
-          <span class="vague_num">{{livingPcForm.theme_vague}}</span>
+          <vh-slider v-model="livingPcForm.blurryDegree" style="width: 131px" :max="10"></vh-slider>
+          <span class="vague_num">{{livingPcForm.blurryDegree}}</span>
         </div>
         <div class="form_item">
           <span class="vague_theme">背景亮度</span>
-          <vh-slider v-model="livingPcForm.theme_light" style="width: 131px" :max="20"></vh-slider>
-          <span class="vague_num">{{livingPcForm.theme_light}}</span>
+          <vh-slider v-model="livingPcForm.lightDegree" style="width: 131px" :max="20"></vh-slider>
+          <span class="vague_num">{{livingPcForm.lightDegree}}</span>
         </div>
       </template>
       <!-- wap主题设置 -->
@@ -102,13 +102,13 @@
             <span v-for="(item, index) in pageThemeColors" :key="index" :style="{backgroundColor:item}"></span>
           </div>
         </div>
-        <div class="form_item" v-if="choseWapType==3">
+        <div class="form_item" v-if="livingWapForm.style==3">
           <p class="form_item_title">主题背景</p>
           <upload
             class="upload__living"
             id="living_cropper"
-            v-model="livingWapForm.theme_url"
-            :domain_url="livingWapForm.theme_url"
+            v-model="livingWapForm.background"
+            :domain_url="livingWapForm.background"
             :saveData="{
               path: pathUrl,
               type: 'image',
@@ -127,15 +127,15 @@
             </div>
           </upload>
         </div>
-        <div class="form_item" v-if="choseWapType==3">
+        <div class="form_item" v-if="livingWapForm.style==3">
           <span class="vague_theme">模糊程度</span>
-          <vh-slider v-model="livingWapForm.theme_vague" style="width: 131px" :max="10"></vh-slider>
-          <span class="vague_num">{{livingWapForm.theme_vague}}</span>
+          <vh-slider v-model="livingWapForm.blurryDegree" style="width: 131px" :max="10"></vh-slider>
+          <span class="vague_num">{{livingWapForm.blurryDegree}}</span>
         </div>
-        <div class="form_item" v-if="choseWapType==3">
+        <div class="form_item" v-if="livingWapForm.style==3">
           <span class="vague_theme">背景亮度</span>
-          <vh-slider v-model="livingWapForm.theme_light" style="width: 131px" :max="20"></vh-slider>
-          <span class="vague_num">{{livingWapForm.theme_light}}</span>
+          <vh-slider v-model="livingWapForm.lightDegree" style="width: 131px" :max="20"></vh-slider>
+          <span class="vague_num">{{livingWapForm.lightDegree}}</span>
         </div>
       </template>
       <!-- 视频区域设置 -->
@@ -154,16 +154,16 @@
           <p class="form_item_title">视频区【连麦】布局</p>
           <div class="form_item_lay">
             <div class="item_lay" @click="choseMicrophone(1)">
-              <p :class="livingForm.microphone == 1 ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
-              <span>主次浮窗</span>
+              <p :class="livingForm.inavLayout == 1 ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
+              <span>均匀排列</span>
             </div>
             <div class="item_lay" @click="choseMicrophone(2)">
-              <p :class="livingForm.microphone == 2 ? 'active' : ''"><img src="./image/main_2.png" alt=""></p>
+              <p :class="livingForm.inavLayout == 2 ? 'active' : ''"><img src="./image/main_2.png" alt=""></p>
               <span>主次平铺</span>
             </div>
             <div class="item_lay" @click="choseMicrophone(3)">
-              <p :class="livingForm.microphone == 3 ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
-              <span>均匀排列</span>
+              <p :class="livingForm.inavLayout == 3 ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
+              <span>主次悬浮</span>
             </div>
           </div>
         </div>
@@ -178,14 +178,14 @@
         </div>
         <div class="form_item">
           <p class="form_item_title">视频区底色</p>
-          <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors"  :colorDefault="livingForm.videoStyle"></color-set>
+          <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoColor"></color-set>
         </div>
         <div class="form_item">
           <p class="form_item_title">视频区背景</p>
           <upload
             class="upload__living"
-            v-model="livingForm.video_url"
-            :domain_url="livingForm.video_url"
+            v-model="livingForm.videoBackGround"
+            :domain_url="livingForm.videoBackGround"
             :saveData="{
               path: pathUrl,
               type: 'image',
@@ -206,17 +206,18 @@
         </div>
         <div class="form_item">
           <span class="vague_theme">模糊程度</span>
-          <vh-slider v-model="livingForm.video_vague" style="width: 131px" :max="10"></vh-slider>
-          <span class="vague_num">{{livingForm.video_vague}}</span>
+          <vh-slider v-model="livingForm.videoBlurryDegree" style="width: 131px" :max="10"></vh-slider>
+          <span class="vague_num">{{livingForm.videoBlurryDegree}}</span>
         </div>
         <div class="form_item">
           <span class="vague_theme">背景亮度</span>
-          <vh-slider v-model="livingForm.video_light" style="width: 131px" :max="20"></vh-slider>
-          <span class="vague_num">{{livingForm.video_light}}</span>
+          <vh-slider v-model="livingForm.videoLightDegree" style="width: 131px" :max="20"></vh-slider>
+          <span class="vague_num">{{livingForm.videoLightDegree}}</span>
         </div>
       </template>
     </div>
-    <cropper @cropComplete="cropComplete" ref="livingCropper" cropperDom="living_cropper"></cropper>
+    <div class="living-setting_hidden" v-if="webinarId && livingConfig==2"></div>
+    <cropper @cropComplete="cropComplete" ref="livingCropper" cropperDom="living_cropper" @deleteComplete="deleteComplete"></cropper>
     <living-preview ref="livingPreview"></living-preview>
   </div>
 </template>
@@ -230,9 +231,15 @@ import pcPreview from './living_pc_preview.vue'
 import wapPreview from './living_wap_preview.vue'
 export default {
   name: 'livingSet',
+  props: {
+    livingConfig: {
+      type: Number,
+      default: 0
+    }
+  },
   data() {
     return {
-      themeTypeList: [
+      themePcTypeList: [
         {
           title: '炫酷黑',
           url: '',
@@ -284,43 +291,51 @@ export default {
           isActive: false
         }
       ],
-      chosePcType: 1,
-      choseWapType: 1,
       pageThemeColors: ['#1A1A1A', '#F0F0F0', '#FB2626', '1E4EDC'],
       videoColors: ['000000', '262626', '595959', '8F8F8F', 'D9D9D9'],
       livingPreview: 1,
       livingPcPreviewType: 1,
+      webinarId: this.$route.params.str,
       livingWapForm: {
-        style: 1, //主题色
-        theme_url: '',
-        theme_vague: 0,
-        theme_light: 10,
-        x: 0,
-        y:0,
-        width: 0,
-        height: 0
+        style: 1,
+        bgColor: 1, //主题色
+        background: '',
+        blurryDegree: 0,
+        lightDegree: 10,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
       },
       livingPcForm: {
-        style: 1, //主题色
-        theme_url: '',
-        theme_vague: 0,
-        theme_light: 10,
-        x: 0,
-        y:0,
-        width: 0,
-        height: 0
+        style: 1,
+        bgColor: 1, //主题色
+        background: '',
+        blurryDegree: 0,
+        lightDegree: 10,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
       },
       livingForm: {
-        videoStyle: '#000000', //视频区底色
+        videoColor: '#000', //视频区底色
         chatLayout: 1,
-        microphone: 1, //连麦布局
-        video_url: '',
-        video_vague: 0,
-        video_light: 10,
-        x: 0,
-        y:0,
-        width: 0,
-        height: 0
+        inavLayout: 1, //连麦布局
+        inavDocumentLayout: 1, //连麦+演示布局
+        videoBackGround: '',
+        videoBlurryDegree: 0,
+        videoLightDegree: 10,
+        videoBackGroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
       }
     }
   },
@@ -338,17 +353,17 @@ export default {
     },
     // pc端主题背景
     domain_pc_url() {
-      if (!this.livingPcForm.theme_url) return '';
-      return `${this.livingPcForm.theme_url}?x-oss-process=image/crop,x_${this.livingPcForm.x.toFixed()},y_${this.livingPcForm.y.toFixed()},w_${this.livingPcForm.width.toFixed()},h_${this.livingPcForm.height.toFixed()}${this.livingPcForm.theme_vague > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingPcForm.theme_vague * 2}` : ''},x-oss-process=image/bright,${(this.livingPcForm.theme_light - 10) * 5} `;
+      if (!this.livingPcForm.background) return '';
+      return `${this.livingPcForm.background}?x-oss-process=image/crop,x_${this.livingPcForm.backgroundSize.x.toFixed()},y_${this.livingPcForm.backgroundSize.y.toFixed()},w_${this.livingPcForm.backgroundSize.width.toFixed()},h_${this.livingPcForm.backgroundSize.height.toFixed()}${this.livingPcForm.blurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingPcForm.blurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.livingPcForm.lightDegree - 10) * 5} `;
     },
     // wap端主题背景
     domain_wap_url() {
-      if (!this.livingWapForm.theme_url) return '';
-      return `${this.livingWapForm.theme_url}?x-oss-process=image/crop,x_${this.livingWapForm.x.toFixed()},y_${this.livingWapForm.y.toFixed()},w_${this.livingWapForm.width.toFixed()},h_${this.livingWapForm.height.toFixed()}${this.livingWapForm.theme_vague > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingWapForm.theme_vague * 2}` : ''},x-oss-process=image/bright,${(this.livingWapForm.theme_light - 10) * 5} `;
+      if (!this.livingWapForm.background) return '';
+      return `${this.livingWapForm.background}?x-oss-process=image/crop,x_${this.livingWapForm.backgroundSize.x.toFixed()},y_${this.livingWapForm.backgroundSize.y.toFixed()},w_${this.livingWapForm.backgroundSize.width.toFixed()},h_${this.livingWapForm.backgroundSize.height.toFixed()}${this.livingWapForm.blurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingWapForm.blurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.livingWapForm.lightDegree - 10) * 5} `;
     },
     video_url() {
-      if (!this.livingForm.video_url) return '';
-      return `${this.livingForm.video_url}?x-oss-process=image/crop,x_${this.livingForm.x.toFixed()},y_${this.livingForm.y.toFixed()},w_${this.livingForm.width.toFixed()},h_${this.livingForm.height.toFixed()}${this.livingForm.video_vague > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingForm.video_vague * 2}` : ''},x-oss-process=image/bright,${(this.livingForm.video_light - 10) * 5} `;
+      if (!this.livingForm.videoBackGround) return '';
+      return `${this.livingForm.videoBackGround}?x-oss-process=image/crop,x_${this.livingForm.videoBackGroundSize.x.toFixed()},y_${this.livingForm.videoBackGroundSize.y.toFixed()},w_${this.livingForm.videoBackGroundSize.width.toFixed()},h_${this.livingForm.videoBackGroundSize.height.toFixed()}${this.livingForm.videoBlurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingForm.videoBlurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.livingForm.videoLightDegree - 10) * 5} `;
     }
   },
   mounted() {
@@ -360,12 +375,30 @@ export default {
     initComp(){
       console.log('我是初始化接口')
     },
+    initLivingSettingInfo() {
+      let params = {
+        webinar_id: this.webinarId || undefined,
+        type: this.webinarId ? 1 : 2
+      }
+      this.$fetch('getInterWebinarSkin', params).then(res=>{
+        if (res.code === 200) {
+          const { skin_json_pc, skin_json_wap } = res.data;
+          this.livingPcForm.style = skin_json_pc.style;
+          this.livingWapForm.style = skin_json_wap.style;
+          this.livingPcForm = { ...skin_json_pc }; //pc信息
+          this.livingWapForm = { ...skin_json_wap }; //wap信息
+          this.livingForm = { ...skin_json_pc }; // 公共信息
+        }
+      }).catch(err => {
+        this.$message.success(err.msg || '获取信息失败')
+      })
+    },
     activeTheme(item) {
-      this.themeTypeList.map(item => {
+      this.themePcTypeList.map(item => {
         return item.isActive = false
       })
       item.isActive = true;
-      this.chosePcType = item.id;
+      this.livingPcForm.style = item.id;
       this.resetFormPcColor(item.id);
     },
     activeWapTheme(item) {
@@ -373,11 +406,15 @@ export default {
         return item.isActive = false
       })
       item.isActive = true;
-      this.choseWapType = item.id;
+      this.livingWapForm.style = item.id;
       this.resetFormWapColor(item.id)
     },
     changePcTheme(index) {
-      this.livingPcForm.style = index + 1;
+      this.livingPcForm.bgColor = index + 1;
+    },
+    // 选择视频区底色
+    changeVideoColor(color) {
+      this.livingForm.videoColor = color;
     },
     getImageQuery(url) {
       if (url.indexOf('?') != -1) {
@@ -398,69 +435,79 @@ export default {
     // 默认pc主题颜色
     resetFormPcColor(index) {
       this.livingPcForm = {
-        style: index, //主题色
-        theme_url: '',
-        theme_vague: 0,
-        theme_light: 10,
-        x: 0,
-        y:0,
-        width: 0,
-        height: 0
+        bgColor: 1, //主题色
+        background: '',
+        blurryDegree: 0,
+        lightDegree: 10,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
       };
       let microphoneArr = [1, 2, 2, 3]
       this.livingForm = {
-        videoStyle: '#000000', //视频区底色
+        videoColor: '#000', //视频区底色
         chatLayout: index==1 || index == 4 ? 1 : 2,
-        microphone: microphoneArr[index-1], //连麦布局
-        video_url: '',
-        video_vague: 0,
-        video_light: 10,
-        x: 0,
-        y:0,
-        width: 0,
-        height: 0
+        inavLayout: microphoneArr[index-1], //连麦布局
+        videoBackGround: '',
+        videoBlurryDegree: 0,
+        videoLightDegree: 10,
+        videoBackGroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
       }
     },
      // 默认wap主题颜色
     resetFormWapColor(index) {
       this.livingWapForm = {
-        style: index, //主题色
-        theme_url: '',
-        theme_vague: 0,
-        theme_light: 10,
-        x: 0,
-        y:0,
-        width: 0,
-        height: 0
+        bgColor: index, //主题色
+        background: '',
+        blurryDegree: 0,
+        lightDegree: 10,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
       };
       // let microphoneArr = [1, 2, 2, 3]
       this.livingForm = {
-        videoStyle: '#000000', //视频区底色
+        videoColor: '#000', //视频区底色
         chatLayout: index==3 ? 2 : 1,
-        microphone: 1, //连麦布局
-        video_url: '',
-        video_vague: 0,
-        video_light: 10,
-        x: 0,
-        y:0,
-        width: 0,
-        height: 0
+        inavLayout: 1, //连麦布局
+        inavDocumentLayout: 1,
+        videoBackGround: '',
+        videoBlurryDegree: 0,
+        videoLightDegree: 10,
+        videoBackGroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
       }
     },
     saveSettingLivingInfo() {
       let params = {
-        pageStyle: '#FFFFFF',
-        videoStyle: '#000000',
-        theme_url: '',
-        theme_vague: 0,
-        theme_light: 10,
-        chatLayout: 1,
-        microphone: 1, //连麦布局
-        video_url: '',
-        video_vague: 0,
-        video_light: 10
+        webinar_id: this.webinarId || undefined,
+        type: this.webinarId ? 1 : 2,
+        skin_json_pc: Object.assign({}, this.livingPcForm, this.livingForm),
+        skin_json_wap: Object.assign({}, this.livingWapForm, this.livingForm)
       }
-      console.log(params)
+      console.log(params, '???1232425')
+      this.$fetch('skinUpdate', params).then(res=>{
+        if (res.code === 200) {
+          this.$message.success('保存成功')
+        }
+      }).catch(err => {
+        this.$message.success(err.msg || '保存失败')
+      })
     },
     goPreviewLiving(){
       this.$refs.livingPreview.dialogVisible = true
@@ -469,38 +516,39 @@ export default {
       console.log(cropedData, option)
       if (option.index == 1) {
         if (this.livingPreview == 1) {
-          this.livingPcForm.theme_url = option.src;
-          this.themePcImages = cropedData;
+          this.livingPcForm.background = option.src;
+          this.livingPcForm.backgroundSize = cropedData;
         } else {
-          this.livingWapForm.theme_url = option.src;
-          this.themeWapImages = cropedData;
+          this.livingWapForm.background = option.src;
+          this.livingWapForm.backgroundSize = cropedData;
         }
       } else {
-        this.livingForm.video_url = option.src
-        this.videoImages = cropedData;
+        this.livingForm.videoBackGround = option.src
+        this.livingForm.videoBackGroundSize = cropedData;
       }
     },
-    resetLogoUrl() {
-      this.$nextTick(()=> {
-        this.livingForm.theme_url = '';
-      });
+    deleteComplete(option) {
+      this.beforeUploadHandler()
     },
+    // 主题背景删除
+    resetLogoUrl() {
+      if (this.livingPreview == 1) {
+         this.livingPcForm.background = '';
+      } else {
+         this.livingWapForm.background = '';
+      }
+    },
+    // 视频区域图片删除
     resetVideoUrl() {
-      this.$nextTick(()=> {
-        this.livingForm.video_url = '';
-      });
+      this.livingForm.videoBackGround = '';
     },
     choseMicrophone(index) {
-      this.livingForm.microphone = index;
+      this.livingForm.inavLayout = index;
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
       if(res.data) {
         this.$refs.livingCropper.showModel(res.data.domain_url, 1)
-        // let domain_url = res.data.domain_url || ''
-        // let file_url = res.data.file_url || '';
-        // this.livingForm.theme_url = file_url;
-        // this.domain_url = domain_url;
       }
     },
     handleUploadVideoSuccess(res, file) {
@@ -561,6 +609,7 @@ export default {
   .living-setting{
     padding-top: 16px;
     display: flex;
+    position: relative;
     &_type{
       display: flex;
       flex-direction: column;
@@ -714,6 +763,14 @@ export default {
           justify-content: flex-start;
         }
       }
+    }
+    &_hidden{
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      top: 0;
+      left: 0;
+      background: rgba(255, 255, 255, 0.5);
     }
     @media (max-width: 1366px) {
       .preview_box_pc{

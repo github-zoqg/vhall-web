@@ -14,6 +14,7 @@ const color_text_active = '#FB2626';
 
 
 /* 背景颜色 */
+const background_color_theme = '#1a1a1a';
 const background_color_default = '#000';
 const background_color_primary = '#1a1a1a';
 const background_color_regular = '#2a2a2a';
@@ -33,5 +34,6 @@ export default {
   '--background_color_primary': background_color_primary,
   '--background_color_regular': background_color_regular,
   '--background_color_chatBg': background_color_chatBg,
-  '--background_color_active': background_color_active
+  '--background_color_active': background_color_active,
+  '--background_color_theme': background_color_theme
 }

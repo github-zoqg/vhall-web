@@ -58,6 +58,10 @@ export default {
       // const fileObj = this.dataURLtoFile(this.cropperImgUrl)
       this.$emit('cropComplete', this.cropperData, this.option)
       this.dialogVisible = false;
+    },
+    resetCropper() {
+      this.dialogVisible = false;
+      this.$emit('deleteComplete', this.option)
     }
   }
 }

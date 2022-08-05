@@ -25,21 +25,21 @@
       </div>
       <div class="pc_watch" v-if="type==1">
         <div class="watch_left">
-          <div class="left_top">
+          <div class="left_top" :style="videoBackground">
             <!-- 均匀 -->
-            <!-- <div class="left_top__even">
+            <div class="left_top__even" v-if="livingForm.inavLayout==1">
               <span><img src="./image/living/layout1.png" alt=""></span>
               <span><img src="./image/living/layout5.png" alt=""></span>
-            </div> -->
-            <!-- 浮窗 -->
-            <!-- <div class="left_top__float">
+            </div>
+            <!-- 主次悬浮 -->
+            <div class="left_top__float" v-if="livingForm.inavLayout==3">
               <div class="imgs">
                 <span><img src="./image/living/layout2.png" alt=""></span>
                 <span><img src="./image/living/layout3.png" alt=""></span>
               </div>
-            </div> -->
-            <!-- 平铺 -->
-            <div class="left_top__tiling">
+            </div>
+            <!-- 主次平铺 -->
+            <div class="left_top__tiling" v-if="livingForm.inavLayout==2">
               <div class="host">
                 <img src="./image/living/layout1.png" alt="">
               </div>
@@ -70,7 +70,7 @@
                 <p>聊天</p>
                 <span></span>
               </div>
-              <div class="chat_box">
+              <div class="chat_box" v-if="livingForm.chatLayout==1">
                 <div class="chat_box_item chat_box_top">
                   <div class="item_img">
                     <p><img src="./image/living/chat1.png" alt=""></p>
@@ -106,6 +106,35 @@
                     <p class="chat_role"><span class="ass">助理</span> 小助理</p>
                     <p class="chat_title">获取PPT，请添加官方企微哦～</p>
                   </div>
+                </div>
+              </div>
+              <div class="chat_right" v-else>
+                <div class="chat_right_item">
+                  <span class="item_avatar"><img src="./image/living/chat1.png" alt=""></span>
+                  <span class="item_host"> 主持人</span>
+                  <span class="item_name"> 蒋老师 </span>
+                  欢迎小伙伴们～
+                </div>
+                <div class="chat_right_item item_other">
+                  <span class="item_avatar"><img src="./image/living/chat2.png" alt=""></span>
+                  <span class="item_name"> 邓浩杰 </span>
+                  期待已久的运营直播实操，终于可以看啦～
+                </div>
+                <div class="chat_right_item">
+                  <span class="item_avatar"><img src="./image/living/layout2.png" alt=""></span>
+                  <span class="item_ass"> 助理</span>
+                  <span class="item_name"> 小助理 </span>
+                  获取PPT，加官微哦
+                </div>
+                <div class="chat_right_item">
+                  <span class="item_avatar"><img src="./image/living/chat3.png" alt=""></span>
+                  <span class="item_name"> 王觉 </span>
+                  这才是实战特训营
+                </div>
+                <div class="chat_right_item">
+                  <span class="item_avatar"><img src="../../../common/images/avatar.png" alt=""></span>
+                  <span class="item_name"> 刘林一 </span>
+                  30分钟直播运营实操特训营 终于开营啦，快来加入吧
                 </div>
               </div>
             </div>
@@ -145,6 +174,25 @@ export default {
     domainUrl: {
       type: String,
       default: ''
+    },
+    // 视频区背景
+    videoUrl: {
+      type: String,
+      default: ''
+    },
+    // 表单数据
+    livingForm: {
+      type: Object,
+      default: ()=>{}
+    }
+  },
+  computed: {
+    videoBackground() {
+      if (this.videoUrl) {
+        return {backgroundImage: `url(${this.videoUrl})`}
+      } else {
+        return {backgroundColor: this.livingForm.videoColor}
+      }
     }
   },
   data() {
@@ -170,7 +218,7 @@ export default {
       width: 100%;
       height: 495px;
       z-index: 0;
-      background-color: var(--background_color_primary);
+      background-color: var(--background_color_theme);
       border-radius: 0 0 4px 4px;
       .pc_bg{
         width: 100%;
@@ -278,7 +326,9 @@ export default {
           .left_top{
             width: 100%;
             height: 334px;
-            background: var(--background_color_default);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            // background: var(--background_color_default);
             border-radius: 4px 4px 0 0;
             &__even{
               display: flex;
@@ -363,6 +413,7 @@ export default {
               display: inline-block;
               width: 112px;
               height: 20px;
+              margin-top: 3px;
               transform: scale(0.9);
               transform-origin: center right;
               img{
@@ -420,24 +471,93 @@ export default {
                   background: var(--background_color_active);
                 }
               }
-            .chat_box{
-              width: 100%;
-              padding: 0 10px;
-              margin-top: 8px;
-              &_item{
-                display: flex;
-                margin-bottom: -14px;
-                &.chat_box_top{
-                  margin-bottom: -2px;
-                }
-                .item_img{
-                  p{
-                    display: inline-block;
-                    width: 28px;
-                    height: 28px;
-                    border-radius: 50%;
+              .chat_box{
+                width: 100%;
+                padding: 0 10px;
+                margin-top: 8px;
+                &_item{
+                  display: flex;
+                  margin-bottom: -14px;
+                  &.chat_box_top{
+                    margin-bottom: -2px;
+                  }
+                  .item_img{
+                    p{
+                      display: inline-block;
+                      width: 28px;
+                      height: 28px;
+                      border-radius: 50%;
+                      transform: scale(0.5);
+                      transform-origin: top left;
+                      img{
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 50%;
+                        object-fit: cover;
+                      }
+                    }
+                  }
+                  .item_chat{
+                    margin-left: -8px;
+                    .chat_role{
+                      font-size: 16px;
+                      transform: scale(0.5);
+                      transform-origin: top left;
+                      color: var(--color_text_chatName);
+                      .host{
+                        color: #FB2626;
+                        padding: 1px 4px;
+                        border-radius: 6px;
+                        background: rgba(251,38,38, 0.15);
+                      }
+                      .ass{
+                        color: #0A7FF5;
+                        padding: 1px 4px;
+                        border-radius: 6px;
+                        background: rgba(10,127,245, 0.15);
+                      }
+                    }
+                  }
+                  .chat_title{
+                    color: var(--color_text_primary);
+                    line-height: 22px;
+                    padding: 2px 5px;
                     transform: scale(0.5);
+                    font-size: 16px;
                     transform-origin: top left;
+                    background: var(--background_color_chatBg);
+                    border-radius: 6px;
+                    margin-right: -115px;
+                  }
+                }
+              }
+              .chat_right{
+                width: 100%;
+                padding: 0 10px;
+                margin-top: 8px;
+                &_item{
+                  color: var(--color_text_primary);
+                  padding: 8px 8px 6px 10px;
+                  border-radius: 16px;
+                  background: var(--background_color_chatBg);
+                  transform: scale(0.5);
+                  line-height: 24px;
+                  transform-origin: top right;
+                  margin-left: -150px;
+                  margin-bottom: -12px;
+                  &.item_other{
+                    margin-bottom: -23px;
+                  }
+                  span{
+                    display: inline-block;
+                    font-size: 16px;
+                  }
+                  .item_avatar{
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    margin-right: 5px;
+                    vertical-align: middle;
                     img{
                       width: 100%;
                       height: 100%;
@@ -445,41 +565,25 @@ export default {
                       object-fit: cover;
                     }
                   }
-                }
-                .item_chat{
-                  margin-left: -8px;
-                  .chat_role{
-                    font-size: 16px;
-                    transform: scale(0.5);
-                    transform-origin: top left;
+                  .item_name{
                     color: var(--color_text_chatName);
-                    .host{
-                      color: #FB2626;
-                      padding: 1px 4px;
-                      border-radius: 6px;
-                      background: rgba(251,38,38, 0.15);
-                    }
-                    .ass{
-                      color: #0A7FF5;
-                      padding: 1px 4px;
-                      border-radius: 6px;
-                      background: rgba(10,127,245, 0.15);
-                    }
+                  }
+                  .item_host{
+                    color: #FB2626;
+                    padding: 1px 4px;
+                    border-radius: 6px;
+                    margin-right: 5px;
+                    background: rgba(251,38,38, 0.15);
+                  }
+                  .item_ass{
+                    color: #0A7FF5;
+                    padding: 1px 4px;
+                    margin-right: 5px;
+                    border-radius: 6px;
+                    background: rgba(10,127,245, 0.15);
                   }
                 }
-                .chat_title{
-                  color: var(--color_text_primary);
-                  line-height: 22px;
-                  padding: 2px 5px;
-                  transform: scale(0.5);
-                  font-size: 16px;
-                  transform-origin: top left;
-                  background: var(--background_color_chatBg);
-                  border-radius: 6px;
-                  margin-right: -115px;
-                }
               }
-            }
           }
           &_send{
             width: 100%;
