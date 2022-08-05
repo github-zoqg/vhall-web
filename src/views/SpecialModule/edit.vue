@@ -1,7 +1,7 @@
 <template>
   <div class="editBox">
     <pageTitle :pageTitle="`${$route.query.title || '创建'}专题`">
-      <div class="title_text" v-if="!isOldSubject">该专题是旧版系统创建，不能设置统一的观看限制。</div>
+      <div class="title_text" v-if="!isOldSubject && $route.params.id">该专题是旧版系统创建，不能设置统一的观看限制。</div>
     </pageTitle>
     <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="80px">
       <el-form-item label="专题标题" prop="title">
