@@ -55,7 +55,7 @@
         <div class="form_item">
           <p class="form_item_title">主题色</p>
           <div class="theme_colors">
-            <span v-for="(item, index) in pageThemeColors" :key="index" :style="{backgroundColor:item}"></span>
+            <span v-for="(item, index) in pageThemeColors" :key="index" :class="livingPcForm.style == index + 1 ? 'active' : ''" :style="{backgroundColor:item}" @click="changePcTheme(index)"></span>
           </div>
         </div>
         <div class="form_item">
@@ -140,7 +140,7 @@
       </template>
       <!-- 视频区域设置 -->
       <template v-if="livingPcPreviewType==1">
-        <div class="form_item">
+        <div class="form_item" v-if="livingPreview==1">
           <span class="vague_theme">聊天布局</span>
           <vh-radio-group v-model="livingForm.chatLayout" size="mini">
             <vh-radio-button round :label="1">上下显示</vh-radio-button>
@@ -257,6 +257,12 @@ export default {
           id: 4,
           isActive: false
         },
+        {
+          title: '荣耀银',
+          url: '',
+          id: 5,
+          isActive: false
+        },
       ],
       themeWapTypeList: [
         {
@@ -285,16 +291,24 @@ export default {
       livingPreview: 1,
       livingPcPreviewType: 1,
       livingWapForm: {
-        pageStyle: '#FFFFFF', //主题色
+        style: 1, //主题色
         theme_url: '',
         theme_vague: 0,
-        theme_light: 10
+        theme_light: 10,
+        x: 0,
+        y:0,
+        width: 0,
+        height: 0
       },
       livingPcForm: {
-        pageStyle: '#1A1A1A', //主题色
+        style: 1, //主题色
         theme_url: '',
         theme_vague: 0,
-        theme_light: 10
+        theme_light: 10,
+        x: 0,
+        y:0,
+        width: 0,
+        height: 0
       },
       livingForm: {
         videoStyle: '#000000', //视频区底色
@@ -302,15 +316,7 @@ export default {
         microphone: 1, //连麦布局
         video_url: '',
         video_vague: 0,
-        video_light: 10
-      },
-      themeImages: {
-        x: 0,
-        y:0,
-        width: 0,
-        height: 0
-      },
-      videoImages: {
+        video_light: 10,
         x: 0,
         y:0,
         width: 0,
@@ -332,17 +338,17 @@ export default {
     },
     // pc端主题背景
     domain_pc_url() {
-      if (!this.livingPcForm.theme_url) return;
-      return `${this.livingPcForm.theme_url}?x-oss-process=image/crop,x_${this.themeImages.x.toFixed()},y_${this.themeImages.y.toFixed()},w_${this.themeImages.width.toFixed()},h_${this.themeImages.height.toFixed()}${this.livingPcForm.theme_vague > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingPcForm.theme_vague * 2}` : ''},x-oss-process=image/bright,${(this.livingPcForm.theme_light - 10) * 5} `;
+      if (!this.livingPcForm.theme_url) return '';
+      return `${this.livingPcForm.theme_url}?x-oss-process=image/crop,x_${this.livingPcForm.x.toFixed()},y_${this.livingPcForm.y.toFixed()},w_${this.livingPcForm.width.toFixed()},h_${this.livingPcForm.height.toFixed()}${this.livingPcForm.theme_vague > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingPcForm.theme_vague * 2}` : ''},x-oss-process=image/bright,${(this.livingPcForm.theme_light - 10) * 5} `;
     },
     // wap端主题背景
     domain_wap_url() {
-      if (!this.livingWapForm.theme_url) return;
-      return `${this.livingWapForm.theme_url}?x-oss-process=image/crop,x_${this.themeImages.x.toFixed()},y_${this.themeImages.y.toFixed()},w_${this.themeImages.width.toFixed()},h_${this.themeImages.height.toFixed()}${this.livingWapForm.theme_vague > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingWapForm.theme_vague * 2}` : ''},x-oss-process=image/bright,${(this.livingWapForm.theme_light - 10) * 5} `;
+      if (!this.livingWapForm.theme_url) return '';
+      return `${this.livingWapForm.theme_url}?x-oss-process=image/crop,x_${this.livingWapForm.x.toFixed()},y_${this.livingWapForm.y.toFixed()},w_${this.livingWapForm.width.toFixed()},h_${this.livingWapForm.height.toFixed()}${this.livingWapForm.theme_vague > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingWapForm.theme_vague * 2}` : ''},x-oss-process=image/bright,${(this.livingWapForm.theme_light - 10) * 5} `;
     },
     video_url() {
-      if (!this.livingForm.video_url) return;
-      return `${this.livingForm.video_url}?x-oss-process=image/crop,x_${this.videoImages.x.toFixed()},y_${this.videoImages.y.toFixed()},w_${this.videoImages.width.toFixed()},h_${this.videoImages.height.toFixed()}${this.livingForm.video_vague > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingForm.video_vague * 2}` : ''},x-oss-process=image/bright,${(this.livingForm.video_light - 10) * 5} `;
+      if (!this.livingForm.video_url) return '';
+      return `${this.livingForm.video_url}?x-oss-process=image/crop,x_${this.livingForm.x.toFixed()},y_${this.livingForm.y.toFixed()},w_${this.livingForm.width.toFixed()},h_${this.livingForm.height.toFixed()}${this.livingForm.video_vague > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingForm.video_vague * 2}` : ''},x-oss-process=image/bright,${(this.livingForm.video_light - 10) * 5} `;
     }
   },
   mounted() {
@@ -360,6 +366,7 @@ export default {
       })
       item.isActive = true;
       this.chosePcType = item.id;
+      this.resetFormPcColor(item.id);
     },
     activeWapTheme(item) {
       this.themeWapTypeList.map(item => {
@@ -367,6 +374,10 @@ export default {
       })
       item.isActive = true;
       this.choseWapType = item.id;
+      this.resetFormWapColor(item.id)
+    },
+    changePcTheme(index) {
+      this.livingPcForm.style = index + 1;
     },
     getImageQuery(url) {
       if (url.indexOf('?') != -1) {
@@ -379,32 +390,62 @@ export default {
     // 恢复默认（pc默认黑色，wap默认白色）
     resetForm() {
       if (this.livingPreview == 1) {
-        this.livingPcForm = {
-          pageStyle: '#1A1A1A', //主题色
-          theme_url: '',
-          theme_vague: 0,
-          theme_light: 10
-        }
+        this.resetFormPcColor(1)
       } else {
-        this.livingWapForm = {
-          pageStyle: '#FFFFFF', //主题色
-          theme_url: '',
-          theme_vague: 0,
-          theme_light: 10
-        }
+        this.resetFormWapColor(1)
       }
+    },
+    // 默认pc主题颜色
+    resetFormPcColor(index) {
+      this.livingPcForm = {
+        style: index, //主题色
+        theme_url: '',
+        theme_vague: 0,
+        theme_light: 10,
+        x: 0,
+        y:0,
+        width: 0,
+        height: 0
+      };
+      let microphoneArr = [1, 2, 2, 3]
       this.livingForm = {
-        videoStyle: '#000000',
-        chatLayout: 1,
+        videoStyle: '#000000', //视频区底色
+        chatLayout: index==1 || index == 4 ? 1 : 2,
+        microphone: microphoneArr[index-1], //连麦布局
+        video_url: '',
+        video_vague: 0,
+        video_light: 10,
+        x: 0,
+        y:0,
+        width: 0,
+        height: 0
+      }
+    },
+     // 默认wap主题颜色
+    resetFormWapColor(index) {
+      this.livingWapForm = {
+        style: index, //主题色
+        theme_url: '',
+        theme_vague: 0,
+        theme_light: 10,
+        x: 0,
+        y:0,
+        width: 0,
+        height: 0
+      };
+      // let microphoneArr = [1, 2, 2, 3]
+      this.livingForm = {
+        videoStyle: '#000000', //视频区底色
+        chatLayout: index==3 ? 2 : 1,
         microphone: 1, //连麦布局
         video_url: '',
         video_vague: 0,
-        video_light: 10
+        video_light: 10,
+        x: 0,
+        y:0,
+        width: 0,
+        height: 0
       }
-    },
-    // 重置主题颜色
-    resetFormColor() {
-
     },
     saveSettingLivingInfo() {
       let params = {
@@ -429,10 +470,11 @@ export default {
       if (option.index == 1) {
         if (this.livingPreview == 1) {
           this.livingPcForm.theme_url = option.src;
+          this.themePcImages = cropedData;
         } else {
           this.livingWapForm.theme_url = option.src;
+          this.themeWapImages = cropedData;
         }
-        this.themeImages = cropedData;
       } else {
         this.livingForm.video_url = option.src
         this.videoImages = cropedData;
@@ -597,10 +639,15 @@ export default {
             display: inline-block;
             width: 32px;
             height: 32px;
-            border: 2px solid transparent;
+            // border: 4px solid transparent;
             background: #595959;
             margin-right: 10px;
             border-radius: 4px;
+            cursor: pointer;
+            &.active{
+              width: 40px;
+              height: 40px;
+            }
             img{
               width: 100%;
               height: 100%;
