@@ -299,6 +299,7 @@ export function checkAuth(to, from, next, that) {
         if (Number(scene_id) === 1) {
           sessionOrLocal.set('token', res.data.token || '', 'localStorage');
           sessionOrLocal.set('tokenExpiredTime', res.data.exp_time, 'localStorage')
+          sessionOrLocal.set('tokenRefresh', new Date().getTime(), 'localStorage')
           sessionOrLocal.set('sso_token', res.data.sso_token || '');
           sessionOrLocal.set('userId', res.data.user_id || '');
         }
@@ -385,6 +386,16 @@ export function checkAuth(to, from, next, that) {
   let token = sessionOrLocal.get('token', 'localStorage') || '';
   if (token) {
     console.log('正常登录、快捷登录，存在token数据');
+
+    //发起端、控制台进入页面添加刷新token机制,每七天刷新一次。  7*24*3600*1000 mm
+    let tokenRefresh = sessionOrLocal.get('tokenRefresh', 'localStorage') ||  new Date().getTime() ;
+    tokenRefresh = parseFloat(tokenRefresh)
+    const curTime = new Date().getTime()
+    const dur = 7*24*3600*1000
+    console.log('tokenRefresh:', new Date(tokenRefresh).toLocaleString(), tokenRefresh)
+    if(curTime-tokenRefresh>dur){
+      refreshToken()
+    }
     // 已登录不准跳转登录页
     if (to.path === '/login') {
       next({ path: '/' });
@@ -545,6 +556,7 @@ export const refreshToken = () => {
   if (token !== undefined && token !== 'undefined' && token !== '' && token !== null && token !== 'null') {
     return fetchData('refreshToken').then(res => {
       sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+      sessionOrLocal.set('tokenRefresh', new Date().getTime(), 'localStorage')
       sessionOrLocal.set('tokenExpiredTime', res.data.exp_time, 'localStorage')
     }).catch(error => {
       // token 失效

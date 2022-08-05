@@ -176,12 +176,14 @@ if (!userGrayId && pageGrayTag) {
 let clientTokenVal = clientToken('token');
 if(clientTokenVal) {
   sessionOrLocal.set('token', clientTokenVal , 'localStorage');
+  sessionOrLocal.set('tokenRefresh', new Date().getTime(), 'localStorage')
   sessionOrLocal.set('platform', clientToken('platform'), 'localStorage');
 } else {
   if (window.location.pathname.indexOf('cMiddle') == -1 || window.location.pathname.indexOf('special/detail') != -1) {
-    console.log('什么都不处理')
+    // console.log('什么都不处理')
   } else {
     // 如果是非免登录的情况，初次进入项目的时候刷新一次 token
+    // console.log('刷新一次 token')
     refreshToken()
   }
 }
