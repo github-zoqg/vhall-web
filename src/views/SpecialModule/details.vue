@@ -210,7 +210,7 @@ export default {
           }
           .info_limit{
             color: #666;
-            padding-top: 8px;
+            padding: 8px 0 4px 0;
           }
         }
         .tag {
