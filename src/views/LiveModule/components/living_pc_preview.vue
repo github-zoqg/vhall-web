@@ -706,5 +706,5 @@ export default {
         color: var(--color_text_footer);
       }
     }
-}
+  }
 </style>

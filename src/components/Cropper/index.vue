@@ -49,9 +49,9 @@ export default {
   },
   methods: {
     showModel(url, index) {
-      this.dialogVisible = true;
       this.option.src = url;
       this.option.index = index;
+      this.dialogVisible = true;
     },
     cropperSure() {
       this.cropperData = this.$refs.cropper.getData()
@@ -61,7 +61,7 @@ export default {
     },
     resetCropper() {
       this.dialogVisible = false;
-      this.$emit('deleteComplete', this.option)
+      this.$emit('deleteComplete', this.option.index)
     }
   }
 }
@@ -71,8 +71,9 @@ export default {
     &_box{
       width: 100%;
       .cropper_img{
-        height: 100%;
+        height:100%;
         width: 100%;
+        overflow: hidden !important;
       }
     }
     &_btn {

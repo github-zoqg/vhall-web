@@ -62,7 +62,7 @@
           <p class="form_item_title">主题背景</p>
           <upload
             class="upload__living"
-            id="living_cropper"
+            id="living_pc_cropper"
             v-model="livingPcForm.background"
             :domain_url="livingPcForm.background"
             :saveData="{
@@ -106,7 +106,7 @@
           <p class="form_item_title">主题背景</p>
           <upload
             class="upload__living"
-            id="living_cropper"
+            id="living_wap_cropper"
             v-model="livingWapForm.background"
             :domain_url="livingWapForm.background"
             :saveData="{
@@ -184,6 +184,7 @@
           <p class="form_item_title">视频区背景</p>
           <upload
             class="upload__living"
+            id="living_video_cropper"
             v-model="livingForm.videoBackGround"
             :domain_url="livingForm.videoBackGround"
             :saveData="{
@@ -527,8 +528,10 @@ export default {
         this.livingForm.videoBackGroundSize = cropedData;
       }
     },
-    deleteComplete(option) {
-      this.beforeUploadHandler()
+    deleteComplete(index) {
+      let ele = ['living_pc_cropper', 'living_wap_cropper', 'living_video_cropper']
+      let dom = document.querySelector(`#${ele[index - 1]} .el-upload__input`);
+      dom.click();
     },
     // 主题背景删除
     resetLogoUrl() {
@@ -548,13 +551,14 @@ export default {
     handleUploadSuccess(res, file){
       console.log(res, file);
       if(res.data) {
-        this.$refs.livingCropper.showModel(res.data.domain_url, 1)
+        let index = this.livingPreview == 1 ? 1 : 2;
+        this.$refs.livingCropper.showModel(res.data.domain_url, index)
       }
     },
     handleUploadVideoSuccess(res, file) {
        console.log(res, file);
       if(res.data) {
-        this.$refs.livingCropper.showModel(res.data.domain_url, 2)
+        this.$refs.livingCropper.showModel(res.data.domain_url, 3)
       }
     },
     beforeUploadHandler(file){
@@ -645,7 +649,7 @@ export default {
       }
     }
     &_preview{
-      width: 944px;
+      width: 594px;
       .preview_btn{
         text-align: center;
       }
@@ -772,13 +776,19 @@ export default {
       left: 0;
       background: rgba(255, 255, 255, 0.5);
     }
-    @media (max-width: 1366px) {
+    @media (max-width: 1920px) {
       .preview_box_pc{
         transform: scale(0.6);
         transform-origin: top left;
       }
+    }
+    @media (min-width: 1920px) {
+      .preview_box_pc{
+        transform: scale(1);
+      }
       .living-setting_preview{
-        width: 594px;
+        // width: 594px;
+         width: 944px;
       }
     }
   }
