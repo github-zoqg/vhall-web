@@ -381,13 +381,13 @@ export default {
   // }
   .wximg-box {
     width: 100%;
-    height: 300px;
+    height: 250px;
     display: flex;
     align-items: center;
     justify-content: center;
     img {
-      width: 80%;
-      height: 80%;
+      width: 210px;
+      height: 210px;
     }
   }
   .wximg-intro {
