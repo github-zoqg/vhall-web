@@ -187,7 +187,7 @@ export default {
         viewer: 0
       },
       subject_id: '',
-      isOldSubject: false,
+      isOldSubject: true,
       userId:JSON.parse(sessionOrLocal.get("userId")),
       loading: false,
       webinarIds: [],
@@ -403,11 +403,12 @@ export default {
               // 保存或创建成功重置更改状态
               this.isChange = false
               let subject_id = this.subject_id || this.$route.params.id;
-              this.$router.push({path: `/subject/details/${subject_id}`});
+              if (!this.isOldSubject && subject_id) {
+                this.$router.push({path: `/subject/list`});
+              } else {
+                this.$router.push({path: `/subject/details/${subject_id}`});
+              }
               console.log(res);
-              // setTimeout(()=>{
-              //   this.$router.push({path: '/special'});
-              // }, 500);
             }
           }).catch(error=>{
             this.$message({
