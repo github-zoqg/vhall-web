@@ -242,7 +242,7 @@ export default {
     return {
       themePcTypeList: [
         {
-          title: '炫酷黑',
+          title: '低调黑',
           url: '',
           id: 1,
           isActive: true
@@ -254,13 +254,13 @@ export default {
           isActive: false
         },
         {
-          title: '科技蓝',
+          title: '喜庆红',
           url: '',
           id: 3,
           isActive: false
         },
         {
-          title: '喜庆红',
+          title: '科技蓝',
           url: '',
           id: 4,
           isActive: false
@@ -293,7 +293,7 @@ export default {
         }
       ],
       pageThemeColors: ['#1A1A1A', '#F0F0F0', '#FB2626', '1E4EDC'],
-      videoColors: ['000000', '262626', '595959', '8F8F8F', 'D9D9D9'],
+      videoColors: ['000000', '262626', '595959', '8C8C8C', 'D9D9D9'],
       livingPreview: 1,
       livingPcPreviewType: 1,
       webinarId: this.$route.params.str,
@@ -669,6 +669,16 @@ export default {
         }
         &_pc{
           width: 880px;
+        }
+        &_wap{
+          width: 375px;
+          height: 812px;
+          border-radius: 4px ;
+          margin: 0 auto;
+          padding: 88px 0 44px 0;
+          background-image: url('./image/video_default_nologo.png');
+          background-repeat: no-repeat;
+          background-size: 100% 100%;
         }
       }
     }
