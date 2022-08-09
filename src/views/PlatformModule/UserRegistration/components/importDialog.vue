@@ -17,7 +17,8 @@
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHandler"
-          :disabled="isUploadDisabled">
+          :disabled="isUploadDisabled"
+          color="#1A1A1A">
           <div slot="upload-result">
             <!-- 状态1： 有上传过文件，后面重新删除等-变为未上传 -->
             <p slot="tip"
