@@ -1,6 +1,6 @@
 <template>
   <div class="editBox">
-    <pageTitle :pageTitle="Number($route.query.type) === 2 ? '编辑信息' : `${title}${webinarTypeToZHTitle}`"></pageTitle>
+    <pageTitle v-if="title" :pageTitle="Number($route.query.type) === 2 ? '编辑信息' : `${title||''}${webinarTypeToZHTitle}`"></pageTitle>
     <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="80px">
       <!-- 观看语种 -->
       <el-form-item label="观看语种" prop="languageVa" class="margin32">
@@ -868,6 +868,16 @@ export default {
     }
     this.versionType = JSON.parse(sessionOrLocal.get('versionType'));
     window.scrollTo(0,0);
+    // 标题文案先展示
+    if (this.$route.query.id || this.$route.params.id) {
+      if(this.$route.query.id){
+        this.title = this.$route.query.type == 2 ? '编辑' : '复制';
+      }else{
+        this.title = '编辑'
+      }
+    } else {
+      this.title = '创建';
+    }
     // 获取活动维度下 - 配置项开关集合 - 通过地址栏参数传递活动ID
     console.log('>>>>>>>>当前活动-配置项开关内容(创建/编辑中调用)', this.$route.params.id)
     await this.getConfigListIsOpen('webinar', 1, this.$route.params.id)
@@ -876,14 +886,8 @@ export default {
     await this.getConfigListIsOpen('webinar', 2, this.$route.params.id)
     if (this.$route.query.id || this.$route.params.id) {
       this.webinarId = this.$route.query.id || this.$route.params.id;
-      if(this.$route.query.id){
-        this.title = this.$route.query.type == 2 ? '编辑' : '复制';
-      }else{
-        this.title = '编辑'
-      }
       this.getLiveBaseInfo(this.webinarId, false);
     } else {
-      this.title = '创建';
       this.liveMode = 2;
       this.webinarId = '';
       // 默认中文选中
