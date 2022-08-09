@@ -1,33 +1,45 @@
 <template>
-  <div :class="['data-list', {'no-height': manageTableData && manageTableData.length === 0}]">
-    <el-table ref="elTable"
+  <div
+    :class="[
+      'data-list',
+      { 'no-height': manageTableData && manageTableData.length === 0 },
+    ]"
+  >
+    <el-table
+      ref="elTable"
       :data="manageTableData"
       @selection-change="handleTableCheckbox"
       :max-height="maxHeight"
-      :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+      :header-cell-style="{
+        background: '#f7f7f7',
+        color: '#666',
+        height: '56px',
+      }"
       :row-class-name="tableRowClassName"
       :row-style="tableRowStyle"
       @cell-mouse-enter="handleCellMouseEnter"
-      @cell-mouse-leave="handleCellMouseLeave">
-      <div slot="empty"
-        style="height:0"></div>
-      <el-table-column type="selection"
+      @cell-mouse-leave="handleCellMouseLeave"
+    >
+      <div slot="empty" style="height: 0"></div>
+      <el-table-column
+        type="selection"
         width="55"
         align="left"
         :selectable="checkSelectable"
-        v-if="isCheckout" />
+        v-if="isCheckout"
+      />
       <template>
-        <el-table-column align="left"
+        <el-table-column
+          align="left"
           v-for="(item, index) in tabelColumnLabel"
           :key="index"
           :width="item.width"
           :label="item.label"
-          :show-overflow-tooltip="!item.customTooltip">
-          <template slot="header"
-            v-if="item.showHeader">
-            <span class="pr20">{{item.label}}</span>
-            <el-tooltip :content="item.headerTooltip"
-              v-tooltipMove>
+          :show-overflow-tooltip="!item.customTooltip"
+        >
+          <template slot="header" v-if="item.showHeader">
+            <span class="pr20">{{ item.label }}</span>
+            <el-tooltip :content="item.headerTooltip" v-tooltipMove>
               <i :class="`iconfont-v3 saasicon_help_m gary`"></i>
             </el-tooltip>
           </template>
@@ -37,93 +49,145 @@
               <p v-if="scope.row.uploadObj">
                 <!-- 上传 -->
                 <span>{{
-                  scope.row.uploadObj.num == 100
-                    ? '上传已完成'
-                    : '文件上传中'
+                  scope.row.uploadObj.num == 100 ? '上传已完成' : '文件上传中'
                 }}</span>
-                <el-progress :percentage="scope.row.uploadObj.num"></el-progress>
+                <el-progress
+                  :percentage="scope.row.uploadObj.num"
+                ></el-progress>
               </p>
               <!-- {{scope.row}} -->
               <p v-if="scope.row.transcode_status_text">
                 <!-- 列表 -->
-                <span class="statusTag"
-                  :class="scope.row.transcode_status == 1 ? 'success' : 'failer'">{{ scope.row.transcode_status_text }}</span>
+                <span
+                  class="statusTag"
+                  :class="
+                    scope.row.transcode_status == 1 ? 'success' : 'failer'
+                  "
+                  >{{ scope.row.transcode_status_text }}</span
+                >
               </p>
             </div>
-            <div v-else-if="item.key === 'img'"
-              class="prizeImg">
+            <div v-else-if="item.key === 'img'" class="prizeImg">
               <img :src="scope.row.img" />
             </div>
-            <div v-else-if="item.key === 'img_url'"
-              class="advImg">
+            <div v-else-if="item.key === 'img_url'" class="advImg">
               <img :src="scope.row.img_url" />
             </div>
             <div v-else-if="item.key === 'watch'">
               <p class="switch__box">
-                <el-switch @change="switchChange(scope.row)"
+                <el-switch
+                  @change="switchChange(scope.row)"
                   v-model="scope.row.watch"
                   active-color="#ff4949"
-                  inactive-color="#ccc">
+                  inactive-color="#ccc"
+                >
                 </el-switch>
               </p>
-
             </div>
             <!-- 开发设置，状态 -->
-            <div v-else-if="scene === 'development' && item.key === 'statusStr'"
-              class="status-show">
+            <div
+              v-else-if="scene === 'development' && item.key === 'statusStr'"
+              class="status-show"
+            >
               <p>
-                <span :class="scope.row.status > 0 ? 'active-success' : 'active-gray'"></span>
+                <span
+                  :class="
+                    scope.row.status > 0 ? 'active-success' : 'active-gray'
+                  "
+                ></span>
                 {{ scope.row.statusStr }}
               </p>
             </div>
-            <div v-else-if="item.key === 'status'"
-              class="status-show">
-              <p>
-                <span :class="scope.row.status == '1' ? 'active-success': scope.row.status == '-1' ? 'active-error' : 'active-waiting'"></span>
+            <div v-else-if="item.key === 'status'" class="status-show">
+              <p :class="'status' + scope.row.status">
+                <span
+                  v-if="showStatusPoint"
+                  :class="
+                    scope.row.status == '1'
+                      ? 'active-success'
+                      : scope.row.status == '-1'
+                      ? 'active-error'
+                      : 'active-waiting'
+                  "
+                ></span>
                 {{ scope.row.statusText }}
               </p>
             </div>
             <!-- 消息中心，消息类型 -->
-            <div v-else-if="scene === 'msg_list' && item.key === 'msgStatusStr'"
-              class="status-show">
+            <div
+              v-else-if="scene === 'msg_list' && item.key === 'msgStatusStr'"
+              class="status-show"
+            >
               <p>
-                <span :class="scope.row.msg_status > 0 ? 'active-success' : 'active-error'"></span>
+                <span
+                  :class="
+                    scope.row.msg_status > 0 ? 'active-success' : 'active-error'
+                  "
+                ></span>
                 {{ scope.row.msgStatusStr }}
               </p>
             </div>
             <!-- 下载中心，文件名 -->
-            <div v-else-if="scene === 'downloadList' && item.key === 'file_name'">
+            <div
+              v-else-if="scene === 'downloadList' && item.key === 'file_name'"
+            >
               <!-- <i class="icon_tag" v-if="Number(scope.row.dow_status) === 0 && Number(scope.row.file_status) === 1"></i> -->
               <p class="text">
-                <icon class="word-status"
+                <icon
+                  class="word-status"
                   :icon-class="scope.row.ext | wordStatusCss"
-                  v-if="Number(scope.row.dow_status)!= undefined && Number(scope.row.file_status) != undefined"></icon>
+                  v-if="
+                    Number(scope.row.dow_status) != undefined &&
+                    Number(scope.row.file_status) != undefined
+                  "
+                ></icon>
                 {{ scope.row.file_name }}
               </p>
             </div>
             <!-- 文档，文件名 -->
             <div v-else-if="scene === 'word' && item.key === 'file_name'">
-              <el-tooltip :disabled="!isTextOverflow" placement="top-start" :content="scope.row.file_name">
+              <el-tooltip
+                :disabled="!isTextOverflow"
+                placement="top-start"
+                :content="scope.row.file_name"
+              >
                 <div class="custom-tooltip-content">
-                  <icon class="word-status"
-                    :icon-class="scope.row.ext | wordStatusCss"></icon>
+                  <icon
+                    class="word-status"
+                    :icon-class="scope.row.ext | wordStatusCss"
+                  ></icon>
                   {{ scope.row.file_name }}
                 </div>
               </el-tooltip>
             </div>
             <!-- 下载中心，生成状态 -->
-            <div class="progressBox"
-              v-else-if="scene === 'downloadList' && item.key === 'fileStatusStr'">
-              <el-progress :percentage="scope.row.percentage"
-                v-if="Number(scope.row.file_status) === 0"></el-progress>
-              <span :class="[scope.row.fileStatusCss, 'statusTag']"
-                v-else>{{scope.row.fileStatusStr}}<span @click="handleBtnClick(scope, { name: '重新生成', methodName: 'resetDownload' })">
-                  <icon v-if="Number(scope.row.file_status) === 2"
-                    icon-class="saasicon-reset"></icon>
-                </span></span>
+            <div
+              class="progressBox"
+              v-else-if="
+                scene === 'downloadList' && item.key === 'fileStatusStr'
+              "
+            >
+              <el-progress
+                :percentage="scope.row.percentage"
+                v-if="Number(scope.row.file_status) === 0"
+              ></el-progress>
+              <span :class="[scope.row.fileStatusCss, 'statusTag']" v-else
+                >{{ scope.row.fileStatusStr
+                }}<span
+                  @click="
+                    handleBtnClick(scope, {
+                      name: '重新生成',
+                      methodName: 'resetDownload',
+                    })
+                  "
+                >
+                  <icon
+                    v-if="Number(scope.row.file_status) === 2"
+                    icon-class="saasicon-reset"
+                  ></icon> </span
+              ></span>
             </div>
-            <div v-else-if="item.key === 'imgOrText'"
-              class="imgAddText">
+            <div v-else-if="item.key === 'imgOrText'" class="imgAddText">
               <!-- {{scope.row}} -->
               <el-scrollbar>
                 <p v-html="scope.row.imgOrText"></p>
@@ -134,136 +198,204 @@
               <span v-else v-html="scope.row.transform_schedule_str"></span>
             </div> -->
             <!-- 文档，进度 -->
-            <div v-else-if="scene === 'word' && item.key === 'transform_schedule_str'">
-              <div v-if="!scope.row.transform_schedule_str"
-                class="progressBox">
+            <div
+              v-else-if="
+                scene === 'word' && item.key === 'transform_schedule_str'
+              "
+            >
+              <div v-if="!scope.row.transform_schedule_str" class="progressBox">
                 <el-progress :percentage="scope.row.codeProcess"></el-progress>
               </div>
               <!-- <span v-if="!scope.row.transform_schedule_str">{{scope.row.isUpload ? '上传' : ''}}{{scope.row.codeProcess}}%</span>
               <el-progress v-if="!scope.row.transform_schedule_str" :show-text=false status="success" :percentage="scope.row.codeProcess"></el-progress>
               <span><icon v-if="Number(scope.row.showEventType) === 5 || Number(scope.row.showEventType) === 7" icon-class="saasicon-reset"></icon></span>-->
-              <div v-else
-                class="progressBox">
+              <div v-else class="progressBox">
                 <!-- 样式变化 -->
-                <template v-for="(item, ins) of scope.row.transform_schedule_str.split('<br/>')">
-                  <span :class="[scope.row.fileStatusCss, 'statusTag']"
-                    :key="ins">{{item}}</span><br />
+                <template
+                  v-for="(item, ins) of scope.row.transform_schedule_str.split(
+                    '<br/>'
+                  )"
+                >
+                  <span
+                    :class="[scope.row.fileStatusCss, 'statusTag']"
+                    :key="ins"
+                    >{{ item }}</span
+                  ><br />
                 </template>
               </div>
             </div>
-            <div v-else-if="item.key === 'video_name'"
-              class="videoName">
-              <i class="iconfont-v3 saasyinpinwenjian"
-                v-if="scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'"></i>
-              <i class="iconfont-v3 saasshipinwenjian"
-                v-else></i>
-              {{ scope.row[item.key]  || '- -'}}
+            <div v-else-if="item.key === 'video_name'" class="videoName">
+              <i
+                class="iconfont-v3 saasyinpinwenjian"
+                v-if="
+                  scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'
+                "
+              ></i>
+              <i class="iconfont-v3 saasshipinwenjian" v-else></i>
+              {{ scope.row[item.key] || '- -' }}
             </div>
-            <el-tooltip v-else-if="item.customTooltip"
+            <el-tooltip
+              v-else-if="item.customTooltip"
               placement="top"
               :disabled="!isTextOverflow"
-              :content="scope.row[item.key] == '' ? '- -' : scope.row[item.key]">
-              <p class="custom-tooltip-content">{{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}</p>
+              :content="scope.row[item.key] == '' ? '- -' : scope.row[item.key]"
+            >
+              <p class="custom-tooltip-content">
+                {{ scope.row[item.key] == '' ? '- -' : scope.row[item.key] }}
+              </p>
             </el-tooltip>
-            <p v-else
-              :class="item.key == 'price' || item.key == 'discount_price' ? 'grayText' :  'text'">
-              <icon v-if="scene === 'word' && item.key === 'file_name'"
+            <p
+              v-else
+              :class="
+                item.key == 'price' || item.key == 'discount_price'
+                  ? 'grayText'
+                  : 'text'
+              "
+            >
+              <icon
+                v-if="scene === 'word' && item.key === 'file_name'"
                 class="word-status"
-                :icon-class="scope.row.ext | wordStatusCss"></icon>{{ scope.row[item.key] == '' && scope.row[item.key]!= 0  ? '- -' : scope.row[item.key] }}
+                :icon-class="scope.row.ext | wordStatusCss"
+              ></icon
+              >{{
+                scope.row[item.key] == '' && scope.row[item.key] != 0
+                  ? '- -'
+                  : scope.row[item.key]
+              }}
             </p>
           </template>
         </el-table-column>
-        <el-table-column label="操作"
+        <el-table-column
+          label="操作"
           align="left"
           v-if="isHandle && scene === 'development'"
           :width="width"
-          class="btn-rows">
+          class="btn-rows"
+        >
           <template slot-scope="scope">
-            <el-button v-preventReClick
+            <el-button
+              v-preventReClick
               v-if="Number(scope.row.status) === 0"
-              @click="handleBtnClick(scope, {
-              name: '启用',
-              methodName: 'restartApp'
-            })"
+              @click="
+                handleBtnClick(scope, {
+                  name: '启用',
+                  methodName: 'restartApp',
+                })
+              "
               size="mini"
-              type="text">启用</el-button>
-            <el-button v-preventReClick
+              type="text"
+              >启用</el-button
+            >
+            <el-button
+              v-preventReClick
               v-if="Number(scope.row.status) === 1"
-              @click="handleBtnClick(scope, {
-              name: '停用',
-              methodName: 'stopApp'
-            })"
+              @click="
+                handleBtnClick(scope, {
+                  name: '停用',
+                  methodName: 'stopApp',
+                })
+              "
               size="mini"
-              type="text">停用</el-button>
-            <el-button v-preventReClick
-              @click="handleBtnClick(scope, {
-              name: '删除',
-              methodName: 'deleteApp'
-            })"
+              type="text"
+              >停用</el-button
+            >
+            <el-button
+              v-preventReClick
+              @click="
+                handleBtnClick(scope, {
+                  name: '删除',
+                  methodName: 'deleteApp',
+                })
+              "
               size="mini"
-              type="text">删除</el-button>
-            <el-button v-preventReClick
-              @click="handleBtnClick(scope, {
-               name: '查看',
-               methodName: 'viewApp'
-            })"
+              type="text"
+              >删除</el-button
+            >
+            <el-button
+              v-preventReClick
+              @click="
+                handleBtnClick(scope, {
+                  name: '查看',
+                  methodName: 'viewApp',
+                })
+              "
               size="mini"
-              type="text">查看</el-button>
+              type="text"
+              >查看</el-button
+            >
           </template>
         </el-table-column>
-        <el-table-column label="操作"
+        <el-table-column
+          label="操作"
           align="left"
           v-else-if="isHandle && scene === 'downloadList'"
           :width="width"
-          class="btn-rows">
+          class="btn-rows"
+        >
           <template slot-scope="scope">
-            <a :href="scope.row.dow_url"
+            <a
+              :href="scope.row.dow_url"
               v-preventReClick
               v-if="Number(scope.row.file_status) === 1"
-              @click="handleBtnClick(scope, {
-              name: '下载',
-              methodName: 'download'
-            })"
-              style="margin-right: 8px;">
-              <el-button style="font-size: 14px"
-                size="mini"
-                type="text">下载</el-button>
+              @click="
+                handleBtnClick(scope, {
+                  name: '下载',
+                  methodName: 'download',
+                })
+              "
+              style="margin-right: 8px"
+            >
+              <el-button style="font-size: 14px" size="mini" type="text"
+                >下载</el-button
+              >
             </a>
-            <el-button style="font-size: 14px"
+            <el-button
+              style="font-size: 14px"
               size="mini"
               type="text"
               v-preventReClick
-              @click="handleBtnClick(scope, {
-              name: '删除',
-              methodName: 'delDownload'
-            })">删除</el-button>
+              @click="
+                handleBtnClick(scope, {
+                  name: '删除',
+                  methodName: 'delDownload',
+                })
+              "
+              >删除</el-button
+            >
           </template>
         </el-table-column>
-        <el-table-column label="操作"
+        <el-table-column
+          label="操作"
           align="left"
           v-if="isHandle && scene !== 'development' && scene !== 'downloadList'"
           :width="width"
           :fixed="fixedBtn"
-          class="btn-rows">
+          class="btn-rows"
+        >
           <template slot-scope="scope">
             <template v-for="(item, index) in tableRowBtnFun">
               <!-- disabledKey 需为manageTableData数据item中key值  key由按钮数据tableRowBtnFun定义 -->
-              <el-button :key="index"
+              <el-button
+                :key="index"
                 type="text"
                 v-preventReClick
-                :disabled='item.disabledKey && !!scope.row[item.disabledKey]'
+                :disabled="item.disabledKey && !!scope.row[item.disabledKey]"
                 @click="handleBtnClick(scope, item)"
-                v-if="checkShowHandle(scope.row, item)">{{ item.name }}</el-button>
+                v-if="checkShowHandle(scope.row, item)"
+                >{{ item.name }}</el-button
+              >
             </template>
           </template>
         </el-table-column>
       </template>
     </el-table>
-    <SPagination :total="totalNum"
+    <SPagination
+      :total="totalNum"
       v-if="needPagination && totalNum > 10"
       :currentPage="pageInfo.pageNum"
       @current-change="currentChangeHandler"
-      align="center">
+      align="center"
+    >
     </SPagination>
   </div>
 </template>
@@ -279,8 +411,8 @@ export default {
         limit: 10,
       },
       isUpdate: 0,
-      oldVal: []
-    };
+      oldVal: [],
+    }
   },
   props: {
     tabelColumnLabel: Array,
@@ -299,13 +431,17 @@ export default {
       type: Boolean,
       default: true,
     },
+    showStatusPoint: {
+      type: Boolean,
+      default: true,
+    },
     width: {
       type: [Number, String],
       default: 300,
     },
     fixedBtn: {
       type: String,
-      default: null
+      default: null,
     },
     maxHeight: {
       type: [Number, String],
@@ -313,14 +449,14 @@ export default {
     },
     scene: {
       type: String,
-      default: 'normal' // 场景，按场景展示
+      default: 'normal', // 场景，按场景展示
     },
   },
   watch: {
     manageTableData: {
-      handler: function(oldData) {
+      handler: function (oldData) {
         // console.log(oldData[0].uploadObj, 'watch变化');
-        this.isUpdate = Math.random() * 100;
+        this.isUpdate = Math.random() * 100
       },
       immediate: false,
       deep: true,
@@ -333,15 +469,15 @@ export default {
   methods: {
     // 开关状态切换的回调
     switchChange(option) {
-      this.$emit('switchChange', option);
+      this.$emit('switchChange', option)
 
-      console.log(option);
+      console.log(option)
     },
     isImg(_data) {
       if (['.png', '.jpg', 'jpeg'].includes(_data.substr(-4))) {
-        return true;
+        return true
       } else {
-        return false;
+        return false
       }
     },
     // 行内操作按钮点击
@@ -350,63 +486,66 @@ export default {
         rows: scope.row,
         path: item.path || '',
         type: item.methodName,
-        index: item.index
-      };
-      this.$emit('onHandleBtnClick', Object.assign({}, obj));
+        index: item.index,
+      }
+      this.$emit('onHandleBtnClick', Object.assign({}, obj))
     },
     checkShowHandle(row, item) {
       if (this.scene === 'accountList') {
-        return row.parent_id > 0 || (item.methodName === 'toSonDetail' && Number(row.parent_id) === 0);
+        return (
+          row.parent_id > 0 ||
+          (item.methodName === 'toSonDetail' && Number(row.parent_id) === 0)
+        )
       } else if (this.scene === 'word') {
         // 静态转码完成，展示 演示、删除；动态转码完成，展示 演示、动画版演示、删除；转码失败展示 删除。静态转码完成，动态转码中，展示预览、删除。
         if (row.showEventType == 4 || row.showEventType == 6) {
           // ppt or pptx 时展示动画演示
-          return /pptx?/.test(row.ext) ? true : item.methodName !== 'preDocShow';
+          return /pptx?/.test(row.ext) ? true : item.methodName !== 'preDocShow'
         } else if (row.showEventType == 3) {
           // 静态转码完成，动态转码中
-          return item.methodName !== 'preDocShow';
+          return item.methodName !== 'preDocShow'
         } else if (row.showEventType == 5 || row.showEventType == 7) {
           // 转码失败
-          return item.methodName === 'deleteHandle';
+          return item.methodName === 'deleteHandle'
         } else {
-          return false;
+          return false
         }
       } else {
-        return true;
+        return true
       }
     },
     // 页码改变按钮事件
     currentChangeHandler(current) {
-      this.pageInfo.pageNum = current;
-      this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit);
-      this.$emit('getTableList', this.pageInfo);
+      this.pageInfo.pageNum = current
+      this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit)
+      this.$emit('getTableList', this.pageInfo)
     },
     // 复选框操作
     handleTableCheckbox(val) {
-      this.oldVal = val;
-      this.$emit('changeTableCheckbox', val);
+      this.oldVal = val
+      this.$emit('changeTableCheckbox', val)
     },
     // 状态栏
     tableRowClassName({ row, rowIndex }) {
       if (this.scene === 'msg_list') {
         // 消息状态区分，已读 or 未读
-        let ids = this.oldVal.map(item => item.msg_id);
+        let ids = this.oldVal.map((item) => item.msg_id)
         if (ids && ids.includes(row.msg_id)) {
           return 'ok-check-row'
         } else if (row.msg_status > 0) {
-          return 'ok-read-row';
+          return 'ok-read-row'
         } else {
-          return 'no-read-row';
+          return 'no-read-row'
         }
       } else {
-        return '';
+        return ''
       }
     },
     // 给下载中心列表用，给已成功下载的行置灰
     tableRowStyle({ row, rowIndex }) {
       if (row.file_status == 1 && row.dow_status == 1) {
         return {
-          color: '#BEBEBE'
+          color: '#BEBEBE',
         }
       }
     },
@@ -417,22 +556,22 @@ export default {
     },
     // 清除记忆
     clearSelect() {
-      this.oldVal = [];
-      this.$refs.elTable.clearSelection();
+      this.oldVal = []
+      this.$refs.elTable.clearSelection()
     },
     checkSelectable(row) {
       if (this.scene === 'accountList') {
-        return row.parent_id > 0;
+        return row.parent_id > 0
       } else if (this.scene === 'downloadList') {
-        return Number(row.file_status) === 1;
+        return Number(row.file_status) === 1
       } /*else if(this.scene === 'roleList') {
         return !(row.child_count > 0);
-      } */else {
-        return true;
+      } */ else {
+        return true
       }
-    }
+    },
   },
-};
+}
 </script>
 <style lang="less" scoped>
 .data-list {
@@ -667,9 +806,9 @@ export default {
   font-size: 16px;
 }
 </style>
-<style lang='less'>
-.data-list{
-  .el-button.is-disabled:hover{
+<style lang="less">
+.data-list {
+  .el-button.is-disabled:hover {
     border: none;
   }
 }

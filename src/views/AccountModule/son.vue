@@ -4,7 +4,7 @@
     <!-- 子账号管理头部 -->
     <div class="title--flex--top">
       <div class="top-item">
-        <p v-if="sonInfo && sonInfo.vip_info && sonInfo.vip_info.type === 0">总并发（方）}}</p>
+        <p v-if="sonInfo && sonInfo.vip_info && sonInfo.vip_info.type === 0">总并发（方）</p>
         <p v-if="sonInfo && sonInfo.vip_info && sonInfo.vip_info.type === 1">总流量（GB）</p>
         <p v-if="sonInfo && sonInfo.vip_info && sonInfo.vip_info.type === 2">总时长</p>
         <p class="custom-font-barlow">

@@ -1065,6 +1065,13 @@ export default {
           customClass: 'zdy-info-box'
         });
         this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(err=>{
+        this.$message({
+          message: err.msg,
+          showClose: true,
+          type: 'warning',
+          customClass: 'zdy-info-box'
+        });
       })
     },
     // 问答
