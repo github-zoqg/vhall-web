@@ -204,22 +204,6 @@
         </div>
       </div>
     </template>
-    <!-- TODO:支付牌照问题 -->
-    <template>
-      <div class="prompt" v-if="payNoticeVisible">
-        <div class="prompt-wrap prompt-wrap__pay">
-            <i class="prompt-con-img i-close saasclose iconfont-v3" @click="closePayNotice"></i>
-            <img class="prompt-con-img" src="//cnstatic01.e.vhall.com/static/images/watch/notice_img.png" alt="">
-            <p class="prompt-con-text prompt-con-text-one">【关于暂停使用红包发放等功能的通知】</p>
-            <p class="prompt-con-text prompt-con-text-three">致：尊敬的微吼用户</p>
-            <p class="prompt-con-text prompt-con-text-two no-bottom">为严格落实支付监管规定并配合微信支付开展支付业务合规检查工作。本次应监管要求，在进行合规自查期间需暂停相关支付业务功能服务，因此自2022年06月29日起，公司将暂停红包、打赏等涉及现金支付功能的使用。</p>
-            <p class="prompt-con-text prompt-con-text-two no-bottom">本次合规自查工作结束后，我们将会第一时间发布恢复通知。</p>
-            <p class="prompt-con-text prompt-con-text-two no-bottom">微吼始终坚持以客户为中心，合规经营，不断追求更优的客户体验。我们对本次工作给您造成的不便深表歉意。感谢您对微吼的支持和理解。</p>
-            <p class="prompt-con-text prompt-con-text-two"> 如有任何疑问请您致电您的专属售后。</p>
-            <a class="prompt-con-text-four" href="javascript:;" @click="closePayNotice">我知道了</a>
-        </div>
-      </div>
-    </template>
   </div>
 </template>
 <script>
@@ -238,7 +222,6 @@ export default {
       isOld: false,
       openSys: false,
       showDelay: false,
-      payNoticeVisible: true, // TODO:支付牌照问题
       imageBanner: null
     };
   },
@@ -308,8 +291,6 @@ export default {
     //   hasClose: false,
     //   endTime: 123123123123
     // }
-    // TODO:支付牌照问题
-    this.checkPayNoticeVisible()
     const now = new Date().getTime()
     const start_time = new Date('September 2, 2021 00:00:01').getTime()
     const today = new Date(new Date(new Date().toLocaleDateString()).getTime() +24 * 60 * 60 * 1000 -1).getTime()
@@ -348,23 +329,6 @@ export default {
     document.getElementById('app').style.minWidth="1366px"
   },
   methods: {
-    // TODO:支付牌照问题
-    checkPayNoticeVisible() {
-      const lastCloseTime = localStorage.getItem(`${sessionStorage.getItem('userId')}_pay_notice`)
-      if (!lastCloseTime){
-        this.payNoticeVisible = true
-      } else {
-        console.log('---====----====', this.$moment().diff(new Date(Number(lastCloseTime)), 'hours'),  new Date(Number(lastCloseTime)))
-        const diffHours = this.$moment().diff(new Date(Number(lastCloseTime)), 'hours')
-        this.payNoticeVisible = diffHours >= 24
-      }
-
-    },
-    // TODO:支付牌照问题
-    closePayNotice() {
-      this.payNoticeVisible = false
-      localStorage.setItem(`${sessionStorage.getItem('userId')}_pay_notice`, new Date().getTime())
-    },
     iKonw(){
       this.isOld = false
       let newUserId = JSON.parse(sessionStorage.getItem('userInfo')).user_id
@@ -831,11 +795,6 @@ export default {
         padding: 32px;
         &.mini {
           height: 440px;
-        }
-        // TODO:支付牌照问题
-        &__pay{
-          height: auto;
-          top: 54%;
         }
     }
     .prompt .prompt-wrap .prompt-con-img{
