@@ -35,8 +35,8 @@ export default {
     return {
       userId:JSON.parse(sessionOrLocal.get("userId")),
       settingList: [
-        {icon: 'icon_information@2x', id: 1, title: '基本信息', subText: '编辑专题基本信息', path: `/subject/edit/${this.$route.params.id}`, k: 100856},
-         {icon: 'icon_watch@2x', id: 2, title: '观看限制', subText: '设置专题观看限制', path: `/subject/viewer/${this.$route.params.id}`, k: 100858},
+        {icon: 'icon_information@2x', id: 1, title: '基本信息', subText: '编辑专题基本信息', path: `/special/edit/${this.$route.params.id}`, k: 100856},
+         {icon: 'icon_watch@2x', id: 2, title: '观看限制', subText: '设置专题观看限制', path: `/special/viewer/${this.$route.params.id}`, k: 100858},
       ]
     }
   },
@@ -47,7 +47,7 @@ export default {
     },
     handleData() {
       this.reportData(100865);
-      this.$router.push({path: `/subject/data/${this.$route.params.id}`})
+      this.$router.push({path: `/special/data/${this.$route.params.id}`})
     },
     reportData(k) {
       this.$vhall_paas_port({

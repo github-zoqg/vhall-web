@@ -83,7 +83,7 @@ export default {
           this.subject_id = res.data.webinar_subject.id;
           let isOldSubject = Boolean(res.data.webinar_subject.is_new_version);
           if (!isOldSubject) {
-            this.$router.push({path: `/subject/edit/${this.subject_id}?title=编辑`});
+            this.$router.push({path: `/special/edit/${this.subject_id}?title=编辑`});
           }
           this.subjectDetailInfo = {...res.data.webinar_subject};
         }

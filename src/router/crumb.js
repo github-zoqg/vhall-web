@@ -919,35 +919,35 @@ export function CrumbSet(metaName, that) {
     return that.$route.params.id ? [
       {
         title: '专题管理',
-        path: '/subject',
+        path: '/special',
         isClick: false,
         redirect: 'noRedirect'
       },
       {
         title: '专题列表',
-        path: '/subject/list',
+        path: '/special/list',
         isClick: true
       },
       {
         title: '专题详情',
-        path: `/subject/details/${that.$route.params.id}`,
+        path: `/special/details/${that.$route.params.id}`,
         isClick: true
       },
       {
         title: '编辑专题',
-        path: `/subject/edit/${that.$route.params.id}`,
+        path: `/special/edit/${that.$route.params.id}`,
         isClick: true
       }
     ] : [
       {
         title: '专题管理',
-        path: '/subject',
+        path: '/special',
         isClick: false,
         redirect: 'noRedirect'
       },
       {
         title: '创建专题',
-        path: '/subject/edit',
+        path: '/special/edit',
         isClick: true
       }
     ];
@@ -955,23 +955,23 @@ export function CrumbSet(metaName, that) {
     return [
       {
         title: '专题管理',
-        path: '/subject',
+        path: '/special',
         isClick: false,
         redirect: 'noRedirect'
       },
       {
         title: '专题列表',
-        path: '/subject/list',
+        path: '/special/list',
         isClick: true
       },
       {
         title: '专题详情',
-        path: `/subject/details/${that.$route.params.id}`,
+        path: `/special/details/${that.$route.params.id}`,
         isClick: true
       },
       {
         title: '观看限制',
-        path: '/subject/viewer',
+        path: '/special/viewer',
         isClick: true
       }
     ]
@@ -979,18 +979,18 @@ export function CrumbSet(metaName, that) {
     return [
       {
         title: '专题管理',
-        path: '/subject',
+        path: '/special',
         isClick: false,
         redirect: 'noRedirect'
       },
       {
         title: '专题列表',
-        path: '/subject/list',
+        path: '/special/list',
         isClick: true
       },
       {
         title: '专题详情',
-        path: `/subject/details/${that.$route.params.id}`,
+        path: `/special/details/${that.$route.params.id}`,
         isClick: true
       }
     ]
@@ -998,23 +998,23 @@ export function CrumbSet(metaName, that) {
     return [
       {
         title: '专题管理',
-        path: '/subject',
+        path: '/special',
         isClick: false,
         redirect: 'noRedirect'
       },
       {
         title: '专题列表',
-        path: '/subject/list',
+        path: '/special/list',
         isClick: true
       },
       {
         title: '专题详情',
-        path: `/subject/details/${that.$route.params.id}`,
+        path: `/special/details/${that.$route.params.id}`,
         isClick: true
       },
       {
         title: '导出数据',
-        path: '/subject/data',
+        path: '/special/data',
         isClick: true
       }
     ]
