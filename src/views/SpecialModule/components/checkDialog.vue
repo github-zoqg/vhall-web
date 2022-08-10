@@ -1,7 +1,7 @@
 <template>
    <el-dialog
       title="直播活动校验"
-      width="590px"
+      width="592px"
       :visible.sync="checkVisible"
       :close-on-click-modal=false
       :close-on-press-escape=false
@@ -69,7 +69,7 @@ export default {
           }
         }
         .check_list{
-          height: 285px;
+          height: 296px;
           overflow: auto;
           &_item{
             line-height: 30px;
@@ -77,7 +77,7 @@ export default {
             color: #666;
             span{
               color: #1a1a1a;
-              font-weight: 500;
+              font-weight: 400;
             }
             .color_blue{
               color: #3562FA;
