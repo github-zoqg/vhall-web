@@ -59,6 +59,7 @@
           <el-button type="primary"
             v-preventReClick
             @click.prevent.stop="saveUserList"
+            class="loading-btn"
             size="medium"
             round
             :disabled="fileResult === 'error' || !isUploadEnd  || saveLoading || importResult.success == 0"
@@ -511,6 +512,15 @@ export default {
     text-align: right;
     margin-bottom: 24px;
     margin-top: 18px;
+  }
+  /deep/.dialog-footer {
+    button {
+      width: 92px;
+      text-align: center;
+    }
+    button.el-button.loading-btn {
+      padding: 4px 0;
+    }
   }
   a.down-a-btn {
     float: left;
