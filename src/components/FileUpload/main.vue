@@ -12,7 +12,7 @@
       <div class="box">
         <a href="javascript:;" class="a-upload mr10" v-if="value">
           <i class="iconfont-v3 saasexcelwendang excel"></i>
-          <p class="file-name" style="color: rgb(136, 136, 136);" :title="fileName">{{fileName}}</p>
+          <p class="file-name" style="`color: #1A1A1A;`" :title="fileName">{{fileName}}</p>
           <slot name="upload-result"></slot>
           <div class="mask">
             <span>
@@ -316,7 +316,7 @@ export default {
     cursor: initial;
   }
   .a-upload .file-name {
-    color: #999;
+    color: #1A1A1A;
     font-size: 14px;
     font-weight: 400;
     margin-top: -5px;

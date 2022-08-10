@@ -15,6 +15,7 @@
         :data="list"
         style="width: 100%"
         :header-cell-style="{background:'#f7f7f7',color:'#666',height:'40px'}"
+        :cell-class-name="setLastCellStyle"
         height="244"
         lazy>
         <el-table-column
@@ -30,7 +31,7 @@
             <div :class="['table-item-column', {
               'error': scope.row.phone_error
             }]">
-              <VhallInput v-model.trim="scope.row.phone" @input="handleInput(scope.row)" autocomplete="off" placeholder="请输入手机号" :maxlength="15" show-word-limit @blur="checkItem(scope.row, scope.$index)"></VhallInput>
+              <VhallInput v-model.trim="scope.row.phone" @input="handleInput(scope.row)" autocomplete="off" placeholder="请输入手机号" :maxlength="15" show-word-limit></VhallInput>
             </div>
             <!-- {{scope.row.phone_error}} -->
           </template>
@@ -41,7 +42,7 @@
             <div :class="['table-item-column', {
               'error': scope.row.name_error
             }]">
-              <VhallInput v-model.trim="scope.row.name" v-clearEmoij autocomplete="off" placeholder="请输入姓名" :maxlength="30" show-word-limit @blur="checkItem(scope.row, scope.$index)"></VhallInput>
+              <VhallInput v-model.trim="scope.row.name" v-clearEmoij autocomplete="off" placeholder="请输入姓名" :maxlength="30" show-word-limit></VhallInput>
               <div class="table-item-btn" v-if="scope.$index !== 0">
                 <i class="iconfont-v3 saasicon_delete" @click.prevent="removeItem(scope.$index)"></i>
               </div>
@@ -99,6 +100,9 @@ export default {
         params.subject_id = this.webinarOrSubjectId
       }
       return params
+    },
+    setLastCellStyle({row, column, rowIndex, columnIndex}) {
+      return this.list && this.list.length <= 4 && columnIndex == 2 ? 'last-cell' : ''
     },
     // 输入限制，只能输入0-9数字
     handleInput(value) {
@@ -159,7 +163,7 @@ export default {
         }
         return allPhone;
       }, {});
-      console.log('当前是否具备重复数据', countPhones)
+      // console.log('当前是否具备重复数据', countPhones)
       // 格式化每行效果
       this.list.forEach(item => {
         if (countPhones[item.phone] > 1) {
@@ -187,7 +191,7 @@ export default {
         this.vm.close();
       }
       this.vm = this.$message({
-        showClose: false,
+        showClose: true,
         duration: 2000,
         message: message,
         type: type ? type : 'warning'
@@ -334,6 +338,10 @@ export default {
     padding-left: 0;
     padding-right: 12px;
   }
+  /deep/.el-table .last-cell .cell {
+    padding-left: 0;
+    padding-right: 0;
+  }
   /deep/.el-dialog__footer {
     padding: 16px 32px 24px 32px;
   }
@@ -349,13 +357,30 @@ export default {
   /deep/.el-table__body tr:hover>td {
     background-color: #ffffff !important;
   }
+  /deep/ button.el-button.add-btn.el-button--primary.el-button--mini.is-round {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: #FFFFFF;
+    margin-bottom: 12px;
+    width: 78px;
+    height: 36px;
+  }
+  /deep/.saasicon_delete {
+    font-size: 18px;
+  }
+  /deep/.dialog-footer {
+    button {
+      width: 96px;
+    }
+  }
 }
 .add-btn {
-  margin-bottom: 16px;
   i.saasline-plus {
     margin-right: 6px;
     font-size: 12px;
   }
 }
+
 </style>
 
