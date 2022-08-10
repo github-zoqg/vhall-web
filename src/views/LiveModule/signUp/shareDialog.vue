@@ -92,8 +92,8 @@ export default {
       shareSwtich: true,
       wxUrl: '',
       wxUrls: `${Env.staticLinkVo.aliQr}`,
-      link: `${process.env.VUE_APP_WAP_WATCH}${this.signUpPageType === 'subject' ? '/subject/entryform/' : '/lives/entryform/'}${this.webinarOrSubjectId}`,
-      sinaLink: `${process.env.VUE_APP_WAP_WATCH}${this.signUpPageType === 'subject' ? '/subject/entryform/' : '/lives/entryform/'}${this.webinarOrSubjectId}`
+      link: `${process.env.VUE_APP_WAP_WATCH}${this.signUpPageType === 'subject' ? '/special/entryform/' : '/lives/entryform/'}${this.webinarOrSubjectId}`,
+      sinaLink: `${process.env.VUE_APP_WAP_WATCH}${this.signUpPageType === 'subject' ? '/special/entryform/' : '/lives/entryform/'}${this.webinarOrSubjectId}`
     };
   },
   watch:{
