@@ -87,13 +87,13 @@ export default {
       subjectShowVisible: false,
       vm: null,
       signUpPageType: (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) ? 'webinar'
-        : (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/subject/entryform') != -1) ? 'subject'
+        : (window.location.href.indexOf('/special/viewer/') != -1 || window.location.href.indexOf('/subject/entryform') != -1) ? 'subject'
         : '',
       webinarOrSubjectId:
         (window.location.href.indexOf('/live/signup/') != -1)
         ? this.$route.params.str :
         (
-          (window.location.href.indexOf('/subject/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/subject/entryform') != -1)
+          (window.location.href.indexOf('/special/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/subject/entryform') != -1)
           ? (this.$route.params.id || this.$route.params.str) : ''
         )
     };
@@ -118,9 +118,9 @@ export default {
     setParamsIdByRoute(params) {
       if (this.signUpPageType === 'webinar') {
         params.webinar_id = this.$route.params.str
-      } else if (this.signUpPageType === 'subject' && window.location.href.indexOf('/subject/viewer/') == -1) {
+      } else if (this.signUpPageType === 'subject' && window.location.href.indexOf('/special/viewer/') == -1) {
         params.subject_id = this.$route.params.str
-      } else if (this.signUpPageType === 'subject' && window.location.href.indexOf('/subject/viewer/') != -1) {
+      } else if (this.signUpPageType === 'subject' && window.location.href.indexOf('/special/viewer/') != -1) {
         params.subject_id = this.$route.params.id
       }
       return params

@@ -404,9 +404,9 @@ export default {
               this.isChange = false
               let subject_id = this.subject_id || this.$route.params.id;
               if (!this.isOldSubject && subject_id) {
-                this.$router.push({path: `/subject/list`});
+                this.$router.push({path: `/special/list`});
               } else {
-                this.$router.push({path: `/subject/details/${subject_id}`});
+                this.$router.push({path: `/special/details/${subject_id}`});
               }
               console.log(res);
             }
@@ -477,15 +477,15 @@ export default {
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
-            this.$router.push({path:'/subject/list'});
+            this.$router.push({path:'/special/list'});
         }).catch(() => {
           });
       } else {
-         this.$router.push({path:'/subject/list'});
+         this.$router.push({path:'/special/list'});
       }
     },
     resetForm(formName) {
-      this.$router.push({path:'/subject/list'});
+      this.$router.push({path:'/special/list'});
     },
     deleteImg() {
       this.formData.imageUrl = '';

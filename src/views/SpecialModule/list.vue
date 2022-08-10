@@ -6,7 +6,7 @@
 
     <!-- 操作栏 -->
     <div class="operaBox" v-if="totalElement || isSearch">
-      <el-button size="medium" type="primary" round @click="$router.push({path:'/subject/edit',query: {title: '创建', refer: 1}})">创建专题</el-button>
+      <el-button size="medium" type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建', refer: 1}})">创建专题</el-button>
       <div class="searchBox">
         <el-select v-model="orderBy" placeholder="请选择" @change="changeOrder">
           <el-option
@@ -36,7 +36,7 @@
 
     <el-row :gutter="24" class="lives" v-show="totalElement">
       <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
-        <router-link :to="{ path: item.is_new_version == 1 ? `/subject/details/${item.id}` : `/subject/edit/${item.id}?title=编辑`}" target="_blank" class="inner">
+        <router-link :to="{ path: item.is_new_version == 1 ? `/special/details/${item.id}` : `/special/edit/${item.id}?title=编辑`}" target="_blank" class="inner">
           <!-- @click="editSpecialInfo(item.id)" -->
           <div class="top">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
@@ -74,7 +74,7 @@
     <SPagination :total="totalElement" :page-size='pageSize' :current-page='pageNum' @current-change="currentChangeHandler" align="center" v-if="totalElement > pageSize"></SPagination>
      <div class="no-live" v-show="!totalElement">
       <noData :nullType="nullText" :text="text">
-        <el-button type="primary" round @click="$router.push({path:'/subject/edit',query: {title: '创建', refer: 1}})" v-if="nullText==='nullData'">创建专题</el-button>
+        <el-button type="primary" round @click="$router.push({path:'/special/edit',query: {title: '创建', refer: 1}})" v-if="nullText==='nullData'">创建专题</el-button>
       </noData>
     </div>
    <share ref="share" :shareVo="shareVo"></share>
@@ -254,7 +254,7 @@ export default {
         k: 100496,
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-      const { href } = this.$router.resolve({path: `/subject/edit/${id}`,query: {title: '编辑'}});
+      const { href } = this.$router.resolve({path: `/special/edit/${id}`,query: {title: '编辑'}});
       window.open(href, '_blank');
     },
     toShare(id) {
@@ -270,7 +270,7 @@ export default {
     },
     // 数据页面
     toDataReport(id) {
-      const { href } = this.$router.resolve({path:`/subject/data/${id}`,query: {title: '查看数据'}});
+      const { href } = this.$router.resolve({path:`/special/data/${id}`,query: {title: '查看数据'}});
       window.open(href, '_blank');
     },
     // 预览页面

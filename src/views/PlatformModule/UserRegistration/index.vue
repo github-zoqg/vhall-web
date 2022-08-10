@@ -129,7 +129,7 @@ export default {
       vm: null,
       /*--------------------列表部分参数定义--------------------*/
       loading: false,
-      isDataPage: location.href.indexOf('/subject/data/') != -1,
+      isDataPage: location.href.indexOf('/special/data/') != -1,
       query: {
         pos: 0,
         limit: 20,
@@ -228,7 +228,7 @@ export default {
     // 跳转专题详情页
     toSubjectDetail() {
       this.$router.push({
-        path: `/subject/details/${this.$route.params.id}`
+        path: `/special/details/${this.$route.params.id}`
       })
     },
     // 获取列表数据
