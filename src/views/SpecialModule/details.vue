@@ -215,6 +215,7 @@ export default {
           .info_limit{
             color: #666;
             padding: 8px 0 4px 0;
+            line-height: 20px;
           }
         }
         .tag {
