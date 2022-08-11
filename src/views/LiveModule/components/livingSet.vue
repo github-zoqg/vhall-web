@@ -12,7 +12,7 @@
       <template v-else>
         <div class="type_item" v-for="(item, index) in themeWapTypeList" :key="index">
           <span class="type_item_title">{{ item.title }}</span>
-          <p class="type_item_check" :class="item.isActive ? 'active' : ''" @click="activeWapTheme(item)">
+          <p class="type_item_check item_checked" :class="item.isActive ? 'active' : ''" @click="activeWapTheme(item)">
             <span class="checked_img" v-if="item.isActive"><img src="../../../common/images/icon-choose.png" alt=""></span>
           </p>
         </div>
@@ -632,6 +632,9 @@ export default {
           border-radius: 4px;
           border: 1px solid transparent;
           cursor: pointer;
+          &.item_checked{
+            height: 260px;
+          }
           &.active {
             border: 1px solid #fb3a32;
           }
