@@ -521,13 +521,23 @@ export default {
     // 验证码生成
     fCodeExecute(formName) {
       let errorMsg = '';
+      if (!this.formCode.code) {
+        this.$message({
+            message:  '邀请码数量不能为空',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+        return;
+      }
       this.$refs[formName].validateField('code', (msg) => {
         errorMsg = msg;
       });
       if(!errorMsg) {
         this.$fetch('createSubjectCode', {
           subject_id: this.subjectForm.subject_id,
-          nums: this.formCode.code
+          nums: this.formCode.code || undefined
         }).then(res => {
           this.$message({
             message:  `生成成功`,
