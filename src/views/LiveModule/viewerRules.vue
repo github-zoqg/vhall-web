@@ -4,6 +4,7 @@
       <!-- <div slot="content">
         可联系客服开通“单点观看”功能，即开启付费/邀请码/白名单后，一个账号仅允许同时一台设备观看直播。
       </div> -->
+      <div class="limit_detail" @click="toDetail">若直播关联专题，以专题鉴权模式为准。<span>查看详情</span></div>
     </pageTitle>
     <!-- 内容区域 -->
     <div class="viewer-rules" v-show="liveDetailInfo">
@@ -251,6 +252,27 @@
         <el-button type="primary" round @click="visible = false;" class="button_size">确定</el-button>
       </div>
     </VhallDialog>
+    <VhallDialog :visible='limitVisible' title="提示" width='400px' @close="limitVisible = false;">
+      <div class="limit_tip">
+        <template v-if="subjectInfo.subject_type==1">
+          <span>本直播属于多个专题，这些专题无统一的观看限制，本直播观看限制生效</span>
+        </template>
+        <template v-else-if="subjectInfo.subject_type==2">
+          本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ titleFormat() }}》</span> ，
+         <span>该专题提供统一的观看限制-{{ handleFormat() }}，本直播观看限制失效。</span>
+        </template>
+        <template v-else-if="subjectInfo.subject_type==3">
+          本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ titleFormat() }}》</span> ，
+          <span>该专题无统一的观看限制，本直播观看限制生效。</span>
+        </template>
+        <template v-else>
+         <span>本直播不属于任何专题，本次设置的观看限制生效。</span>
+        </template>
+      </div>
+      <div slot='footer'>
+        <el-button type="primary" size="medium" round @click="limitVisible = false;">我知道了</el-button>
+      </div>
+    </VhallDialog>
   </div>
 </template>
 
@@ -392,7 +414,14 @@ export default {
       hide_subscribe: true,  // 预约状态
       showPwd: false,
       stash:'',               // 仅占位用
-      liveDetailInfo: null
+      liveDetailInfo: null,
+      limitVisible: false,
+      subjectInfo: {
+        subject_verify: '', //专题鉴权
+        subject_type: '', // 绑定
+        subject_title: '', //专题标题
+        subject_id: '' // 活动对应的专题
+      }
     };
   },
   methods: {
@@ -480,6 +509,13 @@ export default {
             is_preview: is_preview, // 是否开启试看（1-试看；0-否；）
             preview_time: is_preview > 0 ? preview_time : 5 // 试看时长-分钟计，若已经设置过反显。若未设置过默认为5
           };
+          this.subjectInfo = {
+            subject_verify: res.data.subject_verify, //专题鉴权
+            subject_type: res.data.subject_type, // 绑定
+            subject_title: res.data.subject_title, //专题标题
+            parent_verify: res.data.parent_verify,
+            subject_id: res.data.subject_id // 活动对应的专题
+          }
           this.whiteId = verify === 2 ? white_id : null;
           console.log(this.form, '当前');
           // 表单选项初始化
@@ -544,7 +580,7 @@ export default {
         });
       } else if(formName === 'whiteForm') {
         /*flag = this.whiteIds.length > 0;*/
-        flag = this.whiteId !== null && this.whiteId !== undefined && this.whiteId !== '';
+        flag = this.whiteId !== null && this.whiteId !== undefined && this.whiteId !== '' && this.whiteId !== 0;
         if (!flag) {
           this.$message({
             message:  `请选择观众组`,
@@ -582,6 +618,14 @@ export default {
             customClass: 'zdy-info-box'
           });
           return;
+        }
+      }
+      if (formName === 'whiteForm') {
+        try {
+          // 设置白名单的时候，每次点击保存之前，先获取下活动是否设置过报名表单
+          await this.getLiveDetail()
+        } catch(e) {
+          console.log(e)
         }
       }
       // 若是当前白名单，开启了报名表单，直接提示不可和白名单直接使用。
@@ -622,6 +666,13 @@ export default {
           this.sendViewerSetSave(params);
         }
       }
+    },
+    toDetail() {
+      // 有绑定
+      this.limitVisible = true;
+    },
+    goSubjectDetail() {
+      window.open(`${process.env.VUE_APP_WEB_URL}/special/edit/${this.subjectInfo.subject_id}?title=编辑`, '_blank')
     },
     getReportData() {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -701,6 +752,34 @@ export default {
       this.$nextTick(() => {
       })
     },
+    titleFormat() {
+      let val = this.subjectInfo.subject_title;
+      return val.length < 10 ? val : val.substr(0, 10) + '...'
+    },
+    // 格式化鉴权格式
+    handleFormat() {
+      let ret = '';
+      if (this.subjectInfo.subject_verify == 1) {
+        const verify = this.subjectInfo.parent_verify;
+        switch (verify) {
+          case 0:
+            ret = '免费'
+            break;
+          case 1:
+            ret = '密码'
+            break;
+          case 2:
+            ret = '白名单'
+            break;
+          case 4:
+            ret = '邀请码（原F码）'
+            break;
+        }
+      } else {
+        ret = '报名表单'
+      }
+      return ret;
+    },
     // 验证码生成
     fCodeExecute(formName) {
       let errorMsg = '';
@@ -763,8 +842,8 @@ export default {
       this.audienceGet();
     },
     // 获取基本信息
-    getLiveDetail(id) {
-      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+    getLiveDetail() {
+      return this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         this.liveDetailInfo = res.data;
         console.log(this.liveDetailInfo)
       }).catch(res=>{
@@ -844,6 +923,14 @@ export default {
   height: 16px;
   background: #fff;
   text-align: right;
+}
+.limit_detail{
+  font-size: 14px;
+  color: #999;
+  span{
+    color: #3562fa;
+    cursor: pointer;
+  }
 }
 .viewer-rules {
   /deep/.el-radio__inner{
@@ -1157,5 +1244,16 @@ export default {
 }
 .pr60 /deep/.el-input__inner{
   padding-right: 65px !important;
+}
+.limit_tip{
+  font-size: 14px;
+  line-height: 22px;
+  .color_blue{
+    color: #3562fa;
+    cursor: pointer;
+  }
+  .color_red{
+    color: #FB3A32;
+  }
 }
 </style>

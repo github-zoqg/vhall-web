@@ -271,7 +271,7 @@ export function checkAuth(to, from, next, that) {
     to.path.indexOf('/live/room') !== -1 ||
     to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'))
     || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) || to.path.indexOf('/upgrading') !== -1 || to.path.indexOf('/warning/') !== -1
-    || to.path.indexOf('/special/detail') != -1 || to.path.indexOf('/cMiddle') != -1
+    || to.path.indexOf('/cMiddle') != -1
   ) {
     // 不验证直接进入
     next();
@@ -392,6 +392,7 @@ export function checkAuth(to, from, next, that) {
       return;
     }
     fetchData('planFunctionGet', {}).then(res => {
+      console.log('>>>>>>>>当前用户-配置项开关内容(utils.js中调用)')
       if (res && res.code === 200) {
         let permissions = res.data.permissions;
         if (permissions) {
@@ -439,9 +440,13 @@ export function checkAuth(to, from, next, that) {
             webinar_user_id: res.data.user_id,
             scene_id: 1,
           }).then(res => {
+            console.log('>>>>>>>>当前活动-配置项开关内容(utils.js中调用)', to.query.webinar_id, to.params.id, to.query.id)
             if (res && res.code === 200 && res.data.permissions) {
-              // 设置活动全部权限
-              sessionOrLocal.set('WEBINAR_PES', permissions, 'localStorage');
+              let permissions = res.data.permissions;
+              if (permissions) {
+                // 设置活动全部权限
+                sessionOrLocal.set('WEBINAR_PES', permissions, 'localStorage');
+              }
             }
           }).catch(e => {
             console.log('刷新等情况下获取活动下接口配置项情况，异常不做任何处理')
