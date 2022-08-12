@@ -345,6 +345,15 @@ export default {
           path: `/live/langCard/${this.$route.params.str}`,
           isShow: perssionInfo.multilingual == 1 && this.webinarType != 6,
         },
+        {
+          icon: 'icon_embedded@2x',
+          id: 10,
+          title: '消息通知',
+          subText: `设置参与用户接收提醒通知`,
+          type: null, // TODO 需要上报KEY
+          path: `/live/msgNotification/${this.$route.params.str}`,
+          isShow: true,
+        },
       ]),
         (this.brandList = [
           {
