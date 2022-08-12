@@ -38,7 +38,7 @@
             <pc-preview :type="livingPcPreviewType" :domainUrl="domain_pc_url" :livingForm="livingForm" :videoUrl="video_url"></pc-preview>
           </div>
           <div class="preview_box_wap" v-else>
-            <wap-preview :type="livingPcPreviewType"></wap-preview>
+            <wap-preview :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingForm="livingWapForm"></wap-preview>
           </div>
         </div>
       </div>
@@ -436,6 +436,7 @@ export default {
     // 默认pc主题颜色
     resetFormPcColor(index) {
       this.livingPcForm = {
+        style: this.livingPcForm.style,
         bgColor: 1, //主题色
         background: '',
         blurryDegree: 0,
@@ -466,6 +467,7 @@ export default {
      // 默认wap主题颜色
     resetFormWapColor(index) {
       this.livingWapForm = {
+        style: this.livingWapForm.style,
         bgColor: index, //主题色
         background: '',
         blurryDegree: 0,

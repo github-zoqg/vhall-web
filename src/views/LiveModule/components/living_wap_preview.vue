@@ -1,6 +1,6 @@
 <template>
   <div class="living_preview_wap">
-    <div class="living_preview_wap_header">
+    <div class="living_preview_wap_header" v-if="livingForm.style!=3">
       <div class="header_left">
         <span><img src="./image/living/chat1.png" alt=""></span>
         戈里瑰夏
@@ -11,12 +11,31 @@
         <i class="iconfont-v3 saasicon_guanzhu"></i>
       </div>
     </div>
+    <div class="living_preview_wap_simpleHeader" v-else>
+      <div class="header_left">
+        <div class="header_left_avatar"><img src="./image/living/chat1.png" alt=""></div>
+        <div class="header_left_name">
+          <p class="header_host">戈里瑰夏 </p>
+          <p class="header_hot">
+            <i class="iconfont-v3 saasicon_home1">&nbsp;1234&nbsp;&nbsp;</i>
+            <i class="iconfont-v3 saasicon_home1">&nbsp;2345</i>
+          </p>
+        </div>
+        <div class="header_left_attention">
+          <span>关注</span>
+        </div>
+      </div>
+       <div class="header_right">
+        <span><i class="iconfont-v3 saasicon_home1"></i></span>
+        <span><i class="iconfont-v3 saasicon_home1"></i></span>
+       </div>
+    </div>
     <div class="living_preview_wap_body">
       <div class="wap_player">
         <img src="./image/living/layout1.png" alt="">
       </div>
       <div class="wap_menus">
-        <div class="wap_menus_tabs">
+        <div class="wap_menus_tabs" v-if="livingForm.style!=3">
           <div class="tabs_left">
             <i class="iconfont-v3 saasicon_arrowleft"></i>
           </div>
@@ -31,7 +50,7 @@
           </div>
         </div>
         <div class="wap_menus_chat">
-          <div class="wap_menus_chat_topBottom" v-if="false">
+          <div class="wap_menus_chat_topBottom chat_clear" v-if="livingForm.style==1">
             <div class="chat_item">
               <div class="chat_item_avatar">
                 <img src="./image/living/chat2.png" alt="">
@@ -76,7 +95,7 @@
               </div>
             </div>
           </div>
-          <div class="wap_menus_chat_leftRight">
+          <div class="wap_menus_chat_leftRight chat_clear" v-if="livingForm.style==2">
             <div class="chat_item">
               <div class="chat_item_avatar"><img src="./image/living/chat1.png" alt=""></div>
               <div class="chat_item_content"><span class="name">Mr Liu</span>😊😊😊</div>
@@ -126,6 +145,68 @@
               </div>
             </div>
           </div>
+          <div class="wap_menus_chat_leftRight chat_clear" v-if="livingForm.style==3">
+            <div class="chat_item_simple">
+              <div class="chat_item_simple_content"><span class="name">Mr Liu</span>😊😊😊</div>
+            </div>
+            <div class="chat_item_simple">
+              <div class="chat_item_simple_content">
+                <span class="name">
+                  <span class="chat_host">主持人</span>
+                  微吼直播
+                </span>
+                关于热度兼容老版h5动微吼直播app测试
+              </div>
+            </div>
+            <div class="chat_item_simple">
+              <div class="chat_item_simple_content">
+                <span class="name">小助理</span>
+                点关注加粉丝团小微宠粉为涨粉
+              </div>
+            </div>
+            <div class="chat_item_simple">
+              <div class="chat_item_simple_content">
+                <span class="name">
+                  <span class="chat_ass">助理</span>
+                  耶加雪菲
+                </span>
+                发起了签到
+              </div>
+            </div>
+             <div class="chat_item_simple">
+              <div class="chat_item_simple_content">
+                <span class="name">C咪酱🍒</span>
+                花老学生宿舍师，yyds.
+                <span class="chat_imgs">
+                  <img src="./image/living/layout1.png" alt="">
+                  <img src="./image/living/layout2.png" alt="">
+                  <img src="./image/living/layout3.png" alt="">
+                  <img src="./image/living/layout4.png" alt="">
+                </span>
+              </div>
+            </div>
+            <div class="chat_item_simple">
+              <div class="chat_item_simple_content">
+                <span class="name">
+                  <span class="chat_ass">助理</span>
+                  很长的昵称...
+                </span>
+                推送了问卷 <span class="chat_blue">点击查看</span>
+              </div>
+            </div>
+            <div class="chat_item_simple">
+              <div class="chat_item_simple_content">
+                <span class="name">阿曼达</span>
+                0万+行业标杆企业都在用
+              </div>
+            </div>
+             <div class="chat_item_simple">
+              <div class="chat_item_simple_content">
+                <span class="name">董主任</span>
+                12年专业实力铸造品牌口碑
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -147,6 +228,21 @@ export default {
       // 是直播页还是引导页
       type: Number,
       default: 1
+    },
+     // 主题背景
+    domainUrl: {
+      type: String,
+      default: ''
+    },
+    // 视频区背景
+    videoUrl: {
+      type: String,
+      default: ''
+    },
+    // 表单数据
+    livingForm: {
+      type: Object,
+      default: ()=>{}
     }
   }
 }
@@ -155,6 +251,7 @@ export default {
   .living_preview_wap{
     width: 100%;
     height: 100%;
+    position: relative;
     &_header{
       width: 100%;
       height: 36px;
@@ -187,8 +284,78 @@ export default {
         }
       }
     }
+    &_simpleHeader{
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 12px;
+      margin:  8px 0 40px 0;
+      .header_left{
+        width: 174px;
+        height: 40px;
+        padding: 0 8px;
+        border-radius: 40px;
+        background: rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        &_avatar{
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          img{
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+        }
+        &_name{
+          margin: 0 6px;
+          color: #fff;
+          width: 100px;
+          transform: scale(0.5);
+          transform-origin: center left;
+          margin-right: -20px;
+          .header_host{
+            color: #fff;
+            font-size: 24px;
+            line-height: 32px;
+          }
+          .header_hot{
+            font-size: 20px;
+          }
+        }
+        &_attention{
+          width: 40px;
+          height: 24px;
+          background: linear-gradient(280.56deg, #FB2626 9.45%, #FF685F 90.39%);
+          border-radius: 30px;
+          font-size: 12px;
+          color: #fff;
+          text-align: center;
+          line-height: 24px;
+        }
+      }
+      .header_right{
+        span{
+          display: inline-block;
+          width: 30px;
+          height: 30px;
+          background: rgba(0, 0, 0, 0.3);
+          border-radius: 57px;
+          text-align: center;
+          line-height: 30px;
+          margin-left: 12px ;
+          i{
+            font-size: 18px;
+            color: #fff;
+          }
+        }
+      }
+    }
     &_body{
-      height: calc(100% - 92px);
       .wap_player{
         width: 100%;
         height: 221px;
@@ -244,7 +411,7 @@ export default {
         &_chat{
           width: 100%;
           padding: 0 10px;
-          height: 327px;
+          background: #f0f0f0;
           &_topBottom{
             margin-top: 5px;
             .chat_item{
@@ -300,9 +467,9 @@ export default {
             }
           }
           &_leftRight{
-            margin-top: 10px;
+            padding-top: 10px;
             .chat_item{
-              padding: 5px 6px;
+              padding: 2px 6px;
               background: rgba(255, 255, 255, 0.85);
               border-radius: 15px;
               margin-bottom: 10px;
@@ -369,21 +536,77 @@ export default {
                 }
               }
             }
-            // .chat_item_clear::after {
-            //   content: "";
-            //   display: block;
-            //   clear: both;
-            // }
+            .chat_item_simple{
+              padding: 2px 6px;
+              background: rgba(0, 0, 0, 0.25);
+              border-radius: 13px;
+              margin-bottom: 10px;
+              float: left;
+              display: flex;
+              &_content{
+                color: rgba(255, 255, 255, 1);
+                font-size: 13px;
+                line-height: 19px;
+                .name{
+                  color: rgba(255, 255, 255, 0.65);
+                  font-size: 13px;
+                  margin-right: 3px;
+                }
+                .chat_host{
+                  display: inline-block;
+                  color: #FB2626;
+                  padding: 4px 8px;
+                  font-size: 20px;
+                  background: rgba(251, 38, 38, 0.15);
+                  border-radius: 16px;
+                  transform: scale(0.5);
+                  transform-origin: center right;
+                  margin-left: -40px;
+                  vertical-align: middle;
+                  margin-right: 3px;
+                }
+                .chat_ass{
+                  display: inline-block;
+                  color: #0A7FF5;
+                  padding: 4px 8px;
+                  font-size: 20px;
+                  background: rgba(10, 127, 245, 0.15);
+                  border-radius: 16px;
+                  transform: scale(0.5);
+                  transform-origin: center right;
+                  margin-left: -28px;
+                  vertical-align: middle;
+                  margin-right: 3px;
+                }
+                .chat_imgs{
+                  display: flex;
+                  img{
+                    width: 28px;
+                    height: 28px;
+                    margin-right: 4px;
+                    border-radius: 4px;
+                  }
+                }
+              }
+            }
           }
           .chat_blue{
             color: #0A7FF5;
             font-size: 13px;
             line-height: 19px;
           }
+          .chat_clear::after {
+            content: "";
+            display: block;
+            clear: both;
+          }
         }
       }
     }
     &_footer{
+      // position: absolute;
+      // left: 0;
+      // bottom: 0;
       width: 100%;
       height: 56px;
       background: #fff;
