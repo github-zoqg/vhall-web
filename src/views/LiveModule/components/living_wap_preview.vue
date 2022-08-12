@@ -1,6 +1,6 @@
 <template>
   <div class="living_preview_wap">
-    <div class="living_preview_wap_header" v-if="livingForm.style!=3">
+    <div class="living_preview_wap_header" v-if="livingForm.style!=3 && type==2">
       <div class="header_left">
         <span><img src="./image/living/chat1.png" alt=""></span>
         戈里瑰夏
@@ -34,7 +34,23 @@
       <div class="wap_player">
         <img src="./image/living/layout1.png" alt="">
       </div>
-      <div class="wap_menus">
+      <div class="wap_subscribe" v-if="type==2">
+        <div class="subscribe_time">
+          <p class="down_time">距离开播 <span>01</span>天<span>02</span>时<span>27</span>分<span>03</span>秒</p>
+          <p class="down_auth">立即预约</p>
+        </div>
+        <div class="subscribe_tabs">
+          <div class="tab_item">
+            <span>简介</span>
+          </div>
+          <div class="tab_intro">
+            <p class="tab_intro_title">数字化转型时代企业如何做好直播营销</p>
+            <span>2021-03-18 00:00</span>
+            <p class="tab_intro_main">中国儿童中心发布通告，近期，国内多地相继发生聚集性疫情，北京市再次出现京外关联本地病例，疫情形势严峻复杂，防控压力持续增大。为保障学员和家长健康安全，8月3日起停止所有兴趣培训和线下活动以及幼儿园、儿童早期托育、亲子班，园内游艺暂停。具体复课时间安排、游艺开放时间将在微信公众号另行通知。</p>
+          </div>
+        </div>
+      </div>
+      <div class="wap_menus" v-else>
         <div class="wap_menus_tabs" v-if="livingForm.style!=3">
           <div class="tabs_left">
             <i class="iconfont-v3 saasicon_arrowleft"></i>
@@ -210,7 +226,7 @@
         </div>
       </div>
     </div>
-    <div class="living_preview_wap_footer">
+    <div class="living_preview_wap_footer" v-if="type==1">
       <div class="footer_left">
         <img src="./image/living/avatar@2x.png" alt="">
       </div>
@@ -410,10 +426,9 @@ export default {
         }
         &_chat{
           width: 100%;
-          padding: 0 10px;
+          padding: 12px 10px 20px 10px;
           background: #f0f0f0;
           &_topBottom{
-            margin-top: 5px;
             .chat_item{
               display: flex;
               width: 100%;
@@ -467,7 +482,6 @@ export default {
             }
           }
           &_leftRight{
-            padding-top: 10px;
             .chat_item{
               padding: 2px 6px;
               background: rgba(255, 255, 255, 0.85);
@@ -600,6 +614,16 @@ export default {
             display: block;
             clear: both;
           }
+        }
+      }
+      .wap_subscribe{
+        width: 100%;
+        height: calc(100% - 257px);
+        background: #f0f0f0;
+        .subscribe_time{
+          height: 133px;
+          background: #fff;
+          margin-bottom: 8px;
         }
       }
     }

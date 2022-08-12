@@ -85,12 +85,12 @@
         </div>
         <div class="form_item">
           <span class="vague_theme">模糊程度</span>
-          <vh-slider v-model="livingPcForm.blurryDegree" style="width: 131px" :max="10"></vh-slider>
+          <vh-slider v-model="livingPcForm.blurryDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="10"></vh-slider>
           <span class="vague_num">{{livingPcForm.blurryDegree}}</span>
         </div>
         <div class="form_item">
           <span class="vague_theme">背景亮度</span>
-          <vh-slider v-model="livingPcForm.lightDegree" style="width: 131px" :max="20"></vh-slider>
+          <vh-slider v-model="livingPcForm.lightDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="20"></vh-slider>
           <span class="vague_num">{{livingPcForm.lightDegree}}</span>
         </div>
       </template>
@@ -129,12 +129,12 @@
         </div>
         <div class="form_item" v-if="livingWapForm.style==3">
           <span class="vague_theme">模糊程度</span>
-          <vh-slider v-model="livingWapForm.blurryDegree" style="width: 131px" :max="10"></vh-slider>
+          <vh-slider v-model="livingWapForm.blurryDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="10"></vh-slider>
           <span class="vague_num">{{livingWapForm.blurryDegree}}</span>
         </div>
         <div class="form_item" v-if="livingWapForm.style==3">
           <span class="vague_theme">背景亮度</span>
-          <vh-slider v-model="livingWapForm.lightDegree" style="width: 131px" :max="20"></vh-slider>
+          <vh-slider v-model="livingWapForm.lightDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="20"></vh-slider>
           <span class="vague_num">{{livingWapForm.lightDegree}}</span>
         </div>
       </template>
@@ -207,12 +207,12 @@
         </div>
         <div class="form_item">
           <span class="vague_theme">模糊程度</span>
-          <vh-slider v-model="livingForm.videoBlurryDegree" style="width: 131px" :max="10"></vh-slider>
+          <vh-slider v-model="livingForm.videoBlurryDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="10"></vh-slider>
           <span class="vague_num">{{livingForm.videoBlurryDegree}}</span>
         </div>
         <div class="form_item">
           <span class="vague_theme">背景亮度</span>
-          <vh-slider v-model="livingForm.videoLightDegree" style="width: 131px" :max="20"></vh-slider>
+          <vh-slider v-model="livingForm.videoLightDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="20"></vh-slider>
           <span class="vague_num">{{livingForm.videoLightDegree}}</span>
         </div>
       </template>
@@ -225,7 +225,7 @@
 <script>
 import Upload from '@/components/Upload/main';
 import ColorSet from '@/components/ColorSelect';
-import cropper from '@/components/Cropper';
+import cropper from './Cropper/index.vue';
 import skins from '@/common/skins/index';
 import livingPreview from './livingPreview.vue';
 import pcPreview from './living_pc_preview.vue'
@@ -242,35 +242,17 @@ export default {
     return {
       themePcTypeList: [
         {
-          title: '低调黑',
+          title: '传统风格',
           url: '',
           id: 1,
           isActive: true
         },
         {
-          title: '简洁白',
+          title: '简洁风格',
           url: '',
           id: 2,
           isActive: false
-        },
-        {
-          title: '喜庆红',
-          url: '',
-          id: 3,
-          isActive: false
-        },
-        {
-          title: '科技蓝',
-          url: '',
-          id: 4,
-          isActive: false
-        },
-        {
-          title: '荣耀银',
-          url: '',
-          id: 5,
-          isActive: false
-        },
+        }
       ],
       themeWapTypeList: [
         {
@@ -324,7 +306,7 @@ export default {
         }
       },
       livingForm: {
-        videoColor: '#000', //视频区底色
+        videoColor: '#000000', //视频区底色
         chatLayout: 1,
         inavLayout: 1, //连麦布局
         inavDocumentLayout: 1, //连麦+演示布局

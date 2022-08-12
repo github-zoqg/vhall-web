@@ -186,9 +186,9 @@ export default {
   background: #595959;
   border: 1px solid #595959;
 }
-.themes__8F8F8F {
-  background: #8F8F8F;
-  border: 1px solid #8F8F8F;
+.themes__8C8C8C {
+  background: #8C8C8C;
+  border: 1px solid #8C8C8C;
 }
 .themes__D9D9D9 {
   background: #D9D9D9;
