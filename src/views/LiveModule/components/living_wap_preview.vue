@@ -1,6 +1,6 @@
 <template>
   <div class="living_preview_wap">
-    <div class="living_preview_wap_header" v-if="livingForm.style!=3 && type==2">
+    <div class="living_preview_wap_header" v-if="(livingForm.style!=3 && type==1) || type==2">
       <div class="header_left">
         <span><img src="./image/living/chat1.png" alt=""></span>
         戈里瑰夏
@@ -36,16 +36,16 @@
       </div>
       <div class="wap_subscribe" v-if="type==2">
         <div class="subscribe_time">
-          <p class="down_time">距离开播 <span>01</span>天<span>02</span>时<span>27</span>分<span>03</span>秒</p>
+          <p class="down_time">距离开播 <span> 01</span>天<span> 02</span>时<span> 27</span>分<span> 03</span>秒</p>
           <p class="down_auth">立即预约</p>
         </div>
         <div class="subscribe_tabs">
           <div class="tab_item">
-            <span>简介</span>
+            简介<span></span>
           </div>
           <div class="tab_intro">
             <p class="tab_intro_title">数字化转型时代企业如何做好直播营销</p>
-            <span>2021-03-18 00:00</span>
+            <p class="tab_intro_time">2021-03-18 00:00</p>
             <p class="tab_intro_main">中国儿童中心发布通告，近期，国内多地相继发生聚集性疫情，北京市再次出现京外关联本地病例，疫情形势严峻复杂，防控压力持续增大。为保障学员和家长健康安全，8月3日起停止所有兴趣培训和线下活动以及幼儿园、儿童早期托育、亲子班，园内游艺暂停。具体复课时间安排、游艺开放时间将在微信公众号另行通知。</p>
           </div>
         </div>
@@ -620,10 +620,78 @@ export default {
         width: 100%;
         height: calc(100% - 257px);
         background: #f0f0f0;
+        margin-bottom: 8px;
         .subscribe_time{
           height: 133px;
           background: #fff;
           margin-bottom: 8px;
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          .down_time{
+            font-size: 12px;
+            color: #595959;
+            margin-bottom: 16px;
+            span{
+              font-size: 28px;
+              color: #262626;
+            }
+          }
+          .down_auth{
+            width: 260px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            color: #fff;
+            font-size: 18px;
+            background: #FB2626;
+            border-radius: 50px;
+          }
+        }
+        .subscribe_tabs{
+          width: 100%;
+          .tab_item{
+            width: 100%;
+            height: 40px;
+            line-height: 40px;
+            padding-left: 12px;
+            background: #fff;
+            color: #000;
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+            span{
+              position: absolute;
+              bottom: 4px;
+              left: 14px;
+              display: inline-block;
+              width: 22px;
+              height: 3px;
+              background: #FB2626;
+              border-radius: 3px;
+            }
+          }
+          .tab_intro{
+            margin-top: 25px;
+            padding: 0 12px;
+            &_title{
+              color: #262626;
+              font-size: 16px;
+            }
+            &_time{
+              font-size: 14px;
+              color: rgba(0, 0, 0, 0.65);
+              line-height: 20px;
+              padding-bottom: 16px;
+            }
+            &_main{
+              font-size: 14px;
+              color: rgba(0, 0, 0, 0.65);
+              line-height: 20px;
+            }
+          }
         }
       }
     }
