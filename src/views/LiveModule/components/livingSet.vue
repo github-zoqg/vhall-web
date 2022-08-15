@@ -2,10 +2,25 @@
   <div class="living-setting">
     <div class="living-setting_type">
       <template v-if="livingPreview==1">
-        <div class="type_item" v-for="(item, index) in themePcTypeList" :key="index">
-          <span class="type_item_title">{{ item.title }}</span>
-          <p class="type_item_check" :class="item.isActive ? 'active' : ''" @click="activeTheme(item)">
-            <span class="checked_img" v-if="item.isActive"><img src="../../../common/images/icon-choose.png" alt=""></span>
+        <div class="type_item" @click="activeTheme(1)">
+          <span class="type_item_title">传统风格</span>
+          <p class="type_item_check" :class="livingPcForm.style==1 ? 'active' : ''">
+            <img src="./image/pc/style_1.png" class="item_check_style" alt="">
+            <span class="checked_img" v-if="livingPcForm.style==1"><img src="../../../common/images/icon-choose.png"  alt=""></span>
+          </p>
+        </div>
+        <div class="type_item" @click="activeTheme(2)">
+          <span class="type_item_title">简洁风格</span>
+          <p class="type_item_check" :class="livingPcForm.style==2 ? 'active' : ''">
+            <img src="./image/pc/style_2.png" class="item_check_style" alt="">
+            <span class="checked_img" v-if="livingPcForm.style==2"><img src="../../../common/images/icon-choose.png"  alt=""></span>
+          </p>
+        </div>
+        <div class="type_item" @click="activeTheme(3)">
+          <span class="type_item_title">时尚风格</span>
+          <p class="type_item_check" :class="livingPcForm.style==3 ? 'active' : ''">
+            <img src="./image/pc/style_2.png" class="item_check_style" alt="">
+            <span class="checked_img" v-if="livingPcForm.style==3"><img src="../../../common/images/icon-choose.png"  alt=""></span>
           </p>
         </div>
       </template>
@@ -13,6 +28,7 @@
         <div class="type_item" v-for="(item, index) in themeWapTypeList" :key="index">
           <span class="type_item_title">{{ item.title }}</span>
           <p class="type_item_check item_checked" :class="item.isActive ? 'active' : ''" @click="activeWapTheme(item)">
+            <img :src="require(`./image/wap/style_${index+1}.png`)" class="item_check_style" alt="">
             <span class="checked_img" v-if="item.isActive"><img src="../../../common/images/icon-choose.png" alt=""></span>
           </p>
         </div>
@@ -35,10 +51,10 @@
         </div>
         <div class="preview_container">
           <div class="preview_box_pc" v-if="livingPreview==1">
-            <pc-preview :type="livingPcPreviewType" :domainUrl="domain_pc_url" :livingForm="livingForm" :videoUrl="video_url"></pc-preview>
+            <pc-preview :type="livingPcPreviewType" :domainUrl="domain_pc_url" :livingPcForm="livingPcForm" :livingForm="livingForm" :videoUrl="video_url"></pc-preview>
           </div>
           <div class="preview_box_wap" v-else>
-            <wap-preview :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingForm="livingWapForm"></wap-preview>
+            <wap-preview :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm"></wap-preview>
           </div>
         </div>
       </div>
@@ -55,7 +71,9 @@
         <div class="form_item">
           <p class="form_item_title">主题色</p>
           <div class="theme_colors">
-            <span v-for="(item, index) in pageThemeColors" :key="index" :class="livingPcForm.bgColor == index + 1 ? 'active' : ''" :style="{backgroundColor:item}" @click="changePcTheme(index)"></span>
+            <span v-for="(item, index) in pcThemeColors" :key="index" :class="livingPcForm.bgColor == index + 1 ? 'active' : ''" @click="changePcTheme(index)">
+              <img :src="require(`./image/pc/theme_${index+1}.png`)" alt="">
+            </span>
           </div>
         </div>
         <div class="form_item">
@@ -99,7 +117,9 @@
         <div class="form_item">
           <p class="form_item_title">主题色</p>
           <div class="theme_colors">
-            <span v-for="(item, index) in pageThemeColors" :key="index" :style="{backgroundColor:item}"></span>
+            <span v-for="(item, index) in pcThemeColors" :key="index" :class="livingWapForm.bgColor == index + 1 ? 'active' : ''"  @click="changeWapTheme(index)">
+              <img :src="require(`./image/wap/theme_${livingWapForm.style}/theme_${index+1}.png`)" alt="">
+            </span>
           </div>
         </div>
         <div class="form_item" v-if="livingWapForm.style==3">
@@ -240,48 +260,31 @@ export default {
   },
   data() {
     return {
-      themePcTypeList: [
-        {
-          title: '传统风格',
-          url: '',
-          id: 1,
-          isActive: true
-        },
-        {
-          title: '简洁风格',
-          url: '',
-          id: 2,
-          isActive: false
-        }
-      ],
       themeWapTypeList: [
         {
           title: '传统风格',
-          url: '',
           id: 1,
           isActive: true
         },
         {
           title: '时尚风格',
-          url: '',
           id: 2,
           isActive: false
         },
         {
           title: '极简风格',
-          url: '',
           id: 3,
           isActive: false
         }
       ],
-      pageThemeColors: ['#1A1A1A', '#F0F0F0', '#FB2626', '1E4EDC'],
-      videoColors: ['000000', '262626', '595959', '8C8C8C', 'D9D9D9'],
+      pcThemeColors: 5,
+      videoColors: ['000000', '262626', '595959', '8C8C8C', 'F5F5F5'],
       livingPreview: 1,
       livingPcPreviewType: 1,
       webinarId: this.$route.params.str,
       livingWapForm: {
         style: 1,
-        bgColor: 1, //主题色
+        bgColor: 2, //主题色
         background: '',
         blurryDegree: 0,
         lightDegree: 10,
@@ -376,13 +379,9 @@ export default {
         this.$message.success(err.msg || '获取信息失败')
       })
     },
-    activeTheme(item) {
-      this.themePcTypeList.map(item => {
-        return item.isActive = false
-      })
-      item.isActive = true;
-      this.livingPcForm.style = item.id;
-      this.resetFormPcColor(item.id);
+    activeTheme(index) {
+      this.livingPcForm.style = index;
+      this.resetFormPcColor(index);
     },
     activeWapTheme(item) {
       this.themeWapTypeList.map(item => {
@@ -394,6 +393,9 @@ export default {
     },
     changePcTheme(index) {
       this.livingPcForm.bgColor = index + 1;
+    },
+    changeWapTheme(index) {
+      this.livingWapForm.bgColor = index + 1;
     },
     // 选择视频区底色
     changeVideoColor(color) {
@@ -419,7 +421,7 @@ export default {
     resetFormPcColor(index) {
       this.livingPcForm = {
         style: this.livingPcForm.style,
-        bgColor: 1, //主题色
+        bgColor: index == 1 ? 1 : 2, //主题色
         background: '',
         blurryDegree: 0,
         lightDegree: 10,
@@ -430,11 +432,10 @@ export default {
           height: 0
         }
       };
-      let microphoneArr = [1, 2, 2, 3]
       this.livingForm = {
-        videoColor: '#000', //视频区底色
-        chatLayout: index==1 || index == 4 ? 1 : 2,
-        inavLayout: microphoneArr[index-1], //连麦布局
+        videoColor: '#000000', //视频区底色
+        chatLayout: index == 1 ? 1 : 2,
+        inavLayout: index == 1 ? 2 : 1, //连麦布局
         videoBackGround: '',
         videoBlurryDegree: 0,
         videoLightDegree: 10,
@@ -463,7 +464,7 @@ export default {
       };
       // let microphoneArr = [1, 2, 2, 3]
       this.livingForm = {
-        videoColor: '#000', //视频区底色
+        videoColor: '#00000', //视频区底色
         chatLayout: index==3 ? 2 : 1,
         inavLayout: 1, //连麦布局
         inavDocumentLayout: 1,
@@ -612,10 +613,15 @@ export default {
           margin-top: 12px;
           width: 120px;
           height: 68px;
-          background: #d9d9d9;
           border-radius: 4px;
           border: 1px solid transparent;
           cursor: pointer;
+          position: relative;
+          .item_check_style{
+            width: 100%;
+            height: 100%;
+            object-fit: scale-down;
+          }
           &.item_checked{
             height: 260px;
           }
@@ -623,7 +629,9 @@ export default {
             border: 1px solid #fb3a32;
           }
           .checked_img{
-            float: right;
+            position: absolute;
+            top: 0;
+            right: 0;
             width: 24px;
             height: 24px;
             img{
@@ -658,12 +666,12 @@ export default {
           width: 880px;
         }
         &_wap{
-          width: 375px;
+          width: 395px;
           height: 812px;
-          border-radius: 4px ;
+          border-radius: 4px;
           margin: 0 auto;
-          padding: 88px 0 44px 0;
-          background-image: url('./image/video_default_nologo.png');
+          padding: 88px 10px 10px 10px;
+          background-image: url('./image/living/wap_show.png');
           background-repeat: no-repeat;
           background-size: 100% 100%;
         }
@@ -689,11 +697,14 @@ export default {
             display: inline-block;
             width: 32px;
             height: 32px;
-            // border: 4px solid transparent;
+            border: none;
             background: #595959;
             margin-right: 10px;
             border-radius: 4px;
             cursor: pointer;
+            &:nth-of-type(2) {
+              border: 1px solid #D9D9D9;
+            }
             &.active{
               width: 40px;
               height: 40px;
@@ -701,7 +712,8 @@ export default {
             img{
               width: 100%;
               height: 100%;
-              object-fit: cover;
+              object-fit: scale-down;
+              border-radius: 2px;
             }
           }
         }

@@ -3,7 +3,7 @@
     <div class="pc_header_tag">
       <img src="./image/living/browser@2x.png" alt="">
     </div>
-    <div class="pc_container">
+    <div class="pc_container" :style="pcBackground">
       <div class="pc_bg" v-if="domainUrl">
         <img :src="domainUrl" alt="">
       </div>
@@ -180,6 +180,11 @@ export default {
       type: String,
       default: ''
     },
+    // 主题颜色
+    livingPcForm: {
+      type: Object,
+      default: ()=>{}
+    },
     // 表单数据
     livingForm: {
       type: Object,
@@ -192,6 +197,19 @@ export default {
         return {backgroundImage: `url(${this.videoUrl})`}
       } else {
         return {backgroundColor: this.livingForm.videoColor}
+      }
+    },
+    pcBackground() {
+      console.log(this.livingPcForm.bgColor, '??!2343')
+      if (this.livingPcForm.bgColor == 1) {
+        return {backgroundColor: '#1a1a1a'}
+      } else {
+        if (this.livingPcForm.background) {
+          return {backgroundImage: `url(${this.livingPcForm.background})`}
+        } else {
+          let url = require(`./image/pc/bg_${this.livingPcForm.bgColor}.png`);
+          return {backgroundImage: `url(${url})`}
+        }
       }
     }
   },
@@ -217,8 +235,10 @@ export default {
       position: relative;
       width: 100%;
       height: 495px;
-      z-index: 0;
-      background-color: var(--background_color_theme);
+      // z-index: 0;
+      // background-image: url('./image/pc/bg_2.png');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
       border-radius: 0 0 4px 4px;
       .pc_bg{
         width: 100%;

@@ -1,6 +1,6 @@
 <template>
-  <div class="living_preview_wap">
-    <div class="living_preview_wap_header" v-if="(livingForm.style!=3 && type==1) || type==2">
+  <div class="living_preview_wap" :style="wapBackground">
+    <div class="living_preview_wap_header" v-if="(livingWapForm.style!=3 && type==1) || type==2">
       <div class="header_left">
         <span><img src="./image/living/chat1.png" alt=""></span>
         戈里瑰夏
@@ -31,8 +31,35 @@
        </div>
     </div>
     <div class="living_preview_wap_body">
-      <div class="wap_player">
-        <img src="./image/living/layout1.png" alt="">
+      <div class="wap_player" v-if="type==1">
+        <div class="watch_layout_1" v-if="livingForm.inavLayout==1">
+          <span><img src="./image/living/layout1.png" alt=""></span>
+          <span><img src="./image/living/layout2.png" alt=""></span>
+          <span><img src="./image/living/layout3.png" alt=""></span>
+          <span><img src="./image/living/layout4.png" alt=""></span>
+        </div>
+        <div class="watch_layout_2" v-if="livingForm.inavLayout==3">
+          <img src="./image/living/layout1.png" alt="">
+          <div class="layout_float">
+            <span><img src="./image/living/layout2.png" alt=""></span>
+            <span><img src="./image/living/layout3.png" alt=""></span>
+          </div>
+        </div>
+        <div class="watch_layout_3" v-if="livingForm.inavLayout==2">
+          <div class="layout_top" :style="videoBackground">
+            <span><img src="./image/living/layout1.png" alt=""></span>
+          </div>
+          <div class="layout_bottom">
+            <span><img src="./image/living/layout2.png" alt=""></span>
+            <span><img src="./image/living/layout3.png" alt=""></span>
+            <span><img src="./image/living/layout4.png" alt=""></span>
+            <span><img src="./image/living/layout5.png" alt=""></span>
+            <span><img src="./image/wap/video.png" alt=""></span>
+          </div>
+        </div>
+      </div>
+      <div class="wap_player" v-else>
+        <img class="player_subscribe" src="./image/wap/video.png" alt="">
       </div>
       <div class="wap_subscribe" v-if="type==2">
         <div class="subscribe_time">
@@ -51,22 +78,22 @@
         </div>
       </div>
       <div class="wap_menus" v-else>
-        <div class="wap_menus_tabs" v-if="livingForm.style!=3">
-          <div class="tabs_left">
+        <div class="wap_menus_tabs" v-if="livingWapForm.style!=3">
+          <!-- <div class="tabs_left">
             <i class="iconfont-v3 saasicon_arrowleft"></i>
-          </div>
+          </div> -->
           <div class="tabs_center">
-            <span>简介</span>
+            <!-- <span>简介</span> -->
             <span class="active">聊天</span>
-            <span class="circle">问答<b></b></span>
-            <span>私聊</span>
+            <!-- <span class="circle">问答<b></b></span>
+            <span>私聊</span> -->
           </div>
-          <div class="tabs_right">
+          <!-- <div class="tabs_right">
             <i class="iconfont-v3 saasicon_arrowright1"></i>
-          </div>
+          </div> -->
         </div>
         <div class="wap_menus_chat">
-          <div class="wap_menus_chat_topBottom chat_clear" v-if="livingForm.style==1">
+          <div class="wap_menus_chat_topBottom chat_clear" v-if="livingWapForm.style==1">
             <div class="chat_item">
               <div class="chat_item_avatar">
                 <img src="./image/living/chat2.png" alt="">
@@ -80,23 +107,18 @@
               <div class="chat_item_avatar">
                 <img src="./image/living/chat1.png" alt="">
               </div>
-              <div>
+              <div class="chat_item_box">
                 <div class="chat_item_name">微吼直播</div>
                 <div class="chat_item_content">关于热度兼容老版h5活动 Android 微吼直播app测试
-                  <span class="chat_imgs">
-                    <img src="./image/living/layout1.png" alt="">
-                    <img src="./image/living/layout2.png" alt="">
-                    <img src="./image/living/layout3.png" alt="">
-                    <img src="./image/living/layout4.png" alt="">
-                  </span>
+                  <span class="chat_imgs"></span>
                 </div>
               </div>
             </div>
             <div class="chat_item">
               <div class="chat_item_avatar">
-                <img src="./image/living/avatar@2x.png" alt="">
+                <img src="./image/wap/avator.png" alt="">
               </div>
-              <div>
+              <div class="chat_item_box">
                 <div class="chat_item_name">杨保林</div>
                 <div class="chat_item_content">帮助全行业客户落地视频直播营销，开启直播营销，迎来持续增长</div>
               </div>
@@ -105,13 +127,13 @@
               <div class="chat_item_avatar">
                 <img src="./image/living/chat3.png" alt="">
               </div>
-              <div>
+              <div class="chat_item_box">
                 <div class="chat_item_name">微吼直播 <span>主持人</span></div>
                 <div class="chat_item_content">😊😊😊<span class="chat_blue">@杨保林...</span>0万+行业标杆企业都在用</div>
               </div>
             </div>
           </div>
-          <div class="wap_menus_chat_leftRight chat_clear" v-if="livingForm.style==2">
+          <div class="wap_menus_chat_leftRight chat_clear" v-if="livingWapForm.style==2">
             <div class="chat_item">
               <div class="chat_item_avatar"><img src="./image/living/chat1.png" alt=""></div>
               <div class="chat_item_content"><span class="name">Mr Liu</span>😊😊😊</div>
@@ -141,7 +163,7 @@
                 小助理</span> 推送了问卷 <span class="chat_blue">点击查看</span></div>
             </div>
             <div class="chat_item">
-              <div class="chat_item_avatar"><img src="./image/living/chat1.png" alt=""></div>
+              <div class="chat_item_avatar"><img src="./image/wap/avator.png" alt=""></div>
               <div class="chat_item_content"><span class="name">Mr Liu</span>大会现场的图有吗？</div>
             </div>
             <div class="chat_item">
@@ -152,16 +174,11 @@
                   C咪酱🍒
                 </span>
                 花老师，yyds.
-                <span class="chat_imgs">
-                  <img src="./image/living/layout1.png" alt="">
-                  <img src="./image/living/layout2.png" alt="">
-                  <img src="./image/living/layout3.png" alt="">
-                  <img src="./image/living/layout4.png" alt="">
-                </span>
+                <span class="chat_imgs"></span>
               </div>
             </div>
           </div>
-          <div class="wap_menus_chat_leftRight chat_clear" v-if="livingForm.style==3">
+          <div class="wap_menus_chat_leftRight chat_clear" v-if="livingWapForm.style==3">
             <div class="chat_item_simple">
               <div class="chat_item_simple_content"><span class="name">Mr Liu</span>😊😊😊</div>
             </div>
@@ -193,12 +210,7 @@
               <div class="chat_item_simple_content">
                 <span class="name">C咪酱🍒</span>
                 花老学生宿舍师，yyds.
-                <span class="chat_imgs">
-                  <img src="./image/living/layout1.png" alt="">
-                  <img src="./image/living/layout2.png" alt="">
-                  <img src="./image/living/layout3.png" alt="">
-                  <img src="./image/living/layout4.png" alt="">
-                </span>
+                <span class="chat_imgs"></span>
               </div>
             </div>
             <div class="chat_item_simple">
@@ -255,12 +267,38 @@ export default {
       type: String,
       default: ''
     },
+    livingWapForm: {
+      type: Object,
+      default: ()=>{}
+    },
     // 表单数据
     livingForm: {
       type: Object,
       default: ()=>{}
     }
-  }
+  },
+  computed: {
+    videoBackground() {
+      if (this.videoUrl) {
+        return {backgroundImage: `url(${this.videoUrl})`}
+      } else {
+        return {backgroundColor: this.livingForm.videoColor}
+      }
+    },
+    wapBackground() {
+      console.log(this.livingWapForm.style, this.livingWapForm.bgColor, '??!2343')
+      if (this.livingWapForm.style == 1 && this.livingWapForm.bgColor < 3) {
+        return {backgroundColor: this.livingWapForm.bgColor == 1 ? '#1a1a1a' : '#f0f0f0'}
+      } else {
+        if (this.livingWapForm.background) {
+          return {backgroundImage: `url(${this.livingWapForm.background})`}
+        } else {
+          let url = require(`./image/wap/bg_${this.livingWapForm.style}/theme_${this.livingWapForm.bgColor}.png`);
+          return {backgroundImage: `url(${url})`}
+        }
+      }
+    }
+  },
 }
 </script>
 <style lang="less" scoped>
@@ -268,6 +306,10 @@ export default {
     width: 100%;
     height: 100%;
     position: relative;
+    // background-color: #f0f0f0;
+    border-radius: 0 0 30px 30px;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     &_header{
       width: 100%;
       height: 36px;
@@ -305,8 +347,7 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 12px;
-      margin:  8px 0 40px 0;
+      padding: 8px 12px 32px 12px;
       .header_left{
         width: 174px;
         height: 40px;
@@ -374,15 +415,91 @@ export default {
     &_body{
       .wap_player{
         width: 100%;
-        height: 221px;
-        img{
+        height: 210px;
+        .watch_layout_1{
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          span{
+            display: inline-block;
+            width: 187.5px;
+            height: 105px;
+            img{
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+          }
+        }
+        .watch_layout_2{
+          width: 100%;
+          height: 100%;
+          position: relative;
+          img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+          .layout_float{
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 42px;
+            span{
+              display: inline-block;
+              width: 74px;
+              height: 42px;
+              img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+          }
+        }
+        .watch_layout_3{
+          .layout_top{
+            width: 100%;
+            height: 167px;
+            padding: 0 38px;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            span{
+              display: inline-block;
+              width: 298px;
+              height: 100%;
+              img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+          }
+          .layout_bottom{
+            width: 100%;
+            height: 43px;
+            display: flex;
+            span{
+              display: inline-block;
+              width: 75px;
+              height: 43px;
+              img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+          }
+        }
+        .player_subscribe{
           width: 100%;
           height: 100%;
           object-fit: cover;
         }
       }
       .wap_menus{
-        background: #f0f0f0;
         &_tabs{
           width: 100%;
           height: 40px;
@@ -426,8 +543,9 @@ export default {
         }
         &_chat{
           width: 100%;
-          padding: 12px 10px 20px 10px;
-          background: #f0f0f0;
+          padding: 12px 10px 0 10px;
+          // background: #f0f0f0;
+          height: 342px;
           &_topBottom{
             .chat_item{
               display: flex;
@@ -470,15 +588,17 @@ export default {
                 background: rgba(255, 255, 255, 0.85);
                 border-radius: 0px 8px 8px 8px;
                 .chat_imgs{
-                  display: flex;
-                  img{
-                    width: 30px;
-                    height: 30px;
-                    margin-right: 4px;
-                    border-radius: 4px;
-                  }
+                  display: inline-block;
+                  width: 135px;
+                  height: 30px;
+                  background-image: url('./image/wap/chat.png');
+                  background-repeat: no-repeat;
+                  background-size: 100% 100%;
                 }
               }
+            }
+            .chat_item_box{
+              width: calc(100% - 30px);
             }
           }
           &_leftRight{
@@ -540,13 +660,12 @@ export default {
                   margin-right: 3px;
                 }
                 .chat_imgs{
-                  display: flex;
-                  img{
-                    width: 30px;
-                    height: 30px;
-                    margin-right: 4px;
-                    border-radius: 4px;
-                  }
+                  display: inline-block;
+                  width: 135px;
+                  height: 30px;
+                  background-image: url('./image/wap/chat.png');
+                  background-repeat: no-repeat;
+                  background-size: 100% 100%;
                 }
               }
             }
@@ -593,13 +712,12 @@ export default {
                   margin-right: 3px;
                 }
                 .chat_imgs{
-                  display: flex;
-                  img{
-                    width: 28px;
-                    height: 28px;
-                    margin-right: 4px;
-                    border-radius: 4px;
-                  }
+                  display: inline-block;
+                  width: 128px;
+                  height: 28px;
+                  background-image: url('./image/wap/chat.png');
+                  background-repeat: no-repeat;
+                  background-size: 100% 100%;
                 }
               }
             }
@@ -618,6 +736,7 @@ export default {
       }
       .wap_subscribe{
         width: 100%;
+        height: 100%;
         height: calc(100% - 257px);
         background: #f0f0f0;
         margin-bottom: 8px;
@@ -731,9 +850,10 @@ export default {
         }
       }
       .footer_right{
-        width: 130px;
+        width: 120px;
         height: 32px;
-        background-image: url('./image/living/tools@2x.png');
+        // margin-left: 15px;
+        background-image: url('./image/wap/tools.png');
         background-repeat: no-repeat;
         background-size: 100% 100%;
       }

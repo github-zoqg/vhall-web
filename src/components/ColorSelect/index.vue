@@ -190,8 +190,8 @@ export default {
   background: #8C8C8C;
   border: 1px solid #8C8C8C;
 }
-.themes__D9D9D9 {
-  background: #D9D9D9;
+.themes__F5F5F5 {
+  background: #F5F5F5;
   border: 1px solid #D9D9D9;
 }
 /*样式选择器重置*/
