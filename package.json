@@ -1,6 +1,6 @@
 {
   "name": "saas-v3-web",
-  "version": "1.0.1",
+  "version": "1.0.2-gray.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
