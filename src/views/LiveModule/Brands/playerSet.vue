@@ -142,7 +142,7 @@
                 </div>
                 <div class="barrage-box">
                   <i
-                    class="iconfont-v3 saasdanmukai_icon"
+                    class="iconfont-v3 saasline-barrage-off"
                     v-if="formOther.bulletChat"
                   ></i>
                   <!-- <i class="iconfont-v3 saasdanmuguan_icon" v-if="!formOther.bulletChat"></i> -->
@@ -391,32 +391,32 @@ export default {
         return '开启后，观看回放时播放器画面显示进度条'
       }
     },
-    bulletChatText() {
-      if (this.formOther.bulletChat) {
-        return '已开启，观看页播放器画面显示弹幕功能'
-      } else {
-        return '开启后，观看页播放器画面显示弹幕功能'
+    bulletChatText(){
+      if(this.formOther.bulletChat){
+        return '已开启，观看页播放器画面显示弹幕功能';
+      }else{
+        return "开启后，观看页播放器画面显示弹幕功能";
       }
     },
-    doubleSpeedText() {
-      if (this.formOther.doubleSpeed) {
-        return '已开启，观看回放时播放器画面显示倍速功能'
-      } else {
-        return '开启后，观看回放时播放器画面显示倍速功能'
+    doubleSpeedText(){
+      if(this.formOther.doubleSpeed){
+        return '已开启，观看回放时播放器画面显示倍速功能';
+      }else{
+        return "开启后，观看回放时播放器画面显示倍速功能";
       }
     },
-    reservationDesc() {
-      if (this.playerOpen) {
-        return '已开启，使用当前活动播放器设置'
-      } else {
-        return '开启后，将使用当前活动播放器设置'
+    reservationDesc(){
+      if(this.playerOpen){
+        return '已开启，使用当前活动播放器设置';
+      }else{
+        return "开启后，将使用当前活动播放器设置";
       }
     },
-    autoPlayText() {
-      if (this.formOther.autoplay) {
-        return '已开启，音视频自动播放'
-      } else {
-        return '开启后，音视频自动播放'
+    autoPlayText(){
+      if(this.formOther.autoplay){
+        return '已开启，音视频自动播放';
+      }else{
+        return "开启后，音视频自动播放";
       }
     },
     reservationDisable() {
@@ -1332,7 +1332,7 @@ export default {
           }
           .barrage-box {
             display: inline-block;
-            i {
+            i{
               font-size: 22px;
               vertical-align: middle;
             }
