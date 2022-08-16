@@ -1,5 +1,7 @@
 const { debug } = require('console')
 const path = require('path')
+const btool = require('./scripts/btool');
+
 let cdn = {
   js: [
     '//static.vhallyun.com/jssdk/vhall-jssdk-player/latest/vhall-jssdk-player-2.3.0.js',
@@ -15,7 +17,6 @@ let cdn = {
   ],
 }
 
-// console.warn(process)
 let publicPath = process.env.VUE_APP_PUBLIC_PATH || './'
 console.warn('配置环境变量----', {
   // MODE: process.VUE_CLI_SERVICE,
@@ -23,7 +24,17 @@ console.warn('配置环境变量----', {
   VUE_APP_NODE_ENV: process.env.VUE_APP_NODE_ENV,
   VUE_APP_WEB_URL: process.env.VUE_APP_WEB_URL,
   VUE_APP_BASE_URL: process.env.VUE_APP_BASE_URL,
-})
+});
+
+// 解析参数成key-value形式：
+// {
+//   _: ['serve'],
+//   lob: 'demo',
+//   project: 'live-pc',
+//   mode: 'development'
+// };
+const argv = btool.parseArgv(process.argv);
+console.warn('argv------>', argv)
 
 module.exports = {
   lintOnSave: false,
@@ -71,8 +82,9 @@ module.exports = {
   // },
   chainWebpack: (config) => {
     config.plugin('html').tap((options) => {
-      options[0].cdn = cdn
-      options[0].version = process.VUE_CLI_SERVICE.pkg.version
+      options[0].cdn = cdn;
+      options[0].version = process.VUE_CLI_SERVICE.pkg.version;
+      options[0].gitlabHash = argv.hash; //gitlab jenkins对应的项目hash
       return options
     })
     // config.plugin('webpack-bundle-analyzer')
