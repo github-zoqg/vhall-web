@@ -27,9 +27,9 @@
       <template v-else>
         <div class="type_item" v-for="(item, index) in themeWapTypeList" :key="index">
           <span class="type_item_title">{{ item.title }}</span>
-          <p class="type_item_check item_checked" :class="item.isActive ? 'active' : ''" @click="activeWapTheme(item)">
+          <p class="type_item_check item_checked" :class="livingWapForm.style==item.id ? 'active' : ''" @click="activeWapTheme(item)">
             <img :src="require(`./image/wap/style_${index+1}.png`)" class="item_check_style" alt="">
-            <span class="checked_img" v-if="item.isActive"><img src="../../../common/images/icon-choose.png" alt=""></span>
+            <span class="checked_img" v-if="livingWapForm.style==item.id"><img src="../../../common/images/icon-choose.png" alt=""></span>
           </p>
         </div>
       </template>
@@ -50,11 +50,11 @@
           </vh-radio-group>
         </div>
         <div class="preview_container">
-          <div class="preview_box_pc" v-if="livingPreview==1">
-            <pc-preview :type="livingPcPreviewType" :domainUrl="domain_pc_url" :livingPcForm="livingPcForm" :livingForm="livingForm" :videoUrl="video_url"></pc-preview>
+          <div class="preview_box_pc" v-show="livingPreview==1">
+            <pc-preview ref="livingPcPreview" :type="livingPcPreviewType" :domainUrl="domain_pc_url" :livingPcForm="livingPcForm" :livingForm="livingForm" :videoUrl="video_url"></pc-preview>
           </div>
-          <div class="preview_box_wap" v-else>
-            <wap-preview :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm"></wap-preview>
+          <div class="preview_box_wap" v-show="livingPreview==2">
+            <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm"></wap-preview>
           </div>
         </div>
       </div>
@@ -174,20 +174,20 @@
           <p class="form_item_title">视频区【连麦】布局</p>
           <div class="form_item_lay">
             <div class="item_lay" @click="choseMicrophone(1)">
-              <p :class="livingForm.inavLayout == 1 ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
+              <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE' ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
               <span>均匀排列</span>
             </div>
             <div class="item_lay" @click="choseMicrophone(2)">
-              <p :class="livingForm.inavLayout == 2 ? 'active' : ''"><img src="./image/main_2.png" alt=""></p>
+              <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' ? 'active' : ''"><img src="./image/main_2.png" alt=""></p>
               <span>主次平铺</span>
             </div>
             <div class="item_lay" @click="choseMicrophone(3)">
-              <p :class="livingForm.inavLayout == 3 ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
+              <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE' ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
               <span>主次悬浮</span>
             </div>
           </div>
         </div>
-        <div class="form_item" v-if="livingPreview == 2">
+        <!-- <div class="form_item" v-if="livingPreview == 2">
           <p class="form_item_title">视频区【连麦 + 演示】布局</p>
           <div class="form_item_lay form_item_video">
             <div class="item_lay">
@@ -195,12 +195,12 @@
               <span>上下模式</span>
             </div>
           </div>
-        </div>
-        <div class="form_item">
+        </div> -->
+        <!-- <div class="form_item">
           <p class="form_item_title">视频区底色</p>
           <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoColor"></color-set>
-        </div>
-        <div class="form_item">
+        </div> -->
+        <!-- <div class="form_item">
           <p class="form_item_title">视频区背景</p>
           <upload
             class="upload__living"
@@ -224,17 +224,17 @@
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
-        </div>
-        <div class="form_item">
+        </div> -->
+        <!-- <div class="form_item">
           <span class="vague_theme">模糊程度</span>
           <vh-slider v-model="livingForm.videoBlurryDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="10"></vh-slider>
           <span class="vague_num">{{livingForm.videoBlurryDegree}}</span>
-        </div>
-        <div class="form_item">
+        </div> -->
+        <!-- <div class="form_item">
           <span class="vague_theme">背景亮度</span>
           <vh-slider v-model="livingForm.videoLightDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="20"></vh-slider>
           <span class="vague_num">{{livingForm.videoLightDegree}}</span>
-        </div>
+        </div> -->
       </template>
     </div>
     <div class="living-setting_hidden" v-if="webinarId && livingConfig==2"></div>
@@ -246,7 +246,8 @@
 import Upload from '@/components/Upload/main';
 import ColorSet from '@/components/ColorSelect';
 import cropper from './Cropper/index.vue';
-import skins from '@/common/skins/index';
+// import skinsPc from '@/common/skins/pc/index';
+// import skinsWap from '@/common/skins/wap/index';
 import livingPreview from './livingPreview.vue';
 import pcPreview from './living_pc_preview.vue'
 import wapPreview from './living_wap_preview.vue'
@@ -263,20 +264,18 @@ export default {
       themeWapTypeList: [
         {
           title: '传统风格',
-          id: 1,
-          isActive: true
+          id: 1
         },
         {
           title: '时尚风格',
-          id: 2,
-          isActive: false
+          id: 2
         },
         {
           title: '极简风格',
-          id: 3,
-          isActive: false
+          id: 3
         }
       ],
+      skinId: '',
       pcThemeColors: 5,
       videoColors: ['000000', '262626', '595959', '8C8C8C', 'F5F5F5'],
       livingPreview: 1,
@@ -311,7 +310,7 @@ export default {
       livingForm: {
         videoColor: '#000000', //视频区底色
         chatLayout: 1,
-        inavLayout: 1, //连麦布局
+        inavLayout: 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', //连麦布局
         inavDocumentLayout: 1, //连麦+演示布局
         videoBackGround: '',
         videoBlurryDegree: 0,
@@ -328,7 +327,7 @@ export default {
   components: {
     pcPreview,
     wapPreview,
-    ColorSet,
+    // ColorSet,
     cropper,
     Upload,
     livingPreview
@@ -353,24 +352,29 @@ export default {
     }
   },
   mounted() {
-    // 设置主题
-    window.skins = skins;
-    skins.setTheme(skins.themes.themeDefaultBlack, 'preview_container');
   },
   methods: {
     initComp(){
+      // this.$refs.livingWapPreview.settingTheme(1, 2);
+      // this.$refs.livingPcPreview.settingTheme(1, 1);
+      this.initLivingSettingInfo()
       console.log('我是初始化接口')
     },
     initLivingSettingInfo() {
       let params = {
-        webinar_id: this.webinarId || undefined,
+        webinar_id: this.webinarId || '',
         type: this.webinarId ? 1 : 2
       }
-      this.$fetch('getInterWebinarSkin', params).then(res=>{
+      this.$fetch('getInterWebinarSkin', this.$params(params)).then(res=>{
         if (res.code === 200) {
-          const { skin_json_pc, skin_json_wap } = res.data;
+          this.skinId = res.data.skin_id;
+          const skin_json_pc = JSON.parse(res.data.skin_json_pc);
+          const skin_json_wap = JSON.parse(res.data.skin_json_wap);
+          console.log(skin_json_pc, skin_json_wap, '???wsjo')
           this.livingPcForm.style = skin_json_pc.style;
           this.livingWapForm.style = skin_json_wap.style;
+          this.$refs.livingPcPreview.settingTheme(skin_json_pc.style, skin_json_pc.bgColor)
+          this.$refs.livingWapPreview.settingTheme(skin_json_wap.style, skin_json_wap.bgColor, 1)
           this.livingPcForm = { ...skin_json_pc }; //pc信息
           this.livingWapForm = { ...skin_json_wap }; //wap信息
           this.livingForm = { ...skin_json_pc }; // 公共信息
@@ -384,18 +388,16 @@ export default {
       this.resetFormPcColor(index);
     },
     activeWapTheme(item) {
-      this.themeWapTypeList.map(item => {
-        return item.isActive = false
-      })
-      item.isActive = true;
       this.livingWapForm.style = item.id;
       this.resetFormWapColor(item.id)
     },
     changePcTheme(index) {
       this.livingPcForm.bgColor = index + 1;
+      this.$refs.livingPcPreview.settingTheme(this.livingPcForm.style, index+1);
     },
     changeWapTheme(index) {
       this.livingWapForm.bgColor = index + 1;
+      this.$refs.livingWapPreview.settingTheme(this.livingWapForm.style, index+1, this.livingPcPreviewType);
     },
     // 选择视频区底色
     changeVideoColor(color) {
@@ -435,7 +437,7 @@ export default {
       this.livingForm = {
         videoColor: '#000000', //视频区底色
         chatLayout: index == 1 ? 1 : 2,
-        inavLayout: index == 1 ? 2 : 1, //连麦布局
+        inavLayout: index == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', //连麦布局
         videoBackGround: '',
         videoBlurryDegree: 0,
         videoLightDegree: 10,
@@ -446,6 +448,7 @@ export default {
           height: 0
         }
       }
+      this.$refs.livingPcPreview.settingTheme(index, this.livingPcForm.bgColor);
     },
      // 默认wap主题颜色
     resetFormWapColor(index) {
@@ -466,7 +469,7 @@ export default {
       this.livingForm = {
         videoColor: '#00000', //视频区底色
         chatLayout: index==3 ? 2 : 1,
-        inavLayout: 1, //连麦布局
+        inavLayout: 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', //连麦布局
         inavDocumentLayout: 1,
         videoBackGround: '',
         videoBlurryDegree: 0,
@@ -478,13 +481,19 @@ export default {
           height: 0
         }
       }
+      this.$refs.livingWapPreview.settingTheme(index, this.livingWapForm.bgColor, this.livingPcPreviewType);
     },
     saveSettingLivingInfo() {
+      let skin_json_pc = Object.assign({}, this.livingPcForm, this.livingForm);
+      let skin_json_wap = Object.assign({}, this.livingWapForm, this.livingForm);
       let params = {
-        webinar_id: this.webinarId || undefined,
+        skin_id: this.skinId,
         type: this.webinarId ? 1 : 2,
-        skin_json_pc: Object.assign({}, this.livingPcForm, this.livingForm),
-        skin_json_wap: Object.assign({}, this.livingWapForm, this.livingForm)
+        skin_json_pc: JSON.stringify(skin_json_pc),
+        skin_json_wap: JSON.stringify(skin_json_wap)
+      }
+      if (this.webinarId) {
+        params.webinar_id = this.webinarId;
       }
       console.log(params, '???1232425')
       this.$fetch('skinUpdate', params).then(res=>{
@@ -531,7 +540,8 @@ export default {
       this.livingForm.videoBackGround = '';
     },
     choseMicrophone(index) {
-      this.livingForm.inavLayout = index;
+      let arrLayout = ['CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE', 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE']
+      this.livingForm.inavLayout = arrLayout[index];
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
@@ -667,10 +677,10 @@ export default {
         }
         &_wap{
           width: 395px;
-          height: 812px;
+          height: 832px;
           border-radius: 4px;
           margin: 0 auto;
-          padding: 88px 10px 10px 10px;
+          padding: 98px 10px 10px 10px;
           background-image: url('./image/living/wap_show.png');
           background-repeat: no-repeat;
           background-size: 100% 100%;

@@ -82,7 +82,8 @@ export default {
           // this.permissionInfo = permissions;
           this.livingSettingOpen = Boolean(permissions['is_brand_cofig'] == 1)
           this.type = this.livingSettingOpen ? 1 : 2;
-          this.$refs[this.tabType].initComp();
+          this.$refs.livingSet.initComp();
+          // this.$refs[this.tabType].initComp();
         }
       }).catch(e => {});
     },

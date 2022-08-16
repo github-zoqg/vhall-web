@@ -1,39 +1,47 @@
 /**
- * 黑色主题颜色值
+ * 时尚黑色主题颜色值
  */
 
 /* 字体颜色 */
-
-const color_text_primary = '#FFF';
-const color_text_regular = '#E6E6E6';
-const color_text_secondary = '#A6A6A6';
-const color_text_footer = 'rgba(255, 255, 255, 0.26)';
-const color_text_send = 'rgba(255, 255, 255, 0.35)';
-const color_text_chatName = '#737373';
+const color_header_secondary = 'rgba(255, 255, 255, 0.65)';
+const color_chat_name = 'rgba(255, 255, 255, 0.45)'
+const color_chat_primary = 'rgba(255, 255, 255, 0.85)'
+const color_send_color = 'rgba(255, 255, 255, 0.45)';
+const color_tab_text = '#fff';
 const color_text_active = '#FB2626';
+const color_subscribe_primary = 'rgba(255, 255, 255, 0.65)';
+const color_subscribe_secondary = '#fff';
+const color_intro_text = 'rgba(255, 255, 255, 0.65)';
 
 
 /* 背景颜色 */
-const background_color_theme = '#1a1a1a';
-const background_color_default = '#000';
-const background_color_primary = '#1a1a1a';
-const background_color_regular = '#2a2a2a';
-const background_color_chatBg = 'rgba(255, 255, 255, 0.08)';  //聊天文案背景
+const background_header_color = 'transparent'; //顶部背景
+const background_footer_color = 'transparent'; //顶部背景
+const background_tabs_color = 'transparent';  //tabs背景
+const background_chat_color = 'rgba(0, 0, 0, 0.25)';  //聊天文案背景
+const background_send_color = 'rgba(255, 255, 255, 0.1)';  //发送输入框文案背景
 const background_color_active = '#FB2626';
+const background_subscribe_text = '#333';
+// 边框颜色
+const border_tabs_color = 'rgba(0, 0, 0, 0.45)';  //tabs下边框
 
 
 export default {
-  '--color_text_primary': color_text_primary,
-  '--color_text_regular': color_text_regular,
-  '--color_text_secondary': color_text_secondary,
-  '--color_text_footer': color_text_footer,
-  '--color_text_send': color_text_send,
-  '--color_text_chatName': color_text_chatName,
+  '--color_header_secondary': color_header_secondary,
+  '--color_chat_name': color_chat_name,
+  '--color_chat_primary': color_chat_primary,
+  '--color_send_color': color_send_color,
+  '--color_tab_text': color_tab_text,
   '--color_text_active': color_text_active,
-  '--background_color_default': background_color_default,
-  '--background_color_primary': background_color_primary,
-  '--background_color_regular': background_color_regular,
-  '--background_color_chatBg': background_color_chatBg,
+  '--color_subscribe_primary': color_subscribe_primary,
+  '--color_subscribe_secondary': color_subscribe_secondary,
+  '--color_intro_text': color_intro_text,
+  '--background_header_color': background_header_color,
+  '--background_tabs_color': background_tabs_color,
+  '--background_chat_color': background_chat_color,
+  '--background_send_color':background_send_color,
   '--background_color_active': background_color_active,
-  '--background_color_theme': background_color_theme
+  '--border_tabs_color': border_tabs_color,
+  '--background_footer_color': background_footer_color,
+  '--background_subscribe_color': background_subscribe_text
 }

@@ -27,19 +27,19 @@
         <div class="watch_left">
           <div class="left_top" :style="videoBackground">
             <!-- 均匀 -->
-            <div class="left_top__even" v-if="livingForm.inavLayout==1">
+            <div class="left_top__even" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
               <span><img src="./image/living/layout1.png" alt=""></span>
               <span><img src="./image/living/layout5.png" alt=""></span>
             </div>
             <!-- 主次悬浮 -->
-            <div class="left_top__float" v-if="livingForm.inavLayout==3">
+            <div class="left_top__float" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
               <div class="imgs">
                 <span><img src="./image/living/layout2.png" alt=""></span>
                 <span><img src="./image/living/layout3.png" alt=""></span>
               </div>
             </div>
             <!-- 主次平铺 -->
-            <div class="left_top__tiling" v-if="livingForm.inavLayout==2">
+            <div class="left_top__tiling" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
               <div class="host">
                 <img src="./image/living/layout1.png" alt="">
               </div>
@@ -163,6 +163,7 @@
   </div>
 </template>
 <script>
+import skinsPc from '@/common/skins/pc/index';
 export default {
   props: {
     type: {
@@ -213,6 +214,18 @@ export default {
       }
     }
   },
+  // mounted() {
+  //   // 设置主题
+  //   // window.skinsPc = skinsPc;
+  //   skinsPc.setTheme(skinsPc.themes.style_2_theme_5, 'living_preview_wap');
+  // },
+  methods: {
+    settingTheme(style, index) {
+      console.log(style, index, 'pc2321435')
+      let key = `style_${Number(style)}_theme_${Number(index)}`
+      skinsPc.setTheme(skinsPc.themes[key], 'living_preview_pc');
+    }
+  },
   data() {
     return {
     }
@@ -259,7 +272,7 @@ export default {
         height: 48px;
         width: 100%;
         padding: 0 16px;
-        background: var(--background_color_regular);
+        background: var(--background_pc_header_color);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -278,7 +291,7 @@ export default {
           }
           .left_title{
             .title{
-              color: var(--color_text_regular);
+              color: var(--color_pc_header_primary);
               font-size: 12px;
               line-height: 20px;
               span{
@@ -293,7 +306,7 @@ export default {
               }
             }
             .host{
-              color: var(--color_text_secondary);
+              color: var(--color_pc_header_secondary);
               font-size: 14px;
               transform: scale(0.8);
               transform-origin: center left;
@@ -304,7 +317,7 @@ export default {
           display: flex;
           align-items: center;
           .right_icon{
-            color: var(--color_text_secondary);
+            color: var(--color_pc_header_secondary);
             font-size: 12px;
             span{
               padding-right: 10px;
@@ -315,7 +328,7 @@ export default {
           }
           .right_login{
             font-size: 12px;
-            color: var(--color_text_secondary);
+            color: var(--color_pc_header_secondary);
             padding-left: 14px;
             line-height: 24px;
             span{
@@ -348,7 +361,6 @@ export default {
             height: 334px;
             background-size: 100% 100%;
             background-repeat: no-repeat;
-            // background: var(--background_color_default);
             border-radius: 4px 4px 0 0;
             &__even{
               display: flex;
@@ -417,7 +429,7 @@ export default {
           .left_bottom{
             width: 100%;
             height: 28px;
-            background: var(--background_color_regular);
+            background: var(--background_pc_tools_color);
             border-radius: 0 0 4px 4px;
             display: flex;
             justify-content: space-between;
@@ -425,7 +437,7 @@ export default {
             padding-left: 10px;
             &_setting{
               font-size: 14px;
-              color: var(--color_text_secondary);
+              color: var(--color_pc_tools_regular);
               transform: scale(0.8);
               transform-origin: center left;
             }
@@ -461,7 +473,7 @@ export default {
           .right_bottom{
             width: 100%;
             height: 269px;
-            background: var(--background_color_regular);
+            background: var(--background_pc_tabs_color);
             position: relative;
             border-radius: 0 0 4px 4px;
             &_chat{
@@ -470,11 +482,11 @@ export default {
                 height: 21px;
                 width: 100%;
                 padding: 0 10px;
-                background: var(--background_color_regular);
+                background: var(--background_pc_tabs_color);
                 position: relative;
-                border-bottom: 1px solid #1a1a1a;
+                border-bottom: 1px solid var(--border_pc_tabs_color);
                 p{
-                  color: var(--color_text_active);
+                  color: var(--color_pc_text_active);
                   font-size: 14px;
                   line-height: 19px;
                   transform: scale(0.6);
@@ -488,7 +500,7 @@ export default {
                   bottom: 0;
                   left: 10px;
                   border-radius: 4px;
-                  background: var(--background_color_active);
+                  background: var(--background_pc_color_active);
                 }
               }
               .chat_box{
@@ -523,7 +535,7 @@ export default {
                       font-size: 16px;
                       transform: scale(0.5);
                       transform-origin: top left;
-                      color: var(--color_text_chatName);
+                      color: var(--color_pc_chat_name);
                       .host{
                         color: #FB2626;
                         padding: 1px 4px;
@@ -539,13 +551,13 @@ export default {
                     }
                   }
                   .chat_title{
-                    color: var(--color_text_primary);
+                    color: var(--color_pc_chat_primary);
                     line-height: 22px;
                     padding: 2px 5px;
                     transform: scale(0.5);
                     font-size: 16px;
                     transform-origin: top left;
-                    background: var(--background_color_chatBg);
+                    background: var(--background_pc_chat_color);
                     border-radius: 6px;
                     margin-right: -115px;
                   }
@@ -556,10 +568,10 @@ export default {
                 padding: 0 10px;
                 margin-top: 8px;
                 &_item{
-                  color: var(--color_text_primary);
+                  color: var(--color_pc_chat_primary);
                   padding: 8px 8px 6px 10px;
                   border-radius: 16px;
-                  background: var(--background_color_chatBg);
+                  background: var(--background_pc_chat_color);
                   transform: scale(0.5);
                   line-height: 24px;
                   transform-origin: top right;
@@ -586,7 +598,7 @@ export default {
                     }
                   }
                   .item_name{
-                    color: var(--color_text_chatName);
+                    color: var(--color_pc_chat_name);
                   }
                   .item_host{
                     color: #FB2626;
@@ -611,14 +623,15 @@ export default {
             left: 0;
             bottom: 0;
             height: 40px;
-            background: var(--background_color_regular);
-            border-top: 1px solid #1a1a1a;
+            background: var(--background_pc_tabs_color);
+            border-top: 1px solid var(--border_pc_tabs_color);
             padding: 2px 8px;
-            color: var(--color_text_send);
+            color: var(--color_pc_send_color);
             border-radius: 0 0 4px 4px;
             .icon{
               font-size: 18px;
               transform: scale(0.5);
+              color: var(--color_pc_send_font_color);
               transform-origin: top left;
               i{
                 padding-right: 8px;
@@ -633,7 +646,7 @@ export default {
                 width: 125px;
                 height: 20px;
                 border-radius: 20px;
-                background: var(--background_color_primary);
+                background: var(--background_pc_send_color);
                 padding-left: 9px;
                 span{
                   display: inline-block;
@@ -648,7 +661,7 @@ export default {
                 height: 20px;
                 display: inline-block;
                 line-height: 40px;
-                background: var(--background_color_primary);
+                background: var(--background_pc_send_color);
                 border-radius: 50%;
                 text-align: center;
                 i{
@@ -678,13 +691,13 @@ export default {
           width: 100%;
           height: 32px;
           border-radius:  0 0 4px 4px;
-          background: var(--background_color_regular);
+          background: var(--background_pc_subscribe_text);
           padding: 0 12px;
           display: flex;
           justify-content: space-between;
           align-items: center;
           font-size: 12px;
-          color:var(--color_text_regular);
+          color:var(--color_pc_subscribe_text);
           line-height: 32px;
           .font_scale{
             font-size: 20px;
@@ -697,11 +710,12 @@ export default {
             padding-left: 10px;
           }
           .color_red{
-            color:var(--color_text_active);
+            color:var(--color_pc_text_active);
             display: inline-block;
           }
           .font_right{
             font-size: 20px;
+            color: var(--color_tools_regular);
             transform: scale(0.5);
             transform-origin: center right;
           }
@@ -710,8 +724,8 @@ export default {
             width: 128px;
             height: 44px;
             border-radius: 18px;
-            background: var(--background_color_active);
-            color: var(--color_text_primary);
+            background: var(--background_pc_color_active);
+            color: #fff;
             margin-left: 20px;
             line-height: 44px;
             text-align: center;
@@ -723,7 +737,7 @@ export default {
         font-size: 12px;
         line-height: 18px;
         margin-top: 8px;
-        color: var(--color_text_footer);
+        color: var(--color_pc_header_secondary);
       }
     }
   }

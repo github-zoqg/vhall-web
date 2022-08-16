@@ -32,20 +32,20 @@
     </div>
     <div class="living_preview_wap_body">
       <div class="wap_player" v-if="type==1">
-        <div class="watch_layout_1" v-if="livingForm.inavLayout==1">
+        <div class="watch_layout_1" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
           <span><img src="./image/living/layout1.png" alt=""></span>
           <span><img src="./image/living/layout2.png" alt=""></span>
           <span><img src="./image/living/layout3.png" alt=""></span>
           <span><img src="./image/living/layout4.png" alt=""></span>
         </div>
-        <div class="watch_layout_2" v-if="livingForm.inavLayout==3">
+        <div class="watch_layout_2" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
           <img src="./image/living/layout1.png" alt="">
           <div class="layout_float">
             <span><img src="./image/living/layout2.png" alt=""></span>
             <span><img src="./image/living/layout3.png" alt=""></span>
           </div>
         </div>
-        <div class="watch_layout_3" v-if="livingForm.inavLayout==2">
+        <div class="watch_layout_3" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
           <div class="layout_top" :style="videoBackground">
             <span><img src="./image/living/layout1.png" alt=""></span>
           </div>
@@ -250,6 +250,7 @@
   </div>
 </template>
 <script>
+import skinsWap from '@/common/skins/wap/index';
 export default {
   props: {
     type: {
@@ -288,17 +289,31 @@ export default {
     wapBackground() {
       console.log(this.livingWapForm.style, this.livingWapForm.bgColor, '??!2343')
       if (this.livingWapForm.style == 1 && this.livingWapForm.bgColor < 3) {
-        return {backgroundColor: this.livingWapForm.bgColor == 1 ? '#1a1a1a' : '#f0f0f0'}
+        return {backgroundColor: this.livingWapForm.bgColor == 1 ? '#262626' : '#f0f0f0'}
       } else {
         if (this.livingWapForm.background) {
           return {backgroundImage: `url(${this.livingWapForm.background})`}
         } else {
-          let url = require(`./image/wap/bg_${this.livingWapForm.style}/theme_${this.livingWapForm.bgColor}.png`);
+          let style = this.type == 2 && this.livingWapForm.style == 3 ? 2 : this.livingWapForm.style
+          let url = require(`./image/wap/bg_${style}/theme_${this.livingWapForm.bgColor}.png`);
           return {backgroundImage: `url(${url})`}
         }
       }
     }
   },
+  mounted() {
+    // 设置主题
+    // window.skinsWap = skinsWap;
+    // skinsWap.setTheme(skinsWap.themes.style_3_theme_5, 'living_preview_wap');
+  },
+  methods: {
+    settingTheme(style, index, type) {
+      console.log(style, index, type, 'wap2321435')
+      let wapStyle = (type == 2 && style == 3) ? 2 : style;
+      let key = `style_${Number(wapStyle)}_theme_${Number(index)}`
+      skinsWap.setTheme(skinsWap.themes[key], 'living_preview_wap');
+    }
+  }
 }
 </script>
 <style lang="less" scoped>
@@ -313,13 +328,13 @@ export default {
     &_header{
       width: 100%;
       height: 36px;
-      background: #fff;
+      background: var(--background_header_color);
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 0 12px;
       .header_left{
-        color: rgba(0, 0, 0, 0.65);
+        color: var(--color_header_secondary);
         font-size: 14px;
         span{
           display: inline-block;
@@ -337,6 +352,7 @@ export default {
       }
       .header_right{
         font-size: 14px;
+        color: var(--color_header_secondary);
         i{
           padding-left: 10px;
         }
@@ -387,10 +403,10 @@ export default {
         &_attention{
           width: 40px;
           height: 24px;
-          background: linear-gradient(280.56deg, #FB2626 9.45%, #FF685F 90.39%);
+          background: linear-gradient(280.56deg, var(--background_header_attention_1) 9.45%, var(--background_header_attention_2) 90.39%);
           border-radius: 30px;
           font-size: 12px;
-          color: #fff;
+          color: var(--color_header_attention);
           text-align: center;
           line-height: 24px;
         }
@@ -504,26 +520,26 @@ export default {
           width: 100%;
           height: 40px;
           padding: 0 8px;
-          background: #fff;
+          background: var(--background_tabs_color);
           display: flex;
           justify-content: space-around;
           align-items: center;
-          border: 1px solid rgba(255, 255, 255, 0.45);
+          border-bottom: 1px solid var(--border_tabs_color);
           .tabs_left, .tabs_right{
             font-size: 8px;
-            color: rgba(0, 0, 0, 0.45);
+            color: var(--color_tab_text);
           }
           .tabs_center{
             flex: 1;
             font-size: 14px;
-            color: rgba(0, 0, 0, 0.65);
+            color: var(--color_tab_text);
             span{
               margin: 0 15px;
             }
             .active{
               padding-bottom: 5px;
-              color: rgba(0, 0, 0, 1);
-              border-bottom: 3px solid #FB2626;
+              color: var(--color_tab_text);
+              border-bottom: 3px solid var(--background_color_active);
               border-radius: 2px;
             }
             .circle{
@@ -544,7 +560,6 @@ export default {
         &_chat{
           width: 100%;
           padding: 12px 10px 0 10px;
-          // background: #f0f0f0;
           height: 342px;
           &_topBottom{
             .chat_item{
@@ -565,7 +580,7 @@ export default {
               }
               &_name{
                 font-size: 13px;
-                color: rgba(0, 0, 0, 0.45);
+                color: var(--color_chat_name);
                 line-height: 19px;
                 margin-bottom: 2px;
                 span{
@@ -583,9 +598,9 @@ export default {
               &_content{
                 padding: 5px 6px;
                 font-size: 13px;
-                color: rgba(0, 0, 0, 0.85);
+                color: var(--color_chat_primary);
                 line-height: 19px;
-                background: rgba(255, 255, 255, 0.85);
+                background: var(--background_chat_color);
                 border-radius: 0px 8px 8px 8px;
                 .chat_imgs{
                   display: inline-block;
@@ -594,6 +609,7 @@ export default {
                   background-image: url('./image/wap/chat.png');
                   background-repeat: no-repeat;
                   background-size: 100% 100%;
+                  vertical-align: middle;
                 }
               }
             }
@@ -604,7 +620,7 @@ export default {
           &_leftRight{
             .chat_item{
               padding: 2px 6px;
-              background: rgba(255, 255, 255, 0.85);
+              background: var(--background_chat_color);
               border-radius: 15px;
               margin-bottom: 10px;
               float: left;
@@ -622,14 +638,14 @@ export default {
                 }
               }
               &_content{
-                color: rgba(0, 0, 0, 0.85);
+                color: var(--color_chat_primary);
                 font-size: 13px;
                 line-height: 19px;
                 &.content_host{
                   width: calc(100% - 25px);
                 }
                 .name{
-                  color: rgba(0, 0, 0, 0.65);
+                  color: var(--color_chat_name);
                   font-size: 13px;
                   margin-right: 3px;
                 }
@@ -666,22 +682,23 @@ export default {
                   background-image: url('./image/wap/chat.png');
                   background-repeat: no-repeat;
                   background-size: 100% 100%;
+                  vertical-align: middle;
                 }
               }
             }
             .chat_item_simple{
               padding: 2px 6px;
-              background: rgba(0, 0, 0, 0.25);
+              background: var(--background_chat_color);
               border-radius: 13px;
               margin-bottom: 10px;
               float: left;
               display: flex;
               &_content{
-                color: rgba(255, 255, 255, 1);
+                color: var(--color_chat_primary);
                 font-size: 13px;
                 line-height: 19px;
                 .name{
-                  color: rgba(255, 255, 255, 0.65);
+                  color: var(--color_chat_name);
                   font-size: 13px;
                   margin-right: 3px;
                 }
@@ -715,6 +732,7 @@ export default {
                   display: inline-block;
                   width: 128px;
                   height: 28px;
+                  vertical-align: middle;
                   background-image: url('./image/wap/chat.png');
                   background-repeat: no-repeat;
                   background-size: 100% 100%;
@@ -738,11 +756,10 @@ export default {
         width: 100%;
         height: 100%;
         height: calc(100% - 257px);
-        background: #f0f0f0;
         margin-bottom: 8px;
         .subscribe_time{
           height: 133px;
-          background: #fff;
+          background: var(--background_subscribe_color);
           margin-bottom: 8px;
           text-align: center;
           display: flex;
@@ -751,11 +768,11 @@ export default {
           justify-content: center;
           .down_time{
             font-size: 12px;
-            color: #595959;
+            color: var(--color_subscribe_primary);
             margin-bottom: 16px;
             span{
               font-size: 28px;
-              color: #262626;
+              color: var(--color_subscribe_secondary);
             }
           }
           .down_auth{
@@ -765,7 +782,7 @@ export default {
             text-align: center;
             color: #fff;
             font-size: 18px;
-            background: #FB2626;
+            background: var(--background_color_active);
             border-radius: 50px;
           }
         }
@@ -776,8 +793,8 @@ export default {
             height: 40px;
             line-height: 40px;
             padding-left: 12px;
-            background: #fff;
-            color: #000;
+            background: var(--background_subscribe_color);
+            color: var(--color_subscribe_secondary);
             font-size: 14px;
             font-weight: 500;
             position: relative;
@@ -788,7 +805,7 @@ export default {
               display: inline-block;
               width: 22px;
               height: 3px;
-              background: #FB2626;
+              background: var(--background_color_active);
               border-radius: 3px;
             }
           }
@@ -796,18 +813,18 @@ export default {
             margin-top: 25px;
             padding: 0 12px;
             &_title{
-              color: #262626;
+              color: var(--color_subscribe_secondary);
               font-size: 16px;
             }
             &_time{
               font-size: 14px;
-              color: rgba(0, 0, 0, 0.65);
+              color: var(--color_intro_text);
               line-height: 20px;
               padding-bottom: 16px;
             }
             &_main{
               font-size: 14px;
-              color: rgba(0, 0, 0, 0.65);
+              color: var(--color_intro_text);
               line-height: 20px;
             }
           }
@@ -820,7 +837,7 @@ export default {
       // bottom: 0;
       width: 100%;
       height: 56px;
-      background: #fff;
+      background: var(--background_footer_color);
       display: flex;
       align-items: center;
       padding: 0 10px;
@@ -841,9 +858,9 @@ export default {
         border-radius: 35px;
         line-height: 36px;
         padding: 0 10px;
-        background: rgba(0, 0, 0, 0.1);
+        background: var(--background_send_color);
         font-size: 14px;
-        color: rgba(0, 0, 0, 0.45);
+        color: var(--color_send_color);
         margin: 0 10px;
         .iconfont-v3{
           font-size: 13px;
