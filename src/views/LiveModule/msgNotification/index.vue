@@ -8,12 +8,51 @@
           <br />
           3.单条短信超过70字符（含后缀）将消耗2条计费，最大字符限制500字
       </div>
+      <div>
+        短信余额：{{msgInfo.flower_balance}} 条
+      </div>
     </pageTitle>
-    <div class="msg-notification__body"></div>
+    <div class="msg-notification__body">
+      <div class="msg-notification__top">
+        <!-- <div>* 短信签名： {{msgInfo && msgInfo.sign ? msgInfo.sign : '微吼直播'}} <el-button type="text" @click="openDialog('sign')">修改</el-button> </div> -->
+        <div class="msg-sign__top"  @blur.stop="cancelSaveMsgSign">* 短信签名：
+          <span v-if="isSignShow">{{ showSignText }}</span>
+          <VhallInput v-if="!isSignShow" v-model.trim="msgInfo.sign" autocomplete="off"  :maxlength="15" placeholder="请输入短信签名" show-word-limit class="btn-relative btn-two"></VhallInput>
+          <el-button type="text" @click.prevent="isSignShow = false;msgInfo.sign = showSignText" v-if="isSignShow" size="mini">修改</el-button>
+          <el-button type="primary" @click="saveMsgSign" v-if="!isSignShow" size="mini">保存</el-button>
+        </div>
+        <div><el-button type="text" @click="openDialog('link')">配置短链接</el-button></div>
+        <div class="switchBox">
+          <el-switch
+            class="swtich"
+            v-model="msgInfo.is_open"
+            active-color="#FB3A32"
+            inactive-color="#CECECE"
+            @change="switchChangeOpen"
+            :active-text="msgInfo.is_open ? '已开启，用户在预约时提交手机号需要进行短信验证（不含登录/报名）' : '开启后，用户在预约时提交手机号需要进行短信验证（不含登录/报名）'">
+          </el-switch>
+        </div>
+      </div>
+      <div class="msg-notification-center">
+        <el-row :gutter="40">
+          <el-col class="liveItem">
+            <template v-for="(item, index) in baseSet">
+              {{item}}
+              <item-card v-if="item" :info="item" :key="`citem-${index}`"></item-card>
+            </template>
+          </el-col>
+        </el-row>
+      </div>
+    </div>
     <begin-play
       :webinarId="$route.params.str"
       v-if="$route.query.type != 5 && webinarState != 4"
     ></begin-play>
+    <!-- 配置短信签名
+    <sign-dialog v-if="signDialogVisible" :visible="signDialogVisible" @close="closeDialog"></sign-dialog>
+    -->
+    <!-- 配置短链接  -->
+    <link-dialog v-if="linkDialogVisible" :visible="linkDialogVisible" @close="closeDialog"></link-dialog>
   </div>
 </template>
 
@@ -21,19 +60,174 @@
 import PageTitle from '@/components/PageTitle';
 import beginPlay from '@/components/beginBtn';
 import {sessionOrLocal} from "@/utils/utils";
+import LinkDialog from './components/link-dialog.vue'
+import ItemCard from './components/item-card.vue'
+
+// import SignDialog from './components/sign-dialog.vue'
 export default {
   name: 'msgNotification',
   data() {
     return {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
+      msgInfo: {
+        flower_balance: 0, // 短信余额
+        is_open: false, // 是否开启
+        sign: '', // 签名文案
+        link: '', // 短链接
+        dxData: {},
+        startData: {},
+        playbackData: {},
+        followerData: {},
+        wxStartData: {},
+        wxPlaybackData: {}
+      },
+      // signDialogVisible: false,
+      linkDialogVisible: false,
+      showSignText: '微吼直播',
+      inputShowSignText: '',
+      isSignShow: true,
+      liveDetailInfo: {} // 活动详情
+    }
+  },
+  computed: {
+    baseSet: function() {
+      return [
+        {
+          iconType: 'base',
+          title: '预约/报名成功通知',
+          is_open: false,
+          content: `${this.showSignText}您已成功预约“${this.liveDetailInfo.subject}”，直播将于${this.liveDetailInfo.start_time}开播，请准时参加。点击进入`,
+          link: this.msgInfo.link
+        }
+      ]
+    },
+    wxSet: function() {
+      return []
     }
   },
   components: {
     PageTitle,
-    beginPlay
+    beginPlay,
+    // SignDialog,
+    LinkDialog,
+    ItemCard
   },
-  methods: {},
-  created() {
+  methods: {
+    // 开启\关闭报名表单开关
+    switchChangeOpen(value) {
+      const url = value ? 'regFromEnable' : 'regFromDisable';
+      const behaviour = value ? '开启' : '关闭';
+      this.$fetch(url, {
+        webinar_id: this.webinar_id
+      }).then(res => {
+        if (res.code === 200) {
+          this.$vhall_paas_port({
+            k: value ? 100137 : 100138,
+            data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+          this.$message({
+            message:  `报名表单${ behaviour }成功`,
+            showClose: true, // 是否展示关闭按钮
+            type: 'success', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        }
+      }).catch(err => {
+        if (err.code == 512800) {
+          this.$message({
+            message:  '报名表单不能与白名单同时开启',
+            showClose: true, // 是否展示关闭按钮
+            type: 'error', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        } else {
+          this.$message({
+            message:  `报名表单${ behaviour }失败`,
+            showClose: true, // 是否展示关闭按钮
+            type: 'error', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+        }
+      });
+    },
+    // 打开弹窗
+    openDialog(type) {
+      this[`${type}DialogVisible`] = true
+    },
+    // 关闭链接弹窗
+    closeDialog(obj) {
+      this[`${obj.type}DialogVisible`] = false
+      if (obj.content) {
+        // 有传递值就重置
+        this.msgInfo[type] = obj.content
+      }
+    },
+    // 保存签名
+    saveMsgSign() {
+      if (!this.msgInfo.sign) {
+        this.isSignShow = true
+        return
+      }
+      this.$fetch('saveMsgSign', {
+        webinar_id: this.$route.params.str,
+        sign: this.msgInfo.sign
+      }).then(res => {
+        if (res.code === 200) {
+          this.$message({
+            message:  `保存成功`,
+            showClose: true, // 是否展示关闭按钮
+            type: 'success', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+          this.showSignText = this.msgInfo.sign
+        }
+      }).catch(err => {
+        this.$message({
+          message:  `${err.msg || '保存失败'}`,
+          showClose: true, // 是否展示关闭按钮
+          type: 'error', //  提示类型
+          customClass: 'zdy-info-box' // 样式处理
+        });
+      });
+    },
+    // 取消保存签名
+    cancelSaveMsgSign() {
+      this.isSignShow = true
+      this.msgInfo.msg = this.showSignText
+    },
+    // 获取基本信息
+    getLiveDetail(id) {
+      this.loading = true
+      this.$fetch('getWebinarInfo', { webinar_id: id })
+        .then((res) => {
+          this.liveDetailInfo = res.data
+        })
+        .catch((res) => {
+          this.$message({
+            message: res.msg || '获取信息失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box',
+          })
+          console.log(res)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    // 获取消息通知内容
+    getMsgNotificationInfo() {
+      this.$fetch('getMsgNotificationInfo', {
+        webinar_id: this.$route.params.str
+      }).then(res => {
+      }).catch(err => {
+      });
+    }
+  },
+  async created() {
+    await this.getLiveDetail(this.$route.params.str)
+    // this.getMsgNotificationInfo()
   },
   mounted() {}
 };
@@ -42,7 +236,24 @@ export default {
 <style lang="less" scoped>
 .msg-notification-page {
   .msg-notification__body {
-    background: #eae;
+    background: #ffffff;
+    min-height: 600px;
+  }
+  .msg-notification__top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .switchBox {
+      margin-left: auto;
+    }
+    .msg-sign__top {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      .el-input {
+        width: 175px;
+      }
+    }
   }
 }
 </style>

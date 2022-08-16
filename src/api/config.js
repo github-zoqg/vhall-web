@@ -700,7 +700,11 @@ const apis = {
   labelTop: ['/v3/webinars/label/top', 'POST'],
 
   // 首页-广告
-  getBannerSetInfo: ['/v3/interacts/banner/get-banner', 'GET']
+  getBannerSetInfo: ['/v3/interacts/banner/get-banner', 'GET'],
+  // 消息通知
+  getMsgNotificationInfo: ['', 'GET'], // 获取消息通知，各个模块开关情况
+  saveMsgLink: ['', 'POST'], // 保存消息通知-短链接
+  saveMsgSign: ['', 'POST'], // 保存消息通知-签名
 };
 
 const getApi = api => {
