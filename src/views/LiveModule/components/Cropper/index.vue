@@ -6,11 +6,19 @@
     :close-on-press-escape=false
     width="480px">
     <div class="cropper_content">
-      <div class="cropper_content_box" :style="{ height: imgHeight + 'px'}">
-        <vue-cropper ref="cropper" class="cropper_img"
-          :aspect-ratio="1"
+      <div class="cropper_content_box">
+        <vue-cropper ref="cropper"
           :src="option.src"
-          :style="option.style"
+          :info="option.info"
+          :outputSize="option.outputSize"
+          :full="option.full"
+          :original="option.original"
+          :fixed="option.fixed"
+          :fixedBox="option.fixedBox"
+          :fixedNumber="option.fixedNumber"
+          :autoCrop="option.autoCrop"
+          :autoCropWidth="option.autoCropWidth"
+          :autoCropHeight="option.autoCropHeight"
         ></vue-cropper>
       </div>
       <div class="cropper_content_btn">
@@ -34,15 +42,26 @@ export default {
   },
   data() {
     return {
-      dialogVisible: false,
+      dialogVisible: true,
       cropperImgUrl: '',
       option: {
-        style: {
-          'width': '400px',
-          'height': `225px`,
-          'object-fit': 'scale-down'
-        },
-        src: ''
+        src: 'https://t-alistatic01.e.vhall.com/common-static/images/livingSetting.png',
+        // info: true,
+        // outputSize: 1,
+        // full: true,
+        // original: false,
+        // fixed: true,
+        fixedBox: true,
+        // fixedNumber: [16, 9],
+        // autoCrop: true,
+        autoCropWidth: 400,
+        autoCropHeight: 225
+        // style: {
+        //   'width': '400px',
+        //   'height': `225px`,
+        // aspect-ratio="400/225"
+        //   'object-fit': 'scale-down'
+        // },
       }
     }
   },
@@ -70,17 +89,26 @@ export default {
 </script>
 <style lang="less" scoped>
   .cropper_content{
+    width: 100%;
     &_box{
-      width: 100%;
+      width: 416px;
+      height: 234px;
+      padding: 5px;
+      overflow: hidden;
       .cropper_img{
-        height:100%;
-        width: 100%;
+        height:225px;
+        width: 400px;
         margin: 0 auto;
         overflow: hidden !important;
+        img{
+          width: 100%;
+          height: 100%;
+          object-fit: scale-down;
+        }
       }
     }
     &_btn {
-      padding: 20px 0;
+      padding: 24px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;

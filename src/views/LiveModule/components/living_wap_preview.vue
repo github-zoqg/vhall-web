@@ -306,7 +306,7 @@ export default {
       console.log(style, index, type, 'wap2321435')
       let wapStyle = (type == 2 && style == 3) ? 2 : style;
       let key = `style_${Number(wapStyle)}_theme_${Number(index)}`
-      skinsWap.setTheme(skinsWap.themes[key], 'living_preview_wap');
+      skinsWap.setTheme(skinsWap.themes[key], '.living_preview_wap');
     }
   }
 }

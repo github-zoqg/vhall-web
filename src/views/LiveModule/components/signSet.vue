@@ -72,7 +72,7 @@
             <el-button type="primary" round v-preventReClick @click.prevent.stop="signSetSave">保 存</el-button>
           </el-form-item>
         </el-form>
-        <div class="hide-white" v-show="!brandConfig"></div>
+        <div class="hide-white" v-show="brandType==1 && brandConfig==2"></div>
       </div>
       <!-- 预览区域 -->
       <brand-set-preview ref="brandSetPreviewComp" class="brand--preview" :brandType="brandType" :tabType="'signSet'"></brand-set-preview>
