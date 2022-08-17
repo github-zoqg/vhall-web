@@ -10,6 +10,7 @@
         <vue-cropper ref="cropper" class="cropper_img"
           :aspect-ratio="1"
           :src="option.src"
+          :style="option.style"
         ></vue-cropper>
       </div>
       <div class="cropper_content_btn">
@@ -37,7 +38,8 @@ export default {
       cropperImgUrl: '',
       option: {
         style: {
-          'height': `${this.imgHeight}px`,
+          'width': '400px',
+          'height': `225px`,
           'object-fit': 'scale-down'
         },
         src: ''
@@ -73,6 +75,7 @@ export default {
       .cropper_img{
         height:100%;
         width: 100%;
+        margin: 0 auto;
         overflow: hidden !important;
       }
     }

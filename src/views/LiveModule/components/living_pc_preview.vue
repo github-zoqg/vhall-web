@@ -201,14 +201,14 @@ export default {
       }
     },
     pcBackground() {
-      console.log(this.livingPcForm.bgColor, '??!2343')
-      if (this.livingPcForm.bgColor == 1) {
-        return {backgroundColor: '#1a1a1a'}
+      console.log(this.livingPcForm.backGroundColor, '??!2343')
+      if (this.livingPcForm.backGroundColor == 1 || (this.livingPcForm.style == 1 && this.livingPcForm.backGroundColor==2)) {
+        return {backgroundColor: this.livingPcForm.backGroundColor == 1 ? '#1a1a1a' : 'rgba(0, 0, 0, 0.06)'}
       } else {
         if (this.livingPcForm.background) {
           return {backgroundImage: `url(${this.livingPcForm.background})`}
         } else {
-          let url = require(`./image/pc/bg_${this.livingPcForm.bgColor}.png`);
+          let url = require(`./image/pc/bg_${this.livingPcForm.backGroundColor}.png`);
           return {backgroundImage: `url(${url})`}
         }
       }

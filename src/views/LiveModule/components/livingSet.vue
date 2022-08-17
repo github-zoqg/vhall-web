@@ -71,7 +71,7 @@
         <div class="form_item">
           <p class="form_item_title">主题色</p>
           <div class="theme_colors">
-            <span v-for="(item, index) in pcThemeColors" :key="index" :class="livingPcForm.bgColor == index + 1 ? 'active' : ''" @click="changePcTheme(index)">
+            <span v-for="(item, index) in pcThemeColors" :key="index" :class="livingPcForm.backGroundColor == index + 1 ? 'active' : ''" @click="changePcTheme(index)">
               <img :src="require(`./image/pc/theme_${index+1}.png`)" alt="">
             </span>
           </div>
@@ -117,7 +117,7 @@
         <div class="form_item">
           <p class="form_item_title">主题色</p>
           <div class="theme_colors">
-            <span v-for="(item, index) in pcThemeColors" :key="index" :class="livingWapForm.bgColor == index + 1 ? 'active' : ''"  @click="changeWapTheme(index)">
+            <span v-for="(item, index) in pcThemeColors" :key="index" :class="livingWapForm.backGroundColor == index + 1 ? 'active' : ''"  @click="changeWapTheme(index)">
               <img :src="require(`./image/wap/theme_${livingWapForm.style}/theme_${index+1}.png`)" alt="">
             </span>
           </div>
@@ -283,7 +283,7 @@ export default {
       webinarId: this.$route.params.str,
       livingWapForm: {
         style: 1,
-        bgColor: 2, //主题色
+        backGroundColor: 2, //主题色
         background: '',
         blurryDegree: 0,
         lightDegree: 10,
@@ -296,7 +296,7 @@ export default {
       },
       livingPcForm: {
         style: 1,
-        bgColor: 1, //主题色
+        backGroundColor: 1, //主题色
         background: '',
         blurryDegree: 0,
         lightDegree: 10,
@@ -351,8 +351,6 @@ export default {
       return `${this.livingForm.videoBackGround}?x-oss-process=image/crop,x_${this.livingForm.videoBackGroundSize.x.toFixed()},y_${this.livingForm.videoBackGroundSize.y.toFixed()},w_${this.livingForm.videoBackGroundSize.width.toFixed()},h_${this.livingForm.videoBackGroundSize.height.toFixed()}${this.livingForm.videoBlurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingForm.videoBlurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.livingForm.videoLightDegree - 10) * 5} `;
     }
   },
-  mounted() {
-  },
   methods: {
     initComp(){
       // this.$refs.livingWapPreview.settingTheme(1, 2);
@@ -373,8 +371,8 @@ export default {
           console.log(skin_json_pc, skin_json_wap, '???wsjo')
           this.livingPcForm.style = skin_json_pc.style;
           this.livingWapForm.style = skin_json_wap.style;
-          this.$refs.livingPcPreview.settingTheme(skin_json_pc.style, skin_json_pc.bgColor)
-          this.$refs.livingWapPreview.settingTheme(skin_json_wap.style, skin_json_wap.bgColor, 1)
+          this.$refs.livingPcPreview.settingTheme(skin_json_pc.style, skin_json_pc.backGroundColor)
+          this.$refs.livingWapPreview.settingTheme(skin_json_wap.style, skin_json_wap.backGroundColor, 1)
           this.livingPcForm = { ...skin_json_pc }; //pc信息
           this.livingWapForm = { ...skin_json_wap }; //wap信息
           this.livingForm = { ...skin_json_pc }; // 公共信息
@@ -392,11 +390,11 @@ export default {
       this.resetFormWapColor(item.id)
     },
     changePcTheme(index) {
-      this.livingPcForm.bgColor = index + 1;
+      this.livingPcForm.backGroundColor = index + 1;
       this.$refs.livingPcPreview.settingTheme(this.livingPcForm.style, index+1);
     },
     changeWapTheme(index) {
-      this.livingWapForm.bgColor = index + 1;
+      this.livingWapForm.backGroundColor = index + 1;
       this.$refs.livingWapPreview.settingTheme(this.livingWapForm.style, index+1, this.livingPcPreviewType);
     },
     // 选择视频区底色
@@ -423,7 +421,7 @@ export default {
     resetFormPcColor(index) {
       this.livingPcForm = {
         style: this.livingPcForm.style,
-        bgColor: index == 1 ? 1 : 2, //主题色
+        backGroundColor: index == 1 ? 1 : 2, //主题色
         background: '',
         blurryDegree: 0,
         lightDegree: 10,
@@ -448,13 +446,13 @@ export default {
           height: 0
         }
       }
-      this.$refs.livingPcPreview.settingTheme(index, this.livingPcForm.bgColor);
+      this.$refs.livingPcPreview.settingTheme(index, this.livingPcForm.backGroundColor);
     },
      // 默认wap主题颜色
     resetFormWapColor(index) {
       this.livingWapForm = {
         style: this.livingWapForm.style,
-        bgColor: index, //主题色
+        backGroundColor: 2, //主题色
         background: '',
         blurryDegree: 0,
         lightDegree: 10,
@@ -465,11 +463,11 @@ export default {
           height: 0
         }
       };
-      // let microphoneArr = [1, 2, 2, 3]
+      // inavLayout: 传统风格：主次平铺；其他风格：均匀排列
       this.livingForm = {
         videoColor: '#00000', //视频区底色
         chatLayout: index==3 ? 2 : 1,
-        inavLayout: 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', //连麦布局
+        inavLayout: index == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', //连麦布局
         inavDocumentLayout: 1,
         videoBackGround: '',
         videoBlurryDegree: 0,
@@ -481,7 +479,7 @@ export default {
           height: 0
         }
       }
-      this.$refs.livingWapPreview.settingTheme(index, this.livingWapForm.bgColor, this.livingPcPreviewType);
+      this.$refs.livingWapPreview.settingTheme(index, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
     },
     saveSettingLivingInfo() {
       let skin_json_pc = Object.assign({}, this.livingPcForm, this.livingForm);

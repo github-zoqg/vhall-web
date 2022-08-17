@@ -6,9 +6,9 @@
         戈里瑰夏
       </div>
       <div class="header_right">
-        <i class="iconfont-v3 saasicon_home1"></i>
-        <i class="iconfont-v3 saaszuidahua_icon1"></i>
-        <i class="iconfont-v3 saasicon_guanzhu"></i>
+        <i class="iconfont-v3 saasline-house"></i>
+        <i class="iconfont-v3 saasline-public1"></i>
+        <i class="iconfont-v3 saasa-line-collectionsuccess"></i>
       </div>
     </div>
     <div class="living_preview_wap_simpleHeader" v-else>
@@ -17,8 +17,8 @@
         <div class="header_left_name">
           <p class="header_host">戈里瑰夏 </p>
           <p class="header_hot">
-            <i class="iconfont-v3 saasicon_home1">&nbsp;1234&nbsp;&nbsp;</i>
-            <i class="iconfont-v3 saasicon_home1">&nbsp;2345</i>
+            <i class="iconfont-v3 saasline-user">&nbsp;1234&nbsp;&nbsp;</i>
+            <i class="iconfont-v3 saasicon_redu">&nbsp;2345</i>
           </p>
         </div>
         <div class="header_left_attention">
@@ -26,8 +26,8 @@
         </div>
       </div>
        <div class="header_right">
-        <span><i class="iconfont-v3 saasicon_home1"></i></span>
-        <span><i class="iconfont-v3 saasicon_home1"></i></span>
+        <span><i class="iconfont-v3 saasline-house"></i></span>
+        <span><i class="iconfont-v3 saasline-public1"></i></span>
        </div>
     </div>
     <div class="living_preview_wap_body">
@@ -243,7 +243,7 @@
         <img src="./image/living/avatar@2x.png" alt="">
       </div>
       <div class="footer_center">
-        <span><i class="iconfont-v3 saasa-line-zhikanzhubanfang"></i> | 参加聊天</span>
+        <span><i class="iconfont-v3 saasline-audit"></i> | 参加聊天</span>
       </div>
       <div class="footer_right"></div>
     </div>
@@ -287,15 +287,15 @@ export default {
       }
     },
     wapBackground() {
-      console.log(this.livingWapForm.style, this.livingWapForm.bgColor, '??!2343')
-      if (this.livingWapForm.style == 1 && this.livingWapForm.bgColor < 3) {
-        return {backgroundColor: this.livingWapForm.bgColor == 1 ? '#262626' : '#f0f0f0'}
+      console.log(this.livingWapForm.style, this.livingWapForm.backGroundColor, '??!2343')
+      if (this.livingWapForm.style == 1 && this.livingWapForm.backGroundColor < 3) {
+        return {backgroundColor: this.livingWapForm.backGroundColor == 1 ? '#262626' : '#f0f0f0'}
       } else {
         if (this.livingWapForm.background) {
           return {backgroundImage: `url(${this.livingWapForm.background})`}
         } else {
           let style = this.type == 2 && this.livingWapForm.style == 3 ? 2 : this.livingWapForm.style
-          let url = require(`./image/wap/bg_${style}/theme_${this.livingWapForm.bgColor}.png`);
+          let url = require(`./image/wap/bg_${style}/theme_${this.livingWapForm.backGroundColor}.png`);
           return {backgroundImage: `url(${url})`}
         }
       }

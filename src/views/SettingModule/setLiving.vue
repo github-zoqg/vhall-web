@@ -10,7 +10,7 @@
       <!-- 直播间设置 -->
       <living-set ref="livingSet" v-show="tabType === 'livingSet'"></living-set>
       <!-- 标识设置 -->
-      <sign-set ref="signSet" v-show="tabType === 'signSet'"  v-if="perssionInfo['ui.brand_setting'] > 0"></sign-set>
+      <sign-set ref="signSet" v-show="tabType === 'signSet'" :brandType="2"  v-if="perssionInfo['ui.brand_setting'] > 0"></sign-set>
     </div>
   </div>
 </template>

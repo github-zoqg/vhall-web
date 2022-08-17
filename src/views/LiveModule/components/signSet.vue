@@ -86,7 +86,7 @@ import BrandSetPreview from '../../LiveModule/components/brandSetPreview';
 import Env from "@/api/env";
 export default {
   name: "signSet.vue",
-  props: ['brandConfig'],
+  props: ['brandConfig', 'brandType'],
   components: {
     Upload,
     BrandSetPreview
@@ -100,7 +100,7 @@ export default {
         logo_url: null,
         skip_url: null
       },
-      brandType: 1,
+      // brandType: 1,
       domain_url: '',
       signSetFormRules: {
         logo_url: [
@@ -114,13 +114,13 @@ export default {
       }
     };
   },
-  watch: {
-    '$parent.type'() {
-      if (this.brandType) {
-        this.initComp();
-      }
-    }
-  },
+  // watch: {
+  //   '$parent.type'() {
+  //     if (this.brandType) {
+  //       this.initComp();
+  //     }
+  //   }
+  // },
   methods: {
     handleUploadSuccess(res, file){
       console.log(res, file);
@@ -234,7 +234,7 @@ export default {
       });
     },
     initComp() {
-      this.brandType = this.$parent.type;
+      // this.brandType = this.$parent.type;
       this.getSignInfo();// 获取活动标志内容
     },
     // 保存

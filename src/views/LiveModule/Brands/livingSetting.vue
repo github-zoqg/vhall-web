@@ -22,11 +22,11 @@
       </el-tabs>
       <!-- 设置区域 -->
       <!-- 直播间设置 -->
-      <living-set ref="customSet" v-show="tabType === 'livingSet'" :livingConfig="type"></living-set>
+      <living-set ref="livingSet" v-show="tabType === 'livingSet'" :livingConfig="type"></living-set>
       <!-- 自定义菜单 -->
       <customer-tab ref="customSet" v-show="tabType === 'customSet'"></customer-tab>
       <!-- 标识设置 -->
-      <sign-set ref="signSet" v-show="tabType === 'signSet'"  v-if="permissionInfo['ui.brand_setting'] > 0" :brandConfig="type"></sign-set>
+      <sign-set ref="signSet" v-show="tabType === 'signSet'"  v-if="permissionInfo['ui.brand_setting'] > 0" :brandConfig="type" :brandType="1"></sign-set>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
   </div>
@@ -82,8 +82,7 @@ export default {
           // this.permissionInfo = permissions;
           this.livingSettingOpen = Boolean(permissions['is_brand_cofig'] == 1)
           this.type = this.livingSettingOpen ? 1 : 2;
-          this.$refs.livingSet.initComp();
-          // this.$refs[this.tabType].initComp();
+          this.$refs[this.tabType].initComp();
         }
       }).catch(e => {});
     },
