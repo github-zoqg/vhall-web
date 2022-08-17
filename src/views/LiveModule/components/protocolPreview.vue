@@ -291,32 +291,6 @@ export default {
     .protocol-content-choose{
       height: 180px;
     }
-    .protocol-content-read, .protocol-content-choose{
-      // 滚动条的宽度
-      /deep/ &::-webkit-scrollbar {
-        width: 6px; // 横向滚动条
-        height: 6px; // 纵向滚动条 必写
-      }
-      // 滚动条的滑块
-      /deep/ &::-webkit-scrollbar-thumb {
-        border-radius: 3px;
-        transition: all 0.3s;
-        cursor: pointer;
-        display: none;
-        background-color: #cccccc;
-        &:hover {
-          background-color: #cccccc;
-        }
-        &:active {
-          background-color: #cccccc;
-        }
-      }
-      &:hover {
-        /deep/ &::-webkit-scrollbar-thumb {
-          display: block;
-        }
-      }
-    }
     .protocol-bottom{
       width: 100%;
       font-size: 14px;

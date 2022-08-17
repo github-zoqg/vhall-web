@@ -2563,10 +2563,6 @@ export default {
           color: #666;
         }
       }
-      &::-webkit-scrollbar{
-        width: 6px;
-        color: rgba(153,153,153,.3);
-      }
     }
     .checked_num{
       float: left;

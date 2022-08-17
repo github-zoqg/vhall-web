@@ -5,7 +5,7 @@
     element-loading-text="数据获取中"
     v-if="!loading"
   >
-    <pageTitle pageTitle="活动详情"></pageTitle>
+    <pageTitle pageTitle="直播详情"></pageTitle>
     <!--  <pageTitle :title='titleText(liveDetailInfo.webinar_state) + "详情"'></pageTitle> -->
     <el-row :gutter="16" class="basicInfo">
       <el-col
