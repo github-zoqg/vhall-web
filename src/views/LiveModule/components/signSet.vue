@@ -197,8 +197,8 @@ export default {
     // 获取活动标记记录
     getSignInfo() {
       let params = {
-        type: this.$route.params.str ? this.brandType : 2,
-        webinar_id: this.brandType == 1 ? this.$route.params.str : ''
+        type: this.brandType,
+        webinar_id: this.$route.params.str || ''
       }
       this.$fetch('getInterWebinarTag', this.$params(params)).then(res => {
         console.log(res);
@@ -243,7 +243,7 @@ export default {
         if(valid) {
           console.log(this.signSetForm, 'signSetForm');
           let params = Object.assign(this.signSetForm, {webinar_id: this.$route.params.str || '', type: this.brandType});
-          let signObj = {}
+          // let signObj = {}
           this.$fetch('setInterWebinarTag', this.$params(params)).then(res => {
             this.setReportData(this.$params(params))
             this.$message({

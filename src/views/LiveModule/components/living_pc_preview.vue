@@ -202,11 +202,11 @@ export default {
     },
     pcBackground() {
       console.log(this.livingPcForm.backGroundColor, '??!2343')
-      if (this.livingPcForm.backGroundColor == 1 || (this.livingPcForm.style == 1 && this.livingPcForm.backGroundColor==2)) {
+      if (this.livingPcForm.style != 3 && this.livingPcForm.backGroundColor == 1 || (this.livingPcForm.style == 1 && this.livingPcForm.backGroundColor==2)) {
         return {backgroundColor: this.livingPcForm.backGroundColor == 1 ? '#1a1a1a' : 'rgba(0, 0, 0, 0.06)'}
       } else {
         if (this.livingPcForm.background) {
-          return {backgroundImage: `url(${this.livingPcForm.background})`}
+          return {backgroundImage: `url(${this.domainUrl})`}
         } else {
           let url = require(`./image/pc/bg_${this.livingPcForm.backGroundColor}.png`);
           return {backgroundImage: `url(${url})`}
@@ -214,16 +214,12 @@ export default {
       }
     }
   },
-  // mounted() {
-  //   // 设置主题
-  //   // window.skinsPc = skinsPc;
-  //   skinsPc.setTheme(skinsPc.themes.style_2_theme_5, 'living_preview_wap');
-  // },
   methods: {
     settingTheme(style, index) {
       console.log(style, index, 'pc2321435')
-      let key = `style_${Number(style)}_theme_${Number(index)}`
-      skinsPc.setTheme(skinsPc.themes[key], 'living_preview_pc');
+       const pcStyle = style == 3 ? 2 : style;
+      let key = `style_${Number(pcStyle)}_theme_${Number(index)}`
+      skinsPc.setTheme(skinsPc.themes[key], '.living_preview_pc')
     }
   },
   data() {

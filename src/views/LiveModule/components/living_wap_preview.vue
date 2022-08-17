@@ -292,7 +292,7 @@ export default {
         return {backgroundColor: this.livingWapForm.backGroundColor == 1 ? '#262626' : '#f0f0f0'}
       } else {
         if (this.livingWapForm.background) {
-          return {backgroundImage: `url(${this.livingWapForm.background})`}
+          return {backgroundImage: `url(${this.domainUrl})`}
         } else {
           let style = this.type == 2 && this.livingWapForm.style == 3 ? 2 : this.livingWapForm.style
           let url = require(`./image/wap/bg_${style}/theme_${this.livingWapForm.backGroundColor}.png`);
@@ -300,11 +300,6 @@ export default {
         }
       }
     }
-  },
-  mounted() {
-    // 设置主题
-    // window.skinsWap = skinsWap;
-    // skinsWap.setTheme(skinsWap.themes.style_3_theme_5, 'living_preview_wap');
   },
   methods: {
     settingTheme(style, index, type) {

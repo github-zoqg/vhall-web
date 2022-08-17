@@ -83,10 +83,6 @@
             id="living_pc_cropper"
             v-model="livingPcForm.background"
             :domain_url="livingPcForm.background"
-            :saveData="{
-              path: pathUrl,
-              type: 'image',
-            }"
             :on-success="handleUploadSuccess"
             :on-progress="uploadProcess"
             :on-error="uploadError"
@@ -129,10 +125,6 @@
             id="living_wap_cropper"
             v-model="livingWapForm.background"
             :domain_url="livingWapForm.background"
-            :saveData="{
-              path: pathUrl,
-              type: 'image',
-            }"
             :on-success="handleUploadSuccess"
             :on-progress="uploadProcess"
             :on-error="uploadError"
@@ -167,74 +159,76 @@
             <vh-radio-button round :label="2">左右显示</vh-radio-button>
           </vh-radio-group>
         </div>
-        <div class="form_item_br">
-          以下设置对PC端和移动端同时生效～
-        </div>
-        <div class="form_item">
-          <p class="form_item_title">视频区【连麦】布局</p>
-          <div class="form_item_lay">
-            <div class="item_lay" @click="choseMicrophone(1)">
-              <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE' ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
-              <span>均匀排列</span>
-            </div>
-            <div class="item_lay" @click="choseMicrophone(2)">
-              <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' ? 'active' : ''"><img src="./image/main_2.png" alt=""></p>
-              <span>主次平铺</span>
-            </div>
-            <div class="item_lay" @click="choseMicrophone(3)">
-              <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE' ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
-              <span>主次悬浮</span>
+        <template v-if="isShowInteract">
+          <div class="form_item_br">
+            以下设置对PC端和移动端同时生效～
+          </div>
+          <div class="form_item">
+            <p class="form_item_title">视频区【连麦】布局</p>
+            <div class="form_item_lay">
+              <div class="item_lay" @click="choseMicrophone(1)">
+                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE' ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
+                <span>均匀排列</span>
+              </div>
+              <div class="item_lay" @click="choseMicrophone(2)">
+                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' ? 'active' : ''"><img src="./image/main_2.png" alt=""></p>
+                <span>主次平铺</span>
+              </div>
+              <div class="item_lay" @click="choseMicrophone(3)">
+                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE' ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
+                <span>主次悬浮</span>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- <div class="form_item" v-if="livingPreview == 2">
-          <p class="form_item_title">视频区【连麦 + 演示】布局</p>
-          <div class="form_item_lay form_item_video">
-            <div class="item_lay">
-              <p class="active"><img src="./image/main_1.png" alt=""></p>
-              <span>上下模式</span>
+          <!-- <div class="form_item" v-if="livingPreview == 2">
+            <p class="form_item_title">视频区【连麦 + 演示】布局</p>
+            <div class="form_item_lay form_item_video">
+              <div class="item_lay">
+                <p class="active"><img src="./image/main_1.png" alt=""></p>
+                <span>上下模式</span>
+              </div>
             </div>
-          </div>
-        </div> -->
-        <!-- <div class="form_item">
-          <p class="form_item_title">视频区底色</p>
-          <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoColor"></color-set>
-        </div> -->
-        <!-- <div class="form_item">
-          <p class="form_item_title">视频区背景</p>
-          <upload
-            class="upload__living"
-            id="living_video_cropper"
-            v-model="livingForm.videoBackGround"
-            :domain_url="livingForm.videoBackGround"
-            :saveData="{
-              path: pathUrl,
-              type: 'image',
-            }"
-            :on-success="handleUploadVideoSuccess"
-            :on-progress="uploadProcess"
-            :on-error="uploadError"
-            :on-preview="uploadPreview"
-            :heightImg="130"
-            :widthImg="231"
-            :before-upload="beforeUploadHandler"
-            @delete="resetVideoUrl">
-            <div slot="tip">
-              <p>建议尺寸：1920*1080px，小于4M</p>
-              <p>支持jpg、gif、png、bmp</p>
-            </div>
-          </upload>
-        </div> -->
-        <!-- <div class="form_item">
-          <span class="vague_theme">模糊程度</span>
-          <vh-slider v-model="livingForm.videoBlurryDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="10"></vh-slider>
-          <span class="vague_num">{{livingForm.videoBlurryDegree}}</span>
-        </div> -->
-        <!-- <div class="form_item">
+          </div> -->
+          <!-- <div class="form_item">
+            <p class="form_item_title">视频区底色</p>
+            <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoColor"></color-set>
+          </div> -->
+          <!-- <div class="form_item">
+            <p class="form_item_title">视频区背景</p>
+            <upload
+              class="upload__living"
+              id="living_video_cropper"
+              v-model="livingForm.videoBackGround"
+              :domain_url="livingForm.videoBackGround"
+              :saveData="{
+                path: pathUrl,
+                type: 'image',
+              }"
+              :on-success="handleUploadVideoSuccess"
+              :on-progress="uploadProcess"
+              :on-error="uploadError"
+              :on-preview="uploadPreview"
+              :heightImg="130"
+              :widthImg="231"
+              :before-upload="beforeUploadHandler"
+              @delete="resetVideoUrl">
+              <div slot="tip">
+                <p>建议尺寸：1920*1080px，小于4M</p>
+                <p>支持jpg、gif、png、bmp</p>
+              </div>
+            </upload>
+          </div> -->
+          <!-- <div class="form_item">
+            <span class="vague_theme">模糊程度</span>
+            <vh-slider v-model="livingForm.videoBlurryDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="10"></vh-slider>
+            <span class="vague_num">{{livingForm.videoBlurryDegree}}</span>
+          </div> -->
+          <!-- <div class="form_item">
           <span class="vague_theme">背景亮度</span>
           <vh-slider v-model="livingForm.videoLightDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="20"></vh-slider>
           <span class="vague_num">{{livingForm.videoLightDegree}}</span>
         </div> -->
+        </template>
       </template>
     </div>
     <div class="living-setting_hidden" v-if="webinarId && livingConfig==2"></div>
@@ -244,10 +238,9 @@
 </template>
 <script>
 import Upload from '@/components/Upload/main';
-import ColorSet from '@/components/ColorSelect';
+// import ColorSet from '@/components/ColorSelect';
 import cropper from './Cropper/index.vue';
-// import skinsPc from '@/common/skins/pc/index';
-// import skinsWap from '@/common/skins/wap/index';
+import { sessionOrLocal } from "@/utils/utils";
 import livingPreview from './livingPreview.vue';
 import pcPreview from './living_pc_preview.vue'
 import wapPreview from './living_wap_preview.vue'
@@ -276,6 +269,8 @@ export default {
         }
       ],
       skinId: '',
+      webinarType: sessionOrLocal.get("webinarType"),
+      defaultImage: 'https://t-alistatic01.e.vhall.com/common-static/images/livingSetting.png',
       pcThemeColors: 5,
       videoColors: ['000000', '262626', '595959', '8C8C8C', 'F5F5F5'],
       livingPreview: 1,
@@ -333,9 +328,6 @@ export default {
     livingPreview
   },
   computed: {
-    pathUrl() {
-      return `interacts/screen-imgs/${this.$moment().format('YYYYMM')}`;
-    },
     // pc端主题背景
     domain_pc_url() {
       if (!this.livingPcForm.background) return '';
@@ -345,6 +337,20 @@ export default {
     domain_wap_url() {
       if (!this.livingWapForm.background) return '';
       return `${this.livingWapForm.background}?x-oss-process=image/crop,x_${this.livingWapForm.backgroundSize.x.toFixed()},y_${this.livingWapForm.backgroundSize.y.toFixed()},w_${this.livingWapForm.backgroundSize.width.toFixed()},h_${this.livingWapForm.backgroundSize.height.toFixed()}${this.livingWapForm.blurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingWapForm.blurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.livingWapForm.lightDegree - 10) * 5} `;
+    },
+     // 是否显示互动
+    isShowInteract() {
+      if (this.webinarId) {
+        // 活动下互动和分组模式显示
+        if (this.webinarType == 3 || this.webinarType == 6) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        // 账号下默认显示
+        return true;
+      }
     },
     video_url() {
       if (!this.livingForm.videoBackGround) return '';
@@ -422,7 +428,7 @@ export default {
       this.livingPcForm = {
         style: this.livingPcForm.style,
         backGroundColor: index == 1 ? 1 : 2, //主题色
-        background: '',
+        background: this.livingPcForm.style == 3 ? this.defaultImage : '',
         blurryDegree: 0,
         lightDegree: 10,
         backgroundSize: {
@@ -452,7 +458,7 @@ export default {
     resetFormWapColor(index) {
       this.livingWapForm = {
         style: this.livingWapForm.style,
-        backGroundColor: 2, //主题色
+        backGroundColor: this.livingWapForm.style == 1 ? 2 : 5, //主题色
         background: '',
         blurryDegree: 0,
         lightDegree: 10,
