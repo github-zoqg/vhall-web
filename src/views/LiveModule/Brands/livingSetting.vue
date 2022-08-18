@@ -10,7 +10,7 @@
           @change="closeLivingSettingOpen"
           :active-text="reservationDesc">
         </el-switch>
-        <span @click="toSettingDetail">查看账号下品牌直播间设置</span>
+        <span @click="toSettingDetail">查看账号下{{ permissionInfo['ui.brand_setting'] == 1 ? '品牌' : ''}}直播间设置</span>
       </p>
       </div>
     </pageTitle>
@@ -22,7 +22,7 @@
       </el-tabs>
       <!-- 设置区域 -->
       <!-- 直播间设置 -->
-      <living-set ref="livingSet" v-show="tabType === 'livingSet'" :livingConfig="type"></living-set>
+      <living-set ref="livingSet" v-show="tabType === 'livingSet'" :livingConfig="type" :isDelay="isDelay"></living-set>
       <!-- 自定义菜单 -->
       <customer-tab ref="customSet" v-show="tabType === 'customSet'"></customer-tab>
       <!-- 标识设置 -->
@@ -45,6 +45,7 @@ export default {
       tabType: 'livingSet',
       livingSettingOpen: false,
       type: 2,
+      isDelay: false,
       permissionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
       webinarState: JSON.parse(sessionOrLocal.get("webinarState"))
     }
@@ -59,9 +60,9 @@ export default {
   computed: {
     reservationDesc() {
       if(this.livingSettingOpen){
-        return '已开启，使用当前活动【直播间设置】和【标识设置】';
+        return `已开启，使用当前活动【直播间设置】${this.permissionInfo['ui.brand_setting'] == 1 ? '和【标识设置】' : ''}`;
       }else{
-        return "开启后，将使用当前活动【直播间设置】和【标识设置】";
+        return `开启后，将使用当前活动【直播间设置】${this.permissionInfo['ui.brand_setting'] == 1 ? '和【标识设置】' : ''}`;
       }
     }
   },
@@ -79,12 +80,20 @@ export default {
       this.$fetch('planFunctionGet', {webinar_id: this.$route.params.str, webinar_user_id:  this.userId, scene_id: 1}).then(res => {
         if(res.code == 200) {
           let permissions = JSON.parse(res.data.permissions)
-          // this.permissionInfo = permissions;
+          this.permissionInfo = permissions;
           this.livingSettingOpen = Boolean(permissions['is_brand_cofig'] == 1)
           this.type = this.livingSettingOpen ? 1 : 2;
           this.$refs[this.tabType].initComp();
+          this.getWebinarInfo();
         }
       }).catch(e => {});
+    },
+    // 获取活动详情（无延迟直播）
+    getWebinarInfo() {
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res => {
+        // 是不是无延迟
+        this.isDelay = res.data.no_delay_webinar == 1 ? true : false;
+      })
     },
     closeLivingSettingOpen() {
        let params = {

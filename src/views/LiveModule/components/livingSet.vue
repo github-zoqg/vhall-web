@@ -83,7 +83,7 @@
             id="living_pc_cropper"
             v-model="livingPcForm.background"
             :domain_url="livingPcForm.background"
-            :on-success="handleUploadSuccess"
+            :on-success="handlePcUploadSuccess"
             :on-progress="uploadProcess"
             :on-error="uploadError"
             :on-preview="uploadPreview"
@@ -164,9 +164,19 @@
             以下设置对PC端和移动端同时生效～
           </div>
           <div class="form_item">
-            <p class="form_item_title">视频区【连麦】布局</p>
+            <p class="form_item_title">
+              视频区【连麦】布局
+              <el-tooltip v-tooltipMove>
+                <div slot="content">
+                  <p>1.无延迟模式下，只支持主次平铺；</p>
+                  <p>2.直播中修改布局，需要主持人刷新页面<br/>或重启客户端后生效</p>
+                </div>
+                <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
+              </el-tooltip>
+            </p>
             <div class="form_item_lay">
               <div class="item_lay" @click="choseMicrophone(1)">
+                <div class="item_lay_hidden" v-if="isDelay"></div>
                 <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE' ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
                 <span>均匀排列</span>
               </div>
@@ -175,6 +185,7 @@
                 <span>主次平铺</span>
               </div>
               <div class="item_lay" @click="choseMicrophone(3)">
+                <div class="item_lay_hidden" v-if="isDelay"></div>
                 <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE' ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
                 <span>主次悬浮</span>
               </div>
@@ -250,6 +261,10 @@ export default {
     livingConfig: {
       type: Number,
       default: 0
+    },
+    isDelay: {
+      type:Boolean,
+      default: false
     }
   },
   data() {
@@ -382,6 +397,9 @@ export default {
           this.livingPcForm = { ...skin_json_pc }; //pc信息
           this.livingWapForm = { ...skin_json_wap }; //wap信息
           this.livingForm = { ...skin_json_pc }; // 公共信息
+          if (this.isDelay) {
+            this.livingForm.inavLayout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE';
+          }
         }
       }).catch(err => {
         this.$message.success(err.msg || '获取信息失败')
@@ -425,6 +443,7 @@ export default {
     },
     // 默认pc主题颜色
     resetFormPcColor(index) {
+      let layout = '';
       this.livingPcForm = {
         style: this.livingPcForm.style,
         backGroundColor: index == 1 ? 1 : 2, //主题色
@@ -438,10 +457,15 @@ export default {
           height: 0
         }
       };
+      if (this.isDelay) {
+        layout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE';
+      } else {
+        layout = index == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE';
+      }
       this.livingForm = {
         videoColor: '#000000', //视频区底色
         chatLayout: index == 1 ? 1 : 2,
-        inavLayout: index == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', //连麦布局
+        inavLayout: layout, //连麦布局
         videoBackGround: '',
         videoBlurryDegree: 0,
         videoLightDegree: 10,
@@ -456,6 +480,7 @@ export default {
     },
      // 默认wap主题颜色
     resetFormWapColor(index) {
+      let layout = '';
       this.livingWapForm = {
         style: this.livingWapForm.style,
         backGroundColor: this.livingWapForm.style == 1 ? 2 : 5, //主题色
@@ -469,11 +494,16 @@ export default {
           height: 0
         }
       };
+      if (this.isDelay) {
+        layout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE';
+      } else {
+        layout = index == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE';
+      }
       // inavLayout: 传统风格：主次平铺；其他风格：均匀排列
       this.livingForm = {
         videoColor: '#00000', //视频区底色
-        chatLayout: index==3 ? 2 : 1,
-        inavLayout: index == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', //连麦布局
+        chatLayout: index == 3 ? 2 : 1,
+        inavLayout: layout, //连麦布局
         inavDocumentLayout: 1,
         videoBackGround: '',
         videoBlurryDegree: 0,
@@ -488,6 +518,12 @@ export default {
       this.$refs.livingWapPreview.settingTheme(index, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
     },
     saveSettingLivingInfo() {
+      if (this.livingPcForm.background) {
+        this.livingPcForm.pcBackground = this.domain_pc_url;
+      }
+      if (this.livingWapForm.background) {
+        this.livingWapForm.wapBackground = this.domain_wap_url;
+      }
       let skin_json_pc = Object.assign({}, this.livingPcForm, this.livingForm);
       let skin_json_wap = Object.assign({}, this.livingWapForm, this.livingForm);
       let params = {
@@ -511,18 +547,18 @@ export default {
     goPreviewLiving(){
       this.$refs.livingPreview.dialogVisible = true
     },
-    cropComplete(cropedData, option) {
-      console.log(cropedData, option)
-      if (option.index == 1) {
+    cropComplete(cropedData, url, index) {
+      console.log(cropedData, url, index)
+      if (index == 1) {
         if (this.livingPreview == 1) {
-          this.livingPcForm.background = option.src;
+          this.livingPcForm.background = url;
           this.livingPcForm.backgroundSize = cropedData;
         } else {
-          this.livingWapForm.background = option.src;
+          this.livingWapForm.background = url;
           this.livingWapForm.backgroundSize = cropedData;
         }
       } else {
-        this.livingForm.videoBackGround = option.src
+        this.livingForm.videoBackGround = url;
         this.livingForm.videoBackGroundSize = cropedData;
       }
     },
@@ -544,14 +580,19 @@ export default {
       this.livingForm.videoBackGround = '';
     },
     choseMicrophone(index) {
+      if (this.isDelay) return;
       let arrLayout = ['CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE', 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE']
       this.livingForm.inavLayout = arrLayout[index];
+    },
+    handlePcUploadSuccess(res, file) {
+      if(res.data) {
+        this.$refs.livingCropper.showModel(res.data.domain_url, 1)
+      }
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
       if(res.data) {
-        let index = this.livingPreview == 1 ? 1 : 2;
-        this.$refs.livingCropper.showModel(res.data.domain_url, index)
+        this.$refs.livingCropper.showModel(res.data.domain_url, 2)
       }
     },
     handleUploadVideoSuccess(res, file) {
@@ -761,9 +802,19 @@ export default {
           display: flex;
           align-items: center;
           justify-content: space-around;
-          >div{
+          .item_lay{
             text-align: center;
             cursor: pointer;
+            position: relative;
+            &_hidden {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              top: 0;
+              left: 0;
+              cursor: default;
+              background: rgba(255, 255, 255, 0.5);
+            }
           }
           p{
             width: 68px;

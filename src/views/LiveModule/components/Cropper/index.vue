@@ -5,20 +5,13 @@
     :close-on-click-modal=false
     :close-on-press-escape=false
     width="480px">
-    <div class="cropper_content">
+    <div class="cropper_content" v-if="dialogVisible">
       <div class="cropper_content_box">
-        <vue-cropper ref="cropper"
-          :src="option.src"
-          :info="option.info"
-          :outputSize="option.outputSize"
-          :full="option.full"
-          :original="option.original"
-          :fixed="option.fixed"
-          :fixedBox="option.fixedBox"
-          :fixedNumber="option.fixedNumber"
-          :autoCrop="option.autoCrop"
-          :autoCropWidth="option.autoCropWidth"
-          :autoCropHeight="option.autoCropHeight"
+        <vue-cropper ref="cropper" class="cropper_img"
+          :src="url"
+          :aspect-ratio="16/9"
+          :viewMode='1'
+          :autoCropArea="1"
         ></vue-cropper>
       </div>
       <div class="cropper_content_btn">
@@ -42,27 +35,10 @@ export default {
   },
   data() {
     return {
-      dialogVisible: true,
+      dialogVisible: false,
       cropperImgUrl: '',
-      option: {
-        src: 'https://t-alistatic01.e.vhall.com/common-static/images/livingSetting.png',
-        // info: true,
-        // outputSize: 1,
-        // full: true,
-        // original: false,
-        // fixed: true,
-        fixedBox: true,
-        // fixedNumber: [16, 9],
-        // autoCrop: true,
-        autoCropWidth: 400,
-        autoCropHeight: 225
-        // style: {
-        //   'width': '400px',
-        //   'height': `225px`,
-        // aspect-ratio="400/225"
-        //   'object-fit': 'scale-down'
-        // },
-      }
+      url: '',
+      index: 1
     }
   },
   components: {
@@ -70,19 +46,21 @@ export default {
   },
   methods: {
     showModel(url, index) {
-      this.option.src = url;
-      this.option.index = index;
+      this.url = url;
+      this.index = index;
       this.dialogVisible = true;
     },
     cropperSure() {
       this.cropperData = this.$refs.cropper.getData()
       // const fileObj = this.dataURLtoFile(this.cropperImgUrl)
-      this.$emit('cropComplete', this.cropperData, this.option)
+      this.$emit('cropComplete', this.cropperData, this.url, this.index)
+      this.url = '';
       this.dialogVisible = false;
     },
     resetCropper() {
       this.dialogVisible = false;
-      this.$emit('deleteComplete', this.option.index)
+      this.url = '';
+      this.$emit('deleteComplete', this.index)
     }
   }
 }
@@ -93,18 +71,15 @@ export default {
     &_box{
       width: 416px;
       height: 234px;
-      padding: 5px;
+      background: #222;
       overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       .cropper_img{
         height:225px;
         width: 400px;
         margin: 0 auto;
-        overflow: hidden !important;
-        img{
-          width: 100%;
-          height: 100%;
-          object-fit: scale-down;
-        }
       }
     }
     &_btn {
