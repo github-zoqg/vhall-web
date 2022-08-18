@@ -19,7 +19,7 @@
         <div class="type_item" @click="activeTheme(3)">
           <span class="type_item_title">时尚风格</span>
           <p class="type_item_check" :class="livingPcForm.style==3 ? 'active' : ''">
-            <img src="./image/pc/style_2.png" class="item_check_style" alt="">
+            <img src="./image/pc/style_3.png" class="item_check_style" alt="">
             <span class="checked_img" v-if="livingPcForm.style==3"><img src="../../../common/images/icon-choose.png"  alt=""></span>
           </p>
         </div>
@@ -551,13 +551,11 @@ export default {
     cropComplete(cropedData, url, index) {
       console.log(cropedData, url, index)
       if (index == 1) {
-        if (this.livingPreview == 1) {
-          this.livingPcForm.background = url;
-          this.livingPcForm.backgroundSize = cropedData;
-        } else {
-          this.livingWapForm.background = url;
+        this.livingPcForm.background = url;
+        this.livingPcForm.backgroundSize = cropedData;
+      } else if (index == 2) {
+        this.livingWapForm.background = url;
           this.livingWapForm.backgroundSize = cropedData;
-        }
       } else {
         this.livingForm.videoBackGround = url;
         this.livingForm.videoBackGroundSize = cropedData;
