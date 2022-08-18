@@ -517,7 +517,6 @@ export default {
       this.$refs.livingWapPreview.settingTheme(index, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
     },
     saveSettingLivingInfo() {
-      console.log(this.livingPcForm, '??????????')
       if (this.livingPcForm.background) {
         this.livingPcForm.pcBackground = this.domain_pc_url;
       }
@@ -526,6 +525,7 @@ export default {
       }
       let skin_json_pc = Object.assign({}, this.livingPcForm, this.livingForm);
       let skin_json_wap = Object.assign({}, this.livingWapForm, this.livingForm);
+      console.log(skin_json_pc, skin_json_wap, '??????????我是直播间设置参数')
       let params = {
         skin_id: this.skinId,
         type: this.webinarId ? 1 : 2,
