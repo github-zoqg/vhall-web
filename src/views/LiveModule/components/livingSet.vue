@@ -568,9 +568,11 @@ export default {
     // 主题背景删除
     resetLogoUrl() {
       if (this.livingPreview == 1) {
-         this.livingPcForm.background = '';
+        this.livingPcForm.background = '';
+        this.livingPcForm.pcBackground = '';
       } else {
-         this.livingWapForm.background = '';
+        this.livingWapForm.background = '';
+        this.livingWapForm.wapBackground = '';
       }
     },
     // 视频区域图片删除

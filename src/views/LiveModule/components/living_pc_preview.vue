@@ -25,8 +25,8 @@
       </div>
       <div class="pc_watch" v-if="type==1">
         <div class="watch_left">
-          <div class="left_top" :style="videoBackground">
-            <!-- 均匀 -->
+          <div class="left_top">
+            <!-- 均匀 :style="videoBackground"-->
             <div class="left_top__even" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
               <span><img src="./image/living/layout1.png" alt=""></span>
               <span><img src="./image/living/layout5.png" alt=""></span>
@@ -352,6 +352,7 @@ export default {
         .watch_left{
           width: calc(100% - 174px);
           height: 100%;
+          background: #000;
           .left_top{
             width: 100%;
             height: 334px;

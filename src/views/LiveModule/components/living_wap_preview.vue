@@ -46,7 +46,8 @@
           </div>
         </div>
         <div class="watch_layout_3" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
-          <div class="layout_top" :style="videoBackground">
+          <div class="layout_top">
+            <!-- :style="videoBackground" -->
             <span><img src="./image/living/layout1.png" alt=""></span>
           </div>
           <div class="layout_bottom">
@@ -243,7 +244,7 @@
         <img src="./image/living/avatar@2x.png" alt="">
       </div>
       <div class="footer_center">
-        <span><i class="iconfont-v3 saasline-audit"></i> | 参加聊天</span>
+        <span><i class="iconfont-v3 saasline-audit"></i> | 参与聊天</span>
       </div>
       <div class="footer_right"></div>
     </div>
@@ -477,6 +478,7 @@ export default {
             padding: 0 38px;
             background-size: 100% 100%;
             background-repeat: no-repeat;
+            background-color: #000;
             span{
               display: inline-block;
               width: 298px;
