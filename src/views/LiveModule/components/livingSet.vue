@@ -177,7 +177,7 @@
             <div class="form_item_lay">
               <div class="item_lay" @click="choseMicrophone(1)">
                 <div class="item_lay_hidden" v-if="isDelay"></div>
-                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE' ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
+                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE' ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
                 <span>均匀排列</span>
               </div>
               <div class="item_lay" @click="choseMicrophone(2)">
@@ -186,7 +186,7 @@
               </div>
               <div class="item_lay" @click="choseMicrophone(3)">
                 <div class="item_lay_hidden" v-if="isDelay"></div>
-                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE' ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
+                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE' ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
                 <span>主次悬浮</span>
               </div>
             </div>
