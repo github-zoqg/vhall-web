@@ -397,10 +397,8 @@ export default {
           this.$refs.livingWapPreview.settingTheme(skin_json_wap.style, skin_json_wap.backGroundColor, 1)
           this.livingPcForm = { ...skin_json_pc }; //pc信息
           this.livingWapForm = { ...skin_json_wap }; //wap信息
-          this.livingForm = { ...skin_json_pc }; // 公共信息
-          if (this.isDelay) {
-            this.livingForm.inavLayout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE';
-          }
+          this.livingForm.chatLayout = skin_json_pc.chatLayout; // 公共信息 聊天布局
+          this.livingForm.inavLayout = this.isDelay ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : skin_json_pc.inavLayout; // 公共信息 连麦布局
         }
       }).catch(err => {
         this.$message.success(err.msg || '获取信息失败')
@@ -519,6 +517,7 @@ export default {
       this.$refs.livingWapPreview.settingTheme(index, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
     },
     saveSettingLivingInfo() {
+      console.log(this.livingPcForm, '??????????')
       if (this.livingPcForm.background) {
         this.livingPcForm.pcBackground = this.domain_pc_url;
       }
