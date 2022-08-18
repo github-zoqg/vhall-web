@@ -850,7 +850,8 @@ export default {
       border-radius: 4px;
       border: 1px solid #e6e6e6;
       background-image: url('../../../common/images/v35-webinar.png');
-      background-size: 100% 100%;
+      background-size: cover;
+      background-position: left top;
       height: 622px;
       .show-container {
         margin: 50px 24px;
@@ -968,7 +969,8 @@ export default {
       // box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.5);
       // height: 360px;
       background-image: url('../../../common/images/v35-webinar.png');
-      background-size: 100% 100%;
+      background-size: cover;
+      background-position: left top;
       background-repeat: no-repeat;
       border-radius: 4px;
       z-index: 0;
@@ -1097,7 +1099,8 @@ export default {
       border-radius: 4px;
       // border: 1px solid #E2E2E2;
       background-image: url('../../../common/images/v35-webinar.png');
-      background-size: 100% 100%;
+      background-size: cover;
+      background-position: left top;
       background-repeat: no-repeat;
       position: relative;
       .look-color-shadow {
