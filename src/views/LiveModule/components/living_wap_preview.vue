@@ -110,7 +110,7 @@
               <div class="chat_item_box">
                 <div class="chat_item_name">微吼直播</div>
                 <div class="chat_item_content">关于热度兼容老版h5活动 Android 微吼直播app测试
-                  <span class="chat_imgs"></span>
+                  <p class="chat_imgs"></p>
                 </div>
               </div>
             </div>
@@ -174,11 +174,11 @@
                   C咪酱🍒
                 </span>
                 花老师，yyds.
-                <span class="chat_imgs"></span>
+                <p class="chat_imgs"></p>
               </div>
             </div>
           </div>
-          <div class="wap_menus_chat_leftRight chat_clear" v-if="livingWapForm.style==3">
+          <div class="wap_menus_chat_leftRight chat_clear wap_chat_simple" v-if="livingWapForm.style==3">
             <div class="chat_item_simple">
               <div class="chat_item_simple_content"><span class="name">Mr Liu</span>😊😊😊</div>
             </div>
@@ -210,7 +210,7 @@
               <div class="chat_item_simple_content">
                 <span class="name">C咪酱🍒</span>
                 花老学生宿舍师，yyds.
-                <span class="chat_imgs"></span>
+                <p class="chat_imgs"></p>
               </div>
             </div>
             <div class="chat_item_simple">
@@ -560,7 +560,7 @@ export default {
             .chat_item{
               display: flex;
               width: 100%;
-              margin-top: 10px;
+              margin-top: 8px;
               &_avatar{
                 width: 26px;
                 height: 26px;
@@ -598,9 +598,9 @@ export default {
                 background: var(--background_chat_color);
                 border-radius: 0px 8px 8px 8px;
                 .chat_imgs{
-                  display: inline-block;
                   width: 135px;
                   height: 30px;
+                  padding: 3px;
                   background-image: url('./image/wap/chat.png');
                   background-repeat: no-repeat;
                   background-size: 100% 100%;
@@ -613,11 +613,14 @@ export default {
             }
           }
           &_leftRight{
+            &.wap_chat_simple{
+              padding-right: 100px;
+            }
             .chat_item{
               padding: 2px 6px;
               background: var(--background_chat_color);
               border-radius: 15px;
-              margin-bottom: 10px;
+              margin-bottom: 8px;
               float: left;
               display: flex;
               &_avatar{
@@ -671,7 +674,6 @@ export default {
                   margin-right: 3px;
                 }
                 .chat_imgs{
-                  display: inline-block;
                   width: 135px;
                   height: 30px;
                   background-image: url('./image/wap/chat.png');
@@ -682,10 +684,10 @@ export default {
               }
             }
             .chat_item_simple{
-              padding: 2px 6px;
+              padding: 3px 6px;
               background: var(--background_chat_color);
               border-radius: 13px;
-              margin-bottom: 10px;
+              margin-bottom: 8px;
               float: left;
               display: flex;
               &_content{
@@ -724,7 +726,6 @@ export default {
                   margin-right: 3px;
                 }
                 .chat_imgs{
-                  display: inline-block;
                   width: 128px;
                   height: 28px;
                   vertical-align: middle;

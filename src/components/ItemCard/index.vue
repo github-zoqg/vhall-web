@@ -176,18 +176,12 @@ export default {
     childPremission: {
       type: Object,
     },
-    isTrue: {
-      type: Boolean,
-      default: true,
-    },
     videoType: {
       type: Boolean,
       default: false,
     },
   },
   created() {
-    console.log(this.perssionInfo, this.isTrue, '????>>>>>>>>>>>')
-    // this.getLanguagePermission()
     this.resetList(this.perssionInfo)
   },
   watch: {
@@ -367,7 +361,6 @@ export default {
           //   subText: '自定义观看页菜单栏',
           //   type: 100067,
           //   path: `/live/customTab/${this.$route.params.str}`,
-          //   isShow: this.isTrue,
           // },
           {
             icon: 'color-recording-screen@2x',
