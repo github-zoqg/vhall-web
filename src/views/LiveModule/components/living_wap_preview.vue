@@ -828,15 +828,13 @@ export default {
       }
     }
     &_footer{
-      // position: absolute;
-      // left: 0;
-      // bottom: 0;
       width: 100%;
-      height: 56px;
+      height: 96px;
+      border-radius: 0 0 30px 30px;
       background: var(--background_footer_color);
       display: flex;
-      align-items: center;
-      padding: 0 10px;
+      // align-items: center;
+      padding: 12px 10px 0 10px;
       .footer_left{
         width: 28px;
         height: 28px;

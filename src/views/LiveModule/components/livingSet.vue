@@ -175,16 +175,16 @@
               </el-tooltip>
             </p>
             <div class="form_item_lay">
-              <div class="item_lay" @click="choseMicrophone(1)">
+              <div class="item_lay" @click="choseMicrophone(0)">
                 <div class="item_lay_hidden" v-if="isDelay"></div>
                 <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE' ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
                 <span>均匀排列</span>
               </div>
-              <div class="item_lay" @click="choseMicrophone(2)">
+              <div class="item_lay" @click="choseMicrophone(1)">
                 <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' ? 'active' : ''"><img src="./image/main_2.png" alt=""></p>
                 <span>主次平铺</span>
               </div>
-              <div class="item_lay" @click="choseMicrophone(3)">
+              <div class="item_lay" @click="choseMicrophone(2)">
                 <div class="item_lay_hidden" v-if="isDelay"></div>
                 <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE' ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
                 <span>主次悬浮</span>
@@ -279,7 +279,7 @@ export default {
           id: 2
         },
         {
-          title: '极简风格',
+          title: '简洁风格',
           id: 3
         }
       ],

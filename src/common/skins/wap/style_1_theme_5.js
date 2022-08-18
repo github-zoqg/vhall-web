@@ -17,7 +17,7 @@ const color_intro_text = 'rgba(0, 0, 0, 0.65)';
 
 /* 背景颜色 */
 const background_header_color = '#fff'; //顶部背景
-const background_footer_color = 'transparent'; //顶部背景
+const background_footer_color = '#fff'; //顶部背景
 const background_tabs_color = '#fff';  //tabs背景
 const background_chat_color = 'rgba(255, 255, 255, 0.85)';  //聊天文案背景
 const background_send_color = 'rgba(0, 0, 0, 0.1)';  //发送输入框文案背景
