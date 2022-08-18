@@ -30,7 +30,7 @@ export default {
   props: {
     // 比例
     ratio: {
-      type: String,
+      type: Number,
       default: 16/9
     }
   },
