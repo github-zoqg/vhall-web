@@ -243,7 +243,7 @@
       </template>
     </div>
     <div class="living-setting_hidden" v-if="webinarId && livingConfig==2"></div>
-    <cropper @cropComplete="cropComplete" ref="livingCropper" cropperDom="living_cropper" @deleteComplete="deleteComplete"></cropper>
+    <cropper @cropComplete="cropComplete" ref="livingCropper" :ratio="ratio" cropperDom="living_cropper" @deleteComplete="deleteComplete"></cropper>
     <living-preview ref="livingPreview"></living-preview>
   </div>
 </template>
@@ -290,6 +290,7 @@ export default {
       videoColors: ['000000', '262626', '595959', '8C8C8C', 'F5F5F5'],
       livingPreview: 1,
       livingPcPreviewType: 1,
+      ratio: 16/9,
       webinarId: this.$route.params.str,
       livingWapForm: {
         style: 1,
@@ -586,12 +587,14 @@ export default {
     },
     handlePcUploadSuccess(res, file) {
       if(res.data) {
+        this.ratio = 16/9;
         this.$refs.livingCropper.showModel(res.data.domain_url, 1)
       }
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
       if(res.data) {
+        this.ratio = 9/19.48;
         this.$refs.livingCropper.showModel(res.data.domain_url, 2)
       }
     },

@@ -9,7 +9,7 @@
       <div class="cropper_content_box">
         <vue-cropper ref="cropper" class="cropper_img"
           :src="url"
-          :aspect-ratio="16/9"
+          :aspect-ratio="ratio"
           :viewMode='1'
           :autoCropArea="1"
         ></vue-cropper>
@@ -28,9 +28,10 @@
  import vueCropper from 'vue-cropperjs'
 export default {
   props: {
-    imgHeight: {
-      type: Number,
-      default: 234
+    // 比例
+    ratio: {
+      type: String,
+      default: 16/9
     }
   },
   data() {
@@ -77,7 +78,7 @@ export default {
       justify-content: center;
       align-items: center;
       .cropper_img{
-        height:225px;
+        height:234px;
         width: 400px;
         margin: 0 auto;
       }
