@@ -340,6 +340,7 @@ const apis = {
   getRedpacketList: ['/v3/interacts/redpacket/get-redpacket-send-recorder', 'GET'], //活动群红包发送记录
   getCodeRedpacketList: ['/v3/interacts/pwd-redpacket/get-redpacket-send-recorder', 'GET'], //活动口令红包发送记录
   getSignList: ['/v3/interacts/sign/get-sign-stat-list', 'GET'], //获取发起的签到列表
+  getFollowersList: ['', 'GET'], //获取关注用户列表
   exportDetailInvite: ['/v3/interacts/invite-card/export-invite-details', 'GET'], //邀请详情导出
   exportInvite: ['/v3/interacts/invite-card/export', 'GET'], //邀请导出
   exportChat: ['/v3/interacts/chat/export', 'POST'], //导出当前房间聊天列表
@@ -351,7 +352,7 @@ const apis = {
   exportDetailLottery: ['/v3/vss/lottery/export-lottery-user-detail', 'GET'], //导出-抽奖-详情
   exportRedpacket: ['/v3/interacts/redpacket/export-redpacket-send-recorder', 'GET'], //导出活动群红包发送记录
   exportDetailRedpacket: ['/v3/interacts/redpacket/export-redpacket-receive-recorder', 'GET'], //导出单个红包的领取明细
-
+  exportFollowersInfo: ['', 'POST'], //导出-关注用户列表
   exportCodeRedpacket: ['/v3/interacts/pwd-redpacket/export-redpacket-send-recorder', 'GET'], //导出活动口令红包发送记录
   exportDetailCodeRedpacket: ['/v3/interacts/pwd-redpacket/export-redpacket-receive-recorder', 'GET'], //导出单个口令红包的领取明细
 
@@ -699,7 +700,11 @@ const apis = {
   labelTop: ['/v3/webinars/label/top', 'POST'],
 
   // 首页-广告
-  getBannerSetInfo: ['/v3/interacts/banner/get-banner', 'GET']
+  getBannerSetInfo: ['/v3/interacts/banner/get-banner', 'GET'],
+  // 消息通知
+  getMsgNotificationInfo: ['', 'GET'], // 获取消息通知，各个模块开关情况
+  saveMsgLink: ['', 'POST'], // 保存消息通知-短链接
+  saveMsgSign: ['', 'POST'], // 保存消息通知-签名
 };
 
 const getApi = api => {

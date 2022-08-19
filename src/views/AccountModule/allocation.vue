@@ -22,6 +22,7 @@
             :data="dataList"
             tooltip-effect="dark"
             style="width: 100%"
+            max-height="250"
             @selection-change="handleSelectionChange"
             :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
             v-if="!(is_dynamic > 0) && dataList.length > 0">
@@ -104,9 +105,24 @@
               </template>
             </el-table-column>
             <el-table-column
+              label="分配短信"
+              align="left"
+              width="230">
+              <template slot-scope="scope">
+                <!-- <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide"  class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
+                  <template slot="append">GB</template>
+                </el-input> -->
+                <VhallInput v-model.trim="scope.row.inputFollowerCount"  :maxlength="11" v-if="scope.row.isHide" class="btn-relative" autocomplete="off"  @input="formatBFInputs($event, scope.row, 'inputFollowerCount')">
+                  <template slot="append">条</template>
+                </VhallInput>
+                <span v-else>{{scope.row.followerCount | unitCovert}} 条</span>
+              </template>
+            </el-table-column>
+            <el-table-column
               label="操作"
               align="left"
               class="btn-rows"
+              fixed="right"
               width="114">
               <template slot-scope="scope">
                 <el-button type="text" @click="save(scope.row)" v-if="scope.row.isHide">保存</el-button>
@@ -125,7 +141,7 @@
         </div>
         <!-- 动态分配，无查询列表 -->
         <div v-if="tabType === 'trends'" :class="['trends-ctx', {'trends-list': vipStatus === 'trends_1'}]">
-          <p>所有子账号共用所有可用的并发/流量/时长资源，<br />无需为单个账户分配</p>
+          <p>所有子账号共用所有可用的并发/流量/时长资源，以及短信资源，<br />无需为单个账户分配</p>
           <el-button type="primary" class="length152" round v-preventReClick @click="allocationSave('trends')" v-if="!(is_dynamic > 0)">保存</el-button>
         </div>
       </div>
@@ -149,7 +165,7 @@
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
           <ul class="allocation_one" v-if="resourcesVo && resourcesVo.type === 1">
-            
+
             <li class="custom-font-barlow">{{ (resourcesVo ? resourcesVo.flow : 0) | unitCovert }}  </li>
             <li>可分配流量（GB）</li>
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
@@ -165,9 +181,21 @@
             <li>有效期至 {{resourcesVo && resourcesVo.extend_end_time ? resourcesVo.extend_end_time : '--'}}</li>
           </ul>
         </div>
+        <ul class="ac__allocation--msg">
+          <div class="allocation_icon">
+            <img src="../../common/images/account/saasliuliang_tubiao.png" alt="" v-show="tabType === 'trends'"/>
+            <img src="../../common/images/account/saasbingfa_tubiao.png" alt="" v-show="tabType === 'regular'"/>
+            <!-- <i :class="`${resourcesVo && resourcesVo.type > 0 ? 'iconfont-v3 saasliuliang_tubiao' : 'iconfont-v3 saasbingfa_tubiao'}`"></i> -->
+          </div>
+          <ul class="allocation_one">
+            <li class="custom-font-barlow">{{resourcesVo.follower_count || 0}}</li>
+            <li >可分配短信（条）</li>
+            <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
+          </ul>
+        </ul>
         <ul class="ac__allocation--info">
           <li>提示：</li>
-          <li><span>1.</span><span>动态分配方式：所有子账户共用所有可用的并发、流量或时长，无需为单个账户分配</span></li>
+          <li><span>1.</span><span>动态分配方式：所有子账户共用所有可用的并发、流量、时长及短信，无需为单个账户分配</span></li>
           <li><span>2.</span><span>固定分配方式：请为每个子账号分配用量，所有账号用量之和不能大于可分配用量</span></li>
         </ul>
       </div>
@@ -264,7 +292,7 @@
             { required: true, message: '请输入分配数量', trigger: 'blur' },
            /*  { pattern: /^\d{0,8}$/, message: '请输入正整数' , trigger: 'blur'} */
           ],
-          
+
         },
         sonDao: {},
         multipleSelection: [],
@@ -519,13 +547,16 @@
                 item.count = item.vip_info.total;
               }
             }else if(Number(this.resourcesVo.type) == 2){
-              
+
               item.count = item.vip_info.duration;
               item.inputCount = item.vip_info.duration;
-              
-            } 
+
+            }
             item.extend_day = item.vip_info.extend_day;
             item.inputExtendDay = item.vip_info.extend_day;
+            // 短信用量
+            item.follower_count = item.vip_info.follower_count;
+            item.inputFollowerCount = item.vip_info.follower_count
             item.isHide = false;
           });
           this.dataList = dao.list;
@@ -646,10 +677,10 @@
                 // 并发-分配时长，设置 extend_day， type为时长
                 result.extend_day = item.extend_day;
                 result.resources = Number(this.multiAllocForm.count2);
-                
+
               }
               console.log(result, '批量数据')
-              
+
               return result;
             })
             this.multiAllocForm.count2 = null;
@@ -709,6 +740,9 @@
         }
         if(row.inputCount) {
           row.inputCount = `${row.count}`;
+        }
+        if(row.inputFollower) {
+          row.inputFollower = `${row.follower_count}`;
         }
         row.isHide = false;
       },
@@ -810,6 +844,62 @@
     .allocation_icon {
       text-align: center;
       margin-top: 32px;
+      height: 62px;
+      i.iconfont-v3 {
+        font-size: 62px;
+      }
+      img {
+        width: 62px;
+        height: 62px;
+      }
+    }
+    .allocation_one {
+      margin-top: 24px;
+      li {
+        text-align: center;
+        list-style-type: none;
+        font-family: @fontRegular;
+        font-size: 14px;
+        font-weight: 400;
+        color: #1A1A1A;
+        line-height: 20px;
+        &:first-child {
+          font-size: 32px;
+          font-weight: bold;
+          color: #1A1A1A;
+          line-height: 24px;
+          padding-bottom: 8px;
+        }
+        &:last-child {
+          margin-top: 4px;
+          font-size: 14px;
+          font-weight: 400;
+          color: #999999;
+          line-height: 20px;
+        }
+      }
+      &.mt32 {
+        margin-top: 32px;
+      }
+    }
+    .result_val {
+      font-size: 36px;
+      font-family: @fontDINAL;
+      font-weight: bold;
+      color: #1A1A1A;
+      line-height: 42px;
+      margin-top: 24px;
+    }
+    .date {
+      margin-top: 10px;
+    }
+  }
+  .ac__allocation--msg {
+    border-top: 1px solid #E6E6E6;
+    margin-top: 32px;
+    padding-top: 16px;
+    .allocation_icon {
+      text-align: center;
       height: 62px;
       i.iconfont-v3 {
         font-size: 62px;
