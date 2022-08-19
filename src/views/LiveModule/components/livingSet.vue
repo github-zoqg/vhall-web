@@ -441,12 +441,13 @@ export default {
       }
     },
     // 默认pc主题颜色
-    resetFormPcColor(index) {
+    resetFormPcColor(style) {
+      // style: 风格
       let layout = '';
       this.livingPcForm = {
-        style: this.livingPcForm.style,
-        backGroundColor: index == 1 ? 1 : 2, //主题色
-        background: this.livingPcForm.style == 3 ? this.defaultImage : '',
+        style: style,
+        backGroundColor: style == 1 ? 1 : 2, //主题色
+        background: style == 3 ? this.defaultImage : '',
         blurryDegree: 0,
         lightDegree: 10,
         backgroundSize: {
@@ -459,11 +460,11 @@ export default {
       if (this.isDelay) {
         layout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE';
       } else {
-        layout = index == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE';
+        layout = style == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE';
       }
       this.livingForm = {
         videoColor: '#000000', //视频区底色
-        chatLayout: index == 1 ? 1 : 2,
+        chatLayout: style == 1 ? 1 : 2,
         inavLayout: layout, //连麦布局
         videoBackGround: '',
         videoBlurryDegree: 0,
@@ -475,14 +476,15 @@ export default {
           height: 0
         }
       }
-      this.$refs.livingPcPreview.settingTheme(index, this.livingPcForm.backGroundColor);
+      this.$refs.livingPcPreview.settingTheme(style, this.livingPcForm.backGroundColor);
     },
      // 默认wap主题颜色
-    resetFormWapColor(index) {
+    resetFormWapColor(style) {
+      // style: 风格
       let layout = '';
       this.livingWapForm = {
-        style: this.livingWapForm.style,
-        backGroundColor: this.livingWapForm.style == 1 ? 2 : 5, //主题色
+        style: style,
+        backGroundColor: style == 1 ? 2 : 5, //主题色
         background: '',
         blurryDegree: 0,
         lightDegree: 10,
@@ -496,12 +498,12 @@ export default {
       if (this.isDelay) {
         layout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE';
       } else {
-        layout = index == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE';
+        layout = style == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE';
       }
       // inavLayout: 传统风格：主次平铺；其他风格：均匀排列
       this.livingForm = {
         videoColor: '#00000', //视频区底色
-        chatLayout: index == 3 ? 2 : 1,
+        chatLayout: style == 3 ? 2 : 1,
         inavLayout: layout, //连麦布局
         inavDocumentLayout: 1,
         videoBackGround: '',
