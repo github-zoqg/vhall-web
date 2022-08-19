@@ -4,9 +4,9 @@
       <img src="./image/living/browser@2x.png" alt="">
     </div>
     <div class="pc_container" :style="pcBackground">
-      <div class="pc_bg" v-if="domainUrl">
-        <img :src="domainUrl" alt="">
-      </div>
+      <!-- <div class="pc_bg" v-if="domainUrl">
+        <img :src="pcBackground" alt="">
+      </div> -->
       <div class="pc_header">
         <div class="header_left">
           <div class="left_logo"><img src="./image/living/logo@2x.png" alt=""></div>
@@ -202,11 +202,11 @@ export default {
     },
     pcBackground() {
       console.log(this.livingPcForm.backGroundColor, '??!2343')
-      if (this.livingPcForm.style != 3 && this.livingPcForm.backGroundColor == 1 || (this.livingPcForm.style == 1 && this.livingPcForm.backGroundColor==2)) {
-        return {backgroundColor: this.livingPcForm.backGroundColor == 1 ? '#1a1a1a' : 'rgba(0, 0, 0, 0.06)'}
+      if (this.livingPcForm.background) {
+        return {backgroundImage: `url(${this.domainUrl})`}
       } else {
-        if (this.livingPcForm.background) {
-          return {backgroundImage: `url(${this.domainUrl})`}
+        if (this.livingPcForm.backGroundColor == 1 || (this.livingPcForm.style == 1 && this.livingPcForm.backGroundColor==2)) {
+          return {backgroundColor: this.livingPcForm.backGroundColor == 1 ? '#1a1a1a' : 'rgba(0, 0, 0, 0.06)'}
         } else {
           let url = require(`./image/pc/bg_${this.livingPcForm.backGroundColor}.png`);
           return {backgroundImage: `url(${url})`}
