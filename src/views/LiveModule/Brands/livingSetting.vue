@@ -103,13 +103,6 @@ export default {
         }
       }).catch(e => {});
     },
-    // // 获取活动详情（无延迟直播）
-    // getWebinarInfo() {
-    //   this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res => {
-    //     // 是不是无延迟
-    //     this.isDelay = res.data.no_delay_webinar == 1 ? true : false;
-    //   })
-    // },
     closeLivingSettingOpen() {
        let params = {
         webinar_id: this.$route.params.str,
@@ -141,11 +134,6 @@ export default {
     },
     // 查看账号下设置
     toSettingDetail() {
-      // TODO: 上报问题
-      // this.$vhall_paas_port({
-      //   k: 100198,
-      //   data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      // })
       const { href } = this.$router.resolve({path:'/setting/brand'});
       window.open(href, '_blank');
     },
