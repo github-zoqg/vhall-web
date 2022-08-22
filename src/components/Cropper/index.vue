@@ -55,7 +55,7 @@ export default {
   },
   data() {
     return {
-      dialogVisible: true,
+      dialogVisible: false,
       isShowImages: true,
       imageType: 1,
       cropperImgUrl: '',
