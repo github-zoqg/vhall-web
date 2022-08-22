@@ -76,7 +76,7 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import beginPlay from '@/components/beginBtn';
 import {sessionOrLocal} from "@/utils/utils";
-import Env from "@/api/env";
+import defaultAvatar from '@/utils/avatar';
 export default {
   name: 'shareSet',
   components: {
@@ -105,7 +105,7 @@ export default {
         ],
       },
       domain_url: '',
-      avatar: require('../../../common/images/share/avator.png'),
+      avatar: defaultAvatar,
       img: require('../../../common/images/share/img.jpg')
     }
   },

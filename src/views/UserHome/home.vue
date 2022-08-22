@@ -47,6 +47,7 @@ import HomeMain from './components/main.vue';
 import ShareDialog from './components/shareDialog';
 import OldHeader from '@/components/OldHeader';
 import defaultbg from './images/defaultbg.png'
+import defaultAvatar from '@/utils/avatar';
 export default {
   name: 'info.vue',
   components: {
@@ -121,7 +122,7 @@ export default {
           this.follow = follow;
           this.content = homepage_info.content;
           if (this.$route.meta.type !== 'owner') {
-            this.avatarImgUrl = avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+            this.avatarImgUrl = avatar || defaultAvatar;
           }
           try {
             this.$refs.homeMain.initComp(homepage_info);
@@ -145,7 +146,7 @@ export default {
   created() {
     this.static_img_url = `${defaultbg}`
     this.userId = sessionOrLocal.get('userId');
-    this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+    this.avatarImgUrl = defaultAvatar;
     this.getHomePageInfo();
   },
   mounted() {
@@ -153,10 +154,9 @@ export default {
     if(userInfo !== null) {
       this.userInfo = JSON.parse(userInfo);
       if(this.userInfo) {
-        this.avatarImgUrl = this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
-        // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+        this.avatarImgUrl = this.userInfo.avatar || defaultAvatar;
       } else {
-         this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+         this.avatarImgUrl = defaultAvatar;
       }
     }
   }
