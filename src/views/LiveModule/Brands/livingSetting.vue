@@ -22,7 +22,7 @@
       </el-tabs>
       <!-- 设置区域 -->
       <!-- 直播间设置 -->
-      <living-set ref="livingSet" v-show="tabType === 'livingSet'" :livingConfig="type" :isDelay="isDelay"></living-set>
+      <living-set ref="livingSet" v-show="tabType === 'livingSet'" :livingConfig="type"></living-set>
       <!-- 自定义菜单 -->
       <customer-tab ref="customSet" v-show="tabType === 'customSet'" v-if="isCustomSetting"></customer-tab>
       <!-- 标识设置 -->
@@ -46,7 +46,6 @@ export default {
       livingSettingOpen: false,
       type: 2,
       isCustomSetting: true, //是否有自定义菜单
-      isDelay: Boolean(this.$route.query.isDelay),
       permissionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
       webinarState: JSON.parse(sessionOrLocal.get("webinarState"))
     }

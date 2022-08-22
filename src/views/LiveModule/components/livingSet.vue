@@ -261,10 +261,6 @@ export default {
     livingConfig: {
       type: Number,
       default: 0
-    },
-    isDelay: {
-      type:Boolean,
-      default: false
     }
   },
   data() {
@@ -284,6 +280,7 @@ export default {
         }
       ],
       skinId: '',
+      isDelay: this.$route.query.isDelay == 1 ? true : false,
       webinarType: sessionOrLocal.get("webinarType"),
       defaultImage: 'https://cnstatic01.e.vhall.com/common-static/images/livingSetting.png',
       pcThemeColors: 5,
