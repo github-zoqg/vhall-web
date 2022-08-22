@@ -26,9 +26,9 @@
       <div class="set-item send_info">
         <label class="set-item__label">短信内容：</label>
         <div class="set-item__content">
-          <p class="set-item__content_top"><span @click="openTestDialog">发送测试短信</span></p>
+          <p class="set-item__content_top"><span class="set-item__test" @click="openTestDialog">发送测试短信</span></p>
           <div class="set-item__content_center">
-            【微吼直播】您已成功预约“微吼大V讲堂”，直播将于2022-07-29 12:00开播，请准时参加。点击进入https://e.vhall.com/v3/live/detail/924965961
+            {{cardVo && cardVo.content ? cardVo.content+cardVo.link : ''}}
           </div>
           <p class="set-item__content_bottom">
             <span>短信字数：<strong>75</strong>（含退订后缀）</span>
@@ -48,7 +48,6 @@
             <el-checkbox label="60">开播前1小时</el-checkbox>
             <el-checkbox label="30">开播前30分钟</el-checkbox>
             <el-checkbox label="15">开播前15分钟</el-checkbox>
-            <el-checkbox label="5">开播前5分钟</el-checkbox>
           </el-checkbox-group>
           <span v-else-if="setType === 'subscribe'">预约/报名成功后发送</span>
           <span v-else-if="setType === 'playback'">设置默认回放后发送</span>
@@ -100,6 +99,13 @@
         }
       };
     },
+    props: {
+      visible: {
+        type: Boolean,
+        default: false
+      }
+    },
+    inject: ['app'],
     computed: {
       // 是否展示白名单
       isOpenWhite: ()=> {
@@ -119,6 +125,7 @@
       },
       handleClose() {
         this.dialogVisible = true
+        this.$emit('close')
       },
       // 保存数据
       saveInfo() {},
@@ -142,6 +149,10 @@
           }
         })
       }
+    },
+    created() {
+      this.dialogVisible =  this.visible;
+      this.cardVo = this.app.info; // TODO inject传入的内容，在小组件内，只做赋值，不动cardVo数据
     }
   };
 </script>
@@ -160,6 +171,9 @@
     &_top {
       text-align: right;
       color:#3562FA;
+      .set-item__test {
+        cursor: pointer;
+      }
     }
     &_center {
       clear: both;
