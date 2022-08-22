@@ -52,6 +52,7 @@ import AccountSet from '../AccountModule/accountSet';
 import {getQueryString, sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
 import fetchData from "@/api/fetch";
+import defaultAvatar from '@/utils/avatar';
 export default {
   name: 'info.vue',
   components: {
@@ -193,7 +194,6 @@ export default {
     overflow: hidden;
     // border: 1px solid #E2E2E2;
     border-radius: 50%;
-    
   }
   img {
     display: block;
