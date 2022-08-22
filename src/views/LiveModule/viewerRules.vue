@@ -416,6 +416,7 @@ export default {
       stash:'',               // 仅占位用
       liveDetailInfo: null,
       limitVisible: false,
+      vm: {},
       subjectInfo: {
         subject_verify: '', //专题鉴权
         subject_type: '', // 绑定
@@ -423,6 +424,12 @@ export default {
         subject_id: '' // 活动对应的专题
       }
     };
+  },
+  beforeDestroy(to, from, next) {
+    if (this.subjectInfo && this.subjectInfo.subject_type) {
+      this.vm.close();
+    }
+    next();
   },
   methods: {
     handleLowerGradeHeart() {
@@ -517,6 +524,9 @@ export default {
             subject_id: res.data.subject_id // 活动对应的专题
           }
           this.whiteId = verify === 2 ? white_id : null;
+          if (res.data.subject_type == 2) {
+            this.initAuthMessage();
+          }
           console.log(this.form, '当前');
           // 表单选项初始化
           this.initViewerSet();
@@ -670,6 +680,22 @@ export default {
     toDetail() {
       // 有绑定
       this.limitVisible = true;
+    },
+    initAuthMessage() {
+      let that = this;
+      this.vm = this.$message({
+        showClose: true,
+        duration: 0,
+        dangerouslyUseHTMLString: true,
+        // message: `本直播属于专题《 `,
+        message: '<p style="color:#1A1A1A; padding-right: 12px">本直播属于专题《<span id="openSubjectDetails" style="color:#3562fa;cursor: pointer;">'+ that.titleFormat() +'</span>》该专题提供统一的观看限制-'+ that.handleFormat() +'  本直播观看限制 <span style="color:#FB3A32">失效   </span></p>',
+        type: 'warning'
+      });
+      let open = document.querySelector('#openSubjectDetails');
+        open.addEventListener('click', function(e){
+          that.vm.close();
+          that.goSubjectDetail();
+      });
     },
     goSubjectDetail() {
       window.open(`${process.env.VUE_APP_WEB_URL}/special/edit/${this.subjectInfo.subject_id}?title=编辑`, '_blank')
