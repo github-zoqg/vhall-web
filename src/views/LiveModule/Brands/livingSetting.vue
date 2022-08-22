@@ -146,7 +146,7 @@ export default {
       //   k: 100198,
       //   data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       // })
-      const { href } = this.$router.resolve({path:'/setting/living'});
+      const { href } = this.$router.resolve({path:'/setting/brand'});
       window.open(href, '_blank');
     },
   }
