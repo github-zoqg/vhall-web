@@ -12,7 +12,11 @@ let cdn = {
     // '//cnstatic01.e.vhall.com/3rdlibs/common-libs/vue/VhallLibs.js',
     // '//cnstatic01.e.vhall.com/3rdlibs/common-libs/ui-frame/element-UI.js',
     '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.4-beta.1/questionnaire_service.js',
+    'https://t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/common-static/middle/vhall-ui/v1.1.0/index.js'
   ],
+  css: [
+    'https://t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/common-static/middle/vhall-ui/v1.1.0/index.css'
+  ]
 }
 
 // console.warn(process)
