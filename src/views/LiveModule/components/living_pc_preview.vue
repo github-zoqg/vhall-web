@@ -25,7 +25,7 @@
       </div>
       <div class="pc_watch" v-if="type==1">
         <div class="watch_left">
-          <div class="left_top">
+          <div class="left_top" v-if="isShowInteract">
             <!-- 均匀 :style="videoBackground"-->
             <div class="left_top__even" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
               <span><img src="./image/living/layout1.png" alt=""></span>
@@ -50,6 +50,9 @@
                 <span><img src="./image/living/layout5.png" alt=""></span>
               </div>
             </div>
+          </div>
+          <div class="left_no_interact" v-else>
+            <img src="./image/living/layout1.png" alt="">
           </div>
           <div class="left_bottom">
             <span class="left_bottom_setting">
@@ -190,6 +193,11 @@ export default {
     livingForm: {
       type: Object,
       default: ()=>{}
+    },
+    // 是否显示互动
+    isShowInteract: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -201,7 +209,6 @@ export default {
       }
     },
     pcBackground() {
-      console.log(this.livingPcForm.backGroundColor, '??!2343')
       if (this.livingPcForm.background) {
         return {backgroundImage: `url(${this.domainUrl})`}
       } else {
@@ -216,7 +223,7 @@ export default {
   },
   methods: {
     settingTheme(style, index) {
-      console.log(style, index, 'pc2321435')
+      // console.log(style, index, 'pc预览主题')
        const pcStyle = style == 3 ? 2 : style;
       let key = `style_${Number(pcStyle)}_theme_${Number(index)}`
       skinsPc.setTheme(skinsPc.themes[key], '.living_preview_pc')
@@ -421,6 +428,17 @@ export default {
                   }
                 }
               }
+            }
+          }
+          .left_no_interact{
+            width: 100%;
+            height: 334px;
+            border-radius: 4px;
+            img{
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              border-radius: 4px;
             }
           }
           .left_bottom{

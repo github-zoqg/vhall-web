@@ -32,32 +32,39 @@
     </div>
     <div class="living_preview_wap_body">
       <div class="wap_player" v-if="type==1">
-        <div class="watch_layout_1" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
-          <span><img src="./image/living/layout1.png" alt=""></span>
-          <span><img src="./image/living/layout2.png" alt=""></span>
-          <span><img src="./image/living/layout3.png" alt=""></span>
-          <span><img src="./image/living/layout4.png" alt=""></span>
-        </div>
-        <div class="watch_layout_2" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
-          <img src="./image/living/layout1.png" alt="">
-          <div class="layout_float">
-            <span><img src="./image/living/layout2.png" alt=""></span>
-            <span><img src="./image/living/layout3.png" alt=""></span>
-          </div>
-        </div>
-        <div class="watch_layout_3" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
-          <div class="layout_top">
-            <!-- :style="videoBackground" -->
+        <template v-if="isShowInteract">
+          <div class="watch_layout_1" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
             <span><img src="./image/living/layout1.png" alt=""></span>
-          </div>
-          <div class="layout_bottom">
             <span><img src="./image/living/layout2.png" alt=""></span>
             <span><img src="./image/living/layout3.png" alt=""></span>
             <span><img src="./image/living/layout4.png" alt=""></span>
-            <span><img src="./image/living/layout5.png" alt=""></span>
-            <span><img src="./image/wap/video.png" alt=""></span>
           </div>
-        </div>
+          <div class="watch_layout_2" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
+            <img src="./image/living/layout1.png" alt="">
+            <div class="layout_float">
+              <span><img src="./image/living/layout2.png" alt=""></span>
+              <span><img src="./image/living/layout3.png" alt=""></span>
+            </div>
+          </div>
+          <div class="watch_layout_3" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
+            <div class="layout_top">
+              <!-- :style="videoBackground" -->
+              <span><img src="./image/living/layout1.png" alt=""></span>
+            </div>
+            <div class="layout_bottom">
+              <span><img src="./image/living/layout2.png" alt=""></span>
+              <span><img src="./image/living/layout3.png" alt=""></span>
+              <span><img src="./image/living/layout4.png" alt=""></span>
+              <span><img src="./image/living/layout5.png" alt=""></span>
+              <span><img src="./image/wap/video.png" alt=""></span>
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <div class="watch_layout">
+            <img src="./image/living/layout1.png" alt="">
+          </div>
+        </template>
       </div>
       <div class="wap_player" v-else>
         <img class="player_subscribe" src="./image/wap/video.png" alt="">
@@ -277,6 +284,11 @@ export default {
     livingForm: {
       type: Object,
       default: ()=>{}
+    },
+    // 是否显示互动
+    isShowInteract: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -304,7 +316,7 @@ export default {
   },
   methods: {
     settingTheme(style, index, type) {
-      console.log(style, index, type, 'wap2321435')
+      // console.log(style, index, type, 'wap预览主题')
       let wapStyle = (type == 2 && style == 3) ? 2 : style;
       let key = `style_${Number(wapStyle)}_theme_${Number(index)}`
       skinsWap.setTheme(skinsWap.themes[key], '.living_preview_wap');
@@ -428,6 +440,15 @@ export default {
       .wap_player{
         width: 100%;
         height: 210px;
+        .watch_layout{
+          width: 100%;
+          height: 100%;
+          img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
         .watch_layout_1{
           width: 100%;
           height: 100%;

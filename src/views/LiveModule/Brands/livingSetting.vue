@@ -46,7 +46,7 @@ export default {
       livingSettingOpen: false,
       type: 2,
       isCustomSetting: true, //是否有自定义菜单
-      isDelay: false,
+      isDelay: Boolean(this.$route.query.isDelay),
       permissionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
       webinarState: JSON.parse(sessionOrLocal.get("webinarState"))
     }
@@ -100,17 +100,16 @@ export default {
           this.livingSettingOpen = Boolean(permissions['is_brand_cofig'] == 1)
           this.type = this.livingSettingOpen ? 1 : 2;
           this.$refs[this.tabType].initComp();
-          this.getWebinarInfo();
         }
       }).catch(e => {});
     },
-    // 获取活动详情（无延迟直播）
-    getWebinarInfo() {
-      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res => {
-        // 是不是无延迟
-        this.isDelay = res.data.no_delay_webinar == 1 ? true : false;
-      })
-    },
+    // // 获取活动详情（无延迟直播）
+    // getWebinarInfo() {
+    //   this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res => {
+    //     // 是不是无延迟
+    //     this.isDelay = res.data.no_delay_webinar == 1 ? true : false;
+    //   })
+    // },
     closeLivingSettingOpen() {
        let params = {
         webinar_id: this.$route.params.str,

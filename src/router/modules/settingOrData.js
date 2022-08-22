@@ -61,10 +61,10 @@ const router = [
         meta:{ auth: true, title: '功能配置', name: 'functionMgr', activeMenu: '/setting/function'},
       },
       {
-        path: 'living',
+        path: 'brand',
         component: () => import('@/views/SettingModule/setLiving'),
         name: 'brand',
-        meta:{ auth: true, title: '直播间设置', name: 'livingMgr', activeMenu: '/setting/living'},
+        meta:{ auth: true, title: '直播间设置', name: 'livingMgr', activeMenu: '/setting/brand'},
       },
       {
         path: 'protocol',

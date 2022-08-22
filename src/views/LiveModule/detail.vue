@@ -798,10 +798,10 @@ export default {
             path: item.path,
             query: { roomId: this.liveDetailInfo.vss_room_id },
           })
-        } else if (item.path == `/live/embedCard/${this.$route.params.str}`) {
+        } else if (item.path == `/live/livingSet/${this.$route.params.str}`) {
           this.$router.push({
             path: item.path,
-            query: { type: this.liveDetailInfo.webinar_type },
+            query: { type: this.liveDetailInfo.webinar_type, isDelay: Number(this.isDelay) },
           })
         } else {
           this.$router.push({

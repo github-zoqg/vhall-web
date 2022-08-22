@@ -1161,7 +1161,7 @@ export function CrumbSet(metaName, that) {
       ...CrumbLiveList('setting'),
       {
         title: '直播间设置',
-        path: '/setting/living',
+        path: '/setting/brand',
         isClick: false,
         redirect: 'noRedirect'
       }

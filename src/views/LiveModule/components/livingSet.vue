@@ -51,10 +51,10 @@
         </div>
         <div class="preview_container">
           <div class="preview_box_pc" v-show="livingPreview==1">
-            <pc-preview ref="livingPcPreview" :type="livingPcPreviewType" :domainUrl="domain_pc_url" :livingPcForm="livingPcForm" :livingForm="livingForm" :videoUrl="video_url"></pc-preview>
+            <pc-preview ref="livingPcPreview" :type="livingPcPreviewType" :domainUrl="domain_pc_url" :livingPcForm="livingPcForm" :livingForm="livingForm" :videoUrl="video_url" :isShowInteract="isShowInteract"></pc-preview>
           </div>
           <div class="preview_box_wap" v-show="livingPreview==2">
-            <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm"></wap-preview>
+            <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm" :isShowInteract="isShowInteract"></wap-preview>
           </div>
         </div>
       </div>
@@ -386,22 +386,30 @@ export default {
         type: this.webinarId ? 1 : 2
       }
       this.$fetch('getInterWebinarSkin', this.$params(params)).then(res=>{
-        if (res.code === 200) {
+        if (res.code == 200) {
           this.skinId = res.data.skin_id;
           const skin_json_pc = JSON.parse(res.data.skin_json_pc);
           const skin_json_wap = JSON.parse(res.data.skin_json_wap);
           console.log(skin_json_pc, skin_json_wap, '???wsjo')
-          this.livingPcForm.style = skin_json_pc.style;
-          this.livingWapForm.style = skin_json_wap.style;
+          // this.livingPcForm.style = skin_json_pc.style;
+          // this.livingWapForm.style = skin_json_wap.style;
           this.$refs.livingPcPreview.settingTheme(skin_json_pc.style, skin_json_pc.backGroundColor)
           this.$refs.livingWapPreview.settingTheme(skin_json_wap.style, skin_json_wap.backGroundColor, 1)
           this.livingPcForm = { ...skin_json_pc }; //pc信息
           this.livingWapForm = { ...skin_json_wap }; //wap信息
           this.livingForm.chatLayout = skin_json_pc.chatLayout; // 公共信息 聊天布局
           this.livingForm.inavLayout = this.isDelay ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : skin_json_pc.inavLayout; // 公共信息 连麦布局
+
+          // 备份信息
+          this._livingPcForm = { ...skin_json_pc }; //pc信息
+          this._livingWapForm = { ...skin_json_wap }; //wap信息
+          this._livingForm = {
+            chatLayout: skin_json_pc.chatLayout, // 公共信息 聊天布局
+            inavLayout: this.livingForm.inavLayout // 公共信息 连麦布局
+          }
         }
       }).catch(err => {
-        this.$message.success(err.msg || '获取信息失败')
+        this.$message.error(err.msg || '获取信息失败')
       })
     },
     activeTheme(index) {
@@ -443,6 +451,14 @@ export default {
     // 默认pc主题颜色
     resetFormPcColor(style) {
       // style: 风格
+      console.log(style, this._livingPcForm.style)
+      if (style == this._livingPcForm.style) {
+        this.livingPcForm = {...this._livingPcForm};
+        this.livingForm.chatLayout = this._livingForm.chatLayout;
+        this.livingForm.inavLayout = this._livingForm.inavLayout;
+        this.$refs.livingPcPreview.settingTheme(style, this.livingPcForm.backGroundColor);
+        return;
+      }
       let layout = '';
       this.livingPcForm = {
         style: style,
@@ -481,6 +497,13 @@ export default {
      // 默认wap主题颜色
     resetFormWapColor(style) {
       // style: 风格
+      if (style == this._livingWapForm.style) {
+        this.livingWapForm = { ...this._livingWapForm};
+        this.livingForm.chatLayout = style == 3 ? 2 : 1;
+        this.livingForm.inavLayout = this._livingForm.inavLayout;
+        this.$refs.livingWapPreview.settingTheme(style, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
+        return;
+      }
       let layout = '';
       this.livingWapForm = {
         style: style,
@@ -516,7 +539,7 @@ export default {
           height: 0
         }
       }
-      this.$refs.livingWapPreview.settingTheme(index, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
+      this.$refs.livingWapPreview.settingTheme(style, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
     },
     saveSettingLivingInfo() {
       if (this.livingPcForm.background) {
@@ -537,13 +560,20 @@ export default {
       if (this.webinarId) {
         params.webinar_id = this.webinarId;
       }
-      console.log(params, '???1232425')
+      console.log(params, '保存参数')
       this.$fetch('skinUpdate', params).then(res=>{
         if (res.code === 200) {
           this.$message.success('保存成功')
+          // 备份信息
+          this._livingPcForm = { ...skin_json_pc }; //pc信息
+          this._livingWapForm = { ...skin_json_wap }; //wap信息
+          this._livingForm = {
+            chatLayout: skin_json_pc.chatLayout, // 公共信息 聊天布局
+            inavLayout: this.livingForm.inavLayout // 公共信息 连麦布局
+          }
         }
       }).catch(err => {
-        this.$message.success(err.msg || '保存失败')
+        this.$message.error(err.msg || '保存失败')
       })
     },
     goPreviewLiving(){
@@ -719,7 +749,7 @@ export default {
           padding: 24px 32px 8px 0;
         }
         .preview_container{
-          padding: 12px 32px;
+          padding: 12px 32px 48px 32px;
         }
         &_pc{
           width: 880px;
