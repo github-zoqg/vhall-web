@@ -157,6 +157,7 @@
       </div>
     </div>
     <selectMedias ref="selecteMedia" :isWarmVideo="true" @selected='mediaSelected' :selectedList="warmVideoList" :videoSize="videoSize" :videoType="videoType" @closeWarm="closeWarm"></selectMedias>
+    <cropper ref="warmCropper" @cropComplete="cropComplete"></cropper>
     <!-- 预览 -->
     <template v-if="showDialog">
       <div class="preview-wrap">
@@ -176,6 +177,7 @@ import beginPlay from '@/components/beginBtn';
 import selectMedias from './selecteMedia';
 import draggable from "vuedraggable";
 import {sessionOrLocal} from "@/utils/utils";
+import cropper from '@/components/Cropper/index'
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 export default {
   components: {
@@ -184,7 +186,8 @@ export default {
     selectMedias,
     VideoPreview,
     beginPlay,
-    draggable
+    draggable,
+    cropper
   },
    watch: {
     warmForm: {
@@ -357,12 +360,16 @@ export default {
       this.selectMedia = {};
       this.warmForm.record_id = '';
     },
+    cropComplete(cropperData, url) {
+      console.log(cropperData, url, '?????')
+    },
     handleUploadSuccess(res, file) {
       if(res.data) {
-        let domain_url = res.data.domain_url || ''
-        let file_url = res.data.file_url || '';
-        this.warmForm.imageUrl = file_url;
-        this.domain_url = domain_url;
+        this.$refs.warmCropper.showModel(res.data.domain_url);
+        // let domain_url = res.data.domain_url || ''
+        // let file_url = res.data.file_url || '';
+        // this.warmForm.imageUrl = file_url;
+        // this.domain_url = domain_url;
       }
     },
     beforeUploadHandler(file){
