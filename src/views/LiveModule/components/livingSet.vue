@@ -285,7 +285,7 @@ export default {
       ],
       skinId: '',
       webinarType: sessionOrLocal.get("webinarType"),
-      defaultImage: 'https://t-alistatic01.e.vhall.com/common-static/images/livingSetting.png',
+      defaultImage: 'https://cnstatic01.e.vhall.com/common-static/images/livingSetting.png',
       pcThemeColors: 5,
       videoColors: ['000000', '262626', '595959', '8C8C8C', 'F5F5F5'],
       livingPreview: 1,
