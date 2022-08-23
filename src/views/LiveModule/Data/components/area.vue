@@ -27,7 +27,8 @@
 </template>
 <script>
 import echarts from 'echarts';
-import '../../../../../node_modules/echarts/map/js/china.js'; // 引入中国地图数据
+// import '../../../../../node_modules/echarts/map/js/china.js'; // 引入中国地图数据
+import jsonData from '@/common/json/china.json'
 export default {
   props: ['areaDataList'],
   mounted() {
@@ -54,6 +55,7 @@ export default {
       this.initMapEcharts(this.areaDataList, this.maxNum);
     },
     initMapEcharts(data, maxNum) {
+      echarts.registerMap('china', jsonData);
       this.mapChart = echarts.init(this.$refs.mapEchart); //这里是为了获得容器所在位置
       let options = {
         backgroundColor: '#fff',
