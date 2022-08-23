@@ -36,7 +36,15 @@
             </div>
           </upload>
         </el-form-item>
-         <el-form-item label="播放模式" required  prop="playType">
+        <el-form-item label="模糊程度" class="degree_content">
+          <vh-slider v-model="warmForm.blurryDegree" :disabled="!warmForm.imageUrl" :max="10"></vh-slider>
+          <span class="vague_num">{{warmForm.blurryDegree}}</span>
+        </el-form-item>
+         <el-form-item label="背景亮度" class="degree_content">
+          <vh-slider v-model="warmForm.lightDegree" :disabled="!warmForm.imageUrl" :max="10"></vh-slider>
+          <span class="vague_num">{{warmForm.lightDegree}}</span>
+        </el-form-item>
+        <el-form-item label="播放模式" required  prop="playType">
            <el-radio-group v-model="warmForm.playType">
               <el-radio :label="1">单次播放</el-radio>
               <el-radio :label="2">循环播放</el-radio>
@@ -211,10 +219,18 @@ export default {
       showDialog: false,
       warmForm: {
         record_id: '',
-        imageUrl: '',
+        imageUrl: 'https://t-alistatic01.e.vhall.com/upload/users/logo-imgs/c2/2e/c22e448f7fe64f026750b934623fe68f.jpg',
         playType: 1,
         selectedList:[],
-        warmFlag: false
+        warmFlag: false,
+        blurryDegree: 0,
+        lightDegree: 10,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
       },
       domain_url: ''
     };
@@ -222,10 +238,17 @@ export default {
   computed: {
     warmVideoList() {
       return JSON.parse(JSON.stringify(this.warmForm.selectedList || []))
+    },
+    domainUrl() {
+      if (!this.warmForm.imageUrl) return '';
+      return `${this.warmForm.imageUrl}?x-oss-process=image/crop,x_${this.warmForm.backgroundSize.x.toFixed()},y_${this.warmForm.backgroundSize.y.toFixed()},w_${this.warmForm.backgroundSize.width.toFixed()},h_${this.warmForm.backgroundSize.height.toFixed()}${this.warmForm.blurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.warmForm.blurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.warmForm.lightDegree - 10) * 5}, object-fit=1`;
     }
   },
   created() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    let arr = this.getImageQuery(this.domainUrl)
+    let x = this.getQueryString('x-oss-process=image/crop', arr[1])
+    console.log(arr[0], arr[1], x, '图片')
     this.getWarmVideoInfo();
   },
   beforeRouteLeave (to, from, next) {
@@ -362,6 +385,21 @@ export default {
     },
     cropComplete(cropperData, url) {
       console.log(cropperData, url, '?????')
+      this.warmForm.backgroundSize = cropperData;
+      this.warmForm.imageUrl = url;
+    },
+    getQueryString(name, url) {
+      let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+      let r = url.substr(1).match(reg);
+      if (r != null) return unescape(r[2]); return null;
+    },
+    getImageQuery(url) {
+      if (url.indexOf('?') != -1) {
+        let arr = url.split('?');
+        return [arr[0], arr[1]]
+      } else {
+        return url
+      }
     },
     handleUploadSuccess(res, file) {
       if(res.data) {
@@ -665,6 +703,17 @@ export default {
     }
    }
 }
+.degree_content{
+  position: relative;
+}
+.vague_num{
+  position: absolute;
+  top: -2px;
+  right: -35px;
+  padding-left: 10px;
+  font-size: 14px;
+  color: #595959;
+}
 .vh-dialog{
     /deep/ .el-dialog {
       width: 624px!important;
@@ -696,7 +745,7 @@ export default {
       border-radius: 4px;
       padding: 0 4px;
     }
-  }
+}
 .box{
   text-align: center;
 }
@@ -717,7 +766,7 @@ export default {
   }
 
 }
- .vh-sort-tables{
+.vh-sort-tables{
     position: relative;
     width: 640px;
     font-size: 14px;
@@ -820,7 +869,7 @@ export default {
         }
       }
     }
-  }
+}
 
 
 </style>
