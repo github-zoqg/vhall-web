@@ -12,6 +12,8 @@
                    v-if="!(is_dynamic > 0) && dataList.length > 0" :disabled="!multipleSelection.length">{{resourcesVo && Number(resourcesVo.type) !== 0 ? '批量分配' : '分配并发包'}}</el-button>
         <el-button round @click.prevent.stop="multiSetHandle('more')" class="panel-btn length104" size="medium"
                    v-if="!(is_dynamic > 0) && dataList.length > 0 && resourcesVo && resourcesVo.extend_end_time != ''" :disabled="!multipleSelection.length">分配扩展包</el-button>
+        <!-- -->
+
         <!-- 固定分配，有查询列表。 -->
         <div v-if="tabType === 'regular'" :class="['regular-ctx', {'regular-list': !(is_dynamic > 0)}]">
           <p v-if="is_dynamic > 0">每个子账号可单独分配用量，<br/>所有用量之和不能大于可分配用量</p>
