@@ -248,6 +248,7 @@ export default {
       position: relative;
       width: 100%;
       height: 495px;
+      transition: all 0.8s linear;
       // z-index: 0;
       // background-image: url('./image/pc/bg_2.png');
       background-size: 100% 100%;
@@ -276,6 +277,7 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        transition: all 0.8s linear;
         .header_left{
           display: flex;
           align-items: center;
@@ -442,6 +444,7 @@ export default {
             width: 100%;
             height: 28px;
             background: var(--background_pc_tools_color);
+            transition: all 0.8s linear;
             border-radius: 0 0 4px 4px;
             display: flex;
             justify-content: space-between;
@@ -486,6 +489,7 @@ export default {
             width: 100%;
             height: 269px;
             background: var(--background_pc_tabs_color);
+            transition: all 0.8s linear;
             position: relative;
             border-radius: 0 0 4px 4px;
             &_chat{
@@ -752,31 +756,5 @@ export default {
         color: var(--color_pc_header_secondary);
       }
     }
-    /* fade */
-    // .fade-enter-active,
-    // .fade-leave-active {
-    //   transition: opacity 0.28s;
-    // }
-
-    // .fade-enter,
-    // .fade-leave-active {
-    //   opacity: 0;
-    // }
-
-    /* fade-transform */
-    // .fade-transform-leave-active,
-    // .fade-transform-enter-active {
-    //   transition: all .5s;
-    // }
-
-    // .fade-transform-enter {
-    //   opacity: 0;
-    //   transform: translateX(-30px);
-    // }
-
-    // .fade-transform-leave-to {
-    //   opacity: 0;
-    //   transform: translateX(30px);
-    // }
   }
 </style>

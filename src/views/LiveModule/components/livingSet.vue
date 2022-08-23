@@ -51,9 +51,9 @@
         </div>
         <div class="preview_container">
           <div class="preview_box_pc" v-show="livingPreview==1">
-            <transition name="fade-transform" mode="out-in">
+            <!-- <transition name="fade" mode="out-in"> -->
               <pc-preview ref="livingPcPreview" :type="livingPcPreviewType" :domainUrl="domain_pc_url" :livingPcForm="livingPcForm" :livingForm="livingForm" :videoUrl="video_url" :isShowInteract="isShowInteract"></pc-preview>
-            </transition>
+            <!-- </transition> -->
           </div>
           <div class="preview_box_wap" v-show="livingPreview==2">
             <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm" :isShowInteract="isShowInteract"></wap-preview>
@@ -366,8 +366,8 @@ export default {
           return false;
         }
       } else {
-        // 账号下默认显示
-        return true;
+        // 账号下默认不显示
+        return false;
       }
     },
     video_url() {
@@ -497,7 +497,7 @@ export default {
       this.$refs.livingPcPreview.settingTheme(style, this.livingPcForm.backGroundColor);
     },
      // 默认wap主题颜色
-    resetFormWapColor(style) {
+    resetFormWapColor(style, index) {
       // style: 风格
       if (index && style == this._livingWapForm.style) {
         this.livingWapForm = { ...this._livingWapForm};

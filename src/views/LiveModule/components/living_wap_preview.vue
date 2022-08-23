@@ -329,7 +329,7 @@ export default {
     width: 100%;
     height: 100%;
     position: relative;
-    // background-color: #f0f0f0;
+    transition: all 0.8s linear;
     border-radius: 0 0 30px 30px;
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -337,6 +337,7 @@ export default {
       width: 100%;
       height: 36px;
       background: var(--background_header_color);
+      transition: all 0.8s linear;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -411,6 +412,7 @@ export default {
         &_attention{
           width: 40px;
           height: 24px;
+          transition: all 0.8s linear;
           background: linear-gradient(280.56deg, var(--background_header_attention_1) 9.45%, var(--background_header_attention_2) 90.39%);
           border-radius: 30px;
           font-size: 12px;
@@ -497,6 +499,7 @@ export default {
             width: 100%;
             height: 167px;
             padding: 0 38px;
+            transition: all 0.8s linear;
             background-size: 100% 100%;
             background-repeat: no-repeat;
             background-color: #000;
@@ -535,6 +538,7 @@ export default {
       }
       .wap_menus{
         &_tabs{
+          transition: all 0.8s linear;
           width: 100%;
           height: 40px;
           padding: 0 8px;
@@ -641,6 +645,7 @@ export default {
             }
             .chat_item{
               padding: 2px 6px;
+              transition: all 0.8s linear;
               background: var(--background_chat_color);
               border-radius: 15px;
               margin-bottom: 8px;
@@ -778,6 +783,7 @@ export default {
         margin-bottom: 8px;
         .subscribe_time{
           height: 133px;
+          transition: all 0.8s linear;
           background: var(--background_subscribe_color);
           margin-bottom: 8px;
           text-align: center;
@@ -812,6 +818,7 @@ export default {
             height: 40px;
             line-height: 40px;
             padding-left: 12px;
+            transition: all 0.8s linear;
             background: var(--background_subscribe_color);
             color: var(--color_subscribe_secondary);
             font-size: 14px;
@@ -854,6 +861,7 @@ export default {
       width: 100%;
       height: 96px;
       border-radius: 0 0 30px 30px;
+      transition: all 0.8s linear;
       background: var(--background_footer_color);
       display: flex;
       // align-items: center;
