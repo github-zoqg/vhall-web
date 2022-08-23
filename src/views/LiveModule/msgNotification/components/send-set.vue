@@ -14,14 +14,25 @@
           <!-- 开播提醒发送设置：预约/报名用户、导入用户、白名单用户 -->
           <!-- 回放通知发送设置：预约/报名用户、预约/报名中未观看直播用户、导入用户、白名单用户 -->
           <el-checkbox-group v-model="sender_person">
-            <el-checkbox label="1">预约/报名用户</el-checkbox>
-            <el-checkbox label="2" v-if="setType === 'playback'">预约/报名中未观看直播用户</el-checkbox>
+            <el-checkbox label="1">预约/报名用户
+              <el-tooltip v-tooltipMove>
+                <div slot="content">
+                  <p>当活动专题下开启统一观看限制时，且已关联的活动下开启了消息通知，则将分别对预约/报名用户进行消息触达</p>
+                </div>
+                <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
+              </el-tooltip>
+            </el-checkbox>
+            <el-checkbox label="2" v-if="cardVo.iconType === 'base_playback'">预约/报名中未观看直播用户</el-checkbox>
             <el-checkbox label="3">导入用户</el-checkbox>
             <el-checkbox label="4" v-if="isOpenWhite">白名单用户</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
       <!-- 导入用户模板 -->
+      <div class="set-item import_excel_info" v-if="sender_person.includes('3')">
+        <label class="set-item__label"></label>
+        <import-excel></import-excel>
+      </div>
       <!-- 短信内容 -->
       <div class="set-item send_info">
         <label class="set-item__label">短信内容：</label>
@@ -31,9 +42,9 @@
             {{cardVo && cardVo.content ? cardVo.content+cardVo.link : ''}}
           </div>
           <p class="set-item__content_bottom">
-            <span>短信字数：<strong>75</strong>（含退订后缀）</span>
-            <span>计费条数：<strong>2</strong>（70字符为一条）</span>
-            <span>可用余额：<strong>500</strong></span>
+            <span>短信字数：<strong>75</strong>条（含退订后缀）</span>
+            <span>计费条数：<strong>2</strong>条（70字符为一条）</span>
+            <span>可用余额：<strong>500</strong>条</span>
           </p>
         </div>
       </div>
@@ -41,7 +52,7 @@
       <div class="set-item send_time">
         <label class="set-item__label">发送时间：</label>
         <div class="set-item__content">
-          <el-checkbox-group v-model="send_timer" v-if="setType === 'live'">
+          <el-checkbox-group v-model="send_timer" v-if="cardVo.iconType === 'base_start'">
             <el-checkbox label="4320">开播前3天</el-checkbox>
             <el-checkbox label="1440">开播前1天</el-checkbox>
             <el-checkbox label="120">开播前2小时</el-checkbox>
@@ -49,8 +60,8 @@
             <el-checkbox label="30">开播前30分钟</el-checkbox>
             <el-checkbox label="15">开播前15分钟</el-checkbox>
           </el-checkbox-group>
-          <span v-else-if="setType === 'subscribe'">预约/报名成功后发送</span>
-          <span v-else-if="setType === 'playback'">设置默认回放后发送</span>
+          <span v-else-if="cardVo.iconType === 'base_subscribe'">预约/报名成功后发送</span>
+          <span v-else-if="cardVo.iconType === 'base_playback'">设置默认回放后发送</span>
           <span v-else>——</span>
         </div>
       </div>
@@ -79,11 +90,11 @@
 </template>
 <script>
   import { validPhone } from '@/utils/validate.js'
+  import ImportExcel from './import-excel.vue'
   export default {
     data() {
       return {
         dialogVisible: true,
-        setType: 'live', // 当前短信发送设置类型： 预约发送 -- subscribe;开播提醒 -- live；回放通知 -- playback。
         sender_person: ['1'], // 发送对象
         send_timer: ['15'], // 发送时间
         innerVisible: false,
@@ -105,11 +116,14 @@
         default: false
       }
     },
-    inject: ['app'],
+    inject: ['app'], // 卡片对象
+    components: {
+      ImportExcel
+    },
     computed: {
       // 是否展示白名单
       isOpenWhite: ()=> {
-        return true
+        return false
       }
     },
     methods: {

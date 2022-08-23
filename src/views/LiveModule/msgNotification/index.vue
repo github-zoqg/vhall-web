@@ -113,7 +113,7 @@ export default {
             {
               iconType: 'base_subscribe',
               title: '预约/报名成功通知',
-              is_open: true,
+              is_open: false,
               is_allow_set: true, // 是否包含发送设置功能
               content: `${this.showSignText}您已成功预约“${this.liveDetailInfo.subject}”，直播将于${this.liveDetailInfo.start_time}开播，请准时参加。点击进入`,
               link: this.msgInfo.link || `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
@@ -134,7 +134,7 @@ export default {
               iconType: 'base_playback',
               title: '回放通知',
               is_open: false,
-              is_allow_set: false, // 是否包含发送设置功能
+              is_allow_set: true, // 是否包含发送设置功能
               content: `${this.showSignText}直播活动“${this.liveDetailInfo.subject}”，已设置回放，点击进入`,
               link: this.msgInfo.link || `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
               desc: '设置回放后发送',
