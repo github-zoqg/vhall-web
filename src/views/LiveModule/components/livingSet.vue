@@ -26,7 +26,7 @@
       </template>
       <template v-else>
         <div class="type_item" v-for="(item, index) in themeWapTypeList" :key="index">
-          <span class="type_item_title">{{ item.title }}</span>
+          <span class="type_item_title title_center">{{ item.title }}</span>
           <p class="type_item_check item_checked" :class="livingWapForm.style==item.id ? 'active' : ''" @click="activeWapTheme(item)">
             <img :src="require(`./image/wap/style_${index+1}.png`)" class="item_check_style" alt="">
             <span class="checked_img" v-if="livingWapForm.style==item.id"><img src="../../../common/images/icon-choose.png" alt=""></span>
@@ -604,9 +604,13 @@ export default {
       if (this.livingPreview == 1) {
         this.livingPcForm.background = '';
         this.livingPcForm.pcBackground = '';
+        this.livingPcForm.blurryDegree = 0;
+        this.livingPcForm.lightDegree = 10;
       } else {
         this.livingWapForm.background = '';
         this.livingWapForm.wapBackground = '';
+        this.livingWapForm.blurryDegree = 0;
+        this.livingWapForm.lightDegree = 10;
       }
     },
     // 视频区域图片删除
@@ -698,7 +702,12 @@ export default {
       .type_item{
         padding-bottom: 24px;
         &_title{
+          display: inline-block;
+          width: 100%;
           color: #262626;
+          &.title_center{
+            text-align: center;
+          }
         }
         &_check{
           margin-top: 12px;
@@ -714,7 +723,9 @@ export default {
             object-fit: scale-down;
           }
           &.item_checked{
-            height: 260px;
+            height: 173px;
+            width: 80px;
+            margin: 12px auto 0;
           }
           &.active {
             border: 1px solid #fb3a32;
