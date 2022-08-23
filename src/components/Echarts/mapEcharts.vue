@@ -2,7 +2,7 @@
   <div class="map-charts">
     <el-row>
       <el-col :span="14"
-        ><div :style="{ height: '400px', width: '100%' }" ref="mapEchart"></div
+        ><div :style="{ height: '540px', width: '100%' }" ref="mapEchart"></div
       ></el-col>
       <el-col :span="10">
         <div class="grid-table">
@@ -88,16 +88,17 @@ export default {
               normal: {
                 textStyle: {
                   color: '#000',
+                  fontSize: 14
                 },
               },
             },
-            left: '120',
+            left: '50',
             top: '30',
             itemStyle: {
               normal: {
-                borderColor: '#d1d1d1',
+                borderColor: '#7f7f7f',
                 label: {
-                  show: true,
+                  show: false,
                 },
                 areaStyle: {
                   color: '#f4f4f4',
