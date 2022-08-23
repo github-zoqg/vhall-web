@@ -411,11 +411,11 @@ export default {
     },
     activeTheme(index) {
       this.livingPcForm.style = index;
-      this.resetFormPcColor(index);
+      this.resetFormPcColor(index, 1);
     },
     activeWapTheme(item) {
       this.livingWapForm.style = item.id;
-      this.resetFormWapColor(item.id)
+      this.resetFormWapColor(item.id, 1)
     },
     changePcTheme(index) {
       this.livingPcForm.backGroundColor = index + 1;
@@ -440,16 +440,16 @@ export default {
     // 恢复默认（pc默认黑色，wap默认白色）
     resetForm() {
       if (this.livingPreview == 1) {
-        this.resetFormPcColor(1)
+        this.resetFormPcColor(1, 0)
       } else {
-        this.resetFormWapColor(1)
+        this.resetFormWapColor(1, 0)
       }
     },
     // 默认pc主题颜色
-    resetFormPcColor(style) {
+    resetFormPcColor(style, index) {
       // style: 风格
-      console.log(style, this._livingPcForm.style)
-      if (style == this._livingPcForm.style) {
+      console.log(style, index,  this._livingPcForm.style)
+      if (index == 1 && style == this._livingPcForm.style) {
         this.livingPcForm = {...this._livingPcForm};
         this.livingForm.chatLayout = this._livingForm.chatLayout;
         this.livingForm.inavLayout = this._livingForm.inavLayout;
@@ -494,7 +494,7 @@ export default {
      // 默认wap主题颜色
     resetFormWapColor(style) {
       // style: 风格
-      if (style == this._livingWapForm.style) {
+      if (index && style == this._livingWapForm.style) {
         this.livingWapForm = { ...this._livingWapForm};
         this.livingForm.chatLayout = style == 3 ? 2 : 1;
         this.livingForm.inavLayout = this._livingForm.inavLayout;
