@@ -34,13 +34,27 @@
         </div>
       </div>
       <div class="msg-notification-center">
-        <el-row :gutter="40">
-          <el-col class="liveItem">
-            <template v-for="(item, index) in baseSet">
-              {{item}}
-              <item-card v-if="item" :info="item" :key="`citem-${index}`"></item-card>
-            </template>
-          </el-col>
+        <p class="title">短信通知</p>
+        <el-row :gutter="24" class="base_row">
+          <!-- xs	<768px	超小屏 如：手机
+          sm	≥768px	小屏幕 如：平板
+          md	≥992px	中等屏幕 如：桌面显示器
+          lg	≥1200px	大屏幕 如：大桌面显示器
+          xl	≥1920px	2k屏等 -->
+          <template v-for="(item, index) in baseSet">
+            <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="8" v-if="item"  :key="`base-item-${index}`">
+              <item-card :info="item" ></item-card>
+            </el-col>
+           </template>
+        </el-row>
+
+        <p class="title">微信通知</p>
+        <el-row :gutter="24" class="wx_row">
+          <template v-for="(item, index) in wxSet">
+            <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="8" v-if="item"  :key="`wx-item-${index}`">
+              <item-card :info="item" ></item-card>
+            </el-col>
+           </template>
         </el-row>
       </div>
     </div>
@@ -69,6 +83,7 @@ export default {
   data() {
     return {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
+      isLoading: false,
       msgInfo: {
         flower_balance: 0, // 短信余额
         is_open: false, // 是否开启
@@ -86,23 +101,108 @@ export default {
       showSignText: '微吼直播',
       inputShowSignText: '',
       isSignShow: true,
-      liveDetailInfo: {} // 活动详情
+      liveDetailInfo: {}, // 活动详情
+      baseSet: [],
+      wxSet: []
     }
   },
-  computed: {
-    baseSet: function() {
-      return [
-        {
-          iconType: 'base',
-          title: '预约/报名成功通知',
-          is_open: false,
-          content: `${this.showSignText}您已成功预约“${this.liveDetailInfo.subject}”，直播将于${this.liveDetailInfo.start_time}开播，请准时参加。点击进入`,
-          link: this.msgInfo.link
+  watch: {
+    liveDetailInfo: {
+      immediate: true, // 刷新加载 立马触发一次handler
+      deep: true, // 可以深度检测到
+      handler (n, o) {
+        console.log(n, o)
+        if (n) {
+          this.baseSet = [
+            {
+              iconType: 'base_subscribe',
+              title: '预约/报名成功通知',
+              is_open: false,
+              is_allow_set: true, // 是否包含发送设置功能
+              content: `${this.showSignText}您已成功预约“${this.liveDetailInfo.subject}”，直播将于${this.liveDetailInfo.start_time}开播，请准时参加。点击进入`,
+              link: this.msgInfo.link,
+              desc: '预约/报名后发送'
+            },
+            {
+              iconType: 'base_start',
+              title: '开播提醒',
+              is_open: false,
+              is_allow_set: true, // 是否包含发送设置功能
+              content: `${this.showSignText}直播活动“${this.liveDetailInfo.subject}”将于${this.liveDetailInfo.start_time}开播，请准时参加。点击进入`,
+              link: this.msgInfo.link,
+              desc: ''
+            },
+            {
+              iconType: 'base_playback',
+              title: '回放通知',
+              is_open: false,
+              is_allow_set: false, // 是否包含发送设置功能
+              content: `${this.showSignText}直播活动“${this.liveDetailInfo.subject}”，已设置回放，点击进入`,
+              link: this.msgInfo.link,
+              desc: '设置回放后发送'
+            }
+          ]
+          this.wxSet = [
+            {
+              iconType: 'wx_flower',
+              title: '关注成功通知',
+              subTitle: '直播关注成功通知',
+              is_open: false,
+              is_allow_set: false, // 是否包含发送设置功能
+              content: [
+                {
+                  label: '直播标题',
+                  value: this.liveDetailInfo.subject
+                },
+                {
+                  label: '开播时间',
+                  value: this.liveDetailInfo.start_time
+                }
+              ],
+              desc: '关注成功后发送'
+            },
+            {
+              iconType: 'wx_start',
+              title: '开播提醒',
+              subTitle: '预约的直播即将开始',
+              is_open: false,
+              is_allow_set: false, // 是否包含发送设置功能
+              content: [
+                {
+                  label: '直播标题',
+                  value: this.liveDetailInfo.subject
+                },
+                {
+                  label: '开播时间',
+                  value: this.liveDetailInfo.start_time
+                }
+              ],
+              desc: ''
+            },
+            {
+              iconType: 'wx_playback',
+              title: '回放通知',
+              subTitle: '预约直播已设置回放',
+              is_open: false,
+              is_allow_set: false, // 是否包含发送设置功能
+              content: [
+                {
+                  label: '直播标题',
+                  value: this.liveDetailInfo.subject
+                },
+                {
+                  label: '开播时间',
+                  value: this.liveDetailInfo.start_time
+                }
+              ],
+              desc: '设置回放后发送'
+            }
+          ]
+        } else {
+          this.baseSet = []
+          this.wxSet = []
         }
-      ]
-    },
-    wxSet: function() {
-      return []
+      }
     }
   },
   components: {
@@ -198,7 +298,7 @@ export default {
     // 获取基本信息
     getLiveDetail(id) {
       this.loading = true
-      this.$fetch('getWebinarInfo', { webinar_id: id })
+      return this.$fetch('getWebinarInfo', { webinar_id: id })
         .then((res) => {
           this.liveDetailInfo = res.data
         })
@@ -253,6 +353,21 @@ export default {
       .el-input {
         width: 175px;
       }
+    }
+  }
+  .msg-notification-center {
+    margin-top: 10px;
+    .title {
+      font-size: 20px;
+      color: #333333;
+      border-left: 4px solid #fb3a32;
+      line-height: 16px;
+      height: 18px;
+      margin: 32px 0 12px 20px;
+      padding-left: 5px;
+    }
+    /deep/.el-row {
+      padding: 0 20px;
     }
   }
 }

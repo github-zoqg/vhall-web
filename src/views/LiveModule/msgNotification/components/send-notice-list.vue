@@ -176,6 +176,13 @@
         }
       };
     },
+    props: {
+      visible: {
+        type: Boolean,
+        default: false
+      }
+    },
+    inject: ['app'],
     methods: {
       dealDisabledDate(time) {
         return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
@@ -198,6 +205,7 @@
       // 关闭弹出框
       handleClose() {
         this.dialogVisible = true
+        this.$emit('close')
       },
       // 搜索(重置第1页 或者 不重置)
       searchSendNoticeList(type = null) {
@@ -232,7 +240,6 @@
           }
         });
       },
-
       // 导出发送记录数据
       exportSendData() {
         if (this.searchDate) {
@@ -261,6 +268,10 @@
           });
         })
       }
+    },
+    created() {
+      this.dialogVisible =  this.visible;
+      this.cardVo = this.app.info; // TODO inject传入的内容，在小组件内，只做赋值，不动cardVo数据
     }
   };
 </script>
