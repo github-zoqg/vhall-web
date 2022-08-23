@@ -49,6 +49,10 @@ export default {
     visible: {
       type: Boolean,
       default: false
+    },
+    link: {
+      type: String,
+      default: ''
     }
   },
   methods: {
@@ -94,6 +98,7 @@ export default {
   },
   created() {
     this.dialogVisible= this.visible
+    this.form.link = this.link
   }
 }
 </script>

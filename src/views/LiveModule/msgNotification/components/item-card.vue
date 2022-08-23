@@ -12,6 +12,7 @@
           v-model="info.is_open"
           active-color="#FB3A32"
           inactive-color="#CECECE"
+          @change="switchChangeOpen"
           active-text="">
         </el-switch>
       </div>
@@ -20,7 +21,7 @@
     <div :class="`item-card-center ${info && info.iconType == 'base_start' ? 'css_flex' : ''}`">
       <!-- 情况一： 短信活动内容区域：短链接形式 + 发送状态 -->
       <template v-if="!(info.content instanceof Array)">
-        <div>{{info.content}}<a :href="info.link">短链接</a></div>
+        <div>{{info.content}}<a href="javascript:void(0);" @click="openDialog('link')">短链接</a></div>
         <p v-if="info && info.iconType == 'base_start'"><span>直播前15分钟</span><span>未发送</span></p>
       </template>
       <!-- 情况而： 微信活动内容区域 -->
@@ -78,20 +79,25 @@
       </template>
     </div>
     <!-- 发送设置 -->
-    <send-set v-if="setVisible" :visible="setVisible" @close="hanldeSetClose"></send-set>
+    <send-set v-if="setVisible" :visible="setVisible" @close="handleSetClose"></send-set>
     <!-- 发送记录 -->
-    <send-notice-list v-if="noticeVisible" :visible="noticeVisible" @close="hanldeNoticeClose"></send-notice-list>
+    <send-notice-list v-if="noticeVisible" :visible="noticeVisible" @close="handleNoticeClose"></send-notice-list>
+    <!-- 配置短链接  -->
+    <link-dialog v-if="linkDialogVisible" :link="info.link" :visible="linkDialogVisible" @close="closeDialog"></link-dialog>
   </div>
 </template>
 <script>
   import SendSet from './send-set.vue'
   import SendNoticeList from './send-notice-list.vue'
+  import LinkDialog from './link-dialog.vue'
   export default {
     data() {
       return {
-        setVisible: false,
-        noticeVisible : false,
-        selectVal: 15
+        setVisible: false, // 发送设置
+        noticeVisible : false, // 发送记录
+        linkDialogVisible: false, // 短链接
+        selectVal: 15,
+        vm: null
       }
     },
     props: {
@@ -109,15 +115,16 @@
     },
     components: {
       SendSet,
-      SendNoticeList
+      SendNoticeList,
+      LinkDialog
     },
     created() {
     },
     methods: {
-      hanldeSetClose() {
+      handleSetClose() {
         this.setVisible = false
       },
-      hanldeNoticeClose() {
+      handleNoticeClose() {
         this.noticeVisible = false
       },
       openSetDialog() {
@@ -125,6 +132,38 @@
       },
       openNoticeDialog() {
         this.noticeVisible = true;
+      },
+      switchChangeOpen(value) {
+        if (this.info.flower_balance == 0 && value) {
+          this.info.is_open = !value;
+          this.messageInfo('短信余额不足，请充值后开启', 'error')
+          return;
+        }
+      },
+      // 打开弹窗
+      openDialog(type) {
+        this[`${type}DialogVisible`] = true
+      },
+      // 关闭链接弹窗
+      closeDialog(obj) {
+        this[`${obj.type}DialogVisible`] = false
+        if (obj.content) {
+          // 有传递值就重置
+          this.msgInfo[type] = obj.content
+        }
+      },
+      //文案提示问题
+      messageInfo(title, type) {
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.vm = this.$message({
+          showClose: true,
+          duration: 2000,
+          message: title,
+          type: type,
+          customClass: 'zdy-info-box'
+        });
       }
     }
   }
