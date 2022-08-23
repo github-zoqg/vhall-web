@@ -134,12 +134,8 @@ export default {
       this.visible = false;
     },
     // 跳转专题界面
-    goSubjectDetail(subject_id) {
-      if (subject_id) {
-        window.open(`${process.env.VUE_APP_WEB_URL}/special/edit/${this.resultVo.list[0].subject_id}?title=编辑`, '_blank')
-      } else {
-        this.$message.error('未获取到专题信息，请稍后重试')
-      }
+    goSubjectDetail() {
+      window.open(`${process.env.VUE_APP_WEB_URL}/special/edit/${this.resultVo.list[0].subject_id}?title=编辑`, '_blank')
     }
   }
 };
