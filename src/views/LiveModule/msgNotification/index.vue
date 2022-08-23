@@ -8,7 +8,7 @@
           <br />
           3.单条短信超过70字符（含后缀）将消耗2条计费，最大字符限制500字
       </div>
-      <div>
+      <div class="balance__right">
         短信余额：{{msgInfo.flower_balance}} 条
       </div>
     </pageTitle>
@@ -21,7 +21,6 @@
           <el-button type="text" @click.prevent="isSignShow = false;msgInfo.sign = showSignText" v-if="isSignShow" size="mini">修改</el-button>
           <el-button type="primary" @click="saveMsgSign" v-if="!isSignShow" size="mini">保存</el-button>
         </div>
-        <div><el-button type="text" @click="openDialog('link')">配置短链接</el-button></div>
         <div class="switchBox">
           <el-switch
             class="swtich"
@@ -65,8 +64,6 @@
     <!-- 配置短信签名
     <sign-dialog v-if="signDialogVisible" :visible="signDialogVisible" @close="closeDialog"></sign-dialog>
     -->
-    <!-- 配置短链接  -->
-    <link-dialog v-if="linkDialogVisible" :visible="linkDialogVisible" @close="closeDialog"></link-dialog>
   </div>
 </template>
 
@@ -74,7 +71,6 @@
 import PageTitle from '@/components/PageTitle';
 import beginPlay from '@/components/beginBtn';
 import {sessionOrLocal} from "@/utils/utils";
-import LinkDialog from './components/link-dialog.vue'
 import ItemCard from './components/item-card.vue'
 
 // import SignDialog from './components/sign-dialog.vue'
@@ -84,6 +80,7 @@ export default {
     return {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       isLoading: false,
+      vm: null,
       msgInfo: {
         flower_balance: 0, // 短信余额
         is_open: false, // 是否开启
@@ -97,7 +94,6 @@ export default {
         wxPlaybackData: {}
       },
       // signDialogVisible: false,
-      linkDialogVisible: false,
       showSignText: '微吼直播',
       inputShowSignText: '',
       isSignShow: true,
@@ -120,8 +116,9 @@ export default {
               is_open: false,
               is_allow_set: true, // 是否包含发送设置功能
               content: `${this.showSignText}您已成功预约“${this.liveDetailInfo.subject}”，直播将于${this.liveDetailInfo.start_time}开播，请准时参加。点击进入`,
-              link: this.msgInfo.link,
-              desc: '预约/报名后发送'
+              link: this.msgInfo.link || `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
+              desc: '预约/报名后发送',
+              flower_balance: this.msgInfo.flower_balance
             },
             {
               iconType: 'base_start',
@@ -129,17 +126,19 @@ export default {
               is_open: false,
               is_allow_set: true, // 是否包含发送设置功能
               content: `${this.showSignText}直播活动“${this.liveDetailInfo.subject}”将于${this.liveDetailInfo.start_time}开播，请准时参加。点击进入`,
-              link: this.msgInfo.link,
-              desc: ''
+              link: this.msgInfo.link || `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
+              desc: '',
+              flower_balance: this.msgInfo.flower_balance
             },
             {
               iconType: 'base_playback',
               title: '回放通知',
               is_open: false,
-              is_allow_set: false, // 是否包含发送设置功能
+              is_allow_set: true, // 是否包含发送设置功能
               content: `${this.showSignText}直播活动“${this.liveDetailInfo.subject}”，已设置回放，点击进入`,
-              link: this.msgInfo.link,
-              desc: '设置回放后发送'
+              link: this.msgInfo.link || `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`,
+              desc: '设置回放后发送',
+              flower_balance: this.msgInfo.flower_balance
             }
           ]
           this.wxSet = [
@@ -159,7 +158,8 @@ export default {
                   value: this.liveDetailInfo.start_time
                 }
               ],
-              desc: '关注成功后发送'
+              desc: '关注成功后发送',
+              flower_balance: this.msgInfo.flower_balance
             },
             {
               iconType: 'wx_start',
@@ -177,7 +177,8 @@ export default {
                   value: this.liveDetailInfo.start_time
                 }
               ],
-              desc: ''
+              desc: '',
+              flower_balance: this.msgInfo.flower_balance
             },
             {
               iconType: 'wx_playback',
@@ -195,7 +196,8 @@ export default {
                   value: this.liveDetailInfo.start_time
                 }
               ],
-              desc: '设置回放后发送'
+              desc: '设置回放后发送',
+              flower_balance: this.msgInfo.flower_balance
             }
           ]
         } else {
@@ -209,45 +211,35 @@ export default {
     PageTitle,
     beginPlay,
     // SignDialog,
-    LinkDialog,
     ItemCard
   },
   methods: {
     // 开启\关闭报名表单开关
     switchChangeOpen(value) {
-      const url = value ? 'regFromEnable' : 'regFromDisable';
-      const behaviour = value ? '开启' : '关闭';
-      this.$fetch(url, {
+      if (this.msgInfo.flower_balance == 0 && value) {
+        this.msgInfo.is_open = !value;
+        this.messageInfo('短信余额不足，请充值后开启', 'error')
+        return;
+      }
+      const text = value ? '开启' : '关闭';
+      this.$fetch('editMsgPhoneValidateStatus', {
         webinar_id: this.webinar_id
       }).then(res => {
         if (res.code === 200) {
-          this.$vhall_paas_port({
-            k: value ? 100137 : 100138,
-            data: {business_uid: this.userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-          })
           this.$message({
-            message:  `报名表单${ behaviour }成功`,
+            message:  `${ text }成功`,
             showClose: true, // 是否展示关闭按钮
             type: 'success', //  提示类型
             customClass: 'zdy-info-box' // 样式处理
           });
         }
       }).catch(err => {
-        if (err.code == 512800) {
-          this.$message({
-            message:  '报名表单不能与白名单同时开启',
-            showClose: true, // 是否展示关闭按钮
-            type: 'error', //  提示类型
-            customClass: 'zdy-info-box' // 样式处理
-          });
-        } else {
-          this.$message({
-            message:  `报名表单${ behaviour }失败`,
-            showClose: true, // 是否展示关闭按钮
-            type: 'error', //  提示类型
-            customClass: 'zdy-info-box' // 样式处理
-          });
-        }
+        this.$message({
+          message:  `${ text }失败`,
+          showClose: true, // 是否展示关闭按钮
+          type: 'error', //  提示类型
+          customClass: 'zdy-info-box' // 样式处理
+        });
       });
     },
     // 打开弹窗
@@ -303,31 +295,51 @@ export default {
           this.liveDetailInfo = res.data
         })
         .catch((res) => {
-          this.$message({
-            message: res.msg || '获取信息失败',
-            showClose: true,
-            // duration: 0,
-            type: 'error',
-            customClass: 'zdy-info-box',
-          })
+          this.messageInfo(res.msg || '获取信息失败', 'error')
           console.log(res)
         })
         .finally(() => {
           this.loading = false
         })
     },
+    //文案提示问题
+    messageInfo(title, type) {
+      if (this.vm) {
+        this.vm.close();
+      }
+      this.vm = this.$message({
+        showClose: true,
+        duration: 2000,
+        message: title,
+        type: type,
+        customClass: 'zdy-info-box'
+      });
+    },
     // 获取消息通知内容
     getMsgNotificationInfo() {
-      this.$fetch('getMsgNotificationInfo', {
-        webinar_id: this.$route.params.str
-      }).then(res => {
-      }).catch(err => {
-      });
+      // this.$fetch('getMsgNotificationInfo', {
+      //   webinar_id: this.$route.params.str
+      // }).then(res => {
+      //   this.msgInfo = res.data
+      // }).catch(err => {
+      // });
+      this.msgInfo = {
+        flower_balance: 0, // 短信余额
+        is_open: false, // 是否开启
+        sign: '', // 签名文案
+        link: '', // 短链接
+        dxData: {},
+        startData: {},
+        playbackData: {},
+        followerData: {},
+        wxStartData: {},
+        wxPlaybackData: {}
+      }
     }
   },
   async created() {
     await this.getLiveDetail(this.$route.params.str)
-    // this.getMsgNotificationInfo()
+    this.getMsgNotificationInfo()
   },
   mounted() {}
 };
@@ -335,14 +347,22 @@ export default {
 
 <style lang="less" scoped>
 .msg-notification-page {
+  /deep/.titleBox {
+    .balance__right {
+      margin-left: auto;
+    }
+  }
   .msg-notification__body {
     background: #ffffff;
     min-height: 600px;
+    padding-bottom: 40px;
+    padding-top: 24px;
   }
   .msg-notification__top {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-left: 20px;
     .switchBox {
       margin-left: auto;
     }

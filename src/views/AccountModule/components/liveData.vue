@@ -165,7 +165,7 @@ export default {
         params.start_time = this.query.timeStr[0] || '';
         params.end_time = this.query.timeStr[1] || '';
       }
-      
+
       let apiLine = 'getTrendLineInfo';
       if(this.sonVo.vip_info.type === 1){
         apiLine = 'exportFlowDetail';
@@ -210,7 +210,7 @@ export default {
         {
           label: '直播ID',
           key: 'webinar_id',
-          width: 200
+          width: 100
         },
         {
           label: '直播标题',
@@ -225,6 +225,11 @@ export default {
         {
           label: `${this.sonVo.vip_info.type === 2 ? '消耗时长（分钟）' : (this.sonVo.vip_info.type > 0 ? '消耗流量（GB）' : '最高并发（方）')}`,
           key: `${this.sonVo.vip_info.type === 2 ? 'webinar_duration' : (this.sonVo.vip_info.type > 0 ? 'webinar_flow' : 'webinar_max_uv')}`,
+          width: 150
+        },
+        {
+          label: '短信消耗',
+          key: 'pay_date',
           width: 150
         }
       ]

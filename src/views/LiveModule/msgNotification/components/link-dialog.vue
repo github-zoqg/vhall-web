@@ -51,6 +51,7 @@ export default {
       default: false
     }
   },
+  inject: ['app'], // 卡片对象
   methods: {
     // 关闭弹窗
     closeDialog() {
@@ -94,6 +95,7 @@ export default {
   },
   created() {
     this.dialogVisible= this.visible
+    this.form.link = this.app.info.link
   }
 }
 </script>
