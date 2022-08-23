@@ -301,6 +301,10 @@ export function checkAuth(to, from, next, that) {
           sessionOrLocal.set('tokenExpiredTime', res.data.exp_time, 'localStorage')
           sessionOrLocal.set('sso_token', res.data.sso_token || '');
           sessionOrLocal.set('userId', res.data.user_id || '');
+          if (sessionOrLocal.get('userId')) {
+            // 用户登录完成后，用户ID写入Cookie
+            Cookies.set('gray-id', res.data.user_id, { expires: 30 })
+          }
         }
         // 非观看页第三方登录场景，均跳转/home
         if (!sourceTag) {
@@ -429,6 +433,9 @@ export function checkAuth(to, from, next, that) {
           Cookies.remove('gray-id');
           next({ path: '/upgrading' });
           NProgress.done();
+        } else {
+          // 用户登录完成后，用户ID写入Cookie
+          Cookies.set('gray-id', res.data.user_id, { expires: 30 })
         }
         sessionOrLocal.set('userInfo', JSON.stringify(res.data));
         sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));

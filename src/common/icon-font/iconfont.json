@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "30565421",
+      "name": "line-barrage-on",
+      "font_class": "line-barrage-on",
+      "unicode": "e8c9",
+      "unicode_decimal": 59593
+    },
+    {
+      "icon_id": "30565422",
+      "name": "line-barrage-off",
+      "font_class": "line-barrage-off",
+      "unicode": "e8d1",
+      "unicode_decimal": 59601
+    },
+    {
+      "icon_id": "30565423",
+      "name": "line-barrage-set up",
+      "font_class": "a-line-barrage-setup1",
+      "unicode": "e912",
+      "unicode_decimal": 59666
+    },
+    {
       "icon_id": "28506480",
       "name": "line-plus",
       "font_class": "line-plus",

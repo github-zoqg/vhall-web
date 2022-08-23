@@ -181,7 +181,7 @@ let pageGrayTag = clientToken('vhall_gray')
 let userGrayId = Cookies.get('gray-id')
 if (!userGrayId && pageGrayTag) {
   // 若当前未存储过gray-id，并且vhall_gray有标记页面需存储假gray，存储gray-id
-  Cookies.set('gray-id', pageGrayTag)
+  Cookies.set('gray-id', pageGrayTag, { expires: 30 })
   window.location.reload()
 }
 
