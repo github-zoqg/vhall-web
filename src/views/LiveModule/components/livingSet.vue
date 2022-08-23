@@ -51,7 +51,9 @@
         </div>
         <div class="preview_container">
           <div class="preview_box_pc" v-show="livingPreview==1">
-            <pc-preview ref="livingPcPreview" :type="livingPcPreviewType" :domainUrl="domain_pc_url" :livingPcForm="livingPcForm" :livingForm="livingForm" :videoUrl="video_url" :isShowInteract="isShowInteract"></pc-preview>
+            <transition name="fade-transform" mode="out-in">
+              <pc-preview ref="livingPcPreview" :type="livingPcPreviewType" :domainUrl="domain_pc_url" :livingPcForm="livingPcForm" :livingForm="livingForm" :videoUrl="video_url" :isShowInteract="isShowInteract"></pc-preview>
+            </transition>
           </div>
           <div class="preview_box_wap" v-show="livingPreview==2">
             <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm" :isShowInteract="isShowInteract"></wap-preview>
@@ -164,16 +166,19 @@
             以下设置对PC端和移动端同时生效～
           </div>
           <div class="form_item">
-            <p class="form_item_title">
+            <div class="form_item_title">
               视频区【连麦】布局
-              <el-tooltip v-tooltipMove>
+              <p class="title_tip">
+                注意：无延迟模式下，暂只支持主次平铺；直播中修改连麦布局，需要刷新发起端才能生效。
+              </p>
+              <!-- <el-tooltip v-tooltipMove>
                 <div slot="content">
                   <p>1.无延迟模式下，只支持主次平铺；</p>
                   <p>2.直播中修改布局，需要主持人刷新页面<br/>或重启客户端后生效</p>
                 </div>
                 <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
-              </el-tooltip>
-            </p>
+              </el-tooltip> -->
+            </div>
             <div class="form_item_lay">
               <div class="item_lay" @click="choseMicrophone(0)">
                 <div class="item_lay_hidden" v-if="isDelay"></div>
@@ -713,6 +718,7 @@ export default {
           }
           &.active {
             border: 1px solid #fb3a32;
+            transition: all 0.5s linear;
           }
           .checked_img{
             position: absolute;
@@ -756,6 +762,8 @@ export default {
           height: 832px;
           border-radius: 4px;
           margin: 0 auto;
+          transform: scale(0.8);
+          transform-origin: center top;
           padding: 98px 10px 10px 10px;
           background-image: url('./image/living/wap_show.png');
           background-repeat: no-repeat;
@@ -808,6 +816,12 @@ export default {
           color: #262626;
           font-size: 14px;
           line-height: 20px;
+        }
+        .title_tip{
+          font-size: 14px;
+          color: #8c8c8c;
+          line-height: 22px;
+          margin: 10px 0;
         }
         .vh-slider{
           display: inline-block;

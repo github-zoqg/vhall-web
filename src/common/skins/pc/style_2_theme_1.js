@@ -17,7 +17,7 @@ const color_subscribe_text = '#E6E6E6';
 /* 背景颜色 */
 const background_color_primary = '#1a1a1a';
 const background_color_default = '#000';
-const background_header_color = '#2a2a2a'; //顶部背景
+const background_header_color = 'transparent'; //顶部背景
 const background_tools_color = '#262626'; //互动工具背景
 const background_tabs_color = '#262626';  //聊天+tabs背景
 const background_chat_color = 'rgba(255, 255, 255, 0.08)';  //聊天文案背景

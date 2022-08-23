@@ -4,9 +4,6 @@
       <img src="./image/living/browser@2x.png" alt="">
     </div>
     <div class="pc_container" :style="pcBackground">
-      <!-- <div class="pc_bg" v-if="domainUrl">
-        <img :src="pcBackground" alt="">
-      </div> -->
       <div class="pc_header">
         <div class="header_left">
           <div class="left_logo"><img src="./image/living/logo@2x.png" alt=""></div>
@@ -755,5 +752,31 @@ export default {
         color: var(--color_pc_header_secondary);
       }
     }
+    /* fade */
+    // .fade-enter-active,
+    // .fade-leave-active {
+    //   transition: opacity 0.28s;
+    // }
+
+    // .fade-enter,
+    // .fade-leave-active {
+    //   opacity: 0;
+    // }
+
+    /* fade-transform */
+    // .fade-transform-leave-active,
+    // .fade-transform-enter-active {
+    //   transition: all .5s;
+    // }
+
+    // .fade-transform-enter {
+    //   opacity: 0;
+    //   transform: translateX(-30px);
+    // }
+
+    // .fade-transform-leave-to {
+    //   opacity: 0;
+    //   transform: translateX(30px);
+    // }
   }
 </style>
