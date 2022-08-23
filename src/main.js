@@ -7,6 +7,9 @@ import VhallUI from 'vhall-ui';
 import clipboard from 'clipboard'
 // import VueTinymce from '@packy-tang/vue-tinymce/src/main';
 
+
+import 'cropperjs/dist/cropper.css'
+
 import vuescroll from 'vuescroll';
 import PaasPort from '@vhall/paas-report-data'
 
