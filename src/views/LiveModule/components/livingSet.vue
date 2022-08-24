@@ -65,7 +65,7 @@
     <div class="living-setting_form">
       <div class="living-setting_form_opera">
         <vh-button size="small" plain round v-preventReClick @click="resetForm">恢复默认</vh-button>
-        <vh-button size="small" plain  round v-preventReClick @click="goPreviewLiving">预览</vh-button>
+        <vh-button size="small" plain  round v-preventReClick @click="goPreviewLiving" v-if="webinarId">预览</vh-button>
         <vh-button type="primary" size="small" round v-preventReClick @click="saveSettingLivingInfo">保存</vh-button>
       </div>
       <!-- pc主题设置 -->
@@ -503,7 +503,7 @@ export default {
           height: 0
         }
       };
-      this.commonColor();
+      this.commonColor(style);
       this.$refs.livingPcPreview.settingTheme(style, this.livingPcForm.backGroundColor);
       // 如果当前备份需要恢复默认值，需要重置备份数据
       if (index == 1) {
@@ -525,7 +525,7 @@ export default {
           height: 0
         }
       };
-      this.commonColor();
+      this.commonColor(style);
       this.$refs.livingWapPreview.settingTheme(style, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
       if (index == 1) {
         this.setBackupData(this.livingPcForm, this.livingWapForm)

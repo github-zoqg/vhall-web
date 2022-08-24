@@ -331,7 +331,7 @@ export default {
     height: 100%;
     position: relative;
     transition: all 0.8s linear;
-    border-radius: 0 0 30px 30px;
+    border-radius: 0 0 40px 40px;
     background-size: 100% 100%;
     background-repeat: no-repeat;
     &_header{
@@ -876,6 +876,7 @@ export default {
         img{
           width: 100%;
           height: 100%;
+          margin-top: 3px;
           border-radius: 50%;
           object-fit: cover;
         }
