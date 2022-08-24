@@ -184,13 +184,14 @@
               <div class="show-avator">
                 <img :src="avatar" alt="" />
               </div>
-              <p>{{ formInvitation.company || '微吼直播' }}</p>
+              <p>{{ nickName || '微吼直播' }}</p>
               <p>邀请你一起看直播</p>
             </div>
             <div class="show-text">
               <h1>{{ formInvitation.title }}</h1>
               <p>{{ formInvitation.desciption }}</p>
               <div class="show-time">
+                <p>{{ formInvitation.company || '微吼直播' }}</p>
                 <p>{{ formInvitation.webinar_date }}</p>
                 <p>{{ formInvitation.location }}</p>
               </div>
@@ -221,7 +222,7 @@
                     <img :src="avatar" alt="" />
                   </div>
                   <p style="color: #fff">
-                    {{ formInvitation.company || '微吼直播' }}
+                    {{ nickName || '微吼直播' }}
                   </p>
                   <p style="color: #fff">邀请你一起看直播</p>
                 </div>
@@ -234,6 +235,9 @@
                 <div class="watch-code"><img :src="qrcode" alt="" /></div>
                 <div class="watch-action">
                   <!-- <p>扫码观看视频</p> -->
+                  <h1 :title="formInvitation.company">
+                    {{ formInvitation.company }}
+                  </h1>
                   <h1 :title="formInvitation.webinar_date">
                     {{ formInvitation.webinar_date }}
                   </h1>
@@ -257,7 +261,7 @@
               <div class="look-avator">
                 <img :src="avatar" alt="" />
               </div>
-              <p>{{ formInvitation.company || '微吼直播' }}</p>
+              <p>{{ nickName || '微吼直播' }}</p>
               <p>邀请你一起看直播</p>
             </div>
             <div
@@ -268,6 +272,9 @@
               <p>{{ formInvitation.desciption }}</p>
             </div>
             <div class="look-time">
+              <span v-if="formInvitation.company"></span>
+              <p v-if="formInvitation.company">主办方</p>
+              <p>{{ formInvitation.company }}</p>
               <span v-if="formInvitation.webinar_date"></span>
               <p v-if="formInvitation.webinar_date">时间</p>
               <p>{{ formInvitation.webinar_date }}</p>
@@ -356,6 +363,7 @@ export default {
       }
     }
     return {
+      nickName: '',
       invitation: true,
       isInit: false,
       isSave: true,
@@ -523,6 +531,7 @@ export default {
           ...res.data.invite_card,
           is_show_watermark: Boolean(res.data.invite_card.is_show_watermark),
         }
+        this.nickName = res.data.nick_name
         this.information = {
           ...res.data.invite_card,
           is_show_watermark: Boolean(res.data.invite_card.is_show_watermark),
@@ -1169,7 +1178,7 @@ export default {
         }
       }
       .look-time {
-        margin-top: 30px;
+        margin-top: 20px;
         // padding-left: 24px;
         p {
           padding: 0;
