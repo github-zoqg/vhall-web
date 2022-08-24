@@ -282,7 +282,7 @@ export default {
         width: 30px;
         height: 30px;
         border-radius: 2px;
-        background: #999;
+        // background: #999;
         img{
           width: 100%;
           height: 100%;
