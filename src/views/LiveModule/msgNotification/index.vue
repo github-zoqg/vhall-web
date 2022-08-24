@@ -2,14 +2,18 @@
   <div class="msg-notification-page">
     <pageTitle pageTitle="开播提醒">
       <div slot="content">
-          1.开播提醒支持重复发送，为避免用户打扰，建议控制发送时间及频次
+          1.短信通知支持重复发送，为避免用户打扰，建议控制发送时间及频次
           <br />
-          2.重复开播/设置时间即对所有参与用户进行发送，不区分场次
+          2.修改开播时间后将对所有参与用户再次发送通知，不区分场次
           <br />
           3.单条短信超过70字符（含后缀）将消耗2条计费，最大字符限制500字
+          <br />
+          4.关闭或删除活动将停止未发送状态的通知发送，已在发送中的任务不会停止
+          <br />
+          5.短信通知针对发送失败或黑名单的用户，依旧扣除短信余额（余额不足除外）
       </div>
       <div class="balance__right">
-        短信余额：{{msgInfo.flower_balance}} 条
+        短信余额：<strong :class="msgInfo.flower_balance > 0 ? 'color-blue' : 'color-red'">{{msgInfo.flower_balance}}</strong> 条
       </div>
     </pageTitle>
     <div class="msg-notification__body">
@@ -18,7 +22,7 @@
         <div class="msg-sign__top"  @blur.stop="cancelSaveMsgSign">* 短信签名：
           <span v-if="isSignShow">{{ showSignText }}</span>
           <VhallInput v-if="!isSignShow" v-model.trim="msgInfo.sign" autocomplete="off"  :maxlength="15" placeholder="请输入短信签名" show-word-limit class="btn-relative btn-two"></VhallInput>
-          <el-button type="text" @click.prevent="isSignShow = false;msgInfo.sign = showSignText" v-if="isSignShow" size="mini">修改</el-button>
+          <i class="iconfont-v3 saasicon_help_m tip" @click.prevent="isSignShow = false;msgInfo.sign = showSignText" v-if="isSignShow"></i>
           <el-button type="primary" @click="saveMsgSign" v-if="!isSignShow" size="mini">保存</el-button>
         </div>
         <div class="switchBox">
@@ -28,12 +32,16 @@
             active-color="#FB3A32"
             inactive-color="#CECECE"
             @change="switchChangeOpen"
-            :active-text="msgInfo.is_open ? '已开启，用户在预约时提交手机号需要进行短信验证（不含登录/报名）' : '开启后，用户在预约时提交手机号需要进行短信验证（不含登录/报名）'">
+            :active-text="msgInfo.is_open ? '关闭后，用户在预约时提交手机号无需进行短信验证（不含登录/报名）' : '开启后，用户在预约时提交手机号需要进行短信验证（不含登录/报名）'">
           </el-switch>
         </div>
       </div>
       <div class="msg-notification-center">
-        <p class="title">短信通知</p>
+        <p class="title">
+          <span>短信通知</span>
+          <span class="base_title_send" v-if="msgInfo.send_count > 0">当前预计发送{{msgInfo && msgInfo.send_count ? msgInfo.send_count : 0}}条短信</span>
+          <span class="base_title_balance" v-if="msgInfo.flower_balance == 0">余额不足，请联系您的专属客服充值</span>
+        </p>
         <el-row :gutter="24" class="base_row">
           <!-- xs	<768px	超小屏 如：手机
           sm	≥768px	小屏幕 如：平板
@@ -41,8 +49,8 @@
           lg	≥1200px	大屏幕 如：大桌面显示器
           xl	≥1920px	2k屏等 -->
           <template v-for="(item, index) in baseSet">
-            <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="8" v-if="item"  :key="`base-item-${index}`">
-              <item-card :info="item" ></item-card>
+            <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="8" v-if="item && msgInfo[item.iconType]"  :key="`base-item-${index}`">
+              <item-card :info="item" :msgInfo="msgInfo[item.iconType]" @changeSwitch="reloadAjax" @saveChange="reloadAjax"></item-card>
             </el-col>
            </template>
         </el-row>
@@ -51,7 +59,7 @@
         <el-row :gutter="24" class="wx_row">
           <template v-for="(item, index) in wxSet">
             <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="8" v-if="item"  :key="`wx-item-${index}`">
-              <item-card :info="item" ></item-card>
+              <item-card :info="item" :msgInfo="msgInfo[item.iconType]" @changeSwitch="reloadAjax" @saveChange="reloadAjax"></item-card>
             </el-col>
            </template>
         </el-row>
@@ -83,15 +91,16 @@ export default {
       vm: null,
       msgInfo: {
         flower_balance: 0, // 短信余额
+        send_count: 400, // 预发短信条数
         is_open: false, // 是否开启
         sign: '', // 签名文案
         link: '', // 短链接
-        dxData: {},
-        startData: {},
-        playbackData: {},
-        followerData: {},
-        wxStartData: {},
-        wxPlaybackData: {}
+        base_subscribe: {},
+        base_start: {},
+        base_playback: {},
+        wx_flower: {},
+        wx_start: {},
+        wx_playback: {}
       },
       // signDialogVisible: false,
       showSignText: '微吼直播',
@@ -100,6 +109,11 @@ export default {
       liveDetailInfo: {}, // 活动详情
       baseSet: [],
       wxSet: []
+    }
+  },
+  provide: function() {
+    return {
+      noticeApp: this
     }
   },
   watch: {
@@ -226,6 +240,7 @@ export default {
         webinar_id: this.webinar_id
       }).then(res => {
         if (res.code === 200) {
+          this.msgInfo.is_open = value
           this.$message({
             message:  `${ text }成功`,
             showClose: true, // 是否展示关闭按钮
@@ -241,6 +256,10 @@ export default {
           customClass: 'zdy-info-box' // 样式处理
         });
       });
+    },
+    // 刷新界面数据
+    reloadAjax() {
+      this.getMsgNotificationInfo()
     },
     // 打开弹窗
     openDialog(type) {
@@ -325,15 +344,18 @@ export default {
       // });
       this.msgInfo = {
         flower_balance: 0, // 短信余额
+        send_count: 500, // 预发短信
         is_open: false, // 是否开启
         sign: '', // 签名文案
         link: '', // 短链接
-        dxData: {},
-        startData: {},
-        playbackData: {},
-        followerData: {},
-        wxStartData: {},
-        wxPlaybackData: {}
+        base_subscribe: {},
+        base_start: {
+          set_timer: ['60', '30']
+        },
+        base_playback: {},
+        wx_flower: {},
+        wx_start: {},
+        wx_playback: {}
       }
     }
   },
@@ -350,6 +372,12 @@ export default {
   /deep/.titleBox {
     .balance__right {
       margin-left: auto;
+    }
+    .color-blue {
+      color:#3562FA;
+    }
+    .color-red {
+      color:#fb3a32;
     }
   }
   .msg-notification__body {
@@ -385,6 +413,15 @@ export default {
       height: 18px;
       margin: 32px 0 12px 20px;
       padding-left: 5px;
+    }
+    .base_title_send {
+      margin-left: 20px;
+      font-size: 14px;
+    }
+    .base_title_balance {
+      margin-left: 20px;
+      font-size: 14px;
+      color: #fb3a32;
     }
     /deep/.el-row {
       padding: 0 20px;

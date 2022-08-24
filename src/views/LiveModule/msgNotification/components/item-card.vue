@@ -22,7 +22,10 @@
       <!-- 情况一： 短信活动内容区域：短链接形式 + 发送状态 -->
       <template v-if="!(info.content instanceof Array)">
         <div>{{info.content}}<a href="javascript:void(0);" @click="openDialog('link')">短链接</a></div>
-        <p v-if="info && info.iconType == 'base_start'"><span>直播前15分钟</span><span>未发送</span></p>
+        <p v-if="info && info.iconType == 'base_start'"  class="item-card_start">
+          <span class="item-card_start_timer">{{  baseStartText }}</span>
+          <span class="item-card_start_status">未发送</span>
+        </p>
       </template>
       <!-- 情况而： 微信活动内容区域 -->
       <template v-else>
@@ -79,7 +82,7 @@
       </template>
     </div>
     <!-- 发送设置 -->
-    <send-set v-if="setVisible" :visible="setVisible" @close="handleSetClose"></send-set>
+    <send-set v-if="setVisible" :visible="setVisible" @close="handleSetClose" @saveChange="saveChange"></send-set>
     <!-- 发送记录 -->
     <send-notice-list v-if="noticeVisible" :visible="noticeVisible" @close="handleNoticeClose"></send-notice-list>
     <!-- 配置短链接  -->
@@ -106,11 +109,28 @@
         default: function() {
           return {}
         }
+      },
+      msgInfo: {
+        type: Object,
+        default: function() {
+          return {}
+        }
       }
     },
     provide: function() {
       return {
         app: this
+      }
+    },
+    inject: ['noticeApp'], // 卡片对象
+    computed: {
+      baseStartText() {
+        const msgInfo = this.noticeApp.msgInfo
+        if (msgInfo && msgInfo.base_start && msgInfo.base_start.set_timer && msgInfo.base_start.set_timer.length > 0) {
+          return  '已设置多个时间点'
+        } else {
+          return `直播前${msgInfo && msgInfo.base_start && msgInfo.base_start.set_timer && msgInfo.base_start.set_timer[0]}分钟`
+        }
       }
     },
     components: {
@@ -137,8 +157,10 @@
         if (this.info.flower_balance == 0 && value) {
           this.info.is_open = !value;
           this.messageInfo('短信余额不足，请充值后开启', 'error')
+          this.$emit('changeSwitch');
           return;
         }
+        this.$emit('changeSwitch');
       },
       // 打开弹窗
       openDialog(type) {
@@ -151,6 +173,10 @@
           // 有传递值就重置
           this.msgInfo[type] = obj.content
         }
+      },
+      // 发送设置保存成功，更新卡片信息
+      saveChange() {
+        this.$emit('saveChange')
       },
       //文案提示问题
       messageInfo(title, type) {
@@ -192,6 +218,13 @@
   }
   .item-card_ct_item {
     margin-bottom: 10px;
+  }
+  .item-card_start_timer {
+    font-size: 12px;
+  }
+  .item-card_start_status {
+    margin-left: 20px;
+    font-size: 12px;
   }
 }
 .item-card-bottom {

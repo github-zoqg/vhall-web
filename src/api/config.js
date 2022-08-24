@@ -702,10 +702,11 @@ const apis = {
   // 首页-广告
   getBannerSetInfo: ['/v3/interacts/banner/get-banner', 'GET'],
   // 开播提醒
-  getMsgNotificationInfo: ['', 'GET'], // 获取开播提醒，各个模块开关情况
-  editMsgPhoneValidateStatus: ['', 'POST'], // 是否开启短信手机号验证
-  saveMsgLink: ['', 'POST'], // 保存开播提醒-短链接
-  saveMsgSign: ['', 'POST'], // 保存开播提醒-签名
+  getMsgNotificationInfo: ['', 'GET'], // 获取- 开播提醒-界面设置信息
+  editMsgPhoneValidateStatus: ['', 'POST'], // 修改-是否开启短信手机号验证
+  saveMsgLink: ['', 'POST'], // 保存-开播提醒-短链接
+  saveMsgSign: ['', 'POST'], // 保存-开播提醒-签名
+  saveSendSet: ['', 'POST'], // 保存-开播提醒-发送设置
 };
 
 const getApi = api => {

@@ -116,7 +116,7 @@
         default: false
       }
     },
-    inject: ['app'], // 卡片对象
+    inject: ['app', 'noticeApp'], // 卡片对象
     components: {
       ImportExcel
     },
@@ -142,7 +142,17 @@
         this.$emit('close')
       },
       // 保存数据
-      saveInfo() {},
+      saveInfo() {
+        let params = {
+        }
+        this.$fetch('saveSendSet', this.$params(params)).then((res) => {
+          this.$emit('saveChange')
+        })
+        .catch((res) => {
+          this.messageInfo(res.msg || '获取信息失败', 'error')
+          console.log(res)
+        })
+      },
       // 打开测试发送弹出框
       openTestDialog() {
         this.innerVisible = true
