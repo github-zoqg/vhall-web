@@ -799,9 +799,10 @@ export default {
             query: { roomId: this.liveDetailInfo.vss_room_id },
           })
         } else if (item.path == `/live/livingSet/${this.$route.params.str}`) {
+          let isDelay = this.hasDelayPermission && this.isDelay ? 1 : 0;
           this.$router.push({
             path: item.path,
-            query: { type: this.liveDetailInfo.webinar_type, isDelay: Number(this.isDelay) },
+            query: { type: this.liveDetailInfo.webinar_type, isDelay: isDelay },
           })
         } else {
           this.$router.push({

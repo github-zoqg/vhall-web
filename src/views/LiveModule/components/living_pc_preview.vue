@@ -26,13 +26,16 @@
             <!-- 均匀 :style="videoBackground"-->
             <div class="left_top__even" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
               <span><img src="./image/living/layout1.png" alt=""></span>
-              <span><img src="./image/living/layout5.png" alt=""></span>
+              <span><img src="./image/living/layout2.png" alt=""></span>
+              <span><img src="./image/living/layout3.png" alt=""></span>
+              <span><img src="./image/living/layout4.png" alt=""></span>
             </div>
             <!-- 主次悬浮 -->
             <div class="left_top__float" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
               <div class="imgs">
                 <span><img src="./image/living/layout2.png" alt=""></span>
                 <span><img src="./image/living/layout3.png" alt=""></span>
+                <span><img src="./image/living/layout4.png" alt=""></span>
               </div>
             </div>
             <!-- 主次平铺 -->
@@ -44,7 +47,7 @@
                 <span><img src="./image/living/layout2.png" alt=""></span>
                 <span><img src="./image/living/layout3.png" alt=""></span>
                 <span><img src="./image/living/layout4.png" alt=""></span>
-                <span><img src="./image/living/layout5.png" alt=""></span>
+                <!-- <span><img src="./image/living/layout5.png" alt=""></span> -->
               </div>
             </div>
           </div>
@@ -358,18 +361,20 @@ export default {
         .watch_left{
           width: calc(100% - 174px);
           height: 100%;
-          background: #000;
+          border-radius: 4px;
           .left_top{
             width: 100%;
             height: 334px;
             background-size: 100% 100%;
             background-repeat: no-repeat;
             border-radius: 4px 4px 0 0;
+            background: #262626;
             &__even{
               display: flex;
               height: 100%;
-              justify-content: center;
-              align-items: center;
+              flex-wrap: wrap;
+              // justify-content: center;
+              // align-items: center;
               span{
                 display: inline-block;
                 width: 298px;

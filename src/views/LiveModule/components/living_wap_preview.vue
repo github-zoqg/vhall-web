@@ -44,6 +44,7 @@
             <div class="layout_float">
               <span><img src="./image/living/layout2.png" alt=""></span>
               <span><img src="./image/living/layout3.png" alt=""></span>
+              <span><img src="./image/living/layout4.png" alt=""></span>
             </div>
           </div>
           <div class="watch_layout_3" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
@@ -55,8 +56,8 @@
               <span><img src="./image/living/layout2.png" alt=""></span>
               <span><img src="./image/living/layout3.png" alt=""></span>
               <span><img src="./image/living/layout4.png" alt=""></span>
-              <span><img src="./image/living/layout5.png" alt=""></span>
-              <span><img src="./image/wap/video.png" alt=""></span>
+              <!-- <span><img src="./image/living/layout5.png" alt=""></span> -->
+              <!-- <span><img src="./image/wap/video.png" alt=""></span> -->
             </div>
           </div>
         </template>
@@ -113,7 +114,7 @@
             </div>
             <div class="chat_item">
               <div class="chat_item_avatar">
-                <img src="./image/living/chat1.png" alt="">
+                <img src="./image/living/chat3.png" alt="">
               </div>
               <div class="chat_item_box">
                 <div class="chat_item_name">微吼直播</div>
@@ -133,7 +134,7 @@
             </div>
             <div class="chat_item">
               <div class="chat_item_avatar">
-                <img src="./image/living/chat3.png" alt="">
+                <img src="./image/living/chat1.png" alt="">
               </div>
               <div class="chat_item_box">
                 <div class="chat_item_name">微吼直播 <span>主持人</span></div>
@@ -143,11 +144,11 @@
           </div>
           <div class="wap_menus_chat_leftRight chat_clear" v-if="livingWapForm.style==2">
             <div class="chat_item">
-              <div class="chat_item_avatar"><img src="./image/living/chat1.png" alt=""></div>
+              <div class="chat_item_avatar"><img src="./image/living/chat4.png" alt=""></div>
               <div class="chat_item_content"><span class="name">Mr Liu</span>😊😊😊</div>
             </div>
             <div class="chat_item">
-              <div class="chat_item_avatar"><img src="./image/living/chat2.png" alt=""></div>
+              <div class="chat_item_avatar"><img src="./image/living/chat1.png" alt=""></div>
               <div class="chat_item_content content_host">
                 <span class="name">
                   <span class="chat_host">主持人</span>
@@ -248,7 +249,7 @@
     </div>
     <div class="living_preview_wap_footer" v-if="type==1">
       <div class="footer_left">
-        <img src="./image/living/avatar@2x.png" alt="">
+        <img src="./image/living/chat5.png" alt="">
       </div>
       <div class="footer_center">
         <span><i class="iconfont-v3 saasline-audit"></i> | 参与聊天</span>
@@ -304,7 +305,7 @@ export default {
       if (this.livingWapForm.style == 1 && this.livingWapForm.backGroundColor < 3) {
         return {backgroundColor: this.livingWapForm.backGroundColor == 1 ? '#262626' : '#f0f0f0'}
       } else {
-        if (this.livingWapForm.background) {
+        if (this.livingWapForm.background && this.type == 1) {
           return {backgroundImage: `url(${this.domainUrl})`}
         } else {
           let style = this.type == 2 && this.livingWapForm.style == 3 ? 2 : this.livingWapForm.style
@@ -337,7 +338,7 @@ export default {
       width: 100%;
       height: 36px;
       background: var(--background_header_color);
-      transition: all 0.8s linear;
+      transition: transparent 0.8s linear;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -495,6 +496,7 @@ export default {
           }
         }
         .watch_layout_3{
+          background-color: #262626;
           .layout_top{
             width: 100%;
             height: 167px;
@@ -502,7 +504,6 @@ export default {
             transition: all 0.8s linear;
             background-size: 100% 100%;
             background-repeat: no-repeat;
-            background-color: #000;
             span{
               display: inline-block;
               width: 298px;
@@ -648,7 +649,7 @@ export default {
               transition: all 0.8s linear;
               background: var(--background_chat_color);
               border-radius: 15px;
-              margin-bottom: 8px;
+              margin-bottom: 12px;
               float: left;
               display: flex;
               &_avatar{
@@ -708,6 +709,7 @@ export default {
                   background-repeat: no-repeat;
                   background-size: 100% 100%;
                   vertical-align: middle;
+                  margin-bottom: 4px;
                 }
               }
             }
@@ -715,7 +717,7 @@ export default {
               padding: 3px 6px;
               background: var(--background_chat_color);
               border-radius: 13px;
-              margin-bottom: 8px;
+              margin-bottom: 4px;
               float: left;
               display: flex;
               &_content{
@@ -760,6 +762,7 @@ export default {
                   background-image: url('./image/wap/chat.png');
                   background-repeat: no-repeat;
                   background-size: 100% 100%;
+                  margin-bottom: 4px;
                 }
               }
             }

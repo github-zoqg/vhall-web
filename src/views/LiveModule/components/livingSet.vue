@@ -403,12 +403,7 @@ export default {
           this.livingForm.inavLayout = this.isDelay ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : skin_json_pc.inavLayout; // 公共信息 连麦布局
 
           // 备份信息
-          this._livingPcForm = { ...skin_json_pc }; //pc信息
-          this._livingWapForm = { ...skin_json_wap }; //wap信息
-          this._livingForm = {
-            chatLayout: skin_json_pc.chatLayout, // 公共信息 聊天布局
-            inavLayout: this.livingForm.inavLayout // 公共信息 连麦布局
-          }
+          this.setBackupData(skin_json_pc, skin_json_wap);
         }
       }).catch(err => {
         this.$message.error(err.msg || '获取信息失败')
@@ -416,11 +411,26 @@ export default {
     },
     activeTheme(index) {
       this.livingPcForm.style = index;
-      this.resetFormPcColor(index, 1);
+      if (index == this._livingPcForm.style) {
+        this.livingPcForm = {...this._livingPcForm};
+        this.livingForm.chatLayout = this._livingForm.chatLayout;
+        this.livingForm.inavLayout = this._livingForm.inavLayout;
+        this.$refs.livingPcPreview.settingTheme(index, this.livingPcForm.backGroundColor);
+      } else {
+        this.resetFormPcColor(index, 0);
+      }
     },
     activeWapTheme(item) {
       this.livingWapForm.style = item.id;
-      this.resetFormWapColor(item.id, 1)
+      // 如果接口返回的是当前选中值，默认用备份
+      if (item.id == this._livingWapForm.style) {
+        this.livingWapForm = { ...this._livingWapForm};
+        this.livingForm.chatLayout = item.id  == 3 ? 2 : 1;
+        this.livingForm.inavLayout = this._livingForm.inavLayout;
+        this.$refs.livingWapPreview.settingTheme(item.id, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
+      } else {
+        this.resetFormWapColor(item.id, 0)
+      }
     },
     changePcTheme(index) {
       this.livingPcForm.backGroundColor = index + 1;
@@ -434,47 +444,29 @@ export default {
     changeVideoColor(color) {
       this.livingForm.videoColor = color;
     },
-    getImageQuery(url) {
-      if (url.indexOf('?') != -1) {
-        let arr = url.split('?');
-        return arr[0]
-      } else {
-        return url
-      }
-    },
     // 恢复默认（pc默认黑色，wap默认白色）
     resetForm() {
       if (this.livingPreview == 1) {
-        this.resetFormPcColor(1, 0)
+        let isPcIndex = this.livingPcForm.style == this._livingPcForm.style ? 1 : 0;
+        this.resetFormPcColor(this.livingPcForm.style, isPcIndex)
       } else {
-        this.resetFormWapColor(1, 0)
+        let isWapIndex = this.livingWapForm.style == this._livingWapForm.style ? 1 : 0;
+        this.resetFormWapColor(this.livingWapForm.style, isWapIndex)
       }
     },
-    // 默认pc主题颜色
-    resetFormPcColor(style, index) {
-      // style: 风格
-      console.log(style, index,  this._livingPcForm.style)
-      if (index == 1 && style == this._livingPcForm.style) {
-        this.livingPcForm = {...this._livingPcForm};
-        this.livingForm.chatLayout = this._livingForm.chatLayout;
-        this.livingForm.inavLayout = this._livingForm.inavLayout;
-        this.$refs.livingPcPreview.settingTheme(style, this.livingPcForm.backGroundColor);
-        return;
+    // 备份信息
+    setBackupData(skin_json_pc, skin_json_wap) {
+      // 备份信息
+      this._livingPcForm = { ...skin_json_pc }; //pc信息
+      this._livingWapForm = { ...skin_json_wap }; //wap信息
+      this._livingForm = {
+        chatLayout: skin_json_pc.chatLayout, // 公共信息 聊天布局
+        inavLayout: this.livingForm.inavLayout // 公共信息 连麦布局
       }
+    },
+    // 共用表单颜色
+    commonColor(style) {
       let layout = '';
-      this.livingPcForm = {
-        style: style,
-        backGroundColor: style == 1 ? 1 : 2, //主题色
-        background: style == 3 ? this.defaultImage : '',
-        blurryDegree: 0,
-        lightDegree: 10,
-        backgroundSize: {
-          x: 0,
-          y:0,
-          width: 0,
-          height: 0
-        }
-      };
       if (this.isDelay) {
         layout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE';
       } else {
@@ -494,19 +486,32 @@ export default {
           height: 0
         }
       }
+    },
+    // 默认pc主题颜色
+    resetFormPcColor(style, index) {
+      // style: 风格
+      this.livingPcForm = {
+        style: style,
+        backGroundColor: style == 1 ? 1 : 2, //主题色
+        background: style == 3 ? this.defaultImage : '',
+        blurryDegree: 0,
+        lightDegree: 10,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
+      };
+      this.commonColor();
       this.$refs.livingPcPreview.settingTheme(style, this.livingPcForm.backGroundColor);
+      // 如果当前备份需要恢复默认值，需要重置备份数据
+      if (index == 1) {
+        this.setBackupData(this.livingPcForm, this.livingWapForm)
+      }
     },
      // 默认wap主题颜色
     resetFormWapColor(style, index) {
-      // style: 风格
-      if (index && style == this._livingWapForm.style) {
-        this.livingWapForm = { ...this._livingWapForm};
-        this.livingForm.chatLayout = style == 3 ? 2 : 1;
-        this.livingForm.inavLayout = this._livingForm.inavLayout;
-        this.$refs.livingWapPreview.settingTheme(style, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
-        return;
-      }
-      let layout = '';
       this.livingWapForm = {
         style: style,
         backGroundColor: style == 1 ? 2 : 5, //主题色
@@ -520,28 +525,11 @@ export default {
           height: 0
         }
       };
-      if (this.isDelay) {
-        layout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE';
-      } else {
-        layout = style == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE';
-      }
-      // inavLayout: 传统风格：主次平铺；其他风格：均匀排列
-      this.livingForm = {
-        videoColor: '#00000', //视频区底色
-        chatLayout: style == 3 ? 2 : 1,
-        inavLayout: layout, //连麦布局
-        inavDocumentLayout: 1,
-        videoBackGround: '',
-        videoBlurryDegree: 0,
-        videoLightDegree: 10,
-        videoBackGroundSize: {
-          x: 0,
-          y:0,
-          width: 0,
-          height: 0
-        }
-      }
+      this.commonColor();
       this.$refs.livingWapPreview.settingTheme(style, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
+      if (index == 1) {
+        this.setBackupData(this.livingPcForm, this.livingWapForm)
+      }
     },
     saveSettingLivingInfo() {
       if (this.livingPcForm.background) {
@@ -567,12 +555,7 @@ export default {
         if (res.code === 200) {
           this.$message.success('保存成功')
           // 备份信息
-          this._livingPcForm = { ...skin_json_pc }; //pc信息
-          this._livingWapForm = { ...skin_json_wap }; //wap信息
-          this._livingForm = {
-            chatLayout: skin_json_pc.chatLayout, // 公共信息 聊天布局
-            inavLayout: this.livingForm.inavLayout // 公共信息 连麦布局
-          }
+          this.setBackupData(skin_json_pc, skin_json_wap);
         }
       }).catch(err => {
         this.$message.error(err.msg || '保存失败')
@@ -706,7 +689,7 @@ export default {
           width: 100%;
           color: #262626;
           &.title_center{
-            text-align: center;
+            padding-left: 20px;
           }
         }
         &_check{
