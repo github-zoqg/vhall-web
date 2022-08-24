@@ -13,11 +13,11 @@
           <!-- 预约发送：预约/报名用户、白名单用户 -->
           <!-- 开播提醒发送设置：预约/报名用户、导入用户、白名单用户 -->
           <!-- 回放通知发送设置：预约/报名用户、预约/报名中未观看直播用户、导入用户、白名单用户 -->
-          <el-checkbox-group v-model="sender_person">
+          <el-checkbox-group v-model="sender_person" @change="checkSelect">
             <el-checkbox label="1">预约/报名用户
               <el-tooltip v-tooltipMove>
                 <div slot="content">
-                  <p>当活动专题下开启统一观看限制时，且已关联的活动下开启了消息通知，则将分别对预约/报名用户进行消息触达</p>
+                  <p>当活动专题下开启统一观看限制时，且已关联的活动下开启了开播提醒，则将分别对预约/报名用户进行消息触达</p>
                 </div>
                 <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
               </el-tooltip>
@@ -162,6 +162,10 @@
             });
           }
         })
+      },
+      checkSelect(oldVal, newVal) {
+        console.log('之前数据', oldVal)
+        console.log('新数据', newVal)
       }
     },
     created() {

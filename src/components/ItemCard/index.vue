@@ -348,8 +348,8 @@ export default {
         {
           icon: 'icon_embedded@2x',
           id: 10,
-          title: '消息通知',
-          subText: `设置参与用户接收提醒通知`,
+          title: '开播提醒',
+          subText: `针对预约/报名用户发送开播和回放提醒`,
           type: null, // TODO 需要上报KEY
           path: `/live/msgNotification/${this.$route.params.str}`,
           isShow: true,
@@ -665,6 +665,8 @@ export default {
     .subText {
       font-size: 14px;
       color: #666666;
+      max-width: 200px;
+      line-height: 20px;
     }
   }
 }

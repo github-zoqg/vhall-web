@@ -701,11 +701,11 @@ const apis = {
 
   // 首页-广告
   getBannerSetInfo: ['/v3/interacts/banner/get-banner', 'GET'],
-  // 消息通知
-  getMsgNotificationInfo: ['', 'GET'], // 获取消息通知，各个模块开关情况
+  // 开播提醒
+  getMsgNotificationInfo: ['', 'GET'], // 获取开播提醒，各个模块开关情况
   editMsgPhoneValidateStatus: ['', 'POST'], // 是否开启短信手机号验证
-  saveMsgLink: ['', 'POST'], // 保存消息通知-短链接
-  saveMsgSign: ['', 'POST'], // 保存消息通知-签名
+  saveMsgLink: ['', 'POST'], // 保存开播提醒-短链接
+  saveMsgSign: ['', 'POST'], // 保存开播提醒-签名
 };
 
 const getApi = api => {

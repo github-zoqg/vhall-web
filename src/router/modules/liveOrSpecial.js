@@ -140,7 +140,7 @@ const router = [
       {
         path: 'msgNotification/:str(\\d+)',
         component: () => import('@/views/LiveModule/msgNotification'),
-        meta:{ auth: true, title: '消息通知', name: 'msgNotification', activeMenu: '/live/list'},
+        meta:{ auth: true, title: '开播提醒', name: 'msgNotification', activeMenu: '/live/list'},
         hidden: true
       },
       {

@@ -340,7 +340,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
-  else if (metaName === 'msgNotification') {// 消息通知
+  else if (metaName === 'msgNotification') {// 开播提醒
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -349,7 +349,7 @@ export function CrumbSet(metaName, that) {
         isClick: true
       },
       {
-        title: '消息通知',
+        title: '开播提醒',
         path: `/live/msgNotification/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'

@@ -1,8 +1,8 @@
 <template>
   <div class="msg-notification-page">
-    <pageTitle pageTitle="消息通知">
+    <pageTitle pageTitle="开播提醒">
       <div slot="content">
-          1.消息通知支持重复发送，为避免用户打扰，建议控制发送时间及频次
+          1.开播提醒支持重复发送，为避免用户打扰，建议控制发送时间及频次
           <br />
           2.重复开播/设置时间即对所有参与用户进行发送，不区分场次
           <br />
@@ -315,7 +315,7 @@ export default {
         customClass: 'zdy-info-box'
       });
     },
-    // 获取消息通知内容
+    // 获取开播提醒内容
     getMsgNotificationInfo() {
       // this.$fetch('getMsgNotificationInfo', {
       //   webinar_id: this.$route.params.str
