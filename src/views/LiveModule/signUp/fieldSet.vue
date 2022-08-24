@@ -51,13 +51,13 @@
       <div class="disable_wrap" v-show="!signUpSwtich"></div>
       <div class="form_images">
         <div class="form_images_item">
-          模糊程度
+          <span>模糊程度</span>
           <vh-slider class="form-slider" v-model="blurryDegree" :disabled="!imageUrl" :max="10" style="width:540px"></vh-slider>
           <span class="vague_num">{{blurryDegree}}</span>
         </div>
         <div class="form_images_item">
-          背景亮度
-          <vh-slider class="form-slider" v-model="lightDegree" :disabled="!imageUrl" :max="10" style="width:540px"></vh-slider>
+          <span>背景亮度</span>
+          <vh-slider class="form-slider" v-model="lightDegree" :disabled="!imageUrl" :max="20" style="width:540px"></vh-slider>
           <span class="vague_num">{{lightDegree}}</span>
         </div>
       </div>
@@ -380,8 +380,16 @@ export default {
       drag: false,
       radio: 3,
       imageUrl: '',
+      blurryDegree: 0,
+      lightDegree: 10,
       defaultHeader: defaultHeader,
       renderQuestion: [],
+      backgroundSize: {
+        x: 0,
+        y:0,
+        width: 0,
+        height: 0
+      },
       regionalLevel: {
         1: true, // 市
         2: true // 区/县
@@ -959,6 +967,18 @@ export default {
   &.viewItemHover{
     /deep/.el-input__suffix{
       right: 5px;
+    }
+  }
+  .form_images{
+    padding-top: 24px;
+    &_item{
+      padding-bottom: 12px;
+      display: flex;
+      justify-items: center;
+      align-items: center;
+      .form-slider{
+        margin: 0 16px ;
+      }
     }
   }
   &.privacyItem {
