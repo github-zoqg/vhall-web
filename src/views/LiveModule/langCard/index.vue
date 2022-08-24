@@ -62,7 +62,6 @@ import {sessionOrLocal} from "@/utils/utils";
 import beginPlay from '@/components/beginBtn';
 import Env from "@/api/env";
 import html2canvas from 'html2canvas'
-import Vue from 'vue'
 export default {
   name: 'langCard',
   data() {

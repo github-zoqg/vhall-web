@@ -1,17 +1,13 @@
-import Vue from 'vue'
-
 import App from './App.vue';
 import router from './router';
-
-import clipboard from 'clipboard'
-// import VueTinymce from '@packy-tang/vue-tinymce/src/main';
-
 import vuescroll from 'vuescroll';
 import PaasPort from '@vhall/paas-report-data'
 
 import { refreshToken } from './utils/utils'
+import './utils/prototype'
 
-// You can set global config here.
+
+
 Vue.use(vuescroll, {
   ops: {
     // The global config
@@ -24,14 +20,11 @@ Vue.use(vuescroll, {
   },
   name: 'vhscroll' // customize component name, default -> vueScroll
 });
-Vue.prototype.$clipboard = clipboard
 
 
-
-import EventBus from './utils/Events';
-import {copy, dealObjectValue, domainCovert, parseURL, checkUploadType, sessionOrLocal} from './utils/utils';
+import { sessionOrLocal} from './utils/utils';
 // element-ui 样式重置
-import ELEMENT from 'element-ui';
+// import ELEMENT from 'element-ui';
 import '@/common/css/theme/index.css';
 import '@/components/Icon/index';
 // 七巧板组件库，直播间内使用
@@ -46,11 +39,9 @@ import { loadMore, tooltipMove, clearEmoij }  from '@/utils/directive';
 import * as filters from './utils/filter';
 
 // 工具类引入
-import moment from 'moment'; // 日期格式化
-import 'moment/locale/zh-cn';
 
 import { getParams } from './utils/general';
-import fetchData from './api/fetch';
+
 import * as Sentry from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
 
@@ -67,18 +58,8 @@ if(process.env.VUE_APP_NODE_ENV == 'production') {
     integrations: [new Integrations.Vue({ Vue, attachProps: true })]
   })
 }
-window.test = sessionOrLocal
-Vue.prototype.$fetch = fetchData;
-Vue.prototype.$moment = moment;
-Vue.config.productionTip = false;
-Vue.prototype.$EventBus = EventBus;
-Vue.prototype.$copyText = copy;
-Vue.prototype.$params = dealObjectValue; //去除空值参数转换
-Vue.prototype.$domainCovert = domainCovert;// 添加域名
-Vue.prototype.$parseURL = parseURL; // 去除域名//*/upload/
-Vue.prototype.$img = require('./common/images/small.png');
-Vue.prototype.$checkUploadType = checkUploadType; // 验证上传格式
-Vue.use(ELEMENT);
+
+// Vue.use(ELEMENT);
 import './utils/message';
 // Vue.use(vhallSaas, {
 //   config: {
@@ -88,13 +69,12 @@ import './utils/message';
 //   buHost: "https://e.vhall.com"
 // });
 
-moment.locale(); // zh-cn
-window.mom = moment
+
 
 Object.keys(filters).forEach(key=>{
   Vue.filter(key, filters[key]);    //插入过滤器名和对应方法
 });
-
+Vue.config.productionTip = false;
 
 window.SAAS_V3_COL = {
   KEY_1: 'SAAS_V3_SON_VO', // 子账号个数
@@ -131,7 +111,6 @@ Vue.directive('preventReClick', {    // 限制按钮重复点击
   }
 });
 // 国际化
-import VueI18n from 'vue-i18n';
 import Cookies from 'js-cookie'
 
 Vue.use(VueI18n);
@@ -152,9 +131,6 @@ const i18n = new VueI18n({
   }
 });
 window.i18n = i18n;
-
-// Vue.prototype.$tinymce = tinymce;
-// Vue.use(VueTinymce);
 
 function clientToken(param) {
   let reg = new RegExp('[?&]' + param + '=([^&]*)[&$]*');

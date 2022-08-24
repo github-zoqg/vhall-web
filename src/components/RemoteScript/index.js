@@ -1,5 +1,3 @@
-// 导入外部js
-import Vue from 'vue';
 
 Vue.component('remote-script', {
   name: 'importJs',
