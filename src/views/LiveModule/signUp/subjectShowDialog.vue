@@ -100,7 +100,7 @@ export default {
         duration: 0,
         dangerouslyUseHTMLString: true,
         // message: `本直播属于专题《 `,
-        message: '<p style="color:#1A1A1A; padding-right: 12px">本直播属于专题《<span id="openSubjectDetails" style="color:#3562fa;cursor: pointer;">'+ that.subjectTitle +'</span>》该专题提供统一的观看限制-'+ that.verifyText +'  本直播观看限制 <span style="color:#FB3A32">失效   </span></p>',
+        message: '<p style="color:#1A1A1A; padding-right: 12px">本直播属于专题《<span id="openSubjectDetails" style="color:#3562fa;cursor: pointer;">'+ that.subjectTitle +'</span>》该专题提供统一的'+ that.verifyText +'  本直播观看限制 <span style="color:#FB3A32">失效   </span></p>',
         type: 'warning'
       });
       let open = document.querySelector('#openSubjectDetails');
