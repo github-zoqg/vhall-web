@@ -590,6 +590,20 @@ export const replaceWithRules = (longText, rules = []) => {
   });
   return longText;
 };
+// 解析纯图片地址
+export const getImageQuery = url => {
+  if (url.indexOf('?') != -1) {
+    let arr = url.split('?');
+    return arr[0];
+  } else {
+    return url
+  }
+};
+
+// 是否是空对象
+export const isEmptyObj = obj => {
+  return Object.keys(obj).length === 0
+}
 
 /**
  * 将 queryString 转换成 key-value 形式

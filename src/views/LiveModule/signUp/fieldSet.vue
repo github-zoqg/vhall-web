@@ -33,7 +33,8 @@
     <section class="viewItem">
       <p class="label">表单头图</p>
       <upload
-        :domain_url="imageUrl"
+        id="form_cropper"
+        :domain_url="domain_url"
         v-model="imageUrl"
         :on-success="productLoadSuccess"
         :before-upload="beforeUploadHandler"
@@ -319,6 +320,8 @@
     <section class="viewItem sureBtn">
       <el-button :disabled="!signUpSwtich" round type="primary" @click="sureQuestionnaire">保存</el-button>
     </section>
+    <!-- 裁剪图片弹窗 -->
+    <cropper ref="formCropper" @cropComplete="cropComplete" @resetUpload="resetUpload" :mode="imageCropMode"></cropper>
   </div>
 </template>
 
@@ -327,10 +330,13 @@ import draggable from "vuedraggable";
 import upload from '@/components/Upload/main';
 import Env from "@/api/env";
 import defaultHeader from './images/formHeader.png'
+import {parseImgOssQueryString, isEmptyObj, getImageQuery} from "@/utils/utils";
+import cropper from '@/components/Cropper/index'
 export default {
   components:{
     draggable,
-    upload
+    upload,
+    cropper
   },
   props: {
     questionArr: {
@@ -366,7 +372,7 @@ export default {
       handler(newVal){
         this.title = newVal.title;
         this.intro = newVal.intro;
-        this.imageUrl = newVal.cover ? `${Env.staticLinkVo.uploadBaseUrl}${ newVal.cover }` : this.defaultHeader;
+        this.handlerImage(newVal);
       },
       deep: true,
       immediate: true
@@ -380,6 +386,7 @@ export default {
       drag: false,
       radio: 3,
       imageUrl: '',
+      imageCropMode: 1,
       blurryDegree: 0,
       lightDegree: 10,
       defaultHeader: defaultHeader,
@@ -405,6 +412,10 @@ export default {
         ghostClass: "ghost"
       };
     },
+    domain_url() {
+      if (!this.imageUrl) return '';
+      return `${this.imageUrl}?x-oss-process=image/crop,x_${Number(this.backgroundSize.x).toFixed()},y_${Number(this.backgroundSize.y).toFixed()},w_${Number(this.backgroundSize.width).toFixed()},h_${Number(this.backgroundSize.height).toFixed()}${this.blurryDegree > 0 ? `,/blur,r_10,s_${this.blurryDegree * 2}` : ''},/bright,${(this.lightDegree - 10) * 5}&mode=${this.imageCropMode}`;
+    }
   },
   filters: {
     numFormmat(val){
@@ -435,6 +446,25 @@ export default {
         return false
       } else {
         return true
+      }
+    },
+    // 处理图片
+    handlerImage(val) {
+      let imageUrl = val.cover ? `${Env.staticLinkVo.uploadBaseUrl}${ val.cover }` : this.defaultHeader;
+      this.imageUrl = getImageQuery(imageUrl);
+      let obj = parseImgOssQueryString(imageUrl);
+      // 没有参数
+      if (!isEmptyObj(obj)) {
+        const { blur, crop } = obj;
+        this.backgroundSize = {
+          x: crop.x,
+          y: crop.y,
+          width: crop.w,
+          height: crop.h
+        };
+        this.blurryDegree = blur && Number(blur.s);
+        this.lightDegree = obj.bright ? 10 : Number(obj.bright);
+        this.imageCropMode = obj.mode;
       }
     },
     // 保存表单
@@ -810,14 +840,25 @@ export default {
     productLoadSuccess(res, file) {
       if (res.data.file_url) {
         // 文件上传成功，保存信息
-        this.imageUrl = res.data.file_url;
-        this.$emit('setBaseInfo', { cover: res.data.file_url });
+         this.$refs.formCropper.showModel(res.data.domain_url);
+        // this.imageUrl = res.data.file_url;
+        // this.$emit('setBaseInfo', { cover: res.data.file_url });
       }
     },
     // 删除头图
     deleteBanner() {
       this.imageUrl = this.defaultHeader;
       this.$emit('setBaseInfo', { cover: '' });
+    },
+    cropComplete(cropperData, url) {
+      console.log(cropperData, url, '?????')
+      this.backgroundSize = cropperData;
+      this.imageUrl = url;
+      this.$emit('setBaseInfo', { cover: this.domain_url });
+    },
+    resetUpload() {
+      let dom = document.querySelector('#form_cropper .el-upload__input');
+      dom.click();
     },
     // 题目顺序修改
     sortChange(val, arr){

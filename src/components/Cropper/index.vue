@@ -45,6 +45,11 @@ export default {
     ratio: {
       type: Number,
       default: 16/9
+    },
+    // 模式
+    mode: {
+      type: Number || String,
+      default: 1
     }
   },
   data() {
@@ -53,7 +58,13 @@ export default {
       isShowImages: true,
       imageType: 1,
       cropperImgUrl: '',
-      url: 'https://t-alistatic01.e.vhall.com/upload/users/logo-imgs/2e/e7/2ee7b62341cc9a5ee9fe903d3e1de1b3.jpg',
+      cropperData: {
+        x: 0,
+        y:0,
+        width: 0,
+        height: 0
+      },
+      url: '',
       index: 1
     }
   },
@@ -64,6 +75,7 @@ export default {
     showModel(url, index) {
       this.url = url;
       this.index = index || 0;
+      this.imageType = Number(this.mode);
       this.dialogVisible = true;
     },
     goCropper() {
@@ -74,7 +86,9 @@ export default {
 
     },
     cropperSure() {
-      this.cropperData = this.$refs.cropper.getData()
+      if (!this.isShowImages) {
+        this.cropperData = this.$refs.cropper.getData()
+      }
       // const fileObj = this.dataURLtoFile(this.cropperImgUrl)
       this.$emit('cropComplete', this.cropperData, this.url, this.index)
       this.url = '';
@@ -83,7 +97,7 @@ export default {
     resetCropper() {
       this.dialogVisible = false;
       this.url = '';
-      this.$emit('deleteComplete', this.index)
+      this.$emit('resetUpload', this.index)
     }
   }
 }
