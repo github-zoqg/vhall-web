@@ -55,7 +55,7 @@ export default {
       this.initMapEcharts(this.areaDataList, this.maxNum);
     },
     initMapEcharts(data, maxNum) {
-      echarts.registerMap('china', jsonData);
+      echarts.registerMap('chinas', jsonData);
       this.mapChart = echarts.init(this.$refs.mapEchart); //这里是为了获得容器所在位置
       let options = {
         backgroundColor: '#fff',
@@ -87,7 +87,7 @@ export default {
         series: [
           {
             type: 'map',
-            mapType: 'china',
+            mapType: 'chinas',
             label: {
               normal: {
                 textStyle: {
