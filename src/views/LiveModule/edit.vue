@@ -196,6 +196,14 @@
           </div>
         </upload>
       </el-form-item>
+      <el-form-item label="模糊程度">
+        <vh-slider class="form-slider" v-model="formData.blurryDegree" :disabled="!formData.imageUrl" :max="10" style="width:540px"></vh-slider>
+        <span class="vague_num">{{formData.blurryDegree}}</span>
+      </el-form-item>
+      <el-form-item label="背景亮度">
+        <vh-slider class="form-slider" v-model="formData.lightDegree" :disabled="!formData.imageUrl" :max="20" style="width:540px"></vh-slider>
+        <span class="vague_num">{{formData.lightDegree}}</span>
+      </el-form-item>
       <el-form-item label="选择视频"  v-if="webinarType=='vod' || webinarType=='time'" required>
         <div class="mediaBox" @mouseenter="showMenu" @mouseleave="hiddenMenu">
           <div class="mediaSlot" v-if="!selectMedia.id" @click="$refs.selecteMedia.dialogVisible=true">
@@ -441,6 +449,10 @@ export default {
     NullPage
   },
   computed: {
+    domainUrl() {
+      if (!this.formData.imageUrl) return '';
+      return `${this.formData.imageUrl}?x-oss-process=image/crop,x_${this.formData.backgroundSize.x.toFixed()},y_${this.formData.backgroundSize.y.toFixed()},w_${this.formData.backgroundSize.width.toFixed()},h_${this.formData.backgroundSize.height.toFixed()}${this.formData.blurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.formData.blurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.formData.lightDegree - 10) * 5}`;
+    },
     rangHourMins() {
       let sysDate = new Date().getTime();
       let str = this.$moment().format('HH:mm');
@@ -687,6 +699,14 @@ export default {
         limitCapacitySwtich: false,
         imageUrl: '',
         domain_url: '',
+        blurryDegree: 0,
+        lightDegree: 10,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        },
         titleList: [],
         contentList: []
       },
@@ -1842,6 +1862,14 @@ export default {
     //     width: 270px;
     //   }
     // }
+  }
+  .form-slider{
+    position: relative;
+  }
+  .vague_num{
+    position: absolute;
+    top: -3px;
+    right: 24px;
   }
   .item-time {
     p{

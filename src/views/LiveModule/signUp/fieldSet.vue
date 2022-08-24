@@ -49,6 +49,18 @@
       </upload>
       <span class="header-img-tip">建议尺寸：750*125 px，小于2MB（支持格式jpg、png、gif、bmp）</span>
       <div class="disable_wrap" v-show="!signUpSwtich"></div>
+      <div class="form_images">
+        <div class="form_images_item">
+          模糊程度
+          <vh-slider class="form-slider" v-model="blurryDegree" :disabled="!imageUrl" :max="10" style="width:540px"></vh-slider>
+          <span class="vague_num">{{blurryDegree}}</span>
+        </div>
+        <div class="form_images_item">
+          背景亮度
+          <vh-slider class="form-slider" v-model="lightDegree" :disabled="!imageUrl" :max="10" style="width:540px"></vh-slider>
+          <span class="vague_num">{{lightDegree}}</span>
+        </div>
+      </div>
     </section>
     <!-- 表单名称、表单简介与表单头图为固定字段 -->
     <draggable

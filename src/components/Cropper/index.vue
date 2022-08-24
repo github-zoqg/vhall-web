@@ -6,21 +6,15 @@
     :close-on-press-escape=false
     width="480px">
     <div class="cropper_content">
-      <div class="cropper_content_image" v-if="isShowImages">
-        <div class="cropper_list">
-          <el-radio-group v-model="imageType">
-            <el-radio :label="1">全屏拉伸</el-radio>
-            <el-radio :label="2">等比缩放自适应</el-radio>
-            <el-radio :label="3">等比缩放显示全图</el-radio>
-          </el-radio-group>
-        </div>
-        <div class="cropper_img">
-          <img :src="url" alt="" :class="{
-            'is-fill': imageType==1,
-            'is-cover': imageType==2,
-            'is-scale': imageType==3
-          }">
-        </div>
+      <div class="cropper_list">
+        <el-radio-group v-model="imageType">
+          <el-radio :label="1">全屏拉伸</el-radio>
+          <el-radio :label="2">等比缩放自适应</el-radio>
+          <el-radio :label="3">等比缩放显示全图</el-radio>
+        </el-radio-group>
+      </div>
+      <div class="cropper_image" v-if="isShowImages">
+        <img :src="url" alt="">
       </div>
       <div class="cropper_content_box" v-else>
         <vue-cropper ref="cropper" class="cropper_img"
@@ -32,8 +26,8 @@
       </div>
       <div class="cropper_content_btn">
         <div>
-          <vh-button size="medium" v-if="isShowImages" round v-preventReClick @click="goCropper">裁剪</vh-button>
-          <vh-button size="medium" round v-preventReClick @click="resetCropper">重新上传</vh-button>
+          <vh-button size="medium" plain round v-preventReClick @click="goCropper">{{isShowImages ? '裁剪' : '取消裁剪'}}</vh-button>
+          <vh-button size="medium" plain round v-preventReClick @click="resetCropper">重新上传</vh-button>
         </div>
         <div>
           <vh-button  size="medium" type="primary" round v-preventReClick @click="cropperSure">确定</vh-button>
@@ -73,7 +67,11 @@ export default {
       this.dialogVisible = true;
     },
     goCropper() {
-      this.isShowImages = false;
+      this.isShowImages = !this.isShowImages;
+      if (this.isShowImages) {
+        this.$refs.cropper.destroy();
+      }
+
     },
     cropperSure() {
       this.cropperData = this.$refs.cropper.getData()
@@ -93,34 +91,25 @@ export default {
 <style lang="less" scoped>
   .cropper_content{
     width: 100%;
-    &_image{
-      .cropper_list{
-        margin-bottom: 16px;
-      }
-      .cropper_img{
+    .cropper_list{
+      padding-bottom: 10px;
+    }
+    .cropper_image{
+      width: 100%;
+      height: 234px;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.45);
+      img{
         width: 100%;
-        height: 234px;
+        height: 100%;
         border-radius: 4px;
-        img{
-          width: 100%;
-          height: 100%;
-          border-radius: 4px;
-          &.is-fill{
-            object-fit: fill;
-          }
-          &.is-cover{
-            object-fit: cover;
-          }
-          &.is-scale{
-            object-fit: scale-down;
-          }
-        }
+        object-fit: scale-down;
       }
     }
     &_box{
       width: 416px;
       height: 234px;
-      background: #222;
+      background: rgba(0, 0, 0, 0.45);
       overflow: hidden;
       display: flex;
       justify-content: center;
