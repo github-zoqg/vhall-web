@@ -1,5 +1,5 @@
 const path = require('path')
-const vueURL = process.env.NODE_ENV === 'production' ? '//s1.e.vhall.com/common-static/middle/vue/2.6.11/vue.runtime.esm.js' : '//t-alistatic01.e.vhall.com/common-static/middle/vue/2.6.11/vue.js'
+const vueURL = process.env.NODE_ENV === 'production' ? '//s1.e.vhall.com/common-static/middle/vue/2.6.11/vue.min.js' : '//t-alistatic01.e.vhall.com/common-static/middle/vue/2.6.11/vue.js'
 
 let cdn = {
   js: [
