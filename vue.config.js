@@ -11,14 +11,11 @@ let cdn = {
     '//cnstatic01.e.vhall.com/vhall-new-saas/static/polyfill.js?v=202',
     '//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.6.js',
     // '//cnstatic01.e.vhall.com/3rdlibs/common-libs/vue/VhallLibs.js',
-    // '//cnstatic01.e.vhall.com/3rdlibs/common-libs/ui-frame/element-UI.js',
     '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.4-beta.1/questionnaire_service.js',
-    vueURL, // 必须在elementUI 之前
-    // '//s1.e.vhall.com/common-static/middle/element-ui/lib/2.16.2/index.js', // ElementUi
-    '//t-alistatic01.e.vhall.com/common-static/middle/element-ui/lib/2.15.6/index.js',
     '//s1.e.vhall.com/common-static/middle/vue-i18n/8.26.7/vue-i18n.min.js', // VueI18n
     '//s1.e.vhall.com/common-static/middle/vue-router/3.5.3/dist/vue-router.min.js', // VueRouter
-    '//s2.e.vhall.com/common-static/middle/dayjs/1.10.8/dayjs.min.js' // dayjs
+    '//s2.e.vhall.com/common-static/middle/dayjs/1.10.8/dayjs.min.js', // dayjs
+    vueURL // 必须在elementUI 之前
   ],
 }
 

@@ -24,7 +24,7 @@ Vue.use(vuescroll, {
 
 import { sessionOrLocal} from './utils/utils';
 // element-ui 样式重置
-// import ELEMENT from 'element-ui';
+import ELEMENT from 'element-ui';
 import '@/common/css/theme/index.css';
 import '@/components/Icon/index';
 // 七巧板组件库，直播间内使用
@@ -59,7 +59,7 @@ if(process.env.VUE_APP_NODE_ENV == 'production') {
   })
 }
 
-// Vue.use(ELEMENT);
+Vue.use(ELEMENT);
 import './utils/message';
 // Vue.use(vhallSaas, {
 //   config: {
