@@ -18,7 +18,8 @@ let cdn = {
     vueURL, // 必须在elementUI 之前
     '//s1.e.vhall.com/common-static/middle/element-ui/lib/2.15.6/index.js', //elementUI
     '//s1.e.vhall.com/common-static/middle/lodash/4.17.21/lodash.min.js', // lodash
-    '//s1.e.vhall.com/common-static/middle/moment/2.29.1/dist/moment.min.js' // lodash
+    '//s1.e.vhall.com/common-static/middle/moment/2.29.1/dist/moment.min.js', // lodash
+    '//s1.e.vhall.com/common-static/middle/echarts/4.9.0/echarts.min.js', // echarts
   ],
   css: [
     '//s1.e.vhall.com/common-static/middle/element-ui/lib/2.15.6/theme/index.css', //ElementUi
@@ -89,124 +90,125 @@ module.exports = {
       .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
   },
   configureWebpack: () => {
-    const optimization = {
-      splitChunks: {
-        chunks: "all",
-        cacheGroups: {
-          defaultVendors: {
-            test: /[\/]node_modules[\/]/,
-            priority: -10,
-            // name: "vendors",
-          },
-          // 三方依赖
-          html2canvas: {
-            test: /[\/]html2canvas[\/]/,
-            priority: 10,
-            // name: "html2canvas",
-          },
-          tinymce: {
-            test: /[\/]tinymce[\/]/,
-            priority: 10,
-            // name: "tinymce",
-          },
-          echarts: {
-            test: /[\/]echarts[\/]/,
-            priority: 10,
-            // name: "echarts",
-          },
-          vuescroll: {
-            test: /[\/]vuescroll[\/]/,
-            priority: 10,
-            // name: "vuescroll",
-          },
-          jsencrypt: {
-            test: /[\/]jsencrypt[\/]/,
-            priority: 10,
-            // name: "jsencrypt",
-          },
-          // 页面组件拆分
-          componetEditor: {
-            test: /[\/]componet-editor[\/]/,
-            priority: 20,
-            // name: "live-module-componet-ditor",
-          },
-          customerTabview: {
-            test: /[\/]LiveModule[\/]CustomerTabView[\/]/,
-            priority: 15,
-            // name: "live-module-customer-tabview",
-          },
-          materialSet: {
-            test: /[\/]LiveModule[\/]MaterialSet[\/]/,
-            priority: 15,
-            // name: "live-module-material-set",
-          },
-          playBack: {
-            test: /[\/]LiveModule[\/]PlayBack[\/]/,
-            priority: 15,
-            // name: "live-module-play-back",
-          },
-          brands: {
-            test: /[\/]LiveModule[\/]Brands[\/]/,
-            priority: 15,
-            // name: "live-module-brands",
-          },
-          data: {
-            test: /[\/]LiveModule[\/]Data[\/]/,
-            priority: 15,
-            // name: "live-module-data",
-          },
-          signUp: {
-            test: /[\/]LiveModule[\/]signUp[\/]/,
-            priority: 15,
-            // name: "live-module-sign-up",
-          },
-          liveComponents: {
-            test: /[\/]LiveModule[\/]components[\/]/,
-            priority: 15,
-            // name: "live-components",
-          },
-          livemodule: {
-            test: /[\/]LiveModule[\/]/,
-            priority: 10,
-            // name: "live-module",
-          },
-          layout: {
-            test: /[\/]src[\/]layout[\/]/,
-            priority: 10,
-            // name: "app-layout",
-          },
-          OldHeader: {
-            test: /[\/]src[\/]components[\/]OldHeader[\/]/,
-            priority: 15,
-            // name: "app-components-old-header",
-          },
-          videoTailoring: {
-            test: /[\/]src[\/]components[\/]VideoTailoring[\/]/,
-            priority: 15,
-            // name: "app-components-video-tailoring",
-          },
-          defaultGroup: {
-            test: /[\/]src[\/]components[\/]DefaultGroup[\/]/,
-            priority: 15,
-            // name: "app-components-default-group",
-          },
-          appComponents: {
-            test: /[\/]src[\/]components[\/]/,
-            priority: 10,
-            // name: "app-components",
-          }
-        }
-      }
-    }
+    // const optimization = {
+    //   splitChunks: {
+    //     chunks: "all",
+    //     cacheGroups: {
+    //       defaultVendors: {
+    //         test: /[\/]node_modules[\/]/,
+    //         priority: -10,
+    //         // name: "vendors",
+    //       },
+    //       // 三方依赖
+    //       html2canvas: {
+    //         test: /[\/]html2canvas[\/]/,
+    //         priority: 10,
+    //         // name: "html2canvas",
+    //       },
+    //       tinymce: {
+    //         test: /[\/]tinymce[\/]/,
+    //         priority: 10,
+    //         // name: "tinymce",
+    //       },
+    //       echarts: {
+    //         test: /[\/]echarts[\/]/,
+    //         priority: 10,
+    //         // name: "echarts",
+    //       },
+    //       vuescroll: {
+    //         test: /[\/]vuescroll[\/]/,
+    //         priority: 10,
+    //         // name: "vuescroll",
+    //       },
+    //       jsencrypt: {
+    //         test: /[\/]jsencrypt[\/]/,
+    //         priority: 10,
+    //         // name: "jsencrypt",
+    //       }
+    // 页面组件拆分
+    // componetEditor: {
+    //   test: /[\/]componet-editor[\/]/,
+    //   priority: 20,
+    //   // name: "live-module-componet-ditor",
+    // },
+    // customerTabview: {
+    //   test: /[\/]LiveModule[\/]CustomerTabView[\/]/,
+    //   priority: 15,
+    //   // name: "live-module-customer-tabview",
+    // },
+    // materialSet: {
+    //   test: /[\/]LiveModule[\/]MaterialSet[\/]/,
+    //   priority: 15,
+    //   // name: "live-module-material-set",
+    // },
+    // playBack: {
+    //   test: /[\/]LiveModule[\/]PlayBack[\/]/,
+    //   priority: 15,
+    //   // name: "live-module-play-back",
+    // },
+    // brands: {
+    //   test: /[\/]LiveModule[\/]Brands[\/]/,
+    //   priority: 15,
+    //   // name: "live-module-brands",
+    // },
+    // data: {
+    //   test: /[\/]LiveModule[\/]Data[\/]/,
+    //   priority: 15,
+    //   // name: "live-module-data",
+    // },
+    // signUp: {
+    //   test: /[\/]LiveModule[\/]signUp[\/]/,
+    //   priority: 15,
+    //   // name: "live-module-sign-up",
+    // },
+    // liveComponents: {
+    //   test: /[\/]LiveModule[\/]components[\/]/,
+    //   priority: 15,
+    //   // name: "live-components",
+    // },
+    // livemodule: {
+    //   test: /[\/]LiveModule[\/]/,
+    //   priority: 10,
+    //   // name: "live-module",
+    // },
+    // layout: {
+    //   test: /[\/]src[\/]layout[\/]/,
+    //   priority: 10,
+    //   // name: "app-layout",
+    // },
+    // OldHeader: {
+    //   test: /[\/]src[\/]components[\/]OldHeader[\/]/,
+    //   priority: 15,
+    //   // name: "app-components-old-header",
+    // },
+    // videoTailoring: {
+    //   test: /[\/]src[\/]components[\/]VideoTailoring[\/]/,
+    //   priority: 15,
+    //   // name: "app-components-video-tailoring",
+    // },
+    // defaultGroup: {
+    //   test: /[\/]src[\/]components[\/]DefaultGroup[\/]/,
+    //   priority: 15,
+    //   // name: "app-components-default-group",
+    // },
+    // appComponents: {
+    //   test: /[\/]src[\/]components[\/]/,
+    //   priority: 10,
+    //   // name: "app-components",
+    // }
+    //     }
+    //   }
+    // }
     const externals = {
       vue: 'Vue',
       'vue-router': 'VueRouter',
       'element-ui': 'ELEMENT',
       lodash: '_',
-      VueI18n: 'VueI18n'
+      VueI18n: 'VueI18n',
+      echarts: 'echarts'
     }
     return {
-      optimization,
+      // optimization,
       externals
     }
   },
