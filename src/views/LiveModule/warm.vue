@@ -39,12 +39,12 @@
           <div class="image_cropper">
             <div class="image_cropper_item">
               <span>模糊程度</span>
-              <vh-slider v-model="warmForm.blurryDegree" :max="10" style="width:540px"></vh-slider>
+              <vh-slider v-model="warmForm.blurryDegree" :max="10" :disabled="!warmForm.imageUrl"  style="width:540px"></vh-slider>
               <span>{{warmForm.blurryDegree}}</span>
             </div>
             <div class="image_cropper_item">
               <span>背景亮度</span>
-              <vh-slider v-model="warmForm.lightDegree" :max="20" style="width:540px"></vh-slider>
+              <vh-slider v-model="warmForm.lightDegree" :max="20" :disabled="!warmForm.imageUrl"  style="width:540px"></vh-slider>
               <span>{{ warmForm.lightDegree}}</span>
             </div>
           </div>

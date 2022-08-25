@@ -29,12 +29,12 @@
               <div class="image_cropper">
                 <div class="image_cropper_item">
                   <span>模糊程度</span>
-                  <vh-slider v-model="formWapImage.blurryDegree" :max="10" style="width:260px"></vh-slider>
+                  <vh-slider v-model="formWapImage.blurryDegree" :max="10" :disabled="!form.m_img"  style="width:260px"></vh-slider>
                   <span>{{formWapImage.blurryDegree}}</span>
                 </div>
                 <div class="image_cropper_item">
                   <span>背景亮度</span>
-                  <vh-slider v-model="formWapImage.lightDegree" :max="20" style="width:260px"></vh-slider>
+                  <vh-slider v-model="formWapImage.lightDegree" :max="20" :disabled="!form.m_img"  style="width:260px"></vh-slider>
                   <span>{{ formWapImage.lightDegree}}</span>
                 </div>
               </div>
@@ -56,12 +56,12 @@
               <div class="image_cropper">
                 <div class="image_cropper_item">
                   <span>模糊程度</span>
-                  <vh-slider v-model="formPcImage.blurryDegree" :max="10" style="width:260px"></vh-slider>
+                  <vh-slider v-model="formPcImage.blurryDegree" :max="10" :disabled="!form.img"  style="width:260px"></vh-slider>
                   <span>{{formPcImage.blurryDegree}}</span>
                 </div>
                 <div class="image_cropper_item">
                   <span>背景亮度</span>
-                  <vh-slider v-model="formPcImage.lightDegree" :max="20" style="width:260px"></vh-slider>
+                  <vh-slider v-model="formPcImage.lightDegree" :max="20" :disabled="!form.img"  style="width:260px"></vh-slider>
                   <span>{{ formPcImage.lightDegree}}</span>
                 </div>
               </div>
