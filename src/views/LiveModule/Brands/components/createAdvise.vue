@@ -11,6 +11,7 @@
         <div class="img-box">
            <upload
               class="giftUpload"
+              id="advise_cropper"
               v-model="advertisement.img_url"
               :domain_url="domain_url"
               :saveData="{
@@ -102,12 +103,15 @@
         </div>
       </div>
     </VhallDialog>
+    <!-- 裁剪组件 -->
+    <cropper ref="adviseCropper" @cropComplete="cropComplete" @resetUpload="resetUpload" :ratio="400/225"></cropper>
   </div>
 </template>
 <script>
 import upload from '@/components/Upload/main';
 import Env from "@/api/env";
 import noData from '@/views/PlatformModule/Error/nullPage';
+import cropper from '@/components/Cropper/index'
 export default {
   data() {
     const linkValidate = (rule, value, callback) => {
@@ -181,7 +185,8 @@ export default {
   },
   components: {
     upload,
-    noData
+    noData,
+    cropper
   },
   watch: {
     dialogVisible() {
@@ -317,7 +322,7 @@ export default {
         this.advertisement.webinar_id = this.$route.params.str;
       }
       let params = Object.assign({}, this.advertisement) ;
-      params.img_url = this.$parseURL(params.img_url).path;
+      params.img_url = this.domain_url;
       this.$fetch(url, params).then(res => {
         if (res && res.code === 200) {
           if (this.$route.params.str) {
@@ -471,16 +476,26 @@ export default {
       this.advertisement.img_url = '';
       this.domain_url = '';
     },
+    resetUpload() {
+      let dom = document.querySelector('#advise_cropper .el-upload__input');
+      dom.click();
+    },
+    cropComplete(cropperData, url, mode) {
+      console.log(cropperData, url, '?????')
+      this.domain_url = `${url}?x-oss-process=image/crop,x_${cropperData.x.toFixed()},y_${cropperData.y.toFixed()},w_${cropperData.width.toFixed()},h_${cropperData.height.toFixed()}&mode=${mode}`
+      this.advertisement.img_url = url;
+      // 触发验证
+      this.$refs.advertisementForm.validateField('img_url');
+    },
     uploadAdvSuccess(res, file) {
       console.log(res, file);
       if(res.data) {
-        let domain_url = res.data.domain_url || ''
-        let file_url = res.data.file_url || '';
-        this.advertisement.img_url = file_url;
-        this.domain_url = domain_url;
+        this.$refs.adviseCropper.showModel(res.data.domain_url, 1);
+        // let domain_url = res.data.domain_url || ''
+        // let file_url = res.data.file_url || '';
+        // this.advertisement.img_url = file_url;
+        // this.domain_url = domain_url;
       }
-      // 触发验证
-      this.$refs.advertisementForm.validateField('img_url');
     },
     beforeUploadHnadler(file){
       console.log(file);

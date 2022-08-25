@@ -196,14 +196,18 @@
             <p>支持jpg、gif、png、bmp</p>
           </div>
         </upload>
-      </el-form-item>
-      <el-form-item label="模糊程度">
-        <vh-slider class="form-slider" v-model="formData.blurryDegree" :disabled="!formData.imageUrl" :max="10" style="width:540px"></vh-slider>
-        <span class="vague_num">{{formData.blurryDegree}}</span>
-      </el-form-item>
-      <el-form-item label="背景亮度">
-        <vh-slider class="form-slider" v-model="formData.lightDegree" :disabled="!formData.imageUrl" :max="20" style="width:540px"></vh-slider>
-        <span class="vague_num">{{formData.lightDegree}}</span>
+        <div class="image_cropper">
+          <div class="image_cropper_item">
+            <span>模糊程度</span>
+            <vh-slider v-model="formData.blurryDegree" :max="10" style="width:500px"></vh-slider>
+            <span>{{formData.blurryDegree}}</span>
+          </div>
+          <div class="image_cropper_item">
+            <span>背景亮度</span>
+            <vh-slider v-model="formData.lightDegree" :max="20" style="width:500px"></vh-slider>
+            <span>{{ formData.lightDegree}}</span>
+          </div>
+        </div>
       </el-form-item>
       <el-form-item label="选择视频"  v-if="webinarType=='vod' || webinarType=='time'" required>
         <div class="mediaBox" @mouseenter="showMenu" @mouseleave="hiddenMenu">
@@ -384,7 +388,7 @@
       </div>
     </div>
     <!-- 裁剪图片弹窗 -->
-     <cropper ref="webinarCropper" @cropComplete="cropComplete" @resetUpload="resetUpload" :mode="imageCropMode"></cropper>
+     <cropper ref="webinarCropper" @cropComplete="cropComplete" @resetUpload="resetUpload"></cropper>
     <!-- 活动标签选择弹框 -->
     <VhallDialog title="标签引用" :visible.sync="selectTagDialog" class="zdy-async-dialog selectTagDia" width="480px">
     <div v-if='tagList.length'>
@@ -455,7 +459,7 @@ export default {
   computed: {
     domain_url() {
       if (!this.formData.imageUrl) return '';
-      return `${this.formData.imageUrl}?x-oss-process=image/crop,x_${Number(this.formData.backgroundSize.x).toFixed()},y_${Number(this.formData.backgroundSize.y).toFixed()},w_${Number(this.formData.backgroundSize.width).toFixed()},h_${Number(this.formData.backgroundSize.height).toFixed()}${this.formData.blurryDegree > 0 ? `,/blur,r_10,s_${this.formData.blurryDegree * 2}` : ''},/bright,${(this.formData.lightDegree - 10) * 5}&mode=${this.imageCropMode}`;
+      return `${this.formData.imageUrl}?x-oss-process=image/crop,x_${this.formData.backgroundSize.x.toFixed()},y_${this.formData.backgroundSize.y.toFixed()},w_${this.formData.backgroundSize.width.toFixed()},h_${this.formData.backgroundSize.height.toFixed()}${this.formData.blurryDegree > 0 ? `,/blur,r_10,s_${this.formData.blurryDegree * 2}` : ''},/bright,${(this.formData.lightDegree - 10) * 5}&mode=${this.imageCropMode}`;
     },
     rangHourMins() {
       let sysDate = new Date().getTime();
@@ -1118,21 +1122,7 @@ export default {
         this.speakSwitch = Boolean(res.data.auto_speak);
         // 图片处理
         if (this.liveDetailInfo.img_url) {
-          this.formData.imageUrl = getImageQuery(this.liveDetailInfo.img_url);
-          let obj = parseImgOssQueryString(this.liveDetailInfo.img_url);
-          // 没有参数
-          if (!isEmptyObj(obj)) {
-            const { blur, crop } = obj;
-            this.formData.backgroundSize = {
-              x: crop.x,
-              y: crop.y,
-              width: crop.w,
-              height: crop.h
-            };
-            this.formData.blurryDegree = blur && Number(blur.s);
-            this.formData.lightDegree = obj.bright ? 10 : Number(obj.bright);
-            this.imageCropMode = obj.mode;
-          }
+          this.handlerImageInfo(this.liveDetailInfo.img_url);
         }
         // 当前还有其它语种
         await this.getLanguageList(id)
@@ -1179,6 +1169,24 @@ export default {
       }).finally(()=>{
         this.loading = false;
       });
+    },
+    // 处理图片
+    handlerImageInfo(url) {
+      this.formData.imageUrl = getImageQuery(url);
+      let obj = parseImgOssQueryString(url);
+      // 没有参数
+      if (!isEmptyObj(obj)) {
+        const { blur, crop } = obj;
+        this.formData.backgroundSize = {
+          x: Number(crop.x),
+          y: Number(crop.y),
+          width: Number(crop.w),
+          height: Number(crop.h)
+        };
+        this.formData.blurryDegree = blur && Number(blur.s) || 0;
+        this.formData.lightDegree = obj.bright ? 10 : Number(obj.bright);
+        this.imageCropMode = obj.mode;
+      }
     },
     setQueryLang(text, lang, type) {
       // 当前只有默认语种
@@ -1254,10 +1262,11 @@ export default {
         this.selectDirectorMode = 0
       }
     },
-    cropComplete(cropperData, url) {
+    cropComplete(cropperData, url, mode) {
       console.log(cropperData, url, '?????')
       this.formData.backgroundSize = cropperData;
       this.formData.imageUrl = url;
+      this.imageCropMode = mode;
     },
     resetUpload() {
       let dom = document.querySelector('#webinar_cropper .el-upload__input');
@@ -1267,7 +1276,7 @@ export default {
       console.log(res, file);
       // 文件上传成功，保存信息
       if(res.data) {
-        this.$refs.webinarCropper.showModel(res.data.domain_url);
+        this.$refs.webinarCropper.showModel(res.data.domain_url, this.imageCropMode);
         // let domain_url = res.data.domain_url || ''
         // let file_url = res.data.file_url || '';
         // this.formData.imageUrl = file_url;
@@ -1904,10 +1913,17 @@ export default {
   .form-slider{
     position: relative;
   }
-  .vague_num{
-    position: absolute;
-    top: -3px;
-    right: 24px;
+  .image_cropper{
+    width: 100%;
+    margin-top: 16px;
+    &_item{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      span{
+        color: #595959;
+      }
+    }
   }
   .item-time {
     p{

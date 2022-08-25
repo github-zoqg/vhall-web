@@ -8,8 +8,9 @@
       <el-form-item label="专题封面">
         <upload
           class="upload__avatar"
+          id="subject_cropper"
           v-model="formData.imageUrl"
-          :domain_url="formData.domain_url"
+          :domain_url="domain_url"
           :saveData="{
              path: 'webinars/subject-imgs',
              type: 'image',
@@ -25,6 +26,18 @@
             <p>支持jpg、gif、png、bmp</p>
           </div>
         </upload>
+        <div class="image_cropper">
+          <div class="image_cropper_item">
+            <span>模糊程度</span>
+            <vh-slider v-model="cropperImage.blurryDegree" :max="10" style="width:480px"></vh-slider>
+            <span>{{cropperImage.blurryDegree}}</span>
+          </div>
+          <div class="image_cropper_item">
+            <span>背景亮度</span>
+            <vh-slider v-model="cropperImage.lightDegree" :max="20" style="width:480px"></vh-slider>
+            <span>{{ cropperImage.lightDegree}}</span>
+          </div>
+        </div>
       </el-form-item>
       <el-form-item label="专题简介" required>
         <v-editor save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
@@ -158,6 +171,8 @@
       @cacelSelect="showActiveSelect = false"
       @selectedEvent="doSelectedActives"
     ></chose-actives>
+    <!-- 裁剪组件 -->
+    <cropper ref="subjectCropper" @cropComplete="cropComplete" @resetUpload="resetUpload"></cropper>
   </div>
 </template>
 
@@ -166,9 +181,9 @@ import draggable from "vuedraggable";
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import VEditor from '@/components/Tinymce';
-import Env from "@/api/env";
 import ChoseActives from './components/choseLiveList'
-import { sessionOrLocal } from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, isEmptyObj, getImageQuery} from "@/utils/utils";
+import cropper from '@/components/Cropper/index';
 
 export default {
   components: {
@@ -176,9 +191,14 @@ export default {
     VEditor,
     upload,
     ChoseActives,
-    draggable
+    draggable,
+    cropper
   },
   computed: {
+    domain_url() {
+      if (!this.formData.imageUrl) return '';
+      return `${this.formData.imageUrl}?x-oss-process=image/crop,x_${this.cropperImage.backgroundSize.x.toFixed()},y_${this.cropperImage.backgroundSize.y.toFixed()},w_${this.cropperImage.backgroundSize.width.toFixed()},h_${this.cropperImage.backgroundSize.height.toFixed()}${this.cropperImage.blurryDegree > 0 ? `,/blur,r_10,s_${this.cropperImage.blurryDegree * 2}` : ''},/bright,${(this.cropperImage.lightDegree - 10) * 5}&mode=${this.cropperImage.imageCropMode}`
+    },
     reservationDesc(){
       return this.formData.reservation ?  '已开启，专题页显示预约人数' : '开启后，专题页显示预约人数';
     },
@@ -200,7 +220,6 @@ export default {
         title: '',
         reservation: true,
         imageUrl: '',
-        domain_url:'',
         content: '',
         hot: true,
         home: true,
@@ -215,6 +234,17 @@ export default {
         title: [
           { required: true, message: '请输入专题标题', trigger: 'blur' }
         ],
+      },
+      cropperImage: {
+        imageCropMode: 1,
+        lightDegree: 10,
+        blurryDegree: 0,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
       },
       isChange: false
     };
@@ -241,7 +271,6 @@ export default {
           title: '',
           reservation: true,
           imageUrl: '',
-          domain_url:'',
           content: '',
           hot: true,
           home: true
@@ -277,9 +306,12 @@ export default {
           this.subjectInfo = {...res.data.webinar_subject};
           this.formData.selectedActives = Array.from(res.data.webinar_subject.webinar_list)
           this.subject_id = res.data.webinar_subject.id
-          this.formData.title = res.data.webinar_subject.title
-          res.data.webinar_subject.cover && (this.formData.imageUrl = res.data.webinar_subject.cover)
-          this.formData.domain_url = res.data.webinar_subject.cover;
+          this.formData.title = res.data.webinar_subject.title;
+          if (res.data.webinar_subject.cover) {
+            this.handlerImageInfo(res.data.webinar_subject.cover)
+          }
+          // res.data.webinar_subject.cover && (this.formData.imageUrl = res.data.webinar_subject.cover)
+          // this.formData.domain_url = res.data.webinar_subject.cover;
           this.formData.content = res.data.webinar_subject.intro
 
           // 配置项
@@ -294,18 +326,47 @@ export default {
         }
       })
     },
-
+    handlerImageInfo(url) {
+      this.formData.imageUrl = getImageQuery(url);
+      let obj = parseImgOssQueryString(url);
+      // 没有参数
+      if (!isEmptyObj(obj)) {
+        const { blur, crop } = obj;
+        this.cropperImage = {
+          backgroundSize: {
+            x: Number(crop.x),
+            y: Number(crop.y),
+            width: Number(crop.w),
+            height: Number(crop.h)
+          },
+          blurryDegree: blur && Number(blur.s) || 0,
+          lightDegree: obj.bright ? 10 : Number(obj.bright),
+          imageCropMode: obj.mode
+        }
+      }
+    },
     sendData(content) {
       this.formData.content = content;
       console.log(content, "1111111111111111");
     },
+    cropComplete(cropperData, url, mode) {
+      console.log(cropperData, url, '?????')
+      this.cropperImage.backgroundSize = cropperData;
+      this.cropperImage.imageCropMode = mode;
+      this.formData.imageUrl = url;
+    },
+    resetUpload() {
+      let dom = document.querySelector('#subject_cropper .el-upload__input');
+      dom.click();
+    },
     handleUploadSuccess(res, file){
       console.log(res, file);
       if(res.data) {
-        let domain_url = res.data.domain_url || ''
-        let file_url = res.data.file_url || '';
-        this.formData.imageUrl = file_url;
-        this.formData.domain_url = domain_url;
+        this.$refs.subjectCropper.showModel(res.data.domain_url, this.cropperImage.imageCropMode);
+        // let domain_url = res.data.domain_url || ''
+        // let file_url = res.data.file_url || '';
+        // this.formData.imageUrl = file_url;
+        // this.formData.domain_url = domain_url;
       }
     },
     beforeUploadHnadler(file){
@@ -356,7 +417,7 @@ export default {
     },
 
     submitForm(formName) {
-    window.cd = this.formData
+      window.cd = this.formData
       if (!this.formData.content) {
         this.$message({
           message: `请输入专题简介`,
@@ -385,7 +446,7 @@ export default {
           let data = {
             subject: this.formData.title,
             introduction: this.formData.content,
-            img_url: this.formData.imageUrl,
+            img_url: this.domain_url,
             is_private: this.formData.home ? 0 : 1,
             hide_appointment: Number(this.formData.reservation),
             hide_pv: Number(this.formData.hot),
@@ -506,7 +567,8 @@ export default {
     },
     deleteImg() {
       this.formData.imageUrl = '';
-      this.formData.domain_url = '';
+      this.cropperImage.lightDegree = 10;
+      this.cropperImage.blurryDegree = 0;
     },
     doSelectedActives (selectedActives) {
       selectedActives.map(item => {
@@ -648,6 +710,18 @@ export default {
     }
     /deep/.box > div {
       height: 180px;
+    }
+  }
+  .image_cropper{
+    width: 100%;
+    margin-top: 10px;
+    &_item{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      span{
+        color: #595959;
+      }
     }
   }
  /* .editBox {

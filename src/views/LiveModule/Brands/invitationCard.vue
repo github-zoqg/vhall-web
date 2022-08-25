@@ -51,6 +51,18 @@
               <div class="advor_img"><img :src="img" alt="" /></div>
               <span class="choseImg">选择封面</span>
             </div>
+            <div class="image_cropper" v-if="formInvitation.img_type==0">
+              <div class="image_cropper_item">
+                <span>模糊程度</span>
+                <vh-slider v-model="imageCropper.blurryDegree" :max="10" style="width:220px"></vh-slider>
+                <span>{{ imageCropper.blurryDegree }}</span>
+              </div>
+              <div class="image_cropper_item">
+                <span>背景亮度</span>
+                <vh-slider v-model="imageCropper.lightDegree" :max="20" style="width:220px"></vh-slider>
+                <span>{{ imageCropper.lightDegree }}</span>
+              </div>
+            </div>
           </el-form-item>
           <el-form-item label="展示方式">
             <div class="data-show">
@@ -175,7 +187,7 @@
         <!-- <p>移动端预览</p> -->
         <div
           class="show-img"
-          :style="`backgroundImage: url(${img})`"
+          :style="`backgroundImage: url(${ formInvitation.img_type ? img :domain_url })`"
           v-if="formInvitation.show_type == 1"
           id="shopInvent"
         >
@@ -211,7 +223,7 @@
           class="watch-img"
           v-else-if="formInvitation.show_type === 2"
           id="shopInvent"
-          :style="`backgroundImage: url(${img})`"
+          :style="`backgroundImage: url(${formInvitation.img_type ? img :domain_url})`"
         >
           <div class="watch-container">
             <div class="watch-bg">
@@ -247,7 +259,7 @@
         </div>
         <div
           class="look-img"
-          :style="`backgroundImage: url(${img})`"
+          :style="`backgroundImage: url(${formInvitation.img_type ? img :domain_url})`"
           id="shopInvent"
           v-else
         >
@@ -301,7 +313,8 @@
     <add-background
       ref="background"
       @onChangePic="onSubmitImg"
-      :url="imgUrl"
+      :url="img"
+      :mode="imageCropper.imageCropMode"
       :type="formInvitation.img_type"
     ></add-background>
     <begin-play
@@ -372,12 +385,11 @@ export default {
         img_type: 0,
         is_show_watermark: false,
       },
-      imgUrl: '',
       downloadImg: '',
       formInvitation: {
         show_type: 1,
         img_type: 0,
-        is_show_watermark: false,
+        is_show_watermark: false
       },
       fileList: [
         `${Env.staticImgs.invitation[0]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
@@ -390,6 +402,17 @@ export default {
         `${Env.staticImgs.invitation[7]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
         `${Env.staticImgs.invitation[8]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
       ],
+      imageCropper: {
+        imageCropMode: 1,
+        lightDegree: 10,
+        blurryDegree: 0,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
+      },
       rules: {
         title: [{ required: false, validator: titleValidate, trigger: 'blur' }],
         desciption: [
@@ -426,6 +449,12 @@ export default {
         }
       },
     },
+  },
+  computed: {
+    domain_url() {
+      if (this.formInvitation.img_type) return '';
+      return `${this.img}?x-oss-process=image/crop,x_${this.imageCropper.backgroundSize.x.toFixed()},y_${this.imageCropper.backgroundSize.y.toFixed()},w_${this.imageCropper.backgroundSize.width.toFixed()},h_${this.imageCropper.backgroundSize.height.toFixed()}${this.imageCropper.blurryDegree > 0 ? `,/blur,r_10,s_${this.imageCropper.blurryDegree * 2}` : ''},/bright,${(this.imageCropper.lightDegree - 10) * 5}&mode=${this.imageCropper.imageCropMode}`;
+    }
   },
   async created() {
     this.webinarId = this.$route.params.str
@@ -527,17 +556,41 @@ export default {
           ...res.data.invite_card,
           is_show_watermark: Boolean(res.data.invite_card.is_show_watermark),
         }
-        this.qrcode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}?invite=${res.data.invite}`
-        this.img = this.formInvitation.img || this.fileList[0]
-        if (!this.formInvitation.img_type) {
-          this.img = this.formInvitation.img || this.fileList[0]
-        } else {
+        this.qrcode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}?invite=${res.data.invite}`;
+        // 图片处理
+        if (res.data.invite_card.img_type) {
           this.img = this.fileList[this.formInvitation.img_type - 1]
+        } else {
+          this.formInvitation.img_type = 0;
+          if (this.formInvitation.img) {
+            this.handlerImageInfo(this.formInvitation.img)
+          } else {
+            this.img = this.fileList[0]
+          }
         }
-        this.imgUrl = this.formInvitation.img || ''
         this.invitation = Boolean(res.data.status)
         // this.formInvitation.is_show_watermark = Boolean(this.formInvitation.is_show_watermark);
       })
+    },
+    // 处理图片
+    handlerImageInfo(url) {
+      this.img = getImageQuery(url);
+      let obj = parseImgOssQueryString(url);
+      // 没有参数
+      if (!isEmptyObj(obj)) {
+        const { blur, crop } = obj;
+        this.imageCropper = {
+          backgroundSize: {
+            x: Number(crop.x),
+            y: Number(crop.y),
+            width: Number(crop.w),
+            height: Number(crop.h)
+          },
+          blurryDegree: blur && Number(blur.s) || 0,
+          lightDegree: obj.bright ? 10 : Number(obj.bright),
+          imageCropMode: obj.mode
+        }
+      }
     },
     changeImg() {
       this.$refs.background.dialogVisible = true
@@ -545,10 +598,16 @@ export default {
     code() {
       this.$router.push({ path: '/code' })
     },
-    onSubmitImg(type, url, trueImg) {
+    onSubmitImg(type, url, imageObj) {
       if (!type) {
-        this.formInvitation.img = url
-        this.img = trueImg
+        this.img = url;
+        this.imageCropper = {
+          backgroundSize: imageObj.backgroundSize,
+          imageCropMode: imageObj.mode,
+          blurryDegree: 0,
+          lightDegree: 10
+        };
+        this.formInvitation.img_type = 0;
       } else {
         this.img = this.fileList[type - 1]
       }
@@ -563,7 +622,7 @@ export default {
       this.formInvitation.is_show_watermark = Number(
         this.formInvitation.is_show_watermark
       )
-      this.formInvitation.img = this.formInvitation.img_type ? '' : this.img
+      this.formInvitation.img = this.formInvitation.img_type ? '' : this.domain_url
       let arrShowType = [100276, 100277, 100278]
       let obj = Object.assign({}, ids, this.formInvitation)
       // 字段里面若对象值为空，也要传递。
@@ -775,6 +834,18 @@ export default {
       bottom: 0;
       left: 0;
       cursor: pointer;
+    }
+  }
+  .image_cropper{
+    width: 320px;
+    margin-top: 12px;
+    &_item{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      span{
+        color: #595959;
+      }
     }
   }
   .data-show {

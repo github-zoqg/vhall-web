@@ -45,11 +45,6 @@ export default {
     ratio: {
       type: Number,
       default: 16/9
-    },
-    // 模式
-    mode: {
-      type: Number || String,
-      default: 1
     }
   },
   data() {
@@ -72,25 +67,33 @@ export default {
     vueCropper
   },
   methods: {
-    showModel(url, index) {
+    showModel(url, imageType, index) {
       this.url = url;
       this.index = index || 0;
-      this.imageType = Number(this.mode);
+      this.imageType = Number(imageType);
       this.dialogVisible = true;
+      console.log(url, '???!2324')
     },
     goCropper() {
       this.isShowImages = !this.isShowImages;
       if (this.isShowImages) {
         this.$refs.cropper.destroy();
       }
-
     },
     cropperSure() {
       if (!this.isShowImages) {
         this.cropperData = this.$refs.cropper.getData()
       }
-      // const fileObj = this.dataURLtoFile(this.cropperImgUrl)
-      this.$emit('cropComplete', this.cropperData, this.url, this.index)
+      /**
+       * cropperData:裁剪数据
+       * url: 图片地址
+       * imageType: 选择的图片方式
+       * index: 一个页面可能用到多次裁剪组件，用来区分
+       */
+      this.$emit('cropComplete', this.cropperData, this.url, this.imageType, this.index)
+      if (!this.isShowImages) {
+        this.$refs.cropper.destroy();
+      }
       this.url = '';
       this.dialogVisible = false;
     },

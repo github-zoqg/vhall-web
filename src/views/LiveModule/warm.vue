@@ -36,14 +36,18 @@
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
-        </el-form-item>
-        <el-form-item label="模糊程度" class="degree_content">
-          <vh-slider v-model="warmForm.blurryDegree" :disabled="!warmForm.imageUrl" :max="10"></vh-slider>
-          <span class="vague_num">{{warmForm.blurryDegree}}</span>
-        </el-form-item>
-         <el-form-item label="背景亮度" class="degree_content">
-          <vh-slider v-model="warmForm.lightDegree" :disabled="!warmForm.imageUrl" :max="20"></vh-slider>
-          <span class="vague_num">{{warmForm.lightDegree}}</span>
+          <div class="image_cropper">
+            <div class="image_cropper_item">
+              <span>模糊程度</span>
+              <vh-slider v-model="warmForm.blurryDegree" :max="10" style="width:540px"></vh-slider>
+              <span>{{warmForm.blurryDegree}}</span>
+            </div>
+            <div class="image_cropper_item">
+              <span>背景亮度</span>
+              <vh-slider v-model="warmForm.lightDegree" :max="20" style="width:540px"></vh-slider>
+              <span>{{ warmForm.lightDegree}}</span>
+            </div>
+          </div>
         </el-form-item>
         <el-form-item label="播放模式" required  prop="playType">
            <el-radio-group v-model="warmForm.playType">
@@ -140,7 +144,7 @@
       </div>
     </div>
     <selectMedias ref="selecteMedia" :isWarmVideo="true" @selected='mediaSelected' :selectedList="warmVideoList" :videoSize="videoSize" :videoType="videoType" @closeWarm="closeWarm"></selectMedias>
-    <cropper ref="warmCropper" @cropComplete="cropComplete" @resetUpload="resetUpload" :mode="imageCropMode"></cropper>
+    <cropper ref="warmCropper" @cropComplete="cropComplete" @resetUpload="resetUpload"></cropper>
     <!-- 预览 -->
     <template v-if="showDialog">
       <div class="preview-wrap">
@@ -217,7 +221,7 @@ export default {
     },
     domainUrl() {
       if (!this.warmForm.imageUrl) return '';
-      return `${this.warmForm.imageUrl}?x-oss-process=image/crop,x_${Number(this.warmForm.backgroundSize.x).toFixed()},y_${Number(this.warmForm.backgroundSize.y).toFixed()},w_${Number(this.warmForm.backgroundSize.width).toFixed()},h_${Number(this.warmForm.backgroundSize.height).toFixed()}${this.warmForm.blurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.warmForm.blurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.warmForm.lightDegree - 10) * 5}&mode=${this.imageCropMode}`;
+      return `${this.warmForm.imageUrl}?x-oss-process=image/crop,x_${this.warmForm.backgroundSize.x.toFixed()},y_${this.warmForm.backgroundSize.y.toFixed()},w_${this.warmForm.backgroundSize.width.toFixed()},h_${this.warmForm.backgroundSize.height.toFixed()}${this.warmForm.blurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.warmForm.blurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.warmForm.lightDegree - 10) * 5}&mode=${this.imageCropMode}`;
     }
   },
   created() {
@@ -300,21 +304,7 @@ export default {
           this.warmForm.playType = res.data.player_type || 1;
           this.warmForm.selectedList = res.data.record_list || [];
           if (res.data.img_url) {
-            this.warmForm.imageUrl = getImageQuery(res.data.img_url);
-            let obj = parseImgOssQueryString(res.data.img_url);
-            // 没有参数
-            if (!isEmptyObj(obj)) {
-              const { blur, crop } = obj;
-              this.warmForm.backgroundSize = {
-                x: crop.x,
-                y: crop.y,
-                width: crop.w,
-                height: crop.h
-              };
-              this.warmForm.blurryDegree = blur && Number(blur.s);
-              this.warmForm.lightDegree = obj.bright ? 10 : Number(obj.bright);
-              this.imageCropMode = obj.mode;
-            }
+            this.handlerImageInfo(res.data.img_url)
           }
           // 重置修改状态
           setTimeout(() => {
@@ -322,6 +312,24 @@ export default {
           }, 300)
         }
       })
+    },
+    // 处理图片
+    handlerImageInfo(url) {
+      this.warmForm.imageUrl = getImageQuery(url);
+      let obj = parseImgOssQueryString(url);
+      // 没有参数
+      if (!isEmptyObj(obj)) {
+        const { blur, crop } = obj;
+        this.warmForm.backgroundSize = {
+          x: Number(crop.x),
+          y: Number(crop.y),
+          width: Number(crop.w),
+          height: Number(crop.h)
+        };
+        this.warmForm.blurryDegree = blur && Number(blur.s) || 0;
+        this.warmForm.lightDegree = obj.bright ? 10 : Number(obj.bright);
+        this.imageCropMode = obj.mode;
+      }
     },
     changeVideo() {
       this.$refs.selecteMedia.dialogVisible = true;
@@ -367,10 +375,11 @@ export default {
       this.selectMedia = {};
       this.warmForm.record_id = '';
     },
-    cropComplete(cropperData, url) {
+    cropComplete(cropperData, url, mode) {
       console.log(cropperData, url, '?????')
       this.warmForm.backgroundSize = cropperData;
       this.warmForm.imageUrl = url;
+      this.imageCropMode = mode;
     },
     resetUpload() {
       let dom = document.querySelector('#warm_pc_cropper .el-upload__input');
@@ -378,7 +387,7 @@ export default {
     },
     handleUploadSuccess(res, file) {
       if(res.data) {
-        this.$refs.warmCropper.showModel(res.data.domain_url);
+        this.$refs.warmCropper.showModel(res.data.domain_url, this.imageCropMode);
         // let domain_url = res.data.domain_url || ''
         // let file_url = res.data.file_url || '';
         // this.warmForm.imageUrl = file_url;
@@ -534,7 +543,7 @@ export default {
   }
 }
 .demo-ruleForm {
-  width: 600px;
+  width: 740px;
 }
 .switch__box {
   display: inline-block;
@@ -679,16 +688,17 @@ export default {
     }
    }
 }
-.degree_content{
-  position: relative;
-}
-.vague_num{
-  position: absolute;
-  top: -2px;
-  right: -35px;
-  padding-left: 10px;
-  font-size: 14px;
-  color: #595959;
+.image_cropper{
+  width: 100%;
+  margin-top: 16px;
+  &_item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    span{
+      color: #595959;
+    }
+  }
 }
 .vh-dialog{
     /deep/ .el-dialog {

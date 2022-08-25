@@ -321,7 +321,7 @@
       <el-button :disabled="!signUpSwtich" round type="primary" @click="sureQuestionnaire">保存</el-button>
     </section>
     <!-- 裁剪图片弹窗 -->
-    <cropper ref="formCropper" @cropComplete="cropComplete" @resetUpload="resetUpload" :mode="imageCropMode"></cropper>
+    <cropper ref="formCropper" @cropComplete="cropComplete" @resetUpload="resetUpload" :ratio="750/125"></cropper>
   </div>
 </template>
 
@@ -414,7 +414,7 @@ export default {
     },
     domain_url() {
       if (!this.imageUrl) return '';
-      return `${this.imageUrl}?x-oss-process=image/crop,x_${Number(this.backgroundSize.x).toFixed()},y_${Number(this.backgroundSize.y).toFixed()},w_${Number(this.backgroundSize.width).toFixed()},h_${Number(this.backgroundSize.height).toFixed()}${this.blurryDegree > 0 ? `,/blur,r_10,s_${this.blurryDegree * 2}` : ''},/bright,${(this.lightDegree - 10) * 5}&mode=${this.imageCropMode}`;
+      return `${this.imageUrl}?x-oss-process=image/crop,x_${this.backgroundSize.x.toFixed()},y_${this.backgroundSize.y.toFixed()},w_${this.backgroundSize.width.toFixed()},h_${this.backgroundSize.height.toFixed()}${this.blurryDegree > 0 ? `,/blur,r_10,s_${this.blurryDegree * 2}` : ''},/bright,${(this.lightDegree - 10) * 5}&mode=${this.imageCropMode}`;
     }
   },
   filters: {
@@ -457,12 +457,12 @@ export default {
       if (!isEmptyObj(obj)) {
         const { blur, crop } = obj;
         this.backgroundSize = {
-          x: crop.x,
-          y: crop.y,
-          width: crop.w,
-          height: crop.h
+          x: Number(crop.x),
+          y: Number(crop.y),
+          width: Number(crop.w),
+          height: Number(crop.h)
         };
-        this.blurryDegree = blur && Number(blur.s);
+        this.blurryDegree = blur && Number(blur.s) || 0;
         this.lightDegree = obj.bright ? 10 : Number(obj.bright);
         this.imageCropMode = obj.mode;
       }
@@ -840,7 +840,7 @@ export default {
     productLoadSuccess(res, file) {
       if (res.data.file_url) {
         // 文件上传成功，保存信息
-         this.$refs.formCropper.showModel(res.data.domain_url);
+         this.$refs.formCropper.showModel(res.data.domain_url, this.imageCropMode);
         // this.imageUrl = res.data.file_url;
         // this.$emit('setBaseInfo', { cover: res.data.file_url });
       }
@@ -850,10 +850,11 @@ export default {
       this.imageUrl = this.defaultHeader;
       this.$emit('setBaseInfo', { cover: '' });
     },
-    cropComplete(cropperData, url) {
+    cropComplete(cropperData, url, mode) {
       console.log(cropperData, url, '?????')
       this.backgroundSize = cropperData;
       this.imageUrl = url;
+      this.imageCropMode = mode;
       this.$emit('setBaseInfo', { cover: this.domain_url });
     },
     resetUpload() {
