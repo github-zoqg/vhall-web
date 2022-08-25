@@ -702,11 +702,16 @@ const apis = {
   // 首页-广告
   getBannerSetInfo: ['/v3/interacts/banner/get-banner', 'GET'],
   // 开播提醒
-  getMsgNotificationInfo: ['', 'GET'], // 获取- 开播提醒-界面设置信息
-  editMsgPhoneValidateStatus: ['', 'POST'], // 修改-是否开启短信手机号验证
-  saveMsgLink: ['', 'POST'], // 保存-开播提醒-短链接
-  saveMsgSign: ['', 'POST'], // 保存-开播提醒-签名
-  saveSendSet: ['', 'POST'], // 保存-开播提醒-发送设置
+  getNoticePageList: ['/v3/interacts/notice/notice-list', 'GET'], // 获取- 开播提醒-界面设置信息
+  noticeConfigEdit: ['/v3/interacts/notice/notice-config-edit', 'POST'], // 保存-开播提醒-[签名/是否开启短信验证]
+  saveSendSet: ['/v3/interacts/notice/notice-template-edit', 'POST'], // 保存-开播提醒-[发送设置/卡片开关]
+  getNoticeDetail: ['/v3/interacts/notice/notice-detail', 'POST'], // 获取-开播提醒-卡片信息
+  getNoticeRecordList: ['/v3/interacts/notice/notice-record', 'GET'], // 获取-发送记录
+  exprotNoticeRecord: ['/v3/interacts/notice/notice-export-record', 'GET'], // 导出-发送记录
+  importNoticeExcel: ['/v3/interacts/notice/notice-import-user','POST'], // 导入发送用户
+  noticeTestSend: ['/v3/interacts/notice/notice-test-send', 'POST'], // 发送测试
+  noticeCheckImport: ['/v3/interacts/notice/notice-check-import', 'POST'], // 导入进度检测
+  downloadNoticeFailFile: ['/v3/interacts/notice/notice-download-fail-file', 'POST'], // 下载无效数据
 };
 
 const getApi = api => {

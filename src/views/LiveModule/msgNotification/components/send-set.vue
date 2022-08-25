@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="dialogVisible"
+  <VhallDialog :visible="dialogVisible"
     append-to-body
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -13,19 +13,19 @@
           <!-- 预约发送：预约/报名用户、白名单用户 -->
           <!-- 开播提醒发送设置：预约/报名用户、导入用户、白名单用户 -->
           <!-- 回放通知发送设置：预约/报名用户、预约/报名中未观看直播用户、导入用户、白名单用户 -->
-          <el-checkbox-group v-model="sender_person" @change="checkSelect">
-            <el-checkbox label="1">预约/报名用户
+          <vh-checkbox-group v-model="sender_person" @change="checkSelect">
+            <vh-checkbox label="1">预约/报名用户
               <el-tooltip v-tooltipMove>
                 <div slot="content">
                   <p>当活动专题下开启统一观看限制时，且已关联的活动下开启了开播提醒，则将分别对预约/报名用户进行消息触达</p>
                 </div>
                 <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
               </el-tooltip>
-            </el-checkbox>
-            <el-checkbox label="2" v-if="cardVo.iconType === 'base_playback'">预约/报名中未观看直播用户</el-checkbox>
-            <el-checkbox label="3">导入用户</el-checkbox>
-            <el-checkbox label="4" v-if="isOpenWhite">白名单用户</el-checkbox>
-          </el-checkbox-group>
+            </vh-checkbox>
+            <vh-checkbox label="2" v-if="cardVo.iconType === 'base_playback'">预约/报名中未观看直播用户</vh-checkbox>
+            <vh-checkbox label="3">导入用户</vh-checkbox>
+            <vh-checkbox label="4" v-if="isOpenWhite">白名单用户</vh-checkbox>
+          </vh-checkbox-group>
         </div>
       </div>
       <!-- 导入用户模板 -->
@@ -52,14 +52,31 @@
       <div class="set-item send_time">
         <label class="set-item__label">发送时间：</label>
         <div class="set-item__content">
-          <el-checkbox-group v-model="send_timer" v-if="cardVo.iconType === 'base_start'">
-            <el-checkbox label="4320">开播前3天</el-checkbox>
-            <el-checkbox label="1440">开播前1天</el-checkbox>
-            <el-checkbox label="120">开播前2小时</el-checkbox>
-            <el-checkbox label="60">开播前1小时</el-checkbox>
-            <el-checkbox label="30">开播前30分钟</el-checkbox>
-            <el-checkbox label="15">开播前15分钟</el-checkbox>
-          </el-checkbox-group>
+          <vh-checkbox-group v-model="send_timer" v-if="cardVo.iconType === 'base_start'">
+            <vh-checkbox v-for="item in [{
+              label: '开播前15分钟',
+              value: 15
+            },{
+              label: '开播前30分钟',
+              value: 30
+            },{
+              label: '开播前1小时',
+              value: 60
+            },{
+              label: '开播前2小时',
+              value: 120
+            },{
+              label: '开播前1天',
+              value: 1440
+            },{
+              label: '开播前3天',
+              value: 4320
+            }]"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+            </vh-checkbox>
+          </vh-checkbox-group>
           <span v-else-if="cardVo.iconType === 'base_subscribe'">预约/报名成功后发送</span>
           <span v-else-if="cardVo.iconType === 'base_playback'">设置默认回放后发送</span>
           <span v-else>——</span>
@@ -86,7 +103,7 @@
           <el-button type="primary"  size="medium" round @click="sendTest">立即发送</el-button>
         </div>
       </el-dialog>
-  </el-dialog>
+  </VhallDialog>
 </template>
 <script>
   import { validPhone } from '@/utils/validate.js'
@@ -220,7 +237,7 @@
     }
   }
   &.send_time {
-    /deep/.el-checkbox {
+    /deep/.vh-checkbox {
       display: block;
       margin-bottom: 8px;
     }
