@@ -1,4 +1,4 @@
-
+import Vue from 'vue'
 Vue.component('remote-script', {
   name: 'importJs',
   render: function (createElement) {
