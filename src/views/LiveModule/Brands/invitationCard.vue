@@ -191,7 +191,7 @@
               <h1>{{ formInvitation.title }}</h1>
               <p>{{ formInvitation.desciption }}</p>
               <div class="show-time">
-                <p>{{ formInvitation.company || '微吼直播' }}</p>
+                <p>{{ formInvitation.company }}</p>
                 <p>{{ formInvitation.webinar_date }}</p>
                 <p>{{ formInvitation.location }}</p>
               </div>
