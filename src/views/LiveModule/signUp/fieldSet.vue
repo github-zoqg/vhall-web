@@ -50,15 +50,15 @@
       </upload>
       <span class="header-img-tip">建议尺寸：750*125 px，小于2MB（支持格式jpg、png、gif、bmp）</span>
       <div class="disable_wrap" v-show="!signUpSwtich"></div>
-      <div class="form_images">
+      <div class="form_images" v-if="imageUrl">
         <div class="form_images_item">
           <span>模糊程度</span>
-          <vh-slider class="form-slider" v-model="blurryDegree" :disabled="!imageUrl" :max="10" style="width:540px"></vh-slider>
+          <vh-slider class="form-slider" v-model="blurryDegree" :max="10" style="width:540px"></vh-slider>
           <span class="vague_num">{{blurryDegree}}</span>
         </div>
         <div class="form_images_item">
           <span>背景亮度</span>
-          <vh-slider class="form-slider" v-model="lightDegree" :disabled="!imageUrl" :max="20" style="width:540px"></vh-slider>
+          <vh-slider class="form-slider" v-model="lightDegree" :max="20" style="width:540px"></vh-slider>
           <span class="vague_num">{{lightDegree}}</span>
         </div>
       </div>
@@ -412,9 +412,15 @@ export default {
         ghostClass: "ghost"
       };
     },
+    imageParamsUrl() {
+      return `${this.imageUrl}?x-oss-process=image/crop,x_${this.backgroundSize.x.toFixed()},y_${this.backgroundSize.y.toFixed()},w_${this.backgroundSize.width.toFixed()},h_${this.backgroundSize.height.toFixed()}${this.blurryDegree > 0 ? `,/blur,r_10,s_${this.blurryDegree * 2}` : ''},/bright,${(this.lightDegree - 10) * 5}&mode=${this.imageCropMode}`
+    },
     domain_url() {
-      if (!this.imageUrl) return '';
-      return `${this.imageUrl}?x-oss-process=image/crop,x_${this.backgroundSize.x.toFixed()},y_${this.backgroundSize.y.toFixed()},w_${this.backgroundSize.width.toFixed()},h_${this.backgroundSize.height.toFixed()}${this.blurryDegree > 0 ? `,/blur,r_10,s_${this.blurryDegree * 2}` : ''},/bright,${(this.lightDegree - 10) * 5}&mode=${this.imageCropMode}`;
+      if (this.imageUrl) {
+        return `${Env.staticLinkVo.uploadBaseUrl}${this.imageParamsUrl}`;
+      } else {
+        return this.defaultHeader;
+      }
     }
   },
   filters: {
@@ -450,9 +456,13 @@ export default {
     },
     // 处理图片
     handlerImage(val) {
-      let imageUrl = val.cover ? `${Env.staticLinkVo.uploadBaseUrl}${ val.cover }` : this.defaultHeader;
-      this.imageUrl = getImageQuery(imageUrl);
-      let obj = parseImgOssQueryString(imageUrl);
+      if (!val.cover) {
+        this.imageUrl = '';
+        return;
+      }
+      // let url = 'sys/img_url/7d/cd/7dcd0f0f363b26ed4fefc0a854b2c15d.jpg?x-oss-process=image/crop,x_220,y_0,w_360,h_60,/bright,0&mode=1';
+      this.imageUrl = getImageQuery(val.cover);
+      let obj = parseImgOssQueryString(val.cover);
       // 没有参数
       if (!isEmptyObj(obj)) {
         const { blur, crop } = obj;
@@ -840,22 +850,21 @@ export default {
     productLoadSuccess(res, file) {
       if (res.data.file_url) {
         // 文件上传成功，保存信息
-         this.$refs.formCropper.showModel(res.data.domain_url, this.imageCropMode);
-        // this.imageUrl = res.data.file_url;
+        this.$refs.formCropper.showModel(res.data.domain_url, this.imageCropMode);
+        this.imageUrl = res.data.file_url;
         // this.$emit('setBaseInfo', { cover: res.data.file_url });
       }
     },
     // 删除头图
     deleteBanner() {
-      this.imageUrl = this.defaultHeader;
+      this.imageUrl = '';
       this.$emit('setBaseInfo', { cover: '' });
     },
     cropComplete(cropperData, url, mode) {
-      console.log(cropperData, url, '?????')
       this.backgroundSize = cropperData;
-      this.imageUrl = url;
+      // this.imageUrl = url;
       this.imageCropMode = mode;
-      this.$emit('setBaseInfo', { cover: this.domain_url });
+      this.$emit('setBaseInfo', { cover: this.imageParamsUrl });
     },
     resetUpload() {
       let dom = document.querySelector('#form_cropper .el-upload__input');

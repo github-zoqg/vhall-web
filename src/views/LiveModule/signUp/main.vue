@@ -349,6 +349,7 @@ export default {
       for(let item in options) {
         opts[keyMap[item]] = options[item]
       }
+      console.log(opts, '???报名表单参数')
       this.$fetch('regFromUpdate', {
         webinar_id: this.webinar_id,
         ...opts
