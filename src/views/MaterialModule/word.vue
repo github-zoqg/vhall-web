@@ -221,7 +221,6 @@ import Env from '@/api/env'
 import { sessionOrLocal } from '@/utils/utils'
 import beginPlay from '@/components/beginBtn'
 import EventBus from '@/utils/Events'
-/* import FileUpload from '@/components/FileUpload/main'; */
 import { v1 as uuidV1 } from 'uuid'
 
 export default {
