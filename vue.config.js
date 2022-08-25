@@ -86,8 +86,8 @@ module.exports = {
       options[0].version = process.VUE_CLI_SERVICE.pkg.version
       return options
     })
-    config.plugin('webpack-bundle-analyzer')
-      .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+    // config.plugin('webpack-bundle-analyzer')
+    //   .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
   },
   configureWebpack: () => {
     // const optimization = {
