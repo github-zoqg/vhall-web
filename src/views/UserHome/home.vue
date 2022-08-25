@@ -13,8 +13,11 @@
          </li>
          <li :class="`layout__center ${!(userHomeVo && Number(userHomeVo.show_share) === 1) ? 'one--btn' : ''}`">
            <h1>{{userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}</h1>
-           <div :class="open_hide ? 'open_hide user__remark' : 'user__remark'">{{userHomeVo.content}}</div>
-           <span v-show="userHomeVo && userHomeVo.content" class="user__show__btn" @click="showBtnChange">{{open_hide ? '展开' : '收起'}}<i :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
+           <div ref="intro" :class="open_hide ? 'open_hide user__remark' : 'user__remark'">{{userHomeVo.content}}</div>
+           <span v-show="showToggle && userHomeVo && userHomeVo.content" class="user__show__btn" @click="showBtnChange">
+             {{open_hide ? '展开' : '收起'}}
+             <i :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i>
+            </span>
          </li>
          <li :class="!(userHomeVo && Number(userHomeVo.show_share) === 1) ? 'one--btn' : ''">
            <el-button size="medium" round v-if="setHomeCheck" @click.prevent.stop="toHomeSetPage">设置</el-button>
@@ -63,7 +66,8 @@ export default {
       follow: 0,
       avatarImgUrl: ``,
       userInfo: null,
-      open_hide: true,
+      open_hide: false,
+      showToggle: false
     };
   },
   computed: {
@@ -100,6 +104,17 @@ export default {
       }
       this.open_hide = !this.open_hide;
     },
+    //计算简介文字是否过长
+    calculateText() {
+      const txtDom = this.$refs.intro;
+      if (!txtDom) return false;
+      const twoHeight = 30;
+      const curHeight = txtDom.offsetHeight;
+      if (curHeight > twoHeight) {
+        this.showToggle = true;
+        this.open_hide = true;
+      }
+    },
     getHomePageInfo() {
       this.$fetch('homeInfoGet', {
         home_user_id: this.$route.meta.type === 'owner' ? sessionOrLocal.get('userId') : this.$route.params.str
@@ -114,6 +129,9 @@ export default {
             homepage_info.img_url = ''
           }
           this.userHomeVo = homepage_info;
+          this.$nextTick(() => {
+            this.calculateText();
+          });
           if(this.$route.meta.type == 'new') {
             document.title = this.userHomeVo.title;
           }
