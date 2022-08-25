@@ -88,7 +88,7 @@ module.exports = {
     config.plugin('webpack-bundle-analyzer')
       .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
   },
-  configureWebpack: (config) => {
+  configureWebpack: () => {
     const optimization = {
       splitChunks: {
         chunks: "all",
@@ -96,104 +96,104 @@ module.exports = {
           defaultVendors: {
             test: /[\/]node_modules[\/]/,
             priority: -10,
-            name: "vendors",
+            // name: "vendors",
           },
           // 三方依赖
           html2canvas: {
             test: /[\/]html2canvas[\/]/,
             priority: 10,
-            name: "html2canvas",
+            // name: "html2canvas",
           },
           tinymce: {
             test: /[\/]tinymce[\/]/,
             priority: 10,
-            name: "tinymce",
+            // name: "tinymce",
           },
           echarts: {
             test: /[\/]echarts[\/]/,
             priority: 10,
-            name: "echarts",
+            // name: "echarts",
           },
           vuescroll: {
             test: /[\/]vuescroll[\/]/,
             priority: 10,
-            name: "vuescroll",
+            // name: "vuescroll",
           },
           jsencrypt: {
             test: /[\/]jsencrypt[\/]/,
             priority: 10,
-            name: "jsencrypt",
+            // name: "jsencrypt",
           },
           // 页面组件拆分
           componetEditor: {
             test: /[\/]componet-editor[\/]/,
             priority: 20,
-            name: "live-module-componet-ditor",
+            // name: "live-module-componet-ditor",
           },
           customerTabview: {
             test: /[\/]LiveModule[\/]CustomerTabView[\/]/,
             priority: 15,
-            name: "live-module-customer-tabview",
+            // name: "live-module-customer-tabview",
           },
           materialSet: {
             test: /[\/]LiveModule[\/]MaterialSet[\/]/,
             priority: 15,
-            name: "live-module-material-set",
+            // name: "live-module-material-set",
           },
           playBack: {
             test: /[\/]LiveModule[\/]PlayBack[\/]/,
             priority: 15,
-            name: "live-module-play-back",
+            // name: "live-module-play-back",
           },
           brands: {
             test: /[\/]LiveModule[\/]Brands[\/]/,
             priority: 15,
-            name: "live-module-brands",
+            // name: "live-module-brands",
           },
           data: {
             test: /[\/]LiveModule[\/]Data[\/]/,
             priority: 15,
-            name: "live-module-data",
+            // name: "live-module-data",
           },
           signUp: {
             test: /[\/]LiveModule[\/]signUp[\/]/,
             priority: 15,
-            name: "live-module-sign-up",
+            // name: "live-module-sign-up",
           },
           liveComponents: {
             test: /[\/]LiveModule[\/]components[\/]/,
             priority: 15,
-            name: "live-components",
+            // name: "live-components",
           },
           livemodule: {
             test: /[\/]LiveModule[\/]/,
             priority: 10,
-            name: "live-module",
+            // name: "live-module",
           },
           layout: {
             test: /[\/]src[\/]layout[\/]/,
             priority: 10,
-            name: "app-layout",
+            // name: "app-layout",
           },
           OldHeader: {
             test: /[\/]src[\/]components[\/]OldHeader[\/]/,
             priority: 15,
-            name: "app-components-old-header",
+            // name: "app-components-old-header",
           },
           videoTailoring: {
             test: /[\/]src[\/]components[\/]VideoTailoring[\/]/,
             priority: 15,
-            name: "app-components-video-tailoring",
+            // name: "app-components-video-tailoring",
           },
           defaultGroup: {
             test: /[\/]src[\/]components[\/]DefaultGroup[\/]/,
             priority: 15,
-            name: "app-components-default-group",
+            // name: "app-components-default-group",
           },
           appComponents: {
             test: /[\/]src[\/]components[\/]/,
             priority: 10,
-            name: "app-components",
+            // name: "app-components",
           }
         }
       }
