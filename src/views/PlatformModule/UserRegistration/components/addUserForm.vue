@@ -140,12 +140,12 @@ export default {
     },
     // 验证手机号
     checkPhone(row, index) {
+      // console.log('当前手机号', row.phone)
       if (!row.phone) {
         row.phone_error = '请输入手机号'
       } else if (!/^[0-9]{1,15}$/.exec(row.phone)){
         row.phone_error = '手机号格式有误'
       } else {
-        row.phone_error = ''
         // 判断当前是否存在重复数据
         this.checkRepeatPhone(row)
       }
@@ -168,6 +168,8 @@ export default {
       this.list.forEach(item => {
         if (countPhones[item.phone] > 1) {
           item.phone_error = '手机号重复'
+        } else if (!item.phone) {
+          row.phone_error = '请输入手机号'
         } else {
           item.phone_error = ''
         }
