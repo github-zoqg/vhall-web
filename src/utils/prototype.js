@@ -3,9 +3,9 @@ import fetchData from '@/api/fetch';
 import EventBus from '@/utils/Events';
 import clipboard from 'clipboard';
 import { copy, dealObjectValue, domainCovert, parseURL, checkUploadType } from '@/utils/utils';
-import moment from 'moment'; // 日期格式化
-import 'moment/locale/zh-cn';
-moment.locale(); // zh-cn
+// import moment from 'moment'; // 日期格式化
+// import 'moment/locale/zh-cn';
+// moment.locale(); // zh-cn
 
 Vue.prototype.$clipboard = clipboard
 Vue.prototype.$fetch = fetchData;

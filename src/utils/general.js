@@ -133,7 +133,7 @@ export function getRangeDays(value) {
     return formateDate(date);
   }
 }
-import moment from 'moment';
+// import moment from 'moment';
 export function difSeconds(start, end) {
   // console.warn(start, end);
   let dif = end ? moment(end).diff(moment(), 'seconds') : moment(start).diff(moment(), 'seconds')

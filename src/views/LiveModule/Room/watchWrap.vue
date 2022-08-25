@@ -600,7 +600,7 @@ import { isIE, clearCookies } from '@/utils/utils'
 import invited from './rankList' // 邀请榜
 import reward from './rankList/reward' // 打赏榜
 import goodsPop from './rankList/goodsPop'
-import moment from 'moment'
+// import moment from 'moment'
 import QRcode from 'qrcode'
 // import customTab from './custom-tab'
 import tip from './tip'
