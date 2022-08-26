@@ -134,6 +134,18 @@ Vue.directive('preventReClick', {    // 限制按钮重复点击
     });
   }
 });
+Vue.directive('preventReOneClick', {    // 限制按钮重复点击
+  inserted: function (el, binding) {
+    el.addEventListener('click', () => {
+      if (!el.disabled) {
+        el.disabled = true;
+        setTimeout(() => {
+          el.disabled = false;
+        }, binding.value || 1000);
+      }
+    });
+  }
+});
 // 国际化
 import VueI18n from 'vue-i18n';
 import Cookies from 'js-cookie'
