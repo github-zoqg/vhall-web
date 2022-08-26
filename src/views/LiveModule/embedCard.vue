@@ -409,6 +409,7 @@ export default {
         })
     },
     requestRoomInfo(id) {
+      // webinar/info调整-直播中不能操作的使用1
       return this.$fetch('getWebinarInfo', {
         webinar_id: id || this.$route.params.str,
       })

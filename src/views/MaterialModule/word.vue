@@ -976,6 +976,7 @@ export default {
       this.getTableWordList()
     },
     getWebinarInfo() {
+      // webinar/info调整-与活动状态无关的调用
       this.$fetch('getWebinarInfo', { webinar_id: this.$route.params.str })
         .then((res) => {
           if (res && res.code === 200) {

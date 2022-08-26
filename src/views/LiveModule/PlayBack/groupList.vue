@@ -50,7 +50,7 @@
               </div>
             </template>
           </el-table-column>
-         
+
           <el-table-column
             label="状态"
             :width="isBidScreen ? '' : 91"
@@ -426,6 +426,7 @@ export default {
     },
     // 获取当前活动基本信息 判断是点播还是直播回放
     getLiveDetail() {
+      // webinar/info调整-与活动状态无关的调用
       this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
         this.liveDetailInfo = res.data;
         console.log('this.liveDetailInfo:',this.liveDetailInfo)

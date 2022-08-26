@@ -535,7 +535,8 @@ export default {
     // 获取基本信息
     getLiveDetail(id) {
       this.loading = true
-      this.$fetch('getWebinarInfo', { webinar_id: id })
+      // webinar/info调整-正常的信息展示使用 0
+      this.$fetch('getWebinarInfo', { webinar_id: id, is_rehearsal: 0})
         .then((res) => {
           this.liveDetailInfo = res.data
           sessionOrLocal.set('webinarState', this.liveDetailInfo.webinar_state)

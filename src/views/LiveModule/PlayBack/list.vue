@@ -64,7 +64,10 @@
                     <p v-else class="statusDesc disabled">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
                   </div>
                   <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
-                  <span v-if="!isDemand || liveDetailInfo.webinar_type == 5" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
+                  <span v-if="!isDemand || liveDetailInfo.webinar_type == 5 || scope.row.is_rehearsal" class="defaultSign" :class="scope.row.is_rehearsal ? 'isRehearsal' : ''">
+                    <i v-show="!scope.row.is_rehearsal" @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>
+                    {{ scope.row.is_rehearsal ? '彩排回放' : '默认回放' }}
+                  </span>
                   <div v-if="scope.row.encrypt_status == 2" class="ps jiami">加密</div>
                   <div class="ps jiami_zhezhao" v-if="scope.row.encrypt_status == 1">
                     <div class="ps jiamizhong">加密中...</div>
@@ -146,9 +149,10 @@
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
               <el-button v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
-              <el-button v-if="WEBINAR_PES['ui.record_chapter']" type="text" @click="toChapter(scope.row)">章节</el-button>
-              <el-button type="text" v-if="$route.meta.name == 'recordplayback' || $route.meta.name == 'publishplayback'" @click="encryption(scope.row)">加密</el-button>
-              <el-dropdown v-if="!isDemand" @command="handleCommand">
+              <el-button v-if="scope.row.is_rehearsal" type="text" @click="deletePlayBack(scope.row.data.id, 2);(scope.row)">删除</el-button>
+              <el-button v-if="WEBINAR_PES['ui.record_chapter'] && !scope.row.is_rehearsal" type="text" @click="toChapter(scope.row)">章节</el-button>
+              <el-button type="text" v-if="($route.meta.name == 'recordplayback' || $route.meta.name == 'publishplayback') && !scope.row.is_rehearsal" @click="encryption(scope.row)">加密</el-button>
+              <el-dropdown v-if="!isDemand && !scope.row.is_rehearsal" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
                   <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
@@ -477,6 +481,7 @@ export default {
     },
     // 获取当前活动基本信息 判断是点播还是直播回放
     getLiveDetail() {
+      // webinar/info调整-与活动状态无关的调用
       this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
         this.liveDetailInfo = res.data;
         if (this.liveDetailInfo.webinar_type == 5 && !this.liveDetailInfo.is_demand) {
@@ -1216,6 +1221,11 @@ export default {
         color: #fff;
         font-size: 12px;
         padding-left: 8px;
+        &.isRehearsal {
+          padding-left: 6px;
+          padding-right: 6px;
+          width: auto;
+        }
         i{
           display: inline-block;
           width: 12px;
