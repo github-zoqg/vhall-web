@@ -460,9 +460,9 @@ export default {
         this.imageUrl = '';
         return;
       }
-      // let url = 'sys/img_url/7d/cd/7dcd0f0f363b26ed4fefc0a854b2c15d.jpg?x-oss-process=image/crop,x_220,y_0,w_360,h_60,/bright,0&mode=1';
+      let url = `https:${Env.staticLinkVo.uploadBaseUrl}${val.cover}`
       this.imageUrl = getImageQuery(val.cover);
-      let obj = parseImgOssQueryString(val.cover);
+      let obj = parseImgOssQueryString(url);
       // 没有参数
       if (!isEmptyObj(obj)) {
         const { blur, crop } = obj;
