@@ -125,6 +125,15 @@ const apis = {
   subjectInfo: ['/v3/webinars/subject/info', 'POST'], // 获取专题详情接口(专题预览)
   subjectDel: ['/v3/webinars/subject/delete', 'POST'], // 专题删除接口 •••
   btachSubject: ['/v3/webinars/subject/get-batch-info', 'POST'],
+
+  // 专题鉴权
+  subjectCheck: ['/v3/webinars/subject/check-edit-subject', 'POST'], //专题修改前请求判断活动是否与其他专题重合
+  createSubjectCode: ['/v3/webinars/subject/post-generate-fcode', 'POST'], //创建f码
+  downloadSubjectCode: ['/v3/webinars/subject/export-fcode', 'POST'], //邀请码下载
+  createSubjectVerify: ['/v3/webinars/subject/save-verify', 'POST'], //专题观看限制保存接口
+  subjectVerifyInfo: ['/v3/webinars/subject/get-verify', 'POST'], //专题观看限制获取接口
+
+
   // 角色邀请
   privilegeInfo:  ['/v3/webinars/privilege/info', 'POST'], // 获取活动角色配置接口  √
   privilegeOpen:  ['/v3/webinars/privilege/open-privilege', 'POST'], // 开启关闭角色开关  √
@@ -698,14 +707,27 @@ const apis = {
   labelEdit: ['/v3/webinars/label/edit', 'POST'],
   labelResetOrder: ['/v3/webinars/label/reset-order', 'POST'],
   labelTop: ['/v3/webinars/label/top', 'POST'],
-
   // 首页-广告
   getBannerSetInfo: ['/v3/interacts/banner/get-banner', 'GET'],
-  // 消息通知
-  getMsgNotificationInfo: ['', 'GET'], // 获取消息通知，各个模块开关情况
-  editMsgPhoneValidateStatus: ['', 'POST'], // 是否开启短信手机号验证
-  saveMsgLink: ['', 'POST'], // 保存消息通知-短链接
-  saveMsgSign: ['', 'POST'], // 保存消息通知-签名
+  // 报名用户
+  userRegistrationList: ['/v3/webinars/registration-form/get-list', 'POST'], // 用户报名-列表
+  userRegistrationAdd: ['/v3/webinars/registration-form/import-one', 'POST'], // 用户报名-快速报名
+  userRegistrationCheckImport: ['/v3/webinars/registration-form/check-import', 'POST'], // 用户报名-检测导入数据
+  userRegistrationImport: ['/v3/webinars/registration-form/import', 'POST'], // 用户报名-导入数据
+  userRegistrationImportProgress: ['/v3/webinars/registration-form/import-progress', 'POST'], // 用户报名-导入数据结果（轮询）
+  userRegistrationExportFail: ['/v3/webinars/registration-form/export-fail', 'POST'], // 用户报名-导出失效数据
+  getSubjectByWebinarId: ['/v3/webinars/subject/get-list-by-webinar-id', 'POST'], // 活动下-报名表单，依据活动ID获取专题内容信息
+  // 开播提醒
+  getNoticePageList: ['/v3/interacts/notice/notice-list', 'GET'], // 获取- 开播提醒-界面设置信息
+  noticeConfigEdit: ['/v3/interacts/notice/notice-config-edit', 'POST'], // 保存-开播提醒-[签名/是否开启短信验证]
+  saveSendSet: ['/v3/interacts/notice/notice-template-edit', 'POST'], // 保存-开播提醒-[发送设置/卡片开关]
+  getNoticeDetail: ['/v3/interacts/notice/notice-detail', 'POST'], // 获取-开播提醒-卡片信息
+  getNoticeRecordList: ['/v3/interacts/notice/notice-record', 'GET'], // 获取-发送记录
+  exprotNoticeRecord: ['/v3/interacts/notice/notice-export-record', 'GET'], // 导出-发送记录
+  importNoticeExcel: ['/v3/interacts/notice/notice-import-user','POST'], // 导入发送用户
+  noticeTestSend: ['/v3/interacts/notice/notice-test-send', 'POST'], // 发送测试
+  noticeCheckImport: ['/v3/interacts/notice/notice-check-import', 'POST'], // 导入进度检测
+  downloadNoticeFailFile: ['/v3/interacts/notice/notice-download-fail-file', 'POST'], // 下载无效数据
 };
 
 const getApi = api => {

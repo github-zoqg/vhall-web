@@ -41,29 +41,16 @@
               <li><i @click="shareWX"></i><p>微信</p></li>
             </ul>
             <div class="inputCode">
-              <el-input  v-model="sinaLink" class="input-with-select" id="linkBox"></el-input>
+              <el-input v-model.trim="sinaLink" class="input-with-select" id="linkBox"></el-input>
               <span @click="copy">复制</span>
             </div>
-            <p class="sub">地址支持增加refer参数</p>
+            <p class="sub">「报名来源」需在地址最后边增加：?refer=值</p>
           </div>
           <div class="code-div">
             <div class="code-img"> <img :src="wxUrls + sinaLink" alt="二维码加载失败"></div>
             <p class="img-code">手机扫码观看</p>
           </div>
         </div>
-        <!-- <p>
-          <span class="content-key">链接地址</span>
-          <el-input readonly placeholder="请输入内容" v-model="sinaLink" class="input-with-select" id="linkBox">
-            <el-button slot="append" @click="copy">复制</el-button>
-          </el-input>
-
-        </p>
-        <p class="sub">地址支持增加refer参数</p>
-        <p class="icons">
-          <i @click="shareQQ"></i>
-          <i @click="shareSina"></i>
-          <i @click="shareWX"></i>
-        </p> -->
       </div>
     </VhallDialog>
     <VhallDialog
@@ -86,6 +73,16 @@ export default {
   props: {
     baseInfo: {
       type: Object,
+    },
+    // 活动ID 或者 专题ID，跟signUpPageType字段组合使用
+    webinarOrSubjectId: {
+      type: [Number, String],
+      default: 0
+    },
+    // 报名表单类型：webinar--活动；subject--专题
+    signUpPageType: {
+      type: [Number, String],
+      default: ''
     }
   },
   data(){
@@ -95,8 +92,8 @@ export default {
       shareSwtich: true,
       wxUrl: '',
       wxUrls: `${Env.staticLinkVo.aliQr}`,
-      link: `${process.env.VUE_APP_WAP_WATCH}/lives/entryform/${this.$route.params.str}`,
-      sinaLink: `${process.env.VUE_APP_WAP_WATCH}/lives/entryform/${this.$route.params.str}`,
+      link: `${process.env.VUE_APP_WAP_WATCH}${this.signUpPageType === 'subject' ? '/special/entryform/' : '/lives/entryform/'}${this.webinarOrSubjectId}`,
+      sinaLink: `${process.env.VUE_APP_WAP_WATCH}${this.signUpPageType === 'subject' ? '/special/entryform/' : '/lives/entryform/'}${this.webinarOrSubjectId}`
     };
   },
   watch:{
@@ -114,10 +111,12 @@ export default {
       input.select();
       document.execCommand('copy');
       let userId = this.$parent.userId
-      this.$vhall_paas_port({
-        k: 100187,
-        data: {business_uid: userId, user_id: '', webinar_id: this.$parent.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
+      if (this.signUpPageType === 'webinar') {
+        this.$vhall_paas_port({
+          k: 100187,
+          data: {business_uid: userId, user_id: '', webinar_id: this.$parent.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.$message({
         message: `复制成功`,
         showClose: true,
@@ -130,10 +129,12 @@ export default {
     switchExtraForm(value) {
       const val = value ? 1 : 0;
       let userId = this.$parent.userId
-      this.$vhall_paas_port({
-        k: value ? 100185 : 100186,
-        data: {business_uid: userId, user_id: '', webinar_id: this.$parent.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
+      if (this.signUpPageType === 'webinar') {
+        this.$vhall_paas_port({
+          k: value ? 100185 : 100186,
+          data: {business_uid: userId, user_id: '', webinar_id: this.$parent.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+      }
       this.$emit('setBaseInfo', { open_link: val } );
     },
     shareQQ() {
@@ -380,13 +381,13 @@ export default {
   // }
   .wximg-box {
     width: 100%;
-    height: 300px;
+    height: 250px;
     display: flex;
     align-items: center;
     justify-content: center;
     img {
-      width: 80%;
-      height: 80%;
+      width: 210px;
+      height: 210px;
     }
   }
   .wximg-intro {

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="dialogVisible"
+  <VhallDialog :visible="dialogVisible"
     append-to-body
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -28,9 +28,9 @@
       <el-button round  size="medium" class="export-data"  @click="exportSendData">导出数据</el-button>
     </div>
     <!-- tab切换层 -->
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane :label="item.label" :name="item.key" v-for="(item, index) in tabList" :key="index"></el-tab-pane>
-    </el-tabs>
+    <vh-tabs v-model="activeName" @tab-click="handleClick">
+      <vh-tab-pane :label="item.label" :name="item.key" v-for="(item, index) in tabList" :key="index"></vh-tab-pane>
+    </vh-tabs>
     <!-- 表格层 -->
     <div class="tab-content">
       <el-table
@@ -68,7 +68,7 @@
       >
       </SPagination>
     </div>
-  </el-dialog>
+  </VhallDialog>
 </template>
 <script>
   export default {

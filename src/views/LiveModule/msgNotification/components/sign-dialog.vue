@@ -1,6 +1,6 @@
 <template>
   <!-- 短链接弹出 -->
-  <el-dialog
+  <VhallDialog
     title="短信签名"
     :visible.sync="dialogVisible"
     :close-on-click-modal=false
@@ -26,7 +26,7 @@
       <el-button type="primary" v-preventReClick @click="confirmSave" round size="medium">确定</el-button>
       <el-button @click="closeDialog" round size="medium">取消</el-button>
     </div>
-  </el-dialog>
+  </VhallDialog>
 </template>
 <script>
 export default {
