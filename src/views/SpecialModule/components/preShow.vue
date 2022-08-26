@@ -78,6 +78,7 @@ import Env from '@/api/env.js';
 // import { sessionOrLocal } from '@/utils/utils';
 
 export default {
+  name: 'specialPreview',
   data() {
     return {
       activeName: 'first',

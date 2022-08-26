@@ -391,7 +391,8 @@
     </el-table>
     <SPagination
       :total="totalNum"
-      v-if="needPagination && totalNum > 10"
+      :page-size="pageInfo.limit"
+      v-if="needPagination && totalNum > pageInfo.limit"
       :currentPage="pageInfo.pageNum"
       @current-change="currentChangeHandler"
       align="center"
@@ -407,8 +408,7 @@ export default {
     return {
       pageInfo: {
         pageNum: 1,
-        pos: 0,
-        limit: 10,
+        pos: 0
       },
       isUpdate: 0,
       oldVal: [],
@@ -451,6 +451,10 @@ export default {
       type: String,
       default: 'normal', // 场景，按场景展示
     },
+    pageLimit: {
+      type: Number,
+      default: 10
+    }
   },
   watch: {
     manageTableData: {
@@ -463,6 +467,7 @@ export default {
     },
   },
   created() {
+    this.pageInfo.limit = this.pageLimit
     // console.log('tabelColumnLabel', this.tabelColumnLabel);
     // console.log('manageTableData', this.manageTableData);
   },
@@ -517,6 +522,7 @@ export default {
     // 页码改变按钮事件
     currentChangeHandler(current) {
       this.pageInfo.pageNum = current
+      this.pageInfo.limit = this.pageLimit || 10
       this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit)
       this.$emit('getTableList', this.pageInfo)
     },
