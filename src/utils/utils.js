@@ -667,3 +667,11 @@ export const parseImgOssQueryString = imgUrl => {
     return currentObj;
   }, result);
 };
+
+export const BgImgsSize = [
+  '100% 100%','cover','contain'
+]
+export const ImgsSize = [
+  'fill','cover','scale-down'
+]
+
