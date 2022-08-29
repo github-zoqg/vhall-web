@@ -10,7 +10,7 @@
       :before-close="cancelSelect"
       custom-class="choose-gift"
     >
-      <div class="subject_tip">若直播活动在其他专题中已经设置统一观看限制，则此列表不再展示该场直播</div>
+      <div class="subject_tip">若直播在其他专题已设置统一观看限制，当前列表不展示该直播。</div>
       <VhallInput style="width: 230px" v-model="keyword" v-clearEmoij placeholder="请输入直播标题或者直播ID" @keyup.enter.native="inputChange"  @clear="inputChange" class="head-btn search resetRightBrn" clearable>
         <i slot="prefix" class="el-icon-search el-input__icon" :class="{'disabled': !keyword}" @click="inputChange(true)"></i>
       </VhallInput>
