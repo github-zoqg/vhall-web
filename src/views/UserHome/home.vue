@@ -15,12 +15,12 @@
       class="v-home-bg"
       v-if="$route.meta.type !== 'owner'"
       :style="{
-        background: `url(${
+        backgroundImage: `url(${
           userHomeVo && userHomeVo.img_url
             ? userHomeVo.img_url || static_img_url
             : static_img_url
-        }) 0px center / 100% no-repeat`,
-        backgroundSize: BgImgsSize[bgMode - 1]
+        })`,
+        backgroundSize: BgImgsSize[bgImgMode - 1]
       }"
     ></div>
     <div
@@ -51,7 +51,8 @@
                     : avatarImgUrl
                 "
                 :style="{
-                  objectFit: ImgsSize[imgMode - 1]
+                  objectFit: ImgsSize[imgMode - 1],
+                  objectPosition: imgMode == 2 ? 'left top' : ''
                 }"
                 alt=""
                 class="user__avatar"
