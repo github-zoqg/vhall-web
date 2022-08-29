@@ -99,9 +99,10 @@
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
               <el-button v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
-              <el-button v-if="WEBINAR_PES['ui.record_chapter']" type="text" @click="toChapter(scope.row)">章节</el-button>
-              <el-button type="text" v-if="$route.meta.name == 'recordplayback' || $route.meta.name == 'publishplayback'" @click="encryption(scope.row)">加密</el-button>
-              <el-dropdown v-if="!isDemand" @command="handleCommand">
+              <el-button v-if="is_rehearsal" type="text" @click="deletePlayBack(scope.row.id, 2)">删除</el-button>
+              <el-button v-if="WEBINAR_PES['ui.record_chapter'] && !is_rehearsal" type="text" @click="toChapter(scope.row)">章节</el-button>
+              <el-button type="text" v-if="($route.meta.name == 'recordplayback' || $route.meta.name == 'publishplayback')  && !is_rehearsal" @click="encryption(scope.row)">加密</el-button>
+              <el-dropdown v-if="!isDemand && !is_rehearsal" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
                   <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
@@ -272,6 +273,7 @@ export default {
     EventBus.$on('encrypt_complete', this.handleEncryptCallback)
     this.getPermission(this.$route.params.str)
     this.getVersion()
+    this.is_rehearsal = this.$route.query.is_rehearsal
   },
   mounted(){
     window.addEventListener('resize', this.calcScreenWidth)

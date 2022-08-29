@@ -116,7 +116,12 @@
             show-overflow-tooltip>
             <template slot-scope="scope">
               <router-link v-if="scope.row.group_record_num>0"
-               :to="`/live/playback/${webinar_id}/group/${scope.row.switch_id}`" style="color:blue;">
+               :to="{
+                path: `/live/playback/${webinar_id}/group/${scope.row.switch_id}`,
+                query: {
+                  is_rehearsal: scope.row.is_rehearsal
+                }
+               }" style="color:blue;">
               {{scope.row.group_record_num}}</router-link>
               <span v-else>-</span>
             </template>
@@ -149,7 +154,7 @@
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
               <el-button v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
-              <el-button v-if="scope.row.is_rehearsal" type="text" @click="deletePlayBack(scope.row.data.id, 2);(scope.row)">删除</el-button>
+              <el-button v-if="scope.row.is_rehearsal" type="text" @click="deletePlayBack(scope.row.id, 2)">删除</el-button>
               <el-button v-if="WEBINAR_PES['ui.record_chapter'] && !scope.row.is_rehearsal" type="text" @click="toChapter(scope.row)">章节</el-button>
               <el-button type="text" v-if="($route.meta.name == 'recordplayback' || $route.meta.name == 'publishplayback') && !scope.row.is_rehearsal" @click="encryption(scope.row)">加密</el-button>
               <el-dropdown v-if="!isDemand && !scope.row.is_rehearsal" @command="handleCommand">
