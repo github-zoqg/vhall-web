@@ -33,7 +33,7 @@
             }]">
               <VhallInput v-model.trim="scope.row.phone" @input="handleInput(scope.row)" autocomplete="off" placeholder="请输入手机号" :maxlength="15" show-word-limit></VhallInput>
             </div>
-            {{scope.row.phone_error}}
+            <!-- {{scope.row.phone_error}} -->
           </template>
         </el-table-column>
         <el-table-column
