@@ -188,6 +188,7 @@
         <div
           class="show-img"
           :style="`backgroundImage: url(${ formInvitation.img_type ? img :domain_url })`"
+          :class="`show-img__${coverImageMode}`"
           v-if="formInvitation.show_type == 1"
           id="shopInvent"
         >
@@ -225,6 +226,7 @@
           v-else-if="formInvitation.show_type === 2"
           id="shopInvent"
           :style="`backgroundImage: url(${formInvitation.img_type ? img :domain_url})`"
+          :class="`watch-img__${coverImageMode}`"
         >
           <div class="watch-container">
             <div class="watch-bg">
@@ -264,6 +266,7 @@
         <div
           class="look-img"
           :style="`backgroundImage: url(${formInvitation.img_type ? img :domain_url})`"
+          :class="`look-img__${coverImageMode}`"
           id="shopInvent"
           v-else
         >
@@ -332,7 +335,7 @@
 </template>
 <script>
 import addBackground from './components/imgBackground'
-import { sessionOrLocal } from '@/utils/utils'
+import { sessionOrLocal, parseImgOssQueryString } from '@/utils/utils'
 import { isBrower } from '@/utils/getBrowserType'
 import Env from '@/api/env'
 import html2canvas from 'html2canvas'
@@ -436,10 +439,19 @@ export default {
           { required: false, validator: companyValidate, trigger: 'blur' },
         ],
       },
-      liveDetail: null
+      liveDetail: null,
+      coverImageMode: 1
     }
   },
   watch: {
+    domain_url(newVal) {
+      if (newVal.indexOf('?x-oss-process') > -1) {
+        let obj = parseImgOssQueryString(this.coverImgUrl);
+        this.coverImageMode = Number(obj.mode) || 3;
+      } else {
+        this.coverImageMode = 1;
+      }
+    },
     formInvitation: {
       deep: true,
       immediate: true,
@@ -930,8 +942,21 @@ export default {
       border-radius: 4px;
       border: 1px solid #e6e6e6;
       background-image: url('../../../common/images/v35-webinar.png');
+      background-repeat: no-repeat;
       background-size: 100% 100%;
       height: 622px;
+      &__1 {
+        background-size: 100% 100%;
+        background-position: center;
+      }
+      &__2 {
+        background-size: cover;
+        background-position: left top;
+      }
+      &__3 {
+        background-size: contain;
+        background-position: center;
+      }
       .show-container {
         margin: 50px 24px;
         width: 282px;
@@ -1052,6 +1077,18 @@ export default {
       background-repeat: no-repeat;
       border-radius: 4px;
       z-index: 0;
+      &__1 {
+        background-size: 100% 100%;
+        background-position: center;
+      }
+      &__2 {
+        background-size: cover;
+        background-position: left top;
+      }
+      &__3 {
+        background-size: contain;
+        background-position: center;
+      }
       .watch-container {
         width: 100%;
         height: 100%;
@@ -1180,6 +1217,18 @@ export default {
       background-size: 100% 100%;
       background-repeat: no-repeat;
       position: relative;
+      &__1 {
+        background-size: 100% 100%;
+        background-position: center;
+      }
+      &__2 {
+        background-size: cover;
+        background-position: left top;
+      }
+      &__3 {
+        background-size: contain;
+        background-position: center;
+      }
       .look-color-shadow {
         width: 100%;
         height: 100%;

@@ -5,7 +5,7 @@
         <div class="entryFormBox">
           <header>
             <img v-if="!baseInfo.cover" src="../images/formHeader.png" alt="">
-            <img v-else :src="`${ Env.staticLinkVo.uploadBaseUrl }${ baseInfo.cover }`" alt="">
+            <img v-else :class="`signWrap__header-${coverImageMode}`" :src="`${ Env.staticLinkVo.uploadBaseUrl }${ baseInfo.cover }`" alt="">
           </header>
           <article>
             <h1 class="pageTitle">{{ baseInfo.title }}</h1>
@@ -256,7 +256,7 @@
 <script>
   import axios from 'axios';
   import Env from "@/api/env";
-  import { validPhone } from '@/utils/validate.js'
+  import { validPhone, parseImgOssQueryString } from '@/utils/validate.js'
   // import DevicePixelRatio from '@/utils/devicePixelRatio'
   export default {
     created() {
@@ -270,6 +270,14 @@
       this.getQuestionList();
     },
     watch: {
+      coverUrl(newVal) {
+        if (newVal.indexOf('?x-oss-process') > -1) {
+          let obj = parseImgOssQueryString(this.coverImgUrl);
+          this.coverImageMode = Number(obj.mode) || 3;
+        } else {
+          this.coverImageMode = 2;
+        }
+      },
       province(newVal, oldVal) {
         if (newVal != oldVal) {
           this.city = ''
@@ -439,6 +447,9 @@
       },
       countyList() {
         return this.counties[this.city]
+      },
+      coverUrl() {
+        return `${ this.Env.staticLinkVo.uploadBaseUrl }${ this.baseInfo.cover }`
       }
     },
     data() {
@@ -522,7 +533,8 @@
           (
             (window.location.href.indexOf('/special/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/special/entryform') != -1)
             ? (this.$route.params.id || this.$route.params.str) : ''
-          )
+          ),
+        coverImageMode: 2
       };
     },
     mounted() {
@@ -1057,9 +1069,23 @@
         align-items: center;
         img{
           width: 100%;
+          height: 100%;
           object-fit: cover;
         }
+        .signWrap__header {
+          &-1 {
+            object-fit: fill;
+          }
+          &-2 {
+            object-fit: cover;
+            object-position: left top;
+          }
+          &-3 {
+            object-fit: scale-down;
+          }
+        }
       }
+
       .pageTitle{
         font-size: 22px;
         color: #1A1A1A;
