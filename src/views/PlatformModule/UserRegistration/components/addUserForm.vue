@@ -33,7 +33,7 @@
             }]">
               <VhallInput v-model.trim="scope.row.phone" @input="handleInput(scope.row)" autocomplete="off" placeholder="请输入手机号" :maxlength="15" show-word-limit></VhallInput>
             </div>
-            <!-- {{scope.row.phone_error}} -->
+            {{scope.row.phone_error}}
           </template>
         </el-table-column>
         <el-table-column
@@ -147,7 +147,7 @@ export default {
         row.phone_error = '手机号格式有误'
       } else {
         // 判断当前是否存在重复数据
-        this.checkRepeatPhone(row)
+        row.phone_error = this.checkRepeatPhone(row)
       }
     },
     // 判断手机号是否重复
@@ -164,16 +164,11 @@ export default {
         return allPhone;
       }, {});
       // console.log('当前是否具备重复数据', countPhones)
-      // 格式化每行效果
-      this.list.forEach(item => {
-        if (countPhones[item.phone] > 1) {
-          item.phone_error = '手机号重复'
-        } else if (!item.phone) {
-          row.phone_error = '请输入手机号'
-        } else {
-          item.phone_error = ''
-        }
-      })
+      if (countPhones[row.phone] > 1) {
+        return '手机号重复'
+      } else {
+        return ''
+      }
     },
     // 验证姓名
     checkName(row, index) {
@@ -207,6 +202,7 @@ export default {
       })
       // 判断数据未填写完成的
       let nullList = this.list.filter(item => item.name && item.phone)
+      // console.log('当前空数组数据', nullList)
       if (nullList && nullList.length != this.list.length) {
         this.messageInfo('请填写后保存')
         return
