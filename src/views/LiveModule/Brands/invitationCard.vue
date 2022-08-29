@@ -624,7 +624,7 @@ export default {
         this.img = url;
         this.imageCropper = {
           backgroundSize: imageObj.backgroundSize,
-          imageCropMode: imageObj.mode,
+          imageCropMode: imageObj.imageCropMode,
           blurryDegree: 0,
           lightDegree: 10
         };
