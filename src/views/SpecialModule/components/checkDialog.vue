@@ -15,7 +15,9 @@
         </div>
         <div class="check_list">
           <div class="check_list_item" v-for="(item, index) in checkList" :key="index">
-           {{ index + 1 }}、<span>《{{ item.webinar_name }}》</span>属于 <span @click="goEditSubject(item.subject_id)" class="color_blue">《{{ item.subject_name }}》</span> 专题
+            {{ index + 1 }}
+            <span>《 {{ item.webinar_name }} 》</span>属于专题
+            <span v-for="(items, indexs) in item.subject_list" :key="indexs" @click="goEditSubject(items.subject_id)" class="color_blue"> 《{{ items.subject_name }}》<b v-if="indexs!=item.subject_list.length - 1">,</b> </span>
           </div>
         </div>
       </div>
@@ -83,6 +85,9 @@ export default {
               color: #3562FA;
               cursor: pointer;
               font-weight: 400;
+              b{
+                font-weight: 400;
+              }
             }
           }
         }

@@ -49,7 +49,7 @@
     <!-- 开播按钮 -->
     <begin-play  :webinarId="webinarOrSubjectId" v-if="$route.query.type != 5 && webinarState!=4 && signUpPageType == 'webinar'"></begin-play>
     <!-- 直播关联专题详情 -->
-    <subject-show-dialog v-if="subjectShowVisible && signUpPageType === 'webinar'" :webinarOrSubjectId="webinarOrSubjectId" :signUpPageType="signUpPageType" :dialogVisible="subjectShowVisible" @close="closeDetailDialog"></subject-show-dialog>
+    <subject-show-dialog v-if="signUpPageType === 'webinar'" :webinarOrSubjectId="webinarOrSubjectId" :signUpPageType="signUpPageType" ref="subjectAuth"></subject-show-dialog>
   </div>
 </template>
 
@@ -84,8 +84,8 @@ export default {
       userId: '',
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")), // 活动状态
       menuBarFixed: '',
-      subjectShowVisible: false,
       vm: null,
+      resultVo: {},
       signUpPageType: (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) ? 'webinar'
         : (window.location.href.indexOf('/special/viewer/') != -1 || window.location.href.indexOf('/special/entryform') != -1) ? 'subject'
         : '',
@@ -110,8 +110,6 @@ export default {
     } else {
       this.tabType = 'form'
     }
-  },
-  beforeDestroy() {
   },
   methods: {
     // 设置接口入参，是活动维度 还是 专题维度
@@ -219,10 +217,7 @@ export default {
     },
     // 打开报名表单详情弹窗说明
     showDetailDialog() {
-      this.subjectShowVisible = true
-    },
-    closeDetailDialog() {
-      this.subjectShowVisible = false
+      this.$refs.subjectAuth.visible = true;
     },
     // 保存
     sureQuestionnaire() {

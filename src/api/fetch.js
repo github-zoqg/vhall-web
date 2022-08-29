@@ -85,8 +85,7 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   }
   // interact_token && (headers['interact-token'] = interact_token)
   if(window.location.hash.indexOf('/live/watch/') !== -1
-     || window.location.pathname.indexOf('/cMiddle/') !== -1
-     || window.location.pathname.indexOf('/special/detail') !== -1) {
+     || window.location.pathname.indexOf('/cMiddle/') !== -1) {
     // pc观看等
     headers.platform = 7;
   }

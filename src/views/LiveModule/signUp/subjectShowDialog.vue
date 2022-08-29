@@ -1,21 +1,28 @@
 <template>
-  <VhallDialog :visible='visible' title="提示" width='400px' @close="closeDialog" class="subject-show-dialog">
-    <!--
-      // 直播没有绑定任何专题： 本直播不属于任何专题，本次设置的报名表单生效，观看直播需要填写此报名表单。
-      // 绑定专题但没有设置观看限制： 本直播属于专题《客户的力量》，该专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。
-      // 被XXX专题绑定，本次观看限制失效： 本直播属于专题《客户的力量》，该专题提供统一的观看限制-白名单，本直播报名表单失效。
-      // 被XXX专题绑定，被设置统一报名表单，本次失效： 本直播属于专题《客户的力量》，该专题提供统一的报名表单，本直播报名表单失效。
-      -->
-    <div class="tip_content" v-if="resultVo && resultVo.total == 0">本直播不属于任何专题，本次设置的报名表单生效，观看直播需要填写此报名表单。</div>
-    <div class="tip_content" v-else-if="resultVo && resultVo.total == 1">
-      本直播属于专题<span class="color_blue cursor_pointer" v-if="resultVo && resultVo.list" @click="goSubjectDetail(resultVo.list[0].subject_id)">《{{ subjectTitle }}》</span>，{{ verifyText === '' ? '该专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。' : `该专题提供统一的${verifyText}，本直播报名表单失效。`}}
-    </div>
-    <div class="tip_content" v-else-if="resultVo && resultVo.total > 1">本直播属于多个专题，这些专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。</div>
-    <div class="tip_content" v-else>依据活动ID获取其归属专题信息失败，请联系管理员</div>
-    <div slot='footer'>
-      <el-button type="primary" size="medium" round v-preventReClick @click.prevent.stop="closeDialog">我知道了</el-button>
-    </div>
-  </VhallDialog>
+    <VhallDialog :visible='visible' title="提示" width='400px' @close="closeDialog" class="subject-show-dialog">
+      <!--
+        // 直播没有绑定任何专题： 本直播不属于任何专题，本次设置的报名表单生效，观看直播需要填写此报名表单。
+        // 绑定专题但没有设置观看限制： 本直播属于专题《客户的力量》，该专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。
+        // 被XXX专题绑定，本次观看限制失效： 本直播属于专题《客户的力量》，该专题提供统一的观看限制-白名单，本直播报名表单失效。
+        // 被XXX专题绑定，被设置统一报名表单，本次失效： 本直播属于专题《客户的力量》，该专题提供统一的报名表单，本直播报名表单失效。
+        -->
+      <div class="tip_content" v-if="resultVo && resultVo.total == 0">本直播不属于任何专题，本次设置的报名表单生效，观看直播需要填写此报名表单。</div>
+      <div class="tip_content" v-else-if="resultVo && resultVo.total == 1">
+        本直播属于专题<span class="color_blue cursor_pointer" v-if="resultVo && resultVo.list" @click="goSubjectDetail(resultVo.list[0].subject_id)">《{{ subjectTitle }}》</span>，
+        <template v-if="verifyText">
+          该专题提供统一的 {{ verifyText }} 本直播报名表单<span class="color_red">失效</span>。
+        </template>
+        <template v-else>
+          该专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。
+        </template>
+        <!-- {{ verifyText === '' ? '该专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。' : `该专题提供统一的${verifyText}，本直播报名表单失效。`}} -->
+      </div>
+      <div class="tip_content" v-else-if="resultVo && resultVo.total > 1">本直播属于多个专题，这些专题无统一的观看限制，本次设置的报名表单生效，观看直播需要填写此报名表单。</div>
+      <div class="tip_content" v-else>依据活动ID获取其归属专题信息失败，请联系管理员</div>
+      <div slot='footer'>
+        <el-button type="primary" size="medium" round v-preventReClick @click.prevent.stop="closeDialog">我知道了</el-button>
+      </div>
+    </VhallDialog>
 </template>
 <script>
 export default {
@@ -42,7 +49,7 @@ export default {
     }
   },
   created(){
-    this.initComp()
+    this.getVerifyInfo()
   },
   computed: {
     verifyText() {
@@ -79,10 +86,28 @@ export default {
       }
     }
   },
+  beforeDestroy(to, from, next) {
+    if (this.vm) {
+      this.vm.close();
+    }
+    next();
+  },
   methods: {
-    initComp() {
-      this.visible = this.dialogVisible
-      this.getVerifyInfo()
+    initAuthMessage() {
+      let that = this;
+      this.vm = this.$message({
+        showClose: true,
+        duration: 0,
+        dangerouslyUseHTMLString: true,
+        // message: `本直播属于专题《 `,
+        message: '<p style="color:#1A1A1A; padding-right: 12px">本直播属于专题《<span id="openSubjectDetails" style="color:#3562fa;cursor: pointer;">'+ that.subjectTitle +'</span>》该专题提供统一的'+ that.verifyText +'  本直播观看限制 <span style="color:#FB3A32">失效   </span></p>',
+        type: 'warning'
+      });
+      let open = document.querySelector('#openSubjectDetails');
+        open.addEventListener('click', function(e){
+          that.vm.close();
+          that.goSubjectDetail();
+      });
     },
     getVerifyInfo() {
       this.$fetch('getSubjectByWebinarId', {
@@ -92,6 +117,10 @@ export default {
       }).then(resV => {
         if (resV && resV.code == 200 && resV.data) {
           this.resultVo = resV.data
+          console.log(this.resultVo, '我是报名表单')
+          if (this.resultVo && this.resultVo.total == 1 && this.verifyText) {
+            this.initAuthMessage()
+          }
         } else {
           this.resultVo = null
         }
@@ -102,15 +131,11 @@ export default {
     },
     // 关闭
     closeDialog() {
-      this.$emit('close', 'close')
+      this.visible = false;
     },
     // 跳转专题界面
-    goSubjectDetail(subject_id) {
-      if (subject_id) {
-        window.open(`${process.env.VUE_APP_WEB_URL}/special/edit/${subject_id}?title=编辑`, '_blank')
-      } else {
-        this.$message.error('未获取到专题信息，请稍后重试')
-      }
+    goSubjectDetail() {
+      window.open(`${process.env.VUE_APP_WEB_URL}/special/edit/${this.resultVo.list[0].subject_id}?title=编辑`, '_blank')
     }
   }
 };

@@ -60,7 +60,7 @@
       </p>
       <el-form-item label="专题目录" required>
         <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
-        <span class="form_tip" v-if="$route.params.id">标红活动在其他专题重复使用</span>
+        <span class="form_tip"> {{ $route.params.id ? '标红活动在其他专题重复使用' : '专题保存成功后，可设置观看限制' }}</span>
         <div class="vh-sort-tables" v-show="formData.selectedActives.length">
           <div class="vh-sort-tables__theader">
             <div class="vh-sort-tables__theader-id">
