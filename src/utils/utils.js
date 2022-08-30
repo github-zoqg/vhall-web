@@ -604,6 +604,14 @@ export const getImageQuery = url => {
     return url
   }
 };
+//图片经阿里云转换
+export function cropperImage(url) {
+  if (url && url.indexOf('?x-oss-process') != -1) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 // 是否是空对象
 export const isEmptyObj = obj => {

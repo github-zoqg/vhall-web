@@ -43,7 +43,7 @@
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
             </span>
-            <div class="img-box"><img :src="item.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
+            <div class="img-box"><img :class="`img_box_bg subject_bg_${item.itemMode}`" :src="item.cover" alt=""></div>
           </div>
           <div class="bottom">
             <div class="">
@@ -98,7 +98,7 @@ import noData from '@/views/PlatformModule/Error/nullPage';
 import Env from '@/api/env.js';
 import share from './components/share'
 import introduceShow from './components/moduleTutorial'
-import {sessionOrLocal} from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage} from "@/utils/utils";
 export default {
   name: 'specialList',
   data() {
@@ -173,6 +173,15 @@ export default {
       this.loading = true;
       console.log(data);
       this.$fetch('subjectList', this.$params(data)).then(res=>{
+        res.data.total && res.data.list.map(item => {
+          let cover = item.cover ? item.cover : `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`;
+          if (cropperImage(cover)) {
+            item.cover = cover;
+            item.itemMode = this.handlerImageInfo(cover);
+          } else {
+            item.itemMode = 3;
+          }
+        })
         this.liveList = res.data.list;
         this.totalElement = res.data.total;
         if (this.orderBy == 1 && !this.keyWords) {
@@ -198,6 +207,11 @@ export default {
       }).finally(()=>{
         this.loading = false;
       });
+    },
+    // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      return Number(obj.mode) || 3;
     },
     // 删除
     deleteHandle(id) {
@@ -480,12 +494,19 @@ export default {
           top:0;
           left: 0;
           border-radius: 4px 4px 0 0;
-          img{
+          .img_box_bg{
             width: 100%;
             height: 100%;
             object-fit: scale-down;
             cursor: pointer;
             border-radius: 4px 4px 0 0;
+            &.subject_bg_1{
+              object-fit: fill;
+            }
+            &.subject_bg_2{
+              object-fit: cover;
+              object-position: left top;
+            }
           }
         }
         // img{
