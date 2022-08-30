@@ -72,14 +72,13 @@ export default {
     &_box{
       width: 416px;
       height: 234px;
-      background: #222;
       overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
       .cropper_img{
         height:234px;
-        width: 400px;
+        width: 416px;
         margin: 0 auto;
       }
     }
