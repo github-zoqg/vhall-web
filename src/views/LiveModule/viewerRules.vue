@@ -982,11 +982,12 @@ export default {
   font-size: 14px;
 }
 .limit_detail{
-font-size: 14px;
-color: #999;
-span{
-  color: #3562fa;
-  cursor: pointer;
+  font-size: 14px;
+  color: #999;
+  span{
+    color: #3562fa;
+    cursor: pointer;
+  }
 }
 .viewer-rules {
   padding: 49px 56px 40px 56px;
