@@ -256,7 +256,8 @@
 <script>
   import axios from 'axios';
   import Env from "@/api/env";
-  import { validPhone, parseImgOssQueryString } from '@/utils/validate.js'
+  import { validPhone } from '@/utils/validate.js'
+  import { parseImgOssQueryString } from '@/utils/utils.js'
   // import DevicePixelRatio from '@/utils/devicePixelRatio'
   export default {
     created() {

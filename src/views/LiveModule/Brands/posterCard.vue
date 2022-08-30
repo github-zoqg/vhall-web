@@ -100,7 +100,7 @@
                 <img class="hb_bg_default" src="../../../common/images/poster/pc-2.png" alt="" />
                 <!-- 开启 并且有图-->
                 <div class="pc-poster-wrap">
-                  <el-image v-show="status <= 0 && form.img"  class="hb_img v-poster-preview" :src="domain_pc_url" fit="cover"></el-image>
+                  <el-image v-show="status <= 0 && form.img"  class="hb_img v-poster-preview" :src="domain_pc_url" :fit="ImgsSize[formPcImage.imageCropMode - 1]" :class="formPcImage.imageCropMode == 2 ? 'isCover' : ''"></el-image>
                   <el-image v-show="!form.img" class="hb_img v-poster-preview"
                     src="../../../common/images/poster/pc-1.png" fit="cover"></el-image>
                 </div>
@@ -116,7 +116,7 @@
             <!-- 开屏海报 -->
             <div class="hb_app">
               <div class="poster-img">
-                <el-image v-show="status <= 0 && form.m_img" class="domain_url" :src="domain_wap_url" fit="cover">
+                <el-image v-show="status <= 0 && form.m_img" class="domain_url" :src="domain_wap_url" :fit="ImgsSize[formWapImage.imageCropMode - 1]" :class="formWapImage.imageCropMode == 2 ? 'isCover' : ''">
                 </el-image>
                 <el-image v-show="!form.m_img" class="default"
                   src="../../../common/images/poster/phone_poster_default@2x.png" fit="cover">
@@ -140,11 +140,12 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 // import Env from '@/api/env.js';
 import beginPlay from '@/components/beginBtn';
-import {sessionOrLocal, parseImgOssQueryString, isEmptyObj, getImageQuery} from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, isEmptyObj, getImageQuery, ImgsSize} from "@/utils/utils";
 import cropper from '@/components/Cropper/index'
 export default {
   data() {
     return {
+      ImgsSize,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       domain_url: '',
       m_domain_url: '',
@@ -619,6 +620,11 @@ export default {
   user-select: none;
 }
 .offical-show {
+  .isCover {
+    /deep/ .el-image__inner {
+      object-position: left top;
+    }
+  }
   .show-on {
     position: absolute;
     top: 42px;
