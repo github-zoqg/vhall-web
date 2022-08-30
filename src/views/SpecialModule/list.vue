@@ -36,7 +36,7 @@
 
     <el-row :gutter="24" class="lives" v-show="totalElement">
       <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
-        <router-link :to="{path:'/special/edit', query: {id: item.id, title: '编辑'}}" target="_blank" class="inner">
+        <router-link :to="{ path: item.is_new_version == 1 ? `/special/details/${item.id}` : `/special/edit/${item.id}?title=编辑`}" target="_blank" class="inner">
           <!-- @click="editSpecialInfo(item.id)" -->
           <div class="top">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
@@ -51,13 +51,13 @@
               <p class="liveTime">{{item.created_at | unitTime }}</p>
             </div>
             <p class="liveOpera">
-              <el-tooltip class="item" effect="dark" content="编辑" placement="top" v-tooltipMove>
+              <el-tooltip class="item item_right" effect="dark" content="编辑" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-pencil1" @click.prevent.stop="editSpecialInfo(item.id)"></i>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="预览" placement="top" v-tooltipMove>
+              <el-tooltip class="item item_right" effect="dark" content="预览" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-eye1" @click.prevent.stop="specialDetail(item)"></i>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="分享" placement="top" v-tooltipMove>
+              <el-tooltip class="item item_right" effect="dark" content="分享" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-share1" @click.prevent.stop="toShare(item.id)"></i>
               </el-tooltip>
               <el-tooltip class="item isDelete" effect="dark" content="删除" placement="top" v-tooltipMove>
@@ -100,6 +100,7 @@ import share from './components/share'
 import introduceShow from './components/moduleTutorial'
 import {sessionOrLocal} from "@/utils/utils";
 export default {
+  name: 'specialList',
   data() {
     return {
       hasDelayPermission: 0,
@@ -253,7 +254,7 @@ export default {
         k: 100496,
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-      const { href } = this.$router.resolve({path:'/special/edit',query: {id: id, title: '编辑'}});
+      const { href } = this.$router.resolve({path: `/special/edit/${id}`,query: {title: '编辑'}});
       window.open(href, '_blank');
     },
     toShare(id) {
@@ -266,6 +267,11 @@ export default {
       this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${id}`;
       // this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail?id=${id}`;
       this.shareVo.pcUrl = `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${id}`;
+    },
+    // 数据页面
+    toDataReport(id) {
+      const { href } = this.$router.resolve({path:`/special/data/${id}`,query: {title: '查看数据'}});
+      window.open(href, '_blank');
     },
     // 预览页面
     specialDetail(item) {
@@ -549,8 +555,11 @@ export default {
           i{
            cursor: pointer;
            font-size: 18px;
-           &:nth-child(2){
-              padding: 0 20px;
+           &.item_right{
+             padding: 0 10px;
+            }
+            &:first-child{
+              padding-left: 0;
             }
           }
           .el-dropdown{

@@ -2,7 +2,7 @@
   <div class="map-charts">
     <el-row>
       <el-col :span="14"
-        ><div :style="{ height: '400px', width: '100%' }" ref="mapEchart"></div
+        ><div :style="{ height: '540px', width: '100%' }" ref="mapEchart"></div
       ></el-col>
       <el-col :span="10">
         <div class="grid-table">
@@ -25,7 +25,8 @@
 </template>
 <script>
 import echarts from 'echarts';
-import '../../../node_modules/echarts/map/js/china.js'; // 引入中国地图数据
+import jsonData from '@/common/json/china.json'
+// import '../../../node_modules/echarts/map/js/china.js'; // 引入中国地图数据
 export default {
   data() {
     return {
@@ -50,6 +51,7 @@ export default {
     initMapEcharts(data) {
       // this.mapDataList = [];
       // let that = this;
+      echarts.registerMap('chinas', jsonData);
       this.mapChart = echarts.init(this.$refs.mapEchart); //这里是为了获得容器所在位置
       let options = {
         backgroundColor: '#fff',
@@ -81,21 +83,22 @@ export default {
         series: [
           {
             type: 'map',
-            mapType: 'china',
+            mapType: 'chinas',
             label: {
               normal: {
                 textStyle: {
                   color: '#000',
+                  fontSize: 14
                 },
               },
             },
-            left: '120',
+            left: '50',
             top: '30',
             itemStyle: {
               normal: {
-                borderColor: '#d1d1d1',
+                borderColor: '#7f7f7f',
                 label: {
-                  show: true,
+                  show: false,
                 },
                 areaStyle: {
                   color: '#f4f4f4',
