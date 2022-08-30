@@ -747,6 +747,7 @@ export default {
         }
         .preview_container{
           padding: 12px 32px 48px 32px;
+          min-height: 919px;
         }
         &_pc{
           width: 880px;
@@ -888,6 +889,10 @@ export default {
       top: 0;
       left: 0;
       background: rgba(255, 255, 255, 0.5);
+    }
+    /deep/ .el-upload--picture-card {
+      width: 100%;
+      height: 128px;
     }
     @media (max-width: 1920px) {
       .preview_box_pc{

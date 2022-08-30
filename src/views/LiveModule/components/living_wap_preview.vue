@@ -147,9 +147,19 @@
               <div class="chat_item_avatar"><img src="./image/living/chat4.png" alt=""></div>
               <div class="chat_item_content"><span class="name">Mr Liu</span>😊😊😊</div>
             </div>
-            <div class="chat_item">
+            <!-- 左右（头像、内容）分块结构 <div class="chat_item">
               <div class="chat_item_avatar"><img src="./image/living/chat1.png" alt=""></div>
               <div class="chat_item_content content_host">
+                <span class="name">
+                  <span class="chat_host">主持人</span>
+                  微吼直播
+                </span>
+                关于热度兼容老版h5动Android微吼直播app测试
+              </div>
+            </div> -->
+            <div class="chat_item more">
+              <div class="chat_item_content content_host">
+                <div class="chat_item_avatar"><img src="./image/living/chat1.png" alt=""></div>
                 <span class="name">
                   <span class="chat_host">主持人</span>
                   微吼直播
@@ -688,6 +698,7 @@ export default {
                   margin-left: -40px;
                   vertical-align: middle;
                   margin-right: 3px;
+                  margin-top: -3px;
                 }
                 .chat_ass{
                   display: inline-block;
@@ -701,6 +712,7 @@ export default {
                   margin-left: -28px;
                   vertical-align: middle;
                   margin-right: 3px;
+                  margin-top: -3px;
                 }
                 .chat_imgs{
                   width: 135px;
@@ -710,6 +722,18 @@ export default {
                   background-size: 100% 100%;
                   vertical-align: middle;
                   margin-bottom: 4px;
+                }
+              }
+              &.more {
+                .chat_item_content {
+                  line-height: 20px;
+                  .chat_item_avatar {
+                    display: inline-block;
+                    vertical-align: middle;
+                  }
+                  .chat_host {
+                    margin-top: 0;
+                  }
                 }
               }
             }
@@ -741,6 +765,7 @@ export default {
                   margin-left: -40px;
                   vertical-align: middle;
                   margin-right: 3px;
+                  margin-top: -3px;
                 }
                 .chat_ass{
                   display: inline-block;
@@ -754,6 +779,7 @@ export default {
                   margin-left: -28px;
                   vertical-align: middle;
                   margin-right: 3px;
+                  margin-top: -3px;
                 }
                 .chat_imgs{
                   width: 128px;
