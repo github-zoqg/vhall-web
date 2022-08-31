@@ -113,31 +113,41 @@
               </div>
               <div class="chat_right" v-else>
                 <div class="chat_right_item">
-                  <span class="item_avatar"><img src="./image/living/chat1.png" alt=""></span>
-                  <span class="item_host"> 主持人</span>
-                  <span class="item_name"> 蒋老师 </span>
-                  欢迎小伙伴们～
+                  <div class="chat_right_item-box">
+                    <span class="item_avatar"><img src="./image/living/chat1.png" alt=""></span>
+                    <span class="item_host"> 主持人</span>
+                    <span class="item_name"> 蒋老师 </span>
+                    欢迎小伙伴们～
+                  </div>
                 </div>
                 <div class="chat_right_item item_other">
-                  <span class="item_avatar"><img src="./image/living/chat2.png" alt=""></span>
-                  <span class="item_name"> 邓浩杰 </span>
-                  期待已久的运营直播实操，终于可以看啦～
+                  <div class="chat_right_item-box">
+                    <span class="item_avatar"><img src="./image/living/chat2.png" alt=""></span>
+                    <span class="item_name"> 邓浩杰 </span>
+                    期待已久的运营直播实操，终于可以看啦～
+                  </div>
                 </div>
                 <div class="chat_right_item">
-                  <span class="item_avatar"><img src="./image/living/layout2.png" alt=""></span>
-                  <span class="item_ass"> 助理</span>
-                  <span class="item_name"> 小助理 </span>
-                  获取PPT，加官微哦
+                  <div class="chat_right_item-box">
+                    <span class="item_avatar"><img src="./image/living/layout2.png" alt=""></span>
+                    <span class="item_ass"> 助理</span>
+                    <span class="item_name"> 小助理 </span>
+                    获取PPT，加官微哦
+                  </div>
                 </div>
                 <div class="chat_right_item">
-                  <span class="item_avatar"><img src="./image/living/chat3.png" alt=""></span>
-                  <span class="item_name"> 王觉 </span>
-                  这才是实战特训营
+                  <div class="chat_right_item-box">
+                    <span class="item_avatar"><img src="./image/living/chat3.png" alt=""></span>
+                    <span class="item_name"> 王觉 </span>
+                    这才是实战特训营
+                  </div>
                 </div>
                 <div class="chat_right_item">
-                  <span class="item_avatar"><img src="../../../common/images/avatar.png" alt=""></span>
-                  <span class="item_name"> 刘林一 </span>
-                  30分钟直播运营实操特训营 终于开营啦，快来加入吧
+                  <div class="chat_right_item-box">
+                    <span class="item_avatar"><img src="../../../common/images/avatar.png" alt=""></span>
+                    <span class="item_name"> 刘林一 </span>
+                    30分钟直播运营实操特训营 终于开营啦，快来加入吧
+                  </div>
                 </div>
               </div>
             </div>
@@ -572,6 +582,7 @@ export default {
                     }
                   }
                   .chat_title{
+                    display: inline-block;
                     color: var(--color_pc_chat_primary);
                     line-height: 22px;
                     padding: 2px 5px;
@@ -590,14 +601,20 @@ export default {
                 margin-top: 8px;
                 &_item{
                   color: var(--color_pc_chat_primary);
-                  padding: 8px 8px 6px 10px;
-                  border-radius: 16px;
-                  background: var(--background_pc_chat_color);
+
+
                   transform: scale(0.5);
                   line-height: 24px;
                   transform-origin: top right;
                   margin-left: -150px;
                   margin-bottom: -12px;
+                  &-box {
+                    padding: 8px 8px 6px 10px;
+                    display: inline-block;
+                    border-radius: 16px;
+                    height: 100%;
+                    background: var(--background_pc_chat_color);
+                  }
                   &.item_other{
                     margin-bottom: -23px;
                   }
