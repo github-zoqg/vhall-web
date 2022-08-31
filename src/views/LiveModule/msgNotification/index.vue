@@ -18,26 +18,26 @@
     </pageTitle>
     <div class="msg-notification__body">
       <div class="msg-notification__top">
-        <div class="msg-sign__top"  @blur.stop="cancelSaveMsgSign">* 短信签名：
-          <span v-if="isSignShow">{{ showSignText }}</span>
-          <VhallInput v-if="!isSignShow" v-model.trim="msgInfo.config_info.sms_sign" autocomplete="off"  :maxlength="15" placeholder="请输入短信签名" show-word-limit class="btn-relative btn-two"></VhallInput>
+        <div class="msg-sign__top"  @blur.stop="cancelSaveMsgSign">
+          <span :class="['msg-sign__top__label', {
+            'is_no_edit': isSignShow
+          }]">短信签名：</span><span v-if="isSignShow" :class="isSignShow ? 'is_no_edit' : ''">{{ showSignText }}</span>
+          <vh-input type="text" maxlength="15" show-word-limit v-if="!isSignShow" v-model.trim="msgInfo.config_info.sms_sign" autocomplete="off" placeholder="请输入短信签名" size="mini"></vh-input>
           <vh-link icon="el-icon-edit" :underline="false"  @click.prevent="isSignShow = false;msgInfo.config_info.sms_sign = showSignText" v-if="isSignShow"></vh-link>
-          <el-button type="primary" @click="noticeConfigEdit" v-if="!isSignShow" size="mini">保存</el-button>
+          <vh-button borderRadius="4" type="text" round  @click="noticeConfigEdit('confirm')"  v-if="!isSignShow" size="mini" class="zdy-theme-red">确定</vh-button>
+          <vh-button borderRadius="4" type="text" plain  @click="noticeConfigEdit('cancel')"  v-if="!isSignShow" size="mini" class="zdy-theme-gray">取消</vh-button>
         </div>
         <div class="switchBox">
           <vh-switch
             v-model="msgInfo.config_info.phone_verify_status"
             @change="switchChangeOpen"
-            :active-text="msgInfo.config_info.phone_verify_status ? '关闭后，用户在预约时提交手机号无需进行短信验证（不含登录/报名）' : '开启后，用户在预约时提交手机号需要进行短信验证（不含登录/报名）'">
+            :active-text="msgInfo.config_info.phone_verify_status ? '关闭后，用户在预约时提交手机号无需进行短信验证（不含登录/报名）' : '开启后，用户在预约时提交手机号需要进行短信验证（不含登录/报名）'"
+            size="mini">
           </vh-switch>
         </div>
       </div>
       <div class="msg-notification-center">
-        <p class="title">
-          <span>短信通知</span>
-          <span class="base_title_send" v-if="msgInfo.config_info.send_num > 0">当前预计发送{{msgInfo.config_info.send_num}}条短信</span>
-          <span class="base_title_balance" v-if="msgInfo.config_info.balance == 0">余额不足，请联系您的专属客服充值</span>
-        </p>
+        <p class="title"><span>短信通知</span><span class="base_title_send" v-if="msgInfo.config_info.send_num > 0">当前预计发送{{msgInfo.config_info.send_num}}条短信</span><span class="base_title_balance" v-if="msgInfo.config_info.balance == 0">余额不足，请联系您的专属客服充值</span></p>
         <el-row :gutter="24" class="base_row">
           <!-- xs	<768px	超小屏 如：手机
           sm	≥768px	小屏幕 如：平板
@@ -139,7 +139,11 @@ export default {
       }
     },
     // 保存签名
-    noticeConfigEdit() {
+    noticeConfigEdit(type) {
+      if (type == 'cancel') {
+        this.isSignShow = true;
+        return;
+      }
       if (!this.msgInfo.config_info.sms_sign) {
         this.isSignShow = true
         return
@@ -297,27 +301,39 @@ export default {
 <style lang="less" scoped>
 .msg-notification-page {
   /deep/.titleBox {
+    margin-bottom: 28px;
     .balance__right {
       margin-left: auto;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 20px;
+      text-align: right;
+      color: #1A1A1A;
     }
     .color-blue {
       color:#3562FA;
     }
     .color-red {
-      color:#fb3a32;
+      color:#FB2626;
+    }
+    .saasicon_help_m {
+      color: #666666;
     }
   }
   .msg-notification__body {
-    background: #ffffff;
-    min-height: 600px;
-    padding-bottom: 40px;
-    padding-top: 24px;
+    background: #FFFFFF;
+    min-height: 549px;
+    padding: 24px 24px;
+    border-radius: 4px;
   }
   .msg-notification__top {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-left: 20px;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 14px 24px;
+    background: #F5F5F5;
+    border-radius: 4px;
+    line-height: 28px;
     .switchBox {
       margin-left: auto;
     }
@@ -325,21 +341,61 @@ export default {
       display: inline-flex;
       justify-content: center;
       align-items: center;
-      .el-input {
-        width: 175px;
+      height: 28px;
+      &__label {
+        width: 70px;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 22px;
+        color: #1A1A1A;
+        margin-right: 8px;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 22px;
+      }
+      .is_no_edit {
+        color: rgba(0, 0, 0, 0.65);
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 22px;
+      }
+      .vh-input {
+        width: 267px;
+        margin-right: 12px;
+      }
+      .vh-link.vh-link--default {
+        margin-left: 8px;
+      }
+      /deep/.zdy-theme-red {
+        color: #FB2626;
+        &:hover {
+          color: #D4151C;
+        }
+      }
+      /deep/.zdy-theme-gray {
+        color: rgba(0, 0, 0, 0.65);
+        &:hover {
+          color: rgba(0, 0, 0, 0.85);
+        }
       }
     }
   }
   .msg-notification-center {
     margin-top: 10px;
     .title {
-      font-size: 20px;
-      color: #333333;
       border-left: 4px solid #fb3a32;
-      line-height: 16px;
-      height: 18px;
-      margin: 32px 0 12px 20px;
-      padding-left: 5px;
+      margin: 24px 0 16px 0;
+      padding-left: 8px;
+      span {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 18px;
+        line-height: 26px;
+        color: rgba(0, 0, 0, 0.85);
+      }
     }
     .base_title_send {
       margin-left: 20px;
@@ -351,7 +407,7 @@ export default {
       color: #fb3a32;
     }
     /deep/.el-row {
-      padding: 0 20px;
+      padding: 0 0;
     }
   }
 }
