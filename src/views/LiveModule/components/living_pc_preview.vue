@@ -30,7 +30,7 @@
               <span><img src="./image/living/layout3.png" alt=""></span>
               <span><img src="./image/living/layout4.png" alt=""></span>
             </div>
-            <!-- 主次悬浮 -->
+            <!-- 主次浮窗 -->
             <div class="left_top__float" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
               <div class="imgs">
                 <span><img src="./image/living/layout2.png" alt=""></span>

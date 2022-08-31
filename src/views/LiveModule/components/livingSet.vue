@@ -192,7 +192,7 @@
               <div class="item_lay" @click="choseMicrophone(2)">
                 <div class="item_lay_hidden" v-if="isDelay"></div>
                 <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE' ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
-                <span>主次悬浮</span>
+                <span>主次浮窗</span>
               </div>
             </div>
           </div>
