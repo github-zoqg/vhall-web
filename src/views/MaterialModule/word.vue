@@ -127,7 +127,7 @@
     </div>
     <!-- 静态预览功能 -->
     <template v-if="showDialog">
-      <!--<el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
+      <!--<el-dialog class="vh-saas-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
         <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>-->
       <VhallDialog
@@ -1392,7 +1392,7 @@ export default {
   /deep/.el-card__body {
     padding: 32px 24px;
   }
-  ::v-deep .vh-dialog {
+  ::v-deep .vh-saas-dialog {
     .el-dialog {
       width: 960px !important;
       height: 623px;

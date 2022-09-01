@@ -148,7 +148,7 @@
     <!-- 预览 -->
     <template v-if="showDialog">
       <div class="preview-wrap">
-        <el-dialog class="vh-dialog" title="" :visible.sync="showDialog" width="30%" center
+        <el-dialog class="vh-saas-dialog" title="" :visible.sync="showDialog" width="30%" center
         :close-on-press-escape=false>
           <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
         </el-dialog>
@@ -699,7 +699,7 @@ export default {
     }
   }
 }
-.vh-dialog{
+.vh-saas-dialog{
     /deep/ .el-dialog {
       width: 624px!important;
       background: transparent!important;
