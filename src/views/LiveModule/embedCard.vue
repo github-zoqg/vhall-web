@@ -409,7 +409,6 @@ export default {
         })
     },
     requestRoomInfo(id) {
-      // webinar/info调整-直播中不能操作的使用1
       return this.$fetch('getWebinarInfo', {
         webinar_id: id || this.$route.params.str,
       })
@@ -752,7 +751,8 @@ export default {
             } else {
               // this.getTableList()
               this.tableData.map((item) => {
-                if (item.watch && this.liveInfo.webinar_state == 1) {
+                // 直播中并且不是彩排中直接修改
+                if (item.watch && this.liveInfo.webinar_state == 1 && this.liveInfo.rehearsal_type != 1) {
                   item.push_status = 1
                   item.statusText = PushStatus[item.push_status]
                   item.status = 1
