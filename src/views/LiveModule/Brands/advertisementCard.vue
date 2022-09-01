@@ -52,7 +52,7 @@
 <script>
 import createAdvise from './components/createAdvise';
 import noData from '@/views/PlatformModule/Error/nullPage';
-import {sessionOrLocal} from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage} from "@/utils/utils";
 import beginPlay from '@/components/beginBtn';
 export default {
   data() {
@@ -138,8 +138,23 @@ export default {
       this.isSearch = this.paramsObj.keyword ? true : false;
       this.$fetch('getAdvList', this.$params(params)).then(res => {
         this.total = res.data.total;
-        this.tableList = res.data.adv_list;
+        let list = res.data.adv_list;
+        list.map(item => {
+          if (cropperImage(item.img_url)) {
+            item.itemMode = this.handlerImageInfo(item.img_url);
+          } else {
+            item.itemMode = 3;
+          }
+        });
+        // this.tableList = res.data.adv_list
+        this.tableList = list
+        console.log(this.tableList, '????????this.tableList')
       });
+    },
+    // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      return Number(obj.mode) || 3;
     },
     onHandleBtnClick(val) {
       let methodsCombin = this.$options.methods;

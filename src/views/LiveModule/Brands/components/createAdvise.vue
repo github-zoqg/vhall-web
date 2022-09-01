@@ -63,7 +63,7 @@
         <el-scrollbar v-loadMore="moreLoadData" v-show="total" style="height:328px">
           <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
-              <span class="spanImg"> <img :src="`${item.img_url}`" alt=""></span>
+              <span class="spanImg"> <img :class="`img_box_bg box_bg_${item.itemMode}`" :src="`${item.img_url}`" alt=""></span>
               <p>{{ item.subject }}</p>
               <label  class="img-tangle" v-show="item.isChecked"><img src="../../../../common/images/icon-choose.png" alt=""></label>
               <!-- <label class="img-tangle" v-show="item.isChecked">
@@ -112,6 +112,7 @@ import upload from '@/components/Upload/main';
 import Env from "@/api/env";
 import noData from '@/views/PlatformModule/Error/nullPage';
 import cropper from '@/components/Cropper/index'
+import { parseImgOssQueryString, cropperImage} from "@/utils/utils";
 export default {
   data() {
     const linkValidate = (rule, value, callback) => {
@@ -403,6 +404,11 @@ export default {
           this.total = res.data.total;
           adList.map(item => {
             item.isChecked = false;
+            if (cropperImage(item.img_url)) {
+              item.itemMode = this.handlerImageInfo(item.img_url);
+            } else {
+              item.itemMode = 3;
+            }
           });
           this.adList.push(...adList);
           this.maxPage = Math.ceil(res.data.total / this.advertPageInfo.limit);
@@ -410,6 +416,11 @@ export default {
           this.adList = [];
         }
       });
+    },
+     // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      return Number(obj.mode) || 3;
     },
     changeAdverment() {
       this.advertPageInfo = {
@@ -699,10 +710,17 @@ export default {
           height: 93px;
           background: #1A1A1A;
           border-radius: 4px 4px 0 0;
-          img{
+          .img_box_bg{
            width:100%;
            height:100%;
            object-fit: scale-down;
+           &.box_bg_1{
+              object-fit: fill;
+            }
+            &.box_bg_2{
+              object-fit: cover;
+              object-position: left top;
+            }
          }
         }
          p{
