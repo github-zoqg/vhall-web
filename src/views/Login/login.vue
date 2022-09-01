@@ -73,12 +73,15 @@
         <div class="login-just">
           现在注册，就送20G流量<span @click="$router.push({path: '/register'})">立即注册</span>
         </div>
-        <div class="login-other">
-          其他登录方式<span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
+        <div class="login-other inline">
+          其他登录方式<!-- 旧版 <span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span> -->
           <div :class="['other-img', !isOpenOther ? 'noVisible' : '']">
+            <!-- 旧版
             <img v-show="isOpenOther" src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('/v3/commons/auth/qq?jump_url=')">
             <img v-show="isOpenOther" src="../../common/images/icon/wechat.png" alt="" @click="thirdLogin('/v3/commons/auth/weixin?source=pc&jump_url=')">
-            <!-- <img src="../../common/images/icon/weibo.png" alt=""> -->
+            -->
+            <span class="third__login__qq" v-show="isOpenOther"  @click="thirdLogin('/v3/commons/auth/qq?jump_url=')"></span>
+            <span class="third__login__wechat" v-show="isOpenOther"  @click="thirdLogin('/v3/commons/auth/weixin?source=pc&jump_url=')"></span>
           </div>
         </div>
         <!-- 隐私协议合规 -->
@@ -374,8 +377,8 @@ export default {
           { required: true, message: '请输入短信验证码', trigger: 'blur' }
         ]
       },
-      loginChecked: false, // 登录——默认未选中
-      loginDynamicChecked: false, // 登录——默认未选中
+      loginChecked: false, // 登录(账号密码登录)——默认未选中
+      loginDynamicChecked: false, // 登录(快捷短信登录)——默认未选中
       registerChecked: false, // 注册——默认未选中
       showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
@@ -401,7 +404,10 @@ export default {
     }
   },
   created() {
-    this.judgeIswap()
+    this.judgeIsWap()
+    window.addEventListener('resize', () => {
+      this.judgeIsWap()
+    });
   },
   mounted() {
     this.$nextTick(() => {
@@ -410,7 +416,7 @@ export default {
   },
   methods: {
     // 手机适配
-    judgeIswap() {
+    judgeIsWap() {
       const uA = navigator.userAgent.toLowerCase();
       const ipad = uA.match(/ipad/i) == "ipad";
       const iphone = uA.match(/iphone os/i) == "iphone os";
@@ -473,12 +479,12 @@ export default {
     },
     // 账号登录
     loginAccount() {
+      if (!this.loginChecked) {
+        this.messageInfo('请先阅读并同意隐私政策及用户服务协议', 'warning')
+        return
+      }
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
-          if (!this.loginChecked) {
-            this.messageInfo('请先阅读并同意《微吼隐私政策》及《微吼用户服务协议》', 'warning')
-            return
-          }
           this.checkedAccount();
         } else {
           console.log('error submit!!');
@@ -488,12 +494,12 @@ export default {
     },
     // 快捷登录
     loginDynamic() {
+      if (!this.loginDynamicChecked) {
+        this.messageInfo('请先阅读并同意隐私政策及用户服务协议', 'warning')
+        return
+      }
       this.$refs.dynamicForm.validate((valid) => {
         if (valid) {
-          if (!this.loginDynamicChecked) {
-            this.messageInfo('请先阅读并同意《微吼隐私政策》及《微吼用户服务协议》', 'warning')
-            return
-          }
           this.checkedAccount();
         } else {
           console.log('error submit!!');
@@ -693,13 +699,13 @@ export default {
       });
     },
     registerAccount() {
+      if (!this.registerChecked) {
+        this.messageInfo('请先阅读并同意隐私政策及用户服务协议', 'warning')
+        return
+      }
       if (!this.registerText) {
         this.$refs.registerForm.validate(async (valid) => {
           if (valid) {
-            if (!this.registerChecked) {
-              this.messageInfo('请先阅读并同意《微吼隐私政策》及《微吼用户服务协议》', 'warning')
-              return
-            }
             let params = JSON.parse(JSON.stringify(this.registerForm))
             await this.getLoginKey()
             params.password = this.handleEncryptPassword(params.password)
@@ -1164,6 +1170,48 @@ export default {
   margin-top: 20px;
   span {
     cursor: pointer;
+  }
+  &.inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .other-img {
+      margin-top: 0;
+      margin-left: 16px;
+      img {
+        &:first-child {
+          margin-right: 16px;
+        }
+      }
+      span {
+        display: inline-block;
+        vertical-align: middle;
+        text-align: center;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        &:first-child {
+          margin-right: 16px;
+        }
+      }
+      span.third__login__qq {
+        background: url('./images/qq@2x.png') center center no-repeat;
+        background-size: 100% 100%;
+        margin-right: 16px;
+        &:hover {
+          background: url('./images/qq_hover@2x.png') center center no-repeat;
+          background-size: 100% 100%;
+        }
+      }
+      span.third__login__wechat {
+        background: url('./images/wechat@2x.png') center center no-repeat;
+        background-size: 100% 100%;
+        &:hover {
+          background: url('./images/wechat_hover@2x.png') center center no-repeat;
+          background-size: 100% 100%;
+        }
+      }
+    }
   }
 }
 
