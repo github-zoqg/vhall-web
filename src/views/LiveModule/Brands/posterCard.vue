@@ -140,7 +140,7 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 // import Env from '@/api/env.js';
 import beginPlay from '@/components/beginBtn';
-import {sessionOrLocal, parseImgOssQueryString, isEmptyObj, getImageQuery, ImgsSize} from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery, ImgsSize} from "@/utils/utils";
 import cropper from '@/components/Cropper/index'
 export default {
   data() {
@@ -285,9 +285,8 @@ export default {
     },
     // 图片裁剪数据
     handlerImageInfo(img) {
-      let obj = parseImgOssQueryString(img);
-      // 没有参数
-      if (!isEmptyObj(obj)) {
+      if (cropperImage(img)) {
+        let obj = parseImgOssQueryString(img);
         const { blur, crop } = obj;
         return {
           backgroundSize: {

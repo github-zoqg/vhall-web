@@ -624,9 +624,10 @@ export const isEmptyObj = obj => {
  * @returns object
  */
  export const parseQueryString = url => {
-  var reg=/(?:^\?|&)(.*?)=(.*?)(?=&|$)/g,temp,args={};
-    while((temp=reg.exec(url))!=null) args[temp[1]]=decodeURIComponent(temp[2]);
-    return args;
+  return [...new URL(url).searchParams].reduce(
+    (cur, [key, value]) => ((cur[key] = value), cur),
+    {}
+  );
 };
 
 /**

@@ -335,7 +335,7 @@
 </template>
 <script>
 import addBackground from './components/imgBackground'
-import { sessionOrLocal, parseImgOssQueryString } from '@/utils/utils'
+import { sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery } from '@/utils/utils'
 import { isBrower } from '@/utils/getBrowserType'
 import Env from '@/api/env'
 import html2canvas from 'html2canvas'
@@ -596,9 +596,8 @@ export default {
     // 处理图片
     handlerImageInfo(url) {
       this.img = getImageQuery(url);
-      let obj = parseImgOssQueryString(url);
-      // 没有参数
-      if (!isEmptyObj(obj)) {
+      if (cropperImage(url)) {
+        let obj = parseImgOssQueryString(url);
         const { blur, crop } = obj;
         this.imageCropper = {
           backgroundSize: {

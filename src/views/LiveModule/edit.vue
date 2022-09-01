@@ -440,7 +440,7 @@ import beginPlay from '@/components/beginBtn';
 import upload from '@/components/Upload/main';
 import selectMedia from './selecteMedia';
 import VEditor from '@/components/Tinymce';
-import {sessionOrLocal, parseImgOssQueryString, isEmptyObj, getImageQuery} from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery} from "@/utils/utils";
 import cropper from '@/components/Cropper/index'
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 import NullPage from '@/views/PlatformModule/Error/nullPage.vue'
@@ -1197,9 +1197,9 @@ export default {
     // 处理图片
     handlerImageInfo(url) {
       this.formData.imageUrl = getImageQuery(url);
-      let obj = parseImgOssQueryString(url);
-      // 没有参数
-      if (!isEmptyObj(obj)) {
+       // 有参数
+      if (cropperImage(url)) {
+        let obj = parseImgOssQueryString(url);
         const { blur, crop } = obj;
         this.formData.backgroundSize = {
           x: Number(crop.x),

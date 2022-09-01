@@ -90,7 +90,7 @@
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import beginPlay from '@/components/beginBtn';
-import {sessionOrLocal, parseImgOssQueryString, isEmptyObj, getImageQuery} from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery} from "@/utils/utils";
 import cropper from '@/components/Cropper/index'
 export default {
   name: 'shareSet',
@@ -164,24 +164,22 @@ export default {
     // 处理图片
     handlerImageInfo(url) {
       this.formShareInfo.img_url = getImageQuery(url);
+      if (cropperImage(url)) {
         let obj = parseImgOssQueryString(url);
-        // 没有参数
-        if (!isEmptyObj(obj)) {
-          const { blur, crop } = obj;
-          this.imageCropper = {
-            backgroundSize: {
-              x: Number(crop.x),
-              y: Number(crop.y),
-              width: Number(crop.w),
-              height: Number(crop.h)
-            },
-            blurryDegree: blur && Number(blur.s) || 0,
-            lightDegree: obj.bright ? 10 : Number(obj.bright),
-            imageCropMode: obj.mode
-          }
+        const { blur, crop } = obj;
+        this.imageCropper = {
+          backgroundSize: {
+            x: Number(crop.x),
+            y: Number(crop.y),
+            width: Number(crop.w),
+            height: Number(crop.h)
+          },
+          blurryDegree: blur && Number(blur.s) || 0,
+          lightDegree: obj.bright ? 10 : Number(obj.bright),
+          imageCropMode: obj.mode
         }
-        console.log(this.imageCropper, '??分享')
-        this.reImgUrl = this.formShareInfo.img_url;
+      }
+      this.reImgUrl = this.formShareInfo.img_url;
     },
     // 保存设置项
     sureShareSetting(formName) {

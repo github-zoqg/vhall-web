@@ -160,7 +160,7 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import VEditor from '@/components/Tinymce';
 import ChoseActives from './components/choseLiveList'
-import {sessionOrLocal, parseImgOssQueryString, isEmptyObj, getImageQuery} from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery} from "@/utils/utils";
 import cropper from '@/components/Cropper/index';
 
 export default {
@@ -307,9 +307,8 @@ export default {
     },
     handlerImageInfo(url) {
       this.formData.imageUrl = getImageQuery(url);
-      let obj = parseImgOssQueryString(url);
-      // 没有参数
-      if (!isEmptyObj(obj)) {
+      if (cropperImage(url)) {
+        let obj = parseImgOssQueryString(url);
         const { blur, crop } = obj;
         this.cropperImage = {
           backgroundSize: {

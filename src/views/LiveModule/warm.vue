@@ -163,7 +163,7 @@ import Upload from '@/components/Upload/main';
 import beginPlay from '@/components/beginBtn';
 import selectMedias from './selecteMedia';
 import draggable from "vuedraggable";
-import {sessionOrLocal, parseImgOssQueryString, isEmptyObj, getImageQuery} from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery} from "@/utils/utils";
 import cropper from '@/components/Cropper/index'
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 export default {
@@ -316,9 +316,8 @@ export default {
     // 处理图片
     handlerImageInfo(url) {
       this.warmForm.imageUrl = getImageQuery(url);
-      let obj = parseImgOssQueryString(url);
-      // 没有参数
-      if (!isEmptyObj(obj)) {
+      if (cropperImage(url)) {
+        let obj = parseImgOssQueryString(url);
         const { blur, crop } = obj;
         this.warmForm.backgroundSize = {
           x: Number(crop.x),

@@ -138,7 +138,7 @@ import OldHeader from '@/components/OldHeader'
 import defaultbg from './images/defaultbg.png'
 import {
   parseImgOssQueryString,
-  isEmptyObj,
+  cropperImage,
   BgImgsSize,
   ImgsSize
 } from '@/utils/utils'
@@ -296,11 +296,9 @@ export default {
       })
     },
     handlerImageInfo(url, key) {
-      let obj = parseImgOssQueryString(url)
-      // 没有参数
-      if (!isEmptyObj(obj)) {
+      if (cropperImage(url)) {
+        let obj = parseImgOssQueryString(url)
         this[key] = parseInt(obj.mode + '')
-        // console.log(obj, '------------------')
       }
     }
   },

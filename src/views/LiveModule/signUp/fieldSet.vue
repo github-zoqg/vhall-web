@@ -331,7 +331,7 @@ import draggable from "vuedraggable";
 import upload from '@/components/Upload/main';
 import Env from "@/api/env";
 import defaultHeader from './images/formHeader.png'
-import {parseImgOssQueryString, isEmptyObj, getImageQuery} from "@/utils/utils";
+import {parseImgOssQueryString, cropperImage, getImageQuery} from "@/utils/utils";
 import cropper from '@/components/Cropper/index'
 export default {
   components:{
@@ -481,9 +481,8 @@ export default {
       }
       let url = `https:${Env.staticLinkVo.uploadBaseUrl}${val.cover}`
       this.imageUrl = getImageQuery(val.cover);
-      let obj = parseImgOssQueryString(url);
-      // 没有参数
-      if (!isEmptyObj(obj)) {
+      if (cropperImage(val.cover)) {
+        let obj = parseImgOssQueryString(url);
         const { blur, crop } = obj;
         this.backgroundSize = {
           x: Number(crop.x),
