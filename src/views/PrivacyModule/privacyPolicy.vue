@@ -29,7 +29,7 @@
       <section>
         <p class="level-2 font-bold">（二）注册和登录微吼账号</p>
         <p class="level-2">当您在微吼注册账号时，微吼会要求您提供手机号码或者电子邮箱。手机号码、电子邮箱等用于您注册、登录、绑定账号、密码找回时接受验证码，并且作为您与微吼指定的联系方式之一。您同意，微吼有权给您打电话、发短信、发送电子邮件等，对您使用微吼的产品和服务进行回访，服务对账、或者向您介绍微吼最新产品功能，或者向您推荐产品的商务策略等。</p>
-        <p class="level-2 font-italic">收集手机号码是也是履行国家关于网络实名制要求的必要信息，如果您拒绝提供手机号码用于注册、登录，微吼可能无法为您提供更完整的产品和服务。</p>
+        <p class="level-2 font-bold font-italic">收集手机号码是也是履行国家关于网络实名制要求的必要信息，如果您拒绝提供手机号码用于注册、登录，微吼可能无法为您提供更完整的产品和服务。</p>
       </section>
       <section>
         <p class="level-2 font-bold">（三）授权登录</p>
@@ -98,14 +98,14 @@
         <p class="level-2">2、在法定情形下的共享。微吼可能会根据法律法规规定，或者按行政、司法机关依法提出的强制性要求，对外共享您的个人信息。</p>
         <p class="level-2">3、与授权合作伙伴共享。仅为实现本政策中声明的目的，微吼的某些服务将由微吼和合作伙伴共同提供。微吼仅会出于合法、正当、必要、特定、明确的目的共享您的个人信息，并且只会共享提供服务所必要的个人信息。微吼的合作伙伴无权将共享的个人信息用于与产品或者服务无关的其他用途。如：您使用微信支付（财付通支付科技有限公司）向微吼购买产品和服务等，微信支付可能会收集您的个人信息。相关个人信息的处理请您参考微信支付的隐私政策（<a href="https://www.tenpay.com/v3/helpcenter/low/privacy.shtml" target="_blank">https://www.tenpay.com/v3/helpcenter/low/privacy.shtml</a>）。您使用支付宝（支付宝（中国）网络技术有限公司）向微吼购买产品和服务等，支付宝可能会收集您的个人信息。相关个人信息的处理请您参考支付宝的隐私政策：<a href="https://render.alipay.com/p/yuyan/180020010001196791/preview.html?agreementId=AG00000132" target="_blank">https://render.alipay.com/p/yuyan/180020010001196791/preview.html?agreementId=AG00000132</a>。</p>
         <p class="level-2">4、通过SDK方式或者第三方APP与第三方共享。某些产品或者服务可能由第三方提供或者由微吼与第三方共同提供，因此只有共享您的信息，才能提供您需要的产品或者服务，这些产品和服务功能通过嵌入插件（如SDK、第三方APP等）的形式向您提供。在此过程中，第三方服务提供者可能会收集、使用和存储您的相关数据或者信息。</p>
-        <p class="level-2 font-bold font-italic">第三方SDK/APP收集个人信息详情如下：</p>
+        <p class="level-2 font-bold font-italic table-title">第三方SDK/APP收集个人信息详情如下：</p>
         <el-table
           :data="staticData"
           :show-header=false
           border
           :span-method="arraySpanMethod">
           <el-table-column
-            prop="label" width="150">
+            prop="label" width="180">
           </el-table-column>
           <el-table-column>
             <template slot-scope="scope">
@@ -507,6 +507,21 @@ export default {
 <style lang="less" scoped>
 .privacy-policy {
   padding: 0 0;
+  a {
+    color: #3562FA;
+    &:link{
+      color: #3562FA;
+    } //设置未访问时的超链接样式
+    &:visited{
+      color: #3562FA;
+    } //设置已访问的链接的样式
+    &:hover{
+      color: #3562FA
+    } //设置鼠标移动到链接上的样式
+    &:active{
+      color: #3562FA
+    } //设置链接被激活（鼠标点击与释放之间）时的样式
+  }
   > div {
     margin-bottom: 24px;
     &.one {
@@ -521,7 +536,7 @@ export default {
     font-weight: 500;
     font-size: 32px;
     line-height: 44px;
-    color: #000000;
+    color: #262626;
     margin-bottom: 24px;
     padding-top: 40px;
   }
@@ -530,57 +545,77 @@ export default {
     word-break: break-all;
   }
   p.p-timer {
-    margin-bottom: 14px;
+    margin-bottom: 8px;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
     line-height: 28px;
     text-align: center;
-    color: #000000;
+    color: #262626;
     &.margin-24 {
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
   }
   p.level-1 {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     font-style: normal;
     font-weight: 500;
     font-size: 18px;
     line-height: 22px;
-    color: #000000;
+    color: #262626;
   }
   p.level-2 {
     text-indent: 32px;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
     line-height: 22px;
-    color: #000000;
+    color: #262626;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  section {
+    margin-bottom: 12px;
+  }
+  .table-title {
+    margin-top: 32px;
   }
   /deep/.el-table {
     margin: 20px auto;
-    th, tr {
+    tr > td {
       padding: 5px 0;
-      background-color: #f7f7f7;
-    }
-    .cell {
-      padding-left: 10px;
-      padding-right: 10px;
-    }
-    a {
-      color: #1E4EDC;
-      &:hover {
-        color: #1E4EDC;
+      &:first-child {
+        background: #FAFAFA;
+      }
+      &:last-child {
+        background: #FFFFFF;
       }
     }
+    .cell {
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
-}
-.font-italic {
-  font-style: italic;
-}
-.font-bold {
-  font-weight: bold;
+  /deep/.el-table--border, /deep/.el-table--group {
+    border: 1px solid #F0F0F0;
+  }
+  /deep/.el-table--border td, .el-table--border th, .el-table__body-wrapper .el-table--border.is-scrolling-left~.el-table__fixed {
+    border-right: 1px solid #F0F0F0;
+  }
+  /deep/.el-table td, .el-table th.is-leaf {
+    border-bottom: 1px solid #F0F0F0;
+  }
+  /deep/.el-table--border::after, .el-table--group::after, .el-table::before {
+    background-color: #F0F0F0;
+  }
+  .font-italic {
+    font-style: italic !important;
+  }
+  .font-bold {
+    font-weight: bold !important;
+  }
 }
 .page_pc {
   p,h1,table {
@@ -590,6 +625,9 @@ export default {
  .privacy-policy {
     /deep/.el-table {
       width: calc(100% - 166px) !important;
+      tr > td {
+        padding: 13px 24px;
+      }
     }
   }
 }
@@ -601,6 +639,9 @@ export default {
   .privacy-policy {
     /deep/.el-table {
       width: calc(100% - 48px) !important;
+      tr > td {
+        padding: 13px 24px;
+      }
     }
   }
 }
