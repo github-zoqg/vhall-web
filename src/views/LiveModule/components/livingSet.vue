@@ -349,12 +349,12 @@ export default {
     // pc端主题背景
     domain_pc_url() {
       if (!this.livingPcForm.background) return '';
-      return `${this.livingPcForm.background}?x-oss-process=image/crop,x_${this.livingPcForm.backgroundSize.x.toFixed()},y_${this.livingPcForm.backgroundSize.y.toFixed()},w_${this.livingPcForm.backgroundSize.width.toFixed()},h_${this.livingPcForm.backgroundSize.height.toFixed()}${this.livingPcForm.blurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingPcForm.blurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.livingPcForm.lightDegree - 10) * 5} `;
+      return `${this.livingPcForm.background}?x-oss-process=image/crop,x_${this.livingPcForm.backgroundSize.x.toFixed()},y_${this.livingPcForm.backgroundSize.y.toFixed()},w_${this.livingPcForm.backgroundSize.width.toFixed()},h_${this.livingPcForm.backgroundSize.height.toFixed()}${this.livingPcForm.blurryDegree > 0 ? `,x-oss-process=image/blur,r_20,s_${this.livingPcForm.blurryDegree * 4}` : ''},x-oss-process=image/bright,${(this.livingPcForm.lightDegree - 10) * 5} `;
     },
     // wap端主题背景
     domain_wap_url() {
       if (!this.livingWapForm.background) return '';
-      return `${this.livingWapForm.background}?x-oss-process=image/crop,x_${this.livingWapForm.backgroundSize.x.toFixed()},y_${this.livingWapForm.backgroundSize.y.toFixed()},w_${this.livingWapForm.backgroundSize.width.toFixed()},h_${this.livingWapForm.backgroundSize.height.toFixed()}${this.livingWapForm.blurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingWapForm.blurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.livingWapForm.lightDegree - 10) * 5} `;
+      return `${this.livingWapForm.background}?x-oss-process=image/crop,x_${this.livingWapForm.backgroundSize.x.toFixed()},y_${this.livingWapForm.backgroundSize.y.toFixed()},w_${this.livingWapForm.backgroundSize.width.toFixed()},h_${this.livingWapForm.backgroundSize.height.toFixed()}${this.livingWapForm.blurryDegree > 0 ? `,x-oss-process=image/blur,r_20,s_${this.livingWapForm.blurryDegree * 4}` : ''},x-oss-process=image/bright,${(this.livingWapForm.lightDegree - 10) * 5} `;
     },
      // 是否显示互动
     isShowInteract() {
