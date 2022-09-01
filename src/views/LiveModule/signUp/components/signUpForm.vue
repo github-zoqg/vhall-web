@@ -257,7 +257,7 @@
   import axios from 'axios';
   import Env from "@/api/env";
   import { validPhone } from '@/utils/validate.js'
-  import { parseImgOssQueryString } from '@/utils/utils.js'
+  import { parseImgOssQueryString, cropperImage } from '@/utils/utils.js'
   // import DevicePixelRatio from '@/utils/devicePixelRatio'
   export default {
     created() {
@@ -272,8 +272,8 @@
     },
     watch: {
       coverUrl(newVal) {
-        if (newVal.indexOf('?x-oss-process') > -1) {
-          let obj = parseImgOssQueryString(this.coverImgUrl);
+        if (cropperImage(newVal)) {
+          let obj = parseImgOssQueryString(`https:${newVal}`);
           this.coverImageMode = Number(obj.mode) || 3;
         } else {
           this.coverImageMode = 2;

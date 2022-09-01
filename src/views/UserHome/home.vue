@@ -159,7 +159,7 @@ export default {
       follow: 0,
       avatarImgUrl: ``,
       userInfo: null,
-      open_hide: true,
+      open_hide: false,
       bgImgMode: 1, //默认 100% 100%
       imgMode: 2, //默认cover
       BgImgsSize,
@@ -218,7 +218,8 @@ export default {
         })
       }
       this.open_hide = !this.open_hide
-    },//计算简介文字是否过长
+    },
+    //计算简介文字是否过长
     calculateText() {
       const txtDom = this.$refs.intro;
       if (!txtDom) return false;

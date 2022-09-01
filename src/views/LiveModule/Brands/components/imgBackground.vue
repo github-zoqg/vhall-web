@@ -77,8 +77,8 @@ export default {
   watch: {
     dialogVisible() {
       if (this.dialogVisible) {
-        this.domain_url = this.domain_url || this.url || '';
-        this.imageUrl = this.url;
+        this.domain_url = this.type == 0 ? (this.domain_url || this.url) : '';
+        this.imageUrl = this.type == 0 ? this.url : '';
         if (this.imageUrl) {
           this.isType = 0;
         } else {
@@ -92,6 +92,9 @@ export default {
       this.isType = index + 1;
     },
     changePic() {
+      if (this.isType > 0) {
+         this.domain_url = '';
+      }
       this.$emit('onChangePic', this.isType, this.domain_url, this.imageCropper);
       this.dialogVisible = false;
     },
