@@ -874,7 +874,7 @@ export default {
     productLoadSuccess(res, file) {
       if (res.data.file_url) {
         // 文件上传成功，保存信息
-        this.$refs.formCropper.showModel(res.data.domain_url, this.imageCropMode);
+        this.$refs.formCropper.showModel(res.data.domain_url);
         this.imageUrl = res.data.file_url;
         // this.$emit('setBaseInfo', { cover: res.data.file_url });
       }

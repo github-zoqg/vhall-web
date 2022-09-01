@@ -1300,7 +1300,7 @@ export default {
       console.log(res, file);
       // 文件上传成功，保存信息
       if(res.data) {
-        this.$refs.webinarCropper.showModel(res.data.domain_url, this.imageCropMode);
+        this.$refs.webinarCropper.showModel(res.data.domain_url);
         // let domain_url = res.data.domain_url || ''
         // let file_url = res.data.file_url || '';
         // this.formData.imageUrl = file_url;

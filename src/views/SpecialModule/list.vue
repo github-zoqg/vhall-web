@@ -98,7 +98,7 @@ import noData from '@/views/PlatformModule/Error/nullPage';
 import Env from '@/api/env.js';
 import share from './components/share'
 import introduceShow from './components/moduleTutorial'
-import {sessionOrLocal, parseImgOssQueryString, cropperImage} from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage } from "@/utils/utils";
 export default {
   name: 'specialList',
   data() {

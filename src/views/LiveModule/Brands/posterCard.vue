@@ -410,7 +410,7 @@ export default {
       // this.img = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
       if (res.data) {
         this.posterRadio = 192/108;
-        this.$refs.posterCropper.showModel(res.data.domain_url, this.formWapImage.imageCropMode, 2);
+        this.$refs.posterCropper.showModel(res.data.domain_url, 2);
         // let domain_url = res.data.domain_url || ''
         // let file_url = res.data.file_url || '';
         // this.form.img = file_url;
@@ -517,7 +517,7 @@ export default {
       // this.img = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
       if (res.data) {
         this.posterRadio = 750/1344;
-        this.$refs.posterCropper.showModel(res.data.domain_url, this.formWapImage.imageCropMode, 1);
+        this.$refs.posterCropper.showModel(res.data.domain_url, 1);
         // let m_domain_url = res.data.domain_url || ''
         // let m_file_url = res.data.file_url || '';
         // this.form.m_img = m_file_url;

@@ -490,7 +490,7 @@ export default {
     uploadAdvSuccess(res, file) {
       console.log(res, file);
       if(res.data) {
-        this.$refs.adviseCropper.showModel(res.data.domain_url, 1);
+        this.$refs.adviseCropper.showModel(res.data.domain_url);
         // let domain_url = res.data.domain_url || ''
         // let file_url = res.data.file_url || '';
         // this.advertisement.img_url = file_url;

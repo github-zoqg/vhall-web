@@ -18,7 +18,7 @@
       >
         <div class="inner">
           <div class="thumb">
-            <img :src="liveDetailInfo.img_url" alt="" />
+            <img :class="`webinar_cover webinar_cover_${imageMode}`" :src="liveDetailInfo.img_url" alt="" />
             <span class="liveTag">
               <label
                 class="live-status"
@@ -281,7 +281,7 @@ import beginPlay from '@/components/beginBtn'
 import ItemCard from '@/components/ItemCard/index.vue'
 import Env from '@/api/env'
 import { formateDates } from '@/utils/general.js'
-import { sessionOrLocal } from '@/utils/utils'
+import { sessionOrLocal, parseImgOssQueryString, cropperImage } from '@/utils/utils'
 export default {
   components: {
     PageTitle,
@@ -296,6 +296,7 @@ export default {
       hasDelayPermission: false,
       msg: '',
       userId: '',
+      imageMode: 3,
       perssionInfo: {},
       isTrue: true,
       isShow: false,
@@ -537,7 +538,10 @@ export default {
       this.loading = true
       this.$fetch('getWebinarInfo', { webinar_id: id })
         .then((res) => {
-          this.liveDetailInfo = res.data
+          this.liveDetailInfo = res.data;
+          if (cropperImage(this.liveDetailInfo.img_url)) {
+            this.handlerImageInfo(this.liveDetailInfo.img_url);
+          }
           sessionOrLocal.set('webinarState', this.liveDetailInfo.webinar_state)
           sessionOrLocal.set('webinarType', this.liveDetailInfo.webinar_type)
           if (res.data.webinar_state == 4) {
@@ -582,6 +586,11 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      this.imageMode = Number(obj.mode) || 3;
     },
     // 获取是否有报名表单
     getFormInfo(id) {
@@ -1092,11 +1101,18 @@ export default {
       margin-right: 25px;
       background: #1a1a1a;
       border-radius: 4px;
-      img {
+      .webinar_cover{
         width: 100%;
         height: 100%;
         object-fit: scale-down;
         border-radius: 4px;
+        &.webinar_cover_1{
+          object-fit: fill;
+        }
+        &.webinar_cover_2{
+          object-fit: cover;
+          object-position: left top;
+        }
       }
       .liveTag {
         background: rgba(0, 0, 0, 0.7);

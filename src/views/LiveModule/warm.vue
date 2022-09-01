@@ -387,7 +387,7 @@ export default {
     },
     handleUploadSuccess(res, file) {
       if(res.data) {
-        this.$refs.warmCropper.showModel(res.data.domain_url, this.imageCropMode);
+        this.$refs.warmCropper.showModel(res.data.domain_url);
         // let domain_url = res.data.domain_url || ''
         // let file_url = res.data.file_url || '';
         // this.warmForm.imageUrl = file_url;

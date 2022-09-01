@@ -67,10 +67,9 @@ export default {
     vueCropper
   },
   methods: {
-    showModel(url, imageType, index) {
+    showModel(url, index) {
       this.url = url;
       this.index = index || 0;
-      this.imageType = Number(imageType);
       this.dialogVisible = true;
       console.log(url, '???!2324')
     },
@@ -90,7 +89,7 @@ export default {
        * imageType: 选择的图片方式
        * index: 一个页面可能用到多次裁剪组件，用来区分
        */
-      this.$emit('cropComplete', this.cropperData, this.url, this.imageType, this.index)
+      this.$emit('cropComplete', this.cropperData, this.url, Number(this.imageType), this.index)
       if (!this.isShowImages) {
         this.$refs.cropper.destroy();
       }

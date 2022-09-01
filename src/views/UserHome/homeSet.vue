@@ -189,7 +189,7 @@ export default {
       // this.homeSetInfoForm.homepage_avatar = URL.createObjectURL(file.raw);
       if(res.data) {
         this.ratio = 1/1;
-        this.$refs.accountCropper.showModel(res.data.domain_url, 1, 1);
+        this.$refs.accountCropper.showModel(res.data.domain_url, 1);
         // let domain_url = res.data.domain_url || ''
         // let file_url = res.data.file_url || '';
         // this.homeSetInfoForm.homepage_avatar = file_url;
@@ -245,7 +245,7 @@ export default {
       console.log(res, file);
       if(res.data) {
         this.ratio = 192/63;
-        this.$refs.accountCropper.showModel(res.data.domain_url, 1, 2);
+        this.$refs.accountCropper.showModel(res.data.domain_url, 2);
         // let domain_url = res.data.domain_url || ''
         // let file_url = res.data.file_url || '';
         // this.homeSetInfoForm.img_url = file_url;

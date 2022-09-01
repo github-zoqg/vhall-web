@@ -341,7 +341,7 @@ export default {
     handleUploadSuccess(res, file){
       console.log(res, file);
       if(res.data) {
-        this.$refs.subjectCropper.showModel(res.data.domain_url, this.cropperImage.imageCropMode);
+        this.$refs.subjectCropper.showModel(res.data.domain_url);
         // let domain_url = res.data.domain_url || ''
         // let file_url = res.data.file_url || '';
         // this.formData.imageUrl = file_url;

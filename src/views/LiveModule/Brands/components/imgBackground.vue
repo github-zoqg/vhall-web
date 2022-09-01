@@ -115,7 +115,7 @@ export default {
       console.log(res, file);
       // this.imageUrl = URL.createObjectURL(file.raw);
       if (res.data) {
-        this.$refs.invitationCropper.showModel(res.data.domain_url, this.mode);
+        this.$refs.invitationCropper.showModel(res.data.domain_url);
         // let domain_url = res.data.domain_url || ''
         // let file_url = res.data.file_url || '';
         // this.imageUrl = file_url;

@@ -241,7 +241,7 @@ export default {
     uploadAdvSuccess(res, file) {
       console.log(res, file);
       if(res.data) {
-        this.$refs.shareCropper.showModel(res.data.domain_url, this.imageCropper.imageCropMode);
+        this.$refs.shareCropper.showModel(res.data.domain_url);
         // let domain_url = res.data.domain_url || ''
         // let file_url = res.data.file_url || '';
         // this.formShareInfo.img_url = file_url;
