@@ -269,6 +269,21 @@ export default {
 <style lang="less" scoped>
 .user-protection {
   padding: 0 0;
+  a {
+    color: #3562FA;
+    &:link{
+      color: #3562FA;
+    } //设置未访问时的超链接样式
+    &:visited{
+      color: #3562FA;
+    } //设置已访问的链接的样式
+    &:hover{
+      color: #3562FA
+    } //设置鼠标移动到链接上的样式
+    &:active{
+      color: #3562FA
+    } //设置链接被激活（鼠标点击与释放之间）时的样式
+  }
   > div {
     margin-bottom: 24px;
     &.one {
@@ -283,7 +298,7 @@ export default {
     font-weight: 500;
     font-size: 32px;
     line-height: 44px;
-    color: #000000;
+    color: #262626;
     margin-bottom: 24px;
     padding-top: 40px;
   }
@@ -292,66 +307,89 @@ export default {
     word-break: break-all;
   }
   p.p-timer {
-    margin-bottom: 14px;
+    margin-bottom: 8px;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
     line-height: 28px;
     text-align: center;
-    color: #000000;
+    color: #262626;
     &.margin-24 {
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
   }
   p.level-1 {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     font-style: normal;
     font-weight: 500;
     font-size: 18px;
     line-height: 22px;
-    color: #000000;
+    color: #262626;
   }
   p.level-2 {
     text-indent: 32px;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
     line-height: 22px;
-    color: #000000;
+    color: #262626;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  section {
+    margin-bottom: 12px;
+  }
+  .table-title {
+    margin-top: 32px;
   }
   /deep/.el-table {
     margin: 20px auto;
-    th, tr {
+    tr > td {
       padding: 5px 0;
-      background-color: #f7f7f7;
-    }
-    .cell {
-      padding-left: 10px;
-      padding-right: 10px;
-    }
-    a {
-      color: #1E4EDC;
-      &:hover {
-        color: #1E4EDC;
+      &:first-child {
+        background: #FAFAFA;
+      }
+      &:last-child {
+        background: #FFFFFF;
       }
     }
+    .cell {
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
-}
-.font-italic {
-  font-style: italic;
-}
-.font-bold {
-  font-weight: bold;
+  /deep/.el-table--border, /deep/.el-table--group {
+    border: 1px solid #F0F0F0;
+  }
+  /deep/.el-table--border td, .el-table--border th, .el-table__body-wrapper .el-table--border.is-scrolling-left~.el-table__fixed {
+    border-right: 1px solid #F0F0F0;
+  }
+  /deep/.el-table td, .el-table th.is-leaf {
+    border-bottom: 1px solid #F0F0F0;
+  }
+  /deep/.el-table--border::after, .el-table--group::after, .el-table::before {
+    background-color: #F0F0F0;
+  }
+  .font-italic {
+    font-style: italic !important;
+  }
+  .font-bold {
+    font-weight: bold !important;
+  }
 }
 .page_pc {
   p,h1,table {
     margin-left: 83px;
     margin-right: 83px;
   }
- .user-protection {
+ .privacy-policy {
     /deep/.el-table {
       width: calc(100% - 166px) !important;
+      tr > td {
+        padding: 13px 24px;
+      }
     }
   }
 }
@@ -360,9 +398,12 @@ export default {
     margin-left: 24px;
     margin-right: 24px;
   }
-  .user-protection {
+  .privacy-policy {
     /deep/.el-table {
       width: calc(100% - 48px) !important;
+      tr > td {
+        padding: 13px 24px;
+      }
     }
   }
 }
