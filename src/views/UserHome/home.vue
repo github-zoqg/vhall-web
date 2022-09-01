@@ -70,11 +70,11 @@
             <h1>
               {{ userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}
             </h1>
-            <div :class="open_hide ? 'open_hide user__remark' : 'user__remark'">
+            <div ref="intro" :class="open_hide ? 'open_hide user__remark' : 'user__remark'">
               {{ userHomeVo.content }}
             </div>
             <span
-              v-show="userHomeVo && userHomeVo.content"
+              v-show="showToggle && userHomeVo && userHomeVo.content"
               class="user__show__btn"
               @click="showBtnChange"
               >{{ open_hide ? '展开' : '收起'
@@ -163,7 +163,8 @@ export default {
       bgImgMode: 1, //默认 100% 100%
       imgMode: 2, //默认cover
       BgImgsSize,
-      ImgsSize
+      ImgsSize,
+      showToggle: false
     }
   },
   computed: {
@@ -217,6 +218,16 @@ export default {
         })
       }
       this.open_hide = !this.open_hide
+    },//计算简介文字是否过长
+    calculateText() {
+      const txtDom = this.$refs.intro;
+      if (!txtDom) return false;
+      const twoHeight = 30;
+      const curHeight = txtDom.offsetHeight;
+      if (curHeight > twoHeight) {
+        this.showToggle = true;
+        this.open_hide = true;
+      }
     },
     getHomePageInfo() {
       this.$fetch(
@@ -243,6 +254,9 @@ export default {
               homepage_info.img_url = ''
             }
             this.userHomeVo = homepage_info
+            this.$nextTick(() => {
+              this.calculateText();
+            });
             if (this.$route.meta.type == 'new') {
               document.title = this.userHomeVo.title
             }
