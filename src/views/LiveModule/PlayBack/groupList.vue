@@ -334,7 +334,7 @@ export default {
     calcScreenWidth() {
       const clientWidth = document.body.clientWidth
       if (this.isDemand) return;
-      if (clientWidth < 1920) {
+      if (clientWidth < 1900) {
         this.isBidScreen = false
       } else {
         this.isBidScreen = true
