@@ -272,6 +272,7 @@ export function checkAuth(to, from, next, that) {
     to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'))
     || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) || to.path.indexOf('/upgrading') !== -1 || to.path.indexOf('/warning/') !== -1
     || to.path.indexOf('/cMiddle') != -1
+    || to.path.indexOf('/privacy') != -1
   ) {
     // 不验证直接进入
     next();
