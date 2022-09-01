@@ -10,7 +10,7 @@ const color_chat_name = 'rgba(255, 255, 255, 0.45)'
 const color_chat_primary = '#FFF'
 const color_send_color = 'rgba(255, 255, 255, 0.25)';
 const color_send_font_color = '#666';
-const color_text_active = '#E0B96E';
+const color_text_active = '#c99f67';
 const color_subscribe_text = '#E6E6E6';
 
 
@@ -22,7 +22,7 @@ const background_tools_color = '#23232D'; //互动工具背景
 const background_tabs_color = '#23232D';  //聊天+tabs背景
 const background_chat_color = 'rgba(255, 255, 255, 0.08)';  //聊天文案背景
 const background_send_color = 'rgba(255, 255, 255, 0.06)';  //发送输入框文案背景
-const background_color_active = '#E0B96E';
+const background_color_active = '#c99f67';
 const background_subscribe_text = '#23232D'; //预约页背景
 
 // 边框颜色
