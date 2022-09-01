@@ -1,6 +1,8 @@
 <template>
   <el-upload
-    class="file-uploader"
+    :class="['file-uploader ', {
+      'is-upload-disabled': disabled
+    }]"
     v-bind="$props"
     :headers="headersVo"
     :data=saveData
@@ -10,7 +12,7 @@
       <div class="box">
         <a href="javascript:;" class="a-upload mr10" v-if="value">
           <i class="iconfont-v3 saasexcelwendang excel"></i>
-          <p class="file-name" style="color: rgb(136, 136, 136);" :title="fileName">{{fileName}}</p>
+          <p class="file-name" style="`color: #1A1A1A;`" :title="fileName">{{fileName}}</p>
           <slot name="upload-result"></slot>
           <div class="mask">
             <span>
@@ -101,6 +103,10 @@ export default {
       type: String,
       default: ''
     },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     restPic: {
       type: [Function, Boolean],
       default: null
@@ -123,6 +129,9 @@ export default {
       this.fileName = file.name;
       if(response.code !== 200) {
         this.errText = '上传失败，请重新上传';
+        if (typeof this.onError === 'function') {
+          this.onError && this.onError(response, file, fileList)
+        }
       } else {
         this.errText = '';
         console.log(this.$props);
@@ -241,6 +250,13 @@ export default {
       height: 100%;
     }
   }
+  .is-upload-disabled {
+    .a-upload:hover {
+      .mask {
+        display: none;
+      }
+    }
+  }
   .mask{
     position: absolute;
     left: 0;
@@ -300,7 +316,7 @@ export default {
     cursor: initial;
   }
   .a-upload .file-name {
-    color: #999;
+    color: #1A1A1A;
     font-size: 14px;
     font-weight: 400;
     margin-top: -5px;

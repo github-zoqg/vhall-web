@@ -34,7 +34,7 @@
       </span>
     </el-input>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="save" round size="medium">保存</el-button>
+      <el-button type="primary" v-preventReClick @click.prevent.stop="save" round size="medium">保存</el-button>
     </span>
   </VhallDialog>
 </template>

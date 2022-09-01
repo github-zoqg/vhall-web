@@ -192,7 +192,7 @@
               <div class="item_lay" @click="choseMicrophone(2)">
                 <div class="item_lay_hidden" v-if="isDelay"></div>
                 <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE' ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
-                <span>主次悬浮</span>
+                <span>主次浮窗</span>
               </div>
             </div>
           </div>
@@ -747,6 +747,7 @@ export default {
         }
         .preview_container{
           padding: 12px 32px 48px 32px;
+          min-height: 919px;
         }
         &_pc{
           width: 880px;
@@ -888,6 +889,10 @@ export default {
       top: 0;
       left: 0;
       background: rgba(255, 255, 255, 0.5);
+    }
+    /deep/ .el-upload--picture-card {
+      width: 100%;
+      height: 128px;
     }
     @media (max-width: 1920px) {
       .preview_box_pc{

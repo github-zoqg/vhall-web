@@ -311,7 +311,7 @@ const router = [
     path: '/special',
     component: Layout,
     redirect: '/special/list',
-    meta: { auth: true, title: '专题管理', name: 'Special', icon: 'saasicon_projects', level: 1, auth_key: 'subject_manager' },
+    meta: { auth: true, title: '专题管理', name: 'specialList', icon: 'saasicon_projects', level: 1, auth_key: 'subject_manager' },
     children: [
       {
         path: 'list',
@@ -321,7 +321,31 @@ const router = [
       {
         path: 'edit',
         component: () => import('@/views/SpecialModule/edit'),
-        meta: { auth: true, title: '创建专题', name: 'specialEdit', level: 2, activeMenu: '/special/edit', auth_key: 'subject_manager' }
+        meta: { auth: true, title: '创建专题', name: 'subjectEdit', level: 2, activeMenu: '/special/edit', auth_key: 'subject_manager' }
+      },
+      {
+        path: 'edit/:id',
+        component: () => import('@/views/SpecialModule/edit'),
+        meta: { auth: true, title: '编辑专题', name: 'subjectEdit', level: 2, activeMenu: '/special/list', auth_key: 'subject_manager' },
+        hidden: true
+      },
+      {
+        path: 'data/:id',
+        component: () => import('@/views/SpecialModule/data'),
+        meta: { auth: true, title: '查看数据', name: 'subjectData', level: 2, activeMenu: '/special/list', auth_key: 'subject_manager'},
+        hidden: true
+      },
+      {
+        path: 'viewer/:id',
+        component: () => import('@/views/SpecialModule/viewer'),
+        meta: { auth: true, title: '观看限制', name: 'subjectViewer', level: 2, activeMenu: '/special/list', auth_key: 'subject_manager'},
+        hidden: true
+      },
+      {
+        path: 'details/:id',
+        component: () => import('@/views/SpecialModule/details'),
+        meta: { auth: true, title: '专题详情', name: 'subjectDetails', level: 2, activeMenu: '/special/list', auth_key: 'subject_manager' },
+        hidden: true
       }
     ]
   },
@@ -333,7 +357,7 @@ const router = [
   },
   {
     path: '/special/detail',
-    meta: { title: '个人专题详情', name: 'specialDetail'},
+    meta: { title: '个人专题详情', name: 'specialPreview'},
     component: () => import('@/views/SpecialModule/components/preShow'),
     hidden: true
   }

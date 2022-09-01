@@ -246,7 +246,7 @@ export default {
   .vh-chose-active-item{
     cursor: pointer;
     display: inline-block;
-    width: 215px;
+    width: 185px;
     height: 182px;
     overflow: hidden;
     background: #F7F7F7;
