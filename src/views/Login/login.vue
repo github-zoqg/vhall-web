@@ -81,6 +81,8 @@
             <!-- <img src="../../common/images/icon/weibo.png" alt=""> -->
           </div>
         </div>
+        <!-- 隐私协议合规 -->
+        <privacy-select :scene="isOpenOther ? 'login' : 'login_normal'" @check="checkResult"></privacy-select>
       </el-form>
      </div>
      <!-- 手机号登录 -->
@@ -130,6 +132,8 @@
           <div class="login-btn">
             <el-button class="submit top" type="primary" @click="loginDynamic" round>登 录</el-button>
           </div>
+          <!-- 隐私协议合规 -->
+          <privacy-select scene="loginDynamic" @check="checkResult"></privacy-select>
        </el-form>
      </div>
     </div>
@@ -200,12 +204,13 @@
               <p class="errorText" v-show="registerText">{{registerText}}</p>
             </el-form-item>
             <div class="login-btn">
-              <el-button class="submit" type="primary" @click="registerAccount" :disabled="!checked" round>立即注册</el-button>
+              <el-button class="submit" type="primary" @click="registerAccount" round>立即注册</el-button>
             </div>
             <el-form-item class="auto-login register-checked">
-              <el-checkbox v-model="checked">同意遵守<a href="https://t.e.vhall.com/home/vhallapi/serviceterms" target="_blank" rel="noopener noreferrer">《服务条款及隐私协议》</a></el-checkbox>
               <span class="toLogin" @click="$router.push({path: '/login'})">去登录</span>
             </el-form-item>
+            <!-- 隐私协议合规 -->
+            <privacy-select scene="register" @check="checkResult"></privacy-select>
         </el-form>
       </div>
     </div>
@@ -217,13 +222,15 @@
 import {sessionOrLocal, getQueryString} from "@/utils/utils";
 import Cookies from 'js-cookie'
 import footerSection from '../../components/Footer/index';
+import PrivacySelect from './components/privacy-select.vue';
 import Env from "@/api/env";
 import pwdinput from './components/pwdInput'
 import { JSEncrypt } from 'jsencrypt'
 export default {
   components: {
     footerSection,
-    pwdinput
+    pwdinput,
+    PrivacySelect
   },
   data() {
     var validatePhone = (rule, value, callback) => {
@@ -367,7 +374,9 @@ export default {
           { required: true, message: '请输入短信验证码', trigger: 'blur' }
         ]
       },
-      checked: true,
+      loginChecked: false, // 登录——默认未选中
+      loginDynamicChecked: false, // 登录——默认未选中
+      registerChecked: false, // 注册——默认未选中
       showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey: '', // 云盾值
@@ -377,7 +386,8 @@ export default {
       isValidaregisterPhone: false,
       time: 60,
       isActive: 1,
-      isOpenOther: true
+      isOpenOther: true,
+      vm: null
     };
   },
   watch: {
@@ -465,6 +475,10 @@ export default {
     loginAccount() {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
+          if (!this.loginChecked) {
+            this.messageInfo('请先阅读并同意《微吼隐私政策》及《微吼用户服务协议》', 'warning')
+            return
+          }
           this.checkedAccount();
         } else {
           console.log('error submit!!');
@@ -476,6 +490,10 @@ export default {
     loginDynamic() {
       this.$refs.dynamicForm.validate((valid) => {
         if (valid) {
+          if (!this.loginDynamicChecked) {
+            this.messageInfo('请先阅读并同意《微吼隐私政策》及《微吼用户服务协议》', 'warning')
+            return
+          }
           this.checkedAccount();
         } else {
           console.log('error submit!!');
@@ -661,10 +679,27 @@ export default {
         });
       }
     },
+    //文案提示问题
+    messageInfo(title, type) {
+      if (this.vm) {
+        this.vm.close();
+      }
+      this.vm = this.$message({
+        showClose: true,
+        duration: 2000,
+        message: title,
+        type: type,
+        customClass: 'zdy-info-box'
+      });
+    },
     registerAccount() {
       if (!this.registerText) {
         this.$refs.registerForm.validate(async (valid) => {
           if (valid) {
+            if (!this.registerChecked) {
+              this.messageInfo('请先阅读并同意《微吼隐私政策》及《微吼用户服务协议》', 'warning')
+              return
+            }
             let params = JSON.parse(JSON.stringify(this.registerForm))
             await this.getLoginKey()
             params.password = this.handleEncryptPassword(params.password)
@@ -768,6 +803,10 @@ export default {
         }
       });
     },
+    /* 隐私合规选择结果标记 */
+    checkResult(obj) {
+      this[`${['login','login_normal'].includes(obj.scene) ? 'login' : obj.scene}Checked`] = obj.checked
+    }
   }
 };
 </script>
@@ -1000,6 +1039,14 @@ export default {
       color: #4da1ff;
       line-height: 17px;
       cursor: pointer;
+    }
+  }
+  &.register-checked {
+    text-align: center;
+    margin-top: 16px;
+    span.toLogin {
+      float: unset;
+      color: #3562FA;
     }
   }
 }

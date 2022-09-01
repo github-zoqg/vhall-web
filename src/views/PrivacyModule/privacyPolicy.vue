@@ -1,9 +1,10 @@
 <template>
   <!-- 隐私政策 -->
   <div class="privacy-policy">
+    <OldHeader class="head-wrap" scene="userHome" :isWhiteBg=true :isShowLogin=false></OldHeader>
     <h1 class="p-title">微吼隐私政策</h1>
-    <p class="p-timer ">更新日期：【】年【】月【】日</p>
-    <p class="p-timer level-1">生效日期：【】年【】月【】日</p>
+    <p class="p-timer ">更新日期：【2022】年【08】月【31】日</p>
+    <p class="p-timer margin-24">生效日期：【2022】年【09】月【01】日</p>
     <p class="level-2">北京微吼时代科技有限公司及其关联方（以下简称“微吼”）是企业级互动视频直播云平台和一站式互动视频解决方案服务商，致力于通过视频互动技术，为客户提供数字学习技术和数字营销云解决方案，助力企业实现数字化转型。微吼合法拥有并运营微吼官方网站、APP、客户端应用程序等微吼平台。</p>
     <p class="level-2">微吼深知个人信息及隐私对您及其重要并非常重视和保护您的个人信息及隐私。为此，微吼依据《个人信息保护法》、《数据安全法》、《网络安全法》等有关法律法规，特制定《微吼隐私政策》（以下简称“本政策”）。本政策是您与微吼建立的，就您下载、安装、试用、注册、登录微吼官方网站，和/或者APP，和/或者客户应用程序等并试用、或者使用全部微吼产品和服务具有法律约束力的协议。</p>
     <p class="level-2 font-bold font-italic">请您在使用微吼产品和服务之前务必认真阅读本政策，特别是免除或者减轻微吼责任、排除或者限制您的权利、法律适用及争议解决等条款，并审慎判断风险，自主决定是否接受本政策。如果您不同意本政策，请您不要下载、安装、试用、注册、登录、使用微吼的产品和服务。如您进行前述操作视为您已经阅读并同意本政策，并受本政策的约束。</p>
@@ -18,7 +19,7 @@
     <p class="level-2">八、本政策如何查阅和本政策的修订</p>
     <p class="level-2">九、通知送达及推送</p>
     <p class="level-2">十、法律适用和争议解决、侵权投诉和举报渠道</p>
-    <div>
+    <div class="one">
       <p class="level-1 font-bold">一、微吼如何收集和使用您的个人信息</p>
       <p class="level-2">为了更好的提供产品和服务、保障平台正常运行、改进和优化产品和服务质量，微吼会出于本政策所述的以下目的，收集和使用您在使用微吼产品和服务过程中主动提供或由于产品和服务需要而产生的您的如下个人信息：</p>
       <section>
@@ -102,7 +103,6 @@
           :data="staticData"
           :show-header=false
           border
-          style="width: 100%"
           :span-method="arraySpanMethod">
           <el-table-column
             prop="label" width="150">
@@ -253,7 +253,11 @@
   </div>
 </template>
 <script>
+import OldHeader from '@/components/OldHeader';
 export default {
+  components: {
+    OldHeader
+  },
   data() {
     return {
       staticData: [
@@ -450,11 +454,15 @@ export default {
           label: '第三方隐私政策',
           content: '<a href="https://privacy.microsoft.com/zh-CN/privacystatement" target="_blank">https://privacy.microsoft.com/zh-CN/privacystatement</a>'
         }
-      ]
+      ],
+      tableCss: 'width: calc(100% - 48px);'
     }
   },
   created() {
     this.judgeIsWap()
+    window.addEventListener('resize', () => {
+      this.judgeIsWap()
+    });
   },
   methods: {
     judgeIsWap() {
@@ -473,11 +481,15 @@ export default {
         dom.style.minWidth = 'unset';
         dom.style.width = '100%';
         dom.style.overflowX = 'hidden';
+        dom.style.backgroundColor = '#F5F5F5';
+        dom.className = 'page_pc';
       } else{
         // 移动端
         dom.style.minWidth = 'unset';
         dom.style.width = '100%';
         dom.style.overflowX = 'hidden';
+        dom.style.backgroundColor = '#F5F5F5';
+        dom.className = 'page_mobile';
       }
     },
     arraySpanMethod({ row, column, rowIndex, columnIndex }) {
@@ -494,28 +506,57 @@ export default {
 </script>
 <style lang="less" scoped>
 .privacy-policy {
-  padding: 25px 20px;
+  padding: 0 0;
   > div {
-    margin-bottom: 30px;
-    &:first-child {
-      margin-top: 30px;
+    margin-bottom: 24px;
+    &.one {
+      margin-top: 24px;
     }
   }
   h1.p-title {
-    font-size: 24px;
     text-align: center;
-    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #DCDCDC;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 44px;
+    color: #000000;
+    margin-bottom: 24px;
+    padding-top: 40px;
+  }
+  p {
+    text-align: left;
+    word-break: break-all;
   }
   p.p-timer {
-    margin-bottom: 20px;
+    margin-bottom: 14px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 28px;
+    text-align: center;
+    color: #000000;
+    &.margin-24 {
+      margin-bottom: 24px;
+    }
   }
   p.level-1 {
     margin-bottom: 15px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    color: #000000;
   }
   p.level-2 {
     text-indent: 32px;
-    line-height: 20px;
     margin-bottom: 5px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    color: #000000;
   }
   /deep/.el-table {
     margin: 20px auto;
@@ -527,6 +568,12 @@ export default {
       padding-left: 10px;
       padding-right: 10px;
     }
+    a {
+      color: #1E4EDC;
+      &:hover {
+        color: #1E4EDC;
+      }
+    }
   }
 }
 .font-italic {
@@ -534,5 +581,27 @@ export default {
 }
 .font-bold {
   font-weight: bold;
+}
+.page_pc {
+  p,h1,table {
+    margin-left: 83px;
+    margin-right: 83px;
+  }
+ .privacy-policy {
+    /deep/.el-table {
+      width: calc(100% - 166px) !important;
+    }
+  }
+}
+.page_mobile {
+  p,h1,table {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+  .privacy-policy {
+    /deep/.el-table {
+      width: calc(100% - 48px) !important;
+    }
+  }
 }
 </style>

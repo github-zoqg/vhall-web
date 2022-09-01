@@ -1,10 +1,11 @@
 <template>
   <!-- 用户隐私协议 -->
   <div class="user-protection">
+    <OldHeader class="head-wrap" scene="userHome" :isWhiteBg=true :isShowLogin=false></OldHeader>
     <h1 class="p-title">微吼用户服务协议</h1>
-    <p class="p-timer ">更新日期：【】年【】月【】日</p>
-    <p class="p-timer level-1">生效日期：【】年【】月【】日</p>
-    <div>
+    <p class="p-timer ">更新日期：【2022】年【08】月【31】日</p>
+    <p class="p-timer margin-24">生效日期：【2022】年【09】月【01】日</p>
+    <div class="one">
       <p class="level-1 font-bold">一、总则</p>
       <section>
         <p class="level-2">欢迎您使用微吼的产品和服务。</p>
@@ -223,9 +224,16 @@
   </div>
 </template>
 <script>
+import OldHeader from '@/components/OldHeader';
 export default {
+  components: {
+    OldHeader
+  },
   created() {
     this.judgeIsWap()
+    window.addEventListener('resize', () => {
+      this.judgeIsWap()
+    });
   },
   methods: {
     judgeIsWap() {
@@ -244,11 +252,15 @@ export default {
         dom.style.minWidth = 'unset';
         dom.style.width = '100%';
         dom.style.overflowX = 'hidden';
+        dom.style.backgroundColor = '#F5F5F5';
+        dom.className = 'page_pc';
       } else{
         // 移动端
         dom.style.minWidth = 'unset';
         dom.style.width = '100%';
         dom.style.overflowX = 'hidden';
+        dom.style.backgroundColor = '#F5F5F5';
+        dom.className = 'page_mobile';
       }
     }
   }
@@ -256,25 +268,74 @@ export default {
 </script>
 <style lang="less" scoped>
 .user-protection {
-  padding: 25px 20px;
+  padding: 0 0;
   > div {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
+    &.one {
+      margin-top: 24px;
+    }
   }
   h1.p-title {
-    font-size: 24px;
     text-align: center;
-    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #DCDCDC;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 44px;
+    color: #000000;
+    margin-bottom: 24px;
+    padding-top: 40px;
+  }
+  p {
+    text-align: left;
+    word-break: break-all;
   }
   p.p-timer {
-    margin-bottom: 20px;
+    margin-bottom: 14px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 28px;
+    text-align: center;
+    color: #000000;
+    &.margin-24 {
+      margin-bottom: 24px;
+    }
   }
   p.level-1 {
     margin-bottom: 15px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 22px;
+    color: #000000;
   }
   p.level-2 {
     text-indent: 32px;
-    line-height: 20px;
     margin-bottom: 5px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    color: #000000;
+  }
+  /deep/.el-table {
+    margin: 20px auto;
+    th, tr {
+      padding: 5px 0;
+      background-color: #f7f7f7;
+    }
+    .cell {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    a {
+      color: #1E4EDC;
+      &:hover {
+        color: #1E4EDC;
+      }
+    }
   }
 }
 .font-italic {
@@ -282,5 +343,27 @@ export default {
 }
 .font-bold {
   font-weight: bold;
+}
+.page_pc {
+  p,h1,table {
+    margin-left: 83px;
+    margin-right: 83px;
+  }
+ .user-protection {
+    /deep/.el-table {
+      width: calc(100% - 166px) !important;
+    }
+  }
+}
+.page_mobile {
+  p,h1,table {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+  .user-protection {
+    /deep/.el-table {
+      width: calc(100% - 48px) !important;
+    }
+  }
 }
 </style>
