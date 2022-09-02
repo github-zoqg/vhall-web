@@ -86,23 +86,24 @@
         <el-button type="primary"  size="medium" round @click="saveInfo">确 定</el-button>
         <el-button @click="handleClose"  size="medium" round>取 消</el-button>
       </div>
-      <el-dialog
-        width="400px"
-        title="测试发送   "
+      <VhallDialog
+        width="380px"
+        title="测试发送"
         :visible.sync="innerVisible"
         :close-on-click-modal="false"
         :close-on-press-escape="false"
-        append-to-body>
-        <el-form :model="phoneForm" ref="phoneForm" :rules="phoneFormRules" label-width="0">
-          <el-form-item label="" prop="phone">
-            <VhallInput v-model.trim="phoneForm.phone"  @input="handleInput(scope.row)" autocomplete="off" placeholder="请输入手机号" :maxlength="11" show-word-limit></VhallInput>
-          </el-form-item>
-          <p>注意：测试短信也将扣除您的短信余额</p>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary"  size="medium" round @click="sendTest">立即发送</el-button>
+        append-to-body
+        class="send-test__dialog">
+        <vh-form :model="phoneForm" ref="phoneForm" :rules="phoneFormRules" label-width="0">
+          <vh-form-item label="" prop="phone">
+            <vh-input type="text" maxlength="11" show-word-limit v-model.trim="phoneForm.phone" autocomplete="off" placeholder="请输入手机号" @input="handleInput(scope.row)"></vh-input>
+         </vh-form-item>
+        </vh-form>
+        <div class="dialog-footer">
+          <span class="send-test__desc">注意：测试短信也将扣除您的短信余额</span>
+          <vh-button type="primary" round size="medium" @click="sendTest">立即发送</vh-button>
         </div>
-      </el-dialog>
+      </VhallDialog>
   </VhallDialog>
 </template>
 <script>
@@ -245,6 +246,21 @@
   &:last-child {
     /* 最后一条记录，保留间距 */
     padding-bottom: 40px;
+  }
+}
+/* 测试发送弹出框 */
+.send-test__dialog {
+  /deep/.dialog-footer {
+    text-align: right;
+  }
+  .send-test__desc {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    text-align: justify;
+    color: rgba(0, 0, 0, 0.45);
+    float: left;
+    line-height: 36px;
   }
 }
 </style>

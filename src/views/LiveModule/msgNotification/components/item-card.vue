@@ -1,26 +1,23 @@
 <template>
-  <div class="item-card">
+  <vh-card shadow="hover" class="item-card">
     <!-- 卡片顶部区域（图标、文案、开关） -->
     <div class="item-card-top">
-      <label>
-        <img src="../../../../common/images/icon/icon_appointment@2x.png" alt="">
+      <label class="item-card-top__icon">
+        <i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>
       </label>
-      <span>{{info.title || ''}}</span>
+      <span class="item-card-top__title">{{info.title || ''}}</span>
       <vh-switch
         v-model="cardInfo.notice_switch"
         active-text=""
-        @change="switchChangeOpen">
+        @change="switchChangeOpen"
+        size="mini">
       </vh-switch>
     </div>
     <!-- 卡片中间区域（内容区域） -->
     <div :class="`item-card-center ${info && info.config_type == 1 ? 'css_flex' : ''}`">
       <!-- 情况一： 短信活动内容区域：短链接形式 + 发送状态 -->
       <template v-if="!(info.content instanceof Array)">
-        <div>{{info.content_str}} <vh-link type="primary" :underline="false" @click="openDialog('link')">短链接</vh-link></div>
-        <p v-if="info && info.config_type == 2"  class="item-card_start">
-          <span class="item-card_start_timer">{{  baseStartText }}</span>
-          <span class="item-card_start_status">未发送</span>
-        </p>
+        <div class="item-card-center__ctx">{{info.content_str}} <span @click="openDialog('link')" class="item-card-center__link">https://test-zhongtai-webinar.vhall.com/v3/lives/watch/450735208</span></div>
       </template>
       <!-- 情况而： 微信活动内容区域 -->
       <template v-else>
@@ -31,48 +28,62 @@
       </template>
     </div>
     <!-- 卡片底部区域 -->
-    {{info}}
     <div class="item-card-bottom">
-      <template v-if="info && info.config_type == 5">
-        <el-select v-model="selectVal" placeholder="请选择">
-          <el-option
-            v-for="item in [{
-              label: '开播前10分钟',
-              value: 15
-            },{
-              label: '开播前30分钟',
-              value: 0.5
-            },{
-              label: '开播前1小时',
-              value: 1
-            },{
-              label: '开播前2小时',
-              value: 2
-            },{
-              label: '开播前1天',
-              value: 24
-            }]"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </template>
-      <template v-else-if="info && info.config_type != 2">
-        <span>{{info && info.desc ? info.desc : ''}}</span>
-      </template>
-      <template v-if="info && [3,5,6].includes(info.config_type)">
-        <span class="margin-l10">已发送</span>
-      </template>
-      <template v-else>
-        <span class="margin-l10"></span>
-      </template>
-      <template v-if="info && info.is_allow_set">
-        <span class="color-blue color-blue__r10" @click="openSetDialog">发送设置</span>
-      </template>
-      <template>
-        <span class="color-blue" @click="openNoticeDialog">发送记录</span>
-      </template>
+      <div class="item-card-bottom__default">
+        <!-- 发送状态（未发送 or 已设置多个时间点/发送时间 等） -->
+        <p v-if="info && info.config_type == 2"  class="item-card_start">
+          <span class="item-card_start_timer">{{  baseStartText }}</span>
+          <span class="item-card_start_status"> <i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>未发送</span>
+        </p>
+        <!-- 微信：设置时间 -->
+        <template v-if="info && info.config_type == 5">
+          <el-select v-model="selectVal" placeholder="请选择">
+            <el-option
+              v-for="item in [{
+                label: '开播前10分钟',
+                value: 15
+              },{
+                label: '开播前30分钟',
+                value: 0.5
+              },{
+                label: '开播前1小时',
+                value: 1
+              },{
+                label: '开播前2小时',
+                value: 2
+              },{
+                label: '开播前1天',
+                value: 24
+              }]"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </template>
+        <!-- 默认卡片说明文案 -->
+        <template v-else-if="info && info.config_type != 2">
+          <span class="item-card_start_desc">{{info && info.desc ? info.desc : ''}}</span>
+        </template>
+        <!-- 发送状态（已发送） -->
+        <template v-if="info && [3,5,6].includes(info.config_type)">
+          <span  class="item-card_start_status"><i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>已发送</span>
+        </template>
+        <template v-else>
+          <span class="margin-l10"></span>
+        </template>
+      </div>
+      <div class="item-card-bottom__hover">
+        <template>
+          <span class="margin-l10"></span>
+        </template>
+        <template v-if="info && info.is_allow_set">
+          <el-button type="primary" round size="mini" @click="openSetDialog">发送设置</el-button>
+        </template>
+        <template>
+          <el-button round size="mini" @click="openNoticeDialog">发送记录</el-button>
+        </template>
+      </div>
     </div>
     <!-- 发送设置 -->
     <send-set v-if="setVisible" :visible="setVisible" @close="handleSetClose" @saveChange="saveChange"></send-set>
@@ -80,7 +91,7 @@
     <send-notice-list v-if="noticeVisible" :visible="noticeVisible" @close="handleNoticeClose"></send-notice-list>
     <!-- 配置短链接  -->
     <link-dialog v-if="linkDialogVisible" :link="info.link" :visible="linkDialogVisible" @close="closeDialog"></link-dialog>
-  </div>
+  </vh-card>
 </template>
 <script>
   import SendSet from './send-set.vue'
@@ -224,56 +235,143 @@
 </script>
 <style lang="less" scoped>
 .item-card {
-  border: 1px solid #eaeaea;
-}
-.item-card-top {
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-around;
-  width: 100%;
-}
-.item-card-center {
-  padding: 0 10px;
-  height: 100px;
-  line-height: 20px;
-  &.css_flex {
+  background: #FAFAFA;
+  border: 1px solid #D9D9D9;
+  .item-card-top {
     display: inline-flex;
-    flex-direction: column;
+    align-items: center;
     justify-content: space-between;
+    width: 100%;
+    margin-bottom: 8px;
+    &__icon {
+      width: 16px;
+      height: 16px;
+      background: #C7DCFF;
+      border-radius: 2px;
+    }
+    &__title {
+      margin-left: 8px;
+      margin-right: auto;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 22px;
+      color: rgba(0, 0, 0, 0.85);
+    }
   }
-  .item-card_subTitle {
-    margin-bottom: 10px;
-  }
-  .item-card_ct_item {
-    margin-bottom: 10px;
-  }
-  .item-card_start_timer {
+  .item-card-center {
+    font-style: normal;
+    font-weight: 400;
     font-size: 12px;
+    line-height: 20px;
+    text-align: justify;
+    color: rgba(0, 0, 0, 0.65);
+    padding-bottom: 16px;
+    height: 76px;
+    &.css_flex {
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    &__ctx {
+      word-break: break-all;
+    }
+    &__link {
+      color: #0a7ff5;
+      cursor: pointer;
+      &:hover {
+        color: #0060cf;
+      }
+    }
+    .item-card_subTitle {
+      margin-bottom: 10px;
+    }
+    .item-card_ct_item {
+      margin-bottom: 10px;
+    }
   }
-  .item-card_start_status {
-    margin-left: 20px;
-    font-size: 12px;
+  .item-card-bottom {
+    height: 34px;
+    /deep/.vh-card__body {
+      padding: 20px;
+    }
+    .item-card-bottom__default {
+      border-top: 1px solid #D9D9D9;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 20px;
+      color: rgba(0, 0, 0, 0.65);
+      padding-top: 14px;
+      .item-card_start_timer {
+        font-size: 12px;
+      }
+      .item-card_start_desc {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 20px;
+        color: rgba(0, 0, 0, 0.65);
+      }
+      .item-card_start_status {
+        margin-left: 8px;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 20px;
+        color: rgba(0, 0, 0, 0.85);
+        i {
+          font-size: 12px;
+          margin-right: 4px;
+        }
+      }
+    }
+    .item-card-bottom__hover {
+      border-top: 0;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      display: none;
+      padding-top: 12px;
+    }
+    .color-blue {
+      color: #3562FA;
+      cursor: pointer;
+    }
+    .color-blue__r10 {
+      margin-right: 10px;
+    }
+    .margin-l10 {
+      margin-right: auto;
+    }
   }
-}
-.item-card-bottom {
-  margin-top: 20px;
-  padding: 0 10px;
-  height: 52px;
-  border-top: 1px solid #eaeaea;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 12px;
-  .color-blue {
-    color: #3562FA;
-    cursor: pointer;
-  }
-  .color-blue__r10 {
-    margin-right: 10px;
-  }
-  .margin-l10 {
-    margin-left: 10px;
-    margin-right: auto;
+  &:hover {
+    background: #FFFFFF;
+    border: 1px solid #D9D9D9;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.12);
+    /deep/.vh-card__body {
+      padding: 20px 20px 16px 20px;
+    }
+    .item-card-center {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 20px;
+      text-align: justify;
+      color: rgba(0, 0, 0, 0.85);
+    }
+    .item-card-bottom {
+      height: 38px;
+      .item-card-bottom__default {
+        display: none;
+      }
+      .item-card-bottom__hover {
+        display: flex;
+      }
+    }
   }
 }
 </style>

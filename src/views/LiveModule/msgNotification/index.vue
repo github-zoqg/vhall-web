@@ -37,7 +37,7 @@
         </div>
       </div>
       <div class="msg-notification-center">
-        <p class="title"><span>短信通知</span><span class="base_title_send" v-if="msgInfo.config_info.send_num > 0">当前预计发送{{msgInfo.config_info.send_num}}条短信</span><span class="base_title_balance" v-if="msgInfo.config_info.balance == 0">余额不足，请联系您的专属客服充值</span></p>
+        <div class="title-layout"><span class="base_title">短信通知</span><span class="base_title_send" v-if="msgInfo.config_info.send_num > 0">当前预计发送<strong :class="msgInfo.config_info.send_num > 0 ? 'color-blue' : 'color-red'">{{msgInfo.config_info.send_num}}</strong>条短信{{msgInfo.config_info.balance == 0 ? '，' : ''}}</span><span class="base_title_balance" v-if="msgInfo.config_info.balance == 0">余额不足，请联系您的专属客服充值。</span></div>
         <el-row :gutter="24" class="base_row">
           <!-- xs	<768px	超小屏 如：手机
           sm	≥768px	小屏幕 如：平板
@@ -384,17 +384,45 @@ export default {
     }
   }
   .msg-notification-center {
-    margin-top: 10px;
-    .title {
-      border-left: 4px solid #fb3a32;
-      margin: 24px 0 16px 0;
-      padding-left: 8px;
+    .title-layout {
+      margin-top: 24px;
+      margin-bottom: 16px;
+      &::before {
+        content: '';
+        width: 4px;
+        height: 18px;
+        display: inline-block;
+        margin-right: 8px;
+        background: #fb3a32;
+        display: inline-block;
+        vertical-align: middle;
+      }
       span {
+        display: inline-block;
+        vertical-align: middle;
         font-style: normal;
         font-weight: 400;
+        color: rgba(0, 0, 0, 0.85);
+      }
+      .base_title {
         font-size: 18px;
         line-height: 26px;
-        color: rgba(0, 0, 0, 0.85);
+      }
+      .base_title_send {
+        font-size: 14px;
+        line-height: 22px;
+      }
+      .color-blue {
+        color: #3562FA;
+        padding-left: 10px;
+      }
+      .color-red {
+        color: #FB2626;
+      }
+      .base_title_balance {
+        font-size: 14px;
+        line-height: 22px;
+        color: #FB2626;
       }
     }
     .base_title_send {
