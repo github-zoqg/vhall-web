@@ -4,28 +4,33 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :before-close="handleClose"
-    width="800px"
-    title="发送记录">
+    width="840px"
+    class="send-notice-list__dialog">
+    <div slot="title" class="dialog__title">
+      <span class="el-dialog__title vh-dialog__title">发送记录</span>
+      <vh-tooltip effect="dark" content="仅保留近一年的发送记录" placement="right">
+        <i class="iconfont-v3 saasicon_help_m dialog__title__icon"></i>
+      </vh-tooltip>
+    </div>
     <!-- 搜索层 -->
     <div class="search-data">
-      <el-date-picker
+      <vh-date-picker
         v-model="searchDate"
         value-format="yyyy-MM-dd"
         type="daterange"
-        prefix-icon="iconfont-v3 saasicon_date"
-        range-separator="至"
+        range-separator=" 至 "
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         :picker-options="pickerOptions"
-        style="width: 240px"
         @change="searchSendNoticeList"
+        class="search-data__date"
       />
-      <VhallInput v-model="query.keyword"  placeholder="搜索昵称/手机号" class="search-tag" style="width: 220px;marginLeft:15px;" maxlength="50" v-clearEmoij clearable
-        @clear="searchSendNoticeList"
-        @keyup.enter.native="searchSendNoticeList">
-        <i slot="prefix" class="el-icon-search el-input__icon" style="cursor: pointer;line-height: 36px;"></i>
-      </VhallInput>
-      <el-button round  size="medium" class="export-data"  @click="exportSendData">导出数据</el-button>
+      <vh-input
+        type="text"
+        class="search-data__input" size="medium" round placeholder="搜索昵称/手机号" v-model.trim="query.keyword" clearable @clear="searchSendNoticeList" @keyup.enter.native="searchSendNoticeList">
+        <i slot="prefix" class="el-input__icon el-icon-search"></i>
+      </vh-input>
+      <vh-button round ghost size="medium" class="search-data__btn"  @click="exportSendData">导出数据</vh-button>
     </div>
     <!-- tab切换层 -->
     <vh-tabs v-model="activeName" @tab-click="handleClick">
@@ -33,14 +38,8 @@
     </vh-tabs>
     <!-- 表格层 -->
     <div class="tab-content">
-      <el-table
-      :header-cell-style="{
-        background: '#f7f7f7',
-        color: '#666',
-        height: '56px',
-      }"
-      ref="noticeTable" :data="noticeResults.list">
-        <el-table-column
+      <vh-table ref="noticeTable" :data="noticeResults.list">
+        <vh-table-column
           align="left"
           v-for="(item, index) in tableColumn"
           :key="index"
@@ -49,24 +48,29 @@
           :show-overflow-tooltip="!item.customTooltip"
         >
           <template slot-scope="scope">
-            <span v-if="item.key === 'send_status'" :class="scope.row[item.key] == 1 ? 'color-green' : 'color-red'">{{ ['- -', '发送成功', '发送失败'][scope.row[item.key]] || '' }}</span>
+            <div class="icon-status" v-if="item.key === 'send_status'">
+              <i class="icon-dot" :style="{background: scope.row[item.key] == 1 ? '#0FBA5A' : '#FB2626'}"></i>
+              <span>{{ ['- -', '发送成功', '发送失败'][scope.row[item.key]] || '' }}</span>
+            </div>
             <span v-else>{{ scope.row[item.key] || '- -' }}</span>
           </template>
-        </el-table-column>
-      </el-table>
-      <p class="notice-info">发送成功：<span class="color-green">{{noticeResults.success_total}}</span> 条     发送失败：<span class="color-red">{{noticeResults.fail_total}}</span> 条</p>
-      <SPagination
-        :total="noticeResults.total"
-        v-show="noticeResults.total > 10"
-        :currentPage="pageNum"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="query.limit"
-        layout="total, sizes, prev, pager, next, jumper"
-        @current-change="currentChangeHandler"
-        @size-change="handleSizeChange"
-        align="center"
-      >
-      </SPagination>
+        </vh-table-column>
+      </vh-table>
+      <div class="tab-content_page">
+        <p class="notice-info">发送成功：<span class="color-blue">{{noticeResults.success_total}}</span> 条<span class="span-between">&nbsp;</span>发送失败：<span class="color-red">{{noticeResults.fail_total}}</span> 条</p>
+        <SPagination
+          :total="noticeResults.total"
+          v-show="noticeResults.total > 10"
+          :currentPage="pageNum"
+          :page-sizes="[100, 200, 300, 400]"
+          :page-size="query.limit"
+          layout="prev, pager, next"
+          @current-change="currentChangeHandler"
+          @size-change="handleSizeChange"
+          align="center"
+        >
+        </SPagination>
+      </div>
     </div>
   </VhallDialog>
 </template>
@@ -102,19 +106,19 @@
           {
             label: '短信回放通知',
             key: 'dx_playback'
-          },
-          {
-            label: '微信关注通知',
-            key: 'wx_flower'
-          },
-          {
-            label: '微信开播提醒',
-            key: 'wx_start'
-          },
-          {
-            label: '微信回放通知',
-            key: 'wx_playback'
           }
+          // {
+          //   label: '微信关注通知',
+          //   key: 'wx_flower'
+          // },
+          // {
+          //   label: '微信开播提醒',
+          //   key: 'wx_start'
+          // },
+          // {
+          //   label: '微信回放通知',
+          //   key: 'wx_playback'
+          // }
         ],
         activeName: 'dx_success',
         tableColumn: [
@@ -276,54 +280,80 @@
   };
 </script>
 <style lang="less" scoped>
-  .search-data{
-    position: relative;
-    padding: 0 0 32px 0;
-    .export-data {
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-    /deep/.el-input__inner{
-      border-radius: 18px;
-      height: 36px;
-      background: transparent;
-    }
-    .search-tag{
-      /deep/.el-input__inner{
-        padding-right: 30px!important;
+  .send-notice-list__dialog {
+    .dialog__title {
+      &__icon {
+        color: rgba(0, 0, 0, 0.45);
+        margin-left: 8px;
       }
-      /deep/.el-input__icon {
-          line-height: 36px;
-        }
-        /deep/.el-input__prefix{
-          cursor: pointer;
-        }
-    }
-    /deep/.el-icon-arrow-up, .is-reverse{
-      line-height: 36px;
-    }
-    /deep/.el-range-editor.el-input__inner{
-      padding: 1px 10px;
-    }
-    /deep/.el-date-editor .el-range-separator{
-      padding: 2px 5px;
     }
   }
+  .search-data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    /deep/.vh-date-editor .vh-range-separator {
+      width: 20px;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.85);
+    }
+    .search-data__date {
+      width: 276px;
+      border-radius: 100px;
+    }
+    .search-data__input {
+      margin-left: auto;
+      width: 180px;
+      height: 40px;
+      line-height: 40px;
+      /deep/.vh-input__inner {
+        border-radius: 100px;
+      }
+    }
+    .search-data__btn {
+      margin-left: 12px;
+    }
+  }
+  /deep/.vh-tabs__header {
+    margin: 0 0 12px;
+  }
   .tab-content {
-    padding-bottom: 40px;
-    padding-top: 24px;
-    .notice-info {
-      margin-top: 32px;
+    .icon-status {
+      height: 20px;
+      display: flex;
+      align-items: center;
+    }
+    .icon-status span {
+      line-height: 20px;
+    }
+    .icon-dot {
+      width: 8px;
+      height: 8px;
+      display: block;
+      margin-right: 8px;
+      border-radius: 50%;
+    }
+    &_page {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      .pageBox {
+        margin-left: 24px;
+        margin-right: auto;
+      }
     }
     .color-red {
-      color: #fb3a32;
+      color: #FB2626;
     }
-    .color-green {
-      color: #14ba6a;
+    .color-blue {
+      color: #3562FA;
     }
-    .pageBox {
-      margin-top: 32px;
+    .span-between {
+      width: 12px;
     }
   }
 </style>
