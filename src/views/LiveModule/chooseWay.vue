@@ -270,6 +270,7 @@ export default {
         })
     },
     getLiveBaseInfo() {
+      // webinar/info调整-与活动状态无关的调用
       this.$fetch(
         'getWebinarInfo',
         { webinar_id: this.$route.params.str },

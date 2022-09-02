@@ -869,6 +869,7 @@ export default {
     },
     // 获取基本信息
     getLiveDetail() {
+      // webinar/info调整-与活动状态无关的调用
       return this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         this.liveDetailInfo = res.data;
         console.log(this.liveDetailInfo)
