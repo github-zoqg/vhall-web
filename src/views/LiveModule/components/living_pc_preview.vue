@@ -261,7 +261,7 @@ export default {
       position: relative;
       width: 100%;
       height: 495px;
-      transition: all 0.8s linear;
+      transition: all 0.5s linear;
       // z-index: 0;
       // background-image: url('./image/pc/bg_2.png');
       background-size: 100% 100%;
@@ -290,7 +290,7 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        transition: all 0.8s linear;
+        transition: all 0.5s linear;
         .header_left{
           display: flex;
           align-items: center;
@@ -459,7 +459,7 @@ export default {
             width: 100%;
             height: 28px;
             background: var(--background_pc_tools_color);
-            transition: all 0.8s linear;
+            transition: all 0.5s linear;
             border-radius: 0 0 4px 4px;
             display: flex;
             justify-content: space-between;
@@ -504,7 +504,7 @@ export default {
             width: 100%;
             height: 269px;
             background: var(--background_pc_tabs_color);
-            transition: all 0.8s linear;
+            transition: all 0.5s linear;
             position: relative;
             border-radius: 0 0 4px 4px;
             &_chat{
@@ -516,6 +516,7 @@ export default {
                 background: var(--background_pc_tabs_color);
                 position: relative;
                 border-bottom: 1px solid var(--border_pc_tabs_color);
+                transition: all 0.5s linear;
                 p{
                   color: var(--color_pc_text_active);
                   font-size: 14px;
@@ -666,6 +667,7 @@ export default {
             padding: 2px 8px;
             color: var(--color_pc_send_color);
             border-radius: 0 0 4px 4px;
+            transition: all 0.5s linear;
             .icon{
               font-size: 18px;
               transform: scale(0.5);
