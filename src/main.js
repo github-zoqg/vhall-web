@@ -2,15 +2,18 @@ import Vue from 'vue'
 
 import App from './App.vue';
 import router from './router';
+import VhallUI from 'vhall-ui';
 
 import clipboard from 'clipboard'
 // import VueTinymce from '@packy-tang/vue-tinymce/src/main';
+
+import 'cropperjs/dist/cropper.css'
 
 import vuescroll from 'vuescroll';
 import PaasPort from '@vhall/paas-report-data'
 
 import { refreshToken } from './utils/utils'
-
+Vue.use(VhallUI)
 // You can set global config here.
 Vue.use(vuescroll, {
   ops: {

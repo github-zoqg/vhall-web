@@ -338,7 +338,7 @@
     </el-form>
     <selectMedia ref="selecteMedia" @selected='mediaSelected' :isVodVideo="true" :selectedList=[]></selectMedia>
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" :visible.sync="showDialog" width="30%" center
+      <el-dialog class="vh-saas-dialog" :visible.sync="showDialog" width="30%" center
       :close-on-press-escape=false>
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
       </el-dialog>
@@ -2324,7 +2324,7 @@ export default {
       }
     }
   }
-  .vh-dialog{
+  .vh-saas-dialog{
     /deep/ .el-dialog {
       width: 624px!important;
       background: transparent!important;

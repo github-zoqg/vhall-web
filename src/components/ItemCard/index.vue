@@ -176,18 +176,12 @@ export default {
     childPremission: {
       type: Object,
     },
-    isTrue: {
-      type: Boolean,
-      default: true,
-    },
     videoType: {
       type: Boolean,
       default: false,
     },
   },
   created() {
-    console.log(this.perssionInfo, this.isTrue, '????>>>>>>>>>>>')
-    // this.getLanguagePermission()
     this.resetList(this.perssionInfo)
   },
   watch: {
@@ -347,27 +341,27 @@ export default {
         },
       ]),
         (this.brandList = [
-          {
-            icon: 'icon_brand@2x',
-            id: 1,
-            title: '品牌设置',
-            subText: '设置观看页品牌信息',
-            type: 100066,
-            path: `/live/brandSet/${this.$route.params.str}`,
-            isShow:
-              perssionInfo['ui.brand_setting'] > 0 ||
-              perssionInfo.webinar_skins > 0 ||
-              perssionInfo['watch.viewing_protocol'] > 0,
-          },
-          {
-            icon: 'icon_custom@2x',
-            id: 2,
-            title: '自定义菜单',
-            subText: '自定义观看页菜单栏',
-            type: 100067,
-            path: `/live/customTab/${this.$route.params.str}`,
-            isShow: this.isTrue,
-          },
+          { icon: 'icon_brand@2x', id: 1, title: '直播间设置', subText: '设置直播间的主题和布局', type: 100066, path: `/live/livingSet/${this.$route.params.str}`,isShow: true},
+          // {
+          //   icon: 'icon_brand@2x',
+          //   id: 1,
+          //   title: '品牌设置',
+          //   subText: '设置观看页品牌信息',
+          //   type: 100066,
+          //   path: `/live/brandSet/${this.$route.params.str}`,
+          //   isShow:
+          //     perssionInfo['ui.brand_setting'] > 0 ||
+          //     perssionInfo.webinar_skins > 0 ||
+          //     perssionInfo['watch.viewing_protocol'] > 0,
+          // },
+          // {
+          //   icon: 'icon_custom@2x',
+          //   id: 2,
+          //   title: '自定义菜单',
+          //   subText: '自定义观看页菜单栏',
+          //   type: 100067,
+          //   path: `/live/customTab/${this.$route.params.str}`,
+          // },
           {
             icon: 'color-recording-screen@2x',
             id: 9,

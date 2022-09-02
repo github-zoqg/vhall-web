@@ -109,7 +109,7 @@
     </div>
   </el-dialog>
   <template v-if="showDialog">
-    <el-dialog class="vh-dialog" title="" :visible.sync="showDialog" width="30%" center
+    <el-dialog class="vh-saas-dialog" title="" :visible.sync="showDialog" width="30%" center
     :close-on-click-modal=false
     :close-on-press-escape=false>
       <video-preview ref="videoPreview" :videoParam='videoParam'></video-preview>
@@ -558,7 +558,7 @@ export default {
       float: right;
     }
   }
-  .vh-dialog{
+  .vh-saas-dialog{
     /deep/ .el-dialog {
       width: 624px!important;
       background: transparent!important;
