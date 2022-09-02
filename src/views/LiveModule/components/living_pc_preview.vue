@@ -724,6 +724,7 @@ export default {
           height: 380px;
           border-radius: 4px 4px 0 0;
           background: url('./image/living/ppt.png') no-repeat 50% 50%;
+          background-size: cover;
         }
         &_bottom{
           width: 100%;
