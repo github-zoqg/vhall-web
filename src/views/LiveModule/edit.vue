@@ -338,7 +338,7 @@
     </el-form>
     <selectMedia ref="selecteMedia" @selected='mediaSelected' :isVodVideo="true" :selectedList=[]></selectMedia>
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" :visible.sync="showDialog" width="30%" center
+      <el-dialog class="vh-saas-dialog" :visible.sync="showDialog" width="30%" center
       :close-on-press-escape=false>
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
       </el-dialog>
@@ -1093,6 +1093,7 @@ export default {
       this.selectDirectorMode = mode
     },
     getLiveBaseInfo(id, flag) {
+      // webinar/info调整-直播中不能操作的使用1
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(async res=>{
         if( res.code != 200 ){
           return this.$message.warning(res.msg)
@@ -2323,7 +2324,7 @@ export default {
       }
     }
   }
-  .vh-dialog{
+  .vh-saas-dialog{
     /deep/ .el-dialog {
       width: 624px!important;
       background: transparent!important;

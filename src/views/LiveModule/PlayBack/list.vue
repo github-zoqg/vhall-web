@@ -64,7 +64,10 @@
                     <p v-else class="statusDesc disabled">{{ scope.row.transcode_status == 0 || scope.row.transcode_status == 3 ? '生成中...' : '' }}</p>
                   </div>
                   <img @click="preview(scope.row)" :src="scope.row.img_url" alt="" style="cursor: pointer">
-                  <span v-if="!isDemand || liveDetailInfo.webinar_type == 5" class="defaultSign"><i @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>默认回放</span>
+                  <span v-if="!isDemand || liveDetailInfo.webinar_type == 5 || scope.row.is_rehearsal" class="defaultSign" :class="scope.row.is_rehearsal ? 'isRehearsal' : ''">
+                    <i v-show="!scope.row.is_rehearsal" @click="setDefault(scope.row)" :class="{active: scope.row.type == 6}"></i>
+                    {{ scope.row.is_rehearsal ? '彩排回放' : '默认回放' }}
+                  </span>
                   <div v-if="scope.row.encrypt_status == 2" class="ps jiami">加密</div>
                   <div class="ps jiami_zhezhao" v-if="scope.row.encrypt_status == 1">
                     <div class="ps jiamizhong">加密中...</div>
@@ -113,7 +116,12 @@
             show-overflow-tooltip>
             <template slot-scope="scope">
               <router-link v-if="scope.row.group_record_num>0"
-               :to="`/live/playback/${webinar_id}/group/${scope.row.switch_id}`" style="color:blue;">
+               :to="{
+                path: `/live/playback/${webinar_id}/group/${scope.row.switch_id}`,
+                query: {
+                  is_rehearsal: scope.row.is_rehearsal
+                }
+               }" style="color:blue;">
               {{scope.row.group_record_num}}</router-link>
               <span v-else>-</span>
             </template>
@@ -146,9 +154,10 @@
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
               <el-button v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
-              <el-button v-if="WEBINAR_PES['ui.record_chapter']" type="text" @click="toChapter(scope.row)">章节</el-button>
-              <el-button type="text" v-if="$route.meta.name == 'recordplayback' || $route.meta.name == 'publishplayback'" @click="encryption(scope.row)">加密</el-button>
-              <el-dropdown v-if="!isDemand" @command="handleCommand">
+              <el-button v-if="scope.row.is_rehearsal" type="text" @click="deletePlayBack(scope.row.id, 2)">删除</el-button>
+              <el-button v-if="WEBINAR_PES['ui.record_chapter'] && !scope.row.is_rehearsal" type="text" @click="toChapter(scope.row)">章节</el-button>
+              <el-button type="text" v-if="($route.meta.name == 'recordplayback' || $route.meta.name == 'publishplayback') && !scope.row.is_rehearsal" @click="encryption(scope.row)">加密</el-button>
+              <el-dropdown v-if="!isDemand && !scope.row.is_rehearsal" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
                   <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
@@ -229,7 +238,7 @@
     </el-dialog>
     <!-- 预览功能 -->
     <template v-if="showDialog">
-      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center
+      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-saas-dialog" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center
       :close-on-press-escape=false>
       <video-preview ref="videoPreview" :recordId='videoParamId' :webinarId="webinar_id"></video-preview>
       </el-dialog>
@@ -383,7 +392,7 @@ export default {
     calcScreenWidth() {
       const clientWidth = document.body.clientWidth
       if (this.isDemand) return;
-      if (clientWidth < 1920) {
+      if (clientWidth < 1900) {
         this.isBidScreen = false
       } else {
         this.isBidScreen = true
@@ -477,6 +486,7 @@ export default {
     },
     // 获取当前活动基本信息 判断是点播还是直播回放
     getLiveDetail() {
+      // webinar/info调整-与活动状态无关的调用
       this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
         this.liveDetailInfo = res.data;
         if (this.liveDetailInfo.webinar_type == 5 && !this.liveDetailInfo.is_demand) {
@@ -1216,6 +1226,11 @@ export default {
         color: #fff;
         font-size: 12px;
         padding-left: 8px;
+        &.isRehearsal {
+          padding-left: 6px;
+          padding-right: 6px;
+          width: auto;
+        }
         i{
           display: inline-block;
           width: 12px;

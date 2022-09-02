@@ -7,29 +7,29 @@
       <div class="drag-here"> 请拖拽组件至此处</div>
     </template>
     <vhscroll @handle-resize="handleResize" ref="cusResize">
-    <template v-if="units.length">
-      <draggable
-        :list="units"
-      >
-        <div
-          class="editor-component-box"
-          :class="{'editor': index == editorIndex, 'splitLine': item.component_id == 8}"
-          v-for="(item,index) in units"
-          :key="index"
-          @click="doEditor(index)"
+      <template v-if="units.length">
+        <draggable
+          :list="units"
         >
-          <i class="iconfont-v3 saasicon-trashline-01" @click="delComponent(index)"></i>
-          <!-- <i class="iconfontV3 saasicon_warning"></i> -->
-        <template>
-          <preview-box
-            :info="item"
-            :mode="1"
-            :pre="pre"
-          ></preview-box>
-        </template>
-        </div>
-      </draggable>
-    </template>
+          <div
+            class="editor-component-box"
+            :class="{'editor': index == editorIndex, 'splitLine': item.component_id == 8}"
+            v-for="(item,index) in units"
+            :key="index"
+            @click="doEditor(index)"
+          >
+            <i class="iconfont-v3 saasicon-trashline-01" @click="delComponent(index)"></i>
+            <!-- <i class="iconfontV3 saasicon_warning"></i> -->
+          <template>
+            <preview-box
+              :info="item"
+              :mode="1"
+              :pre="pre"
+            ></preview-box>
+          </template>
+          </div>
+        </draggable>
+      </template>
     </vhscroll>
 
   </div>
@@ -205,6 +205,7 @@ export default {
   .customer-preview {
     width: 100%;
     height: 100%;
+    overflow: auto;
     .editor-component-box{
       position: relative;
       padding: 10px 5px;

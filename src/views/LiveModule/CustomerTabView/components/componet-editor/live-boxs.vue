@@ -246,7 +246,7 @@ export default {
   .vh-chose-active-item{
     cursor: pointer;
     display: inline-block;
-    width: 215px;
+    width: 175px;
     height: 182px;
     overflow: hidden;
     background: #F7F7F7;
@@ -359,6 +359,11 @@ export default {
       border-radius: 20px;
       position: relative;
       z-index: 2;
+    }
+  }
+  @media (min-width: 1920px) {
+    .vh-chose-active-item {
+      width: 215px;
     }
   }
   .select-option{
