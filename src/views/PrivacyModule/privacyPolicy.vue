@@ -550,7 +550,7 @@ export default {
     font-weight: 400;
     font-size: 14px;
     line-height: 28px;
-    text-align: center;
+    text-align: left;
     color: #262626;
     &.margin-24 {
       margin-bottom: 28px;
