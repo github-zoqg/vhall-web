@@ -346,10 +346,10 @@ export default {
           isShow: perssionInfo.multilingual == 1 && this.webinarType != 6,
         },
         {
-          icon: 'icon_embedded@2x',
+          icon: 'icon_notice@2x',
           id: 10,
           title: '开播提醒',
-          subText: `针对预约/报名用户发送开播和回放提醒`,
+          subText: `对目标观众发送开播和回放提醒`,
           type: null, // TODO 需要上报KEY
           path: `/live/msgNotification/${this.$route.params.str}`,
           isShow: true,

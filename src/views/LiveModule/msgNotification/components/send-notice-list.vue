@@ -4,43 +4,42 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :before-close="handleClose"
-    width="800px"
-    title="发送记录">
+    width="840px"
+    class="send-notice-list__dialog">
+    <div slot="title" class="dialog__title">
+      <span class="el-dialog__title vh-dialog__title">发送记录</span>
+      <vh-tooltip effect="dark" content="仅保留近一年的发送记录" placement="right">
+        <i class="iconfont-v3 saasicon_help_m dialog__title__icon"></i>
+      </vh-tooltip>
+    </div>
     <!-- 搜索层 -->
     <div class="search-data">
-      <el-date-picker
+      <vh-date-picker
         v-model="searchDate"
         value-format="yyyy-MM-dd"
         type="daterange"
-        prefix-icon="iconfont-v3 saasicon_date"
-        range-separator="至"
+        range-separator=" 至 "
         start-placeholder="开始日期"
         end-placeholder="结束日期"
         :picker-options="pickerOptions"
-        style="width: 240px"
         @change="searchSendNoticeList"
+        class="search-data__date"
       />
-      <VhallInput v-model="query.keyword"  placeholder="搜索昵称/手机号" class="search-tag" style="width: 220px;marginLeft:15px;" maxlength="50" v-clearEmoij clearable
-        @clear="searchSendNoticeList"
-        @keyup.enter.native="searchSendNoticeList">
-        <i slot="prefix" class="el-icon-search el-input__icon" style="cursor: pointer;line-height: 36px;"></i>
-      </VhallInput>
-      <el-button round  size="medium" class="export-data"  @click="exportSendData">导出数据</el-button>
+      <vh-input
+        type="text"
+        class="search-data__input" size="medium" round placeholder="搜索昵称/手机号" v-model.trim="query.keyword" clearable @clear="searchSendNoticeList" @keyup.enter.native="searchSendNoticeList">
+        <i slot="prefix" class="el-input__icon el-icon-search"></i>
+      </vh-input>
+      <vh-button round ghost size="medium" class="search-data__btn"  @click="exportSendData" :disabled="!noticeResults.is_export">导出数据</vh-button>
     </div>
     <!-- tab切换层 -->
-    <vh-tabs v-model="activeName" @tab-click="handleClick">
+    <vh-tabs v-model="query.config_type" @tab-click="handleClick">
       <vh-tab-pane :label="item.label" :name="item.key" v-for="(item, index) in tabList" :key="index"></vh-tab-pane>
     </vh-tabs>
     <!-- 表格层 -->
     <div class="tab-content">
-      <el-table
-      :header-cell-style="{
-        background: '#f7f7f7',
-        color: '#666',
-        height: '56px',
-      }"
-      ref="noticeTable" :data="noticeResults.list">
-        <el-table-column
+      <vh-table ref="noticeTable" :data="noticeResults.list">
+        <vh-table-column
           align="left"
           v-for="(item, index) in tableColumn"
           :key="index"
@@ -49,29 +48,40 @@
           :show-overflow-tooltip="!item.customTooltip"
         >
           <template slot-scope="scope">
-            <span v-if="item.key === 'send_status'" :class="scope.row[item.key] == 1 ? 'color-green' : 'color-red'">{{ ['- -', '发送成功', '发送失败'][scope.row[item.key]] || '' }}</span>
+            <div class="icon-status" v-if="item.key === 'send_status'">
+              <i class="icon-dot" :style="{background: scope.row[item.key] == 1 ? '#0FBA5A' : '#FB2626'}"></i>
+              <span>{{ ['- -', '发送成功', '发送失败'][scope.row[item.key]] || '' }}</span>
+            </div>
             <span v-else>{{ scope.row[item.key] || '- -' }}</span>
           </template>
-        </el-table-column>
-      </el-table>
-      <p class="notice-info">发送成功：<span class="color-green">{{noticeResults.success_total}}</span> 条     发送失败：<span class="color-red">{{noticeResults.fail_total}}</span> 条</p>
-      <SPagination
-        :total="noticeResults.total"
-        v-show="noticeResults.total > 10"
-        :currentPage="pageNum"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="query.limit"
-        layout="total, sizes, prev, pager, next, jumper"
-        @current-change="currentChangeHandler"
-        @size-change="handleSizeChange"
-        align="center"
-      >
-      </SPagination>
+        </vh-table-column>
+        <div slot="empty"></div>
+      </vh-table>
+      <noData :nullType="'nullData'" height=0 v-if="!noticeResults.total" :text="'暂未搜索到您想要的内容'"></noData>
+      <div class="tab-content_page" v-if="noticeResults.total > 0">
+        <p class="notice-info">发送成功：<span class="color-blue">{{noticeResults.success_num}}</span> 条<span class="span-between">&nbsp;</span>发送失败：<span class="color-red">{{noticeResults.fail_num}}</span> 条</p>
+        <SPagination
+          :total="noticeResults.total"
+          v-show="noticeResults.total > 10"
+          :currentPage="pageNum"
+          :page-sizes="[100, 200, 300, 400]"
+          :page-size="query.limit"
+          layout="prev, pager, next"
+          @current-change="currentChangeHandler"
+          @size-change="handleSizeChange"
+          align="center"
+        >
+        </SPagination>
+      </div>
     </div>
   </VhallDialog>
 </template>
 <script>
+  import noData from '@/views/PlatformModule/Error/nullPage';
   export default {
+    components: {
+      noData
+    },
     data() {
       return {
         dialogVisible: true,
@@ -79,11 +89,13 @@
           start_time: '',
           end_time: '',
           keyword: '',
+          config_type: '1',
           pos: 0,
           limit: 10
         },
         searchDate: '',
         pageNum: 1,
+        vm: null,
         pickerOptions: {
           // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
           disabledDate: (time) => {
@@ -93,30 +105,29 @@
         tabList: [
           {
             label: '短信成功通知',
-            key: 'dx_success'
+            key: '1'
           },
           {
             label: '短信开播提醒',
-            key: 'dx_start'
+            key: '2'
           },
           {
             label: '短信回放通知',
-            key: 'dx_playback'
-          },
-          {
-            label: '微信关注通知',
-            key: 'wx_flower'
-          },
-          {
-            label: '微信开播提醒',
-            key: 'wx_start'
-          },
-          {
-            label: '微信回放通知',
-            key: 'wx_playback'
+            key: '3'
           }
+          // {
+          //   label: '微信关注通知',
+          //   key: 'wx_flower'
+          // },
+          // {
+          //   label: '微信开播提醒',
+          //   key: 'wx_start'
+          // },
+          // {
+          //   label: '微信回放通知',
+          //   key: 'wx_playback'
+          // }
         ],
-        activeName: 'dx_success',
         tableColumn: [
           {
             label: '昵称',
@@ -151,28 +162,11 @@
         ],
         isHandle: false,
         noticeResults: {
-          total: 1000,
-          success_total: 200,
-          fail_total: 800,
-          list: [
-            {
-              nick_name: 'aaaa',
-              send_status: 1
-            },
-            {
-              nick_name: 'aaaa',
-              send_status: 2
-            },
-            {
-              nick_name: 'aaaa'
-            },
-            {
-              nick_name: 'aaaa'
-            },
-            {
-              nick_name: 'aaaa'
-            }
-          ]
+          total: 0,
+          is_export: 0,
+          success_num: 0,
+          fail_num: 0,
+          list: []
         }
       };
     },
@@ -217,27 +211,43 @@
           this.query.start_time = this.searchDate[0];
           this.query.end_time = this.searchDate[1];
         }
-        this.$fetch('getAdvList', this.$params({
+        this.$fetch('getNoticeRecordList', this.$params({
           webinar_id: this.$route.params.str || '',
-          ...this.query
+          ...this.query,
+          config_type: Number(this.query.config_type)
         })).then(res => {
           if (res && res.code == 200 && res.data) {
             this.noticeResults = res.data
           } else {
             this.noticeResults = {
               total: 0,
-              success_total: 0,
-              fail_total: 0,
+              is_export: 0,
+              success_num: 0,
+              fail_num: 0,
               list: []
             }
           }
         }).catch(() => {
           this.noticeResults = {
             total: 0,
-            success_total: 0,
-            fail_total: 0,
+            is_export: 0,
+            success_num: 0,
+            fail_num: 0,
             list: []
           }
+        });
+      },
+      //文案提示问题
+      messageInfo(title, type) {
+        if (this.vm) {
+          this.vm.close()
+        }
+        this.vm = this.$message({
+          showClose: true,
+          duration: 2000,
+          message: title,
+          type: type,
+          customClass: 'zdy-info-box'
         });
       },
       // 导出发送记录数据
@@ -246,84 +256,110 @@
           this.query.start_time = this.searchDate[0];
           this.query.end_time = this.searchDate[1];
         }
-        this.$fetch('exportOnline', this.$params({
+        this.$fetch('exportNoticeRecord', this.$params({
           webinar_id: this.$route.params.str || '',
-          ...this.query
+          ...this.query,
+          config_type: Number(this.query.config_type)
         })).then(res => {
-          this.$message({
-            message: `导出申请成功，请去下载中心下载`,
-            showClose: true,
-            // duration: 0,
-            type: 'success',
-            customClass: 'zdy-info-box'
-          });
+          this.$messageInfo('导出申请成功，请去下载中心下载', 'success');
           this.$EventBus.$emit('saas_vs_download_change');
         }).catch(res => {
-          this.$message({
-            message: res.msg || `导出失败`,
-            showClose: true,
-            // duration: 0,
-            type: 'error',
-            customClass: 'zdy-info-box'
-          });
+          this.$messageInfo(res.msg || `导出失败`, 'error');
         })
+      },
+      initPage() {
+        // 初始化设置日期为最近一年 1000 * 60 * 24
+        const end = new Date();
+        const start = new Date();
+        end.setTime(end.getTime());
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 365);
+        this.searchDate = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')]
+        this.query.start_time = this.searchDate[0];
+        this.query.end_time = this.searchDate[1];
       }
     },
     created() {
       this.dialogVisible =  this.visible;
       this.cardVo = this.app.info; // TODO inject传入的内容，在小组件内，只做赋值，不动cardVo数据
+      this.initPage()
     }
   };
 </script>
 <style lang="less" scoped>
-  .search-data{
-    position: relative;
-    padding: 0 0 32px 0;
-    .export-data {
-      position: absolute;
-      right: 0;
-      top: 0;
-    }
-    /deep/.el-input__inner{
-      border-radius: 18px;
-      height: 36px;
-      background: transparent;
-    }
-    .search-tag{
-      /deep/.el-input__inner{
-        padding-right: 30px!important;
+  .send-notice-list__dialog {
+    .dialog__title {
+      &__icon {
+        color: rgba(0, 0, 0, 0.45);
+        margin-left: 8px;
       }
-      /deep/.el-input__icon {
-          line-height: 36px;
-        }
-        /deep/.el-input__prefix{
-          cursor: pointer;
-        }
-    }
-    /deep/.el-icon-arrow-up, .is-reverse{
-      line-height: 36px;
-    }
-    /deep/.el-range-editor.el-input__inner{
-      padding: 1px 10px;
-    }
-    /deep/.el-date-editor .el-range-separator{
-      padding: 2px 5px;
     }
   }
+  .search-data {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    /deep/.vh-date-editor .vh-range-separator {
+      width: 20px;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.85);
+    }
+    .search-data__date {
+      width: 276px;
+      border-radius: 100px;
+    }
+    .search-data__input {
+      margin-left: auto;
+      width: 180px;
+      height: 40px;
+      line-height: 40px;
+      /deep/.vh-input__inner {
+        border-radius: 100px;
+      }
+    }
+    .search-data__btn {
+      margin-left: 12px;
+    }
+  }
+  /deep/.vh-tabs__header {
+    margin: 0 0 12px;
+  }
   .tab-content {
-    padding-bottom: 40px;
-    padding-top: 24px;
-    .notice-info {
-      margin-top: 32px;
+    .icon-status {
+      height: 20px;
+      display: flex;
+      align-items: center;
+    }
+    .icon-status span {
+      line-height: 20px;
+    }
+    .icon-dot {
+      width: 8px;
+      height: 8px;
+      display: block;
+      margin-right: 8px;
+      border-radius: 50%;
+    }
+    &_page {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      .pageBox {
+        margin-left: 24px;
+        margin-right: auto;
+      }
     }
     .color-red {
-      color: #fb3a32;
+      color: #FB2626;
     }
-    .color-green {
-      color: #14ba6a;
+    .color-blue {
+      color: #3562FA;
     }
-    .pageBox {
-      margin-top: 32px;
+    .span-between {
+      width: 12px;
     }
   }
 </style>

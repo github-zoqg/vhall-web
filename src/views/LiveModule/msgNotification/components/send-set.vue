@@ -22,7 +22,7 @@
                 <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
               </el-tooltip>
             </vh-checkbox>
-            <vh-checkbox label="2" v-if="cardVo.iconType === 'base_playback'">预约/报名中未观看直播用户</vh-checkbox>
+            <vh-checkbox label="2" v-if="cardVo.config_type == 3">预约/报名中未观看直播用户</vh-checkbox>
             <vh-checkbox label="3">导入用户</vh-checkbox>
             <vh-checkbox label="4" v-if="isOpenWhite">白名单用户</vh-checkbox>
           </vh-checkbox-group>
@@ -52,7 +52,7 @@
       <div class="set-item send_time">
         <label class="set-item__label">发送时间：</label>
         <div class="set-item__content">
-          <vh-checkbox-group v-model="send_timer" v-if="cardVo.iconType === 'base_start'">
+          <vh-checkbox-group v-model="send_timer" v-if="cardVo.config_type == 2">
             <vh-checkbox v-for="item in [{
               label: '开播前15分钟',
               value: 15
@@ -77,8 +77,8 @@
             :value="item.value">
             </vh-checkbox>
           </vh-checkbox-group>
-          <span v-else-if="cardVo.iconType === 'base_subscribe'">预约/报名成功后发送</span>
-          <span v-else-if="cardVo.iconType === 'base_playback'">设置默认回放后发送</span>
+          <span v-else-if="cardVo.config_type == 1">预约/报名成功后发送</span>
+          <span v-else-if="cardVo.config_type == 3">设置默认回放后发送</span>
           <span v-else>——</span>
         </div>
       </div>
@@ -86,23 +86,24 @@
         <el-button type="primary"  size="medium" round @click="saveInfo">确 定</el-button>
         <el-button @click="handleClose"  size="medium" round>取 消</el-button>
       </div>
-      <el-dialog
-        width="400px"
-        title="测试发送   "
+      <VhallDialog
+        width="380px"
+        title="测试发送"
         :visible.sync="innerVisible"
         :close-on-click-modal="false"
         :close-on-press-escape="false"
-        append-to-body>
-        <el-form :model="phoneForm" ref="phoneForm" :rules="phoneFormRules" label-width="0">
-          <el-form-item label="" prop="phone">
-            <VhallInput v-model.trim="phoneForm.phone"  @input="handleInput(scope.row)" autocomplete="off" placeholder="请输入手机号" :maxlength="11" show-word-limit></VhallInput>
-          </el-form-item>
-          <p>注意：测试短信也将扣除您的短信余额</p>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button type="primary"  size="medium" round @click="sendTest">立即发送</el-button>
+        append-to-body
+        class="send-test__dialog">
+        <vh-form :model="phoneForm" ref="phoneForm" :rules="phoneFormRules" label-width="0">
+          <vh-form-item label="" prop="phone">
+            <vh-input type="text" maxlength="11" show-word-limit v-model.trim="phoneForm.phone" autocomplete="off" placeholder="请输入手机号" @input="handleInput(scope.row)"></vh-input>
+         </vh-form-item>
+        </vh-form>
+        <div class="dialog-footer">
+          <span class="send-test__desc">注意：测试短信也将扣除您的短信余额</span>
+          <vh-button type="primary" round size="medium" @click="sendTest">立即发送</vh-button>
         </div>
-      </el-dialog>
+      </VhallDialog>
   </VhallDialog>
 </template>
 <script>
@@ -178,14 +179,18 @@
       sendTest() {
         this.$refs.phoneForm.validate((valid) => {
           if (valid) {
-            this.$fetch('', this.$params(this.phoneForm)).then(res => {
+            this.$fetch('noticeTestSend', this.$params({
+              webinar_id: this.cardVo.webinar_id,
+              phone: this.phoneForm.phone,
+              config_type: this.cardVo.config_type
+            })).then(res => {
               if (res && res.code == 200) {
-                this.$message.success('已发送，请观察短信是否能正常收到')
+                this.messageInfo('已发送，请观察短信是否能正常收到', 'success')
               } else {
-                this.$message.error(res.msg || '发送失败')
+                this.messageInfo(res.msg || '发送失败', 'error')
               }
             }).catch(res => {
-              this.$message.error(res.msg || '发送失败')
+              this.messageInfo(res.msg || '发送失败', 'error')
             });
           }
         })
@@ -245,6 +250,21 @@
   &:last-child {
     /* 最后一条记录，保留间距 */
     padding-bottom: 40px;
+  }
+}
+/* 测试发送弹出框 */
+.send-test__dialog {
+  /deep/.dialog-footer {
+    text-align: right;
+  }
+  .send-test__desc {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    text-align: justify;
+    color: rgba(0, 0, 0, 0.45);
+    float: left;
+    line-height: 36px;
   }
 }
 </style>
