@@ -30,10 +30,10 @@
         class="search-data__input" size="medium" round placeholder="搜索昵称/手机号" v-model.trim="query.keyword" clearable @clear="searchSendNoticeList" @keyup.enter.native="searchSendNoticeList">
         <i slot="prefix" class="el-input__icon el-icon-search"></i>
       </vh-input>
-      <vh-button round ghost size="medium" class="search-data__btn"  @click="exportSendData">导出数据</vh-button>
+      <vh-button round ghost size="medium" class="search-data__btn"  @click="exportSendData" :disabled="!noticeResults.is_export">导出数据</vh-button>
     </div>
     <!-- tab切换层 -->
-    <vh-tabs v-model="activeName" @tab-click="handleClick">
+    <vh-tabs v-model="query.config_type" @tab-click="handleClick">
       <vh-tab-pane :label="item.label" :name="item.key" v-for="(item, index) in tabList" :key="index"></vh-tab-pane>
     </vh-tabs>
     <!-- 表格层 -->
@@ -55,9 +55,11 @@
             <span v-else>{{ scope.row[item.key] || '- -' }}</span>
           </template>
         </vh-table-column>
+        <div slot="empty"></div>
       </vh-table>
-      <div class="tab-content_page">
-        <p class="notice-info">发送成功：<span class="color-blue">{{noticeResults.success_total}}</span> 条<span class="span-between">&nbsp;</span>发送失败：<span class="color-red">{{noticeResults.fail_total}}</span> 条</p>
+      <noData :nullType="'nullData'" height=0 v-if="!noticeResults.total" :text="'暂未搜索到您想要的内容'"></noData>
+      <div class="tab-content_page" v-if="noticeResults.total > 0">
+        <p class="notice-info">发送成功：<span class="color-blue">{{noticeResults.success_num}}</span> 条<span class="span-between">&nbsp;</span>发送失败：<span class="color-red">{{noticeResults.fail_num}}</span> 条</p>
         <SPagination
           :total="noticeResults.total"
           v-show="noticeResults.total > 10"
@@ -75,7 +77,11 @@
   </VhallDialog>
 </template>
 <script>
+  import noData from '@/views/PlatformModule/Error/nullPage';
   export default {
+    components: {
+      noData
+    },
     data() {
       return {
         dialogVisible: true,
@@ -83,11 +89,13 @@
           start_time: '',
           end_time: '',
           keyword: '',
+          config_type: '1',
           pos: 0,
           limit: 10
         },
         searchDate: '',
         pageNum: 1,
+        vm: null,
         pickerOptions: {
           // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
           disabledDate: (time) => {
@@ -97,15 +105,15 @@
         tabList: [
           {
             label: '短信成功通知',
-            key: 'dx_success'
+            key: '1'
           },
           {
             label: '短信开播提醒',
-            key: 'dx_start'
+            key: '2'
           },
           {
             label: '短信回放通知',
-            key: 'dx_playback'
+            key: '3'
           }
           // {
           //   label: '微信关注通知',
@@ -120,7 +128,6 @@
           //   key: 'wx_playback'
           // }
         ],
-        activeName: 'dx_success',
         tableColumn: [
           {
             label: '昵称',
@@ -155,28 +162,11 @@
         ],
         isHandle: false,
         noticeResults: {
-          total: 1000,
-          success_total: 200,
-          fail_total: 800,
-          list: [
-            {
-              nick_name: 'aaaa',
-              send_status: 1
-            },
-            {
-              nick_name: 'aaaa',
-              send_status: 2
-            },
-            {
-              nick_name: 'aaaa'
-            },
-            {
-              nick_name: 'aaaa'
-            },
-            {
-              nick_name: 'aaaa'
-            }
-          ]
+          total: 0,
+          is_export: 0,
+          success_num: 0,
+          fail_num: 0,
+          list: []
         }
       };
     },
@@ -221,27 +211,43 @@
           this.query.start_time = this.searchDate[0];
           this.query.end_time = this.searchDate[1];
         }
-        this.$fetch('getAdvList', this.$params({
+        this.$fetch('getNoticeRecordList', this.$params({
           webinar_id: this.$route.params.str || '',
-          ...this.query
+          ...this.query,
+          config_type: Number(this.query.config_type)
         })).then(res => {
           if (res && res.code == 200 && res.data) {
             this.noticeResults = res.data
           } else {
             this.noticeResults = {
               total: 0,
-              success_total: 0,
-              fail_total: 0,
+              is_export: 0,
+              success_num: 0,
+              fail_num: 0,
               list: []
             }
           }
         }).catch(() => {
           this.noticeResults = {
             total: 0,
-            success_total: 0,
-            fail_total: 0,
+            is_export: 0,
+            success_num: 0,
+            fail_num: 0,
             list: []
           }
+        });
+      },
+      //文案提示问题
+      messageInfo(title, type) {
+        if (this.vm) {
+          this.vm.close()
+        }
+        this.vm = this.$message({
+          showClose: true,
+          duration: 2000,
+          message: title,
+          type: type,
+          customClass: 'zdy-info-box'
         });
       },
       // 导出发送记录数据
@@ -250,32 +256,32 @@
           this.query.start_time = this.searchDate[0];
           this.query.end_time = this.searchDate[1];
         }
-        this.$fetch('exportOnline', this.$params({
+        this.$fetch('exportNoticeRecord', this.$params({
           webinar_id: this.$route.params.str || '',
-          ...this.query
+          ...this.query,
+          config_type: Number(this.query.config_type)
         })).then(res => {
-          this.$message({
-            message: `导出申请成功，请去下载中心下载`,
-            showClose: true,
-            // duration: 0,
-            type: 'success',
-            customClass: 'zdy-info-box'
-          });
+          this.$messageInfo('导出申请成功，请去下载中心下载', 'success');
           this.$EventBus.$emit('saas_vs_download_change');
         }).catch(res => {
-          this.$message({
-            message: res.msg || `导出失败`,
-            showClose: true,
-            // duration: 0,
-            type: 'error',
-            customClass: 'zdy-info-box'
-          });
+          this.$messageInfo(res.msg || `导出失败`, 'error');
         })
+      },
+      initPage() {
+        // 初始化设置日期为最近一年 1000 * 60 * 24
+        const end = new Date();
+        const start = new Date();
+        end.setTime(end.getTime());
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 365);
+        this.searchDate = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')]
+        this.query.start_time = this.searchDate[0];
+        this.query.end_time = this.searchDate[1];
       }
     },
     created() {
       this.dialogVisible =  this.visible;
       this.cardVo = this.app.info; // TODO inject传入的内容，在小组件内，只做赋值，不动cardVo数据
+      this.initPage()
     }
   };
 </script>

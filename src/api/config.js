@@ -723,7 +723,7 @@ const apis = {
   saveSendSet: ['/v3/interacts/notice/notice-template-edit', 'POST'], // 保存-开播提醒-[发送设置/卡片开关]
   getNoticeDetail: ['/v3/interacts/notice/notice-detail', 'POST'], // 获取-开播提醒-卡片信息
   getNoticeRecordList: ['/v3/interacts/notice/notice-record', 'GET'], // 获取-发送记录
-  exprotNoticeRecord: ['/v3/interacts/notice/notice-export-record', 'GET'], // 导出-发送记录
+  exportNoticeRecord: ['/v3/interacts/notice/notice-export-record', 'GET'], // 导出-发送记录
   importNoticeExcel: ['/v3/interacts/notice/notice-import-user','POST'], // 导入发送用户
   noticeTestSend: ['/v3/interacts/notice/notice-test-send', 'POST'], // 发送测试
   noticeCheckImport: ['/v3/interacts/notice/notice-check-import', 'POST'], // 导入进度检测

@@ -22,7 +22,7 @@
                 <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
               </el-tooltip>
             </vh-checkbox>
-            <vh-checkbox label="2" v-if="cardVo.iconType === 'base_playback'">预约/报名中未观看直播用户</vh-checkbox>
+            <vh-checkbox label="2" v-if="cardVo.config_type == 3">预约/报名中未观看直播用户</vh-checkbox>
             <vh-checkbox label="3">导入用户</vh-checkbox>
             <vh-checkbox label="4" v-if="isOpenWhite">白名单用户</vh-checkbox>
           </vh-checkbox-group>
@@ -52,7 +52,7 @@
       <div class="set-item send_time">
         <label class="set-item__label">发送时间：</label>
         <div class="set-item__content">
-          <vh-checkbox-group v-model="send_timer" v-if="cardVo.iconType === 'base_start'">
+          <vh-checkbox-group v-model="send_timer" v-if="cardVo.config_type == 2">
             <vh-checkbox v-for="item in [{
               label: '开播前15分钟',
               value: 15
@@ -77,8 +77,8 @@
             :value="item.value">
             </vh-checkbox>
           </vh-checkbox-group>
-          <span v-else-if="cardVo.iconType === 'base_subscribe'">预约/报名成功后发送</span>
-          <span v-else-if="cardVo.iconType === 'base_playback'">设置默认回放后发送</span>
+          <span v-else-if="cardVo.config_type == 1">预约/报名成功后发送</span>
+          <span v-else-if="cardVo.config_type == 3">设置默认回放后发送</span>
           <span v-else>——</span>
         </div>
       </div>
@@ -179,14 +179,18 @@
       sendTest() {
         this.$refs.phoneForm.validate((valid) => {
           if (valid) {
-            this.$fetch('', this.$params(this.phoneForm)).then(res => {
+            this.$fetch('noticeTestSend', this.$params({
+              webinar_id: this.cardVo.webinar_id,
+              phone: this.phoneForm.phone,
+              config_type: this.cardVo.config_type
+            })).then(res => {
               if (res && res.code == 200) {
-                this.$message.success('已发送，请观察短信是否能正常收到')
+                this.messageInfo('已发送，请观察短信是否能正常收到', 'success')
               } else {
-                this.$message.error(res.msg || '发送失败')
+                this.messageInfo(res.msg || '发送失败', 'error')
               }
             }).catch(res => {
-              this.$message.error(res.msg || '发送失败')
+              this.messageInfo(res.msg || '发送失败', 'error')
             });
           }
         })
