@@ -101,8 +101,8 @@
                 <!-- 开启 并且有图-->
                 <div class="pc-poster-wrap">
                   <el-image v-show="status <= 0 && form.img"  class="hb_img v-poster-preview" :src="domain_pc_url" :fit="ImgsSize[formPcImage.imageCropMode - 1]" :class="formPcImage.imageCropMode == 2 ? 'isCover' : ''"></el-image>
-                  <el-image v-show="!form.img" class="hb_img v-poster-preview"
-                    src="../../../common/images/poster/pc-1.png" fit="cover"></el-image>
+                  <!-- <el-image v-show="!form.img" class="hb_img v-poster-preview"
+                    src="../../../common/images/poster/pc-1.png" fit="cover"></el-image> -->
                 </div>
                 <!--  <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button> -->
                 <div :class="['poster-btn', {'five': alertType > 0}]"></div>
@@ -118,9 +118,9 @@
               <div class="poster-img">
                 <el-image v-show="status <= 0 && form.m_img" class="domain_url" :src="domain_wap_url" :fit="ImgsSize[formWapImage.imageCropMode - 1]" :class="formWapImage.imageCropMode == 2 ? 'isCover' : ''">
                 </el-image>
-                <el-image v-show="!form.m_img" class="default"
+                <!-- <el-image v-show="!form.m_img" class="default"
                   src="../../../common/images/poster/phone_poster_default@2x.png" fit="cover">
-                </el-image>
+                </el-image> -->
               </div>
               <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s 关闭' : '关闭'}}
               </el-button>
@@ -796,7 +796,7 @@ export default {
       height: 568px;
       border-bottom-right-radius: 26px;
       border-bottom-left-radius: 26px;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.5);
       .domain_url {
         display: inline-block;
         position: absolute;

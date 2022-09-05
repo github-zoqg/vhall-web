@@ -80,8 +80,8 @@ export default {
       console.log(url, '???!2324')
     },
     goCropper() {
-      this.isShowImages = !this.isShowImages;
-      // debounce(this.changeValue, 3000)
+      // this.isShowImages = !this.isShowImages;
+      debounce(this.changeValue, true, 3000)
       // this.isShowImages = !this.isShowImages;
       // console.log(this.isShowImages, '???13224')
       // if (this.isShowImages) {

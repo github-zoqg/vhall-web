@@ -4,6 +4,7 @@ import NProgress from "nprogress";
 import { message } from 'element-ui';
 import Cookies from 'js-cookie';
 import { v1 as uuidV1 } from 'uuid';
+import { fn } from "moment";
 export const sessionOrLocal = {
   set: (key, value, saveType = 'sessionStorage') => {
     if (!key) return;
@@ -55,7 +56,14 @@ export const debounce = (function(immediate = false) {
   let timer = 0
   return function(callback, ms) {
     clearTimeout(timer)
-    timer = setTimeout(callback, ms)
+    if (immediate) {
+      let bool = !timer;
+      timer = setTimeout(() => (timer = 0), ms)
+      return bool && fn.apply(this, [...arguments]);
+    } else {
+      timer = setTimeout(callback, ms)
+    }
+
   }
 })()
 
