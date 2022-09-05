@@ -188,7 +188,7 @@
         <div
           class="show-img"
           :style="`backgroundImage: url(${ formInvitation.img_type ? img :domain_url })`"
-          :class="`show-img__${coverImageMode}`"
+          :class="`show-img__${imageCropper.imageCropMode}`"
           v-if="formInvitation.show_type == 1"
           id="shopInvent"
         >
@@ -226,7 +226,7 @@
           v-else-if="formInvitation.show_type === 2"
           id="shopInvent"
           :style="`backgroundImage: url(${formInvitation.img_type ? img :domain_url})`"
-          :class="`watch-img__${coverImageMode}`"
+          :class="`watch-img__${imageCropper.imageCropMode}`"
         >
           <div class="watch-container">
             <div class="watch-bg">
@@ -266,7 +266,7 @@
         <div
           class="look-img"
           :style="`backgroundImage: url(${formInvitation.img_type ? img :domain_url})`"
-          :class="`look-img__${coverImageMode}`"
+          :class="`look-img__${imageCropper.imageCropMode}`"
           id="shopInvent"
           v-else
         >
@@ -439,19 +439,18 @@ export default {
           { required: false, validator: companyValidate, trigger: 'blur' },
         ],
       },
-      liveDetail: null,
-      coverImageMode: 1
+      liveDetail: null
     }
   },
   watch: {
-    domain_url(newVal) {
-      if (newVal.indexOf('?x-oss-process') > -1) {
-        let obj = parseImgOssQueryString(this.coverImgUrl);
-        this.coverImageMode = Number(obj.mode) || 3;
-      } else {
-        this.coverImageMode = 1;
-      }
-    },
+    // domain_url(newVal) {
+    //   if (newVal.indexOf('?x-oss-process') > -1) {
+    //     let obj = parseImgOssQueryString(this.coverImgUrl);
+    //     this.coverImageMode = Number(obj.mode) || 3;
+    //   } else {
+    //     this.coverImageMode = 1;
+    //   }
+    // },
     formInvitation: {
       deep: true,
       immediate: true,
@@ -608,7 +607,7 @@ export default {
           },
           blurryDegree: blur && Number(blur.s) || 0,
           lightDegree: obj.bright ? 10 : Number(obj.bright),
-          imageCropMode: obj.mode
+          imageCropMode: Number(obj.mode)
         }
       }
     },

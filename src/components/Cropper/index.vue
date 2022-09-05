@@ -13,16 +13,19 @@
           <el-radio :label="3">等比缩放显示全图</el-radio>
         </el-radio-group>
       </div>
-      <div class="cropper_image" v-if="isShowImages">
-        <img :src="url" alt="">
-      </div>
-      <div class="cropper_content_box" v-else>
-        <vue-cropper ref="cropper" class="cropper_img"
-          :src="url"
-          :aspect-ratio="ratio"
-          :viewMode='1'
-          :autoCropArea="1"
-        ></vue-cropper>
+      <div class="cropper_content_wrapper">
+        <div class="cropper_image" :style="{zIndex: isShowImages ? 1 : 0}" v-show="isShowImages">
+          <img :src="url" alt="">
+        </div>
+        <div class="cropper_content_box" :style="{zIndex: isShowImages ? 0 : 1}">
+          <vue-cropper ref="cropper" class="cropper_img"
+            :src="url"
+            :aspect-ratio="ratio"
+            :viewMode='1'
+            :style="{width:'400px', height:'234px'}"
+            :autoCropArea="1"
+          ></vue-cropper>
+        </div>
       </div>
       <div class="cropper_content_btn">
         <div>
@@ -31,14 +34,14 @@
         </div>
         <div>
           <vh-button  size="medium" type="primary" round v-preventReClick @click="cropperSure">确定</vh-button>
-          <vh-button size="medium" plain round v-preventReClick @click="dialogVisible=false">取消</vh-button>
+          <vh-button size="medium" plain round v-preventReClick @click="cancelCropper">取消</vh-button>
         </div>
       </div>
     </div>
   </el-dialog>
 </template>
 <script>
- import vueCropper from 'vue-cropperjs'
+import vueCropper from 'vue-cropperjs'
 export default {
   props: {
     // 比例
@@ -71,13 +74,20 @@ export default {
       this.url = url;
       this.index = index || 0;
       this.dialogVisible = true;
+      this.isShowImages = true;
       console.log(url, '???!2324')
     },
     goCropper() {
       this.isShowImages = !this.isShowImages;
-      if (this.isShowImages) {
-        this.$refs.cropper.destroy();
-      }
+      console.log(this.isShowImages, '???13224')
+      // if (this.isShowImages) {
+      //   this.$refs.cropper.reset()
+      // }
+    },
+    cancelCropper() {
+      this.dialogVisible = false;
+      this.isShowImages = true;
+      this.$refs.cropper && this.$refs.cropper.destroy();
     },
     cropperSure() {
       if (!this.isShowImages) {
@@ -90,15 +100,14 @@ export default {
        * index: 一个页面可能用到多次裁剪组件，用来区分
        */
       this.$emit('cropComplete', this.cropperData, this.url, Number(this.imageType), this.index)
-      if (!this.isShowImages) {
-        this.$refs.cropper.destroy();
-      }
+      this.$refs.cropper && this.$refs.cropper.destroy();
       this.url = '';
       this.dialogVisible = false;
     },
     resetCropper() {
       this.dialogVisible = false;
       this.url = '';
+      this.$refs.cropper && this.$refs.cropper.destroy();
       this.$emit('resetUpload', this.index)
     }
   }
@@ -107,6 +116,11 @@ export default {
 <style lang="less" scoped>
   .cropper_content{
     width: 100%;
+    &_wrapper{
+      width: 100%;
+      height: 234px;
+      position: relative;
+    }
     .cropper_list{
       padding-bottom: 10px;
     }
@@ -114,7 +128,10 @@ export default {
       width: 100%;
       height: 234px;
       border-radius: 4px;
-      background: rgba(0, 0, 0, 0.45);
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #8c8c8c;
       img{
         width: 100%;
         height: 100%;
@@ -125,7 +142,10 @@ export default {
     &_box{
       width: 416px;
       height: 234px;
-      background: rgba(0, 0, 0, 0.45);
+      background: #8c8c8c;
+      position: absolute;
+      top: 0;
+      left: 0;
       overflow: hidden;
       display: flex;
       justify-content: center;

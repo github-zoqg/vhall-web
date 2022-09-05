@@ -874,18 +874,21 @@ export default {
       if (res.data.file_url) {
         // 文件上传成功，保存信息
         this.$refs.formCropper.showModel(res.data.domain_url);
-        this.imageUrl = res.data.file_url;
+        this._imageUrl = res.data.file_url;
         // this.$emit('setBaseInfo', { cover: res.data.file_url });
       }
     },
     // 删除头图
     deleteBanner() {
       this.imageUrl = '';
+      this.blurryDegree = 0;
+      this.lightDegree = 10;
       this.$emit('setBaseInfo', { cover: '' });
     },
     cropComplete(cropperData, url, mode) {
       this.backgroundSize = cropperData;
       // this.imageUrl = url;
+      this.imageUrl = this._imageUrl;
       this.imageCropMode = mode;
       this.$emit('setBaseInfo', { cover: this.imageParamsUrl });
     },
