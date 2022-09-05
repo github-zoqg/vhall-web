@@ -229,8 +229,8 @@ export default {
     let checkPassword = (rule, value, callback) => {
       if (value === null || value === undefined || value === '') {
         return callback(new Error('请输入口令'));
-      } else if (!/^[0-9]*$/.test(value)) {
-        return callback(new Error('口令必须是数字'));
+      } else if (!/^[0-9a-zA-Z]*$/.test(value)) {
+        return callback(new Error('口令必须是数字或字母'));
       } else if (value.length < 6) {
         return callback(new Error('口令长度不能少于6位！'));
       } else {
