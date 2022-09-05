@@ -230,7 +230,7 @@
             <div
               :class="[
                 'addBtn',
-                (item.nodes[0].children && item.nodes[0].children.length >= 20) || item.nodes.length >= 20 ? 'isoverflow' : ''
+                (item.nodes[0].children && item.nodes[0].children.length >= 30) || item.nodes.length >= 30 ? 'isoverflow' : ''
               ]">
               <el-button
                 type="text"
