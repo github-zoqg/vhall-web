@@ -323,7 +323,7 @@ export default {
         this.advertisement.webinar_id = this.$route.params.str;
       }
       let params = Object.assign({}, this.advertisement) ;
-      params.img_url = this.domain_url;
+      params.img_url = this.$parseURL(this.domain_url).path;
       this.$fetch(url, params).then(res => {
         if (res && res.code === 200) {
           if (this.$route.params.str) {

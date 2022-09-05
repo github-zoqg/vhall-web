@@ -13,7 +13,7 @@
         <el-form-item label="主页头像" prop="homepage_avatar">
           <upload
             class="upload__avatar"
-            id="account_avatar_Cropper"
+            id="account_avatar_cropper"
             v-model="homeSetInfoForm.homepage_avatar"
             :domain_url="domain_url"
             :saveData="{
@@ -48,7 +48,7 @@
         <el-form-item label="背景图片" prop="img_url">
           <upload
             class="upload__bg__avatar"
-            id="account_bg_Cropper"
+            id="account_bg_cropper"
             v-model="homeSetInfoForm.img_url"
             :domain_url="domain_bg_url"
             :saveData="{
@@ -307,8 +307,8 @@ export default {
       this.$refs.homeSetInfoForm.validate((valid) => {
         if(valid) {
           let params = {
-            img_url: this.domain_bg_url,
-            homepage_avatar: this.homeSetInfoForm.homepage_avatar ? this.domain_url : '',
+            img_url: this.$parseURL(this.domain_bg_url).path,
+            homepage_avatar: this.homeSetInfoForm.homepage_avatar ? this.$parseURL(this.domain_url).path : '',
             content: this.homeSetInfoForm.content,
             show_share: this.homeSetInfoForm.show_share, // 分享
             show_webinar_list: this.homeSetInfoForm.show_webinar_list, // 直播列表展示：0不展示 1展示

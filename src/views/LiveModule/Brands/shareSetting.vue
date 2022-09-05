@@ -164,6 +164,7 @@ export default {
     // 处理图片
     handlerImageInfo(url) {
       this.formShareInfo.img_url = getImageQuery(url);
+      console.log(this.formShareInfo.img_url, '??fenx分享图片')
       if (cropperImage(url)) {
         let obj = parseImgOssQueryString(url);
         const { blur, crop } = obj;
@@ -186,7 +187,7 @@ export default {
       this.formShareInfo.webinar_id = this.$route.params.str;
       let params = {
         ...this.formShareInfo,
-        img_url: this.domain_url
+        img_url: this.$parseURL(this.domain_url).path
       }
       this.$refs[formName].validate((valid) => {
         if (valid) {

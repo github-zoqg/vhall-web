@@ -641,7 +641,7 @@ export default {
       this.formInvitation.is_show_watermark = Number(
         this.formInvitation.is_show_watermark
       )
-      this.formInvitation.img = this.formInvitation.img_type ? '' : this.domain_url
+      this.formInvitation.img = this.formInvitation.img_type ? '' : this.$parseURL(this.domain_url).path
       let arrShowType = [100276, 100277, 100278]
       let obj = Object.assign({}, ids, this.formInvitation)
       // 字段里面若对象值为空，也要传递。

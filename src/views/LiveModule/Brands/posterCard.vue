@@ -41,7 +41,7 @@
             </el-form-item>
             <el-form-item label="PC图片" prop="img">
               <div class="img-box">
-                <upload class="giftUpload" id="poster_wap_cropper" v-model="form.img" :domain_url="form.img" :saveData="{
+                <upload class="giftUpload" id="poster_pc_cropper" v-model="form.img" :domain_url="form.img" :saveData="{
                      path: pathUrl,
                      type: 'image',
                   }" :widthImg="231" :heightImg="130" :on-success="uploadAdvSuccess" :on-progress="uploadProcess"
@@ -343,8 +343,8 @@ export default {
       let params = {
         webinar_id: this.$route.params.str,
         status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭
-        img: this.domain_pc_url, // 开屏海报  PC图片地址
-        m_img: this.domain_wap_url // 开屏海报  手机图片地址
+        img: this.$parseURL(this.domain_pc_url).path, // 开屏海报  PC图片地址
+        m_img: this.$parseURL(this.domain_wap_url).path // 开屏海报  手机图片地址
         // img: this.form.img ? this.$parseURL(this.form.img).path : '', // 开屏海报  PC图片地址
         // m_img: this.form.m_img ? this.$parseURL(this.form.m_img).path : '' // 开屏海报  手机图片地址
       };
@@ -796,6 +796,7 @@ export default {
       height: 568px;
       border-bottom-right-radius: 26px;
       border-bottom-left-radius: 26px;
+      background: rgba(0, 0, 0, 0.8);
       .domain_url {
         display: inline-block;
         position: absolute;

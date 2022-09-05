@@ -51,7 +51,7 @@ export function resize() {
 }
 
 // 防抖
-export const debounce = (function() {
+export const debounce = (function(immediate = false) {
   let timer = 0
   return function(callback, ms) {
     clearTimeout(timer)

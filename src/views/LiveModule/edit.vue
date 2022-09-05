@@ -1431,7 +1431,7 @@ export default {
         hide_pv: Number(this.formData.hot),// 是否显示活动热度 1 是 0 否
         webinar_curr_num: this.formData.limitCapacitySwtich ? this.formData.limitCapacity : 0,// 	最高并发 0 无限制
         is_capacity: Number(this.formData.capacity),// 是否扩容 1 是 0 否
-        img_url: this.domain_url, // 封面图
+        img_url: this.$parseURL(this.domain_url).path, // 封面图
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
         no_delay_webinar: this.liveMode == 6 ? 1 : this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status [分组直播默认无延迟]
         is_timing: this.webinarVideo ? (this.$route.meta.webinarType == 'vod' ? 0 : 1) : '',

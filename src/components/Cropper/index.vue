@@ -14,10 +14,10 @@
         </el-radio-group>
       </div>
       <div class="cropper_content_wrapper">
-        <div class="cropper_image" :style="{zIndex: isShowImages ? 1 : 0}" v-show="isShowImages">
+        <div class="cropper_image" v-if="isShowImages">
           <img :src="url" alt="">
         </div>
-        <div class="cropper_content_box" :style="{zIndex: isShowImages ? 0 : 1}">
+        <div class="cropper_content_box" v-else>
           <vue-cropper ref="cropper" class="cropper_img"
             :src="url"
             :aspect-ratio="ratio"
@@ -42,6 +42,7 @@
 </template>
 <script>
 import vueCropper from 'vue-cropperjs'
+import { debounce } from '@/utils/utils';
 export default {
   props: {
     // 比例
@@ -74,15 +75,21 @@ export default {
       this.url = url;
       this.index = index || 0;
       this.dialogVisible = true;
+      this.imageType = 1;
       this.isShowImages = true;
       console.log(url, '???!2324')
     },
     goCropper() {
       this.isShowImages = !this.isShowImages;
-      console.log(this.isShowImages, '???13224')
+      // debounce(this.changeValue, 3000)
+      // this.isShowImages = !this.isShowImages;
+      // console.log(this.isShowImages, '???13224')
       // if (this.isShowImages) {
       //   this.$refs.cropper.reset()
       // }
+    },
+    async changeValue() {
+      this.isShowImages = !this.isShowImages;
     },
     cancelCropper() {
       this.dialogVisible = false;
@@ -128,9 +135,6 @@ export default {
       width: 100%;
       height: 234px;
       border-radius: 4px;
-      position: absolute;
-      top: 0;
-      left: 0;
       background: #8c8c8c;
       img{
         width: 100%;
@@ -143,9 +147,6 @@ export default {
       width: 416px;
       height: 234px;
       background: #8c8c8c;
-      position: absolute;
-      top: 0;
-      left: 0;
       overflow: hidden;
       display: flex;
       justify-content: center;

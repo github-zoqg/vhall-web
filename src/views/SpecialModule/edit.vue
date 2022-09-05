@@ -424,7 +424,7 @@ export default {
           let data = {
             subject: this.formData.title,
             introduction: this.formData.content,
-            img_url: this.domain_url,
+            img_url: this.$parseURL(this.domain_url).path,
             is_private: this.formData.home ? 0 : 1,
             hide_appointment: Number(this.formData.reservation),
             hide_pv: Number(this.formData.hot),
