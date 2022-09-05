@@ -1153,7 +1153,7 @@ export default {
   color: #333333;
   line-height: 17px;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 16px;
   span {
     color: #3562FA;
     margin-left: 8px;
@@ -1167,7 +1167,7 @@ export default {
   color: #999999;
   line-height: 17px;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 36px;
   span {
     cursor: pointer;
   }
