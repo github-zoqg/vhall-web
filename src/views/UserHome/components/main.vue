@@ -523,7 +523,8 @@ export default {
       .img_box_bg{
         width: 100%;
         height: 100%;
-        object-fit: scale-down;
+        object-fit: contain;
+        object-position: center;
         position: absolute;
         border-radius: 4px 4px 0 0;
         top:0;

@@ -181,7 +181,8 @@ export default {
           .subject_cover{
             width: 100%;
             height: 100%;
-            object-fit: scale-down;
+            object-fit: contain;
+            object-position: center;
             border-radius: 4px;
             &.subject_cover_1{
               object-fit: fill;

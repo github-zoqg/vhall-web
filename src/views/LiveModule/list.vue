@@ -793,7 +793,8 @@ export default {
           .img_box_bg{
             width: 100%;
             height: 100%;
-            object-fit: scale-down;
+            object-fit: contain;
+            object-position: center;
             cursor: pointer;
             font-size: 0;
             &.webinar_bg_1{
