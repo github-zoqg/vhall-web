@@ -1122,6 +1122,7 @@ export default {
       this.selectDirectorMode = mode
     },
     getLiveBaseInfo(id, flag) {
+      // webinar/info调整-直播中不能操作的使用1
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(async res=>{
         if( res.code != 200 ){
           return this.$message.warning(res.msg)

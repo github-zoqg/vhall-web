@@ -100,9 +100,9 @@
                 <img class="hb_bg_default" src="../../../common/images/poster/pc-2.png" alt="" />
                 <!-- 开启 并且有图-->
                 <div class="pc-poster-wrap">
-                  <el-image v-show="status <= 0 && form.img"  class="hb_img v-poster-preview" :src="domain_pc_url" :fit="ImgsSize[formPcImage.imageCropMode - 1]" :class="formPcImage.imageCropMode == 2 ? 'isCover' : ''"></el-image>
-                  <!-- <el-image v-show="!form.img" class="hb_img v-poster-preview"
-                    src="../../../common/images/poster/pc-1.png" fit="cover"></el-image> -->
+                  <el-image v-show="status <= 0 && domain_pc_url"  class="hb_img v-poster-preview" :src="domain_url" :fit="ImgsSize[formPcImage.imageCropMode - 1]" :class="formPcImage.imageCropMode == 2 ? 'isCover' : ''"></el-image>
+                  <el-image v-show="!domain_pc_url" class="hb_img v-poster-preview"
+                    :src="pcPoster" fit="cover"></el-image>
                 </div>
                 <!--  <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button> -->
                 <div :class="['poster-btn', {'five': alertType > 0}]"></div>
@@ -116,11 +116,11 @@
             <!-- 开屏海报 -->
             <div class="hb_app">
               <div class="poster-img">
-                <el-image v-show="status <= 0 && form.m_img" class="domain_url" :src="domain_wap_url" :fit="ImgsSize[formWapImage.imageCropMode - 1]" :class="formWapImage.imageCropMode == 2 ? 'isCover' : ''">
+                <el-image v-show="status <= 0 && domain_wap_url" class="domain_url" :src="domain_wap_url" :fit="ImgsSize[formWapImage.imageCropMode - 1]" :class="formWapImage.imageCropMode == 2 ? 'isCover' : ''">
                 </el-image>
-                <!-- <el-image v-show="!form.m_img" class="default"
-                  src="../../../common/images/poster/phone_poster_default@2x.png" fit="cover">
-                </el-image> -->
+                <el-image v-show="!domain_wap_url" class="default"
+                  :src="h5Poster" fit="cover">
+                </el-image>
               </div>
               <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s 关闭' : '关闭'}}
               </el-button>
@@ -142,9 +142,13 @@ import upload from '@/components/Upload/main';
 import beginPlay from '@/components/beginBtn';
 import {sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery, ImgsSize} from "@/utils/utils";
 import cropper from '@/components/Cropper/index'
+import pcPoster from '../../../common/images/poster/pc-1.png'
+import h5Poster from '../../../common/images/poster/phone_poster_default@2x.png'
 export default {
   data() {
     return {
+      pcPoster,
+      h5Poster,
       ImgsSize,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       domain_url: '',
@@ -813,13 +817,13 @@ export default {
       }
       .default {
         display: inline-block;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        object-fit: cover;
-        max-width: 312px;
-        max-height: 568px;
+        // position: absolute;
+        // top: 50%;
+        // left: 50%;
+        // transform: translate(-50%, -50%);
+        // object-fit: cover;
+        // max-width: 100%;
+        // max-height: 100%;
         border-bottom-right-radius: 26px;
         border-bottom-left-radius: 26px;
       }

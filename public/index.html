@@ -35,7 +35,7 @@
   </head>
   <body>
     <!-- 使用CDN的CSS文件 -->
-     <% for (const css of Object.values(htmlWebpackPlugin.options.cdn.css)) { %> <%if(css){%>
+    <% for (const css of Object.values(htmlWebpackPlugin.options.cdn.css)) { %> <%if(css){%>
       <link rel="stylesheet" href="<%= css %>" />
     <% } }%>
     <noscript>

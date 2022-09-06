@@ -258,7 +258,6 @@
     <item-card
       :type="liveDetailInfo.webinar_state"
       :webinarType="liveDetailInfo.webinar_type"
-      :isTrue="isTrue"
       :perssionInfo="perssionInfo"
       :childPremission="childPremission"
       :videoType="videoType"
@@ -298,7 +297,6 @@ export default {
       userId: '',
       imageMode: 3,
       perssionInfo: {},
-      isTrue: true,
       isShow: false,
       loading: true,
       isForm: false,
@@ -410,17 +408,6 @@ export default {
     },
     setLowerGradeConfig(data) {
       if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
-      let arr = [
-        'component_1',
-        'component_2',
-        'component_3',
-        'component_4',
-        'component_5',
-        'component_6',
-        'component_7',
-        'component_8',
-        'component_9',
-      ]
       let perssionInfo = JSON.parse(
         sessionOrLocal.get('WEBINAR_PES', 'localStorage')
       )
@@ -429,9 +416,6 @@ export default {
       sessionOrLocal.set('WEBINAR_PES', perssionInfo, 'localStorage')
       console.log(this.perssionInfo, '>>>>>>1231<<<')
       this.isShow = true
-      this.isTrue = arr.some((item) => {
-        return this.perssionInfo[item] > 0
-      })
       this.hasDelayPermission =
         this.perssionInfo['no.delay.webinar'] &&
         this.perssionInfo['no.delay.webinar'] == 1
@@ -491,17 +475,6 @@ export default {
       })
         .then((res) => {
           if (res.code == 200) {
-            let arr = [
-              'component_1',
-              'component_2',
-              'component_3',
-              'component_4',
-              'component_5',
-              'component_6',
-              'component_7',
-              'component_8',
-              'component_9',
-            ]
             if (res.data.permissions) {
               sessionOrLocal.set(
                 'WEBINAR_PES',
@@ -513,10 +486,6 @@ export default {
               )
               console.log(this.perssionInfo, '>>>>>>1231<<<')
               this.isShow = true
-              this.isTrue = arr.some((item) => {
-                // eslint-disable-next-line no-prototype-builtins
-                return this.perssionInfo[item] > 0
-              })
               this.hasDelayPermission =
                 this.perssionInfo['no.delay.webinar'] &&
                 this.perssionInfo['no.delay.webinar'] == 1
@@ -536,7 +505,8 @@ export default {
     // 获取基本信息
     getLiveDetail(id) {
       this.loading = true
-      this.$fetch('getWebinarInfo', { webinar_id: id })
+      // webinar/info调整-正常的信息展示使用 0
+      this.$fetch('getWebinarInfo', { webinar_id: id, is_rehearsal: 0})
         .then((res) => {
           this.liveDetailInfo = res.data;
           if (cropperImage(this.liveDetailInfo.img_url)) {
@@ -838,10 +808,11 @@ export default {
             path: item.path,
             query: { roomId: this.liveDetailInfo.vss_room_id },
           })
-        } else if (item.path == `/live/embedCard/${this.$route.params.str}`) {
+        } else if (item.path == `/live/livingSet/${this.$route.params.str}`) {
+          let isDelay = this.hasDelayPermission && this.isDelay ? 1 : 0;
           this.$router.push({
             path: item.path,
-            query: { type: this.liveDetailInfo.webinar_type },
+            query: { type: this.liveDetailInfo.webinar_type, isDelay: isDelay },
           })
         } else {
           this.$router.push({

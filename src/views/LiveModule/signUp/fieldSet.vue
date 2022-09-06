@@ -243,7 +243,7 @@
             <div
               :class="[
                 'addBtn',
-                (item.nodes[0].children && item.nodes[0].children.length >= 20) || item.nodes.length >= 20 ? 'isoverflow' : ''
+                (item.nodes[0].children && item.nodes[0].children.length >= 30) || item.nodes.length >= 30 ? 'isoverflow' : ''
               ]">
               <el-button
                 type="text"
@@ -544,9 +544,9 @@ export default {
     },
     // 添加一个题目选项
     addOption(data, other){
-      if ((data.nodes[0].children && data.nodes[0].children.length >= 20) || data.nodes.length >= 20) {
+      if ((data.nodes[0].children && data.nodes[0].children.length >= 30) || data.nodes.length >= 30) {
         this.$message({
-          message: `最多可添加20个选项`,
+          message: `最多可添加30个选项`,
           showClose: true,
           type: 'error',
           customClass: 'zdy-info-box'

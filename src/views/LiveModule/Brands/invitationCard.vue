@@ -486,7 +486,8 @@ export default {
     const lookUrl = `${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?invite_id=&type=1`
     this.showCode = `${Env.staticLinkVo.aliQr}${encodeURIComponent(lookUrl)}`
     try {
-      const result = await this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str})
+      // webinar/info调整-正常的信息展示使用 0
+      const result = await this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str, is_rehearsal: 0})
       if (result.code == 200 && result.data) {
         this.liveDetail = result.data
       }

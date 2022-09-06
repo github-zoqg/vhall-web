@@ -558,7 +558,8 @@
       },
       // 获取当前活动类型
       getWebinarType() {
-        this.$fetch('getWebinarInfo', this.setParamsIdByRoute({})).then(res => {
+        // webinar/info调整-正常的信息展示使用0
+        this.$fetch('getWebinarInfo', this.setParamsIdByRoute({is_rehearsal: 0})).then(res => {
           // webinar_state  1直播 2预约 3结束 4点播 5回放
           this.isSubscribe = res.data.webinar_state == 2 ? 1 : 2
           this.tabs = res.data.webinar_state == 2 ? 1 : 2
