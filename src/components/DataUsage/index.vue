@@ -1,5 +1,7 @@
 <template>
+  <!-- .data-finance 财务总览（typeChange==true）；.data-usage 首页（typeChange==false） -->
   <div :class=" typeChange ? 'data-finance' : 'data-usage'">
+    <!-- 计费：并发 -->
     <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.concurrency">
       <el-col :span="buttonList.includes('extend') ? (typeChange ? 8 : 6) : (typeChange ? 15 : 9)">
         <div class="top-item first-version">
@@ -38,7 +40,15 @@
           <p>{{ userInfo.concurrency.extend_day_start }} 至 {{ userInfo.concurrency.extend_day_end }}</p>
         </div>
       </el-col>
+      <el-col :span="typeChange ? 8 : 6" v-if="userInfo && userInfo.sms">
+        <div class="top-item">
+          <p>短信余额（条）</p>
+          <h2 class="custom-big custom-font-barlow">{{ userInfo.sms.sms || 0 }}</h2>
+          <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.edition_valid_time || '' }}<span v-if="isOutTime">(已过期)</span></p>
+        </div>
+      </el-col>
     </el-row>
+    <!-- 计费：流量 -->
     <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.flow">
       <el-col :span="typeChange ? 15 : 9">
         <div class="top-item usage-item">
@@ -80,6 +90,7 @@
         </div>
       </el-col>
     </el-row>
+    <!-- 计费：时长 -->
     <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.duration">
       <el-col :span="typeChange ? 15 : 9">
         <div class="top-item usage-item">
@@ -137,6 +148,11 @@ export default {
       concurrentPrice: {}
     };
   },
+  computed: {
+    concurrencyColSpan() {
+      return 1
+    }
+  },
   components: {
     upVersion
   },
@@ -153,6 +169,9 @@ export default {
   methods: {
     getVersion() {
       this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {
+        res.data.sms = {
+          sms: 100
+        }
         this.userInfo = res.data;
         this.versionType = res.data.edition;
         this.isOutTime = res.data.expired == 1 ? true : false;
