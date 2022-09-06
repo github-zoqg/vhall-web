@@ -13,7 +13,6 @@ import vuescroll from 'vuescroll';
 import PaasPort from '@vhall/paas-report-data'
 
 import { refreshToken } from './utils/utils'
-
 Vue.use(VhallUI)
 // You can set global config here.
 Vue.use(vuescroll, {

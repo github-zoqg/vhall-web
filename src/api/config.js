@@ -226,6 +226,8 @@ const apis = {
   virtualAccumulation: ['/v3/webinars/virtual/accumulation', 'GET'], // 发起端-增加虚拟观众 √
   // virtualSwitchSet: ['/v3/webinars/webinar/post-switch-virtual', 'POST', 'mock'], // 控制台-虚拟人数开关 jia.li •••废弃
 
+  // 直播间设置
+
   // 严禁词
   getKeywordList: ['/v3/interacts/keyword/get-list', 'POST'], // 获取严禁词列表[控制台调用] jia.li  √
   multiKeywordAdd: ['/v3/interacts/keyword/batch-create', 'POST'], // 添加严禁词-可批量 jia.li  √
@@ -538,7 +540,7 @@ const apis = {
   watchInterGetWebinarTag: ['/v3/interacts/webinar-tag/watch-get-webinar-tag', 'GET'], // 获取活动标记-观看端 Jia.li
   setSkinWebinarSkin: ['/v3/interacts/skin/set-webinar-skin', 'POST'], // 设置活动的默认皮肤 Jia.li
   skinCreate: ['/v3/interacts/skin/create', 'POST'], // 新建自定义皮肤 Jia.li
-  getInterWebinarSkin: ['/v3/interacts/skin/get-webinar-skin', 'GET'], // 获取活动启用皮肤的信息详情 Jia.li
+  getInterWebinarSkin: ['/v3/interacts/skin/get-webinar-skin', 'GET'], // 获取活动启用直播间设置的信息详情
   skinUpdate: ['/v3/interacts/skin/update', 'POST'], // 更新自定义皮肤信息 Jia.li
   watchGetWebinarSkin: ['/v3/interacts/skin/watch-get-webinar-skin', 'GET'], // 观看端-获取皮肤 Jia.li
 

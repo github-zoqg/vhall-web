@@ -356,7 +356,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
-  else if (metaName === 'brandSet') {// 品牌设置
+  else if (metaName === 'livingSetting') {// 直播间设置
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -365,8 +365,8 @@ export function CrumbSet(metaName, that) {
         isClick: true
       },
       {
-        title: '品牌设置',
-        path: `/live/brandSet/${that.$route.params.str}`,
+        title: '直播间设置',
+        path: `/live/livingSet/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'
       }
@@ -1244,12 +1244,23 @@ export function CrumbSet(metaName, that) {
       }
     ]
   }
-  else if (metaName === 'brandMgr') {//设置中心-品牌设置
+  else if (metaName === 'livingMgr') {//设置中心-直播间设置
     return [
       ...CrumbLiveList('setting'),
       {
-        title: '品牌设置',
-        path: '/setting/brandMgr',
+        title: '直播间设置',
+        path: '/setting/brand',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ]
+  }
+  else if (metaName === 'protocolMgr') {//设置中心-观看协议
+    return [
+      ...CrumbLiveList('setting'),
+      {
+        title: '观看协议',
+        path: '/setting/protocol',
         isClick: false,
         redirect: 'noRedirect'
       }
