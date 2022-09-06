@@ -206,6 +206,8 @@
                 <div class="btnBox">
                   <el-button style="margin-top: 11px;" :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click="submitForm">报名</el-button>
                 </div>
+                <!-- 隐私协议合规 -->
+                <privacy-select scene="signForm" compType="2"></privacy-select>
               </el-form>
             </template>
 
@@ -241,6 +243,8 @@
                 <div class="btnBox">
                   <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click="submitVerify">提交</el-button>
                 </div>
+                <!-- 隐私协议合规 -->
+                <privacy-select scene="signForm" compType="2"></privacy-select>
               </el-form>
             </template>
           </article>
@@ -257,8 +261,12 @@
   import axios from 'axios';
   import Env from "@/api/env";
   import { validPhone } from '@/utils/validate.js'
+  import PrivacySelect from '../../../Login/components/privacy-select.vue';
   // import DevicePixelRatio from '@/utils/devicePixelRatio'
   export default {
+    components: {
+      PrivacySelect
+    },
     created() {
       if (this.signUpPageType == 'webinar') {
         this.getWebinarType();

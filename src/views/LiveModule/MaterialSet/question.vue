@@ -38,6 +38,8 @@
               <div class="submit-footer">
                 <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
               </div>
+              <!-- 隐私协议合规（活动下） -->
+              <privacy-select scene="question" compType="2"></privacy-select>
             </div>
           </vhscroll>
         </div>
@@ -55,6 +57,7 @@ import baseQuestion from './components/questionBase';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import beginPlay from '@/components/beginBtn';
 import {sessionOrLocal} from "@/utils/utils";
+import PrivacySelect from '@/views/Login/components/privacy-select.vue';
 export default {
   name: "question",
   data() {
@@ -93,7 +96,8 @@ export default {
     preQuestion,
     baseQuestion,
     noData,
-    beginPlay
+    beginPlay,
+    PrivacySelect
   },
   created() {
     this.webinarId = this.$route.params.str;
