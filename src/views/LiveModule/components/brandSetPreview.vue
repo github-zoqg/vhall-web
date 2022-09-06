@@ -188,7 +188,7 @@ export default {
     },
     initPage() {
       this.getSignInfo();
-      this.getInterWebinarSkin();
+      // this.getInterWebinarSkin();
     }
   },
   created() {
@@ -335,7 +335,7 @@ export default {
           object-fit: scale-down;
         }
       }
-      
+
     }
     .sign-title{
       font-size: 12px;

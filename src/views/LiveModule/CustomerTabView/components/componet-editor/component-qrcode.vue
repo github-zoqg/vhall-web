@@ -199,7 +199,7 @@ export default {
   }
   .editorContent{
     display: inline-block;
-    width: 376px;
+    width: 312px;
     height: 180px;
     border: 1px solid #CCCCCC;
     overflow: hidden;
