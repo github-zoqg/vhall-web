@@ -115,7 +115,8 @@ export default {
   methods: {
     //获取直播详情
     getLiveDetail() {
-      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+      // webinar/info调整-正常的信息展示使用 0
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str, is_rehearsal: 0}).then(res=>{
         this.liveDetailInfo = res.data;
       }).catch(res => {
         this.$message({

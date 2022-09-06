@@ -80,7 +80,7 @@
    <share ref="share" :shareVo="shareVo"></share>
    <el-dialog
       custom-class="dialog-tutorial-wrap"
-      class="vh-dialog"
+      class="vh-saas-dialog"
       :visible.sync="tutorialVisible"
       width="740px"
       center
