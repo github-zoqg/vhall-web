@@ -1,7 +1,7 @@
 <template>
   <div :class="['signFormBox']" @click.self="closePreview">
     <div :class="['signWrap']">
-      <vhscroll @handle-scroll="handleAutoCloseSelect">
+      <vue-scroll @handle-scroll="handleAutoCloseSelect">
         <div class="entryFormBox">
           <header>
             <img v-if="!baseInfo.cover" src="../images/formHeader.png" alt="">
@@ -249,7 +249,7 @@
             </template>
           </article>
         </div>
-      </vhscroll>
+      </vue-scroll>
       <i v-if="!isEntryForm" class="closeBtn" @click="closePreview">
         <i class="iconfont-v3 saasicon_close"></i>
       </i>

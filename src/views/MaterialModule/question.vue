@@ -40,7 +40,7 @@
       <div class="show-question" @click="isShowQuestion=false">
         <div class="show-main" @click.stop="isShowQuestion=true">
           <span class="close-btn"><i class="el-icon-close" @click.stop="isShowQuestion=false"></i></span>
-          <vhscroll>
+          <vue-scroll>
             <div class="question_main">
               <pre-question  :questionId="questionId"></pre-question>
               <div class="submit-footer">
@@ -49,7 +49,7 @@
               <!-- 隐私协议合规（资料管理下） -->
               <privacy-select scene="question" compType="2"></privacy-select>
             </div>
-          </vhscroll>
+          </vue-scroll>
         </div>
       </div>
     </template>
