@@ -29,7 +29,7 @@
       </div>
       <div class="cropper_content_btn">
         <div>
-          <vh-button size="medium" plain round v-preventReClick @click="goCropper">{{isShowImages ? '裁剪' : '取消裁剪'}}</vh-button>
+          <vh-button size="medium" plain round @click="changeValue">{{isShowImages ? '裁剪' : '取消裁剪'}}</vh-button>
           <vh-button size="medium" plain type='text' v-preventReClick @click="resetCropper">重新上传</vh-button>
         </div>
         <div>
@@ -79,15 +79,15 @@ export default {
       this.isShowImages = true;
       console.log(url, '???!2324')
     },
-    goCropper() {
-      // this.isShowImages = !this.isShowImages;
-      debounce(this.changeValue, true, 3000)
-      // this.isShowImages = !this.isShowImages;
-      // console.log(this.isShowImages, '???13224')
-      // if (this.isShowImages) {
-      //   this.$refs.cropper.reset()
-      // }
-    },
+    // goCropper() {
+    //   // this.isShowImages = !this.isShowImages;
+    //   debounce(this.changeValue, true, 3000)
+    //   // this.isShowImages = !this.isShowImages;
+    //   // console.log(this.isShowImages, '???13224')
+    //   // if (this.isShowImages) {
+    //   //   this.$refs.cropper.reset()
+    //   // }
+    // },
     async changeValue() {
       this.isShowImages = !this.isShowImages;
     },
