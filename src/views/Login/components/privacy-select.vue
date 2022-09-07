@@ -58,7 +58,7 @@ export default {
     a {
       font-style: normal;
       font-weight: 400;
-      font-size: 14px;
+      font-size: 12px;
       line-height: 16px;
       color: #8c8c8c;
       word-break: break-word;
@@ -84,7 +84,7 @@ export default {
     a {
       font-style: normal;
       font-weight: 400;
-      font-size: 14px;
+      font-size: 12px;
       line-height: 16px;
       color: #8c8c8c;
       word-break: break-word;
