@@ -9,12 +9,12 @@
         <span class="bang-rule" @click="changeRule">排行榜规则<i class="iconfont-v3 saasicon_arrowdown1-copy" v-if="rankRule"></i><i class="iconfont-v3 saasicon_arrowdown1" v-else></i></span>
       </div>
       <div class="ranking-box" v-show="rankRule" :class="pre == 1 ? 'rankLine' : 'rankBox'">
-          <!-- <vhscroll> -->
+          <!-- <vue-scroll> -->
           <div class="rank-con" v-show="activeIndex == 1" v-html="info.inContent || ' 什么规则都没有 '">
           </div>
           <div class="rank-con" v-show="activeIndex == 2" v-html="info.rewardContent || ' 什么规则都没有 '">
           </div>
-          <!-- </vhscroll> -->
+          <!-- </vue-scroll> -->
       </div>
       <div class="rank-band">
         <img v-if="activeIndex == 1 && pre == 1" src="./invta_iphone.png" alt="" />

@@ -18,7 +18,7 @@
     :infinite-scroll-immediate="true"
     v-show="total"
   >
-    <vhscroll>
+    <vue-scroll>
       <!-- 单个视频 -->
       <div class="vh-chose-active-item"
         v-for="(item) in activeList"
@@ -51,7 +51,7 @@
           {{ item.start_time }}
         </div>
       </div>
-    </vhscroll>
+    </vue-scroll>
   </div>
 </div>
 </template>
