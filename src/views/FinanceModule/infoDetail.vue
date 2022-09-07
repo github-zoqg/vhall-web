@@ -30,7 +30,7 @@
             <el-table-column
               :prop="activeIndex==1 ? 'order_id' : 'id'"
               label="订单编号"
-              width="145"
+              min-width="145"
               >
             </el-table-column>
             <el-table-column
@@ -192,6 +192,10 @@ export default {
         {
           label: '时长包',
           value: 'duration'
+        },
+        {
+          label: '短信',
+          value: '19'
         }
       ],
       orderOptions: [
@@ -409,7 +413,7 @@ export default {
         },
         {
           label: '失效日期',
-          key: 'end_time',
+          key: 'end_time'
         }
       ]
     };

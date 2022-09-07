@@ -730,6 +730,10 @@ const apis = {
   noticeTestSend: ['/v3/interacts/notice/notice-test-send', 'POST'], // 发送测试
   noticeCheckImport: ['/v3/interacts/notice/notice-check-import', 'POST'], // 导入进度检测
   downloadNoticeFailFile: ['/v3/interacts/notice/notice-download-fail-file', 'POST'], // 下载无效数据
+  // 财务总览 - 消费明细 - 短信消耗（日期筛选）
+  getUserSmsPay: ['/v3/data-center/business-total/user-sms-pay', 'GET'], // 财务总览-消费明细-短信消耗总条数
+  getUserSmsPayByPage: ['/v3/data-center/business-total/user-sms-pay-detail', 'GET'], // 财务总览-消费明细-短信消耗-列表
+
 };
 
 const getApi = api => {

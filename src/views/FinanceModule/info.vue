@@ -98,10 +98,10 @@
             <el-option
               v-for="(opt, optIndex) in [{
                 label: '套餐消费',
-                value: '1'
+                value: 'other'
               },{
                 label: '短信消费',
-                value: '2'
+                value: 'sms'
               }]"
               :key="optIndex"
               :label="opt.label"
@@ -112,7 +112,7 @@
             <el-button round  size="medium" @click="exportAccount">导出数据</el-button>
           </div>
         </div>
-      <div class="content-grid" v-if="!versionType">
+      <div :class="['content-grid', smsInfo && smsInfo.sms >= 0 ? 'include_sms' : '']" v-if="!versionType">
          <div class="grid-item">
           <div class="grid-content">
             <p>累计直播（个）</p>
@@ -131,14 +131,14 @@
             <h1 class="custom-font-barlow">{{ trendData.max_uv || 0 }}</h1>
           </div>
         </div>
-        <div class="grid-item">
+        <div class="grid-item" v-if="smsInfo && smsInfo.sms >= 0">
           <div class="grid-content">
             <p>短信消耗(条)</p>
-            <h1 class="custom-font-barlow">{{ versionType == 1 ? trendData.vod_flow || 0 : trendData.vod_duration || 0}}</h1>
+            <h1 class="custom-font-barlow">{{ smsInfo.sms || 0 }}</h1>
           </div>
         </div>
       </div>
-      <div class="content-grid" v-else>
+      <div :class="['content-grid', smsInfo && smsInfo.sms >= 0 ? 'include_sms' : '']" v-else>
         <div class="content-item">
           <div class="grid-content">
             <p>累计活动（个）</p>
@@ -187,25 +187,25 @@
             <h1 class="custom-font-barlow">{{ versionType == 1 ? trendData.vod_flow || 0 : trendData.vod_duration || 0}}</h1>
           </div>
         </div>
-        <div class="content-item">
+        <div class="content-item" v-if="smsInfo && smsInfo.sms >= 0">
           <div class="grid-content">
             <p>短信消耗(条)</p>
-            <h1 class="custom-font-barlow">{{ versionType == 1 ? trendData.vod_flow || 0 : trendData.vod_duration || 0}}</h1>
+            <h1 class="custom-font-barlow">{{ smsInfo.sms || 0 }}</h1>
           </div>
         </div>
       </div>
       <div class="list_info">
         <table-list
           ref="accountTableList"
-          :manageTableData="tableList"
-          :tabelColumnLabel="tabelColumn"
+          :manageTableData="trendType == 'sms' ? tableCmsList : tableList"
+          :tabelColumnLabel="trendType == 'sms' ? tableCmsColumn : tableColumn"
           :isCheckout="false"
           :isHandle="false"
-          :totalNum="totalNum"
+          :totalNum="trendType == 'sms' ? cmsTotalNum : totalNum"
           @getTableList="getAccountList"
           >
         </table-list>
-        <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂无数据'"></noData>
+        <noData :nullType="'nullData'" v-if="trendType == 'sms' ? !totalNum : !cmsTotalNum" :text="'暂无数据'"></noData>
       </div>
       </div>
     </div>
@@ -257,40 +257,18 @@ export default {
       },
       time: '',
       versionType: '',
-      trendType: '1',
+      trendType: 'sms',
       lineParams: {},
       dataParams: {},
       totalNum: 0,
+      cmsTotalNum: 0,
       vm: {},
       status: 0,
       tableList: [],
-      tabelColumn: [],
-      tabelColumns: [
-        {
-          label: '消费时间',
-          key: 'pay_date',
-          width: 120
-        },
-        {
-          label: '活动ID',
-          key: 'webinar_id',
-          width: 120
-        },
-        {
-          label: '活动名称',
-          key: 'subject',
-        },
-        {
-          label: '消费类型',
-          key: 'typePay',
-          width: 120
-        },
-        {
-          label: '账号类型',
-          key: 'typeText',
-          width: 120
-        },
-      ],
+      tableCmsList: [],
+      tableColumn: [], // 消费表格
+      tableCmsColumn: [], // 消息表格
+      smsInfo: null, // 消息对象
       pickerOptions: {
         // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
         disabledDate: (time) => {
@@ -352,7 +330,8 @@ export default {
         }
         this.getLineList();
         this.getAccountList();
-        this.getCumlus(this.versionType)
+        // 格式化表格
+        this.compareTableColumns()
         this.status = res.data.arrears.total_fee
         if (this.status) {
           this.initPayMessage(res.data.arrears);
@@ -361,21 +340,59 @@ export default {
         console.log(e);
       });
     },
-    getCumlus(versionType) {
+    compareTableColumns() {
+      const defaultColumns = [
+        {
+          label: '消费时间',
+          key: 'pay_date',
+          width: 120
+        },
+        {
+          label: '活动ID',
+          key: 'webinar_id',
+          width: 120
+        },
+        {
+          label: '活动名称',
+          key: 'subject',
+        },
+        {
+          label: '消费类型',
+          key: 'typePay',
+          width: 120
+        },
+        {
+          label: '账号类型',
+          key: 'typeText',
+          width: 120
+        }
+      ]
+      if (this.trendType == 'sms') {
+        defaultColumns[5] = {
+          label: '短信消耗（条）',
+          key: 'sms',
+          width: 150
+        }
+        this.tableCmsColumn = defaultColumns
+      } else {
+        this.getColumns(defaultColumns, this.versionType)
+      }
+    },
+    getColumns(defaultColumns, versionType) {
       if (versionType == 1) {
-         this.tabelColumn = this.tabelColumns.concat({
+        this.tableColumn = defaultColumns.concat({
           label: '消耗流量（GB）',
           key: 'webinar_flow',
           width: 150
         })
       } else if (versionType == 2) {
-        this.tabelColumn = this.tabelColumns.concat({
+        this.tableColumn = defaultColumns.concat({
           label: '消耗时长（分钟）',
           key: 'webinar_duration',
           width: 150
         })
       } else {
-        this.tabelColumn = this.tabelColumns.concat({
+        this.tableColumn = defaultColumns.concat({
           label: '最高并发（方）',
           key: 'webinar_max_uv',
           width: 150
@@ -467,8 +484,18 @@ export default {
       let obj = Object.assign({}, pageInfo, paramsObj);
 
       this.getOnlinePay(this.$params(this.dataParams));
-      this.getDataList(this.$params(obj));
+      this.getUserSmsPay(this.$params(this.dataParams));
+      if (this.trendType == 'sms') {
+        this.compareTableColumns()
+        // 获取短信消耗明细
+        this.getUserSmsPayByPage(this.$params(obj));
+      } else {
+        // 获取流量消耗明细
+        this.compareTableColumns()
+        this.getDataList(this.$params(obj));
+      }
     },
+    // 流量消费等查询
     getDataList(obj) {
       let url = this.versionType == 1 ? 'getBusinessList' : this.versionType == 2 ? 'getDurationList' : 'getAccountList';
       this.$fetch(url, obj).then(res =>{
@@ -476,9 +503,31 @@ export default {
         this.totalNum = res.data.total;
          costList.map(item => {
             item.typeText = item.type == 1 ? '主账号' : '子账号';
-            item.typePay = item.pay_type >= 0 && item.pay_type <= 3 ? ['', '并发', '流量', '时长'][item.pay_type] : ''
+            item.typePay = item.pay_type >= 0 && item.pay_type <= 4 ? ['', '并发', '流量', '时长', '短信'][item.pay_type] : ''
           });
         this.tableList = costList;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    // 短信消耗总数查询
+    getUserSmsPay(obj) {
+      this.$fetch('getUserSmsPay', obj).then(res =>{
+        this.smsInfo = res.data;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    // 短信分页查询
+    getUserSmsPayByPage(obj) {
+      this.$fetch('getUserSmsPayByPage', obj).then(res =>{
+        let costList = res.data.list;
+        this.cmsTotalNum = res.data.total;
+         costList.map(item => {
+            item.typeText = item.type == 1 ? '主账号' : '子账号';
+            item.typePay = item.pay_type >= 0 && item.pay_type <= 4 ? ['', '并发', '流量', '时长', '短信'][item.pay_type] : ''
+          });
+        this.tableCmsList = costList;
       }).catch(e=>{
         console.log(e);
       });
@@ -691,13 +740,18 @@ export default {
       border-radius: 4px;
     }
     .grid-item{
-      width: 33%;
-      &.no_sms {
-        width: 493%;
-      }
+      width: 49%;
       background: #F7F7F7;
       height:100px;
       border-radius: 4px;
+    }
+    &.include_sms {
+      .content-item {
+        width: 19%;
+      }
+      .grid-item{
+        width: 33%;
+      }
     }
     .grid-content{
       margin: 22px 40px;
