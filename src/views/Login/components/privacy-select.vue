@@ -48,7 +48,7 @@ export default {
   }
   /* 注册 */
   &.scene_register {
-    margin-top: 70px;
+    margin-top: 24px;
   }
   /* 问卷 */
   &.scene_question {
