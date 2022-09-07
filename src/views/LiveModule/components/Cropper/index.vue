@@ -15,7 +15,7 @@
         ></vue-cropper>
       </div>
       <div class="cropper_content_btn">
-        <div><vh-button size="medium" round v-preventReClick @click="resetCropper">重新上传</vh-button></div>
+        <div><vh-button size="medium" type='text' plain round v-preventReClick @click="resetCropper">重新上传</vh-button></div>
         <div>
           <vh-button  size="medium" type="primary" round v-preventReClick @click="cropperSure">确定</vh-button>
           <vh-button size="medium" plain round v-preventReClick @click="dialogVisible=false">取消</vh-button>
