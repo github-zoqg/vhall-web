@@ -1208,8 +1208,8 @@ export default {
           width: Number(crop.w),
           height: Number(crop.h)
         };
-        this.formData.blurryDegree = blur && Number(blur.s) || 0;
-        this.formData.lightDegree = obj.bright ? 10 : Number(obj.bright);
+        this.formData.blurryDegree = blur && Number(blur.s) / 2 || 0;
+        this.formData.lightDegree = obj.bright ? 10 + Number(obj.bright) / 5 : 10;
         this.imageCropMode = obj.mode;
       }
     },

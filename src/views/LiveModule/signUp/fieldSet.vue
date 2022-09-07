@@ -490,8 +490,8 @@ export default {
           width: Number(crop.w),
           height: Number(crop.h)
         };
-        this.blurryDegree = blur && Number(blur.s) || 0;
-        this.lightDegree = obj.bright ? 10 : Number(obj.bright);
+        this.blurryDegree = blur && Number(blur.s) / 2 || 0;
+        this.lightDegree = obj.bright ? 10 + Number(obj.bright) / 5 : 10;
         this.imageCropMode = obj.mode;
       }
     },

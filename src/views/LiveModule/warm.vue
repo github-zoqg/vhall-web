@@ -325,8 +325,8 @@ export default {
           width: Number(crop.w),
           height: Number(crop.h)
         };
-        this.warmForm.blurryDegree = blur && Number(blur.s) || 0;
-        this.warmForm.lightDegree = obj.bright ? 10 : Number(obj.bright);
+        this.warmForm.blurryDegree = blur && Number(blur.s) / 2 || 0;
+        this.warmForm.lightDegree = obj.bright ? 10 + Number(obj.bright) / 5 : 10;
         this.imageCropMode = obj.mode;
       }
     },
