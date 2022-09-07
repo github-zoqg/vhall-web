@@ -1340,14 +1340,17 @@ export default {
       }
     }
  }
-  .errorText{
-    line-height: 20px;
-    color:#fc5659;
-    font-size: 12px;
-    position: absolute;
-    i{
-      color: #fc5659;
-      padding-right: 5px;
-    }
+.errorText{
+  line-height: 20px;
+  color:#fc5659;
+  font-size: 12px;
+  position: absolute;
+  i{
+    color: #fc5659;
+    padding-right: 5px;
   }
+}
+/deep/.el-checkbox__label {
+  padding-left: 8px!important;
+}
 </style>
