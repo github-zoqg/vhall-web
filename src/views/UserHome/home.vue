@@ -349,6 +349,7 @@ export default {
   width: 100%;
   min-height: 448px;
   background-image: url('../../common/images/sys/v3_home_phone_bg.png');
+  background-position: center center;
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }

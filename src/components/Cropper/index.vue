@@ -30,11 +30,11 @@
       <div class="cropper_content_btn">
         <div>
           <vh-button size="medium" plain round v-preventReClick @click="goCropper">{{isShowImages ? '裁剪' : '取消裁剪'}}</vh-button>
-          <vh-button size="medium" plain round v-preventReClick @click="resetCropper">重新上传</vh-button>
+          <vh-button size="medium" plain type='text' v-preventReClick @click="resetCropper">重新上传</vh-button>
         </div>
         <div>
           <vh-button  size="medium" type="primary" round v-preventReClick @click="cropperSure">确定</vh-button>
-          <vh-button size="medium" plain round v-preventReClick @click="cancelCropper">取消</vh-button>
+          <vh-button size="medium" ghost type="info" round v-preventReClick @click="cancelCropper">取消</vh-button>
         </div>
       </div>
     </div>

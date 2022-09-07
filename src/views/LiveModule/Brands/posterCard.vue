@@ -30,12 +30,12 @@
                 <div class="image_cropper_item">
                   <span>模糊程度</span>
                   <vh-slider v-model="formWapImage.blurryDegree" :max="10" :disabled="!form.m_img"  style="width:260px"></vh-slider>
-                  <span>{{formWapImage.blurryDegree}}</span>
+                  <span class="wid_block">{{formWapImage.blurryDegree}}</span>
                 </div>
                 <div class="image_cropper_item">
                   <span>背景亮度</span>
                   <vh-slider v-model="formWapImage.lightDegree" :max="20" :disabled="!form.m_img"  style="width:260px"></vh-slider>
-                  <span>{{ formWapImage.lightDegree}}</span>
+                  <span class="wid_block">{{ formWapImage.lightDegree}}</span>
                 </div>
               </div>
             </el-form-item>
@@ -57,12 +57,12 @@
                 <div class="image_cropper_item">
                   <span>模糊程度</span>
                   <vh-slider v-model="formPcImage.blurryDegree" :max="10" :disabled="!form.img"  style="width:260px"></vh-slider>
-                  <span>{{formPcImage.blurryDegree}}</span>
+                  <span class="wid_block">{{formPcImage.blurryDegree}}</span>
                 </div>
                 <div class="image_cropper_item">
                   <span>背景亮度</span>
                   <vh-slider v-model="formPcImage.lightDegree" :max="20" :disabled="!form.img"  style="width:260px"></vh-slider>
-                  <span>{{ formPcImage.lightDegree}}</span>
+                  <span class="wid_block">{{ formPcImage.lightDegree}}</span>
                 </div>
               </div>
             </el-form-item>
@@ -100,7 +100,7 @@
                 <img class="hb_bg_default" src="../../../common/images/poster/pc-2.png" alt="" />
                 <!-- 开启 并且有图-->
                 <div class="pc-poster-wrap">
-                  <el-image v-show="status <= 0 && domain_pc_url"  class="hb_img v-poster-preview" :src="domain_url" :fit="ImgsSize[formPcImage.imageCropMode - 1]" :class="formPcImage.imageCropMode == 2 ? 'isCover' : ''"></el-image>
+                  <el-image v-show="status <= 0 && domain_pc_url"  class="hb_img v-poster-preview" :src="form.img" :fit="ImgsSize[formPcImage.imageCropMode - 1]" :class="formPcImage.imageCropMode == 2 ? 'isCover' : ''"></el-image>
                   <el-image v-show="!domain_pc_url" class="hb_img v-poster-preview"
                     :src="pcPoster" fit="cover"></el-image>
                 </div>
@@ -226,6 +226,7 @@ export default {
     domain_url: {
       handler(val) {
         if (val) {
+          console.log(val,'val')
           this.showPoster = true
         }
       },
@@ -867,6 +868,10 @@ export default {
     align-items: center;
     span{
       color: #595959;
+    }
+    .wid_block{
+      display: inline-block;
+      width: 16px;
     }
   }
 }
