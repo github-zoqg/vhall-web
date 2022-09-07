@@ -29,7 +29,9 @@
       </div>
       <div class="cropper_content_btn">
         <div>
-          <vh-button size="medium" plain round @click="changeValue">{{isShowImages ? '裁剪' : '取消裁剪'}}</vh-button>
+          <!-- 一个按钮会有样式问题 裁剪&取消裁剪-->
+          <vh-button size="medium" plain round @click="changeValue" v-if='isShowImages'>裁剪</vh-button>
+          <vh-button size="medium" plain round @click="changeValue" v-if='!isShowImages'>取消裁剪</vh-button>
           <vh-button size="medium" plain type='text' v-preventReClick @click="resetCropper">重新上传</vh-button>
         </div>
         <div>
