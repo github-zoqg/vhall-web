@@ -356,6 +356,7 @@ const router = [
     hidden: true
   },
   {
+    // 该路由已废弃
     path: '/special/detail',
     meta: { title: '个人专题详情', name: 'specialPreview'},
     component: () => import('@/views/SpecialModule/components/preShow'),
