@@ -355,6 +355,13 @@ export default {
     }
   },
   watch:{
+    imageParamsUrl: {
+      handler(newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.$emit('setBaseInfo', { cover: this.imageParamsUrl });
+        }
+      }
+    },
     regionalOptions: {
       handler(newVal){
         this.regionalLevel = { ...newVal }
@@ -890,7 +897,7 @@ export default {
       // this.imageUrl = url;
       this.imageUrl = this._imageUrl;
       this.imageCropMode = mode;
-      this.$emit('setBaseInfo', { cover: this.imageParamsUrl });
+      // this.$emit('setBaseInfo', { cover: this.imageParamsUrl });
     },
     resetUpload() {
       let dom = document.querySelector('#form_cropper .el-upload__input');
