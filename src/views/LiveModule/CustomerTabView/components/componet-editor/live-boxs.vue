@@ -78,7 +78,7 @@ export default {
       visible: true,
       isSearch: false,
       hasDelayPermission: false,
-      selectWebinars: []
+      selectWebinars: this.checkedList
     }
   },
   computed: {
