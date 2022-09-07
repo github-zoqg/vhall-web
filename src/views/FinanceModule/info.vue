@@ -70,25 +70,39 @@
           </div>
           <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>
-         <div class="search-data">
+        <div class="search-data">
           <el-date-picker
-          v-model="accountSearchDate"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          prefix-icon="iconfont-v3 saasicon_date"
-          @change="getSearchList"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :picker-options="pickerOptionsTwo"
-          style="width: 240px"
-        />
-        <VhallInput v-model="subject"  placeholder="请输入活动名称" class="search-tag" style="width: 220px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" v-clearEmoij clearable>
-          <i slot="prefix" class="el-icon-search el-input__icon" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
-        </VhallInput>
+            v-model="accountSearchDate"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            prefix-icon="iconfont-v3 saasicon_date"
+            @change="getSearchList"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :picker-options="pickerOptionsTwo"
+            style="width: 240px"
+          />
+          <VhallInput v-model="subject"  placeholder="请输入活动名称" class="search-tag" style="width: 220px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" v-clearEmoij clearable>
+            <i slot="prefix" class="el-icon-search el-input__icon" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
+          </VhallInput>
           <el-select filterable v-model="accountType" style="width: 160px;marginLeft:15px" @change="getTypeList" v-if="type">
             <el-option
               v-for="(opt, optIndex) in versionList"
+              :key="optIndex"
+              :label="opt.label"
+              :value="opt.value"
+            />
+          </el-select>
+          <el-select filterable v-model="trendType" style="width: 160px;marginLeft:15px" @change="getTypeList">
+            <el-option
+              v-for="(opt, optIndex) in [{
+                label: '套餐消费',
+                value: '1'
+              },{
+                label: '短信消费',
+                value: '2'
+              }]"
               :key="optIndex"
               :label="opt.label"
               :value="opt.value"
@@ -111,10 +125,16 @@
             <h1 class="custom-font-barlow">{{ trendData.webinar_num || 0 }}</h1>
           </div>
         </div>
-         <div class="grid-item">
+        <div class="grid-item">
           <div class="grid-content">
             <p>最高并发（方）</p>
             <h1 class="custom-font-barlow">{{ trendData.max_uv || 0 }}</h1>
+          </div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-content">
+            <p>短信消耗(条)</p>
+            <h1 class="custom-font-barlow">{{ versionType == 1 ? trendData.vod_flow || 0 : trendData.vod_duration || 0}}</h1>
           </div>
         </div>
       </div>
@@ -164,6 +184,12 @@
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </el-tooltip>
+            <h1 class="custom-font-barlow">{{ versionType == 1 ? trendData.vod_flow || 0 : trendData.vod_duration || 0}}</h1>
+          </div>
+        </div>
+        <div class="content-item">
+          <div class="grid-content">
+            <p>短信消耗(条)</p>
             <h1 class="custom-font-barlow">{{ versionType == 1 ? trendData.vod_flow || 0 : trendData.vod_duration || 0}}</h1>
           </div>
         </div>
@@ -231,6 +257,7 @@ export default {
       },
       time: '',
       versionType: '',
+      trendType: '1',
       lineParams: {},
       dataParams: {},
       totalNum: 0,
@@ -664,7 +691,10 @@ export default {
       border-radius: 4px;
     }
     .grid-item{
-      width: 49%;
+      width: 33%;
+      &.no_sms {
+        width: 493%;
+      }
       background: #F7F7F7;
       height:100px;
       border-radius: 4px;
