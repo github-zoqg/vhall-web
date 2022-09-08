@@ -71,7 +71,7 @@
           <el-button class="submit" type="primary" @click="loginAccount" round>登&nbsp;&nbsp;&nbsp;录</el-button>
         </div>
         <div class="login-just">
-          现在注册，就送20G流量<span @click="$router.push({path: '/register'})">立即注册</span>
+          现在注册，就送20G流量<span @click="toRegister">立即注册</span>
         </div>
         <div class="login-other inline">
           其他登录方式<!-- 旧版 <span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span> -->
@@ -85,7 +85,7 @@
           </div>
         </div>
         <!-- 隐私协议合规 -->
-        <privacy-select :scene="isOpenOther ? 'login' : 'login_normal'" @check="checkResult"></privacy-select>
+        <privacy-select :scene="isOpenOther ? 'login' : 'login_normal'" ref="loginPrivacyCompliance" @check="checkResult"></privacy-select>
       </el-form>
      </div>
      <!-- 手机号登录 -->
@@ -136,7 +136,7 @@
             <el-button class="submit top" type="primary" @click="loginDynamic" round>登 录</el-button>
           </div>
           <!-- 隐私协议合规 -->
-          <privacy-select scene="loginDynamic" @check="checkResult"></privacy-select>
+          <privacy-select scene="loginDynamic" ref="loginDynamicPrivacyCompliance" @check="checkResult"></privacy-select>
        </el-form>
      </div>
     </div>
@@ -213,7 +213,7 @@
               <span class="toLogin" @click="$router.push({path: '/login'})">去登录</span>
             </el-form-item>
             <!-- 隐私协议合规 -->
-            <privacy-select scene="register" @check="checkResult"></privacy-select>
+            <privacy-select scene="register" ref="registerPrivacyCompliance" @check="checkResult"></privacy-select>
         </el-form>
       </div>
     </div>
@@ -461,6 +461,15 @@ export default {
       this.errorMsgShow = '';
       this.errorText = '';
       this.callCaptcha();
+      if (index == 1) {
+        // 去填写 账号登录，重置 账号登录 状态
+        this.loginChecked = false;
+        this.$refs.loginPrivacyCompliance && this.$refs.loginPrivacyCompliance.resetChecked();
+      }else if (index == 2) {
+        // 去填写 验证码登录，重置 账号登录 状态
+        this.loginDynamicChecked = false;
+        this.$refs.loginDynamicPrivacyCompliance && this.$refs.loginDynamicPrivacyCompliance.resetChecked();
+      }
     },
     getDyCode() {
       // 获取短信验证码
@@ -812,6 +821,11 @@ export default {
     /* 隐私合规选择结果标记 */
     checkResult(obj) {
       this[`${['login','login_normal'].includes(obj.scene) ? 'login' : obj.scene}Checked`] = obj.checked
+    },
+    toRegister() {
+      this.registerChecked = false;
+      this.$refs.registerPrivacyCompliance && this.$refs.registerPrivacyCompliance.resetChecked()
+      this.$router.push({path: '/register'})
     }
   }
 };
