@@ -77,7 +77,8 @@ export default {
       loading: false,
       visible: true,
       isSearch: false,
-      hasDelayPermission: false
+      hasDelayPermission: false,
+      selectWebinars: this.checkedList
     }
   },
   computed: {
@@ -209,12 +210,19 @@ export default {
 
       item.checked = !item.checked;
       this.selectedOption = this.activeList.filter(item => item.checked);
+      
+      // 按时间排序
+      // let webinars = this.selectedOption.map((item) => {
+      //   return item.webinar_id
+      // })
 
-      let webinars = this.selectedOption.map((item) => {
-        return item.webinar_id
-      })
+      // 按选择顺序排序
+      item.checked && this.selectWebinars.push(item.webinar_id)
+      if( !item.checked ) {
+        this.selectWebinars = this.selectWebinars.filter(i => i != item.webinar_id)
+      }
 
-      this.$emit('seleclted', webinars)
+      this.$emit('seleclted', this.selectWebinars)
     },
   },
 
