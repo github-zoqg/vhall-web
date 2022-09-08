@@ -31,6 +31,10 @@ export default {
           scene: this.scene
         });
       }
+    },
+    // 重置选中状态
+    resetChecked() {
+      this.isCheck = false;
     }
   }
 }
