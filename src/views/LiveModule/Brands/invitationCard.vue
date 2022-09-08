@@ -51,7 +51,7 @@
               <div class="advor_img"><img :src="img" alt="" /></div>
               <span class="choseImg">选择封面</span>
             </div>
-            <div class="image_cropper" v-if="formInvitation.img_type==0">
+            <!-- <div class="image_cropper" v-if="formInvitation.img_type==0">
               <div class="image_cropper_item">
                 <span>模糊程度</span>
                 <vh-slider v-model="imageCropper.blurryDegree" :max="10" style="width:220px"></vh-slider>
@@ -62,7 +62,7 @@
                 <vh-slider v-model="imageCropper.lightDegree" :max="20" style="width:220px"></vh-slider>
                 <span class="wid_block">{{ imageCropper.lightDegree }}</span>
               </div>
-            </div>
+            </div> -->
           </el-form-item>
           <el-form-item label="展示方式">
             <div class="data-show">

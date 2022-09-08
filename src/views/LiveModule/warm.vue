@@ -458,7 +458,7 @@ export default {
     saveWarmInfo(recordId) {
       let params = {
         is_open_warm_video: Number(this.warmForm.warmFlag),
-        img_url: this.$parseURL(this.domain_url).path,
+        img_url: this.$parseURL(this.domainUrl).path,
         player_type: this.warmForm.playType,
         webinar_id: this.$route.params.str,
         warm_id: this.warmId,
