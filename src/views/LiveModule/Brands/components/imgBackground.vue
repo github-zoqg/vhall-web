@@ -118,11 +118,15 @@ export default {
       console.log(res, file);
       // this.imageUrl = URL.createObjectURL(file.raw);
       if (res.data) {
-        this.$refs.invitationCropper.showModel(res.data.domain_url);
-        // let domain_url = res.data.domain_url || ''
-        // let file_url = res.data.file_url || '';
-        // this.imageUrl = file_url;
-        // this.domain_url = domain_url;
+        if(this.$route.meta.name == 'invCard'){
+          let domain_url = res.data.domain_url || ''
+          let file_url = res.data.file_url || '';
+          this.imageUrl = file_url;
+          this.domain_url = domain_url;
+          this.cropComplete({height: 0,width: 0,x: 0,y: 0},this.domain_url,'')
+        } else {
+          this.$refs.invitationCropper.showModel(res.data.domain_url);
+        }
         this.isType = 0;
       }
     },

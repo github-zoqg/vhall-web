@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="裁剪图片"
+    title="图片处理"
     :visible.sync="dialogVisible"
     :close-on-click-modal=false
     :close-on-press-escape=false
