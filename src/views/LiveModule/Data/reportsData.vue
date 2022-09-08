@@ -32,6 +32,7 @@
         style="width: 240px;"
       />
       <el-select filterable clearable v-model="switchId" v-if="type=='2'" @change="getDataList"  style="width: 160px;vertical-align: top;">
+        <el-option value="all" label="全部正式直播"></el-option>
         <el-option
           v-for="(opt, optIndex) in switchList"
           :key="optIndex"
@@ -267,7 +268,7 @@ export default {
       this.$fetch('getWebinarSwitchList', {webinar_id: this.$route.params.str}).then(res => {
         this.switchList = res.data.switch_list.map((item, index) => {
           return {
-            label: `第${index + 1}场`,
+            label: `第${index + 1}场 ${item.is?'(彩排)':''}`,
             value: item.id
           }
         });
