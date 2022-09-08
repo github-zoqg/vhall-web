@@ -418,6 +418,12 @@ export default {
       ]
     };
   },
+  computed: {
+    isZhiXueYun: function () {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      return userInfo.user_extends.extends_remark == 1
+    }
+  },
   components: {
     PageTitle,
     noData
@@ -442,6 +448,10 @@ export default {
   methods: {
     getRoleList() {
       let arrList = JSON.parse(JSON.stringify(this.options));
+      if (this.isZhiXueYun) {
+        // 如果是知学云，不考虑短信数据
+        arrList = arrList.filters(item => Number(item.value) != 19)
+      }
       this.$fetch('getRoleRbacList', {category_id: 1,limit: 50, pos: 0}).then(res => {
         res.data.list.map(item => {
           arrList.push({

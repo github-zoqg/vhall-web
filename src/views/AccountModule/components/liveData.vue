@@ -22,7 +22,7 @@
         @clear="queryList">
         <i class="el-icon-search el-input__icon" slot="prefix" @click="searchList"></i>
       </VhallInput>
-      <el-select round v-model="trendType" @change="searchList">
+      <el-select round v-model="trendType" @change="searchList" v-if="!isZhiXueYun">
         <el-option
           v-for="item in [{
             label: '套餐使用情况',
@@ -86,7 +86,7 @@ export default {
         total: 0,
         list: []
       },
-      trendType: 'sms',
+      trendType: 'other', // 兼容知学云功能，默认初始化，套餐查询
       isHandle: false, // 是否有操作项
       sonTableColumn: [],
       sonTableCmsColumn: [],
@@ -97,6 +97,13 @@ export default {
         }
       }
     };
+  },
+  computed: {
+    // 是否知学云客户
+    isZhiXueYun: function () {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      return userInfo.user_extends.extends_remark == 1
+    }
   },
   methods: {
     dealDisabledData(time) {

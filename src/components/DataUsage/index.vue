@@ -48,7 +48,7 @@
           <p>{{ userInfo.concurrency.extend_day_start }} 至 {{ userInfo.concurrency.extend_day_end }}</p>
         </div>
       </el-col>
-      <el-col :span="buttonList.includes('extend') ? (typeChange ? 8 : 6) : (typeChange ? 15 : 9)" v-if="typeChange">
+      <el-col :span="buttonList.includes('extend') ? (typeChange ? 8 : 6) : (typeChange ? 15 : 9)" v-if="!isZhiXueYun && typeChange">
         <div class="top-item">
           <p>短信余额（条）</p>
           <h2 class="custom-big custom-font-barlow">{{ userInfo && userInfo.sms && userInfo.sms.sms ? userInfo.sms.sms || 0 : 0 }}</h2>
@@ -97,7 +97,7 @@
           <!-- <p class="account"  @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p> -->
         </div>
       </el-col>
-      <el-col :span="typeChange ? 15 : 9" v-if="typeChange">
+      <el-col :span="typeChange ? 15 : 9" v-if="!isZhiXueYun && typeChange">
         <div class="top-item usage-item">
           <p>短信余额（条）</p>
           <h2 class="custom-big custom-font-barlow">{{ userInfo && userInfo.sms && userInfo.sms.sms ? userInfo.sms.sms || 0 : 0 }}</h2>
@@ -129,7 +129,7 @@
           <h2 class="custom-big custom-font-barlow" v-if="userInfo.duration">{{ userInfo.duration.total_duration}}/{{ userInfo.duration.duration }}</h2>
         </div>
       </el-col>
-      <el-col :span="typeChange ? 15 : 9" v-if="typeChange">
+      <el-col :span="typeChange ? 15 : 9" v-if="!isZhiXueYun && typeChange">
         <div class="top-item usage-item">
           <p>短信余额（条）</p>
           <h2 class="custom-big custom-font-barlow">{{ userInfo && userInfo.sms && userInfo.sms.sms ? userInfo.sms.sms || 0 : 0 }}</h2>
@@ -171,8 +171,9 @@ export default {
     };
   },
   computed: {
-    concurrencyColSpan() {
-      return 1
+    isZhiXueYun: function () {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      return userInfo.user_extends.extends_remark == 1
     }
   },
   components: {

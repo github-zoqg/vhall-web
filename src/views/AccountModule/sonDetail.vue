@@ -47,7 +47,7 @@
           </li>
           <li>
             <label>用量分配</label>
-            <!-- <p>{{sonVo &&  sonVo.vip_info.type > 0 ? '流量' : '并发' }}（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）</p> -->
+            <!-- <p>{{sonVo &&  sonVo.vip_info.type > 0 ? '流量' : '并发' }}（{{isZhiXueYun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）</p> -->
             <p v-if="sonVo &&  sonVo.vip_info.type === 0">并发{{ dynamicText }}<span v-if="!isZhiXueYun">&nbsp;&nbsp;|&nbsp;&nbsp;短信{{ dynamicText }}</span></p>
             <p v-if="sonVo &&  sonVo.vip_info.type === 1">流量{{ dynamicText }}<span v-if="!isZhiXueYun">&nbsp;&nbsp;|&nbsp;&nbsp;短信{{ dynamicText }}</span></p>
             <p v-if="sonVo &&  sonVo.vip_info.type === 2">时长{{ dynamicText }}<span v-if="!isZhiXueYun">&nbsp;&nbsp;|&nbsp;&nbsp;短信{{ dynamicText }}</span></p>
@@ -93,12 +93,12 @@ export default {
       return `账号：${this.sonVo.name || '暂无'}
 请登录www.vhall.com，选择账号登录，首次登录请修改密码、绑定手机号后进行使用`;
     },
-    isZhixueyun: function () {
+    isZhiXueYun: function () {
       const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
       return userInfo.user_extends.extends_remark == 1
     },
     dynamicText: function() {
-      return `（${this.isZhixueyun && this.sonVo && this.sonVo.is_dynamic == 2 ? '固定' : (this.sonVo && this.sonVo.is_dynamic > 0 ? '动态' : '固定') }）`
+      return `（${this.isZhiXueYun && this.sonVo && this.sonVo.is_dynamic == 2 ? '固定' : (this.sonVo && this.sonVo.is_dynamic > 0 ? '动态' : '固定') }）`
     }
   },
   methods:{

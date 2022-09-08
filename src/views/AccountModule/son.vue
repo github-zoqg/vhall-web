@@ -95,8 +95,10 @@ export default {
         return 0;
       }
     },
-    isZhiXueYun() {
-      return this.userInfo.user_extends.extends_remark == 1
+    // 是否知学云客户
+    isZhiXueYun: function () {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      return userInfo.user_extends.extends_remark == 1
     }
   },
   methods:{

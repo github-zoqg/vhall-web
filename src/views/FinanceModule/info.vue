@@ -94,7 +94,7 @@
               :value="opt.value"
             />
           </el-select>
-          <el-select filterable v-model="trendType" style="width: 160px;marginLeft:15px" @change="getTypeList">
+          <el-select filterable v-model="trendType" style="width: 160px;marginLeft:15px" @change="getTypeList" v-if="!isZhiXueYun">
             <el-option
               v-for="(opt, optIndex) in [{
                 label: '套餐消费',
@@ -112,7 +112,7 @@
             <el-button round  size="medium" @click="exportAccount">导出数据</el-button>
           </div>
         </div>
-      <div :class="['content-grid', smsInfo && smsInfo.sms >= 0 ? 'include_sms' : '']" v-if="!versionType">
+      <div :class="['content-grid', !isZhiXueYun && smsInfo && smsInfo.sms >= 0 ? 'include_sms' : '']" v-if="!versionType">
          <div class="grid-item">
           <div class="grid-content">
             <p>累计直播（个）</p>
@@ -131,14 +131,14 @@
             <h1 class="custom-font-barlow">{{ trendData.max_uv || 0 }}</h1>
           </div>
         </div>
-        <div class="grid-item" v-if="smsInfo && smsInfo.sms >= 0">
+        <div class="grid-item" v-if="!isZhiXueYun && smsInfo && smsInfo.sms >= 0">
           <div class="grid-content">
             <p>短信消耗(条)</p>
             <h1 class="custom-font-barlow">{{ smsInfo.sms || 0 }}</h1>
           </div>
         </div>
       </div>
-      <div :class="['content-grid', smsInfo && smsInfo.sms >= 0 ? 'include_sms' : '']" v-else>
+      <div :class="['content-grid', !isZhiXueYun && smsInfo && smsInfo.sms >= 0 ? 'include_sms' : '']" v-else>
         <div class="content-item">
           <div class="grid-content">
             <p>累计活动（个）</p>
@@ -187,7 +187,7 @@
             <h1 class="custom-font-barlow">{{ versionType == 1 ? trendData.vod_flow || 0 : trendData.vod_duration || 0}}</h1>
           </div>
         </div>
-        <div class="content-item" v-if="smsInfo && smsInfo.sms >= 0">
+        <div class="content-item" v-if="!isZhiXueYun && smsInfo && smsInfo.sms >= 0">
           <div class="grid-content">
             <p>短信消耗(条)</p>
             <h1 class="custom-font-barlow">{{ smsInfo.sms || 0 }}</h1>
@@ -257,7 +257,7 @@ export default {
       },
       time: '',
       versionType: '',
-      trendType: 'sms',
+      trendType: 'other', // 默认查询套餐情况，兼容知学云不要短信功能
       lineParams: {},
       dataParams: {},
       totalNum: 0,
@@ -282,6 +282,12 @@ export default {
         }
       }
     };
+  },
+  computed: {
+    isZhiXueYun: function () {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      return userInfo.user_extends.extends_remark == 1
+    }
   },
   filters:{
     formatMoney
