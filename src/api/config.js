@@ -733,6 +733,9 @@ const apis = {
   // 财务总览 - 消费明细 - 短信消耗（日期筛选）
   getUserSmsPay: ['/v3/data-center/business-total/user-sms-pay', 'GET'], // 财务总览-消费明细-短信消耗总条数
   getUserSmsPayByPage: ['/v3/data-center/business-total/user-sms-pay-detail', 'GET'], // 财务总览-消费明细-短信消耗-列表
+  // 子账号管理 - 短信数据趋势图
+  getUserSmsTrend: ['/v3/data-center/business-total/user-sms-trend', 'GET'], // 子账号管理 - 短信数据趋势图
+  exportUserSmsTrend: ['/v3/data-center/business-total/export-user-sms-trend', 'GET'], // 子账号管理 - 直播统计 - 短信数据导出
 
 };
 

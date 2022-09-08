@@ -485,15 +485,17 @@ export default {
 
       this.getOnlinePay(this.$params(this.dataParams));
       this.getUserSmsPay(this.$params(this.dataParams));
-      if (this.trendType == 'sms') {
-        this.compareTableColumns()
-        // 获取短信消耗明细
-        this.getUserSmsPayByPage(this.$params(obj));
-      } else {
-        // 获取流量消耗明细
-        this.compareTableColumns()
-        this.getDataList(this.$params(obj));
-      }
+      // 格式化表格头
+      this.compareTableColumns()
+      this.$nextTick(() => {
+        if (this.trendType == 'sms') {
+          // 获取短信消耗明细
+          this.getUserSmsPayByPage(this.$params(obj));
+        } else {
+          // 获取流量消耗明细
+          this.getDataList(this.$params(obj));
+        }
+      })
     },
     // 流量消费等查询
     getDataList(obj) {
@@ -615,14 +617,20 @@ export default {
     },
     // 导出消费账单
     exportAccount() {
-      let url = this.versionType == 1 ? 'exportFlowDetail' : this.versionType == 2 ? 'exportDurationDetail' : 'exportOnlineDetail';
+      let url = ''
+      if (this.trendType == 'sms') {
+        // 短信导出
+        url = 'exportUserSmsTrend'
+      } else {
+        url = this.versionType == 1 ? 'exportFlowDetail' : this.versionType == 2 ? 'exportDurationDetail' : 'exportOnlineDetail';
+      }
       this.$fetch(url, this.dataParams).then(res => {
         this.$vhall_paas_port({
           k: 100702,
           data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
        this.$message({
-        message: `${this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发'}消费账单导出申请成功，请去下载中心下载`,
+        message: `${this.trendType == 'sms' ? '短信' : (this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发')}消费账单导出申请成功，请去下载中心下载`,
         showClose: true,
         // duration: 0,
         type: 'success',
@@ -631,7 +639,7 @@ export default {
        this.$EventBus.$emit('saas_vs_download_change');
       }).catch(res => {
         this.$message({
-          message: res.msg || `${this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发'}消费账单导出失败`,
+          message: res.msg || `${this.trendType == 'sms' ? '短信' : (this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发')}消费账单导出失败`,
           showClose: true,
           // duration: 0,
           type: 'error',

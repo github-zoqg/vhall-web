@@ -15,15 +15,16 @@
         @change="getDateInfo"
       />
     </div>
-    <p>套餐使用情况</p>
+    <p class="echarts--group--title">套餐使用情况</p>
     <div class="echarts--line" ref="dateLineChartDom" id="dateLineChartDom"></div>
-    <p>短信使用情况</p>
-    <div class="echarts--line" ref="msgDateLineChartDom" id="msgDateLineChartDom"></div>
+    <p class="echarts--group--title" v-if="!isZhixueyun">短信使用情况</p>
+    <div class="echarts--line" ref="msgDateLineChartDom" id="msgDateLineChartDom" v-if="!isZhixueyun"></div>
   </div>
 </template>
 
 <script>
 import Echarts from 'echarts';
+import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'dateData.vue',
   data() {
@@ -40,6 +41,12 @@ export default {
         }
       }
     };
+  },
+  computed: {
+    isZhixueyun: function () {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      return userInfo.user_extends.extends_remark == 1
+    }
   },
   created() {
   },
@@ -138,9 +145,9 @@ export default {
         params.start_time = this.timeStr[0] || '';
         params.end_time = this.timeStr[1] || '';
       }
-      this.$fetch('getFlowLineInfo', this.$params(params)).then(res=>{
+      this.$fetch('getUserSmsTrend', this.$params(params)).then(res=>{
         if (res && res.code === 200) {
-          this.msgDataList = res.data.list;
+          this.msgDataList = res.data.list || [];
           this.renderMsgDateLineCharts();
           this.$nextTick(() => {
             if (this.myMsgChart) {
@@ -161,8 +168,12 @@ export default {
       });
     },
     getDateInfo() {
+      // 套餐用量消耗图
       this.getUserPayDetail();
-      this.getMsgLineDetail();
+      if (!this.isZhixueyun) {
+        // 短信消耗图
+        this.getMsgLineDetail();
+      }
     },
     renderLineCharts() {
       this.myChart = Echarts.init(this.$refs.dateLineChartDom);
@@ -366,7 +377,7 @@ export default {
         tooltip: {
           trigger: 'axis',
           show: true,
-          formatter:  `{b} <br/>{a}: {c}（'条'）`
+          formatter:  `{b} <br/>{a}: {c}（条）`
         },
         xAxis: {
           /* name: '日期', */
@@ -501,6 +512,18 @@ export default {
 .date--data {
   /* .padding41-40(); */
   padding: 24px 0px 0px;
+}
+.echarts--group--title {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  color: #1A1A1A;
+  margin-top: 20px;
+  padding-left: 24px;
+  &:last-child {
+    margin-top: 16px;
+  }
 }
 .echarts--line {
   display: block;

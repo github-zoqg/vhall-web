@@ -48,9 +48,9 @@
           <li>
             <label>用量分配</label>
             <!-- <p>{{sonVo &&  sonVo.vip_info.type > 0 ? '流量' : '并发' }}（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）</p> -->
-            <p v-if="sonVo &&  sonVo.vip_info.type === 0">并发（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）  <span>&nbsp;&nbsp;|&nbsp;&nbsp;短信（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）</span></p>
-            <p v-if="sonVo &&  sonVo.vip_info.type === 1">流量（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）  <span>&nbsp;&nbsp;|&nbsp;&nbsp;短信（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）</span></p>
-            <p v-if="sonVo &&  sonVo.vip_info.type === 2">时长（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）  <span>&nbsp;&nbsp;|&nbsp;&nbsp;短信（{{isZhixueyun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）</span></p>
+            <p v-if="sonVo &&  sonVo.vip_info.type === 0">并发{{ dynamicText }}<span v-if="!isZhiXueYun">&nbsp;&nbsp;|&nbsp;&nbsp;短信{{ dynamicText }}</span></p>
+            <p v-if="sonVo &&  sonVo.vip_info.type === 1">流量{{ dynamicText }}<span v-if="!isZhiXueYun">&nbsp;&nbsp;|&nbsp;&nbsp;短信{{ dynamicText }}</span></p>
+            <p v-if="sonVo &&  sonVo.vip_info.type === 2">时长{{ dynamicText }}<span v-if="!isZhiXueYun">&nbsp;&nbsp;|&nbsp;&nbsp;短信{{ dynamicText }}</span></p>
           </li>
           <li>
             <label>手机号码</label>
@@ -95,9 +95,11 @@ export default {
     },
     isZhixueyun: function () {
       const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-      console.log('主账户是否知学云账户', userInfo.user_extends.extends_remark == 1)
       return userInfo.user_extends.extends_remark == 1
     },
+    dynamicText: function() {
+      return `（${this.isZhixueyun && this.sonVo && this.sonVo.is_dynamic == 2 ? '固定' : (this.sonVo && this.sonVo.is_dynamic > 0 ? '动态' : '固定') }）`
+    }
   },
   methods:{
     handleClick(tab, event) {
