@@ -29,7 +29,7 @@
         <i class="iconfont-v3 saasicon-choose-01" v-show="item.checked"></i>
         <div class="vh-chose-active-item__cover">
           <!-- TODO 右侧专题选择区域 -->
-          <img :src="item.cover" alt="">
+          <img :class="`img_box_bg box_bg_${item.itemMode}`" :src="item.cover" alt="">
           <div class="vh-chose-active-item__cover-status">
             <!-- <span class="liveTag"> -->
               <!-- <label class="live-status" v-if="item.webinar_state == 1">
@@ -59,6 +59,7 @@
 import noData from '@/views/PlatformModule/Error/nullPage';
 import EventBus from '../../bus'
 import eventsType from '../../EventConts'
+import { sessionOrLocal, parseImgOssQueryString, cropperImage } from '@/utils/utils';
 export default {
   props: ['checkedList'],
   data() {
@@ -129,8 +130,13 @@ export default {
             this.total = 0
           } else {
             this.activeList =  this.activeList.concat(res.data.list.map(item => {
+              let mode = 3;
+              if (cropperImage(item.cover)) {
+                mode = this.handlerImageInfo(item.cover);
+              }
               return {
                 ...item,
+                itemMode: mode,
                 checked: false
               }
             }))
@@ -144,7 +150,11 @@ export default {
         }
       })
     },
-
+    // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      return Number(obj.mode) || 3;
+    },
     // 同步 选中状态
     syncCheckStatus(ids, del_id) {
 
@@ -266,13 +276,21 @@ export default {
       background: #1A1A1A;
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
-      img{
+      .img_box_bg{
         width: 100%;
         height: 100%;
-        object-fit: scale-down;
+        object-fit: contain;
+        object-position: center;
         position: absolute;
         top:0;
         left: 0;
+        &.box_bg_1{
+          object-fit: fill;
+        }
+        &.box_bg_2{
+          object-fit: cover;
+          object-position: left top;
+        }
       }
       &-status{
         position: absolute;

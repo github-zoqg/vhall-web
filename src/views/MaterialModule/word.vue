@@ -1393,9 +1393,9 @@ export default {
   /deep/.el-card__body {
     padding: 32px 24px;
   }
-  ::v-deep .vh-saas-dialog{
-    .el-dialog{
-      width: 960px!important;
+  ::v-deep .vh-saas-dialog {
+    .el-dialog {
+      width: 960px !important;
       height: 623px;
       .el-dialog__body {
         height: calc(100% - 44px);
