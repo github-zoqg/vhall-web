@@ -5,7 +5,7 @@
         <div class="entryFormBox">
           <header>
             <img v-if="!baseInfo.cover" src="../images/formHeader.png" alt="">
-            <img v-else :src="`${ Env.staticLinkVo.uploadBaseUrl }${ baseInfo.cover }`" alt="">
+            <img v-else :class="`signWrap__header-${coverImageMode}`" :src="`${ Env.staticLinkVo.uploadBaseUrl }${ baseInfo.cover }`" alt="">
           </header>
           <article>
             <h1 class="pageTitle">{{ baseInfo.title }}</h1>
@@ -206,6 +206,8 @@
                 <div class="btnBox">
                   <el-button style="margin-top: 11px;" :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click="submitForm">报名</el-button>
                 </div>
+                <!-- 隐私协议合规 -->
+                <privacy-select scene="signForm" compType="2"></privacy-select>
               </el-form>
             </template>
 
@@ -241,6 +243,8 @@
                 <div class="btnBox">
                   <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click="submitVerify">提交</el-button>
                 </div>
+                <!-- 隐私协议合规 -->
+                <privacy-select scene="signForm" compType="2"></privacy-select>
               </el-form>
             </template>
           </article>
@@ -257,8 +261,13 @@
   import axios from 'axios';
   import Env from "@/api/env";
   import { validPhone } from '@/utils/validate.js'
+  import PrivacySelect from '../../../Login/components/privacy-select.vue';
+  import { parseImgOssQueryString, cropperImage } from '@/utils/utils.js'
   // import DevicePixelRatio from '@/utils/devicePixelRatio'
   export default {
+    components: {
+      PrivacySelect
+    },
     created() {
       if (this.signUpPageType == 'webinar') {
         this.getWebinarType();
@@ -270,6 +279,14 @@
       this.getQuestionList();
     },
     watch: {
+      coverUrl(newVal) {
+        if (cropperImage(newVal)) {
+          let obj = parseImgOssQueryString(`https:${newVal}`);
+          this.coverImageMode = Number(obj.mode) || 3;
+        } else {
+          this.coverImageMode = 2;
+        }
+      },
       province(newVal, oldVal) {
         if (newVal != oldVal) {
           this.city = ''
@@ -439,6 +456,9 @@
       },
       countyList() {
         return this.counties[this.city]
+      },
+      coverUrl() {
+        return `${ this.Env.staticLinkVo.uploadBaseUrl }${ this.baseInfo.cover }`
       }
     },
     data() {
@@ -522,7 +542,8 @@
           (
             (window.location.href.indexOf('/special/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/special/entryform') != -1)
             ? (this.$route.params.id || this.$route.params.str) : ''
-          )
+          ),
+        coverImageMode: 2
       };
     },
     mounted() {
@@ -1058,9 +1079,24 @@
         align-items: center;
         img{
           width: 100%;
+          height: 100%;
           object-fit: cover;
         }
+        .signWrap__header {
+          &-1 {
+            object-fit: fill;
+          }
+          &-2 {
+            object-fit: cover;
+            object-position: left top;
+          }
+          &-3 {
+            object-fit: contain;
+            object-position: center;
+          }
+        }
       }
+
       .pageTitle{
         font-size: 22px;
         color: #1A1A1A;
