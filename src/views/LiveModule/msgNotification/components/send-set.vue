@@ -30,8 +30,10 @@
       </div>
       <!-- 导入用户模板 -->
       <div class="set-item import_excel_info" v-if="sender_person.includes('3')">
-        <label class="set-item__label"></label>
-        <import-excel></import-excel>
+        <label class="set-item__label">导入文件</label>
+        <div class="set-item__content">
+          <import-excel></import-excel>
+        </div>
       </div>
       <!-- 短信内容 -->
       <div class="set-item send_info">
