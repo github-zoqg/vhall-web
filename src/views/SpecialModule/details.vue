@@ -6,7 +6,7 @@
       <div class="subject_left">
         <div class="info_inner">
           <div class="info_inner_thumb">
-            <img :src="subjectDetailInfo.cover" alt="" />
+            <img :class="`subject_cover subject_cover_${imageMode}`" :src="subjectDetailInfo.cover" alt="" />
           </div>
           <div class="info_inner_base">
             <div class="hidden_hover">
@@ -47,7 +47,7 @@
 import PageTitle from '@/components/PageTitle'
 import itemCard from './components/itemCard.vue'
 import share from './components/share.vue'
-import {sessionOrLocal} from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage } from "@/utils/utils";
 import Env from "@/api/env";
 export default {
   name: 'subjectDetails',
@@ -59,6 +59,7 @@ export default {
   data() {
     return {
       hasDelayPermission: 0,
+      imageMode: 3,
       userId:JSON.parse(sessionOrLocal.get("userId")),
       subject_id: this.$route.params.id,
       subjectWapLink: `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.params.id}`,
@@ -86,8 +87,16 @@ export default {
             this.$router.push({path: `/special/edit/${this.subject_id}?title=编辑`});
           }
           this.subjectDetailInfo = {...res.data.webinar_subject};
+          if (cropperImage(this.subjectDetailInfo.cover)) {
+            this.handlerImageInfo(this.subjectDetailInfo.cover);
+          }
         }
       })
+    },
+    // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      this.imageMode = Number(obj.mode) || 3;
     },
     reportData(k) {
       this.$vhall_paas_port({
@@ -169,11 +178,19 @@ export default {
           margin-right: 25px;
           background: #1a1a1a;
           border-radius: 4px;
-          img {
+          .subject_cover{
             width: 100%;
             height: 100%;
-            object-fit: scale-down;
+            object-fit: contain;
+            object-position: center;
             border-radius: 4px;
+            &.subject_cover_1{
+              object-fit: fill;
+            }
+            &.subject_cover_2{
+              object-fit: cover;
+              object-position: left top;
+            }
           }
         }
         &_base {
