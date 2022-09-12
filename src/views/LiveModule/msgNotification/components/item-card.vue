@@ -130,7 +130,7 @@
     inject: ['noticeApp'], // 卡片对象
     computed: {
       baseStartText() {
-        const sendTimerList = this.info.send_timer.split(',')
+        const sendTimerList = this.info.send_time.split(',')
         if (this.info.config_type == 2 && sendTimerList.length > 0) {
           return  '已设置多个时间点'
         } else {

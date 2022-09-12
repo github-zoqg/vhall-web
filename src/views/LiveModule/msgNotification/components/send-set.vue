@@ -13,7 +13,7 @@
           <!-- 预约发送：预约/报名用户、白名单用户 -->
           <!-- 开播提醒发送设置：预约/报名用户、导入用户、白名单用户 -->
           <!-- 回放通知发送设置：预约/报名用户、预约/报名中未观看直播用户、导入用户、白名单用户 -->
-          <vh-checkbox-group v-model="sender_person" @change="checkSelect">
+          <vh-checkbox-group v-model="sender_person" @change="checkSelect" :min="1">
             <vh-checkbox label="1">预约/报名用户
               <el-tooltip v-tooltipMove>
                 <div slot="content">
@@ -22,9 +22,9 @@
                 <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
               </el-tooltip>
             </vh-checkbox>
-            <vh-checkbox label="2" v-if="cardVo.config_type == 3">预约/报名中未观看直播用户</vh-checkbox>
+            <vh-checkbox label="4" v-if="cardVo.config_type == 3">预约/报名中未观看直播用户</vh-checkbox>
             <vh-checkbox label="3">导入用户</vh-checkbox>
-            <vh-checkbox label="4" v-if="isOpenWhite">白名单用户</vh-checkbox>
+            <vh-checkbox label="2" v-if="isOpenWhite">白名单用户</vh-checkbox>
           </vh-checkbox-group>
         </div>
       </div>
@@ -40,7 +40,7 @@
         <label class="set-item__label">短信内容</label>
         <div class="set-item__content">
           <div class="set-item__content_center">
-            {{cardVo && cardVo.content ? cardVo.content+cardVo.link : ''}}
+            {{cardVo && cardVo.content_str ? cardVo.content_str+cardVo.link : ''}}
           </div>
           <p class="set-item__content_bottom">
             <span>短信字数：<strong>75</strong>（含退订后缀）</span>
@@ -166,15 +166,15 @@
     },
     methods: {
       //文案提示问题
-      messageInfo() {
+      messageInfo(title, type) {
         if (this.vm) {
           this.vm.close();
         }
         this.vm = this.$message({
           showClose: true,
           duration: 2000,
-          message: '设置成功',
-          type: 'success',
+          message: title,
+          type: type,
           customClass: 'zdy-info-box',
         })
       },
@@ -195,6 +195,36 @@
       // 保存数据
       saveInfo() {
         let params = {
+          webinar_id: this.cardVo.webinar_id,
+          config_type: this.cardVo.config_type,
+          send_user: this.sender_person.join(','),
+          notice_switch: 1
+        }
+        if (this.sender_person.includes('1')) {
+          if (this.send_timer && this.send_timer <= 0) {
+            this.messageInfo(`请选择发送时间`, 'warning')
+            return
+          }
+          // 预约报名不能为空
+          params.send_time = this.send_timer.join(',');
+        } else {
+          params.send_time = '';
+        }
+        if (this.sender_person.includes('3')) {
+          if (!this.file) {
+            this.messageInfo(`请导入文件`, 'warning')
+            return
+          }
+          // 导入
+          params.file = ''
+          params.key = ''
+        } else {
+          try {
+            delete params.file;
+            delete params.key;
+          } catch(e) {
+            console.log(e)
+          }
         }
         this.$fetch('saveSendSet', this.$params(params)).then((res) => {
           if (res.code == 200) {
