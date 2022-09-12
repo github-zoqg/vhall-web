@@ -260,7 +260,7 @@
     color: rgba(0, 0, 0, 0.65);
   }
   &__content {
-    width: calc(100% - 100px);
+    width: calc(100% - 68px);
     &_center {
       clear: both;
       padding: 8px 12px;
