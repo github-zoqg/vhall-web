@@ -1,3 +1,4 @@
+<!-- 此页面已废弃 -->
 <template>
   <div v-loading='loading' element-loading-background="#1a1a1a" element-loading-text="加载中..." v-if="!loading"
     style="height:100%">
@@ -28,9 +29,9 @@
                 </div>
               </div>
               <div class="special-detail">
-                <vhscroll>
+                <vue-scroll>
                   <div class="text" v-html="specialInfo.intro"></div>
-                </vhscroll>
+                </vue-scroll>
               </div>
             </div>
           </div>
@@ -78,6 +79,7 @@ import Env from '@/api/env.js';
 // import { sessionOrLocal } from '@/utils/utils';
 
 export default {
+  name: 'specialPreview',
   data() {
     return {
       activeName: 'first',

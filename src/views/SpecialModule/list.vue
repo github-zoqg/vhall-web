@@ -36,14 +36,14 @@
 
     <el-row :gutter="24" class="lives" v-show="totalElement">
       <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="6" v-for="(item, index) in liveList" :key="index">
-        <router-link :to="{path:'/special/edit', query: {id: item.id, title: '编辑'}}" target="_blank" class="inner">
+        <router-link :to="{ path: item.is_new_version == 1 ? `/special/details/${item.id}` : `/special/edit/${item.id}?title=编辑`}" target="_blank" class="inner">
           <!-- @click="editSpecialInfo(item.id)" -->
           <div class="top">
            <!-- <span class="liveTag">{{item | liveTag}}</span>-->
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
             </span>
-            <div class="img-box"><img :src="item.cover || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
+            <div class="img-box"><img :class="`img_box_bg subject_bg_${item.itemMode}`" :src="item.cover" alt=""></div>
           </div>
           <div class="bottom">
             <div class="">
@@ -51,13 +51,13 @@
               <p class="liveTime">{{item.created_at | unitTime }}</p>
             </div>
             <p class="liveOpera">
-              <el-tooltip class="item" effect="dark" content="编辑" placement="top" v-tooltipMove>
+              <el-tooltip class="item item_right" effect="dark" content="编辑" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-pencil1" @click.prevent.stop="editSpecialInfo(item.id)"></i>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="预览" placement="top" v-tooltipMove>
+              <el-tooltip class="item item_right" effect="dark" content="预览" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-eye1" @click.prevent.stop="specialDetail(item)"></i>
               </el-tooltip>
-              <el-tooltip class="item" effect="dark" content="分享" placement="top" v-tooltipMove>
+              <el-tooltip class="item item_right" effect="dark" content="分享" placement="top" v-tooltipMove>
                 <i class="iconfont-v3 saasicon-share1" @click.prevent.stop="toShare(item.id)"></i>
               </el-tooltip>
               <el-tooltip class="item isDelete" effect="dark" content="删除" placement="top" v-tooltipMove>
@@ -80,7 +80,7 @@
    <share ref="share" :shareVo="shareVo"></share>
    <el-dialog
       custom-class="dialog-tutorial-wrap"
-      class="vh-dialog"
+      class="vh-saas-dialog"
       :visible.sync="tutorialVisible"
       width="740px"
       center
@@ -98,8 +98,9 @@ import noData from '@/views/PlatformModule/Error/nullPage';
 import Env from '@/api/env.js';
 import share from './components/share'
 import introduceShow from './components/moduleTutorial'
-import {sessionOrLocal} from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage } from "@/utils/utils";
 export default {
+  name: 'specialList',
   data() {
     return {
       hasDelayPermission: 0,
@@ -172,6 +173,15 @@ export default {
       this.loading = true;
       console.log(data);
       this.$fetch('subjectList', this.$params(data)).then(res=>{
+        res.data.total && res.data.list.map(item => {
+          let cover = item.cover ? item.cover : `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`;
+          if (cropperImage(cover)) {
+            item.cover = cover;
+            item.itemMode = this.handlerImageInfo(cover);
+          } else {
+            item.itemMode = 3;
+          }
+        })
         this.liveList = res.data.list;
         this.totalElement = res.data.total;
         if (this.orderBy == 1 && !this.keyWords) {
@@ -197,6 +207,11 @@ export default {
       }).finally(()=>{
         this.loading = false;
       });
+    },
+    // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      return Number(obj.mode) || 3;
     },
     // 删除
     deleteHandle(id) {
@@ -253,7 +268,7 @@ export default {
         k: 100496,
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
-      const { href } = this.$router.resolve({path:'/special/edit',query: {id: id, title: '编辑'}});
+      const { href } = this.$router.resolve({path: `/special/edit/${id}`,query: {title: '编辑'}});
       window.open(href, '_blank');
     },
     toShare(id) {
@@ -266,6 +281,11 @@ export default {
       this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${id}`;
       // this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail?id=${id}`;
       this.shareVo.pcUrl = `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${id}`;
+    },
+    // 数据页面
+    toDataReport(id) {
+      const { href } = this.$router.resolve({path:`/special/data/${id}`,query: {title: '查看数据'}});
+      window.open(href, '_blank');
     },
     // 预览页面
     specialDetail(item) {
@@ -474,12 +494,20 @@ export default {
           top:0;
           left: 0;
           border-radius: 4px 4px 0 0;
-          img{
+          .img_box_bg{
             width: 100%;
             height: 100%;
-            object-fit: scale-down;
+            object-fit: contain;
+            object-position: center;
             cursor: pointer;
             border-radius: 4px 4px 0 0;
+            &.subject_bg_1{
+              object-fit: fill;
+            }
+            &.subject_bg_2{
+              object-fit: cover;
+              object-position: left top;
+            }
           }
         }
         // img{
@@ -549,8 +577,11 @@ export default {
           i{
            cursor: pointer;
            font-size: 18px;
-           &:nth-child(2){
-              padding: 0 20px;
+           &.item_right{
+             padding: 0 10px;
+            }
+            &:first-child{
+              padding-left: 0;
             }
           }
           .el-dropdown{

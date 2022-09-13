@@ -50,7 +50,7 @@
               </div>
             </template>
           </el-table-column>
-         
+
           <el-table-column
             label="状态"
             :width="isBidScreen ? '' : 91"
@@ -99,9 +99,10 @@
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
               <el-button v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
-              <el-button v-if="WEBINAR_PES['ui.record_chapter']" type="text" @click="toChapter(scope.row)">章节</el-button>
-              <el-button type="text" v-if="$route.meta.name == 'recordplayback' || $route.meta.name == 'publishplayback'" @click="encryption(scope.row)">加密</el-button>
-              <el-dropdown v-if="!isDemand" @command="handleCommand">
+              <el-button v-if="is_rehearsal" type="text" @click="deletePlayBack(scope.row.id, 2)">删除</el-button>
+              <el-button v-if="WEBINAR_PES['ui.record_chapter'] && !is_rehearsal" type="text" @click="toChapter(scope.row)">章节</el-button>
+              <el-button type="text" v-if="($route.meta.name == 'recordplayback' || $route.meta.name == 'publishplayback')  && !is_rehearsal" @click="encryption(scope.row)">加密</el-button>
+              <el-dropdown v-if="!isDemand && !is_rehearsal" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
                   <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
@@ -182,7 +183,7 @@
     </el-dialog>
     <!-- 预览功能 -->
     <template v-if="showDialog">
-      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-dialog" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center
+      <el-dialog custom-class="dialog-padding_playbackpreview" class="vh-saas-dialog" :visible.sync="showDialog" width="1010px" :before-close='closeBefore' center
       :close-on-press-escape=false>
       <video-preview ref="videoPreview" :recordId='videoParamId' :webinarId="webinar_id"></video-preview>
       </el-dialog>
@@ -272,6 +273,7 @@ export default {
     EventBus.$on('encrypt_complete', this.handleEncryptCallback)
     this.getPermission(this.$route.params.str)
     this.getVersion()
+    this.is_rehearsal = this.$route.query.is_rehearsal
   },
   mounted(){
     window.addEventListener('resize', this.calcScreenWidth)
@@ -332,7 +334,7 @@ export default {
     calcScreenWidth() {
       const clientWidth = document.body.clientWidth
       if (this.isDemand) return;
-      if (clientWidth < 1920) {
+      if (clientWidth < 1900) {
         this.isBidScreen = false
       } else {
         this.isBidScreen = true
@@ -426,6 +428,7 @@ export default {
     },
     // 获取当前活动基本信息 判断是点播还是直播回放
     getLiveDetail() {
+      // webinar/info调整-与活动状态无关的调用
       this.$fetch('getWebinarInfo', {webinar_id: this.webinar_id}).then(res=>{
         this.liveDetailInfo = res.data;
         console.log('this.liveDetailInfo:',this.liveDetailInfo)

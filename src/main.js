@@ -2,15 +2,18 @@ import Vue from 'vue'
 
 import App from './App.vue';
 import router from './router';
+import VhallUI from 'vhall-ui';
 
 import clipboard from 'clipboard'
 // import VueTinymce from '@packy-tang/vue-tinymce/src/main';
+
+import 'cropperjs/dist/cropper.css'
 
 import vuescroll from 'vuescroll';
 import PaasPort from '@vhall/paas-report-data'
 
 import { refreshToken } from './utils/utils'
-
+Vue.use(VhallUI)
 // You can set global config here.
 Vue.use(vuescroll, {
   ops: {
@@ -22,7 +25,7 @@ Vue.use(vuescroll, {
       initialScrollY: '100%'
     } */
   },
-  name: 'vhscroll' // customize component name, default -> vueScroll
+  // name: 'vhscroll' // customize component name, default -> vueScroll
 });
 Vue.prototype.$clipboard = clipboard
 
@@ -130,6 +133,18 @@ Vue.directive('preventReClick', {    // 限制按钮重复点击
     });
   }
 });
+Vue.directive('preventReOneClick', {    // 限制按钮重复点击
+  inserted: function (el, binding) {
+    el.addEventListener('click', () => {
+      if (!el.disabled) {
+        el.disabled = true;
+        setTimeout(() => {
+          el.disabled = false;
+        }, binding.value || 1000);
+      }
+    });
+  }
+});
 // 国际化
 import VueI18n from 'vue-i18n';
 import Cookies from 'js-cookie'
@@ -169,7 +184,7 @@ let pageGrayTag = clientToken('vhall_gray')
 let userGrayId = Cookies.get('gray-id')
 if (!userGrayId && pageGrayTag) {
   // 若当前未存储过gray-id，并且vhall_gray有标记页面需存储假gray，存储gray-id
-  Cookies.set('gray-id', pageGrayTag)
+  Cookies.set('gray-id', pageGrayTag, { expires: 30 })
   window.location.reload()
 }
 

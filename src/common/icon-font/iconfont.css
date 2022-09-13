@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont-v3"; /* Project id 2212678 */
-  src: url('iconfont.woff2?t=1655293543035') format('woff2'),
-       url('iconfont.woff?t=1655293543035') format('woff'),
-       url('iconfont.ttf?t=1655293543035') format('truetype');
+  src: url('iconfont.woff2?t=1660701506211') format('woff2'),
+       url('iconfont.woff?t=1660701506211') format('woff'),
+       url('iconfont.ttf?t=1660701506211') format('truetype');
 }
 
 .iconfont-v3 {
@@ -11,6 +11,42 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.saasline-public1:before {
+  content: "\e871";
+}
+
+.saasa-line-collectionsuccess:before {
+  content: "\e876";
+}
+
+.saasline-house:before {
+  content: "\e8a7";
+}
+
+.saasline-collection:before {
+  content: "\e8b6";
+}
+
+.saasline-audit:before {
+  content: "\e911";
+}
+
+.saasline-user:before {
+  content: "\e894";
+}
+
+.saasline-expression:before {
+  content: "\e8a6";
+}
+
+.saasline-send:before {
+  content: "\e881";
+}
+
+.saasa-line-zhikanzhubanfang:before {
+  content: "\e845";
 }
 
 .saasline-plus:before {

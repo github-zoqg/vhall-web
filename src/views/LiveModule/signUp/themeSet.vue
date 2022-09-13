@@ -4,12 +4,12 @@
     :visible.sync="dialogVisible"
     :close-on-click-modal="false"
     width="510px">
-    <div class="themeBox">
+    <!-- <div class="themeBox">
       <span style="color:#1a1a1a;">选择主题</span>
       <i :class="{active: colorIndex=='red'}" @click="colorIndex='red'"></i>
       <i :class="{active: colorIndex=='blue'}" @click="colorIndex='blue'"></i>
       <i :class="{active: colorIndex=='purple'}" @click="colorIndex='purple'"></i>
-    </div>
+    </div> -->
     <p class="margin">
       <span style="color:#1a1a1a;">标签页标题</span>
     </p>
@@ -34,7 +34,7 @@
       </span>
     </el-input>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="save" round size="medium">保存</el-button>
+      <el-button type="primary" v-preventReClick @click.prevent.stop="save" round size="medium">保存</el-button>
     </span>
   </VhallDialog>
 </template>

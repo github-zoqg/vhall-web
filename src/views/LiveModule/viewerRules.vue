@@ -4,238 +4,247 @@
       <!-- <div slot="content">
         可联系客服开通“单点观看”功能，即开启付费/邀请码/白名单后，一个账号仅允许同时一台设备观看直播。
       </div> -->
+      <div class="setting_detail" @click="toSettingDetail" v-if="tabType=='viewingProtocol'">查看账号下观看协议设置</div>
+      <div class="limit_detail" @click="toDetail" v-else>若直播关联专题，以专题鉴权模式为准。<span>查看详情</span></div>
     </pageTitle>
     <!-- 内容区域 -->
-    <div class="viewer-rules" v-show="liveDetailInfo">
-      <el-radio-group v-model="form.verify" @change="handleClick">
-        <el-radio :label="0" v-if="liveDetailInfo && liveDetailInfo.webinar_type != 6">免费</el-radio>
-        <el-radio :label="3">付费</el-radio>
-        <el-radio :label="4" v-if="perssionInfo.f_code">邀请码（原F码）</el-radio>
-        <el-radio :label="6" v-if="perssionInfo.f_code">付费/邀请码</el-radio>
-        <el-radio :label="1">密码</el-radio>
-        <el-radio :label="2" v-if="perssionInfo.white_list">白名单</el-radio>
-      </el-radio-group>
-      <!-- 选值区域 -->
-      <div class="viewer-rules-content">
-        <template v-if="liveDetailInfo && liveDetailInfo.webinar_type != 6">
-          <!-- 免费 0 -->
-          <div v-show="Number(form.verify) === 0" class="viewer-rules-ctx--0">
-            <span v-if='webinarState != 4'>
-              <span class="color1a1a1a">预约按钮：</span>
-              <el-switch class="pl10 address" v-model="hide_subscribe" active-color="#FB3A32" inactive-color="#cecece"></el-switch>
-              <span class="pl10 fontStyle">{{hide_subscribe?'已开启':'开启后'}}，预告状态下且未设置报名表单时显示&lt;立即预约&gt;按钮</span>
-            </span>
-            <p class="mt30">观看无需任何验证，即可观看直播</p>
+    <div class="viewer-rules_container">
+      <el-tabs v-model="tabType" @tab-click="handleClick">
+        <el-tab-pane label="观看限制" name="viewerLimit"></el-tab-pane>
+        <el-tab-pane label="观看协议" name="viewingProtocol" v-if="permissionInfo['watch.viewing_protocol'] > 0"></el-tab-pane>
+      </el-tabs>
+      <div class="viewer-rules" v-show="liveDetailInfo && tabType === 'viewerLimit'">
+        <el-radio-group v-model="form.verify" @change="handleClick">
+          <el-radio :label="0" v-if="liveDetailInfo && liveDetailInfo.webinar_type != 6">免费</el-radio>
+          <el-radio :label="3">付费</el-radio>
+          <el-radio :label="4" v-if="permissionInfo.f_code">邀请码（原F码）</el-radio>
+          <el-radio :label="6" v-if="permissionInfo.f_code">付费/邀请码</el-radio>
+          <el-radio :label="1">密码</el-radio>
+          <el-radio :label="2" v-if="permissionInfo.white_list">白名单</el-radio>
+        </el-radio-group>
+        <!-- 选值区域 -->
+        <div class="viewer-rules-content">
+          <template v-if="liveDetailInfo && liveDetailInfo.webinar_type != 6">
+            <!-- 免费 0 -->
+            <div v-show="Number(form.verify) === 0" class="viewer-rules-ctx--0">
+              <span v-if='webinarState != 4'>
+                <span class="color1a1a1a">预约按钮：</span>
+                <el-switch class="pl10 address" v-model="hide_subscribe" active-color="#FB3A32" inactive-color="#cecece"></el-switch>
+                <span class="pl10 fontStyle">{{hide_subscribe?'已开启':'开启后'}}，预告状态下且未设置报名表单时显示&lt;立即预约&gt;按钮</span>
+              </span>
+              <p class="mt30">观看无需任何验证，即可观看直播</p>
+            </div>
+          </template>
+          <!-- 付费 3 -->
+          <div v-show="Number(form.verify) === 3" class="viewer-rules-ctx--3">
+            <el-form :model="payForm" ref="payForm" :rules="payFormRules"  label-width="70px">
+              <el-form-item label="付费金额" prop="fee">
+                <!--<div class="rules-ctx-inline">
+                  <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99"></el-input>
+                  <span class="ctx-span">元</span>
+                </div>-->
+                <VhallInput v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border" ref="payForm_fee" @input="formatInputs($event, 'payForm', 'fee')">
+                  <i slot="suffix">元</i>
+                  <!-- <template slot="append">元</template> -->
+                </VhallInput>
+              </el-form-item>
+              <el-form-item label="试看" class="switch__height" v-if="permissionInfo.btn_preview">
+                <div class="switch__box">
+                  <el-switch
+                    v-model="form.is_preview"
+                    :active-value="1"
+                    :inactive-value="0"
+                    active-color="#FB3A32"
+                    inactive-color="#CECECE">
+                  </el-switch>
+                  <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
+                </div>
+              </el-form-item>
+              <el-form-item label="试看时长" v-show="form.is_preview">
+                <el-select v-model="form.preview_time" placeholder="请选择">
+                  <el-option
+                    v-for="item in timeOption"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
           </div>
-        </template>
-        <!-- 付费 3 -->
-        <div v-show="Number(form.verify) === 3" class="viewer-rules-ctx--3">
-          <el-form :model="payForm" ref="payForm" :rules="payFormRules"  label-width="70px">
-            <el-form-item label="付费金额" prop="fee">
-              <!--<div class="rules-ctx-inline">
-                <el-input v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99"></el-input>
-                <span class="ctx-span">元</span>
-              </div>-->
-              <VhallInput v-model.trim="payForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border" ref="payForm_fee" @input="formatInputs($event, 'payForm', 'fee')">
-                <i slot="suffix">元</i>
-                <!-- <template slot="append">元</template> -->
-              </VhallInput>
-            </el-form-item>
-            <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
-              <div class="switch__box">
-                <el-switch
-                  v-model="form.is_preview"
-                  :active-value="1"
-                  :inactive-value="0"
-                  active-color="#FB3A32"
-                  inactive-color="#CECECE">
-                </el-switch>
-                <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
-              </div>
-            </el-form-item>
-            <el-form-item label="试看时长" v-show="form.is_preview">
-              <el-select v-model="form.preview_time" placeholder="请选择">
-                <el-option
-                  v-for="item in timeOption"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
-        </div>
-        <!-- 邀请码（原F码）4-->
-        <div v-show="Number(form.verify) === 4" class="viewer-rules-ctx--4">
-          <el-form :model="fCodeForm" ref="fCodeForm" :rules="fCodeFormRules"  label-width="82px">
-            <el-form-item label="生成邀请码" prop="nums">
-              <div class="fCode__flex">
-                <VhallInput v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two" @input="formatInputs($event, 'fCodeForm', 'nums')">
-                  <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
+          <!-- 邀请码（原F码）4-->
+          <div v-show="Number(form.verify) === 4" class="viewer-rules-ctx--4">
+            <el-form :model="fCodeForm" ref="fCodeForm" :rules="fCodeFormRules"  label-width="82px">
+              <el-form-item label="生成邀请码" prop="nums">
+                <div class="fCode__flex">
+                  <VhallInput v-model.trim="fCodeForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two" @input="formatInputs($event, 'fCodeForm', 'nums')">
+                    <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodeForm')">生成</el-button>
+                  </VhallInput>
+                  <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
+                  <el-button class="down-btn" size="medium" type="white-primary" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
+                </div>
+              </el-form-item>
+              <el-form-item label="设置提示" prop="">
+                <VhallInput v-model.trim="fCodeForm.fcode_verify" class="pr60" autocomplete="off" placeholder="请输入邀请码" :maxlength="30" show-word-limit></VhallInput>
+                <!-- <el-input type="text" placeholder="请输入邀请码" v-model="fCodeForm.fcode_verify" maxlength="30" show-word-limit></el-input> -->
+                <span class="pl10 color-3562FA cursor" @click="openDialog(fCodeForm.fcode_verify|| '请输入邀请码')">查看效果</span>
+              </el-form-item>
+              <el-form-item label="试看" class="switch__height" v-if="permissionInfo.btn_preview">
+                <div class="switch__box">
+                  <el-switch
+                    v-model="form.is_preview"
+                    :active-value="1"
+                    :inactive-value="0"
+                    active-color="#FB3A32"
+                    inactive-color="#CECECE">
+                  </el-switch>
+                  <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
+                </div>
+              </el-form-item>
+              <el-form-item label="试看时长" v-show="form.is_preview">
+                <el-select v-model="form.preview_time" placeholder="请选择">
+                  <el-option
+                    v-for="item in timeOption"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </div>
+          <!-- 付费/邀请码 6 -->
+          <div v-show="Number(form.verify) === 6" class="viewer-rules-ctx--6">
+            <el-form :model="fCodePayForm" ref="fCodePayForm" :rules="fCodePayFormRules"  label-width="82px">
+              <el-form-item label="付费金额" prop="fee">
+                <VhallInput v-model.trim="fCodePayForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border" @input="formatInputs($event, 'fCodePayForm', 'fee')">
+                  <i slot="suffix">元</i>
                 </VhallInput>
-                <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
-                <el-button class="down-btn" size="medium" type="white-primary" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
-              </div>
-            </el-form-item>
-            <el-form-item label="设置提示" prop="">
-              <VhallInput v-model.trim="fCodeForm.fcode_verify" class="pr60" autocomplete="off" placeholder="请输入邀请码" :maxlength="30" show-word-limit></VhallInput>
-              <!-- <el-input type="text" placeholder="请输入邀请码" v-model="fCodeForm.fcode_verify" maxlength="30" show-word-limit></el-input> -->
-              <span class="pl10 color-3562FA cursor" @click="openDialog(fCodeForm.fcode_verify|| '请输入邀请码')">查看效果</span>
-            </el-form-item>
-            <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
-              <div class="switch__box">
-                <el-switch
-                  v-model="form.is_preview"
-                  :active-value="1"
-                  :inactive-value="0"
-                  active-color="#FB3A32"
-                  inactive-color="#CECECE">
-                </el-switch>
-                <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
-              </div>
-            </el-form-item>
-            <el-form-item label="试看时长" v-show="form.is_preview">
-              <el-select v-model="form.preview_time" placeholder="请选择">
-                <el-option
-                  v-for="item in timeOption"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
+              </el-form-item>
+              <el-form-item label="生成邀请码" prop="nums">
+                <div class="fCode__flex">
+                  <VhallInput v-model.trim="fCodePayForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two" @input="formatInputs($event, 'fCodePayForm', 'nums')">
+                    <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodePayForm')">生成</el-button>
+                  </VhallInput>
+                  <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
+                  <el-button class="down-btn" size="medium" type="white-primary" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
+                </div>
+              </el-form-item>
+              <el-form-item label="设置提示" prop="">
+                <VhallInput v-model.trim="fCodePayForm.fee_verify" class="pr60" autocomplete="off" placeholder="请输入邀请码" :maxlength="30" show-word-limit></VhallInput>
+                <!-- <el-input type="text" placeholder="请输入邀请码" v-model="fCodePayForm.fee_verify" maxlength="30" show-word-limit ></el-input> -->
+                <span class="pl10 color-3562FA cursor" @click="openDialog(fCodePayForm.fee_verify || '请输入邀请码')">查看效果</span>
+              </el-form-item>
+              <el-form-item label="试看" class="switch__height" v-if="permissionInfo.btn_preview">
+                <div class="switch__box">
+                  <el-switch
+                    v-model="form.is_preview"
+                    :active-value="1"
+                    :inactive-value="0"
+                    active-color="#FB3A32"
+                    inactive-color="#CECECE">
+                  </el-switch>
+                  <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
+                </div>
+              </el-form-item>
+              <el-form-item label="试看时长" v-show="form.is_preview">
+                <el-select v-model="form.preview_time" placeholder="请选择">
+                  <el-option
+                    v-for="item in timeOption"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </div>
+          <!-- 密码 1 -->
+          <div v-show="Number(form.verify) === 1" class="viewer-rules-ctx--1">
+            <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="70px">
+              <el-form-item label="观看密码" prop="password">
+                <VhallInput v-model.trim="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></VhallInput>
+              </el-form-item>
+              <el-form-item label="设置提示" prop="">
+                <VhallInput v-model.trim="pwdForm.password_verify" class="pr60" autocomplete="off" placeholder="请输入密码" :maxlength="30" show-word-limit></VhallInput>
+                <!-- <el-input type="text" placeholder="请输入密码" v-model="pwdForm.password_verify" maxlength="30" show-word-limit ></el-input> -->
+                <span class="pl10 color-3562FA cursor" @click="openDialog(pwdForm.password_verify || '请输入密码')">查看效果</span>
+              </el-form-item>
+              <el-form-item label="试看" class="switch__height" v-if="permissionInfo.btn_preview">
+                <div class="switch__box">
+                  <el-switch
+                    v-model="form.is_preview"
+                    :active-value="1"
+                    :inactive-value="0"
+                    active-color="#FB3A32"
+                    inactive-color="#CECECE">
+                  </el-switch>
+                  <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
+                </div>
+              </el-form-item>
+              <el-form-item label="试看时长" v-show="form.is_preview">
+                <el-select v-model="form.preview_time" placeholder="请选择">
+                  <el-option
+                    v-for="item in timeOption"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </div>
+          <!-- 白名单 2 -->
+          <div v-show="Number(form.verify) === 2" class="viewer-rules-ctx--2">
+            <el-form label-width="82px">
+              <el-form-item label="设置提示" prop="">
+                <VhallInput v-model.trim="white_verify" class="pr60" autocomplete="off" placeholder="请输入手机号/邮箱/工号" :maxlength="30" show-word-limit></VhallInput>
+                <!-- <el-input type="text" placeholder="请输入手机号/邮箱/工号" v-model="white_verify" maxlength="30" show-word-limit ></el-input> -->
+                <span class="pl10 color-3562FA cursor" @click="openDialog(white_verify || '请输入手机号/邮箱/工号')">查看效果</span>
+              </el-form-item>
+              <el-form-item label="选择观众组">
+                <ul class="tab__white tab__white__group">
+                  <li :class="['tab__btn--solid', {'active': whiteId === item.id }]"  v-for="(item, ins) in groupList" :key="`group${ins}`" @click.prevent.stop="selectGroup(item)">
+                    <span>{{item.subject}}</span>
+                  </li>
+                  <li class="">
+                    <router-link :to="{path:'/material/viewer'}"><el-button type="white-primary" class="changeIconCol" size="small" round><i class="el-icon-plus"></i>添加观众组</el-button></router-link>
+                  </li>
+                </ul>
+              </el-form-item>
+              <el-form-item label="试看" class="switch__height" v-if="permissionInfo.btn_preview">
+                <div class="switch__box">
+                  <el-switch
+                    v-model="form.is_preview"
+                    :active-value=1
+                    :inactive-value=0
+                    active-color="#FB3A32"
+                    inactive-color="#CECECE">
+                  </el-switch>
+                  <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
+                </div>
+              </el-form-item>
+              <el-form-item label="试看时长" v-show="form.is_preview">
+                <el-select v-model="form.preview_time" placeholder="请选择">
+                  <el-option
+                    v-for="item in timeOption"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-form>
+          </div>
         </div>
-        <!-- 付费/邀请码 6 -->
-        <div v-show="Number(form.verify) === 6" class="viewer-rules-ctx--6">
-          <el-form :model="fCodePayForm" ref="fCodePayForm" :rules="fCodePayFormRules"  label-width="82px">
-            <el-form-item label="付费金额" prop="fee">
-              <VhallInput v-model.trim="fCodePayForm.fee" autocomplete="off" placeholder="0.01-99999.99" class="btn-relative no-border" @input="formatInputs($event, 'fCodePayForm', 'fee')">
-                <i slot="suffix">元</i>
-              </VhallInput>
-            </el-form-item>
-            <el-form-item label="生成邀请码" prop="nums">
-              <div class="fCode__flex">
-                <VhallInput v-model.trim="fCodePayForm.nums" autocomplete="off" placeholder="1-1000个" class="btn-relative btn-two" @input="formatInputs($event, 'fCodePayForm', 'nums')">
-                  <el-button type="text" class="no-border" size="mini" slot="append" v-preventReClick @click.prevent.stop="fCodeExecute('fCodePayForm')">生成</el-button>
-                </VhallInput>
-                <span class="inline-count">已生成<strong>{{viewerDao && viewerDao.fcodes ? viewerDao.fcodes : 0}}</strong>个</span>
-                <el-button class="down-btn" size="medium" type="white-primary" v-preventReClick round @click="downFCodeHandle">下载邀请码</el-button>
-              </div>
-            </el-form-item>
-            <el-form-item label="设置提示" prop="">
-              <VhallInput v-model.trim="fCodePayForm.fee_verify" class="pr60" autocomplete="off" placeholder="请输入邀请码" :maxlength="30" show-word-limit></VhallInput>
-              <!-- <el-input type="text" placeholder="请输入邀请码" v-model="fCodePayForm.fee_verify" maxlength="30" show-word-limit ></el-input> -->
-              <span class="pl10 color-3562FA cursor" @click="openDialog(fCodePayForm.fee_verify || '请输入邀请码')">查看效果</span>
-            </el-form-item>
-            <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
-              <div class="switch__box">
-                <el-switch
-                  v-model="form.is_preview"
-                  :active-value="1"
-                  :inactive-value="0"
-                  active-color="#FB3A32"
-                  inactive-color="#CECECE">
-                </el-switch>
-                <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
-              </div>
-            </el-form-item>
-            <el-form-item label="试看时长" v-show="form.is_preview">
-              <el-select v-model="form.preview_time" placeholder="请选择">
-                <el-option
-                  v-for="item in timeOption"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
-        </div>
-        <!-- 密码 1 -->
-        <div v-show="Number(form.verify) === 1" class="viewer-rules-ctx--1">
-          <el-form :model="pwdForm" ref="pwdForm" :rules="pwdFormRules"  label-width="70px">
-            <el-form-item label="观看密码" prop="password">
-              <VhallInput v-model.trim="pwdForm.password" autocomplete="off" placeholder="请输入密码" :maxlength="12" show-word-limit></VhallInput>
-            </el-form-item>
-            <el-form-item label="设置提示" prop="">
-              <VhallInput v-model.trim="pwdForm.password_verify" class="pr60" autocomplete="off" placeholder="请输入密码" :maxlength="30" show-word-limit></VhallInput>
-              <!-- <el-input type="text" placeholder="请输入密码" v-model="pwdForm.password_verify" maxlength="30" show-word-limit ></el-input> -->
-              <span class="pl10 color-3562FA cursor" @click="openDialog(pwdForm.password_verify || '请输入密码')">查看效果</span>
-            </el-form-item>
-            <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
-              <div class="switch__box">
-                <el-switch
-                  v-model="form.is_preview"
-                  :active-value="1"
-                  :inactive-value="0"
-                  active-color="#FB3A32"
-                  inactive-color="#CECECE">
-                </el-switch>
-                <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
-              </div>
-            </el-form-item>
-            <el-form-item label="试看时长" v-show="form.is_preview">
-              <el-select v-model="form.preview_time" placeholder="请选择">
-                <el-option
-                  v-for="item in timeOption"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
-        </div>
-        <!-- 白名单 2 -->
-        <div v-show="Number(form.verify) === 2" class="viewer-rules-ctx--2">
+        <!-- 保存 -->
+        <div class="save-margin-top40">
           <el-form label-width="82px">
-            <el-form-item label="设置提示" prop="">
-              <VhallInput v-model.trim="white_verify" class="pr60" autocomplete="off" placeholder="请输入手机号/邮箱/工号" :maxlength="30" show-word-limit></VhallInput>
-              <!-- <el-input type="text" placeholder="请输入手机号/邮箱/工号" v-model="white_verify" maxlength="30" show-word-limit ></el-input> -->
-              <span class="pl10 color-3562FA cursor" @click="openDialog(white_verify || '请输入手机号/邮箱/工号')">查看效果</span>
-            </el-form-item>
-            <el-form-item label="选择观众组">
-              <ul class="tab__white tab__white__group">
-                <li :class="['tab__btn--solid', {'active': whiteId === item.id }]"  v-for="(item, ins) in groupList" :key="`group${ins}`" @click.prevent.stop="selectGroup(item)">
-                  <span>{{item.subject}}</span>
-                </li>
-                <li class="">
-                  <router-link :to="{path:'/material/viewer'}"><el-button type="white-primary" class="changeIconCol" size="small" round><i class="el-icon-plus"></i>添加观众组</el-button></router-link>
-                </li>
-              </ul>
-            </el-form-item>
-            <el-form-item label="试看" class="switch__height" v-if="perssionInfo.btn_preview">
-              <div class="switch__box">
-                <el-switch
-                  v-model="form.is_preview"
-                  :active-value=1
-                  :inactive-value=0
-                  active-color="#FB3A32"
-                  inactive-color="#CECECE">
-                </el-switch>
-                <span class="leve3_title title--999">开启后，观众可以对回放进行试看</span>
-              </div>
-            </el-form-item>
-            <el-form-item label="试看时长" v-show="form.is_preview">
-              <el-select v-model="form.preview_time" placeholder="请选择">
-                <el-option
-                  v-for="item in timeOption"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
+            <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="viewerSetSave">保 存</el-button>
           </el-form>
         </div>
       </div>
-      <!-- 保存 -->
-      <div class="save-margin-top40">
-        <el-form label-width="82px">
-          <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="viewerSetSave">保 存</el-button>
-        </el-form>
-      </div>
+      <viewing-protocol ref="viewingProtocolComp" type="1" :tabType="tabType" v-if="permissionInfo['watch.viewing_protocol'] > 0 && tabType === 'viewingProtocol'"></viewing-protocol>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
     <VhallDialog :visible='visible' title="权限验证" width='400px' @close="visible = false;">
@@ -251,6 +260,27 @@
         <el-button type="primary" round @click="visible = false;" class="button_size">确定</el-button>
       </div>
     </VhallDialog>
+    <VhallDialog :visible='limitVisible' title="提示" width='400px' @close="limitVisible = false;">
+      <div class="limit_tip">
+        <template v-if="subjectInfo.subject_type==1">
+          <span>本直播属于多个专题，这些专题无统一的观看限制，本直播观看限制生效</span>
+        </template>
+        <template v-else-if="subjectInfo.subject_type==2">
+          本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ titleFormat() }}》</span> ，
+         <span>该专题提供统一的观看限制-{{ handleFormat() }}，本直播观看限制<span class="color_red">失效</span>。 </span>
+        </template>
+        <template v-else-if="subjectInfo.subject_type==3">
+          本直播属于专题 <span class="color_blue" @click="goSubjectDetail">《{{ titleFormat() }}》</span> ，
+          <span>该专题无统一的观看限制，本直播观看限制生效。</span>
+        </template>
+        <template v-else>
+         <span>本直播不属于任何专题，本次设置的观看限制生效。</span>
+        </template>
+      </div>
+      <div slot='footer'>
+        <el-button type="primary" size="medium" round @click="limitVisible = false;">我知道了</el-button>
+      </div>
+    </VhallDialog>
   </div>
 </template>
 
@@ -261,11 +291,13 @@ import {formateDate} from "@/utils/general";
 import { parse } from 'qs';
 import { sessionOrLocal } from '@/utils/utils';
 import beginPlay from '@/components/beginBtn';
+import ViewingProtocol from './components/viewingProtocol';
 export default {
   name: 'viewerRules.vue',
   components: {
     PageTitle,
-    beginPlay
+    beginPlay,
+    ViewingProtocol
   },
   // 无极版、标准版、新享版 没有邀请码 付费 白名单 试看 权限 按钮-试看
   data() {
@@ -321,10 +353,12 @@ export default {
           value: 20
         }
       ],
+      tabType: 'viewerLimit',
       lowerGradeInterval: null,
       viewerDao: {},
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
-      perssionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
+      permissionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
+      perssionWebInfo: JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage')), //账号下配置项
       form: {
         webinar_id: this.$route.params.str,
         verify: 0,
@@ -392,8 +426,22 @@ export default {
       hide_subscribe: true,  // 预约状态
       showPwd: false,
       stash:'',               // 仅占位用
-      liveDetailInfo: null
+      liveDetailInfo: null,
+      limitVisible: false,
+      vm: {},
+      subjectInfo: {
+        subject_verify: '', //专题鉴权
+        subject_type: '', // 绑定
+        subject_title: '', //专题标题
+        subject_id: '' // 活动对应的专题
+      }
     };
+  },
+  beforeDestroy(to, from, next) {
+    if (this.subjectInfo && this.subjectInfo.subject_type) {
+      this.vm.close();
+    }
+    next();
   },
   methods: {
     handleLowerGradeHeart() {
@@ -480,7 +528,17 @@ export default {
             is_preview: is_preview, // 是否开启试看（1-试看；0-否；）
             preview_time: is_preview > 0 ? preview_time : 5 // 试看时长-分钟计，若已经设置过反显。若未设置过默认为5
           };
+          this.subjectInfo = {
+            subject_verify: res.data.subject_verify, //专题鉴权
+            subject_type: res.data.subject_type, // 绑定
+            subject_title: res.data.subject_title, //专题标题
+            parent_verify: res.data.parent_verify,
+            subject_id: res.data.subject_id // 活动对应的专题
+          }
           this.whiteId = verify === 2 ? white_id : null;
+          if (res.data.subject_type == 2) {
+            this.initAuthMessage();
+          }
           console.log(this.form, '当前');
           // 表单选项初始化
           this.initViewerSet();
@@ -544,7 +602,7 @@ export default {
         });
       } else if(formName === 'whiteForm') {
         /*flag = this.whiteIds.length > 0;*/
-        flag = this.whiteId !== null && this.whiteId !== undefined && this.whiteId !== '';
+        flag = this.whiteId !== null && this.whiteId !== undefined && this.whiteId !== '' && this.whiteId !== 0;
         if (!flag) {
           this.$message({
             message:  `请选择观众组`,
@@ -582,6 +640,14 @@ export default {
             customClass: 'zdy-info-box'
           });
           return;
+        }
+      }
+      if (formName === 'whiteForm') {
+        try {
+          // 设置白名单的时候，每次点击保存之前，先获取下活动是否设置过报名表单
+          await this.getLiveDetail()
+        } catch(e) {
+          console.log(e)
         }
       }
       // 若是当前白名单，开启了报名表单，直接提示不可和白名单直接使用。
@@ -622,6 +688,29 @@ export default {
           this.sendViewerSetSave(params);
         }
       }
+    },
+    toDetail() {
+      // 有绑定
+      this.limitVisible = true;
+    },
+    initAuthMessage() {
+      let that = this;
+      this.vm = this.$message({
+        showClose: true,
+        duration: 0,
+        dangerouslyUseHTMLString: true,
+        // message: `本直播属于专题《 `,
+        message: '<p style="color:#1A1A1A; padding-right: 12px">本直播属于专题《<span id="openSubjectDetails" style="color:#3562fa;cursor: pointer;">'+ that.titleFormat() +'</span>》该专题提供统一的观看限制-'+ that.handleFormat() +'  本直播观看限制 <span style="color:#FB3A32">失效   </span></p>',
+        type: 'warning'
+      });
+      let open = document.querySelector('#openSubjectDetails');
+        open.addEventListener('click', function(e){
+          that.vm.close();
+          that.goSubjectDetail();
+      });
+    },
+    goSubjectDetail() {
+      window.open(`${process.env.VUE_APP_WEB_URL}/special/edit/${this.subjectInfo.subject_id}?title=编辑`, '_blank')
     },
     getReportData() {
       let userId = JSON.parse(sessionOrLocal.get('userId'));
@@ -697,9 +786,51 @@ export default {
       */
       this.whiteId = item.id;
     },
+    toSettingDetail() {
+      // 针对某一个活动，开启了观看协议
+      if (this.perssionWebInfo['watch.viewing_protocol'] == 0) {
+        this.$alert('尊敬的用户，您的账号无此权限。如需使用，请联系您的客户经理或专属售后，也可拨打400-888-9970转2咨询', '提示', {
+          confirmButtonText: '我知道了',
+          lockScroll: false,
+          customClass: 'zdy-message-box',
+          callback: action => {}
+        });
+        return;
+      }
+      const { href } = this.$router.resolve({path:'/setting/protocol'});
+      window.open(href, '_blank');
+    },
     formatInput() {
       this.$nextTick(() => {
       })
+    },
+    titleFormat() {
+      let val = this.subjectInfo.subject_title;
+      return val.length < 10 ? val : val.substr(0, 10) + '...'
+    },
+    // 格式化鉴权格式
+    handleFormat() {
+      let ret = '';
+      if (this.subjectInfo.subject_verify == 1) {
+        const verify = this.subjectInfo.parent_verify;
+        switch (verify) {
+          case 0:
+            ret = '免费'
+            break;
+          case 1:
+            ret = '密码'
+            break;
+          case 2:
+            ret = '白名单'
+            break;
+          case 4:
+            ret = '邀请码（原F码）'
+            break;
+        }
+      } else {
+        ret = '报名表单'
+      }
+      return ret;
     },
     // 验证码生成
     fCodeExecute(formName) {
@@ -763,8 +894,9 @@ export default {
       this.audienceGet();
     },
     // 获取基本信息
-    getLiveDetail(id) {
-      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+    getLiveDetail() {
+      // webinar/info调整-与活动状态无关的调用
+      return this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
         this.liveDetailInfo = res.data;
         console.log(this.liveDetailInfo)
       }).catch(res=>{
@@ -845,7 +977,21 @@ export default {
   background: #fff;
   text-align: right;
 }
+.setting_detail{
+  color: #3562FA;
+  cursor: pointer;
+  font-size: 14px;
+}
+.limit_detail{
+  font-size: 14px;
+  color: #999;
+  span{
+    color: #3562fa;
+    cursor: pointer;
+  }
+}
 .viewer-rules {
+  padding: 49px 56px 40px 56px;
   /deep/.el-radio__inner{
     width: 16px;
     height: 16px;
@@ -854,9 +1000,6 @@ export default {
       height: 8px;
     }
   }
-  .layout--right--main();
-  min-height: 544px;
-  padding: 49px 56px 40px 56px;
   /deep/.el-radio__label {
     font-size: 14px;
     font-weight: 400;
@@ -869,6 +1012,10 @@ export default {
     font-weight: 400;
     color: #1A1A1A;
   }
+}
+.viewer-rules_container{
+  min-height: 544px;
+  .layout--right--main();
 }
 .viewer-rules-content {
   margin-top: 32px;
@@ -1157,5 +1304,16 @@ export default {
 }
 .pr60 /deep/.el-input__inner{
   padding-right: 65px !important;
+}
+.limit_tip{
+  font-size: 14px;
+  line-height: 22px;
+  .color_blue{
+    color: #3562fa;
+    cursor: pointer;
+  }
+  .color_red{
+    color: #FB3A32;
+  }
 }
 </style>

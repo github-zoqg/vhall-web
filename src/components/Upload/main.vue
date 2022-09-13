@@ -128,7 +128,7 @@ export default {
       default: 180
     },
     widthImg: {
-      type: Number,
+      type: [Number, String],
       default: 320
     },
     'on-success': {

@@ -477,7 +477,7 @@
                 </div>
                 <div class="barrage-box">
                   <i
-                    class="iconfont-v3 saasdanmukai_icon"
+                    class="iconfont-v3 saasline-barrage-off"
                     v-if="formOther.bulletChat"
                   ></i>
                   <!-- <i class="iconfont-v3 saasdanmuguan_icon" v-if="!formOther.bulletChat"></i> -->
@@ -874,6 +874,7 @@ export default {
       }
     },
     getLiveBaseInfo() {
+      // webinar/info调整-与活动状态无关的调用
       this.$fetch('getWebinarInfo', { webinar_id: this.$route.params.str })
         .then((res) => {
           if (res.code != 200) {

@@ -4,6 +4,7 @@ import NProgress from "nprogress";
 import { message } from 'element-ui';
 import Cookies from 'js-cookie';
 import { v1 as uuidV1 } from 'uuid';
+import { fn } from "moment";
 export const sessionOrLocal = {
   set: (key, value, saveType = 'sessionStorage') => {
     if (!key) return;
@@ -51,11 +52,18 @@ export function resize() {
 }
 
 // 防抖
-export const debounce = (function() {
+export const debounce = (function(immediate = false) {
   let timer = 0
   return function(callback, ms) {
     clearTimeout(timer)
-    timer = setTimeout(callback, ms)
+    if (immediate) {
+      let bool = !timer;
+      timer = setTimeout(() => (timer = 0), ms)
+      return bool && fn.apply(this, [...arguments]);
+    } else {
+      timer = setTimeout(callback, ms)
+    }
+
   }
 })()
 
@@ -271,7 +279,8 @@ export function checkAuth(to, from, next, that) {
     to.path.indexOf('/live/room') !== -1 ||
     to.path.indexOf('/forgetPassword') !== -1 || (to.path.indexOf('/live/room') !== -1 && sessionOrLocal.get('interact_token'))
     || (to.path.indexOf('/chooseWay') !== -1 && sessionOrLocal.get('interact_token')) || to.path.indexOf('/upgrading') !== -1 || to.path.indexOf('/warning/') !== -1
-    || to.path.indexOf('/special/detail') != -1 || to.path.indexOf('/cMiddle') != -1
+    || to.path.indexOf('/cMiddle') != -1
+    || to.path.indexOf('/privacy') != -1
   ) {
     // 不验证直接进入
     next();
@@ -302,6 +311,10 @@ export function checkAuth(to, from, next, that) {
           sessionOrLocal.set('tokenRefresh', new Date().getTime(), 'localStorage')
           sessionOrLocal.set('sso_token', res.data.sso_token || '');
           sessionOrLocal.set('userId', res.data.user_id || '');
+          if (sessionOrLocal.get('userId')) {
+            // 用户登录完成后，用户ID写入Cookie
+            Cookies.set('gray-id', res.data.user_id, { expires: 30 })
+          }
         }
         // 非观看页第三方登录场景，均跳转/home
         if (!sourceTag) {
@@ -394,6 +407,7 @@ export function checkAuth(to, from, next, that) {
       return;
     }
     fetchData('planFunctionGet', {}).then(res => {
+      console.log('>>>>>>>>当前用户-配置项开关内容(utils.js中调用)')
       if (res && res.code === 200) {
         let permissions = res.data.permissions;
         if (permissions) {
@@ -430,6 +444,9 @@ export function checkAuth(to, from, next, that) {
           Cookies.remove('gray-id');
           next({ path: '/upgrading' });
           NProgress.done();
+        } else {
+          // 用户登录完成后，用户ID写入Cookie
+          Cookies.set('gray-id', res.data.user_id, { expires: 30 })
         }
         sessionOrLocal.set('userInfo', JSON.stringify(res.data));
         sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
@@ -441,9 +458,13 @@ export function checkAuth(to, from, next, that) {
             webinar_user_id: res.data.user_id,
             scene_id: 1,
           }).then(res => {
+            console.log('>>>>>>>>当前活动-配置项开关内容(utils.js中调用)', to.query.webinar_id, to.params.id, to.query.id)
             if (res && res.code === 200 && res.data.permissions) {
-              // 设置活动全部权限
-              sessionOrLocal.set('WEBINAR_PES', permissions, 'localStorage');
+              let permissions = res.data.permissions;
+              if (permissions) {
+                // 设置活动全部权限
+                sessionOrLocal.set('WEBINAR_PES', permissions, 'localStorage');
+              }
             }
           }).catch(e => {
             console.log('刷新等情况下获取活动下接口配置项情况，异常不做任何处理')
@@ -595,3 +616,91 @@ export const replaceWithRules = (longText, rules = []) => {
   });
   return longText;
 };
+// 解析纯图片地址
+export const getImageQuery = url => {
+  if (url.indexOf('?') != -1) {
+    let arr = url.split('?');
+    return arr[0];
+  } else {
+    return url
+  }
+};
+//图片经阿里云转换
+export function cropperImage(url) {
+  if (url && url.indexOf('?x-oss-process') != -1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+// 是否是空对象
+export const isEmptyObj = obj => {
+  return Object.keys(obj).length === 0
+}
+
+/**
+ * 将 queryString 转换成 key-value 形式
+ * @param {String} url url地址
+ * @returns object
+ */
+ export const parseQueryString = url => {
+  return [...new URL(url).searchParams].reduce(
+    (cur, [key, value]) => ((cur[key] = value), cur),
+    {}
+  );
+};
+
+/**
+ * 将oss图片地址中的图片处理参数解析成 key-value 的形式
+ * @param {String} imgUrl 图片地址
+ * @returns Object
+ */
+export const parseImgOssQueryString = imgUrl => {
+  const queryObj = parseQueryString(imgUrl);
+  let result = {};
+
+  if (!queryObj['x-oss-process']) {
+    return queryObj;
+  } else {
+    result = { ...queryObj };
+    delete result['x-oss-process'];
+  }
+
+  const xOssProcessStr = queryObj['x-oss-process'];
+  const xOssProcessArr = xOssProcessStr.split(/image\/|x-oss-process=image\/|\//);
+
+  // 解析最外层参数，blur  bright  crop等
+  return xOssProcessArr.reduce((currentObj, item) => {
+    if (!item) return currentObj;
+    const resultKey = item.substring(0, item.indexOf(','));
+    let resultVal = null;
+    let itemVal = item.substring(item.indexOf(',') + 1);
+    if (
+      // 亮度、对比度、锐化、渐进显示、旋转、自适应方向、格式转换，直接就是值，不需要再做第二层解析
+      ['bright', 'contrast', 'sharpen', 'interlace', 'rotate', 'auto-orient', 'format'].includes(
+        resultKey
+      )
+    ) {
+      resultVal = itemVal;
+    } else {
+      // 解析每个参数具体的值，blur  bright  crop等对应的具体的值
+      resultVal = itemVal.split(',').reduce((cur, itemStr) => {
+        if (!itemStr) return cur;
+        const itemArr = itemStr.split('_');
+        cur[itemArr[0]] = itemArr[1];
+        return cur;
+      }, {});
+    }
+    currentObj[resultKey] = resultVal;
+    return currentObj;
+  }, result);
+};
+
+export const BgImgsSize = [
+  '100% 100%','cover','contain'
+]
+export const ImgsSize = [
+  'fill','cover','scale-down'
+]
+

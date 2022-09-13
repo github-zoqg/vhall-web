@@ -64,7 +64,8 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
     platform: sessionOrLocal.get('platform', 'localStorage') || 17,
     token: token,
     origin: window.location.origin,
-    'request-id': uuidV1()
+    'request-id': uuidV1(),
+    zone: Intl.DateTimeFormat().resolvedOptions().timeZone
   };
   // header 可能传gray-id，可能传递token，可能传递Content-Type
   if (header['token'] !== null && header['token'] !== undefined) {
@@ -85,8 +86,7 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   }
   // interact_token && (headers['interact-token'] = interact_token)
   if(window.location.hash.indexOf('/live/watch/') !== -1
-     || window.location.pathname.indexOf('/cMiddle/') !== -1
-     || window.location.pathname.indexOf('/special/detail') !== -1) {
+     || window.location.pathname.indexOf('/cMiddle/') !== -1) {
     // pc观看等
     headers.platform = 7;
   }

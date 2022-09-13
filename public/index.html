@@ -34,6 +34,10 @@
     </style>
   </head>
   <body>
+    <!-- 使用CDN的CSS文件 -->
+    <% for (const css of Object.values(htmlWebpackPlugin.options.cdn.css)) { %> <%if(css){%>
+      <link rel="stylesheet" href="<%= css %>" />
+    <% } }%>
     <noscript>
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
