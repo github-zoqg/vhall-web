@@ -270,6 +270,8 @@
 </template>
 <script>
 import skinsWap from '@/common/skins/wap/index';
+import { imgPositionSizeMap } from '@/utils/imgSizeMap'
+
 export default {
   props: {
     type: {
@@ -316,7 +318,7 @@ export default {
         return {backgroundColor: this.livingWapForm.backGroundColor == 1 ? '#262626' : '#f0f0f0'}
       } else {
         if (this.livingWapForm.background && this.type == 1) {
-          return {backgroundImage: `url(${this.domainUrl})`}
+          return {backgroundImage: `url(${this.domainUrl})`, ...imgPositionSizeMap[this.livingWapForm.backgroundSize.imageCropMode]}
         } else {
           let style = this.type == 2 && this.livingWapForm.style == 3 ? 2 : this.livingWapForm.style
           let url = require(`./image/wap/bg_${style}/theme_${this.livingWapForm.backGroundColor}.png`);

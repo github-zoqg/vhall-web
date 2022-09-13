@@ -245,6 +245,7 @@
     </div>
     <div class="living-setting_hidden" v-if="webinarId && livingConfig==2"></div>
     <cropper @cropComplete="cropComplete" ref="livingCropper" :ratio="ratio" cropperDom="living_cropper" @deleteComplete="deleteComplete"></cropper>
+    <cropper2 @cropComplete="cropComplete2" ref="livingCropper2" :ratio="ratio" @resetUpload="deleteComplete"></cropper2>
     <living-preview ref="livingPreview"></living-preview>
   </div>
 </template>
@@ -252,6 +253,7 @@
 import Upload from '@/components/Upload/main';
 import ColorSet from '@/components/ColorSelect';
 import cropper from './Cropper/index.vue';
+import cropper2 from '@/components/Cropper/index'
 import { sessionOrLocal } from "@/utils/utils";
 import livingPreview from './livingPreview.vue';
 import pcPreview from './living_pc_preview.vue'
@@ -300,7 +302,8 @@ export default {
           x: 0,
           y:0,
           width: 0,
-          height: 0
+          height: 0,
+          imageCropMode: 2
         }
       },
       livingPcForm: {
@@ -313,7 +316,8 @@ export default {
           x: 0,
           y:0,
           width: 0,
-          height: 0
+          height: 0,
+          imageCropMode: 2
         }
       },
       livingForm: {
@@ -338,6 +342,7 @@ export default {
     wapPreview,
     ColorSet,
     cropper,
+    cropper2,
     Upload,
     livingPreview
   },
@@ -583,15 +588,19 @@ export default {
     },
     cropComplete(cropedData, url, index) {
       console.log(cropedData, url, index)
+      this.livingForm.videoBackGround = url;
+      this.livingForm.videoBackGroundSize = cropedData;
+    },
+    cropComplete2(cropedData, url, mode, index) {
+      console.log(cropedData, url, mode, index)
       if (index == 1) {
         this.livingPcForm.background = url;
         this.livingPcForm.backgroundSize = cropedData;
+        this.livingPcForm.backgroundSize.imageCropMode = mode;
       } else if (index == 2) {
         this.livingWapForm.background = url;
-          this.livingWapForm.backgroundSize = cropedData;
-      } else {
-        this.livingForm.videoBackGround = url;
-        this.livingForm.videoBackGroundSize = cropedData;
+        this.livingWapForm.backgroundSize = cropedData;
+        this.livingWapForm.backgroundSize.imageCropMode = mode;
       }
     },
     deleteComplete(index) {
@@ -625,14 +634,14 @@ export default {
     handlePcUploadSuccess(res, file) {
       if(res.data) {
         this.ratio = 16/9;
-        this.$refs.livingCropper.showModel(res.data.domain_url, 1)
+        this.$refs.livingCropper2.showModel(res.data.domain_url, 1)
       }
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
       if(res.data) {
         this.ratio = 9/19.48;
-        this.$refs.livingCropper.showModel(res.data.domain_url, 2)
+        this.$refs.livingCropper2.showModel(res.data.domain_url, 2)
       }
     },
     handleUploadVideoSuccess(res, file) {

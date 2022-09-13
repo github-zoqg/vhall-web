@@ -177,6 +177,8 @@
 </template>
 <script>
 import skinsPc from '@/common/skins/pc/index';
+import { imgPositionSizeMap } from '@/utils/imgSizeMap'
+
 export default {
   props: {
     type: {
@@ -220,7 +222,7 @@ export default {
     },
     pcBackground() {
       if (this.livingPcForm.background) {
-        return {backgroundImage: `url(${this.domainUrl})`}
+        return {backgroundImage: `url(${this.domainUrl})`, ...imgPositionSizeMap[this.livingPcForm.backgroundSize.imageCropMode]}
       } else {
         if (this.livingPcForm.backGroundColor == 1 || (this.livingPcForm.style == 1 && this.livingPcForm.backGroundColor==2)) {
           return {backgroundColor: this.livingPcForm.backGroundColor == 1 ? '#1a1a1a' : 'rgba(0, 0, 0, 0.06)'}
