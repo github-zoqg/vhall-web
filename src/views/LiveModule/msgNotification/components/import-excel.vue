@@ -2,7 +2,7 @@
   <div class="upload-dialog-content">
     <div class="upload__top">
       <p class="upload__top__top">
-        <a href="javascript:void(0);" class="down-a-btn" @click="downloadTemplate"><i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>下载模板</a>
+        <a href="javascript:void(0);" class="down-a-btn" @click="downloadTemplate"><img src="../images/line-download.svg"/>下载模板</a>
         <span class="span__desc">文件最大支持10000条，手机号必填</span>
       </p>
       <p class="upload__top__bottom">
@@ -455,6 +455,14 @@ export default {
     line-height: 22px;
     color: #1E4EDC;
     margin-right: 12px;
+    img {
+      width: 13px;
+      height: 13px;
+      margin-right: 4px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-top: -4px;
+    }
   }
   .span__desc {
     font-style: normal;
