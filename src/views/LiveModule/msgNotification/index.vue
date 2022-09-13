@@ -22,8 +22,8 @@
           <span :class="['msg-sign__top__label', {
             'is_no_edit': isSignShow
           }]">短信签名：</span><span v-if="isSignShow" :class="isSignShow ? 'is_no_edit' : ''">{{ showSignText }}</span>
-          <vh-input type="text" maxlength="15" show-word-limit v-if="!isSignShow" v-model.trim="msgInfo.config_info.sms_sign" autocomplete="off" placeholder="请输入短信签名" size="mini"></vh-input>
-          <vh-link icon="el-icon-edit" :underline="false"  @click.prevent="isSignShow = false;msgInfo.config_info.sms_sign = showSignText" v-if="isSignShow"></vh-link>
+          <vh-input type="text" maxlength="15" show-word-limit v-if="!isSignShow" v-model.trim="inputSign" autocomplete="off" placeholder="请输入短信签名" size="mini"></vh-input>
+          <vh-link icon="el-icon-edit" :underline="false"  @click.prevent="editSignShow" v-if="isSignShow"></vh-link>
           <vh-button borderRadius="4" type="text" round  @click="noticeConfigEdit('confirm')"  v-if="!isSignShow" size="mini" class="zdy-theme-red">确定</vh-button>
           <vh-button borderRadius="4" type="text" plain  @click="noticeConfigEdit('cancel')"  v-if="!isSignShow" size="mini" class="zdy-theme-gray">取消</vh-button>
         </div>
@@ -73,12 +73,13 @@ export default {
       vm: null,
       msgInfo: null,
       // signDialogVisible: false,
-      showSignText: '微吼直播',
-      inputShowSignText: '',
+      showSignText: null,
+      inputSign: null,
       isSignShow: true,
       liveDetailInfo: {}, // 活动详情
       baseSet: [],
-      wxSet: []
+      wxSet: [],
+      versionInfo: {}
     }
   },
   provide: function() {
@@ -92,6 +93,11 @@ export default {
     ItemCard
   },
   methods: {
+    // 编辑签名 - 展示
+    editSignShow() {
+      this.isSignShow = false;
+      this.inputSign = this.msgInfo.config_info.sms_sign || '微吼直播';
+    },
     // 开启\关闭报名表单开关
     switchChangeOpen(value) {
       if (this.msgInfo.config_info.balance == 0 && value) {
@@ -144,13 +150,16 @@ export default {
         this.isSignShow = true;
         return;
       }
-      if (!this.msgInfo.config_info.sms_sign) {
-        this.isSignShow = true
+      if (this.inputSign.length > 15 || this.inputSign.length < 2) {
+        this.messageInfo(`短信签名，长度2-12个字符`, 'error')
+        if (!this.inputSign) {
+          this.inputSign = '微吼直播'
+        }
         return
       }
       this.$fetch('noticeConfigEdit', {
         webinar_id: this.$route.params.str,
-        sms_sign: this.msgInfo.config_info.sms_sign || '微吼直播'
+        sms_sign: this.inputSign || '微吼直播'
       }).then(res => {
         if (res.code === 200) {
           this.$message({
@@ -159,7 +168,9 @@ export default {
             type: 'success', //  提示类型
             customClass: 'zdy-info-box' // 样式处理
           });
-          this.showSignText = this.msgInfo.config_info.sms_sign || '微吼直播'
+          this.isSignShow = true;
+          // 刷新界面数据
+          this.reloadAjax()
         }
       }).catch(err => {
         this.$message({
@@ -203,47 +214,6 @@ export default {
         customClass: 'zdy-info-box'
       });
     },
-    // mock模拟数据
-    mockMsgInfo() {
-      const msgInfo = {
-        config_info: {
-          sms_sign: '微吼直播',
-          phone_verify_status: false,
-          balance: 20,
-          send_num: 10
-        },
-        list: [
-          {
-            config_type: 1,
-            content: '【${sms_sign}】您已成功预约“微吼大V讲堂”，直播将于2022-07-29 12:00开播，请准时参加。点击进入${url}',
-            webinar_id: 892948024,
-            notice_switch: 0,
-            send_status: 0, // 1=已发送，0=未发送（默认），2=发送中
-            send_time: '0', // 0=立即发送，0.25=15分钟，0.5=30分钟，1=1小时，2=2小时，24=1天，72=3天
-            short_url: 'http://www.baidu.com/'
-          },
-          {
-            config_type: 2,
-            content: '【${sms_sign}】直播活动“微吼大V讲堂”将于2022-07-29 12:00开播，请准时参加。点击进入${url}',
-            webinar_id: 892948024,
-            notice_switch: 0,
-            send_status: 0, // 1=已发送，0=未发送（默认），2=发送中
-            send_time: '0.25,0.5', // 0=立即发送，0.25=15分钟，0.5=30分钟，1=1小时，2=2小时，24=1天，72=3天
-            short_url: 'http://www.baidu.com/'
-          },
-          {
-            config_type: 3,
-            content: '【${sms_sign}】直播活动“微吼大V讲堂”，已设置回放，点击进入${url}',
-            webinar_id: 892948024,
-            notice_switch: 0,
-            send_status: 0, // 1=已发送，0=未发送（默认），2=发送中
-            send_time: '0', // 0=立即发送，0.25=15分钟，0.5=30分钟，1=1小时，2=2小时，24=1天，72=3天
-            short_url: 'http://www.baidu.com/'
-          }
-        ]
-      }
-      return msgInfo
-    },
     // 组装信息面板静态内容
     joinNoticeItemStatic(msgInfo) {
       const titleList = ['', '预约/报名成功通知', '开播提醒', '回放通知', '关注成功通知', '开播提醒', '回放通知']
@@ -267,7 +237,8 @@ export default {
             }
           ]
         } else {
-          item.content_str = item.content.replace('${sms_sign}', msgInfo.config_info.sms_sign).replace('${url}', '')
+          // item.content_str = item.content.replace('${sms_sign}', msgInfo.config_info.sms_sign).replace('${url}', '')
+          item.content_str = item.content.replace('${sms_sign}', msgInfo.config_info.sms_sign).replace(new RegExp(item.short_url, 'g'), '')
         }
       })
       return msgInfo
@@ -280,19 +251,26 @@ export default {
         let msgInfo = res.data
         msgInfo = this.joinNoticeItemStatic(msgInfo)
         this.msgInfo = msgInfo
+        this.showSignText = msgInfo.config_info.sms_sign || '微吼直播'
       }).catch(res => {
         this.messageInfo(res.msg || '获取信息失败', 'error')
         this.msgInfo = {config_info: {}, list: []}
       });
     },
+    // 获取短信套餐余额
     getSmsBalance() {
       return this.$fetch('getVersionInfo', { user_id: this.userId})
       .then((res) => {
-        this.versionInfo = res.data;
+        if (res.code == 200 && res.data) {
+          this.versionInfo = res.data;
+        } else {
+          this.versionInfo = {}
+        }
       })
       .catch((res) => {
         this.messageInfo(res.msg || '获取信息失败', 'error')
         console.log(res)
+        this.versionInfo = {}
       })
     }
   },

@@ -22,7 +22,7 @@
                 <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
               </el-tooltip>
             </vh-checkbox>
-            <vh-checkbox label="4" v-if="cardVo.config_type == 3">预约/报名中未观看直播用户</vh-checkbox>
+            <vh-checkbox label="4" v-if="cardInfo.config_type == 3">预约/报名中未观看直播用户</vh-checkbox>
             <vh-checkbox label="3">导入用户</vh-checkbox>
             <vh-checkbox label="2" v-if="isOpenWhite">白名单用户</vh-checkbox>
           </vh-checkbox-group>
@@ -40,12 +40,12 @@
         <label class="set-item__label">短信内容</label>
         <div class="set-item__content">
           <div class="set-item__content_center">
-            {{cardVo && cardVo.content_str ? cardVo.content_str+cardVo.link : ''}}
+            <div class="et-item__content_center__ctx">{{cardQueryVo && cardQueryVo.content_str ? cardQueryVo.content_str : ''}} <span @click="openShortLink" class="item-card-center__link">{{cardQueryVo && cardQueryVo.short_url ? cardQueryVo.short_url : ''}}</span></div>
           </div>
           <p class="set-item__content_bottom">
-            <span>短信字数：<strong>75</strong>（含退订后缀）</span>
-            <span>计费条数 (条)：<strong>2</strong>（70字符为一条）</span>
-            <span>可用余额 (条)：<strong>500</strong></span>
+            <span>短信字数：<strong>{{smsCensus.wordage}}</strong>（含退订后缀）</span>
+            <span>计费条数 (条)：<strong>{{smsCensus.rowCount}}</strong>（70字符为一条）</span>
+            <span>可用余额 (条)：<strong>{{userSmsAmount}}</strong></span>
           </p>
         </div>
       </div>
@@ -53,7 +53,7 @@
       <div class="set-item send_time">
         <label class="set-item__label">发送时间</label>
         <div class="set-item__content">
-          <vh-checkbox-group v-model="send_timer" v-if="cardVo.config_type == 2">
+          <vh-checkbox-group v-model="send_timer" v-if="cardInfo.config_type == 2">
             <vh-checkbox v-for="item in [{
               label: '开播前1天',
               value: '24'
@@ -78,10 +78,10 @@
             {{item.label}}
             </vh-checkbox>
           </vh-checkbox-group>
-          <span class="set-item__content__default" v-else-if="cardVo.config_type == 1">预约/报名成功后发送</span>
-          <span class="set-item__content__default" v-else-if="cardVo.config_type == 3">设置默认回放后发送</span>
+          <span class="set-item__content__default" v-else-if="cardInfo.config_type == 1">预约/报名成功后发送</span>
+          <span class="set-item__content__default" v-else-if="cardInfo.config_type == 3">设置默认回放后发送</span>
           <span class="set-item__content__default" v-else>——</span>
-          <p v-if="[2,3].includes(cardVo.config_type)" class="set-item__content__desc">{{cardVo.config_type == 2 ? `注意：若勾选已错过的时间点将不进行发送，当前开播时间：2022-08-29 12:00` : '注意：当前活动仅发送一次'}}</p>
+          <p v-if="[2,3].includes(cardInfo.config_type)" class="set-item__content__desc">{{cardInfo.config_type == 2 ? `注意：若勾选已错过的时间点将不进行发送，当前开播时间：2022-08-29 12:00` : '注意：当前活动仅发送一次'}}</p>
         </div>
       </div>
       <div class="set-dialog__footer">
@@ -100,7 +100,7 @@
         class="send-test__dialog">
         <vh-form :model="phoneForm" ref="phoneForm" :rules="phoneFormRules" label-width="0">
           <vh-form-item label="" prop="phone">
-            <vh-input type="text" maxlength="11" show-word-limit v-model.trim="phoneForm.phone" autocomplete="off" placeholder="请输入手机号" @input="handleInput(scope.row)"></vh-input>
+            <vh-input type="text" maxlength="11" show-word-limit v-model.trim="phoneForm.phone" autocomplete="off" placeholder="请输入手机号" @input="handleInput"></vh-input>
          </vh-form-item>
         </vh-form>
         <div class="dialog-footer">
@@ -129,7 +129,7 @@
   export default {
     data() {
       return {
-        dialogVisible: true,
+        dialogVisible: false,
         sender_person: ['1'], // 发送对象
         send_timer: ['0.1'], // 发送时间
         innerVisible: false,
@@ -145,13 +145,24 @@
         },
         vm: null,
         noBalanceVisible: false,
-        preSmsCount: 0 // 预发短信数量
+        preSmsCount: 0, // 预发短信数量
+        noticeDetailVo: {}, // 短信模板详情
+        cardQueryVo: {}, // 卡片sms_info设置内容
+        userSmsAmount: 0, // 用户短信余额
+        smsCensus: {
+          wordage: 0, // 短信字数
+          rowCount: 0 // 短信计费条数
+        }
       };
     },
     props: {
       visible: {
         type: Boolean,
         default: false
+      },
+      cardInfo: {
+        type: Object,
+        require: true
       }
     },
     inject: ['app', 'noticeApp'], // 卡片对象
@@ -180,23 +191,28 @@
       },
       // 输入限制，只能输入0-9数字
       handleInput(value) {
-        if (value.phone.length == 0) {
+        if (value.length == 0) {
           return;
         }
         const pattern = /^[0-9]*$/ // 正整数的正则表达式
-        if (!pattern.test(value.phone)) {
-          value.phone = ''
+        if (!pattern.test(value)) {
+          value = ''
+          this.phoneForm.phone = ''
         }
       },
+      // 打开短链接
+      openShortLink() {
+        this.cardQueryVo.short_url && window.open(this.cardQueryVo.short_url, '_blank');
+      },
       handleClose() {
-        this.dialogVisible = true
+        this.dialogVisible = false
         this.$emit('close')
       },
       // 保存数据
       saveInfo() {
         let params = {
-          webinar_id: this.cardVo.webinar_id,
-          config_type: this.cardVo.config_type,
+          webinar_id: this.cardInfo.webinar_id,
+          config_type: this.cardInfo.config_type,
           send_user: this.sender_person.join(','),
           notice_switch: 1
         }
@@ -247,6 +263,12 @@
       sendTest() {
         this.$refs.phoneForm.validate((valid) => {
           if (valid) {
+            if (this.userSmsAmount <= 0) {
+              // 短信余额不足
+              this.preSmsCount = 1;
+              this.noBalanceVisible = true;
+              return;
+            }
             this.$fetch('noticeTestSend', this.$params({
               webinar_id: this.cardVo.webinar_id,
               phone: this.phoneForm.phone,
@@ -266,11 +288,40 @@
       checkSelect(oldVal, newVal) {
         console.log('之前数据', oldVal)
         console.log('新数据', newVal)
+      },
+      // 获取消息模板详情
+      getNoticeDetail() {
+        this.$fetch('getNoticeDetail', this.$params({
+          webinar_id: this.cardInfo.webinar_id,
+          config_type: this.cardInfo.config_type
+        })).then((res) => {
+          if (res.code == 200 && res.data) {
+            this.noticeDetailVo = res.data
+            if (res.data.sms_info && res.data.sms_info.content) {
+              res.data.sms_info.content_str =  res.data.sms_info.content.replace('${sms_sign}', res.data.config_info.sms_sign).replace(new RegExp(res.data.sms_info.short_url, 'g'), '')
+            }
+            this.cardQueryVo = res.data.sms_info
+            // 计算短信长度
+            const smsStr = res.data.sms_info.content_str + res.data.sms_info.short_url
+            this.smsCensus.wordage = smsStr.length
+            this.smsCensus.rowCount = smsStr.length > 70 ? Math.ceil(smsStr.length / 67) : 1
+          } else {
+            this.noticeDetailVo = {}
+            this.cardQueryVo = {}
+          }
+        })
+        .catch((res) => {
+          this.messageInfo(res.msg || '获取模板信息失败', 'error')
+          console.log(res)
+          this.noticeDetailVo = {}
+          this.cardQueryVo = {}
+        })
       }
     },
     created() {
       this.dialogVisible =  this.visible;
       this.cardVo = this.app.info; // TODO inject传入的内容，在小组件内，只做赋值，不动cardVo数据
+      this.getNoticeDetail();
     }
   };
 </script>
