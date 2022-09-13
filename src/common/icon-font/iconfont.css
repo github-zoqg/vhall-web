@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont-v3"; /* Project id 2212678 */
-  src: url('iconfont.woff2?t=1660701506211') format('woff2'),
-       url('iconfont.woff?t=1660701506211') format('woff'),
-       url('iconfont.ttf?t=1660701506211') format('truetype');
+  src: url('iconfont.woff2?t=1663052648622') format('woff2'),
+       url('iconfont.woff?t=1663052648622') format('woff'),
+       url('iconfont.ttf?t=1663052648622') format('truetype');
 }
 
 .iconfont-v3 {
@@ -11,6 +11,30 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.saashuifangtixing:before {
+  content: "\e7b9";
+}
+
+.saasfill-wait:before {
+  content: "\e7ba";
+}
+
+.saasfill-warning:before {
+  content: "\e7bb";
+}
+
+.saasfill-success:before {
+  content: "\e7bc";
+}
+
+.saaskaibotixing:before {
+  content: "\e7b3";
+}
+
+.saasyuyuebaoming:before {
+  content: "\e7b8";
 }
 
 .saasline-public1:before {
@@ -1076,4 +1100,3 @@
 .saasicon_Settings:before {
   content: "\e717";
 }
-

@@ -3,7 +3,9 @@
     <!-- 卡片顶部区域（图标、文案、开关） -->
     <div class="item-card-top">
       <label class="item-card-top__icon">
-        <i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>
+        <img src="../images/msg1.svg" v-show="info.config_type == 1"/>
+        <img src="../images/msg2.svg" v-show="info.config_type == 2"/>
+        <img src="../images/msg3.svg" v-show="info.config_type == 3"/>
       </label>
       <span class="item-card-top__title">{{info.title || ''}}</span>
       <vh-switch
@@ -258,6 +260,11 @@
       height: 16px;
       background: #C7DCFF;
       border-radius: 2px;
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 2px;
+      }
     }
     &__title {
       margin-left: 8px;
