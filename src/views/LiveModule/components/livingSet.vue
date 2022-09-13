@@ -161,11 +161,11 @@
             <vh-radio-button round :label="2">左右显示</vh-radio-button>
           </vh-radio-group>
         </div>
-        <template v-if="isShowInteract">
+        <template v-if="webinarType != 1">
           <div class="form_item_br">
             以下设置对PC端和移动端同时生效～
           </div>
-          <div class="form_item">
+          <div class="form_item" v-if="isShowInteract">
             <div class="form_item_title">
               视频区【连麦】布局
               <p class="title_tip">
@@ -205,21 +205,17 @@
               </div>
             </div>
           </div> -->
-          <!-- <div class="form_item">
+          <div class="form_item">
             <p class="form_item_title">视频区底色</p>
-            <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoColor"></color-set>
-          </div> -->
-          <!-- <div class="form_item">
+            <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoBackGroundColor"></color-set>
+          </div>
+          <div class="form_item">
             <p class="form_item_title">视频区背景</p>
             <upload
               class="upload__living"
               id="living_video_cropper"
               v-model="livingForm.videoBackGround"
               :domain_url="livingForm.videoBackGround"
-              :saveData="{
-                path: pathUrl,
-                type: 'image',
-              }"
               :on-success="handleUploadVideoSuccess"
               :on-progress="uploadProcess"
               :on-error="uploadError"
@@ -233,17 +229,17 @@
                 <p>支持jpg、gif、png、bmp</p>
               </div>
             </upload>
-          </div> -->
-          <!-- <div class="form_item">
+          </div>
+          <div class="form_item">
             <span class="vague_theme">模糊程度</span>
             <vh-slider v-model="livingForm.videoBlurryDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="10"></vh-slider>
             <span class="vague_num">{{livingForm.videoBlurryDegree}}</span>
-          </div> -->
-          <!-- <div class="form_item">
+          </div>
+          <div class="form_item">
           <span class="vague_theme">背景亮度</span>
           <vh-slider v-model="livingForm.videoLightDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="20"></vh-slider>
           <span class="vague_num">{{livingForm.videoLightDegree}}</span>
-        </div> -->
+        </div>
         </template>
       </template>
     </div>
@@ -254,7 +250,7 @@
 </template>
 <script>
 import Upload from '@/components/Upload/main';
-// import ColorSet from '@/components/ColorSelect';
+import ColorSet from '@/components/ColorSelect';
 import cropper from './Cropper/index.vue';
 import { sessionOrLocal } from "@/utils/utils";
 import livingPreview from './livingPreview.vue';
@@ -321,7 +317,7 @@ export default {
         }
       },
       livingForm: {
-        videoColor: '#000000', //视频区底色
+        videoBackGroundColor: '#000000', //视频区底色
         chatLayout: 1,
         inavLayout: 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', //连麦布局
         inavDocumentLayout: 1, //连麦+演示布局
@@ -340,7 +336,7 @@ export default {
   components: {
     pcPreview,
     wapPreview,
-    // ColorSet,
+    ColorSet,
     cropper,
     Upload,
     livingPreview
@@ -401,6 +397,11 @@ export default {
           this.livingWapForm = { ...skin_json_wap }; //wap信息
           this.livingForm.chatLayout = skin_json_pc.chatLayout; // 公共信息 聊天布局
           this.livingForm.inavLayout = this.isDelay ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : skin_json_pc.inavLayout; // 公共信息 连麦布局
+          this.livingForm.videoBackGround = skin_json_pc.videoBackGround; // 公共信息  视频区背景 图片地址
+          this.livingForm.videoBackGroundColor = skin_json_pc.videoBackGroundColor; // 公共信息  视频区背景 颜色
+          this.livingForm.videoBackGroundSize = skin_json_pc.videoBackGroundSize; // 公共信息 视频区背景 裁剪信息
+          this.livingForm.videoBlurryDegree = skin_json_pc.videoBlurryDegree; // 公共信息 视频区背景 模糊度
+          this.livingForm.videoLightDegree = skin_json_pc.videoLightDegree; // 公共信息 视频区背景 亮度
 
           // 备份信息
           this.setBackupData(skin_json_pc, skin_json_wap);
@@ -413,8 +414,13 @@ export default {
       this.livingPcForm.style = index;
       if (index == this._livingPcForm.style) {
         this.livingPcForm = {...this._livingPcForm};
-        this.livingForm.chatLayout = this._livingForm.chatLayout;
-        this.livingForm.inavLayout = this._livingForm.inavLayout;
+        this.livingForm.chatLayout = this._livingForm.chatLayout, // 公共信息 聊天布局
+        this.livingForm.inavLayout = this._livingForm.inavLayout, // 公共信息 连麦布局
+        this.livingForm.videoBackGround = this._livingForm.videoBackGround, // 公共信息  视频区背景 图片地址
+        this.livingForm.videoBackGroundColor = this._livingForm.videoBackGroundColor, // 公共信息  视频区背景 颜色
+        this.livingForm.videoBackGroundSize = this._livingForm.videoBackGroundSize, // 公共信息 视频区背景 裁剪信息
+        this.livingForm.videoBlurryDegree = this._livingForm.videoBlurryDegree, // 公共信息 视频区背景 模糊度
+        this.livingForm.videoLightDegree = this._livingForm.videoLightDegree, // 公共信息 视频区背景 亮度
         this.$refs.livingPcPreview.settingTheme(index, this.livingPcForm.backGroundColor);
       } else {
         this.resetFormPcColor(index, 0);
@@ -427,6 +433,12 @@ export default {
         this.livingWapForm = { ...this._livingWapForm};
         this.livingForm.chatLayout = item.id  == 3 ? 2 : 1;
         this.livingForm.inavLayout = this._livingForm.inavLayout;
+        this.livingForm.videoBackGround = this._livingForm.videoBackGround, // 公共信息  视频区背景 图片地址
+        this.livingForm.videoBackGroundColor = this._livingForm.videoBackGroundColor, // 公共信息  视频区背景 颜色
+        this.livingForm.videoBackGroundSize = this._livingForm.videoBackGroundSize, // 公共信息 视频区背景 裁剪信息
+        this.livingForm.videoBlurryDegree = this._livingForm.videoBlurryDegree, // 公共信息 视频区背景 模糊度
+        this.livingForm.videoLightDegree = this._livingForm.videoLightDegree, // 公共信息 视频区背景 亮度
+
         this.$refs.livingWapPreview.settingTheme(item.id, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
       } else {
         this.resetFormWapColor(item.id, 0)
@@ -442,7 +454,7 @@ export default {
     },
     // 选择视频区底色
     changeVideoColor(color) {
-      this.livingForm.videoColor = color;
+      this.livingForm.videoBackGroundColor = color;
     },
     // 恢复默认（pc默认黑色，wap默认白色）
     resetForm() {
@@ -461,7 +473,12 @@ export default {
       this._livingWapForm = { ...skin_json_wap }; //wap信息
       this._livingForm = {
         chatLayout: skin_json_pc.chatLayout, // 公共信息 聊天布局
-        inavLayout: this.livingForm.inavLayout // 公共信息 连麦布局
+        inavLayout: this.livingForm.inavLayout, // 公共信息 连麦布局
+        videoBackGround: skin_json_pc.videoBackGround, // 公共信息  视频区背景 图片地址
+        videoBackGroundColor: skin_json_pc.videoBackGroundColor, // 公共信息  视频区背景 颜色
+        videoBackGroundSize: skin_json_pc.videoBackGroundSize, // 公共信息 视频区背景 裁剪信息
+        videoBlurryDegree: skin_json_pc.videoBlurryDegree, // 公共信息 视频区背景 模糊度
+        videoLightDegree: skin_json_pc.videoLightDegree, // 公共信息 视频区背景 亮度
       }
     },
     // 共用表单颜色
@@ -473,7 +490,7 @@ export default {
         layout = style == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE';
       }
       this.livingForm = {
-        videoColor: '#000000', //视频区底色
+        videoBackGroundColor: '#262626', //视频区底色
         chatLayout: style == 1 ? 1 : 2,
         inavLayout: layout, //连麦布局
         videoBackGround: '',

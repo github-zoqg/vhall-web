@@ -31,7 +31,7 @@
        </div>
     </div>
     <div class="living_preview_wap_body">
-      <div class="wap_player" v-if="type==1">
+      <div class="wap_player" v-if="type==1" :style="videoBackground">
         <template v-if="isShowInteract">
           <div class="watch_layout_1" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
             <span><img src="./image/living/layout1.png" alt=""></span>
@@ -307,7 +307,7 @@ export default {
       if (this.videoUrl) {
         return {backgroundImage: `url(${this.videoUrl})`}
       } else {
-        return {backgroundColor: this.livingForm.videoColor}
+        return {backgroundColor: this.livingForm.videoBackGroundColor}
       }
     },
     wapBackground() {
@@ -506,7 +506,7 @@ export default {
           }
         }
         .watch_layout_3{
-          background-color: #262626;
+          // background-color: #262626;
           .layout_top{
             width: 100%;
             height: 167px;

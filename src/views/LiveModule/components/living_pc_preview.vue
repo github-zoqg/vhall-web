@@ -22,7 +22,7 @@
       </div>
       <div class="pc_watch" v-if="type==1">
         <div class="watch_left">
-          <div class="left_top" v-if="isShowInteract">
+          <div class="left_top" v-if="isShowInteract" :style="videoBackground">
             <!-- 均匀 :style="videoBackground"-->
             <div class="left_top__even" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
               <span><img src="./image/living/layout1.png" alt=""></span>
@@ -51,7 +51,7 @@
               </div>
             </div>
           </div>
-          <div class="left_no_interact" v-else>
+          <div class="left_no_interact" v-else :style="videoBackground">
             <img src="./image/living/layout1.png" alt="">
           </div>
           <div class="left_bottom">
@@ -215,7 +215,7 @@ export default {
       if (this.videoUrl) {
         return {backgroundImage: `url(${this.videoUrl})`}
       } else {
-        return {backgroundColor: this.livingForm.videoColor}
+        return {backgroundColor: this.livingForm.videoBackGroundColor}
       }
     },
     pcBackground() {
