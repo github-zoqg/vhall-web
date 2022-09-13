@@ -229,7 +229,6 @@
       },
       // 发送设置保存成功，更新卡片信息
       saveChange() {
-        this.visible = false;
         this.$emit('saveChange')
       },
       //文案提示问题

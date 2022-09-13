@@ -53,7 +53,7 @@
       <div class="set-item send_time">
         <label class="set-item__label">发送时间</label>
         <div class="set-item__content">
-          <vh-checkbox-group v-model="send_timer" v-if="cardInfo.config_type == 2">
+          <vh-checkbox-group v-model="send_time" v-if="cardInfo.config_type == 2">
             <vh-checkbox v-for="item in [{
               label: '开播前1天',
               value: '86400'
@@ -131,7 +131,7 @@
       return {
         dialogVisible: false,
         send_user: ['1'], // 发送对象
-        send_timer: ['600'], // 发送时间
+        send_time: ['600'], // 发送时间
         innerVisible: false,
         phoneForm: {
           phone: ''
@@ -217,12 +217,12 @@
           notice_switch: 1
         }
         if (this.send_user.includes('1')) {
-          if (this.send_timer && this.send_timer <= 0) {
+          if (this.send_time && this.send_time <= 0) {
             this.messageInfo('请选择发送时间', 'warning')
             return
           }
           // 预约报名不能为空
-          params.send_time = this.send_timer.join(',');
+          params.send_time = this.send_time.join(',');
         } else {
           params.send_time = '';
         }
@@ -245,7 +245,7 @@
         this.$fetch('saveSendSet', this.$params(params)).then((res) => {
           if (res.code == 200) {
             this.messageInfo('设置成功', 'success')
-            this.dialogVisible = false;
+            this.handleClose()
             this.$emit('saveChange')
           } else {
             // 设置预发短信
@@ -309,6 +309,8 @@
             this.smsCensus.rowCount = smsStr.length > 70 ? Math.ceil(smsStr.length / 67) : 1
             // 转换发送对象
             this.send_user = res.data.sms_info.send_user.split(',')
+            // 转换发送时间
+            this.send_time = res.data.sms_info.send_time.split(',')
           } else {
             this.noticeDetailVo = {}
             this.cardQueryVo = {}
