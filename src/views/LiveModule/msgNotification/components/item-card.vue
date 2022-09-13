@@ -35,7 +35,9 @@
         <!-- 发送状态（未发送 or 已设置多个时间点/发送时间 等） -->
         <p v-if="info && info.config_type == 2"  class="item-card_start">
           <span class="item-card_start_timer">{{  baseStartText }}</span>
-          <span class="item-card_start_status"> <i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>未发送</span>
+          <span class="item-card_start_status" v-if="info.send_status == 1"><img src="../images/fill-success.svg"/>已发送</span>
+          <span class="item-card_start_status" v-else-if="info.send_status == 2"><img src="../images/fill-warning.svg"/>未发送</span>
+          <span class="item-card_start_status" v-else><img src="../images/fill-wait.svg"/>未发送</span>
         </p>
         <!-- 微信：设置时间 -->
         <template v-if="info && info.config_type == 5">
@@ -43,19 +45,19 @@
             <el-option
               v-for="item in [{
                 label: '开播前10分钟',
-                value: 0.1
+                value: 600
               },{
                 label: '开播前30分钟',
-                value: 0.5
+                value: 1800
               },{
                 label: '开播前1小时',
-                value: 1
+                value: 3600
               },{
                 label: '开播前2小时',
-                value: 2
+                value: 7200
               },{
                 label: '开播前1天',
-                value: 24
+                value: 86400
               }]"
               :key="item.value"
               :label="item.value">
@@ -69,7 +71,9 @@
         </template>
         <!-- 发送状态（已发送） -->
         <template v-if="info && [3,5,6].includes(info.config_type)">
-          <span  class="item-card_start_status"><i class="vh-saas-iconfont vh-saas-a-line-batchdistribution pr4"></i>已发送</span>
+          <span class="item-card_start_status" v-if="info.send_status == 1"><img src="../images/fill-success.svg"/>已发送</span>
+          <span class="item-card_start_status" v-else-if="info.send_status == 2"><img src="../images/fill-warning.svg"/>未发送</span>
+          <span class="item-card_start_status" v-else><img src="../images/fill-wait.svg"/>未发送</span>
         </template>
         <template v-else>
           <span class="margin-l10"></span>
@@ -138,10 +142,10 @@
     computed: {
       baseStartText() {
         const sendTimerList = this.info.send_time.split(',')
-        if (this.info.config_type == 2 && sendTimerList.length > 0) {
+        if (this.info.config_type == 2 && sendTimerList.length > 1) {
           return  '已设置多个时间点'
         } else {
-          return `直播前${this.covertTimerText(sendTimerList[0])}`
+          return `直播前${this.covertTimerText(sendTimerList[0])}发送`
         }
       }
     },
@@ -156,18 +160,16 @@
     methods: {
       // 转换时间文案
       covertTimerText(timers) {
-        if(timers == 0.5) {
+        if(timers == 600) {
+          return '10分钟'
+        } else if(timers == 1800) {
           return '30分钟'
-        } else if(timers == 0.25) {
-          return '15分钟'
-        } else if(timers == 1) {
+        } else if(timers == 3600) {
           return '1小时'
-        } else if(timers == 2) {
+        } else if(timers == 7200) {
           return '2小时'
-        } else if(timers == 24) {
+        } else if(timers == 86400) {
           return '1天'
-        } else if(timers == 72) {
-          return '3天'
         } else {
           return ''
         }
@@ -258,7 +260,6 @@
     &__icon {
       width: 16px;
       height: 16px;
-      background: #C7DCFF;
       border-radius: 2px;
       img {
         width: 100%;
@@ -292,12 +293,14 @@
     }
     &__ctx {
       word-break: break-all;
+      max-height: 60px;
+      overflow-y: auto;
     }
     &__link {
-      color: #0a7ff5;
+      color: #1E4EDC;
       cursor: pointer;
       &:hover {
-        color: #0060cf;
+        color: #1E4EDC;
       }
     }
     .item-card_subTitle {
@@ -340,9 +343,13 @@
         font-size: 12px;
         line-height: 20px;
         color: rgba(0, 0, 0, 0.85);
-        i {
-          font-size: 12px;
+        img {
+          display: inline-block;
+          width: 12px;
+          height: 12px;
+          vertical-align: middle;
           margin-right: 4px;
+          margin-top: -1px;
         }
       }
     }
@@ -355,7 +362,7 @@
       padding-top: 12px;
     }
     .color-blue {
-      color: #3562FA;
+      color: #1E4EDC;
       cursor: pointer;
     }
     .color-blue__r10 {

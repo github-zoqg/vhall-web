@@ -2,7 +2,7 @@
   <div class="upload-dialog-content">
     <div class="upload__top">
       <p class="upload__top__top">
-        <a href="javascript:void(0);" class="down-a-btn" @click="downloadTemplate"><i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>下载模板</a>
+        <a href="javascript:void(0);" class="down-a-btn" @click="downloadTemplate"><img src="../images/line-download.svg"/>下载模板</a>
         <span class="span__desc">文件最大支持10000条，手机号必填</span>
       </p>
       <p class="upload__top__bottom">
@@ -26,7 +26,7 @@
       <div slot="upload-result">
         <!-- 状态1： 有上传过文件，后面重新删除等-变为未上传 -->
         <p slot="tip"
-          v-if="uploadResult && uploadResult.status === 'start' && fileUrl">请使用模版上传文件</p>
+          v-if="uploadResult && uploadResult.status === 'start' && fileUrl"><span class="default_top">请使用模版上传文件</span><br/><span class="default_bottom">下载模板并完善信息后，可进行上传</span></p>
         <!-- 状态2： 已选择文件，上传中 或者 检测中-->
         <div v-if="uploadResult && uploadResult.status === 'progress'">
           <div class="progress-check-box">
@@ -51,7 +51,7 @@
         </div>
       </div>
       <!-- 状态5： 未上传 -->
-      <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && !fileUrl">请使用模版上传文件</p>
+      <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && !fileUrl"><span class="default_top">请使用模版上传文件</span><br/><span class="default_bottom">下载模板并完善信息后，可进行上传</span></p>
       <!-- 状态6：上传失败，后端有报错 -->
       <p slot="tip" class="p-error" v-if="uploadResult && uploadResult.status === 'error' && !fileUrl">{{uploadResult.text}}</p>
     </file-upload>
@@ -70,15 +70,9 @@ export default {
       type: Boolean,
       default: false
     },
-    // 活动ID 或者 专题ID，跟signUpPageType字段组合使用
-    webinarOrSubjectId: {
-      type: [Number, String],
-      default: 0
-    },
-    // 报名表单类型：webinar--活动；subject--专题
-    signUpPageType: {
-      type: [Number, String],
-      default: ''
+    cardInfo: {
+      type: Object,
+      require: true
     }
   },
   data() {
@@ -105,22 +99,13 @@ export default {
   },
   computed: {
     pathUrl: function() {
-      return `webinars/form-user-docs`;
+      return `webinars/notice-user-docs`;
     },
     isUploadDisabled: function() {
       return this.uploadResult.status === 'progress'
     }
   },
   methods: {
-    // 设置接口入参，是活动维度 还是 专题维度
-    setParamsIdByRoute(params) {
-      if (this.signUpPageType === 'webinar') {
-        params.webinar_id = this.webinarOrSubjectId
-      } else if (this.signUpPageType === 'subject') {
-        params.subject_id = this.webinarOrSubjectId
-      }
-      return params
-    },
     // 下载模板
     downloadTemplate() {
       const xHttp = new window.XMLHttpRequest();
@@ -130,7 +115,7 @@ export default {
         const url = window.URL.createObjectURL(xHttp.response);
         const aDom = document.createElement('a');
         aDom.href = url;
-        aDom.download = '报名表单.xlsx';
+        aDom.download = '消息通知导入.xlsx';
         aDom.click();
       }
       xHttp.send();
@@ -160,7 +145,6 @@ export default {
       const typeList = ['xls', 'xlsx'];
       let nameArr = file.name.split('.');
       const isType = typeList.includes(nameArr[nameArr.length - 1]); // typeList.includes(file.type.toLowerCase());
-      const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isType) {
         this.$message({
           message: `上传格式只能是 ${typeList.join('、')} 格式!`,
@@ -171,26 +155,15 @@ export default {
         });
         return false;
       }
-      if (!isLt2M) {
-        this.$message({
-          message: `上传文件大小不能超过 2M!`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-        return false;
-      }
-      return isType && isLt2M;
+      return isType;
     },
     // 轮询结果 type：import-导入；save-保存
-    intervalCheck(type) {
+    intervalCheck() {
       let that = this
-      this.intervalType = type
       if (this.checkImportTimer) {
         clearTimeout(this.checkImportTimer);
       }
-      this.startPolling(type);
+      this.startPolling();
       this.checkImportTimer = setTimeout(function() {
         that.clearPageTimes();
       }, 120000); // 2分钟之后失效
@@ -199,70 +172,45 @@ export default {
       this.pollingTimerVo = {};
       this.pollingTimerId = 1;
     },
-    async startPolling(type) {
+    async startPolling() {
       const that = this;
       const id = this.pollingTimerId++;
       this.pollingTimerVo[id] = true;
       const pollingFn = async function() {
-        console.log('当前触发监听的type', that.intervalType, that.pollingTimerVo[id])
         // 若发现setTimeout存在，即退出
         if (!that.pollingTimerVo[id]) return;
-        const progressResult = await that.$fetch('userRegistrationImportProgress', {
-          key: that.intervalType === 'import' ? that.checkImportKey : that.saveImportKey
+        const progressResult = await that.$fetch('noticeCheckImport', {
+          key: that.checkImportKey
         }); // 模拟请求
         if (progressResult && progressResult.code == 200) {
           if (progressResult.data.status == 2) {
             // 预检/导入 完成
             that.clearPageTimes();
-            if (that.intervalType === 'import') {
-              that.isUploadEnd = true;
-              that.fileResult = 'success';
-              that.uploadResult = {
-                status: 'success',
-                text: '检测成功'
-              }
-              that.importResult = {
-                success: progressResult.data.success,
-                fail: progressResult.data.fail
-              };
-              if (that.$refs.viewerUpload) {
-                that.$refs.viewerUpload.setError('');
-              }
-            } else {
-              that.visibleTemp = false;
-              that.isUploadEnd = false;
-              that.saveLoading = false
-              that.fileUrl = '';
-              that.uploadResult = {
-                status: 'start',
-                text: '请上传文件'
-              }
-              // 导入成功，关闭弹窗，刷新列表
-              that.$emit('success')
+            that.isUploadEnd = true;
+            that.fileResult = 'success';
+            that.uploadResult = {
+              status: 'success',
+              text: '检测成功'
+            }
+            that.importResult = {
+              success: progressResult.data.success,
+              fail: progressResult.data.fail
+            };
+            if (that.$refs.viewerUpload) {
+              that.$refs.viewerUpload.setError('');
             }
           } else if (progressResult.data.status == 3) {
             // 预检/导入 失败（轮询不在继续，直接终止）
             that.clearPageTimes();
-            if (that.intervalType === 'import') {
-              that.isUploadEnd = true;
-              that.fileResult = 'error';
-              that.uploadResult = {
-                status: 'error',
-                text: progressResult.msg || `${that.intervalType === 'import' ? '预检' : '导入'}失败，请重新上传`
-              }
-              that.importResult = null;
-              if (that.$refs.viewerUpload) {
-                that.$refs.viewerUpload.setError(progressResult.msg || `${that.intervalType === 'import' ? '预检' : '导入'}失败，请重新上传`);
-              }
-            } else {
-              that.saveLoading = false
-              that.$message({
-                message: progressResult.msg || '导入观众信息失败',
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box'
-              });
+            that.isUploadEnd = true;
+            that.fileResult = 'error';
+            that.uploadResult = {
+              status: 'error',
+              text: progressResult.msg || '预检失败，请重新上传'
+            }
+            that.importResult = null;
+            if (that.$refs.viewerUpload) {
+              that.$refs.viewerUpload.setError(progressResult.msg || '预检失败，请重新上传');
             }
           } else {
             // 未开始 or 进行中
@@ -283,23 +231,27 @@ export default {
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
         // 文件上传成功，检测观众
-        this.$fetch('userRegistrationCheckImport', this.getImportOrSaveParams(this.fileUrl)).then(resV => {
+        this.$fetch('importNoticeExcel', {
+          webinar_id: this.cardInfo.webinar_id,
+          config_type: this.cardInfo.config_type,
+          file: this.fileUrl
+        }).then(resV => {
           if (resV && resV.code == 200 && resV.data) {
             this.checkImportKey = resV.data.key
             // 开启轮询
-            this.intervalCheck('import')
+            this.intervalCheck()
           } else {
-            this.renderCheckImportError(resV.msg, 'import', true)
+            this.renderCheckImportError(resV.msg, true)
           }
         }).catch(resV => {
-          this.renderCheckImportError(resV.msg, 'import', true)
+          this.renderCheckImportError(resV.msg, true)
         });
       } else {
-        this.renderCheckImportError(res.msg, 'import', false)
+        this.renderCheckImportError(res.msg, false)
       }
     },
     /* 报名导入预检-失败处理（代码冗余缩短） */
-    renderCheckImportError(msg, type, isSetError) {
+    renderCheckImportError(msg, isSetError) {
       this.clearPageTimes();
       this.isUploadEnd = true;
       this.fileResult = 'error';
@@ -310,7 +262,7 @@ export default {
       if (isSetError) {
         this.importResult = null;
         if (this.$refs.viewerUpload) {
-          this.$refs.viewerUpload.setError(msg || `${type === 'import' ? '检测' : '导入'}失败，请重新上传`);
+          this.$refs.viewerUpload.setError(msg || '检测失败，请重新上传');
         }
       }
     },
@@ -349,44 +301,11 @@ export default {
         customClass: 'zdy-info-box'
       });
     },
-    /* 调用报名导入，预检/导入时候，入参组装 */
-    getImportOrSaveParams(fileUrl) {
-      let params = {
-        file: fileUrl
-      }
-      return this.setParamsIdByRoute(params)
-    },
-    /* 报名导入-保存 */
-    saveUserList() {
-      if (!this.fileUrl) {
-        this.$message({
-          message: `请先选择模板`,
-          showClose: true,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-        return;
-      }
-      this.saveLoading = true
-      // 数据存储
-      this.$fetch('userRegistrationImport', this.getImportOrSaveParams(this.fileUrl)).then(resV => {
-        if (resV && resV.code == 200 && resV.data) {
-          this.saveImportKey = resV.data.key
-          // 开启轮询
-          this.intervalCheck('save')
-        } else {
-          this.renderSaveError(resV.msg)
-        }
-      }).catch(resV => {
-        this.renderSaveError(resV.msg)
-      });
-    },
     /* 报名导入-失败处理（代码冗余缩短） */
     renderSaveError(msg) {
-
       this.saveLoading = false
       this.$message({
-        message: msg || '导入观众信息失败',
+        message: msg || '导入失败',
         showClose: true,
         // duration: 0,
         type: 'error',
@@ -445,6 +364,26 @@ export default {
   }
   /deep/.el-progress__text /deep/i {
     font-size: 18px;
+  }
+  /deep/.el-upload--picture-card i.excel {
+    margin: 16px auto 0 auto;
+  }
+  .default_top {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.65);
+    margin-bottom: 4px;
+  }
+  .default_bottom {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.45);
   }
   .progress-check-box {
     div {
@@ -516,6 +455,14 @@ export default {
     line-height: 22px;
     color: #1E4EDC;
     margin-right: 12px;
+    img {
+      width: 13px;
+      height: 13px;
+      margin-right: 4px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-top: -4px;
+    }
   }
   .span__desc {
     font-style: normal;
