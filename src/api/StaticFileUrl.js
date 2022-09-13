@@ -5,8 +5,8 @@ var SignUploadTemplateUrlNew = [
   'https://cnstatic01.e.vhall.com/upload/webinars/form-user-docs/2c/d8/2cd89b70a87219d823516fa589e8111e.xlsx', // 报名表单-下载上传模板-静态地址（化蝶新活动）--- 线上
 ]
 var SmsNoticeUploadTemplateUrlNew = [
-  'https://t-alistatic01.e.vhall.com/upload/webinars/form-user-docs/2c/d8/2cd89b70a87219d823516fa589e8111e.xlsx', // 消息通知-下载上传模板-静态地址（历史） --- 测试
-  'https://cnstatic01.e.vhall.com/upload/webinars/form-user-docs/2c/d8/2cd89b70a87219d823516fa589e8111e.xlsx' // 消息通知-下载上传模板-静态地址（历史） --- 线上
+  'https://t-alistatic01.e.vhall.com/upload/webinars/notice-user-docs/e4/7e/e47e7ed8e960ad29cf0cc86e485971ce.xlsx', // 消息通知-下载上传模板-静态地址（历史） --- 测试
+  'https://cnstatic01.e.vhall.com/upload/webinars/notice-user-docs/e4/7e/e47e7ed8e960ad29cf0cc86e485971ce.xlsx' // 消息通知-下载上传模板-静态地址（历史） --- 线上
 ]
 var StaticFileUrlsMap= {
   /**
