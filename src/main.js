@@ -25,7 +25,7 @@ Vue.use(vuescroll, {
       initialScrollY: '100%'
     } */
   },
-  name: 'vhscroll' // customize component name, default -> vueScroll
+  // name: 'vhscroll' // customize component name, default -> vueScroll
 });
 Vue.prototype.$clipboard = clipboard
 
