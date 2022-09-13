@@ -18,21 +18,21 @@
       <div :class="topItemCss(1)">
         <p>子账号（个）</p>
         <p class="custom-font-barlow">
-          <count-to :startVal="0" :endVal="sonInfo.child_count" :duration="1500" v-if="sonInfo && sonInfo.child_count > 0"></count-to>
+          <count-to :startVal="0" :endVal="sonInfo.child_count||0" :duration="1500" v-if="sonInfo && sonInfo.child_count > 0"></count-to>
           <span v-else>0</span>
         </p>
       </div>
       <div :class="topItemCss(2)">
         <p>活动数量（个）</p>
         <p class="custom-font-barlow">
-          <count-to :startVal="0" :endVal="sonInfo.webinar_count" :duration="1500" v-if="sonInfo && sonInfo.webinar_count > 0"></count-to>
+          <count-to :startVal="0" :endVal="sonInfo.webinar_count||0" :duration="1500" v-if="sonInfo && sonInfo.webinar_count > 0"></count-to>
           <span v-else>0</span>
         </p>
       </div>
       <div :class="topItemCss(3)" v-if="!isZhiXueYun">
         <p>短信余额（条）</p>
         <p class="custom-font-barlow">
-          <count-to :startVal="0" :endVal="sonInfo.vip_info.sms" :duration="1500" v-if="sonInfo && sonInfo.vip_info && sonInfo.vip_info.sms > 0"></count-to>
+          <count-to :startVal="0" :endVal="sonInfo.vip_info.sms||0" :duration="1500" v-if="sonInfo && sonInfo.vip_info && sonInfo.vip_info.sms > 0"></count-to>
           <span v-else>0</span>
         </p>
       </div>
@@ -72,7 +72,9 @@ export default {
       tabType: 'sonList',
       userId: JSON.parse(sessionOrLocal.get("userId")),
       sonInfo: {
-        vip_info: null
+        vip_info: {
+          sms: 0
+        }
       },
       userInfo: {
         user_extends: {
