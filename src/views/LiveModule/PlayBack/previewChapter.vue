@@ -40,14 +40,14 @@
           <span>章节</span>
         </div>
         <div class="listBox">
-          <vhscroll :ops="ops">
+          <vue-scroll :ops="ops">
             <ul class="chapterList">
               <li v-for="(item, index) in tableData" @click="chapterHandler(index)" :key="index">
                 <span class="title"><span class="titleIndex">{{item.index}}.</span>{{item.title}}</span>
                 <span class="times">{{item.createTimeShow}}</span>
               </li>
             </ul>
-          </vhscroll>
+          </vue-scroll>
         </div>
       </div>
     </div>

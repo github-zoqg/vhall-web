@@ -13,6 +13,7 @@
         <el-form-item label="主页头像" prop="homepage_avatar">
           <upload
             class="upload__avatar"
+            id="account_avatar_cropper"
             v-model="homeSetInfoForm.homepage_avatar"
             :domain_url="domain_url"
             :saveData="{
@@ -47,6 +48,7 @@
         <el-form-item label="背景图片" prop="img_url">
           <upload
             class="upload__bg__avatar"
+            id="account_bg_cropper"
             v-model="homeSetInfoForm.img_url"
             :domain_url="domain_bg_url"
             :saveData="{
@@ -110,6 +112,8 @@
         </el-form-item>
       </el-form>
     </div>
+    <!-- 裁剪组件 -->
+    <cropper ref="accountCropper" @cropComplete="cropComplete" @resetUpload="resetUpload" :ratio="ratio"></cropper>
   </div>
 </template>
 
@@ -117,11 +121,13 @@
 import Upload from '@/components/Upload/main';
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from "@/utils/utils";
+import cropper from '@/components/Cropper/index';
 export default {
   name: "homeSetInfo.vue",
   components: {
     Upload,
-    PageTitle
+    PageTitle,
+    cropper
   },
   data() {
     return {
@@ -154,20 +160,40 @@ export default {
           { max: 150, message: '最多可输入150个字符', trigger: 'blur' }
         ]
       },
+      ratio: 1/1,
       domain_url: '',
       domain_bg_url: '',
       isEdit: false
     };
   },
   methods: {
+    cropComplete(cropperData, url, mode, index) {
+      console.log(cropperData, url, '?????')
+      // 主页头像
+      if (index == 1) {
+        this.domain_url = `${url}?x-oss-process=image/crop,x_${cropperData.x.toFixed()},y_${cropperData.y.toFixed()},w_${cropperData.width.toFixed()},h_${cropperData.height.toFixed()}&mode=${mode}`
+        this.homeSetInfoForm.homepage_avatar = url;
+      } else {
+        // 背景图片
+        this.domain_bg_url = `${url}?x-oss-process=image/crop,x_${cropperData.x.toFixed()},y_${cropperData.y.toFixed()},w_${cropperData.width.toFixed()},h_${cropperData.height.toFixed()}&mode=${mode}`
+        this.homeSetInfoForm.img_url = url;
+      }
+
+    },
+    resetUpload(index) {
+      let dom = document.querySelector(`#account_${index==1 ? 'avatar' : 'bg'}_cropper .el-upload__input`);
+      dom.click();
+    },
     handleUploadSuccess(res, file){
       console.log(res, file);
       // this.homeSetInfoForm.homepage_avatar = URL.createObjectURL(file.raw);
       if(res.data) {
-        let domain_url = res.data.domain_url || ''
-        let file_url = res.data.file_url || '';
-        this.homeSetInfoForm.homepage_avatar = file_url;
-        this.domain_url = domain_url;
+        this.ratio = 1/1;
+        this.$refs.accountCropper.showModel(res.data.domain_url, 1);
+        // let domain_url = res.data.domain_url || ''
+        // let file_url = res.data.file_url || '';
+        // this.homeSetInfoForm.homepage_avatar = file_url;
+        // this.domain_url = domain_url;
       }
     },
     beforeUploadHandler(file){
@@ -217,13 +243,13 @@ export default {
     },
     handleUploadSuccessBg(res, file){
       console.log(res, file);
-      // this.homeSetInfoForm.img_url = URL.createObjectURL(file.raw);
-      console.log(res, file);
       if(res.data) {
-        let domain_url = res.data.domain_url || ''
-        let file_url = res.data.file_url || '';
-        this.homeSetInfoForm.img_url = file_url;
-        this.domain_bg_url = domain_url;
+        this.ratio = 192/63;
+        this.$refs.accountCropper.showModel(res.data.domain_url, 2);
+        // let domain_url = res.data.domain_url || ''
+        // let file_url = res.data.file_url || '';
+        // this.homeSetInfoForm.img_url = file_url;
+        // this.domain_bg_url = domain_url;
       }
     },
     beforeUploadHandlerBg(file){
@@ -281,8 +307,8 @@ export default {
       this.$refs.homeSetInfoForm.validate((valid) => {
         if(valid) {
           let params = {
-            img_url: this.$parseURL(this.homeSetInfoForm.img_url).path,
-            homepage_avatar: this.homeSetInfoForm.homepage_avatar ? this.$parseURL(this.homeSetInfoForm.homepage_avatar).path : '',
+            img_url: this.$parseURL(this.domain_bg_url).path,
+            homepage_avatar: this.homeSetInfoForm.homepage_avatar ? this.$parseURL(this.domain_url).path : '',
             content: this.homeSetInfoForm.content,
             show_share: this.homeSetInfoForm.show_share, // 分享
             show_webinar_list: this.homeSetInfoForm.show_webinar_list, // 直播列表展示：0不展示 1展示

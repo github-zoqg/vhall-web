@@ -239,6 +239,52 @@
     components: {
       PageTitle
     },
+    computed:{
+      // 是否知学云客户
+      isZhiXueYun: function () {
+        const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+        return userInfo.user_extends.extends_remark == 1
+      },
+      // 批量分配可操作按钮（只有固定分配才有按钮）
+      clickOptions: function () {
+        let list = []
+        // 套餐包
+        if (!(this.is_dynamic > 0) && this.dataList.length > 0 && this.tabType=='regular') {
+          if(this.resourcesVo && Number(this.resourcesVo.type) === 1) {
+            list.push({
+              value: '2',
+              label: '分配流量'
+            })
+          } else if (this.resourcesVo && Number(this.resourcesVo.type) === 2) {
+            list.push({
+              value: '4',
+              label: '分配时长'
+            })
+          } else if (this.resourcesVo && Number(this.resourcesVo.type) === 0) {
+            list.push({
+              value: '1',
+              label: '分配并发包'
+            })
+          }
+        }
+        // 并发扩展包
+        if (!(this.is_dynamic > 0) && this.dataList.length > 0 && this.tabType=='regular' && this.resourcesVo && this.resourcesVo.extend_end_time != '') {
+          // 有分配扩展包
+          list.push({
+            value: '3',
+            label: '分配扩展包'
+          })
+        }
+        // 流量包
+        if (!this.isZhiXueYun) {
+          list.push({
+            value: '19',
+            label: '分配短信'
+          })
+        }
+        return list
+      }
+    },
     data() {
       let checkGB = (rule, value, callback) => {
         if (!value) {
@@ -304,52 +350,6 @@
         typeName: '',
         clickType: null
       };
-    },
-    computed: {
-      // 是否知学云客户
-      isZhiXueYun: function () {
-        const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-        return userInfo.user_extends.extends_remark == 1
-      },
-      // 批量分配可操作按钮
-      clickOptions: function () {
-        let list = []
-        // 套餐包
-        if (!(this.is_dynamic > 0) && this.dataList.length > 0) {
-          if(this.resourcesVo && Number(this.resourcesVo.type) === 1) {
-            list.push({
-              value: '2',
-              label: '分配流量'
-            })
-          } else if (this.resourcesVo && Number(this.resourcesVo.type) === 2) {
-            list.push({
-              value: '4',
-              label: '分配时长'
-            })
-          } else if (this.resourcesVo && Number(this.resourcesVo.type) === 0) {
-            list.push({
-              value: '1',
-              label: '分配并发包'
-            })
-          }
-        }
-        // 并发扩展包
-        if (!(this.is_dynamic > 0) && this.dataList.length > 0 && this.resourcesVo && this.resourcesVo.extend_end_time != '') {
-          // 有分配扩展包
-          list.push({
-            value: '3',
-            label: '分配扩展包'
-          })
-        }
-        // 流量包
-        if (!this.isZhiXueYun) {
-          list.push({
-            value: '19',
-            label: '分配短信'
-          })
-        }
-        return list
-      }
     },
     methods: {
        /**

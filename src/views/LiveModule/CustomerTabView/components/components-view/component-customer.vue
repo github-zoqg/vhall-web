@@ -6,7 +6,7 @@
     <template v-if="units.length == 0">
       <div class="drag-here"> 请拖拽组件至此处</div>
     </template>
-    <vhscroll @handle-resize="handleResize" ref="cusResize">
+    <vue-scroll @handle-resize="handleResize" ref="cusResize">
       <template v-if="units.length">
         <draggable
           :list="units"
@@ -30,7 +30,7 @@
           </div>
         </draggable>
       </template>
-    </vhscroll>
+    </vue-scroll>
 
   </div>
 </template>
