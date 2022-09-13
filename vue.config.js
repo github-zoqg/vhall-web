@@ -19,6 +19,11 @@ let cdn = {
   ]
 }
 
+if (process.env.NODE_ENV === 'development') {
+  const vueIndex = cdn.js.findIndex(item => item.indexOf('vue.min.js') > -1)
+  cdn.js.splice(vueIndex, 1, '//t-alistatic01.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.js')
+}
+
 // console.warn(process)
 let publicPath = process.env.VUE_APP_PUBLIC_PATH || './'
 console.warn('配置环境变量----', {
