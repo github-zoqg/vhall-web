@@ -522,7 +522,8 @@ export default {
           x: 0,
           y:0,
           width: 0,
-          height: 0
+          height: 0,
+          imageCropMode: 2
         }
       };
       this.commonColor(style);
@@ -544,7 +545,8 @@ export default {
           x: 0,
           y:0,
           width: 0,
-          height: 0
+          height: 0,
+          imageCropMode: 2
         }
       };
       this.commonColor(style);
@@ -595,12 +597,16 @@ export default {
       console.log(cropedData, url, mode, index)
       if (index == 1) {
         this.livingPcForm.background = url;
-        this.livingPcForm.backgroundSize = cropedData;
-        this.livingPcForm.backgroundSize.imageCropMode = mode;
+        this.livingPcForm.backgroundSize = {
+          ...cropedData,
+          imageCropMode: mode
+        };
       } else if (index == 2) {
         this.livingWapForm.background = url;
-        this.livingWapForm.backgroundSize = cropedData;
-        this.livingWapForm.backgroundSize.imageCropMode = mode;
+        this.livingWapForm.backgroundSize = {
+          ...cropedData,
+          imageCropMode: mode
+        };
       }
     },
     deleteComplete(index) {
