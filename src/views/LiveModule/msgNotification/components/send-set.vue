@@ -13,7 +13,7 @@
           <!-- 预约发送：预约/报名用户、白名单用户 -->
           <!-- 开播提醒发送设置：预约/报名用户、导入用户、白名单用户 -->
           <!-- 回放通知发送设置：预约/报名用户、预约/报名中未观看直播用户、导入用户、白名单用户 -->
-          <vh-checkbox-group v-model="sender_person" @change="checkSelect" :min="1">
+          <vh-checkbox-group v-model="send_user" @change="checkSelect" :min="1">
             <vh-checkbox label="1">预约/报名用户
               <el-tooltip v-tooltipMove>
                 <div slot="content">
@@ -29,7 +29,7 @@
         </div>
       </div>
       <!-- 导入用户模板 -->
-      <div class="set-item import_excel_info" v-if="sender_person.includes('3')">
+      <div class="set-item import_excel_info" v-if="send_user.includes('3')">
         <label class="set-item__label">导入文件</label>
         <div class="set-item__content">
           <import-excel></import-excel>
@@ -40,7 +40,7 @@
         <label class="set-item__label">短信内容</label>
         <div class="set-item__content">
           <div class="set-item__content_center">
-            <div class="et-item__content_center__ctx">{{cardQueryVo && cardQueryVo.content_str ? cardQueryVo.content_str : ''}} <span @click="openShortLink" class="item-card-center__link">{{cardQueryVo && cardQueryVo.short_url ? cardQueryVo.short_url : ''}}</span></div>
+            <div class="set-item__content_center__ctx">{{cardQueryVo && cardQueryVo.content_str ? cardQueryVo.content_str : ''}} <span @click="openShortLink" class="set-item__content_center__link">{{cardQueryVo && cardQueryVo.short_url ? cardQueryVo.short_url : ''}}</span></div>
           </div>
           <p class="set-item__content_bottom">
             <span>短信字数：<strong>{{smsCensus.wordage}}</strong>（含退订后缀）</span>
@@ -56,19 +56,19 @@
           <vh-checkbox-group v-model="send_timer" v-if="cardInfo.config_type == 2">
             <vh-checkbox v-for="item in [{
               label: '开播前1天',
-              value: '24'
+              value: '86400'
             },{
               label: '开播前2小时',
-              value: '2'
+              value: '7200'
             },{
               label: '开播前1小时',
-              value: '1'
+              value: '3600'
             },{
               label: '开播前30分钟',
-              value: '0.5'
+              value: '1800'
             },{
               label: '开播前10分钟',
-              value: '0.1'
+              value: '600'
             }]"
             :key="item.value"
             :label="item.value"
@@ -130,8 +130,8 @@
     data() {
       return {
         dialogVisible: false,
-        sender_person: ['1'], // 发送对象
-        send_timer: ['0.1'], // 发送时间
+        send_user: ['1'], // 发送对象
+        send_timer: ['600'], // 发送时间
         innerVisible: false,
         phoneForm: {
           phone: ''
@@ -213,12 +213,12 @@
         let params = {
           webinar_id: this.cardInfo.webinar_id,
           config_type: this.cardInfo.config_type,
-          send_user: this.sender_person.join(','),
+          send_user: this.send_user.join(','),
           notice_switch: 1
         }
-        if (this.sender_person.includes('1')) {
+        if (this.send_user.includes('1')) {
           if (this.send_timer && this.send_timer <= 0) {
-            this.messageInfo(`请选择发送时间`, 'warning')
+            this.messageInfo('请选择发送时间', 'warning')
             return
           }
           // 预约报名不能为空
@@ -226,9 +226,9 @@
         } else {
           params.send_time = '';
         }
-        if (this.sender_person.includes('3')) {
+        if (this.send_user.includes('3')) {
           if (!this.file) {
-            this.messageInfo(`请导入文件`, 'warning')
+            this.messageInfo('请导入文件', 'warning')
             return
           }
           // 导入
@@ -244,8 +244,11 @@
         }
         this.$fetch('saveSendSet', this.$params(params)).then((res) => {
           if (res.code == 200) {
+            this.messageInfo('设置成功', 'success')
+            this.dialogVisible = false;
             this.$emit('saveChange')
           } else {
+            // 设置预发短信
             this.preSmsCount = res.data.count;
             this.noBalanceVisible = true;
           }
@@ -285,9 +288,8 @@
           }
         })
       },
-      checkSelect(oldVal, newVal) {
-        console.log('之前数据', oldVal)
-        console.log('新数据', newVal)
+      checkSelect(oldVal) {
+        console.log('数据', oldVal)
       },
       // 获取消息模板详情
       getNoticeDetail() {
@@ -305,6 +307,8 @@
             const smsStr = res.data.sms_info.content_str + res.data.sms_info.short_url
             this.smsCensus.wordage = smsStr.length
             this.smsCensus.rowCount = smsStr.length > 70 ? Math.ceil(smsStr.length / 67) : 1
+            // 转换发送对象
+            this.send_user = res.data.sms_info.send_user.split(',')
           } else {
             this.noticeDetailVo = {}
             this.cardQueryVo = {}
@@ -355,6 +359,23 @@
       line-height: 22px;
       text-align: justify;
       color: rgba(0, 0, 0, 0.85);
+      &.css_flex {
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      &__ctx {
+        word-break: break-all;
+      }
+      &__link {
+        color: #1E4EDC;
+        cursor: pointer;
+        max-height: 48px;
+        overflow-y: auto;
+        &:hover {
+          color: #1E4EDC;
+        }
+      }
     }
     &_bottom {
       display: flex;
@@ -370,7 +391,7 @@
         margin-right: 8px;
       }
       strong {
-        color:#3562FA;
+        color:#1E4EDC;
       }
     }
     &__desc {
@@ -462,7 +483,7 @@
     color: rgba(0, 0, 0, 0.65);
   }
   .color-blue {
-    color: #3562FA;
+    color: #1E4EDC;
   }
 }
 </style>
