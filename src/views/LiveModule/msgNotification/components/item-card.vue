@@ -17,7 +17,7 @@
     <div :class="`item-card-center ${info && info.config_type == 1 ? 'css_flex' : ''}`">
       <!-- 情况一： 短信活动内容区域：短链接形式 + 发送状态 -->
       <template v-if="!(info.content instanceof Array)">
-        <div class="item-card-center__ctx">{{info.content_str}} <span @click="openDialog('link')" class="item-card-center__link">https://test-zhongtai-webinar.vhall.com/v3/lives/watch/450735208</span></div>
+        <div class="item-card-center__ctx">{{info.content_str}} <span @click="openDialog('link')" class="item-card-center__link">{{info.short_url}}</span></div>
       </template>
       <!-- 情况而： 微信活动内容区域 -->
       <template v-else>
@@ -86,11 +86,14 @@
       </div>
     </div>
     <!-- 发送设置 -->
-    <send-set v-if="setVisible" :visible="setVisible" @close="handleSetClose" @saveChange="saveChange"></send-set>
+    <send-set v-if="setVisible" :visible="setVisible" :cardInfo="{
+      webinar_id: info.webinar_id,
+      config_type: info.config_type
+    }" @close="handleSetClose" @saveChange="saveChange"></send-set>
     <!-- 发送记录 -->
     <send-notice-list v-if="noticeVisible" :visible="noticeVisible" @close="handleNoticeClose"></send-notice-list>
     <!-- 配置短链接  -->
-    <link-dialog v-if="linkDialogVisible" :link="info.link" :visible="linkDialogVisible" @close="closeDialog"></link-dialog>
+    <link-dialog v-if="linkDialogVisible" :link="info.short_url" :visible="linkDialogVisible" @close="closeDialog"></link-dialog>
   </vh-card>
 </template>
 <script>
@@ -109,12 +112,14 @@
       }
     },
     props: {
+      // 卡片单个信息
       info: {
         type: Object,
         default: function() {
           return {}
         }
       },
+      // 短信、签名等通用信息
       configInfo: {
         type: Object,
         default: function() {
@@ -187,7 +192,8 @@
           // 存储数据
           this.$fetch('saveSendSet', {
             webinar_id: this.$route.params.str,
-            notice_switch: Number(value) // 1=开，0=关（默认）
+            notice_switch: Number(value), // 1=开，0=关（默认）
+            config_type: this.info.config_type
           }).then(res => {
             if (res.code === 200) {
               this.cardInfo.notice_switch = value;
@@ -203,7 +209,11 @@
       },
       // 打开弹窗
       openDialog(type) {
-        this[`${type}DialogVisible`] = true
+        if (type === 'link') {
+         this.info.short_url && window.open(this.info.short_url, '_blank');
+        } else {
+          this[`${type}DialogVisible`] = true
+        }
       },
       // 关闭链接弹窗
       closeDialog(obj) {
