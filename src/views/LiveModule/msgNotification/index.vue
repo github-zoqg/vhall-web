@@ -118,6 +118,8 @@ export default {
             type: 'success', //  提示类型
             customClass: 'zdy-info-box' // 样式处理
           });
+        } else {
+          this.msgInfo.config_info.phone_verify_status = !value;
         }
       }).catch(err => {
         this.$message({
@@ -126,6 +128,7 @@ export default {
           type: 'error', //  提示类型
           customClass: 'zdy-info-box' // 样式处理
         });
+        this.msgInfo.config_info.phone_verify_status = !value;
       });
     },
     // 刷新界面数据
