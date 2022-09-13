@@ -7,7 +7,7 @@
         <el-tabs v-model="tabType" @tab-click="handleClick">
           <el-tab-pane :label="item.label" :name="item.value" v-for="(item, ins) in tabList" :key="ins"></el-tab-pane>
         </el-tabs>
-        <vh-select v-model="clickType" round size="medium" placeholder="批量分配" :disabled="!multipleSelection.length" class="panel-select-btn" @change="multiSetHandle">
+        <vh-select v-if="tabType == 'regular'" v-model="clickType" round size="medium" placeholder="批量分配" :disabled="!multipleSelection.length" class="panel-select-btn" @change="multiSetHandle">
           <vh-option
             v-for="item in clickOptions"
             :key="item.value"
@@ -475,6 +475,7 @@
         // trends_0 动态重分配；trends_1 动态已分配；regular_0 固定重分配；regular_1 固定已分配。
         this.vipSelectStatus = this.tabType === 'trends' ? `trends_0` : `regular_0`;
       },
+      // 按钮切换的时候，选择
       multiSetHandle() {
         // 按钮限制，若没有选中信息，不可展示
         if (this.multipleSelection && this.multipleSelection.length > 0) {
@@ -673,7 +674,7 @@
         }
         if (!this.isZhiXueYun) {
           // 增加短信设置
-          paramsKv.sms = row.sms || 0
+          paramsKv.sms = Number(row.inputSms) || 0
         }
         let params = {
           type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量 2-时长
@@ -717,7 +718,7 @@
               }
               if (!this.isZhiXueYun && this.dialogType === 19) {
                 // 短信分配，设置cms，增量
-                result.sms = item.sms;
+                result.sms = Number(this.multiAllocForm.count2);
               }
               console.log(result, '批量数据')
               return result;
@@ -734,6 +735,8 @@
       },
       closeAllocDialog() {
         this.multiAllocShow = false;
+        // 设置完成，按钮归位
+        this.clickType = null
         this.$nextTick(() => {
           this.multiAllocForm.count = null;
           this.multiAllocForm.count1 = null;

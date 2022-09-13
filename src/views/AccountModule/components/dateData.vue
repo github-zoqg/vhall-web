@@ -337,8 +337,23 @@ export default {
       } else {
         options.dataZoom = [];
       }
-      // 使用刚指定的配置项和数据显示图表。
-      this.myChart.setOption(options);
+      if (this.tableList.length > 0) {
+        // 使用刚指定的配置项和数据显示图表。
+        this.myChart.setOption(options);
+      } else {
+        this.myChart.setOption({
+          title: {
+            text: '暂无数据',
+            x: 'center',
+            y: 'center',
+            textStyle: {
+              color: '#666666',
+              fontSize: 14,
+              fontFamily: '"-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif'
+            }
+          }
+        });
+      }
     },
     renderMsgDateLineCharts() {
       this.myMsgChart = Echarts.init(this.$refs.msgDateLineChartDom);
@@ -501,8 +516,23 @@ export default {
       } else {
         options.dataZoom = [];
       }
-      // 使用刚指定的配置项和数据显示图表。
-      this.myMsgChart.setOption(options);
+      if (this.msgDataList.length > 0) {
+        // 使用刚指定的配置项和数据显示图表。
+        this.myMsgChart.setOption(options);
+      } else {
+        this.myMsgChart.setOption({
+          title: {
+            text: '暂无数据',
+            x: 'center',
+            y: 'center',
+            textStyle: {
+              color: '#666666',
+              fontSize: 14,
+              fontFamily: '"-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif'
+            }
+          }
+        });
+      }
     }
   }
 };
