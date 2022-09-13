@@ -144,9 +144,9 @@ const router = [
         hidden: true
       },
       {
-        path: 'brandSet/:str(\\d+)',
-        component: () => import('@/views/LiveModule/brandSet'),
-        meta:{ auth: true, title: '品牌设置', name: 'brandSet', activeMenu: '/live/list'},
+        path: 'livingSet/:str(\\d+)',
+        component: () => import('@/views/LiveModule/Brands/livingSetting'),
+        meta:{ auth: true, title: '直播间设置', name: 'livingSetting', activeMenu: '/live/list'},
         hidden: true
       },
       {
@@ -195,13 +195,6 @@ const router = [
         path: 'shareSetting/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/shareSetting'),
         meta:{ auth: true, title: '分享设置', name: 'shareSet', activeMenu: '/live/list'},
-        hidden: true
-      },
-      {
-        path: 'customTab/:str(\\d+)',
-        component: CustomerTab,
-        // component: () => import('@/views/LiveModule/customTab'),
-        meta:{ auth: true, title: '自定义菜单', name: 'customTab', activeMenu: '/live/list'},
         hidden: true
       },
       {

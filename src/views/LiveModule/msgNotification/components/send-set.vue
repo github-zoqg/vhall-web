@@ -1,92 +1,96 @@
 <template>
-  <VhallDialog :visible="dialogVisible"
+  <vh-dialog :visible="dialogVisible"
     append-to-body
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :before-close="handleClose"
-    width="800px"
+    width="744px"
     title="发送设置">
       <!-- 发送对象 -->
       <div class="set-item">
-        <label class="set-item__label">发送对象：</label>
+        <label class="set-item__label">发送对象</label>
         <div class="set-item__content">
           <!-- 预约发送：预约/报名用户、白名单用户 -->
           <!-- 开播提醒发送设置：预约/报名用户、导入用户、白名单用户 -->
           <!-- 回放通知发送设置：预约/报名用户、预约/报名中未观看直播用户、导入用户、白名单用户 -->
-          <vh-checkbox-group v-model="sender_person" @change="checkSelect">
+          <vh-checkbox-group v-model="sender_person" @change="checkSelect" :min="1">
             <vh-checkbox label="1">预约/报名用户
               <el-tooltip v-tooltipMove>
                 <div slot="content">
-                  <p>当活动专题下开启统一观看限制时，且已关联的活动下开启了开播提醒，则将分别对预约/报名用户进行消息触达</p>
+                  <p>当活动专题下开启统一观看限制时，且已关联的活动下开启了开播提醒，<br/>则将分别对预约/报名用户进行消息触达</p>
                 </div>
                 <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
               </el-tooltip>
             </vh-checkbox>
-            <vh-checkbox label="2" v-if="cardVo.config_type == 3">预约/报名中未观看直播用户</vh-checkbox>
+            <vh-checkbox label="4" v-if="cardVo.config_type == 3">预约/报名中未观看直播用户</vh-checkbox>
             <vh-checkbox label="3">导入用户</vh-checkbox>
-            <vh-checkbox label="4" v-if="isOpenWhite">白名单用户</vh-checkbox>
+            <vh-checkbox label="2" v-if="isOpenWhite">白名单用户</vh-checkbox>
           </vh-checkbox-group>
         </div>
       </div>
       <!-- 导入用户模板 -->
       <div class="set-item import_excel_info" v-if="sender_person.includes('3')">
-        <label class="set-item__label"></label>
-        <import-excel></import-excel>
+        <label class="set-item__label">导入文件</label>
+        <div class="set-item__content">
+          <import-excel></import-excel>
+        </div>
       </div>
       <!-- 短信内容 -->
       <div class="set-item send_info">
-        <label class="set-item__label">短信内容：</label>
+        <label class="set-item__label">短信内容</label>
         <div class="set-item__content">
-          <p class="set-item__content_top"><span class="set-item__test" @click="openTestDialog">发送测试短信</span></p>
           <div class="set-item__content_center">
-            {{cardVo && cardVo.content ? cardVo.content+cardVo.link : ''}}
+            {{cardVo && cardVo.content_str ? cardVo.content_str+cardVo.link : ''}}
           </div>
           <p class="set-item__content_bottom">
-            <span>短信字数：<strong>75</strong>条（含退订后缀）</span>
-            <span>计费条数：<strong>2</strong>条（70字符为一条）</span>
-            <span>可用余额：<strong>500</strong>条</span>
+            <span>短信字数：<strong>75</strong>（含退订后缀）</span>
+            <span>计费条数 (条)：<strong>2</strong>（70字符为一条）</span>
+            <span>可用余额 (条)：<strong>500</strong></span>
           </p>
         </div>
       </div>
       <!-- 发送时间 -->
       <div class="set-item send_time">
-        <label class="set-item__label">发送时间：</label>
+        <label class="set-item__label">发送时间</label>
         <div class="set-item__content">
           <vh-checkbox-group v-model="send_timer" v-if="cardVo.config_type == 2">
             <vh-checkbox v-for="item in [{
-              label: '开播前15分钟',
-              value: 15
-            },{
-              label: '开播前30分钟',
-              value: 30
-            },{
-              label: '开播前1小时',
-              value: 60
+              label: '开播前1天',
+              value: '24'
             },{
               label: '开播前2小时',
-              value: 120
+              value: '2'
             },{
-              label: '开播前1天',
-              value: 1440
+              label: '开播前1小时',
+              value: '1'
             },{
-              label: '开播前3天',
-              value: 4320
+              label: '开播前30分钟',
+              value: '0.5'
+            },{
+              label: '开播前10分钟',
+              value: '0.1'
             }]"
             :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            :label="item.value"
+            border
+            round
+            size="medium">
+            {{item.label}}
             </vh-checkbox>
           </vh-checkbox-group>
-          <span v-else-if="cardVo.config_type == 1">预约/报名成功后发送</span>
-          <span v-else-if="cardVo.config_type == 3">设置默认回放后发送</span>
-          <span v-else>——</span>
+          <span class="set-item__content__default" v-else-if="cardVo.config_type == 1">预约/报名成功后发送</span>
+          <span class="set-item__content__default" v-else-if="cardVo.config_type == 3">设置默认回放后发送</span>
+          <span class="set-item__content__default" v-else>——</span>
+          <p v-if="[2,3].includes(cardVo.config_type)" class="set-item__content__desc">{{cardVo.config_type == 2 ? `注意：若勾选已错过的时间点将不进行发送，当前开播时间：2022-08-29 12:00` : '注意：当前活动仅发送一次'}}</p>
         </div>
       </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary"  size="medium" round @click="saveInfo">确 定</el-button>
-        <el-button @click="handleClose"  size="medium" round>取 消</el-button>
+      <div class="set-dialog__footer">
+        <p class="set-dialog__footer_left"><span class="set-item__test" @click="openTestDialog">发送测试短信</span></p>
+        <vh-button type="primary"  size="medium" round @click="saveInfo">确 定</vh-button>
+        <vh-button @click="handleClose"  size="medium" round>取 消</vh-button>
       </div>
-      <VhallDialog
+      <!-- 发送测试短信 -->
+      <vh-dialog
         width="380px"
         title="测试发送"
         :visible.sync="innerVisible"
@@ -103,8 +107,21 @@
           <span class="send-test__desc">注意：测试短信也将扣除您的短信余额</span>
           <vh-button type="primary" round size="medium" @click="sendTest">立即发送</vh-button>
         </div>
-      </VhallDialog>
-  </VhallDialog>
+      </vh-dialog>
+      <!-- 余额不足提示 -->
+      <vh-dialog width="380px"
+        title="提示"
+        :visible.sync="noBalanceVisible"
+        :close-on-click-modal="false"
+        :close-on-press-escape="false"
+        append-to-body
+        class="send-no-balance__dialog">
+        <div class="tip">当前预计发送 <span class="color-blue">{{preSmsCount}}</span> 条短信，余额不足，为避免影响您的业务请及时充值。</div>
+        <div slot='footer'>
+          <el-button type="primary" size="medium" round @click="noBalanceVisible = false;">我知道了</el-button>
+        </div>
+    </vh-dialog>
+  </vh-dialog>
 </template>
 <script>
   import { validPhone } from '@/utils/validate.js'
@@ -114,7 +131,7 @@
       return {
         dialogVisible: true,
         sender_person: ['1'], // 发送对象
-        send_timer: ['15'], // 发送时间
+        send_timer: ['0.1'], // 发送时间
         innerVisible: false,
         phoneForm: {
           phone: ''
@@ -125,7 +142,10 @@
             validator: validPhone,
             trigger: 'blur'
           }
-        }
+        },
+        vm: null,
+        noBalanceVisible: false,
+        preSmsCount: 0 // 预发短信数量
       };
     },
     props: {
@@ -145,6 +165,19 @@
       }
     },
     methods: {
+      //文案提示问题
+      messageInfo(title, type) {
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.vm = this.$message({
+          showClose: true,
+          duration: 2000,
+          message: title,
+          type: type,
+          customClass: 'zdy-info-box',
+        })
+      },
       // 输入限制，只能输入0-9数字
       handleInput(value) {
         if (value.phone.length == 0) {
@@ -162,9 +195,44 @@
       // 保存数据
       saveInfo() {
         let params = {
+          webinar_id: this.cardVo.webinar_id,
+          config_type: this.cardVo.config_type,
+          send_user: this.sender_person.join(','),
+          notice_switch: 1
+        }
+        if (this.sender_person.includes('1')) {
+          if (this.send_timer && this.send_timer <= 0) {
+            this.messageInfo(`请选择发送时间`, 'warning')
+            return
+          }
+          // 预约报名不能为空
+          params.send_time = this.send_timer.join(',');
+        } else {
+          params.send_time = '';
+        }
+        if (this.sender_person.includes('3')) {
+          if (!this.file) {
+            this.messageInfo(`请导入文件`, 'warning')
+            return
+          }
+          // 导入
+          params.file = ''
+          params.key = ''
+        } else {
+          try {
+            delete params.file;
+            delete params.key;
+          } catch(e) {
+            console.log(e)
+          }
         }
         this.$fetch('saveSendSet', this.$params(params)).then((res) => {
-          this.$emit('saveChange')
+          if (res.code == 200) {
+            this.$emit('saveChange')
+          } else {
+            this.preSmsCount = res.data.count;
+            this.noBalanceVisible = true;
+          }
         })
         .catch((res) => {
           this.messageInfo(res.msg || '获取信息失败', 'error')
@@ -213,43 +281,108 @@
   align-items: flex-start;
   margin-bottom: 16px;
   &__label {
-    margin-right: 10px;
-    width: 100px;
+    margin-right: 12px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    text-align: justify;
+    color: rgba(0, 0, 0, 0.65);
   }
   &__content {
-    width: calc(100% - 100px);
-    &_top {
-      text-align: right;
-      color:#3562FA;
-      .set-item__test {
-        cursor: pointer;
-      }
-    }
+    width: calc(100% - 68px);
     &_center {
       clear: both;
-      background: #eaeaea;
-      padding: 10px 10px;
-      margin: 12px auto;
+      padding: 8px 12px;
+      width: 612px;
+      height: 60px;
+      background: rgba(217, 217, 217, 0.85);
+      border-radius: 4px;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
       line-height: 22px;
+      text-align: justify;
+      color: rgba(0, 0, 0, 0.85);
     }
     &_bottom {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
       align-items: center;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 20px;
+      color: rgba(0, 0, 0, 0.45);
+      margin-top: 8px;
+      span {
+        margin-right: 8px;
+      }
       strong {
         color:#3562FA;
       }
     }
-  }
-  &.send_time {
-    /deep/.vh-checkbox {
-      display: block;
-      margin-bottom: 8px;
+    &__desc {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 20px;
+      text-align: justify;
+      color: rgba(0, 0, 0, 0.45);
+    }
+    &__default {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 22px;
+      text-align: justify;
+      color: rgba(0, 0, 0, 0.85);
+      margin-bottom: 4px;
     }
   }
   &:last-child {
     /* 最后一条记录，保留间距 */
     padding-bottom: 40px;
+  }
+}
+/deep/.send_time {
+  .vh-checkbox-group {
+    width: 612px;
+  }
+  .vh-checkbox {
+    width: 196px ;
+    margin-bottom: 12px;
+    margin-left: 0!important;
+    margin-right: 12px!important;
+  }
+  .vh-checkbox:nth-child(3n+3) {
+    margin-right: 0!important;
+  }
+  .vh-checkbox:nth-child(4) {
+    margin-bottom: 8px!important;
+  }
+  .vh-checkbox:nth-child(5) {
+    margin-bottom: 8px!important;
+  }
+  .vh-checkbox:nth-child(6) {
+    margin-bottom: 8px!important;
+  }
+}
+.set-dialog__footer {
+  margin-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .set-dialog__footer_left {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    color: #1E4EDC;
+    margin-right: auto;
+    .set-item__test {
+      cursor: pointer;
+    }
   }
 }
 /* 测试发送弹出框 */
@@ -265,6 +398,20 @@
     color: rgba(0, 0, 0, 0.45);
     float: left;
     line-height: 36px;
+  }
+}
+/* 余额不足弹出框 */
+.send-no-balance__dialog {
+  .tip {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: justify;
+    color: rgba(0, 0, 0, 0.65);
+  }
+  .color-blue {
+    color: #3562FA;
   }
 }
 </style>

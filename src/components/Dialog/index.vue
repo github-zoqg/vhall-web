@@ -1,5 +1,5 @@
 <template>
-  <vh-dialog v-bind="$props"
+  <el-dialog v-bind="$props"
     @open="openHandler"
     @opened="openedHandler"
     @close="closeHandler"
@@ -19,7 +19,7 @@
       v-if="$slots.footer">
       <slot name="footer"></slot>
     </div>
-  </vh-dialog>
+  </el-dialog>
 </template>
 
 <script>

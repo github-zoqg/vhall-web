@@ -226,6 +226,8 @@ const apis = {
   virtualAccumulation: ['/v3/webinars/virtual/accumulation', 'GET'], // 发起端-增加虚拟观众 √
   // virtualSwitchSet: ['/v3/webinars/webinar/post-switch-virtual', 'POST', 'mock'], // 控制台-虚拟人数开关 jia.li •••废弃
 
+  // 直播间设置
+
   // 严禁词
   getKeywordList: ['/v3/interacts/keyword/get-list', 'POST'], // 获取严禁词列表[控制台调用] jia.li  √
   multiKeywordAdd: ['/v3/interacts/keyword/batch-create', 'POST'], // 添加严禁词-可批量 jia.li  √
@@ -538,7 +540,7 @@ const apis = {
   watchInterGetWebinarTag: ['/v3/interacts/webinar-tag/watch-get-webinar-tag', 'GET'], // 获取活动标记-观看端 Jia.li
   setSkinWebinarSkin: ['/v3/interacts/skin/set-webinar-skin', 'POST'], // 设置活动的默认皮肤 Jia.li
   skinCreate: ['/v3/interacts/skin/create', 'POST'], // 新建自定义皮肤 Jia.li
-  getInterWebinarSkin: ['/v3/interacts/skin/get-webinar-skin', 'GET'], // 获取活动启用皮肤的信息详情 Jia.li
+  getInterWebinarSkin: ['/v3/interacts/skin/get-webinar-skin', 'GET'], // 获取活动启用直播间设置的信息详情
   skinUpdate: ['/v3/interacts/skin/update', 'POST'], // 更新自定义皮肤信息 Jia.li
   watchGetWebinarSkin: ['/v3/interacts/skin/watch-get-webinar-skin', 'GET'], // 观看端-获取皮肤 Jia.li
 
@@ -728,6 +730,13 @@ const apis = {
   noticeTestSend: ['/v3/interacts/notice/notice-test-send', 'POST'], // 发送测试
   noticeCheckImport: ['/v3/interacts/notice/notice-check-import', 'POST'], // 导入进度检测
   downloadNoticeFailFile: ['/v3/interacts/notice/notice-download-fail-file', 'POST'], // 下载无效数据
+  // 财务总览 - 消费明细 - 短信消耗（日期筛选）
+  getUserSmsPay: ['/v3/data-center/business-total/user-sms-pay', 'GET'], // 财务总览-消费明细-短信消耗总条数
+  getUserSmsPayByPage: ['/v3/data-center/business-total/user-sms-pay-detail', 'GET'], // 财务总览-消费明细-短信消耗-列表
+  // 子账号管理 - 短信数据趋势图
+  getUserSmsTrend: ['/v3/data-center/business-total/user-sms-trend', 'GET'], // 子账号管理 - 短信数据趋势图
+  exportUserSmsTrend: ['/v3/data-center/business-total/export-user-sms-trend', 'GET'], // 子账号管理 - 直播统计 - 短信数据导出
+
 };
 
 const getApi = api => {

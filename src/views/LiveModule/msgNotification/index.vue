@@ -13,7 +13,7 @@
           5.短信通知针对发送失败或黑名单的用户，依旧扣除短信余额（余额不足除外）
       </div>
       <div class="balance__right">
-        短信余额：<strong :class="msgInfo.config_info.balance > 0 ? 'color-blue' : 'color-red'">{{msgInfo.config_info.balance}}</strong> 条
+        短信余额：<strong :class="versionInfo && versionInfo.sms && versionInfo.sms.sms > 0 ? 'color-blue' : 'color-red'">{{ versionInfo && versionInfo.sms ? versionInfo.sms.sms || 0 : 0 }}</strong> 条
       </div>
     </pageTitle>
     <div class="msg-notification__body">
@@ -219,7 +219,7 @@ export default {
             webinar_id: 892948024,
             notice_switch: 0,
             send_status: 0, // 1=已发送，0=未发送（默认），2=发送中
-            send_timer: '0', // 0=立即发送，0.25=15分钟，0.5=30分钟，1=1小时，2=2小时，24=1天，72=3天
+            send_time: '0', // 0=立即发送，0.25=15分钟，0.5=30分钟，1=1小时，2=2小时，24=1天，72=3天
             short_url: 'http://www.baidu.com/'
           },
           {
@@ -228,7 +228,7 @@ export default {
             webinar_id: 892948024,
             notice_switch: 0,
             send_status: 0, // 1=已发送，0=未发送（默认），2=发送中
-            send_timer: '0.25,0.5', // 0=立即发送，0.25=15分钟，0.5=30分钟，1=1小时，2=2小时，24=1天，72=3天
+            send_time: '0.25,0.5', // 0=立即发送，0.25=15分钟，0.5=30分钟，1=1小时，2=2小时，24=1天，72=3天
             short_url: 'http://www.baidu.com/'
           },
           {
@@ -237,7 +237,7 @@ export default {
             webinar_id: 892948024,
             notice_switch: 0,
             send_status: 0, // 1=已发送，0=未发送（默认），2=发送中
-            send_timer: '0', // 0=立即发送，0.25=15分钟，0.5=30分钟，1=1小时，2=2小时，24=1天，72=3天
+            send_time: '0', // 0=立即发送，0.25=15分钟，0.5=30分钟，1=1小时，2=2小时，24=1天，72=3天
             short_url: 'http://www.baidu.com/'
           }
         ]
@@ -274,23 +274,31 @@ export default {
     },
     // 获取开播提醒内容
     getNoticePageList() {
-      let msgInfo = this.mockMsgInfo();
-      msgInfo = this.joinNoticeItemStatic(msgInfo)
-      this.msgInfo = msgInfo
-      return 'TODO'
-      // this.$fetch('getNoticePageList', {
-      //   webinar_id: this.$route.params.str
-      // }).then(res => {
-      //   let msgInfo = res.data
-      //   msgInfo = this.joinNoticeItemStatic(msgInfo)
-      //   this.msgInfo = msgInfo
-      // }).catch(res => {
-      //   this.messageInfo(res.msg || '获取信息失败', 'error')
-      //   this.msgInfo = {config_info: {}, list: []}
-      // });
+      this.$fetch('getNoticePageList', {
+        webinar_id: this.$route.params.str
+      }).then(res => {
+        let msgInfo = res.data
+        msgInfo = this.joinNoticeItemStatic(msgInfo)
+        this.msgInfo = msgInfo
+      }).catch(res => {
+        this.messageInfo(res.msg || '获取信息失败', 'error')
+        this.msgInfo = {config_info: {}, list: []}
+      });
+    },
+    getSmsBalance() {
+      return this.$fetch('getVersionInfo', { user_id: this.userId})
+      .then((res) => {
+        this.versionInfo = res.data;
+      })
+      .catch((res) => {
+        this.messageInfo(res.msg || '获取信息失败', 'error')
+        console.log(res)
+      })
     }
   },
   async created() {
+    this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    await this.getSmsBalance();
     await this.getLiveDetail(this.$route.params.str)
     this.getNoticePageList()
   },

@@ -1,5 +1,15 @@
 <template>
   <div class="upload-dialog-content">
+    <div class="upload__top">
+      <p class="upload__top__top">
+        <a href="javascript:void(0);" class="down-a-btn" @click="downloadTemplate"><i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>下载模板</a>
+        <span class="span__desc">文件最大支持10000条，手机号必填</span>
+      </p>
+      <p class="upload__top__bottom">
+        <span class="down-span-text" v-show="importResult && importResult.fail > 0" @click.prevent.stop="downErrorHandle">下载无效数据</span>
+        <span class="down-span-text" @click.prevent.stop="downErrorHandle">下载原文件</span>
+      </p>
+    </div>
     <file-upload ref="viewerUpload"
       v-model.trim="fileUrl"
       @delete="deleteFile"
@@ -45,16 +55,6 @@
       <!-- 状态6：上传失败，后端有报错 -->
       <p slot="tip" class="p-error" v-if="uploadResult && uploadResult.status === 'error' && !fileUrl">{{uploadResult.text}}</p>
     </file-upload>
-    <div class="upload__right">
-      <p class="upload__right__top">
-        <span>文件最大支持10000条，手机号必填</span>
-        <a href="javascript:void(0);" class="down-a-btn" @click="downloadTemplate">下载模板</a>
-      </p>
-      <p class="upload__right__bottom">
-        <span class="down-span-text" v-show="importResult && importResult.fail > 0" @click.prevent.stop="downErrorHandle">下载无效数据</span>
-        <span class="down-span-text" @click.prevent.stop="downErrorHandle">下载原文件</span>
-      </p>
-    </div>
   </div>
 </template>
 <script>
@@ -438,14 +438,11 @@ export default {
 /* 导入报名用户样式-------------------------------------- */
 .upload-dialog-content {
   overflow: hidden;
-  display: inline-flex;
-  align-items: flex-start;
-  justify-content: flex-start;
   width: 100%;
   /* 文件上传 */
   /deep/.el-upload--picture-card {
-    width: 200px;
-    height: 100px;
+    width: 612px;
+    height: 118px;
     .noPic {
       height: 100px;
     }
@@ -501,39 +498,48 @@ export default {
       background-color: #14ba6a;
     }
   }
-  .upload__right {
-    display: inline-flex;
-    flex-flow: column;
-    align-items: flex-start;
-    justify-content: space-between;
-    height: 100px;
-    margin-left: 10px;
-    .upload__right__top {
-      display: inline-flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+  .upload__top {
     font-family: 'PingFang SC';
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
     color: #999999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
     .down-span-text {
-      color: #3562FA;
       cursor: pointer;
-      margin-right: 10px;
+      margin-right: 12px;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 22px;
+      text-align: center;
+      color: #1E4EDC;
+      &:last-child {
+        margin-right: 0;
+      }
     }
   }
   a.down-a-btn {
-    float: left;
     text-decoration: none;
+    cursor: pointer;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
-    line-height: 36px;
-    color: #3562FA;
-    cursor: pointer;
+    line-height: 22px;
+    color: #1E4EDC;
+    margin-right: 12px;
+  }
+  .span__desc {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: justify;
+    color: rgba(0, 0, 0, 0.45);
   }
 }
 </style>

@@ -78,7 +78,7 @@
                 <div class="pc-poster-wrap">
                   <el-image v-show="status <= 0 && domain_url"  class="hb_img v-poster-preview" :src="domain_url" fit="cover"></el-image>
                   <el-image v-show="!domain_url" class="hb_img v-poster-preview"
-                    src="../../../common/images/poster/pc-1.png" fit="cover"></el-image>
+                    :src="pcPoster" fit="cover"></el-image>
                 </div>
                 <!--  <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button> -->
                 <div :class="['poster-btn', {'five': alertType > 0}]"></div>
@@ -95,7 +95,7 @@
                 <el-image v-show="status <= 0 && m_domain_url" class="domain_url" :src="m_domain_url" fit="cover">
                 </el-image>
                 <el-image v-show="!m_domain_url" class="default"
-                  src="../../../common/images/poster/phone_poster_default@2x.png" fit="cover">
+                  :src="h5Poster" fit="cover">
                 </el-image>
               </div>
               <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s 关闭' : '关闭'}}
@@ -115,9 +115,13 @@ import upload from '@/components/Upload/main';
 // import Env from '@/api/env.js';
 import beginPlay from '@/components/beginBtn';
 import { sessionOrLocal } from "@/utils/utils";
+import pcPoster from '../../../common/images/poster/pc-1.png'
+import h5Poster from '../../../common/images/poster/phone_poster_default@2x.png'
 export default {
   data() {
     return {
+      pcPoster,
+      h5Poster,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       domain_url: '',
       m_domain_url: '',
@@ -687,13 +691,13 @@ export default {
       }
       .default {
         display: inline-block;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        object-fit: cover;
-        max-width: 312px;
-        max-height: 568px;
+        // position: absolute;
+        // top: 50%;
+        // left: 50%;
+        // transform: translate(-50%, -50%);
+        // object-fit: cover;
+        // max-width: 100%;
+        // max-height: 100%;
         border-bottom-right-radius: 26px;
         border-bottom-left-radius: 26px;
       }
