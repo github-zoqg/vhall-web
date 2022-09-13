@@ -32,7 +32,8 @@
             v-model="msgInfo.config_info.phone_verify_status"
             @change="switchChangeOpen"
             :active-text="msgInfo.config_info.phone_verify_status ? '关闭后，用户在预约时提交手机号无需进行短信验证（不含登录/报名）' : '开启后，用户在预约时提交手机号需要进行短信验证（不含登录/报名）'"
-            size="mini">
+            size="mini"
+            active-value="1" inactive-value="0">
           </vh-switch>
         </div>
       </div>
