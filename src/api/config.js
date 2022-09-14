@@ -736,6 +736,8 @@ const apis = {
   // 子账号管理 - 短信数据趋势图
   getUserSmsTrend: ['/v3/data-center/business-total/user-sms-trend', 'GET'], // 子账号管理 - 短信数据趋势图
   exportUserSmsTrend: ['/v3/data-center/business-total/export-user-sms-trend', 'GET'], // 子账号管理 - 直播统计 - 短信数据导出
+  // 获取短信余额
+  getSmsBalance: ['/v3/fin/user-vip/get-sms-balance', 'GET'], // 根据token查询短信余额
 
 };
 
