@@ -222,11 +222,11 @@
               :on-preview="uploadPreview"
               :heightImg="130"
               :widthImg="231"
-              :before-upload="beforeUploadHandler"
+              :before-upload="file => this.beforeUploadHandler(file, true)"
               @delete="resetVideoUrl">
               <div slot="tip">
                 <p>建议尺寸：1920*1080px，小于4M</p>
-                <p>支持jpg、gif、png、bmp</p>
+                <p>支持jpg、png</p>
               </div>
             </upload>
           </div>
@@ -403,7 +403,7 @@ export default {
           this.livingForm.chatLayout = skin_json_pc.chatLayout; // 公共信息 聊天布局
           this.livingForm.inavLayout = this.isDelay ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : skin_json_pc.inavLayout; // 公共信息 连麦布局
           this.livingForm.videoBackGround = skin_json_pc.videoBackGround; // 公共信息  视频区背景 图片地址
-          this.livingForm.videoBackGroundColor = skin_json_pc.videoBackGroundColor; // 公共信息  视频区背景 颜色
+          this.livingForm.videoBackGroundColor = skin_json_pc.videoBackGroundColor == '#333338' ? '#000000' : skin_json_pc.videoBackGroundColor; // 公共信息  视频区背景 颜色
           this.livingForm.videoBackGroundSize = skin_json_pc.videoBackGroundSize; // 公共信息 视频区背景 裁剪信息
           this.livingForm.videoBlurryDegree = skin_json_pc.videoBlurryDegree; // 公共信息 视频区背景 模糊度
           this.livingForm.videoLightDegree = skin_json_pc.videoLightDegree; // 公共信息 视频区背景 亮度
@@ -495,7 +495,7 @@ export default {
         layout = style == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE';
       }
       this.livingForm = {
-        videoBackGroundColor: '#262626', //视频区底色
+        videoBackGroundColor: '#000000', //视频区底色
         chatLayout: style == 1 ? 1 : 2,
         inavLayout: layout, //连麦布局
         videoBackGround: '',
@@ -658,9 +658,9 @@ export default {
         this.$refs.livingCropper.showModel(res.data.domain_url, 3)
       }
     },
-    beforeUploadHandler(file){
+    beforeUploadHandler(file, isVideo){
       console.log(file);
-      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      const typeList = !isVideo ? ['png', 'jpeg', 'gif', 'bmp'] : ['png', 'jpeg'];
       console.log(file.type.toLowerCase())
       let typeArr = file.type.toLowerCase().split('/');
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
