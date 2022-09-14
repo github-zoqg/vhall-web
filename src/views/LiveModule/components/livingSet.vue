@@ -631,6 +631,8 @@ export default {
     // 视频区域图片删除
     resetVideoUrl() {
       this.livingForm.videoBackGround = '';
+      this.livingForm.videoBlurryDegree = 0;
+      this.livingForm.videoLightDegree = 10;
     },
     choseMicrophone(index) {
       if (this.isDelay) return;
