@@ -205,7 +205,7 @@
           @getTableList="getAccountList"
           >
         </table-list>
-        <noData :nullType="'nullData'" v-if="trendType == 'sms' ? !totalNum : !cmsTotalNum" :text="'暂无数据'"></noData>
+        <noData :nullType="'nullData'" v-if="trendType == 'sms' ? !cmsTotalNum : !totalNum" :text="'暂无数据'"></noData>
       </div>
       </div>
     </div>
