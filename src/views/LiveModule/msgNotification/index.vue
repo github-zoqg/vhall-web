@@ -13,7 +13,7 @@
           5.短信通知针对发送失败或黑名单的用户，依旧扣除短信余额（余额不足除外）
       </div>
       <div class="balance__right">
-        短信余额：<strong :class="versionInfo && versionInfo.sms && versionInfo.sms.sms > 0 ? 'color-blue' : 'color-red'">{{ versionInfo && versionInfo.sms ? versionInfo.sms.sms || 0 : 0 }}</strong> 条
+        短信余额：<strong :class="smsBalance && smsBalance.sms > 0 ? 'color-blue' : 'color-red'">{{ smsBalance ? smsBalance.sms || 0 : 0 }}</strong> 条
       </div>
     </pageTitle>
     <div class="msg-notification__body">
@@ -38,7 +38,7 @@
         </div>
       </div>
       <div class="msg-notification-center">
-        <div class="title-layout"><span class="base_title">短信通知</span><span class="base_title_send" v-if="msgInfo.config_info.send_num > 0">当前预计发送<strong :class="msgInfo.config_info.send_num > 0 ? 'color-blue' : 'color-red'">{{msgInfo.config_info.send_num}}</strong>条短信{{msgInfo.config_info.balance == 0 ? '，' : ''}}</span><span class="base_title_balance" v-if="msgInfo.config_info.balance == 0">余额不足，请联系您的专属客服充值。</span></div>
+        <div class="title-layout"><span class="base_title">短信通知</span><span class="base_title_send" v-if="sms_send_num > 0">当前预计发送<strong :class="sms_send_num > 0 ? 'color-blue' : 'color-red'">{{sms_send_num}}</strong>条短信{{msgInfo.config_info.balance == 0 ? '，' : ''}}</span><span class="base_title_balance" v-if="msgInfo.config_info.balance == 0">余额不足，请联系您的专属客服充值。</span></div>
         <el-row :gutter="24" class="base_row">
           <!-- xs	<768px	超小屏 如：手机
           sm	≥768px	小屏幕 如：平板
@@ -65,6 +65,7 @@ import PageTitle from '@/components/PageTitle';
 import beginPlay from '@/components/beginBtn';
 import {sessionOrLocal} from "@/utils/utils";
 import ItemCard from './components/item-card.vue'
+import EventBus from "@/utils/Events";
 export default {
   name: 'msgNotification',
   data() {
@@ -80,7 +81,8 @@ export default {
       liveDetailInfo: {}, // 活动详情
       baseSet: [],
       wxSet: [],
-      versionInfo: {}
+      smsBalance: {},
+      sms_send_num: 0 // 预发短信数量
     }
   },
   provide: function() {
@@ -263,28 +265,36 @@ export default {
     },
     // 获取短信套餐余额
     getSmsBalance() {
-      return this.$fetch('getVersionInfo', { user_id: this.userId})
+      return this.$fetch('getSmsBalance', {})
       .then((res) => {
         if (res.code == 200 && res.data) {
-          this.versionInfo = res.data;
+          this.smsBalance = res.data;
         } else {
-          this.versionInfo = {}
+          this.smsBalance = {}
         }
       })
       .catch((res) => {
         this.messageInfo(res.msg || '获取信息失败', 'error')
         console.log(res)
-        this.versionInfo = {}
+        this.smsBalance = {}
       })
     }
   },
   async created() {
+    const that = this;
+    EventBus.$on('notice_sms_send_num', msgData => {
+      // 获取预发短信这个
+      console.log('监听内容', msgData.sms_send_num)
+      that.sms_send_num = msgData.sms_send_num
+    });
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     await this.getSmsBalance();
     await this.getLiveDetail(this.$route.params.str)
     this.getNoticePageList()
   },
-  mounted() {}
+  beforeDestroy() {
+    EventBus.$off("notice_sms_send_num");
+  }
 };
 </script>
 

@@ -118,10 +118,17 @@ export default {
     'on-success': {
       type: Function,
       default: ()=>{}
+    },
+    defaultFileName: {
+      type: String,
+      default: ''
     }
   },
   created(){
     console.log(this.$props);
+    if (this.defaultFileName) {
+      this.fileName = this.defaultFileName
+    }
   },
   methods: {
     uploadSuccess(response, file, fileList){

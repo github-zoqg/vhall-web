@@ -35,7 +35,12 @@
           <import-excel ref="importNoticeExcel" :cardInfo="{
             webinar_id: cardInfo.webinar_id,
             config_type: cardInfo.config_type
-          }" v-if="cardInfo"></import-excel>
+          }" :importExcelBase="{
+            file_name: 'fileName.xls' || noticeDetailVo.sms_info.file_name,
+            import_user_url: noticeDetailVo.sms_info.import_user_url,
+            import_user_fail_url: noticeDetailVo.sms_info.import_user_fail_url,
+            import_result: noticeDetailVo.sms_info.import_result
+          }" @uploadKey="uploadKeySet" v-if="cardInfo && noticeDetailVo" :visible="cardInfo && noticeDetailVo"></import-excel>
         </div>
       </div>
       <!-- 短信内容 -->
@@ -78,7 +83,8 @@
             border
             round
             size="medium">
-            {{item.label}}
+             <span>{{item.label}}</span>
+             <template v-if="send_time.includes(item.value)" v-html="checkboxHtml(item)"></template>
             </vh-checkbox>
           </vh-checkbox-group>
           <span class="set-item__content__default" v-else-if="cardInfo.config_type == 1">预约/报名成功后发送</span>
@@ -119,16 +125,18 @@
         :close-on-press-escape="false"
         append-to-body
         class="send-no-balance__dialog">
-        <div class="tip">当前预计发送 <span class="color-blue">{{preSmsCount}}</span> 条短信，余额不足，为避免影响您的业务请及时充值。</div>
+        <div class="tip">当前预计发送 <span class="color-blue">{{preSmsCount > 0 ? preSmsCount : noticeApp.sms_send_num}}</span> 条短信，余额不足，为避免影响您的业务请及时充值。</div>
         <div slot='footer'>
-          <el-button type="primary" size="medium" round @click="noBalanceVisible = false;">我知道了</el-button>
+          <el-button type="primary" size="medium" round @click="closeNoBalanceDialog">我知道了</el-button>
         </div>
     </vh-dialog>
   </vh-dialog>
 </template>
 <script>
   import { validPhone } from '@/utils/validate.js'
-  import ImportExcel from './import-excel.vue'
+  import {sessionOrLocal} from "@/utils/utils";
+  import ImportExcel from './import-excel.vue';
+  import EventBus from "@/utils/Events";
   export default {
     data() {
       return {
@@ -148,14 +156,16 @@
         },
         vm: null,
         noBalanceVisible: false,
-        preSmsCount: 0, // 预发短信数量
+        preSmsCount: 0, // 预发短信数量【测试发送】
         noticeDetailVo: {}, // 短信模板详情
         cardQueryVo: {}, // 卡片sms_info设置内容
         userSmsAmount: 0, // 用户短信余额
         smsCensus: {
           wordage: 0, // 短信字数
           rowCount: 0 // 短信计费条数
-        }
+        },
+        sms_send_num: 0, // 预发短信数量【消息类型】
+        uploadKey: null
       };
     },
     props: {
@@ -207,12 +217,47 @@
       openShortLink() {
         this.cardQueryVo.short_url && window.open(this.cardQueryVo.short_url, '_blank');
       },
+      checkboxHtml(item) {
+        if (this.noticeDetailVo && this.noticeDetailVo.sms_info && this.noticeDetailVo.sms_info.send_res) {
+          const list = this.noticeDetailVo.sms_info.send_res.filter(vItem => {
+            return vItem.send_time = item.value
+          })
+          if (list && list.length > 0) {
+            if (list[0].send_status == 1) {
+              return '<span class="send_time_status"><img src="../images/fill-success.svg"/>已发送</span>'
+            } else if (list[0].send_status == 2) {
+              return '<span class="send_time_status"><img src="../images/fill-warning.svg"/>未发送</span>'
+            } else {
+              return '<span class="send_time_status"><img src="../images/fill-wait.svg"/>未发送</span>'
+            }
+          } else {
+            return '';
+          }
+        } else {
+          return ''
+        }
+      },
       handleClose() {
         this.dialogVisible = false
         this.$emit('close')
       },
-      // 保存数据
+      // 导入文件地址记录
+      uploadKeySet(key) {
+        this.uploadKey = key
+      },
+      // 保持验证余额数量
       saveInfo() {
+        // 预发短信数量是否大于余额
+        if (this.noticeApp.sms_send_num > this.userSmsAmount) {
+          this.preSmsCount = 0;
+          this.noBalanceVisible = true;
+          return;
+        } else {
+          this.ajaxSetSave()
+        }
+      },
+      // 发送设置 - 接口发送组装
+      ajaxSetSave() {
         let params = {
           webinar_id: this.cardInfo.webinar_id,
           config_type: this.cardInfo.config_type,
@@ -230,16 +275,14 @@
           params.send_time = '';
         }
         if (this.send_user.includes('3')) {
-          if (!this.file) {
+          if (!this.uploadKey) {
             this.messageInfo('请导入文件', 'warning')
             return
           }
           // 导入
-          params.file = ''
-          params.key = ''
+          params.key = this.uploadKey
         } else {
           try {
-            delete params.file;
             delete params.key;
           } catch(e) {
             console.log(e)
@@ -251,15 +294,22 @@
             this.handleClose()
             this.$emit('saveChange')
           } else {
-            // 设置预发短信
-            this.preSmsCount = res.data.count;
-            this.noBalanceVisible = true;
+            this.messageInfo(res.msg || '获取信息失败', 'error')
           }
         })
         .catch((res) => {
           this.messageInfo(res.msg || '获取信息失败', 'error')
           console.log(res)
         })
+      },
+      closeNoBalanceDialog() {
+        this.noBalanceVisible = false;
+        if (this.preSmsCount > 0) {
+          // 测试发送触发
+        } else {
+          // 发送设置触发
+          this.ajaxSetSave()
+        }
       },
       // 打开测试发送弹出框
       openTestDialog() {
@@ -307,9 +357,11 @@
             }
             this.cardQueryVo = res.data.sms_info
             // 计算短信长度
-            const smsStr = res.data.sms_info.content_str + res.data.sms_info.short_url
+            /* const smsStr = res.data.sms_info.content_str + res.data.sms_info.short_url
             this.smsCensus.wordage = smsStr.length
-            this.smsCensus.rowCount = smsStr.length > 70 ? Math.ceil(smsStr.length / 67) : 1
+            this.smsCensus.rowCount = smsStr.length > 70 ? Math.ceil(smsStr.length / 67) : 1 */
+            this.smsCensus.wordage = res.data.config_info?.length || 0
+            this.smsCensus.rowCount = res.data.config_info?.multiple || 0
             // 转换发送对象
             this.send_user = res.data.sms_info.send_user.split(',')
             // 转换发送时间
@@ -325,12 +377,31 @@
           this.noticeDetailVo = {}
           this.cardQueryVo = {}
         })
+      },
+      // 获取短信套餐余额
+      getSmsBalance() {
+       return this.$fetch('getSmsBalance', {})
+      .then((res) => {
+          if (res.code == 200 && res.data) {
+            this.userSmsAmount = res.data.sms || 0;
+          } else {
+            this.userSmsAmount = 0
+          }
+        })
+        .catch((res) => {
+          this.messageInfo(res.msg || '获取信息失败', 'error')
+          console.log(res)
+          this.userSmsAmount = 0
+        })
       }
     },
     created() {
+      const that = this
       this.dialogVisible =  this.visible;
+      this.userId = JSON.parse(sessionOrLocal.get('userId'));
       this.cardVo = this.app.info; // TODO inject传入的内容，在小组件内，只做赋值，不动cardVo数据
       this.getNoticeDetail();
+      this.getSmsBalance();
     }
   };
 </script>
@@ -431,6 +502,7 @@
     margin-bottom: 12px;
     margin-left: 0!important;
     margin-right: 12px!important;
+    position: relative;
   }
   .vh-checkbox:nth-child(3n+3) {
     margin-right: 0!important;
@@ -443,6 +515,23 @@
   }
   .vh-checkbox:nth-child(6) {
     margin-bottom: 8px!important;
+  }
+  .send_time_status {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    color: rgba(0, 0, 0, 0.45);
+    position: absolute;
+    right: 12px;
+    img {
+      width: 12px;
+      height: 12px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 4px;
+      margin-top: -2px;
+    }
   }
 }
 .set-dialog__footer {

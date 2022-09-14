@@ -7,7 +7,7 @@
       </p>
       <p class="upload__top__bottom">
         <span class="down-span-text" v-show="importResult && importResult.fail > 0" @click.prevent.stop="downErrorHandle">下载无效数据</span>
-        <span class="down-span-text" @click.prevent.stop="downErrorHandle">下载原文件</span>
+        <span class="down-span-text" @click.prevent.stop="downBaseFileHandle" v-show="importExcelBase && importExcelBase.import_user_url">下载原文件</span>
       </p>
     </div>
     <file-upload ref="viewerUpload"
@@ -17,6 +17,7 @@
         path: pathUrl,
         type: 'exel',
       }"
+      :defaultFileName="fileName"
       :on-success="uploadSuccess"
       :on-progress="uploadProcess"
       :on-error="uploadError"
@@ -73,6 +74,10 @@ export default {
     cardInfo: {
       type: Object,
       require: true
+    },
+    importExcelBase: {
+      type: Object,
+      require: true
     }
   },
   data() {
@@ -87,6 +92,7 @@ export default {
       percent: 0,
       downloadUrl: StaticFileUrlsMap.getSmsNoticeDownTemplateUrl(process.env.VUE_APP_NODE_ENV), // 下载模板地址
       fileUrl: '', // 文件地址
+      fileName: '', // 文件名称
       fileResult: '', // 文件上传结果
       importResult: null,
       saveLoading: false,//导入确定按钮是否可点击
@@ -183,7 +189,7 @@ export default {
           key: that.checkImportKey
         }); // 模拟请求
         if (progressResult && progressResult.code == 200) {
-          if (progressResult.data.status == 2) {
+          if (progressResult.data.status == 1) {
             // 预检/导入 完成
             that.clearPageTimes();
             that.isUploadEnd = true;
@@ -193,13 +199,13 @@ export default {
               text: '检测成功'
             }
             that.importResult = {
-              success: progressResult.data.success,
-              fail: progressResult.data.fail
+              success: progressResult.data.success_num,
+              fail: progressResult.data.fail_num
             };
             if (that.$refs.viewerUpload) {
               that.$refs.viewerUpload.setError('');
             }
-          } else if (progressResult.data.status == 3) {
+          } else if (progressResult.data.status == 2) {
             // 预检/导入 失败（轮询不在继续，直接终止）
             that.clearPageTimes();
             that.isUploadEnd = true;
@@ -213,7 +219,7 @@ export default {
               that.$refs.viewerUpload.setError(progressResult.msg || '预检失败，请重新上传');
             }
           } else {
-            // 未开始 or 进行中
+            // 未开始
           }
         }
         console.log('看看当前几秒轮询一次', id)
@@ -227,17 +233,20 @@ export default {
     },
     // 文件上传成功 & 文档预检
     uploadSuccess(res, file) {
-      console.log(res, file);
+      console.log('文件上传', res, file);
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
+        this.fileName = file.name
         // 文件上传成功，检测观众
         this.$fetch('importNoticeExcel', {
           webinar_id: this.cardInfo.webinar_id,
           config_type: this.cardInfo.config_type,
-          file: this.fileUrl
+          file: this.fileUrl,
+          file_name: this.fileName
         }).then(resV => {
           if (resV && resV.code == 200 && resV.data) {
             this.checkImportKey = resV.data.key
+            this.$emit('uploadKey', resV.data.key)
             // 开启轮询
             this.intervalCheck()
           } else {
@@ -301,6 +310,20 @@ export default {
         customClass: 'zdy-info-box'
       });
     },
+    // 下载源文件
+    downBaseFileHandle() {
+      const xHttp = new window.XMLHttpRequest();
+      xHttp.open('GET', this.importExcelBase.import_user_url, true);
+      xHttp.responseType = 'blob';
+      xHttp.onload = () => {
+        const url = window.URL.createObjectURL(xHttp.response);
+        const aDom = document.createElement('a');
+        aDom.href = url;
+        aDom.download = '消息通知导入.xlsx';
+        aDom.click();
+      }
+      xHttp.send();
+    },
     /* 报名导入-失败处理（代码冗余缩短） */
     renderSaveError(msg) {
       this.saveLoading = false
@@ -324,10 +347,27 @@ export default {
   created() {
     // 外层控制内层dialog是否开启
     this.visibleTemp =  this.visible
+    console.log('当前界面弹出框是否展示', this.visibleTemp)
     if (this.visibleTemp) {
-      this.fileUrl = null;
-      this.fileResult = '';
-      this.importResult = null;
+      // 导入用户面板选中展示，若当前存在上传后的数据，直接展示；否则重置为空
+      if (this.importExcelBase) {
+        this.fileUrl = this.importExcelBase?.import_user_url || '';
+        this.fileName = this.importExcelBase?.file_name || '';
+        this.fileResult = 'success';
+        this.uploadResult = {
+          status: 'success',
+          text: '检测成功'
+        }
+        this.importResult = {
+          success: this.importExcelBase?.import_result?.success_num || 0,
+          fail: this.importExcelBase?.import_result?.fail_num || 0
+        };
+      } else {
+        this.fileUrl = null;
+        this.fileName = '';
+        this.fileResult = '';
+        this.importResult = null;
+      }
     }
   },
   mounted() {},

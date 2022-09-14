@@ -694,9 +694,7 @@
           if (valid) {
             let childIdList = this.multipleSelection.map(item => {
               let result = {
-                user_id: item.child_id,
-                resources: 0,
-                extend_day: 0
+                user_id: item.child_id
               }
               console.log(this.multiAllocForm, 'this.multiAllocForm')
               if (this.dialogType === 1) {
@@ -719,6 +717,10 @@
               if (!this.isZhiXueYun && this.dialogType === 19) {
                 // 短信分配，设置cms，增量
                 result.sms = Number(this.multiAllocForm.count2);
+                result.resources = 0;
+                result.extend_day = 0; // 如果是短信分配，批量，其它字段传递0
+              } else {
+                result.sms = 0; // 如果是其它分配，短信字段值传0
               }
               console.log(result, '批量数据')
               return result;
