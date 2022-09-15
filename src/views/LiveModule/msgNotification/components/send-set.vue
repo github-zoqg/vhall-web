@@ -83,7 +83,21 @@
             round
             size="medium">
              <span>{{item.label}}</span>
-             <template v-if="send_time.includes(item.value)" v-html="checkboxHtml(item)"></template>
+             <template v-if="send_time.includes(item.value)">
+              <!-- 1=已发送，0=未发送（默认），2=发送中 ，3=已过时-->
+              <template v-if="getCheckStatus(item) == 1">
+                <span class="send_time_status"><img src="../images/fill-success.svg"/>已发送</span>
+              </template>
+              <template v-else-if="getCheckStatus(item) == 2">
+                <span class="send_time_status"><img src="../images/fill-send.svg"/>发送中</span>
+              </template>
+              <template v-else-if="getCheckStatus(item) === 3">
+                <span class="send_time_status"><img src="../images/fill-warning.svg"/>已过时</span>
+              </template>
+              <template v-if="getCheckStatus(item) === 0">
+                <span class="send_time_status"><img src="../images/fill-wait.svg"/>未发送</span>
+              </template>
+             </template>
             </vh-checkbox>
           </vh-checkbox-group>
           <span class="set-item__content__default" v-else-if="cardInfo.config_type == 1">预约/报名成功后发送</span>
@@ -211,24 +225,19 @@
       openShortLink() {
         this.cardQueryVo.short_url && window.open(this.cardQueryVo.short_url, '_blank');
       },
-      checkboxHtml(item) {
+      getCheckStatus(item) {
+        console.log('当前状态内容', this.noticeDetailVo.sms_info)
         if (this.noticeDetailVo && this.noticeDetailVo.sms_info && this.noticeDetailVo.sms_info.send_res) {
           const list = this.noticeDetailVo.sms_info.send_res.filter(vItem => {
             return vItem.send_time = item.value
           })
           if (list && list.length > 0) {
-            if (list[0].send_status == 1) {
-              return '<span class="send_time_status"><img src="../images/fill-success.svg"/>已发送</span>'
-            } else if (list[0].send_status == 2) {
-              return '<span class="send_time_status"><img src="../images/fill-warning.svg"/>未发送</span>'
-            } else {
-              return '<span class="send_time_status"><img src="../images/fill-wait.svg"/>未发送</span>'
-            }
+            return list[0].send_status || 0;
           } else {
-            return '';
+            return null;
           }
         } else {
-          return ''
+          return null
         }
       },
       handleClose() {
