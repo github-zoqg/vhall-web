@@ -259,7 +259,7 @@
           notice_switch: 1
         }
         if (this.send_user.includes('1')) {
-          if (this.send_time && this.send_time <= 0) {
+          if (this.cardInfo.config_type == 2 && this.send_time && this.send_time <= 0) {
             this.messageInfo('请选择发送时间', 'warning')
             return
           }
