@@ -303,9 +303,11 @@ export default {
   async created() {
     const that = this;
     EventBus.$on('notice_sms_send_num', msgData => {
-      // 获取预发短信这个
-      console.log('监听内容', msgData.sms_send_num)
-      that.sms_send_num = msgData.sms_send_num
+      if (msgData.webinar_id == that.$route.params.str) {
+        // 活动匹配的时候，展示预发短信内容
+        console.log('监听内容', msgData.sms_send_num)
+        that.sms_send_num = msgData.sms_send_num
+      }
     });
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
     await this.getConfigListIsOpen(1, this.$route.params.str)
