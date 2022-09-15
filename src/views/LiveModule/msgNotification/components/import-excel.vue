@@ -352,7 +352,7 @@ export default {
       // 导入用户面板选中展示，若当前存在上传后的数据，直接展示；否则重置为空
       if (this.importExcelBase) {
         this.fileUrl = this.importExcelBase?.import_user_url || '';
-        this.fileName = this.importExcelBase?.file_name || '';
+        this.fileName = this.importExcelBase?.import_result?.file_name || '';
         this.fileResult = 'success';
         this.uploadResult = {
           status: 'success',

@@ -27,7 +27,8 @@
           <vh-button borderRadius="4" type="text" round  @click="noticeConfigEdit('confirm')"  v-if="!isSignShow" size="mini" class="zdy-theme-red">确定</vh-button>
           <vh-button borderRadius="4" type="text" plain  @click="noticeConfigEdit('cancel')"  v-if="!isSignShow" size="mini" class="zdy-theme-gray">取消</vh-button>
         </div>
-        <div class="switchBox">
+        <!-- 开启了微信授权的时候，才有短信验证码开关设置 -->
+        <div class="switchBox" v-if="msgInfo && msgInfo.config_info && WEBINAR_PES && ![1, '1'].includes(WEBINAR_PES['ui.hide_wechat'])">
           <vh-switch
             v-model="msgInfo.config_info.phone_verify_status"
             @change="switchChangeOpen"
@@ -38,8 +39,8 @@
         </div>
       </div>
       <div class="msg-notification-center">
-        <div class="title-layout"><span class="base_title">短信通知</span><span class="base_title_send" v-if="sms_send_num > 0">当前预计发送<strong :class="sms_send_num > 0 ? 'color-blue' : 'color-red'">{{sms_send_num}}</strong>条短信{{msgInfo.config_info.balance == 0 ? '，' : ''}}</span><span class="base_title_balance" v-if="msgInfo.config_info.balance == 0">余额不足，请联系您的专属客服充值。</span></div>
-        <el-row :gutter="24" class="base_row">
+        <div class="title-layout"><span class="base_title">短信通知</span><span class="base_title_send" v-if="sms_send_num > 0">当前预计发送<strong :class="sms_send_num > 0 ? 'color-blue' : 'color-red'">{{sms_send_num}}</strong>条短信{{msgInfo && msgInfo.config_info && msgInfo.config_info.balance == 0 ? '，' : ''}}</span><span class="base_title_balance" v-if="msgInfo && msgInfo.config_info && msgInfo.config_info.balance == 0">余额不足，请联系您的专属客服充值。</span></div>
+        <el-row :gutter="24" class="base_row" v-if="msgInfo">
           <!-- xs	<768px	超小屏 如：手机
           sm	≥768px	小屏幕 如：平板
           md	≥992px	中等屏幕 如：桌面显示器
@@ -82,7 +83,8 @@ export default {
       baseSet: [],
       wxSet: [],
       smsBalance: {},
-      sms_send_num: 0 // 预发短信数量
+      sms_send_num: 0, // 预发短信数量
+      webinarPes: {}
     }
   },
   provide: function() {
@@ -103,7 +105,7 @@ export default {
     },
     // 开启\关闭报名表单开关
     switchChangeOpen(value) {
-      if (this.msgInfo.config_info.balance == 0 && value) {
+      if (this.smsBalance.sms == 0 && value) {
         this.msgInfo.config_info.phone_verify_status = !value;
         this.messageInfo('短信余额不足，请充值后开启', 'error')
         return;
@@ -278,16 +280,37 @@ export default {
         console.log(res)
         this.smsBalance = {}
       })
+    },
+    // 获取活动层级 —— 配置项开关 / 具体配置项值
+    getConfigListIsOpen(scene = 1, webinar_id = '') {
+      let params = {
+        webinar_id: webinar_id,
+        webinar_user_id: this.userId,
+        scene_id: scene,
+      }
+      return this.$fetch('planFunctionGet', this.$params(params),{
+        'gray-id': this.userId
+      }).then(res => {
+        if (res && res.code === 200 && res.data.permissions) {
+          const data = JSON.parse(res.data.permissions)
+          this.WEBINAR_PES = data;
+        }
+      }).catch(e => {
+        console.log('刷新等情况下获取活动下接口配置项情况，异常不做任何处理')
+      });
     }
   },
   async created() {
     const that = this;
     EventBus.$on('notice_sms_send_num', msgData => {
-      // 获取预发短信这个
-      console.log('监听内容', msgData.sms_send_num)
-      that.sms_send_num = msgData.sms_send_num
+      if (msgData.webinar_id == that.$route.params.str) {
+        // 活动匹配的时候，展示预发短信内容
+        console.log('监听内容', msgData.sms_send_num)
+        that.sms_send_num = msgData.sms_send_num
+      }
     });
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    await this.getConfigListIsOpen(1, this.$route.params.str)
     await this.getSmsBalance();
     await this.getLiveDetail(this.$route.params.str)
     this.getNoticePageList()
