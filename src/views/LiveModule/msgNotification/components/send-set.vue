@@ -24,7 +24,7 @@
             </vh-checkbox>
             <vh-checkbox label="4" v-if="cardInfo.config_type == 3">预约/报名中未观看直播用户</vh-checkbox>
             <vh-checkbox label="3">导入用户</vh-checkbox>
-            <vh-checkbox label="2" v-if="isOpenWhite">白名单用户</vh-checkbox>
+            <vh-checkbox label="2" v-if="noticeApp && noticeApp.WEBINAR_PES['white_list'] && isSetWhite">白名单用户</vh-checkbox>
           </vh-checkbox-group>
         </div>
       </div>
@@ -36,7 +36,6 @@
             webinar_id: cardInfo.webinar_id,
             config_type: cardInfo.config_type
           }" :importExcelBase="{
-            file_name: 'fileName.xls' || noticeDetailVo.sms_info.file_name,
             import_user_url: noticeDetailVo.sms_info.import_user_url,
             import_user_fail_url: noticeDetailVo.sms_info.import_user_fail_url,
             import_result: noticeDetailVo.sms_info.import_result
@@ -165,7 +164,8 @@
           rowCount: 0 // 短信计费条数
         },
         sms_send_num: 0, // 预发短信数量【消息类型】
-        uploadKey: null
+        uploadKey: null,
+        isSetWhite: '' // 观看限制 - 是否设置为白名单
       };
     },
     props: {
@@ -181,12 +181,6 @@
     inject: ['app', 'noticeApp'], // 卡片对象
     components: {
       ImportExcel
-    },
-    computed: {
-      // 是否展示白名单
-      isOpenWhite: ()=> {
-        return false
-      }
     },
     methods: {
       //文案提示问题
@@ -319,9 +313,9 @@
       sendTest() {
         this.$refs.phoneForm.validate((valid) => {
           if (valid) {
-            if (this.userSmsAmount <= 0) {
-              // 短信余额不足
-              this.preSmsCount = 1;
+            if (this.userSmsAmount <= 0 || this.smsCensus.rowCount > this.userSmsAmount) {
+              // 短信余额本身不足  或者 预计发送的计费条数>短信余额， 当前不可发送
+              this.preSmsCount = this.smsCensus.rowCount;
               this.noBalanceVisible = true;
               return;
             }
@@ -393,15 +387,36 @@
           console.log(res)
           this.userSmsAmount = 0
         })
+      },
+      // 获取观看限制是否是白名单
+      getWebianrVerify() {
+       return this.$fetch('viewerSetGet', {
+         webinar_id: this.cardInfo.webinar_id
+       })
+      .then((res) => {
+          if (res.code == 200 && res.data) {
+            this.isSetWhite = res.data.verify || (res.data.parent_verify == 2 && res.data.subject_verify == 1);
+          } else {
+            this.isSetWhite = '';
+          }
+        })
+        .catch((res) => {
+          this.messageInfo(res.msg || '获取信息失败', 'error')
+          console.log(res)
+          this.isSetWhite = ''
+        })
       }
     },
-    created() {
-      const that = this
+    async created() {
       this.dialogVisible =  this.visible;
       this.userId = JSON.parse(sessionOrLocal.get('userId'));
       this.cardVo = this.app.info; // TODO inject传入的内容，在小组件内，只做赋值，不动cardVo数据
+      // this.isOpenWhite = noticeApp && noticeApp.WEBINAR_PES['white_list'] && isSetWhite;
+      console.log('当前app', this.app)
+      console.log('当前noticeApp', this.noticeApp)
+      await this.getSmsBalance();
+      await this.getWebianrVerify();
       this.getNoticeDetail();
-      this.getSmsBalance();
     }
   };
 </script>
