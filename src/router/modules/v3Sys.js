@@ -90,12 +90,12 @@ const router = [
   },
   {
     path: '/privacyPolicy',
-    meta: { auth: false, name: 'privacyPolicy', title: '微吼隐私政策' },
+    meta: { auth: false, name: 'privacyPolicy', title: '隐私政策' },
     component: () => import('@/views/PrivacyModule/privacyPolicy'),
     hidden: true
   },{
     path: '/privacyUPo',
-    meta: { auth: false, name: 'userProtection', title: '微吼用户服务协议' },
+    meta: { auth: false, name: 'userProtection', title: '用户服务协议' },
     component: () => import('@/views/PrivacyModule/userProtection'),
     hidden: true
   },
