@@ -161,7 +161,7 @@
             <vh-radio-button round :label="2">左右显示</vh-radio-button>
           </vh-radio-group>
         </div>
-        <template v-if="webinarType != 1">
+        <template v-if="isShowVideoBackground || isShowInteract">
           <div class="form_item_br">
             以下设置对PC端和移动端同时生效～
           </div>
@@ -205,41 +205,43 @@
               </div>
             </div>
           </div> -->
-          <div class="form_item">
-            <p class="form_item_title">视频区底色</p>
-            <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoBackGroundColor"></color-set>
-          </div>
-          <div class="form_item">
-            <p class="form_item_title">视频区背景</p>
-            <upload
-              class="upload__living"
-              id="living_video_cropper"
-              v-model="livingForm.videoBackGround"
-              :domain_url="livingForm.videoBackGround"
-              :on-success="handleUploadVideoSuccess"
-              :on-progress="uploadProcess"
-              :on-error="uploadError"
-              :on-preview="uploadPreview"
-              :heightImg="130"
-              :widthImg="231"
-              :before-upload="file => this.beforeUploadHandler(file, true)"
-              @delete="resetVideoUrl">
-              <div slot="tip">
-                <p>建议尺寸：1920*1080px，小于4M</p>
-                <p>支持jpg、png</p>
-              </div>
-            </upload>
-          </div>
-          <div class="form_item">
-            <span class="vague_theme">模糊程度</span>
-            <vh-slider v-model="livingForm.videoBlurryDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="10"></vh-slider>
-            <span class="vague_num">{{livingForm.videoBlurryDegree}}</span>
-          </div>
-          <div class="form_item">
-          <span class="vague_theme">背景亮度</span>
-          <vh-slider v-model="livingForm.videoLightDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="20"></vh-slider>
-          <span class="vague_num">{{livingForm.videoLightDegree}}</span>
-        </div>
+          <template v-if="isShowVideoBackground">
+            <div class="form_item">
+              <p class="form_item_title">视频区底色</p>
+              <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoBackGroundColor"></color-set>
+            </div>
+            <div class="form_item">
+              <p class="form_item_title">视频区背景</p>
+              <upload
+                class="upload__living"
+                id="living_video_cropper"
+                v-model="livingForm.videoBackGround"
+                :domain_url="livingForm.videoBackGround"
+                :on-success="handleUploadVideoSuccess"
+                :on-progress="uploadProcess"
+                :on-error="uploadError"
+                :on-preview="uploadPreview"
+                :heightImg="130"
+                :widthImg="231"
+                :before-upload="file => this.beforeUploadHandler(file, true)"
+                @delete="resetVideoUrl">
+                <div slot="tip">
+                  <p>建议尺寸：1920*1080px，小于4M</p>
+                  <p>支持jpg、png</p>
+                </div>
+              </upload>
+            </div>
+            <div class="form_item">
+              <span class="vague_theme">模糊程度</span>
+              <vh-slider v-model="livingForm.videoBlurryDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="10"></vh-slider>
+              <span class="vague_num">{{livingForm.videoBlurryDegree}}</span>
+            </div>
+            <div class="form_item">
+              <span class="vague_theme">背景亮度</span>
+              <vh-slider v-model="livingForm.videoLightDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="20"></vh-slider>
+              <span class="vague_num">{{livingForm.videoLightDegree}}</span>
+            </div>
+          </template>
         </template>
       </template>
     </div>
@@ -369,6 +371,19 @@ export default {
       } else {
         // 账号下默认不显示
         return false;
+      }
+    },
+    isShowVideoBackground() {
+      if (this.webinarId) {
+        // 活动下互动和分组模式显示
+        if (this.webinarType == 3 || this.webinarType == 6) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        // 账号下默认显示
+        return true;
       }
     },
     video_url() {
