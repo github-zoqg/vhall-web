@@ -223,13 +223,13 @@ export default {
           }
         }
         console.log('看看当前几秒轮询一次', id)
-        setTimeout(pollingFn, 5000); // 5秒一轮询
+        setTimeout(pollingFn, 2000); // 2秒一轮询
       };
-      // 第一次调用预检的时候，5秒后再轮询第一次
+      // 第一次调用预检的时候，2秒后再轮询第一次
       const timerTemp = setTimeout(() => {
         timerTemp && clearTimeout(timerTemp)
         pollingFn();
-      }, 5000)
+      }, 2000)
     },
     // 文件上传成功 & 文档预检
     uploadSuccess(res, file) {
