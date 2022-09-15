@@ -124,13 +124,6 @@
         default: function() {
           return {}
         }
-      },
-      // 短信、签名等通用信息
-      configInfo: {
-        type: Object,
-        default: function() {
-          return {}
-        }
       }
     },
     provide: function() {
@@ -188,7 +181,7 @@
       },
       switchChangeOpen(value) {
         this.cardInfo.notice_switch = !value;
-        if (this.configInfo.balance == 0 && value) {
+        if (this.noticeApp && this.noticeApp.smsBalance && this.noticeApp.smsBalance.sms == 0 && value) {
           this.messageInfo('短信余额不足，请充值后开启', 'error')
           this.$emit('changeSwitch');
           return;
