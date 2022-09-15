@@ -670,8 +670,7 @@
         let paramsKv = {
           user_id: row.child_id,
           resources: row.inputCount || 0,
-          extend_day: row.inputExtendDay || 0,
-          scene: 1 // 1 全部修改；2 只修改短信；3 修改套餐or扩展包。
+          extend_day: row.inputExtendDay || 0
         }
         if (!this.isZhiXueYun) {
           // 增加短信设置
@@ -680,7 +679,8 @@
         let params = {
           type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量 2-时长
           pid: sessionOrLocal.get('userId'),
-          kv: [paramsKv]
+          kv: [paramsKv],
+          scene: 1 // 1 全部修改；2 只修改短信；3 修改套餐or扩展包。
         };
         flag ? this.sendAllocSet(params, row) :  this.$message({
           message: '请输入数量',
@@ -718,12 +718,10 @@
               if (!this.isZhiXueYun && this.dialogType === 19) {
                 // 短信分配，设置cms，增量
                 result.sms = Number(this.multiAllocForm.count2);
-                result.scene = 2;
                 result.resources = 0;
                 result.extend_day = 0; // 如果是短信分配，批量，其它字段传递0
               } else {
                 result.sms = 0; // 如果是其它分配，短信字段值传0
-                result.scene = 3;
               }
               console.log(result, '批量数据')
               return result;
@@ -732,7 +730,8 @@
             let params = {
               type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量,
               pid: sessionOrLocal.get('userId'),
-              kv: childIdList
+              kv: childIdList,
+              scene: !this.isZhiXueYun && this.dialogType === 19 ? 2 : 3
             };
             this.sendAllocSet(params);
           }
