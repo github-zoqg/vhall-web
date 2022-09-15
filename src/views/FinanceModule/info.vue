@@ -626,7 +626,7 @@ export default {
       let url = ''
       if (this.trendType == 'sms') {
         // 短信导出
-        url = 'exportUserSmsTrend'
+        url = 'exportUserSmsPayDetail'
       } else {
         url = this.versionType == 1 ? 'exportFlowDetail' : this.versionType == 2 ? 'exportDurationDetail' : 'exportOnlineDetail';
       }
