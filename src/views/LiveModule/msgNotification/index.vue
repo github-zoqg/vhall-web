@@ -48,7 +48,7 @@
           xl	≥1920px	2k屏等 -->
           <template v-for="(item, index) in msgInfo.list">
             <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="8" v-if="item"  :key="`base-item-${index}`">
-              <item-card :info="item" :configInfo="msgInfo.config_info" @changeSwitch="reloadAjax" @saveChange="reloadAjax"></item-card>
+              <item-card :info="item" @changeSwitch="reloadAjax" @saveChange="reloadAjax"></item-card>
             </el-col>
            </template>
         </el-row>
