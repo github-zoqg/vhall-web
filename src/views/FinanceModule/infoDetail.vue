@@ -564,6 +564,7 @@ export default {
         }
       }
       paramsObj.type = formParams.orderType || '';
+      paramsObj = this.formatSmsQuery(paramsObj); // 短信查询入参格式化
       let obj = Object.assign({}, this.pageInfo, paramsObj);
       this.params = paramsObj;
       let url = this.activeIndex == 1 ? "buyDetail" : "orderDetail";
@@ -594,6 +595,23 @@ export default {
       }).catch(e=>{
         console.log(e);
       });
+    },
+    formatSmsQuery(obj) {
+      try {
+        if (this.activeIndex != 1) {
+          // 如果当前是 开通明细，当前是短信包，传递一个serviceType传递，否则不需要
+          if (obj.type == 19) {
+            delete obj.orderType;
+            delete obj.type;
+            obj.serviceType = 19;
+          } else {
+            delete obj.serviceType;
+          }
+        }
+      } catch(e) {
+        // 去除无效key
+      }
+      return obj
     },
     // 页码改变按钮事件
     currentChangeHandler(current) {

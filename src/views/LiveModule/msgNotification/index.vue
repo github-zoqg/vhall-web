@@ -39,7 +39,7 @@
         </div>
       </div>
       <div class="msg-notification-center">
-        <div class="title-layout"><span class="base_title">短信通知</span><span class="base_title_send" v-if="sms_send_num > 0">当前预计发送<strong :class="sms_send_num > 0 ? 'color-blue' : 'color-red'">{{sms_send_num}}</strong>条短信{{msgInfo && msgInfo.config_info && msgInfo.config_info.balance == 0 ? '，' : ''}}</span><span class="base_title_balance" v-if="msgInfo && msgInfo.config_info && msgInfo.config_info.balance == 0">余额不足，请联系您的专属客服充值。</span></div>
+        <div class="title-layout"><span class="base_title">短信通知</span><span class="base_title_send" v-if="sms_send_num > 0">当前预计发送<strong :class="sms_send_num > 0 ? 'color-blue' : 'color-red'">{{sms_send_num}}</strong>条短信{{smsBalance && smsBalance.sms == 0 ? '，' : ''}}</span><span class="base_title_balance" v-if="smsBalance && smsBalance.sms == 0">余额不足，请联系您的专属客服充值。</span></div>
         <el-row :gutter="24" class="base_row" v-if="msgInfo">
           <!-- xs	<768px	超小屏 如：手机
           sm	≥768px	小屏幕 如：平板
