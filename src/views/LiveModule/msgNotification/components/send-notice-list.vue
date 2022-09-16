@@ -90,7 +90,7 @@
           start_time: '',
           end_time: '',
           keyword: '',
-          config_type: '1',
+          config_type: '',
           pos: 0,
           limit: 10
         },
@@ -291,6 +291,7 @@
     created() {
       this.dialogVisible =  this.visible;
       this.cardVo = this.app.info; // TODO inject传入的内容，在小组件内，只做赋值，不动cardVo数据
+      this.query.config_type = `${this.cardVo.config_type}`;
       this.initPage()
     }
   };
