@@ -4,6 +4,7 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :before-close="handleClose"
+    v-loading="isLoading"
     width="744px"
     title="发送设置">
       <!-- 发送对象 -->
@@ -91,7 +92,7 @@
               <template v-else-if="getCheckStatus(item) == 2">
                 <span class="send_time_status"><img src="../images/fill-send.svg"/>发送中</span>
               </template>
-              <template v-else-if="getCheckStatus(item) === 3">
+              <template v-else-if="getCheckStatus(item) == 3">
                 <span class="send_time_status"><img src="../images/fill-warning.svg"/>已过时</span>
               </template>
               <template v-if="getCheckStatus(item) === 0">
@@ -103,7 +104,7 @@
           <span class="set-item__content__default" v-else-if="cardInfo.config_type == 1">预约/报名成功后发送</span>
           <span class="set-item__content__default" v-else-if="cardInfo.config_type == 3">设置默认回放后发送</span>
           <span class="set-item__content__default" v-else>——</span>
-          <p v-if="[2,3].includes(cardInfo.config_type)" class="set-item__content__desc">{{cardInfo.config_type == 2 ? `注意：若勾选已错过的时间点将不进行发送，当前开播时间：2022-08-29 12:00` : '注意：当前活动仅发送一次'}}</p>
+          <p v-if="[2,3].includes(cardInfo.config_type)" class="set-item__content__desc">{{cardInfo.config_type == 2 ? `注意：若勾选已错过的时间点将不进行发送，当前开播时间：${noticeDetailVo && noticeDetailVo.webinar_info && noticeDetailVo.webinar_info.start_time ? noticeDetailVo.webinar_info.start_time : '--'}` : '注意：当前活动仅发送一次'}}</p>
         </div>
       </div>
       <div class="set-dialog__footer">
@@ -179,7 +180,8 @@
         },
         sms_send_num: 0, // 预发短信数量【消息类型】
         uploadKey: null,
-        isSetWhite: '' // 观看限制 - 是否设置为白名单
+        isSetWhite: '', // 观看限制 - 是否设置为白名单
+        isLoading: false
       };
     },
     props: {
@@ -226,16 +228,16 @@
         this.cardQueryVo.short_url && window.open(this.cardQueryVo.short_url, '_blank');
       },
       getCheckStatus(item) {
-        console.log('当前状态内容', this.noticeDetailVo.sms_info)
         if (this.noticeDetailVo && this.noticeDetailVo.sms_info && this.noticeDetailVo.sms_info.send_res) {
-          const list = this.noticeDetailVo.sms_info.send_res.filter(vItem => {
-            return vItem.send_time = item.value
-          })
-          if (list && list.length > 0) {
-            return list[0].send_status || 0;
-          } else {
-            return null;
+          const list = this.noticeDetailVo.sms_info.send_res || []
+          let send_status = null
+          for (let i = 0; i<list.length; i++) {
+            if (list[i].send_time == item.value) {
+              send_status = list[i].send_status
+              break;
+            }
           }
+          return send_status
         } else {
           return null
         }
@@ -353,6 +355,7 @@
           webinar_id: this.cardInfo.webinar_id,
           config_type: this.cardInfo.config_type
         })).then((res) => {
+          this.isLoading = false
           if (res.code == 200 && res.data) {
             this.noticeDetailVo = res.data
             if (res.data.sms_info && res.data.sms_info.content) {
@@ -375,7 +378,8 @@
           }
         })
         .catch((res) => {
-          this.messageInfo(res.msg || '获取模板信息失败', 'error')
+          this.isLoading = false
+          this.messageInfo(res.msg || '获取发送设置信息失败', 'error')
           console.log(res)
           this.noticeDetailVo = {}
           this.cardQueryVo = {}
@@ -392,8 +396,7 @@
           }
         })
         .catch((res) => {
-          this.messageInfo(res.msg || '获取信息失败', 'error')
-          console.log(res)
+          console.log('获取短信余额异常', res)
           this.userSmsAmount = 0
         })
       },
@@ -410,8 +413,7 @@
           }
         })
         .catch((res) => {
-          this.messageInfo(res.msg || '获取信息失败', 'error')
-          console.log(res)
+          console.log('获取观看限制是否开启白名单异常', res)
           this.isSetWhite = ''
         })
       }
@@ -421,8 +423,7 @@
       this.userId = JSON.parse(sessionOrLocal.get('userId'));
       this.cardVo = this.app.info; // TODO inject传入的内容，在小组件内，只做赋值，不动cardVo数据
       // this.isOpenWhite = noticeApp && noticeApp.WEBINAR_PES['white_list'] && isSetWhite;
-      console.log('当前app', this.app)
-      console.log('当前noticeApp', this.noticeApp)
+      this.isLoading = true;
       await this.getSmsBalance();
       await this.getWebianrVerify();
       this.getNoticeDetail();
@@ -466,6 +467,8 @@
       }
       &__ctx {
         word-break: break-all;
+        max-height: 40px;
+        overflow-y: auto;
       }
       &__link {
         color: #1E4EDC;
