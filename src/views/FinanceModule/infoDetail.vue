@@ -419,9 +419,11 @@ export default {
     };
   },
   computed: {
-    isZhiXueYun: function () {
+    showSmsModule: function () {
       const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-      return userInfo.user_extends.extends_remark == 1
+      const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
+      // 不是知学云账号 & 开启了 短信通知配置项权限
+      return !userInfo.user_extends.extends_remark == 1 && isNoticeMessage;
     }
   },
   components: {
@@ -448,7 +450,7 @@ export default {
   methods: {
     getRoleList() {
       let arrList = JSON.parse(JSON.stringify(this.options));
-      if (this.isZhiXueYun) {
+      if (!this.showSmsModule) {
         // 如果是知学云，不考虑短信数据
         arrList = arrList.filters(item => Number(item.value) != 19)
       }

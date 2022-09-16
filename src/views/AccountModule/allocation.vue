@@ -179,7 +179,7 @@
             <li>有效期至 {{resourcesVo && resourcesVo.extend_end_time ? resourcesVo.extend_end_time : '--'}}</li>
           </ul>
         </div>
-        <ul class="ac__allocation--msg" v-if="!isZhiXueYun">
+        <ul class="ac__allocation--msg" v-if="showSmsModule">
           <div class="allocation_icon">
             <img src="../../common/images/account/saasliuliang_tubiao.png" alt="" v-show="tabType === 'trends'"/>
             <img src="../../common/images/account/saasbingfa_tubiao.png" alt="" v-show="tabType === 'regular'"/>
@@ -240,10 +240,11 @@
       PageTitle
     },
     computed:{
-      // 是否知学云客户
-      isZhiXueYun: function () {
+      showSmsModule: function () {
         const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-        return userInfo.user_extends.extends_remark == 1
+        const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
+        // 不是知学云账号 & 开启了 短信通知配置项权限
+        return !userInfo.user_extends.extends_remark == 1 && isNoticeMessage;
       },
       // 批量分配可操作按钮（只有固定分配才有按钮）
       clickOptions: function () {
@@ -276,7 +277,7 @@
           })
         }
         // 流量包
-        if (!this.isZhiXueYun) {
+        if (this.showSmsModule) {
           list.push({
             value: '19',
             label: '分配短信'
@@ -672,7 +673,7 @@
           resources: row.inputCount || 0,
           extend_day: row.inputExtendDay || 0
         }
-        if (!this.isZhiXueYun) {
+        if (this.showSmsModule) {
           // 增加短信设置
           paramsKv.sms = Number(row.inputSms) || 0
         }
@@ -715,7 +716,7 @@
                 result.extend_day = item.extend_day;
                 result.resources = Number(this.multiAllocForm.count2);
               }
-              if (!this.isZhiXueYun && this.dialogType === 19) {
+              if (this.showSmsModule && this.dialogType === 19) {
                 // 短信分配，设置cms，增量
                 result.sms = Number(this.multiAllocForm.count2);
                 result.resources = 0;
@@ -731,7 +732,7 @@
               type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量,
               pid: sessionOrLocal.get('userId'),
               kv: childIdList,
-              scene: !this.isZhiXueYun && this.dialogType === 19 ? 2 : 3
+              scene: this.showSmsModule && this.dialogType === 19 ? 2 : 3
             };
             this.sendAllocSet(params);
           }

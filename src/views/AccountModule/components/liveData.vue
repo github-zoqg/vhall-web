@@ -22,7 +22,7 @@
         @clear="queryList">
         <i class="el-icon-search el-input__icon" slot="prefix" @click="searchList"></i>
       </VhallInput>
-      <el-select round v-model="trendType" @change="searchList" v-if="!isZhiXueYun">
+      <el-select round v-model="trendType" @change="searchList" v-if="showSmsModule">
         <el-option
           v-for="item in [{
             label: '套餐使用情况',
@@ -99,10 +99,11 @@ export default {
     };
   },
   computed: {
-    // 是否知学云客户
-    isZhiXueYun: function () {
+    showSmsModule: function () {
       const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-      return userInfo.user_extends.extends_remark == 1
+      const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
+      // 不是知学云账号 & 开启了 短信通知配置项权限
+      return !userInfo.user_extends.extends_remark == 1 && isNoticeMessage;
     }
   },
   methods: {

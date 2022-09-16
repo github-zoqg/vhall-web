@@ -17,8 +17,8 @@
     </div>
     <p class="echarts--group--title">套餐使用情况</p>
     <div class="echarts--line" ref="dateLineChartDom" id="dateLineChartDom"></div>
-    <p class="echarts--group--title" v-if="!isZhixueyun">短信使用情况</p>
-    <div class="echarts--line" ref="msgDateLineChartDom" id="msgDateLineChartDom" v-if="!isZhixueyun"></div>
+    <p class="echarts--group--title" v-if="showSmsModule">短信使用情况</p>
+    <div class="echarts--line" ref="msgDateLineChartDom" id="msgDateLineChartDom" v-if="showSmsModule"></div>
   </div>
 </template>
 
@@ -43,9 +43,11 @@ export default {
     };
   },
   computed: {
-    isZhixueyun: function () {
+    showSmsModule: function () {
       const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-      return userInfo.user_extends.extends_remark == 1
+      const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
+      // 不是知学云账号 & 开启了 短信通知配置项权限
+      return !userInfo.user_extends.extends_remark == 1 && isNoticeMessage;
     }
   },
   created() {
@@ -170,7 +172,7 @@ export default {
     getDateInfo() {
       // 套餐用量消耗图
       this.getUserPayDetail();
-      if (!this.isZhixueyun) {
+      if (this.showSmsModule) {
         // 短信消耗图
         this.getMsgLineDetail();
       }

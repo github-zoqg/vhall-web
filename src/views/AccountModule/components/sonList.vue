@@ -731,7 +731,7 @@ export default {
           width: 'auto'
         }
       ]
-      if (this.userInfo && this.userInfo.user_extends && this.userInfo.user_extends.extends_remark != 1) {
+      if (this.showSmsModule) {
         tableColumns.push({
           label: '短信分配',
           key: 'sms',
@@ -739,6 +739,12 @@ export default {
         })
       }
       return tableColumns
+    },
+    showSmsModule: function () {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
+      // 不是知学云账号 & 开启了 短信通知配置项权限
+      return userInfo.user_extends.extends_remark != 1 && isNoticeMessage == 1;
     }
   }
 };
