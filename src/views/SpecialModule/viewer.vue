@@ -156,6 +156,12 @@
           <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="saveSubjectViewer">保 存</el-button>
         </el-form>
       </div>
+      <!-- 内容提示 -->
+      <div class="subject-viewer_remark">
+        <p>注意：当开启专题统一观看限制、统一报名表单时</p>
+        <p>1. 如果专题下的多个活动分别开启了短信通知，则通过专题预约报名的用户都将收到不同活动的通知消息</p>
+        <p>2. 通过预约报名专题的用户，仅发送活动下设置的开播提醒或回放提醒，不会发送预约报名成功的通知</p>
+      </div>
       <VhallDialog :visible='visiblePreview' title="权限验证" width='400px' @close="visiblePreview = false;">
         <span  class="subject-viewer_dialog" v-if='!showPwd'>
           <el-input :placeholder="showText" v-model="stash" type="password" maxlength="12"></el-input>
@@ -749,6 +755,17 @@ export default {
     }
     &_save{
       margin-top: 8px;
+    }
+    &_remark {
+      margin-top: 16px;
+      p {
+        font-family: 'PingFang SC';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 22px;
+        color: #1A1A1A;
+      }
     }
     &_dialog{
       position: relative;
