@@ -1,5 +1,5 @@
 <template>
-  <VhallDialog :visible="dialogVisible"
+  <vh-dialog :visible="dialogVisible"
     append-to-body
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -27,8 +27,8 @@
       />
       <vh-input
         type="text"
-        class="search-data__input" size="medium" round placeholder="搜索昵称/手机号" v-model.trim="query.keyword" clearable @clear="searchSendNoticeList" @keyup.enter.native="searchSendNoticeList">
-        <i slot="prefix" class="el-input__icon el-icon-search"></i>
+        class="search-data__input" size="medium" round placeholder="请输入昵称/手机号" v-model.trim="query.keyword" clearable @clear="searchSendNoticeList" @keyup.enter.native="searchSendNoticeList">
+        <i slot="prefix" class="el-input__icon el-icon-search" @click="searchSendNoticeList"></i>
       </vh-input>
       <vh-button round ghost size="medium" class="search-data__btn"  @click="exportSendData" :disabled="!noticeResults.is_export">导出数据</vh-button>
     </div>
@@ -38,7 +38,7 @@
     </vh-tabs>
     <!-- 表格层 -->
     <div class="tab-content">
-      <vh-table ref="noticeTable" :data="noticeResults.list">
+      <vh-table ref="noticeTable" :data="noticeResults.list" max-height="288">
         <vh-table-column
           align="left"
           v-for="(item, index) in tableColumn"
@@ -50,16 +50,17 @@
           <template slot-scope="scope">
             <div class="icon-status" v-if="item.key === 'send_status'">
               <i class="icon-dot" :style="{background: scope.row[item.key] == 1 ? '#0FBA5A' : '#FB2626'}"></i>
-              <span>{{ ['- -', '发送成功', '发送失败'][scope.row[item.key]] || '' }}</span>
+              <!-- 发送状态 ，发送状态  0,发送中 1，发送成功 2，发送失败	 -->
+              <span>{{ ['发送中', '发送成功', '发送失败'][scope.row[item.key]] || '' }}</span>
             </div>
             <span v-else>{{ scope.row[item.key] || '- -' }}</span>
           </template>
         </vh-table-column>
         <div slot="empty"></div>
       </vh-table>
-      <noData :nullType="'nullData'" height=0 v-if="!noticeResults.total" :text="'暂未搜索到您想要的内容'"></noData>
+      <noData :nullType="'nullData'" height=60 v-if="!noticeResults.total" :text="'暂未搜索到您想要的内容'"></noData>
       <div class="tab-content_page" v-if="noticeResults.total > 0">
-        <p class="notice-info">发送成功：<span class="color-blue">{{noticeResults.success_num}}</span> 条<span class="span-between">&nbsp;</span>发送失败：<span class="color-red">{{noticeResults.fail_num}}</span> 条</p>
+        <p class="notice-info">发送成功：<span class="color-blue">{{noticeResults.success_num||0}}</span> 条<span class="span-between">&nbsp;</span>发送失败：<span class="color-red">{{noticeResults.fail_num || 0}}</span> 条</p>
         <SPagination
           :total="noticeResults.total"
           v-show="noticeResults.total > 10"
@@ -74,7 +75,7 @@
         </SPagination>
       </div>
     </div>
-  </VhallDialog>
+  </vh-dialog>
 </template>
 <script>
   import noData from '@/views/PlatformModule/Error/nullPage';
@@ -131,7 +132,7 @@
         tableColumn: [
           {
             label: '昵称',
-            key: 'nick_name',
+            key: 'nickname',
             width: 'auto'
           },
           {
@@ -141,7 +142,7 @@
           },
           {
             label: '来源',
-            key: 'refer',
+            key: 'sms_souce_str',
             width: 'auto'
           },
           {
@@ -151,7 +152,7 @@
           },
           {
             label: '发送时间',
-            key: 'send_date',
+            key: 'send_time',
             width: 'auto'
           },
           {
@@ -179,7 +180,9 @@
     inject: ['app'],
     methods: {
       dealDisabledDate(time) {
-        return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
+        const day = 365 * 24 * 3600 * 1000
+        // 可以选择当天，及近一年的数据
+        return time.getTime() > Date.now() || time.getTime() < Date.now() - day; //设置选择今天以及今天以前的日期
       },
       // 每页改变条数事件
       handleSizeChange(val) {
@@ -208,8 +211,8 @@
           this.pageNum = 1;
         }
         if (this.searchDate) {
-          this.query.start_time = this.searchDate[0];
-          this.query.end_time = this.searchDate[1];
+          this.query.start_time = this.$moment(this.searchDate[0]).format('YYYY-MM-DD 00:00:00') // 有效期 - 开始时间
+          this.query.end_time = this.$moment(this.searchDate[1]).format('YYYY-MM-DD 23:59:59')
         }
         this.$fetch('getNoticeRecordList', this.$params({
           webinar_id: this.$route.params.str || '',
@@ -217,6 +220,14 @@
           config_type: Number(this.query.config_type)
         })).then(res => {
           if (res && res.code == 200 && res.data) {
+            res.data.list.map(item => {
+              let smsSource = item.sms_source.split(',') || []
+              const newSmsSouce = []
+              smsSource.forEach(sItem => {
+                newSmsSouce.push(['--','预约/报名用户','白名单','导入','预约/报名中未观看直播用户'][sItem])
+              });
+              item.sms_souce_str = newSmsSouce.join(',')
+            })
             this.noticeResults = res.data
           } else {
             this.noticeResults = {
@@ -252,30 +263,29 @@
       },
       // 导出发送记录数据
       exportSendData() {
-        if (this.searchDate) {
-          this.query.start_time = this.searchDate[0];
-          this.query.end_time = this.searchDate[1];
-        }
         this.$fetch('exportNoticeRecord', this.$params({
           webinar_id: this.$route.params.str || '',
           ...this.query,
           config_type: Number(this.query.config_type)
         })).then(res => {
-          this.$messageInfo('导出申请成功，请去下载中心下载', 'success');
+          this.messageInfo('导出申请成功，请去下载中心下载', 'success');
           this.$EventBus.$emit('saas_vs_download_change');
         }).catch(res => {
-          this.$messageInfo(res.msg || `导出失败`, 'error');
+          this.messageInfo(res.msg || `导出失败`, 'error');
         })
       },
       initPage() {
-        // 初始化设置日期为最近一年 1000 * 60 * 24
-        const end = new Date();
-        const start = new Date();
-        end.setTime(end.getTime());
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 365);
-        this.searchDate = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')]
-        this.query.start_time = this.searchDate[0];
-        this.query.end_time = this.searchDate[1];
+        // 初始化设置日期为最近一周
+        const end = new Date()
+        const start = new Date()
+        end.setTime(end.getTime())
+        start.setTime(start.getTime() - 3600 * 1000 * 24 * 6)
+        this.searchDate = [
+          this.$moment(start).format('YYYY-MM-DD'),
+          this.$moment(end).format('YYYY-MM-DD')
+        ]
+        this.query.start_time = this.$moment(this.searchDate[0]).format('YYYY-MM-DD 00:00:00')
+        this.query.end_time = this.$moment(this.searchDate[1]).format('YYYY-MM-DD 00:00:00')
       }
     },
     created() {
@@ -326,7 +336,11 @@
   /deep/.vh-tabs__header {
     margin: 0 0 12px;
   }
+  /deep/.vh-table__empty-block {
+    min-height: 0;
+  }
   .tab-content {
+    min-height: 338px;
     .icon-status {
       height: 20px;
       display: flex;

@@ -467,6 +467,8 @@
       }
       &__ctx {
         word-break: break-all;
+        max-height: 40px;
+        overflow-y: auto;
       }
       &__link {
         color: #1E4EDC;
