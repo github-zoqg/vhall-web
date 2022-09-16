@@ -603,10 +603,18 @@ export default {
     goPreviewLiving(){
       this.$refs.livingPreview.dialogVisible = true
     },
+    toFloorEven(num) {
+      const floorNum = Math.floor(num)
+      return floorNum % 2 == 1 ? floorNum + 1 : floorNum
+    },
     cropComplete(cropedData, url, index) {
       console.log(cropedData, url, index)
       this.livingForm.videoBackGround = url;
-      this.livingForm.videoBackGroundSize = cropedData;
+      this.livingForm.videoBackGroundSize = {
+        ...cropedData,
+        width: this.toFloorEven(cropedData.width),
+        height: this.toFloorEven(cropedData.height)
+      };
     },
     cropComplete2(cropedData, url, mode, index) {
       console.log(cropedData, url, mode, index)
