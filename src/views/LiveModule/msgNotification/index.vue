@@ -16,7 +16,7 @@
         短信余额：<strong :class="smsBalance && smsBalance.sms > 0 ? 'color-blue' : 'color-red'">{{ smsBalance ? smsBalance.sms || 0 : 0 }}</strong> 条
       </div>
     </pageTitle>
-    <div class="msg-notification__body">
+    <div class="msg-notification__body" v-loading="isLoading">
       <div class="msg-notification__top">
         <div class="msg-sign__top"  @blur.stop="cancelSaveMsgSign">
           <span :class="['msg-sign__top__label', {
@@ -28,7 +28,7 @@
           <vh-button borderRadius="4" type="text" plain  @click="noticeConfigEdit('cancel')"  v-if="!isSignShow" size="mini" class="zdy-theme-gray">取消</vh-button>
         </div>
         <!-- 开启了微信授权的时候，才有短信验证码开关设置 -->
-        <div class="switchBox" v-if="msgInfo && msgInfo.config_info && WEBINAR_PES && ![1, '1'].includes(WEBINAR_PES['ui.hide_wechat'])">
+        <div class="switchBox" v-if="msgInfo && msgInfo.config_info && WEBINAR_PES && WEBINAR_PES['ui.hide_wechat']!=1">
           <vh-switch
             v-model="msgInfo.config_info.phone_verify_status"
             @change="switchChangeOpen"
@@ -269,11 +269,13 @@ export default {
       this.$fetch('getNoticePageList', {
         webinar_id: this.$route.params.str
       }).then(res => {
+        this.isLoading = false;
         let msgInfo = res.data
         msgInfo = this.joinNoticeItemStatic(msgInfo)
         this.msgInfo = msgInfo
         this.showSignText = msgInfo.config_info.sms_sign || '微吼直播'
       }).catch(res => {
+        this.isLoading = false;
         this.messageInfo(res.msg || '获取信息失败', 'error')
         this.msgInfo = {config_info: {}, list: []}
       });
@@ -323,6 +325,7 @@ export default {
       }
     });
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    this.isLoading = true
     await this.getConfigListIsOpen(1, this.$route.params.str)
     await this.getSmsBalance();
     await this.getLiveDetail(this.$route.params.str)

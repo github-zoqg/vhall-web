@@ -99,7 +99,7 @@ export default {
     showSmsModule: function () {
       const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
       // 不是知学云账号 & 开启了 短信通知配置项权限
-      return !this.isZhiXueYun && isNoticeMessage;
+      return (!this.isZhiXueYun) && isNoticeMessage == 1;
     },
     dynamicText: function() {
       return `（${this.isZhiXueYun && this.sonVo && this.sonVo.is_dynamic == 2 ? '固定' : (this.sonVo && this.sonVo.is_dynamic > 0 ? '动态' : '固定') }）`
