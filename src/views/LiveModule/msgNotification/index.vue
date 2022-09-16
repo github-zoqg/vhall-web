@@ -245,7 +245,9 @@ export default {
             }
           ]
         } else {
-          item.content_str_min = this.formatContentStr(item, msgInfo, 16)
+          // 每个开播类型，最多支持展示的文字长度
+          let maxLen = [0, 18, 26, 45][item.config_type]
+          item.content_str_min = this.formatContentStr(item, msgInfo, maxLen)
         }
       })
       return msgInfo
@@ -255,8 +257,8 @@ export default {
       if (!item.content_template) {
         return ''
       }
-      const smsSign = msgInfo?.sms_info?.sms_sign || '微吼直播'
-      const subject = msgInfo?.webianr_info?.subject || ''
+      const smsSign = msgInfo?.config_info?.sms_sign || '微吼直播'
+      const subject = msgInfo?.webinar_info?.subject || ''
       // 举例 —— 最小展示规则：中文加签名长度16个字长度，若超出，活动名称长度=14-签名长度，拼接上...
       let subjectByType = (subject.length + smsSign.length) > len ? subject.substring(0, (len-2) - smsSign.length) + '...' : subject
       // 格式化列表展示文案

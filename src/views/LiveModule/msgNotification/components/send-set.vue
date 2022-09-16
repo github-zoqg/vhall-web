@@ -361,10 +361,12 @@
         })).then((res) => {
           this.isLoading = false
           if (res.code == 200 && res.data) {
-            this.noticeDetailVo = res.data
             if (res.data.sms_info && res.data.sms_info.content_template) {
-              res.data.content_str_max = this.formatContentStr(res.data, 96)
+              // 每个开播类型，最多支持展示的文字长度
+              let maxLen = [0, 48, 57, 72][this.cardInfo.config_type]
+              res.data.sms_info.content_str_max = this.formatContentStr(res.data, maxLen)
             }
+            this.noticeDetailVo = res.data
             this.cardQueryVo = res.data.sms_info
             // 计算短信长度
             /* const smsStr = res.data.sms_info.content_str + res.data.sms_info.short_url
@@ -391,11 +393,12 @@
       },
       // 格式化短信部分内容呈现
       formatContentStr(resVo, len = 96) {
+        console.log('当前resVo', resVo)
         if (!resVo.sms_info.content_template) {
           return ''
         }
-        const smsSign = resVo?.sms_info?.sms_sign || '微吼直播'
-        const subject = resVo?.webianr_info?.subject || ''
+        const smsSign = resVo?.config_info?.sms_sign || '微吼直播'
+        const subject = resVo?.webinar_info?.subject || ''
         // 举例 —— 最小展示规则：中文加签名长度16个字长度，若超出，活动名称长度=14-签名长度，拼接上...
         let subjectByType = (subject.length + smsSign.length) > len ? subject.substring(0, (len-2) - smsSign.length) + '...' : subject
         // 格式化列表展示文案
