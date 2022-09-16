@@ -29,7 +29,7 @@
           <span v-else>0</span>
         </p>
       </div>
-      <div :class="topItemCss(3)" v-if="!isZhiXueYun">
+      <div :class="topItemCss(3)" v-if="showSmsModule">
         <p>短信余额（条）</p>
         <p class="custom-font-barlow">
           <count-to :startVal="0" :endVal="sonInfo.vip_info.sms||0" :duration="1500" v-if="sonInfo && sonInfo.vip_info && sonInfo.vip_info.sms > 0"></count-to>
@@ -97,10 +97,15 @@ export default {
         return 0;
       }
     },
-    // 是否知学云客户
     isZhiXueYun: function () {
       const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-      return userInfo.user_extends.extends_remark == 1
+      return userInfo.user_extends.extends_remark == 1;
+    },
+    showSmsModule: function () {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
+      // 不是知学云账号 & 开启了 短信通知配置项权限
+      return userInfo.user_extends.extends_remark != 1 && isNoticeMessage == 1;
     }
   },
   methods:{
@@ -138,10 +143,15 @@ export default {
       this.getSonInfo();// 获取子账号统计信息
     },
     topItemCss(type) {
-      if (this.isZhiXueYun) {
+      if(this.showSmsModule) {
+        // 不是知学云，开启了短信
+        return 'top-item top-item-lg4'
+      } else if (this.isZhiXueYun) {
+        // 是知学云
         return type === 0 ? 'top-item' : 'top-item top-item-lg'
       } else {
-        return 'top-item top-item-lg4'
+        // 不是知学云，未开启短信
+        return 'top-item'
       }
     }
   },

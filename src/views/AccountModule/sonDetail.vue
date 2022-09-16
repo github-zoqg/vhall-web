@@ -47,10 +47,9 @@
           </li>
           <li>
             <label>用量分配</label>
-            <!-- <p>{{sonVo &&  sonVo.vip_info.type > 0 ? '流量' : '并发' }}（{{isZhiXueYun && sonVo && sonVo.is_dynamic == 2 ? '固定' : (sonVo && sonVo.is_dynamic > 0 ? '动态' : '固定') }}）</p> -->
-            <p v-if="sonVo &&  sonVo.vip_info.type === 0">并发{{ dynamicText }}<span v-if="!isZhiXueYun">&nbsp;&nbsp;|&nbsp;&nbsp;短信{{ dynamicText }}</span></p>
-            <p v-if="sonVo &&  sonVo.vip_info.type === 1">流量{{ dynamicText }}<span v-if="!isZhiXueYun">&nbsp;&nbsp;|&nbsp;&nbsp;短信{{ dynamicText }}</span></p>
-            <p v-if="sonVo &&  sonVo.vip_info.type === 2">时长{{ dynamicText }}<span v-if="!isZhiXueYun">&nbsp;&nbsp;|&nbsp;&nbsp;短信{{ dynamicText }}</span></p>
+            <p v-if="sonVo &&  sonVo.vip_info.type === 0">并发{{ dynamicText }}<span v-if="showSmsModule">&nbsp;&nbsp;|&nbsp;&nbsp;短信{{ dynamicText }}</span></p>
+            <p v-if="sonVo &&  sonVo.vip_info.type === 1">流量{{ dynamicText }}<span v-if="showSmsModule">&nbsp;&nbsp;|&nbsp;&nbsp;短信{{ dynamicText }}</span></p>
+            <p v-if="sonVo &&  sonVo.vip_info.type === 2">时长{{ dynamicText }}<span v-if="showSmsModule">&nbsp;&nbsp;|&nbsp;&nbsp;短信{{ dynamicText }}</span></p>
           </li>
           <li>
             <label>手机号码</label>
@@ -95,7 +94,12 @@ export default {
     },
     isZhiXueYun: function () {
       const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
-      return userInfo.user_extends.extends_remark == 1
+      return userInfo.user_extends.extends_remark == 1;
+    },
+    showSmsModule: function () {
+      const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
+      // 不是知学云账号 & 开启了 短信通知配置项权限
+      return !this.isZhiXueYun && isNoticeMessage;
     },
     dynamicText: function() {
       return `（${this.isZhiXueYun && this.sonVo && this.sonVo.is_dynamic == 2 ? '固定' : (this.sonVo && this.sonVo.is_dynamic > 0 ? '动态' : '固定') }）`
