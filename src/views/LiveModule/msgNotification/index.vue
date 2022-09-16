@@ -22,7 +22,7 @@
           <span :class="['msg-sign__top__label', {
             'is_no_edit': isSignShow
           }]">短信签名：</span><span v-if="isSignShow" :class="isSignShow ? 'is_no_edit' : ''">{{ showSignText }}</span>
-          <vh-input type="text" maxlength="15" show-word-limit v-if="!isSignShow" v-model.trim="inputSign" autocomplete="off" placeholder="请输入短信签名" size="mini"></vh-input>
+          <vh-input type="text" maxlength="12" show-word-limit v-if="!isSignShow" v-model.trim="inputSign" autocomplete="off" placeholder="请输入短信签名" size="mini"></vh-input>
           <vh-link icon="el-icon-edit" :underline="false"  @click.prevent="editSignShow" v-if="isSignShow"></vh-link>
           <vh-button borderRadius="4" type="text" round  @click="noticeConfigEdit('confirm')"  v-if="!isSignShow" size="mini" class="zdy-theme-red">确定</vh-button>
           <vh-button borderRadius="4" type="text" plain  @click="noticeConfigEdit('cancel')"  v-if="!isSignShow" size="mini" class="zdy-theme-gray">取消</vh-button>
@@ -158,7 +158,7 @@ export default {
         this.isSignShow = true;
         return;
       }
-      if (this.inputSign.length > 15 || this.inputSign.length < 2) {
+      if (this.inputSign.length > 12 || this.inputSign.length < 2) {
         this.messageInfo(`短信签名，长度2-12个字符`, 'error')
         if (!this.inputSign) {
           this.inputSign = '微吼直播'

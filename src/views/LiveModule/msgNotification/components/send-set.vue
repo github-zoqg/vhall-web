@@ -4,6 +4,7 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :before-close="handleClose"
+    v-loading="isLoading"
     width="744px"
     title="发送设置">
       <!-- 发送对象 -->
@@ -179,7 +180,8 @@
         },
         sms_send_num: 0, // 预发短信数量【消息类型】
         uploadKey: null,
-        isSetWhite: '' // 观看限制 - 是否设置为白名单
+        isSetWhite: '', // 观看限制 - 是否设置为白名单
+        isLoading: false
       };
     },
     props: {
@@ -353,6 +355,7 @@
           webinar_id: this.cardInfo.webinar_id,
           config_type: this.cardInfo.config_type
         })).then((res) => {
+          this.isLoading = false
           if (res.code == 200 && res.data) {
             this.noticeDetailVo = res.data
             if (res.data.sms_info && res.data.sms_info.content) {
@@ -375,7 +378,8 @@
           }
         })
         .catch((res) => {
-          this.messageInfo(res.msg || '获取模板信息失败', 'error')
+          this.isLoading = false
+          this.messageInfo(res.msg || '获取发送设置信息失败', 'error')
           console.log(res)
           this.noticeDetailVo = {}
           this.cardQueryVo = {}
@@ -392,8 +396,7 @@
           }
         })
         .catch((res) => {
-          this.messageInfo(res.msg || '获取信息失败', 'error')
-          console.log(res)
+          console.log('获取短信余额异常', res)
           this.userSmsAmount = 0
         })
       },
@@ -410,8 +413,7 @@
           }
         })
         .catch((res) => {
-          this.messageInfo(res.msg || '获取信息失败', 'error')
-          console.log(res)
+          console.log('获取观看限制是否开启白名单异常', res)
           this.isSetWhite = ''
         })
       }
@@ -421,8 +423,7 @@
       this.userId = JSON.parse(sessionOrLocal.get('userId'));
       this.cardVo = this.app.info; // TODO inject传入的内容，在小组件内，只做赋值，不动cardVo数据
       // this.isOpenWhite = noticeApp && noticeApp.WEBINAR_PES['white_list'] && isSetWhite;
-      console.log('当前app', this.app)
-      console.log('当前noticeApp', this.noticeApp)
+      this.isLoading = true;
       await this.getSmsBalance();
       await this.getWebianrVerify();
       this.getNoticeDetail();
