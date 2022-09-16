@@ -162,6 +162,7 @@ export default {
       let checkIds = this.checkedList
       if(ids && ids.length > 0) {
         checkIds = ids
+        this.selectWebinars = ids
       }
       if (checkIds.length > 0) {
         const checked = checkIds.map((item) => {

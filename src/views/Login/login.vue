@@ -593,6 +593,7 @@ export default {
         this.errorText = '';
         this.errorMsgShow = '';
         sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+        sessionOrLocal.set( 'tokenRefresh', new Date().getTime(), 'localStorage')
         sessionOrLocal.set('tokenExpiredTime', res.data.exp_time || '', 'localStorage');
         // 存储控制台-channel_id频道
         sessionOrLocal.set('SAAS_V3_CHANNEL_ID', res.data.channel_id || '', 'localStorage');
