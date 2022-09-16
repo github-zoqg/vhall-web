@@ -37,9 +37,9 @@
           <span class="item-card_start_timer">{{  baseStartText }}</span>
           <!-- 1=已发送，0=未发送（默认），2=发送中 ，3=已过时-->
           <span class="item-card_start_status" v-if="info.send_status == 1"><img src="../images/fill-success.svg"/>已发送</span>
-          <span class="item-card_start_status" v-else-if="info.send_status == 2"><img src="../images/fill-wait.svg"/>未发送</span>
+          <span class="item-card_start_status" v-else-if="info.send_status == 2"><img src="../images/fill-send.svg"/>发送中</span>
           <span class="item-card_start_status" v-else-if="info.send_status == 3"><img src="../images/fill-warning.svg"/>已过时</span>
-          <span class="item-card_start_status" v-else><img src="../images/fill-send.svg"/>发送中</span>
+          <span class="item-card_start_status" v-else><img src="../images/fill-wait.svg"/>未发送</span>
         </p>
         <!-- 微信：设置时间 -->
         <template v-if="info && info.config_type == 5">
@@ -75,9 +75,9 @@
         <template v-if="info && [3,5,6].includes(info.config_type)">
           <!-- 1=已发送，0=未发送（默认），2=发送中 ，3=已过时-->
           <span class="item-card_start_status" v-if="info.send_status == 1"><img src="../images/fill-success.svg"/>已发送</span>
-          <span class="item-card_start_status" v-else-if="info.send_status == 2"><img src="../images/fill-wait.svg"/>未发送</span>
+          <span class="item-card_start_status" v-else-if="info.send_status == 2"><img src="../images/fill-send.svg"/>发送中</span>
           <span class="item-card_start_status" v-else-if="info.send_status == 3"><img src="../images/fill-warning.svg"/>已过时</span>
-          <span class="item-card_start_status" v-else><img src="../images/fill-send.svg"/>发送中</span>
+          <span class="item-card_start_status" v-else><img src="../images/fill-wait.svg"/>未发送</span>
         </template>
         <template v-else>
           <span class="margin-l10"></span>
