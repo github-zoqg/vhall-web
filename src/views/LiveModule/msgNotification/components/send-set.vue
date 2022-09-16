@@ -48,7 +48,7 @@
         <label class="set-item__label">短信内容</label>
         <div class="set-item__content">
           <div class="set-item__content_center">
-            <div class="set-item__content_center__ctx">{{cardQueryVo && cardQueryVo.content_str ? cardQueryVo.content_str : ''}} <span @click="openShortLink" class="set-item__content_center__link">{{cardQueryVo && cardQueryVo.short_url ? cardQueryVo.short_url : ''}}</span></div>
+            <div class="set-item__content_center__ctx">{{cardQueryVo && cardQueryVo.content_str_max ? cardQueryVo.content_str_max : ''}} <span @click="openShortLink" class="set-item__content_center__link">{{cardQueryVo && cardQueryVo.short_url ? hideString(cardQueryVo.short_url, 28) : ''}}</span></div>
           </div>
           <p class="set-item__content_bottom">
             <span>短信字数：<strong>{{smsCensus.wordage}}</strong>（含退订后缀）</span>
@@ -199,6 +199,10 @@
       ImportExcel
     },
     methods: {
+      // 格式化字符串
+      hideString(str, len) {
+        return str.length > len ? str.substring(0, len) + '...' : str
+      },
       //文案提示问题
       messageInfo(title, type) {
         if (this.vm) {
@@ -358,8 +362,8 @@
           this.isLoading = false
           if (res.code == 200 && res.data) {
             this.noticeDetailVo = res.data
-            if (res.data.sms_info && res.data.sms_info.content) {
-              res.data.sms_info.content_str =  res.data.sms_info.content.replace('${sms_sign}', res.data.config_info.sms_sign).replace(new RegExp(res.data.sms_info.short_url, 'g'), '')
+            if (res.data.sms_info && res.data.sms_info.content_template) {
+              res.data.content_str_max = this.formatContentStr(res.data, 96)
             }
             this.cardQueryVo = res.data.sms_info
             // 计算短信长度
@@ -384,6 +388,18 @@
           this.noticeDetailVo = {}
           this.cardQueryVo = {}
         })
+      },
+      // 格式化短信部分内容呈现
+      formatContentStr(resVo, len = 96) {
+        if (!resVo.sms_info.content_template) {
+          return ''
+        }
+        const smsSign = resVo?.sms_info?.sms_sign || '微吼直播'
+        const subject = resVo?.webianr_info?.subject || ''
+        // 举例 —— 最小展示规则：中文加签名长度16个字长度，若超出，活动名称长度=14-签名长度，拼接上...
+        let subjectByType = (subject.length + smsSign.length) > len ? subject.substring(0, (len-2) - smsSign.length) + '...' : subject
+        // 格式化列表展示文案
+        return resVo.sms_info.content_template.replace('${sms_sign}', smsSign).replace('${subject}', subjectByType).replace(new RegExp(resVo.sms_info.short_url, 'g'), '')
       },
       // 获取短信套餐余额
       getSmsBalance() {
