@@ -245,11 +245,22 @@ export default {
             }
           ]
         } else {
-          // item.content_str = item.content.replace('${sms_sign}', msgInfo.config_info.sms_sign).replace('${url}', '')
-          item.content_str = item.content.replace('${sms_sign}', msgInfo.config_info.sms_sign).replace(new RegExp(item.short_url, 'g'), '')
+          item.content_str_min = this.formatContentStr(item, msgInfo, 16)
         }
       })
       return msgInfo
+    },
+    // 格式化短信部分内容呈现
+    formatContentStr(item, msgInfo, len = 96) {
+      if (!item.content_template) {
+        return ''
+      }
+      const smsSign = msgInfo?.sms_info?.sms_sign || '微吼直播'
+      const subject = msgInfo?.webianr_info?.subject || ''
+      // 举例 —— 最小展示规则：中文加签名长度16个字长度，若超出，活动名称长度=14-签名长度，拼接上...
+      let subjectByType = (subject.length + smsSign.length) > len ? subject.substring(0, (len-2) - smsSign.length) + '...' : subject
+      // 格式化列表展示文案
+      return item.content_template.replace('${sms_sign}', smsSign).replace('${subject}', subjectByType).replace(new RegExp(item.short_url, 'g'), '')
     },
     // 获取开播提醒内容
     getNoticePageList() {
