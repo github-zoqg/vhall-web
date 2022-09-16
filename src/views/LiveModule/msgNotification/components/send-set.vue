@@ -91,7 +91,7 @@
               <template v-else-if="getCheckStatus(item) == 2">
                 <span class="send_time_status"><img src="../images/fill-send.svg"/>发送中</span>
               </template>
-              <template v-else-if="getCheckStatus(item) === 3">
+              <template v-else-if="getCheckStatus(item) == 3">
                 <span class="send_time_status"><img src="../images/fill-warning.svg"/>已过时</span>
               </template>
               <template v-if="getCheckStatus(item) === 0">
@@ -103,7 +103,7 @@
           <span class="set-item__content__default" v-else-if="cardInfo.config_type == 1">预约/报名成功后发送</span>
           <span class="set-item__content__default" v-else-if="cardInfo.config_type == 3">设置默认回放后发送</span>
           <span class="set-item__content__default" v-else>——</span>
-          <p v-if="[2,3].includes(cardInfo.config_type)" class="set-item__content__desc">{{cardInfo.config_type == 2 ? `注意：若勾选已错过的时间点将不进行发送，当前开播时间：2022-08-29 12:00` : '注意：当前活动仅发送一次'}}</p>
+          <p v-if="[2,3].includes(cardInfo.config_type)" class="set-item__content__desc">{{cardInfo.config_type == 2 ? `注意：若勾选已错过的时间点将不进行发送，当前开播时间：${noticeDetailVo && noticeDetailVo.webinar_info && noticeDetailVo.webinar_info.start_time ? noticeDetailVo.webinar_info.start_time : '--'}` : '注意：当前活动仅发送一次'}}</p>
         </div>
       </div>
       <div class="set-dialog__footer">
@@ -226,16 +226,16 @@
         this.cardQueryVo.short_url && window.open(this.cardQueryVo.short_url, '_blank');
       },
       getCheckStatus(item) {
-        console.log('当前状态内容', this.noticeDetailVo.sms_info)
         if (this.noticeDetailVo && this.noticeDetailVo.sms_info && this.noticeDetailVo.sms_info.send_res) {
-          const list = this.noticeDetailVo.sms_info.send_res.filter(vItem => {
-            return vItem.send_time = item.value
-          })
-          if (list && list.length > 0) {
-            return list[0].send_status || 0;
-          } else {
-            return null;
+          const list = this.noticeDetailVo.sms_info.send_res || []
+          let send_status = null
+          for (let i = 0; i<list.length; i++) {
+            if (list[i].send_time == item.value) {
+              send_status = list[i].send_status
+              break;
+            }
           }
+          return send_status
         } else {
           return null
         }
