@@ -341,6 +341,10 @@
             })).then(res => {
               if (res && res.code == 200) {
                 this.messageInfo('已发送，请观察短信是否能正常收到', 'success')
+                this.innerVisible = false;
+                // 刷新余额
+                this.getSmsBalance();
+                this.$emit('saveChange')
               } else {
                 this.messageInfo(res.msg || '发送失败', 'error')
               }

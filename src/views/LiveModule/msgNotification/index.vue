@@ -79,7 +79,6 @@ export default {
       showSignText: null,
       inputSign: null,
       isSignShow: true,
-      liveDetailInfo: {}, // 活动详情
       baseSet: [],
       wxSet: [],
       smsBalance: {},
@@ -138,6 +137,7 @@ export default {
     },
     // 刷新界面数据
     reloadAjax() {
+      this.getSmsBalance();
       this.getNoticePageList()
     },
     // 打开弹窗
@@ -194,21 +194,6 @@ export default {
       this.isSignShow = true
       this.msgInfo.msg = this.showSignText
     },
-    // 获取基本信息
-    getLiveDetail(id) {
-      this.loading = true
-      return this.$fetch('getWebinarInfo', { webinar_id: id })
-        .then((res) => {
-          this.liveDetailInfo = res.data
-        })
-        .catch((res) => {
-          this.messageInfo(res.msg || '获取信息失败', 'error')
-          console.log(res)
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
     //文案提示问题
     messageInfo(title, type) {
       if (this.vm) {
@@ -234,14 +219,15 @@ export default {
         item.is_allow_set = item.config_type < 4 ? true : false
         item.notice_switch = !!item.notice_switch
         if (item.config_type > 3) {
+          // 微信
           item.content = [
             {
               label: '直播标题',
-              value: this.liveDetailInfo.subject
+              value: msgInfo.webinar_info.subject
             },
             {
               label: '开播时间',
-              value: this.liveDetailInfo.start_time
+              value: msgInfo.webinar_info.start_time
             }
           ]
         } else {
@@ -328,7 +314,6 @@ export default {
     this.isLoading = true
     await this.getConfigListIsOpen(1, this.$route.params.str)
     await this.getSmsBalance();
-    await this.getLiveDetail(this.$route.params.str)
     this.getNoticePageList()
   },
   beforeDestroy() {
