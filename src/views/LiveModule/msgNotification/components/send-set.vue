@@ -109,7 +109,7 @@
       </div>
       <div class="set-dialog__footer">
         <p class="set-dialog__footer_left"><span class="set-item__test" @click="openTestDialog">发送测试短信</span></p>
-        <vh-button type="primary"  size="medium" round @click="saveInfo">确 定</vh-button>
+        <vh-button type="primary"  size="medium" round @click="saveInfo" :disabled="btnDisabled || saveLoading">{{ saveLoading ? '执行中' : '确 定' }}</vh-button>
         <vh-button @click="handleClose"  size="medium" round>取 消</vh-button>
       </div>
       <!-- 发送测试短信 -->
@@ -180,8 +180,11 @@
         },
         sms_send_num: 0, // 预发短信数量【消息类型】
         uploadKey: null,
+        isUploadChange: false, // 导入文件是否有做出修改
         isSetWhite: '', // 观看限制 - 是否设置为白名单
-        isLoading: false
+        isLoading: false,
+        btnDisabled: false, // 是否禁用按钮
+        saveLoading: false // 是否保存执行中
       };
     },
     props: {
@@ -251,8 +254,9 @@
         this.$emit('close')
       },
       // 导入文件地址记录
-      uploadKeySet(key) {
-        this.uploadKey = key
+      uploadKeySet(obj = {}) {
+        this.uploadKey = obj.key || ''
+        this.isUploadChange = obj.isEdit || false
       },
       // 保持验证余额数量
       saveInfo() {
@@ -284,20 +288,43 @@
           params.send_time = '';
         }
         if (this.send_user.includes('3')) {
-          if (!this.uploadKey) {
-            this.messageInfo('请导入文件', 'warning')
-            return
-          }
-          // 导入
-          params.key = this.uploadKey
-        } else {
-          try {
-            delete params.key;
-          } catch(e) {
-            console.log(e)
+          console.log('当前数据状态', this.uploadKey, this.isUploadChange)
+          // 选择了发送对象 - 导入用户，但从来没上传过，提示 [uploadKey为空，isUploadChange为false，noticeDetailVo.sms_info.import_user_url 为空]
+          // 选择了发送对象 - 导入用户，上传过，但是没有编辑 [uploadKey为空，isUploadChange 为false，noticeDetailVo.sms_info.import_user_url 不为空]，不提示，不传递key
+          // 选择了发送对象 - 导入用户，上传过，有编辑 [uploadKey不为空，isUploadChange 为true，noticeDetailVo.sms_info.import_user_url 之前不为空]，不提示，传递key
+          // 不选择发送对象 - 无导入用户key入参
+          if (this.noticeDetailVo.sms_info.import_user_url == '') {
+            if (!this.uploadKey && !this.isUploadChange) {
+              // 未上传过
+              this.messageInfo('请导入文件', 'warning')
+              return
+            } else {
+              // uploadKey有值表示有上传
+              params.key = this.uploadKey
+            }
+          } else {
+            if (!this.uploadKey && !this.isUploadChange) {
+              // 之前有反显，当前无编辑 —— 无任何操作
+            } else {
+              if (this.uploadKey && this.isUploadChange) {
+                // 有反显，当前有编辑，更新文件
+                params.key = this.uploadKey
+              } else if (!this.uploadKey && this.isUploadChange) {
+                // 有反显，当前有编辑，但是没有上传key，表示只是删除
+                this.messageInfo('请导入文件', 'warning')
+                setTimeout(() => {
+                  this.$refs.importNoticeExcel && this.$refs.importNoticeExcel.resetSelectFile();
+                }, 2000)
+                return
+              } else {
+                // 有反显，当前无key，未作出任何修改 —— 无任何操作
+              }
+            }
           }
         }
+        this.saveLoading = true;
         this.$fetch('saveSendSet', this.$params(params)).then((res) => {
+          this.saveLoading = false;
           if (res.code == 200) {
             this.messageInfo('设置成功', 'success')
             this.handleClose()
@@ -307,10 +334,12 @@
           }
         })
         .catch((res) => {
+          this.saveLoading = false;
           this.messageInfo(res.msg || '获取信息失败', 'error')
           console.log(res)
         })
       },
+      // 余额不足提示
       closeNoBalanceDialog() {
         this.noBalanceVisible = false;
         if (this.preSmsCount > 0) {

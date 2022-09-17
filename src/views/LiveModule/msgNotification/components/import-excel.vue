@@ -144,6 +144,7 @@ export default {
         status: 'start',
         text: '请上传文件'
       }
+      this.$emit('uploadKey', {key: '', isEdit: this.importExcelBase?.import_user_ur != this.fileUrl})
     },
     // 上传前检测
     beforeUploadHandler(file) {
@@ -246,7 +247,7 @@ export default {
         }).then(resV => {
           if (resV && resV.code == 200 && resV.data) {
             this.checkImportKey = resV.data.key
-            this.$emit('uploadKey', resV.data.key)
+            this.$emit('uploadKey', {key: resV.data.key, isEdit: this.importExcelBase?.import_user_ur != this.fileUrl})
             // 开启轮询
             this.intervalCheck()
           } else {
@@ -342,16 +343,12 @@ export default {
       }
       // 若未得到理想轮询结果，5分钟后自动停止轮询
       this.stopPolling();
-    }
-  },
-  created() {
-    // 外层控制内层dialog是否开启
-    this.visibleTemp =  this.visible
-    console.log('当前界面弹出框是否展示', this.visibleTemp)
-    if (this.visibleTemp) {
+    },
+    // 重置选中文件
+    resetSelectFile() {
       // 导入用户面板选中展示，若当前存在上传后的数据，直接展示；否则重置为空
-      if (this.importExcelBase) {
-        this.fileUrl = this.importExcelBase?.import_user_url || '';
+      if (this.importExcelBase && this.importExcelBase.import_user_url) {
+        this.fileUrl = `${this.importExcelBase?.import_user_url || ''}`;
         this.fileName = this.importExcelBase?.import_result?.file_name || '';
         this.fileResult = 'success';
         this.uploadResult = {
@@ -368,6 +365,14 @@ export default {
         this.fileResult = '';
         this.importResult = null;
       }
+    }
+  },
+  created() {
+    // 外层控制内层dialog是否开启
+    this.visibleTemp =  this.visible
+    console.log('当前界面弹出框是否展示', this.visibleTemp)
+    if (this.visibleTemp) {
+      this.resetSelectFile();
     }
   },
   mounted() {},
