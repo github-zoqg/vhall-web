@@ -1,3 +1,7 @@
+var StaticBaseUrl = {
+  test: 'https://t-alistatic01.e.vhall.com/upload/',
+  base: 'https://cnstatic01.e.vhall.com/upload/'
+}
 var SignUploadTemplateUrlNew = [
   'http://t-alistatic01.e.vhall.com/static/download/%E9%A2%84%E6%8A%A5%E5%90%8D%E6%A8%A1%E6%9D%BF.xlsx', //  报名表单-下载上传模板-静态地址（历史） --- 测试
   'http://cnstatic01.e.vhall.com/static/download/%E9%A2%84%E6%8A%A5%E5%90%8D%E6%A8%A1%E6%9D%BF.xlsx', //  报名表单-下载上传模板-静态地址（历史） --- 线上
@@ -25,6 +29,14 @@ var StaticFileUrlsMap= {
   */
   getSmsNoticeDownTemplateUrl(processKey) {
     return ['production', 'pre'].includes(processKey) ? SmsNoticeUploadTemplateUrlNew[1] : SmsNoticeUploadTemplateUrlNew[0]
+  },
+  /**
+  * getDownBaseUrl 获取消息通知下载模板路径
+  * @param {*} processKey 传递当前环境标记，当前指的是 process.env.NODE_ENV
+  * @returns
+  */
+  getDownBaseUrl(processKey) {
+    return ['production', 'pre'].includes(processKey) ? StaticBaseUrl.base : StaticBaseUrl.test
   }
 };
 export default StaticFileUrlsMap;
