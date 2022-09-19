@@ -226,7 +226,7 @@
                 :before-upload="file => this.beforeUploadHandler(file, true)"
                 @delete="resetVideoUrl">
                 <div slot="tip">
-                  <p>建议尺寸：1920*1080px，小于4M</p>
+                  <p>建议尺寸：1300*730px，小于4M</p>
                   <p>支持jpg、png</p>
                 </div>
               </upload>
