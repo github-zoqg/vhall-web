@@ -221,12 +221,15 @@
         })).then(res => {
           if (res && res.code == 200 && res.data) {
             res.data.list.map(item => {
+              // 格式化预约对象
               let smsSource = item.sms_source.split(',') || []
               const newSmsSouce = []
               smsSource.forEach(sItem => {
                 newSmsSouce.push(['--','预约/报名用户','白名单','导入','预约/报名中未观看直播用户'][sItem])
               });
               item.sms_souce_str = newSmsSouce.join(',')
+              // 单独处理测试发送
+              item.remark = (item.is_test == 1 ? '测试发送' : item.remark);
             })
             this.noticeResults = res.data
           } else {
