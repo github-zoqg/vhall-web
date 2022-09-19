@@ -314,7 +314,7 @@ export default {
     // 下载源文件
     downBaseFileHandle() {
       const xHttp = new window.XMLHttpRequest();
-      xHttp.open('GET', this.importExcelBase.import_user_url, true);
+      xHttp.open('GET', `${StaticFileUrlsMap.getDownBaseUrl(process.env.VUE_APP_NODE_ENV) + this.importExcelBase.import_user_url}`, true);
       xHttp.responseType = 'blob';
       xHttp.onload = () => {
         const url = window.URL.createObjectURL(xHttp.response);
