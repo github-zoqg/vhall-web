@@ -327,6 +327,7 @@ export default {
         chatLayout: 1,
         inavLayout: 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', //连麦布局
         inavDocumentLayout: 1, //连麦+演示布局
+        finalVideoBackground: '',
         videoBackGround: '',
         videoBlurryDegree: 0,
         videoLightDegree: 10,
@@ -577,6 +578,7 @@ export default {
       if (this.livingWapForm.background) {
         this.livingWapForm.wapBackground = this.domain_wap_url;
       }
+      this.livingForm.finalVideoBackground = this.video_url;
       let skin_json_pc = Object.assign({}, this.livingPcForm, this.livingForm);
       let skin_json_wap = Object.assign({}, this.livingWapForm, this.livingForm);
       console.log(skin_json_pc, skin_json_wap, '??????????我是直播间设置参数')
@@ -654,6 +656,7 @@ export default {
     // 视频区域图片删除
     resetVideoUrl() {
       this.livingForm.videoBackGround = '';
+      this.livingForm.finalVideoBackground = '';
       this.livingForm.videoBlurryDegree = 0;
       this.livingForm.videoLightDegree = 10;
     },
