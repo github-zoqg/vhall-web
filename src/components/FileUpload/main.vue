@@ -250,6 +250,7 @@ export default {
       }
       .picInco{
         height: 40px;
+        line-height: 40px;
       }
     }
     img{

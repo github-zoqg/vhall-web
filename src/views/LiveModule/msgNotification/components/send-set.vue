@@ -109,8 +109,8 @@
       </div>
       <div class="set-dialog__footer">
         <p class="set-dialog__footer_left"><span class="set-item__test" @click="openTestDialog">发送测试短信</span></p>
-        <vh-button type="primary"  size="medium" round @click="saveInfo" :disabled="btnDisabled || saveLoading">{{ saveLoading ? '执行中' : '确 定' }}</vh-button>
-        <vh-button @click="handleClose"  size="medium" round>取 消</vh-button>
+        <vh-button type="primary"  size="medium" round borderRadius="50" @click="saveInfo" :disabled="btnDisabled || saveLoading">{{ saveLoading ? '执行中' : '确定' }}</vh-button>
+        <vh-button @click="handleClose"  size="medium" plain borderRadius="50">取消</vh-button>
       </div>
       <!-- 发送测试短信 -->
       <vh-dialog
@@ -128,7 +128,7 @@
         </vh-form>
         <div class="dialog-footer">
           <span class="send-test__desc">注意：测试短信也将扣除您的短信余额</span>
-          <vh-button type="primary" round size="medium" @click="sendTest">立即发送</vh-button>
+          <vh-button type="primary" round size="medium" borderRadius="50" @click="sendTest" :disabled="!phoneForm.phone || (phoneForm.phone && phoneForm.phone.length != 11)">立即发送</vh-button>
         </div>
       </vh-dialog>
       <!-- 余额不足提示 -->
@@ -141,7 +141,7 @@
         class="send-no-balance__dialog">
         <div class="tip">当前预计发送 <span class="color-blue">{{preSmsCount > 0 ? preSmsCount : noticeApp.sms_send_num}}</span> 条短信，余额不足，为避免影响您的业务请及时充值。</div>
         <div slot='footer'>
-          <el-button type="primary" size="medium" round @click="closeNoBalanceDialog">我知道了</el-button>
+          <vh-button type="primary" size="medium" round borderRadius="50" @click="closeNoBalanceDialog">我知道了</vh-button>
         </div>
     </vh-dialog>
   </vh-dialog>
