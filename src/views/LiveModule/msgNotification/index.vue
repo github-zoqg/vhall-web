@@ -23,7 +23,7 @@
             'is_no_edit': isSignShow
           }]">短信签名：</span><span v-if="isSignShow" :class="isSignShow ? 'is_no_edit' : ''">{{ showSignText }}</span>
           <vh-input type="text" maxlength="12" show-word-limit v-if="!isSignShow" v-model.trim="inputSign" autocomplete="off" placeholder="请输入短信签名" size="mini"></vh-input>
-          <vh-link icon="el-icon-edit" :underline="false"  @click.prevent="editSignShow" v-if="isSignShow"></vh-link>
+          <vh-link class="msg-edit-icon" icon="el-icon-edit" :underline="false"  @click.prevent="editSignShow" v-if="isSignShow"></vh-link>
           <vh-button borderRadius="4" type="text" round  @click="noticeConfigEdit('confirm')"  v-if="!isSignShow" size="mini" class="zdy-theme-red">确定</vh-button>
           <vh-button borderRadius="4" type="text" plain  @click="noticeConfigEdit('cancel')"  v-if="!isSignShow" size="mini" class="zdy-theme-gray">取消</vh-button>
         </div>
@@ -32,7 +32,7 @@
           <vh-switch
             v-model="msgInfo.config_info.phone_verify_status"
             @change="switchChangeOpen"
-            :active-text="msgInfo.config_info.phone_verify_status ? '关闭后，用户在预约时提交手机号无需进行短信验证（不含登录/报名）' : '开启后，用户在预约时提交手机号需要进行短信验证（不含登录/报名）'"
+            :active-text="showSwitchText"
             size="mini"
             active-value="1" inactive-value="0">
           </vh-switch>
@@ -84,6 +84,12 @@ export default {
       smsBalance: {},
       sms_send_num: 0, // 预发短信数量
       webinarPes: {}
+    }
+  },
+  computed: {
+    showSwitchText: function () {
+      // 只在开关右侧展示的文案
+      return this.msgInfo && this.msgInfo.config_info && this.msgInfo.config_info.phone_verify_status ? '关闭后，用户在预约时提交手机号无需进行短信验证（不含登录/报名）' : '开启后，用户在预约时提交手机号需要进行短信验证（不含登录/报名）'
     }
   },
   provide: function() {
@@ -335,13 +341,22 @@ export default {
       color: #1A1A1A;
     }
     .color-blue {
-      color:#3562FA;
+      color: #1E4EDC;
     }
     .color-red {
       color:#FB2626;
     }
     .saasicon_help_m {
       color: #666666;
+    }
+  }
+  /deep/.vh-switch__label {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.45);
+    &.is-active {
+      color: rgba(0, 0, 0, 0.45);
     }
   }
   .msg-notification__body {
@@ -360,6 +375,11 @@ export default {
     line-height: 28px;
     .switchBox {
       margin-left: auto;
+    }
+    .msg-edit-icon {
+      &:hover {
+        color: #FB2626;
+      }
     }
     .msg-sign__top {
       display: inline-flex;
@@ -437,7 +457,7 @@ export default {
         line-height: 22px;
       }
       .color-blue {
-        color: #3562FA;
+        color: #1E4EDC;
         padding-left: 10px;
       }
       .color-red {

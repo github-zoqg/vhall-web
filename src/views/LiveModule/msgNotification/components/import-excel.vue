@@ -48,13 +48,15 @@
         <!-- 状态4:  检测成功 -->
         <div class="change-txt"
           v-if="uploadResult && uploadResult.status === 'success'">
-          <p class="p-right">上传成功，共检测到{{importResult && importResult.success}}条有效数据，{{importResult && importResult.fail}}条无效数据</p>
+          <p class="p-right">上传成功，共检测到<span class="color-blue"> {{importResult && importResult.success}} </span>条有效数据，<span class="color-red">{{importResult && importResult.fail}} </span>条无效数据</p>
         </div>
       </div>
       <!-- 状态5： 未上传 -->
       <p slot="tip" v-if="uploadResult && uploadResult.status === 'start' && !fileUrl"><span class="default_top">请使用模版上传文件</span><br/><span class="default_bottom">下载模板并完善信息后，可进行上传</span></p>
       <!-- 状态6：上传失败，后端有报错 -->
-      <p slot="tip" class="p-error" v-if="uploadResult && uploadResult.status === 'error' && !fileUrl">{{uploadResult.text}}</p>
+      <p slot="tip" class="p-error" v-if="uploadResult && uploadResult.status === 'error' && !fileUrl">
+        <span class="default_top">请使用模版上传文件</span><br/>
+        <span class="default_bottom error">{{uploadResult.text}}</span></p>
     </file-upload>
   </div>
 </template>
@@ -406,12 +408,45 @@ export default {
     margin-top: -5px;
     color: #fb3a32;
     font-size: 14px;
+    .default_bottom {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 20px;
+      text-align: center;
+      color: #E34D59;
+    }
+  }
+  .color-blue {
+    color: #1E4EDC;
+  }
+  .color-red {
+    color:#FB2626;
   }
   /deep/.el-progress__text /deep/i {
     font-size: 18px;
   }
   /deep/.el-upload--picture-card i.excel {
     margin: 16px auto 0 auto;
+  }
+  /deep/.el-upload--picture-card i.saasicon_shangchuan {
+    font-size: 28px;
+    color: #595959;
+  }
+  /deep/.mask {
+    background: rgba(0, 0, 0, 0.55)
+  }
+  /deep/.file-name {
+    margin: 8px 20px 4px 20px;
+    line-height: 22px;
+  }
+  /deep/.upload-dialog-content .p-right {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.45);
   }
   .default_top {
     font-style: normal;

@@ -372,7 +372,7 @@
       color: #FB2626;
     }
     .color-blue {
-      color: #3562FA;
+      color: #1E4EDC;
     }
     .span-between {
       width: 12px;
