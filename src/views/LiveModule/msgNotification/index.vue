@@ -89,7 +89,7 @@ export default {
   computed: {
     showSwitchText: function () {
       // 只在开关右侧展示的文案
-      return this.msgInfo && this.msgInfo.config_info && this.msgInfo.config_info.phone_verify_status ? '关闭后，用户在预约时提交手机号无需进行短信验证（不含登录/报名）' : '开启后，用户在预约时提交手机号需要进行短信验证（不含登录/报名）'
+      return this.msgInfo && this.msgInfo.config_info && this.msgInfo.config_info.phone_verify_status == 1 ? '关闭后，用户在预约时提交手机号无需进行短信验证（不含登录/报名）' : '开启后，用户在预约时提交手机号需要进行短信验证（不含登录/报名）'
     }
   },
   provide: function() {
