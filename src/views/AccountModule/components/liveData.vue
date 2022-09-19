@@ -263,7 +263,7 @@ export default {
       let apiLine = 'getTrendLineInfo';
       if (this.trendType == 'sms') {
         // 短信导出
-        apiLine = 'exportUserSmsTrend'
+        apiLine = 'exportUserSmsPayDetail'
       } else if (this.sonVo.vip_info.type === 1){
         apiLine = 'exportFlowDetail';
       } else if(this.sonVo.vip_info.type === 0){
