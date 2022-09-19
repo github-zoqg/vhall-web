@@ -396,7 +396,7 @@
           if (res.code == 200 && res.data) {
             if (res.data.sms_info && res.data.sms_info.content_template) {
               // 每个开播类型，最多支持展示的文字长度
-              let maxLen = [0, 48, 57, 72][this.cardInfo.config_type]
+              let maxLen = [0, 44, 52, 70][this.cardInfo.config_type]
               res.data.sms_info.content_str_max = this.formatContentStr(res.data, maxLen)
             }
             this.noticeDetailVo = res.data
@@ -519,8 +519,6 @@
       }
       &__ctx {
         word-break: break-all;
-        max-height: 40px;
-        overflow-y: auto;
       }
       &__link {
         color: #1E4EDC;
