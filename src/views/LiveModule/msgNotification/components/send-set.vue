@@ -14,18 +14,17 @@
           <!-- 预约发送：预约/报名用户、白名单用户 -->
           <!-- 开播提醒发送设置：预约/报名用户、导入用户、白名单用户 -->
           <!-- 回放通知发送设置：预约/报名用户、预约/报名中未观看直播用户、导入用户、白名单用户 -->
-          <vh-checkbox-group v-model="send_user" @change="checkSelect" :min="1">
-            <vh-checkbox label="1">预约/报名用户
-              <el-tooltip v-tooltipMove>
-                <div slot="content">
-                  <p>当活动专题下开启统一观看限制时，且已关联的活动下开启了开播提醒，<br/>则将分别对预约/报名用户进行消息触达</p>
-                </div>
-                <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
-              </el-tooltip>
-            </vh-checkbox>
-            <vh-checkbox label="4" v-if="cardInfo.config_type == 3">预约/报名中未观看直播用户</vh-checkbox>
-            <vh-checkbox label="3">导入用户</vh-checkbox>
-            <vh-checkbox label="2" v-if="noticeApp && noticeApp.WEBINAR_PES['white_list'] && isSetWhite">白名单用户</vh-checkbox>
+          <vh-checkbox-group v-model="send_user" @change="checkSelect" :disabled="senderUserShowLength == 1">
+            <template v-for="(item, index) in senderUserOptions">
+              <vh-checkbox :label="item.label" :key="`send_${index}`" v-if="item.isShow">{{item.text}}
+                <el-tooltip v-tooltipMove v-if="item.label == 1">
+                  <div slot="content">
+                    <p>当活动专题下开启统一观看限制时，且已关联的活动下开启了开播提醒，<br/>则将分别对预约/报名用户进行消息触达</p>
+                  </div>
+                  <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
+                </el-tooltip>
+              </vh-checkbox>
+            </template>
           </vh-checkbox-group>
         </div>
       </div>
@@ -197,6 +196,36 @@
         require: true
       }
     },
+    computed: {
+      senderUserOptions: function () {
+        return [
+          {
+            label: '1',
+            text: '预约/报名用户',
+            isShow: true
+          },
+          {
+            label: '4',
+            text: '预约/报名中未观看直播用户',
+            isShow: this.cardInfo.config_type == 3
+          },
+          {
+            label: '3',
+            text: '导入用户',
+            isShow: this.cardInfo.config_type != 1
+          },
+          {
+            label: '2',
+            text: '白名单用户',
+            isShow: this.noticeApp && this.noticeApp.WEBINAR_PES['white_list'] && this.isSetWhite
+          }
+        ]
+      },
+      senderUserShowLength: function() {
+        const list = this.senderUserOptions || []
+        return list.filter(item => item.isShow == true).length
+      }
+    },
     inject: ['app', 'noticeApp'], // 卡片对象
     components: {
       ImportExcel
@@ -276,6 +305,10 @@
           config_type: this.cardInfo.config_type,
           send_user: this.send_user.join(','),
           notice_switch: 1
+        }
+        if (this.send_user && this.send_user.length == 0) {
+          this.messageInfo('请选择发送对象', 'warning')
+          return
         }
         if (this.cardInfo.config_type == 2) {
           if (this.send_time && this.send_time.length <= 0) {
