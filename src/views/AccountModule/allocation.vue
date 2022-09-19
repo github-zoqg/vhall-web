@@ -25,7 +25,6 @@
             :data="dataList"
             tooltip-effect="dark"
             style="width: 100%"
-            max-height="250"
             @selection-change="handleSelectionChange"
             :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
             v-if="!(is_dynamic > 0) && dataList.length > 0">

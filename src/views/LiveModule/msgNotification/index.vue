@@ -217,7 +217,7 @@ export default {
     joinNoticeItemStatic(msgInfo) {
       const titleList = ['', '预约/报名成功通知', '开播提醒', '回放通知', '关注成功通知', '开播提醒', '回放通知']
       const subTitleList = ['','','','','直播关注成功通知','预约的直播即将开始', '预约直播已设置回放']
-      const descList = ['','预约/报名后发送','', '设置回放后发送', '关注成功后发送', '', '设置回放后发送']
+      const descList = ['','预约/报名后发送','', '设置默认回放后发送', '关注成功后发送', '', '设置默认回放后发送']
       msgInfo.list.map(item => {
         item.title = titleList[item.config_type]
         item.subTitle = subTitleList[item.config_type]
