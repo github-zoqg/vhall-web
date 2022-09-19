@@ -217,7 +217,7 @@
           {
             label: '2',
             text: '白名单用户',
-            isShow: this.noticeApp && this.noticeApp.WEBINAR_PES['white_list'] && this.isSetWhite
+            isShow: this.cardInfo.config_type != 1 && this.noticeApp && this.noticeApp.WEBINAR_PES['white_list'] && this.isSetWhite
           }
         ]
       },
