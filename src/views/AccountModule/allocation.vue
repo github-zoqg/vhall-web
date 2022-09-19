@@ -122,9 +122,9 @@
               fixed="right"
               width="114">
               <template slot-scope="scope">
-                <el-button type="text" @click="save(scope.row)" v-if="scope.row.isHide">保存</el-button>
+                <vh-button borderRadius="4" type="text" round @click="save(scope.row)" v-if="scope.row.isHide" size="mini" class="zdy-theme-red">保存</vh-button>
                 <el-button type="text" @click="showInput(scope.row)" v-if="!scope.row.isHide">编辑</el-button>
-                <el-button type="text" @click="hideInput(scope.row)" v-if="scope.row.isHide">取消</el-button>
+                <vh-button borderRadius="4" type="text" plain  @click="hideInput(scope.row)" v-if="scope.row.isHide" size="mini" class="zdy-theme-gray">取消</vh-button>
               </template>
             </vh-table-column>
           </vh-table>
@@ -223,8 +223,8 @@
          </vh-form-item>
       </vh-form>
       <div slot="footer" class="dialog-footer">
-        <vh-button type="primary"  size="medium" round @click="saveMultiSetHandle">确 定</vh-button>
-        <vh-button @click="closeAllocDialog"  size="medium" round>取 消</vh-button>
+        <vh-button type="primary"  size="medium" round @click="saveMultiSetHandle" borderRadius="50">确定</vh-button>
+        <vh-button @click="closeAllocDialog"  size="medium" round plain borderRadius="50">取消</vh-button>
       </div>
     </vh-dialog>
   </div>
@@ -1035,11 +1035,86 @@
       margin-right: 132px;
     }
   }
-  .panel-select-btn {
+  /* 下拉切换 */
+  /deep/.vh-select.panel-select-btn {
     position: absolute;
     right: 32px;
     top: 9px;
     width: 116px;
+    .vh-select__caret {
+      color: #bfbfbf;
+    }
+    &:hover, &:hover .vh-input.is-focus {
+      .vh-input__inner {
+        border-color: #FB2626;
+      }
+      .vh-select__caret {
+        color: #FB2626;
+      }
+      .vh-input__inner::-webkit-input-placeholder {
+        color: #FB2626;
+      }
+      .vh-input__inner::-moz-placeholder {
+        color: #FB2626;
+      }
+      .vh-input__inner:-ms-input-placeholder {
+        color: #FB2626;
+      }
+      .vh-input__inner::-ms-input-placeholder {
+        color: #FB2626;
+      }
+      .vh-input__inner::placeholder {
+        color: #FB2626;
+      }
+    }
+    .vh-input.is-disabled {
+      .vh-input__inner {
+        border-color: #d9d9d9;
+        background-color: transparent;
+      }
+      .vh-select__caret {
+        color: #bfbfbf;
+      }
+      .vh-input__inner::-webkit-input-placeholder {
+        color: #bfbfbf;
+      }
+      .vh-input__inner::-moz-placeholder {
+        color: #bfbfbf;
+      }
+      .vh-input__inner:-ms-input-placeholder {
+        color: #bfbfbf;
+      }
+      .vh-input__inner::-ms-input-placeholder {
+        color: #bfbfbf;
+      }
+      .vh-input__inner::placeholder {
+        color: #bfbfbf;
+      }
+    }
+    /* 切换要选择的时候 */
+    .vh-input.is-focus {
+      .vh-input__inner {
+        border-color: #d9d9d9;
+      }
+      .vh-select__caret {
+        color: #595959;
+      }
+      .vh-input__inner::-webkit-input-placeholder {
+        color: rgba(0, 0, 0, 0.85);
+      }
+      .vh-input__inner::-moz-placeholder {
+        color: rgba(0, 0, 0, 0.85);
+      }
+      .vh-input__inner:-ms-input-placeholder {
+        color: rgba(0, 0, 0, 0.85);
+      }
+      .vh-input__inner::-ms-input-placeholder {
+        color: rgba(0, 0, 0, 0.85);
+      }
+      .vh-input__inner::placeholder {
+        color: rgba(0, 0, 0, 0.85);
+      }
+    }
   }
   /* 选项卡 */
   /deep/.el-tabs__header {
@@ -1095,16 +1170,57 @@
     color: #1A1A1A;
   }
   .dialog__group{
+    /deep/.vh-dialog__body {
+      padding: 0 32px;
+    }
     /deep/.el-input__inner{
       border-radius: 4px;
     }
     /deep/.el-form-item {
       margin-bottom: 0;
     }
+    /deep/.vh-select-dropdown__item {
+      &.hover {
+        background-color: #d9d9d9;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 36px;
+        color: rgba(0, 0, 0, 0.85);
+        &:active {
+          background-color: #f0f0f0;
+        }
+      }
+      &:active {
+        background-color: #f0f0f0;
+      }
+    }
+    /deep/.vh-form-item__label {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      text-align: right;
+      color: rgba(0, 0, 0, 0.65);
+    }
+    /deep/.vh-button+.vh-button {
+      margin-left: 12px;
+    }
   }
   .el-table__row {
     /deep/.el-input-group {
       width: 130px;
+    }
+  }
+  /deep/.vh-button--text.zdy-theme-red {
+    color: #FB2626;
+    &:hover {
+      color: #D4151C;
+    }
+  }
+  /deep/.vh-button--text.zdy-theme-gray {
+    color: rgba(0, 0, 0, 0.65);
+    &:hover {
+      color: rgba(0, 0, 0, 0.85);
     }
   }
 </style>
