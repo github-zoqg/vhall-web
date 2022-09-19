@@ -56,7 +56,7 @@
             <!-- </transition> -->
           </div>
           <div class="preview_box_wap" v-show="livingPreview==2">
-            <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm" :isShowInteract="isShowInteract"></wap-preview>
+            <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm" :videoUrl="video_url" :isShowInteract="isShowInteract"></wap-preview>
           </div>
         </div>
       </div>
@@ -389,7 +389,7 @@ export default {
     },
     video_url() {
       if (!this.livingForm.videoBackGround) return '';
-      return `${this.livingForm.videoBackGround}?x-oss-process=image/crop,x_${this.livingForm.videoBackGroundSize.x.toFixed()},y_${this.livingForm.videoBackGroundSize.y.toFixed()},w_${this.livingForm.videoBackGroundSize.width.toFixed()},h_${this.livingForm.videoBackGroundSize.height.toFixed()}${this.livingForm.videoBlurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingForm.videoBlurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.livingForm.videoLightDegree - 10) * 5} `;
+      return `${this.livingForm.videoBackGround}?x-oss-process=image/crop,x_${this.livingForm.videoBackGroundSize.x.toFixed()},y_${this.livingForm.videoBackGroundSize.y.toFixed()},w_${this.livingForm.videoBackGroundSize.width.toFixed()},h_${this.livingForm.videoBackGroundSize.height.toFixed()}${this.livingForm.videoBlurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingForm.videoBlurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.livingForm.videoLightDegree - 10) * 5}`;
     }
   },
   methods: {
