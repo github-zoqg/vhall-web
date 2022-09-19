@@ -286,6 +286,7 @@
         ]
         this.query.start_time = this.$moment(this.searchDate[0]).format('YYYY-MM-DD 00:00:00')
         this.query.end_time = this.$moment(this.searchDate[1]).format('YYYY-MM-DD 00:00:00')
+        this.searchSendNoticeList('init')
       }
     },
     created() {
