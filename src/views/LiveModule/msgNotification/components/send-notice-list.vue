@@ -133,12 +133,12 @@
           {
             label: '昵称',
             key: 'nickname',
-            width: 'auto'
+            width: '120px'
           },
           {
             label: '手机号',
             key: 'phone',
-            width: 'auto'
+            width: '120px'
           },
           {
             label: '来源',
@@ -148,17 +148,17 @@
           {
             label: '发送状态',
             key: 'send_status',
-            width: 'auto'
+            width: '120px'
           },
           {
             label: '发送时间',
             key: 'send_time',
-            width: 'auto'
+            width: '180px'
           },
           {
             label: '备注',
             key: 'remark',
-            width: '200px'
+            width: '120px'
           }
         ],
         isHandle: false,
