@@ -459,7 +459,7 @@
        })
       .then((res) => {
           if (res.code == 200 && res.data) {
-            this.isSetWhite = res.data.verify || (res.data.parent_verify == 2 && res.data.subject_verify == 1);
+            this.isSetWhite = res.data.verify == 2 || (res.data.parent_verify == 2 && res.data.subject_verify == 1);
           } else {
             this.isSetWhite = '';
           }
