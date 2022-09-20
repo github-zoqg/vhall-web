@@ -19,7 +19,7 @@
     <div :class="`item-card-center ${info && info.config_type == 1 ? 'css_flex' : ''}`">
       <!-- 情况一： 短信活动内容区域：短链接形式 + 发送状态 -->
       <template v-if="!(info.content instanceof Array)">
-        <div class="item-card-center__ctx">{{ info.content_str_min }} <span @click="openDialog('link')" class="item-card-center__link">{{ hideString(info.short_url, 28)}}</span></div>
+        <div class="item-card-center__ctx">{{ info.content_str_min }} <span @click="openDialog('link')" class="item-card-center__link">{{ hideString(info.short_url, 20)}}</span></div>
       </template>
       <!-- 情况而： 微信活动内容区域 -->
       <template v-else>
