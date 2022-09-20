@@ -131,14 +131,14 @@
             <h1 class="custom-font-barlow">{{ trendData.max_uv || 0 }}</h1>
           </div>
         </div>
-        <div class="grid-item" v-if="showSmsModule && smsInfo && smsInfo.sms >= 0">
+        <div class="grid-item" v-if="showSmsModule && smsInfo && smsInfo.sms">
           <div class="grid-content">
             <p>短信消耗(条)</p>
             <h1 class="custom-font-barlow">{{ smsInfo.sms || 0 }}</h1>
           </div>
         </div>
       </div>
-      <div :class="['content-grid', showSmsModule && smsInfo && smsInfo.sms >= 0 ? 'include_sms' : '']" v-else>
+      <div :class="['content-grid', showSmsModule && smsInfo && smsInfo.sms ? 'include_sms' : '']" v-else>
         <div class="content-item">
           <div class="grid-content">
             <p>累计活动（个）</p>
@@ -187,7 +187,7 @@
             <h1 class="custom-font-barlow">{{ versionType == 1 ? trendData.vod_flow || 0 : trendData.vod_duration || 0}}</h1>
           </div>
         </div>
-        <div class="content-item" v-if="showSmsModule && smsInfo && smsInfo.sms >= 0">
+        <div class="content-item" v-if="showSmsModule && smsInfo && smsInfo.sms">
           <div class="grid-content">
             <p>短信消耗(条)</p>
             <h1 class="custom-font-barlow">{{ smsInfo.sms || 0 }}</h1>
