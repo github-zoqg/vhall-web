@@ -32,7 +32,7 @@
       <div :class="topItemCss(3)" v-if="showSmsModule">
         <p>短信余额（条）</p>
         <p class="custom-font-barlow">
-          <count-to :startVal="0" :endVal="sonInfo.vip_info.sms||0" :duration="1500" v-if="sonInfo && sonInfo.vip_info && sonInfo.vip_info.sms > 0"></count-to>
+          <count-to :startVal="0" :endVal="sonInfo.vip_info.sms||0" :duration="1500" v-if="sonInfo && sonInfo.vip_info && sonInfo.vip_info"></count-to>
           <span v-else>0</span>
         </p>
       </div>
