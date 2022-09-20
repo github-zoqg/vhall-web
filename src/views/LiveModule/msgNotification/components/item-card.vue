@@ -188,29 +188,53 @@
         this.noticeVisible = true;
       },
       switchChangeOpen(value) {
-        this.cardInfo.notice_switch = !value;
-        if (this.noticeApp && this.noticeApp.smsBalance && this.noticeApp.smsBalance.sms == 0 && value) {
+        if (this.noticeApp && this.noticeApp.smsBalance && this.noticeApp.smsBalance.sms == 0 && value == 1) {
+          this.cardInfo.notice_switch = !value;
           this.messageInfo('短信余额不足，请充值后开启', 'error')
+          // 开关改变，刷新界面数据
           this.$emit('changeSwitch');
           return;
+        } else if (this.noticeApp && this.noticeApp.smsBalance && this.noticeApp.smsBalance.sms == 0 && value != 1) {
+          this.messageInfo('短信余额不足，请充值后开启', 'error')
+          // 开关改变，刷新界面数据
+          const temp = setTimeout(() => {
+            temp && clearTimeout(temp)
+            this.changeNoticeSwitch(value)
+          }, 1000)
         } else {
-          // 存储数据
-          this.$fetch('saveSendSet', {
-            webinar_id: this.$route.params.str,
-            notice_switch: Number(value), // 1=开，0=关（默认）
-            config_type: this.info.config_type
-          }).then(res => {
-            if (res.code === 200) {
-              this.cardInfo.notice_switch = value;
-              this.$emit('changeSwitch', value);
-            } else {
-              this.cardInfo.notice_switch = !value;
-            }
-          }).catch(err => {
-            this.cardInfo.notice_switch = !value;
-            console.log('修改卡片状态失败', err)
-          });
+          this.changeNoticeSwitch(value);
         }
+      },
+      changeNoticeSwitch(value) {
+        // 存储数据
+        const text = Number(value) ? '开启' : '关闭';
+        this.$fetch('saveSendSet', {
+          webinar_id: this.$route.params.str,
+          notice_switch: Number(value), // 1=开，0=关（默认）
+          config_type: this.info.config_type
+        }).then(res => {
+          if (res.code === 200) {
+            this.cardInfo.notice_switch = value;
+            this.$message({
+              message:  `${ text }成功`,
+              showClose: true, // 是否展示关闭按钮
+              type: 'success', //  提示类型
+              customClass: 'zdy-info-box' // 样式处理
+            });
+            this.$emit('changeSwitch', value);
+          } else {
+            this.cardInfo.notice_switch = !value;
+          }
+        }).catch(err => {
+          this.cardInfo.notice_switch = !value;
+          this.$message({
+            message:   `${ text }失败`,
+            showClose: true, // 是否展示关闭按钮
+            type: 'error', //  提示类型
+            customClass: 'zdy-info-box' // 样式处理
+          });
+          console.log('修改卡片状态失败', err)
+        });
       },
       // 打开弹窗
       openDialog(type) {

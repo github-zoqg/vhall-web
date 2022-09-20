@@ -110,11 +110,21 @@ export default {
     },
     // 开启\关闭报名表单开关
     switchChangeOpen(value) {
-      if (this.smsBalance.sms == 0 && value) {
+      if (this.smsBalance.sms == 0 && value == 1) {
         this.msgInfo.config_info.phone_verify_status = !value;
         this.messageInfo('短信余额不足，请充值后开启', 'error')
         return;
+      } else if (this.smsBalance.sms == 0 && value != 1) {
+        // 余额不足，且当前开关点击关闭时，提示信息，并且关闭开关
+        this.messageInfo('短信余额不足，请充值后开启', 'error')
+        setTimeout(() => {
+          this.changeStatusAjax(value)
+        }, 1000)
+      } else {
+        this.changeStatusAjax(value)
       }
+    },
+    changeStatusAjax(value) {
       const text = Number(value) ? '开启' : '关闭';
       this.$fetch('noticeConfigEdit', {
         webinar_id: this.$route.params.str,

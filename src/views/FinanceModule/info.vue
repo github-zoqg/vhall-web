@@ -60,7 +60,7 @@
         <span>消费账单</span>
         <el-tooltip effect="dark" placement="right" v-tooltipMove>
           <div slot="content" v-if="versionType==1">
-           数据更新频率：直播使用流量1小时更新，回放/点播使用流量1小时更新<br>删除活动或者删除子账号，不影响已统计的历史数据
+           数据更新频率：直播使用流量1小时更新，回放/点播使用流量1小时更新，短信消耗实时更新，<br>删除活动或者删除子账号，不影响已统计的历史数据
           </div>
           <div slot="content" v-if="versionType==2">
            1.时长统计每小时更新一次<br>2.时长套餐按人/分钟进行时长消耗<br>3.删除活动或者删除子账号，不影响已统计的历史数据<br>4.时长消耗保留2位小数，累计/直播/回放使用时长为实际消耗，与列表中的时长存在误差，但扣费以实际消耗为准
@@ -770,7 +770,7 @@ export default {
       }
     }
     .grid-content{
-      margin: 22px 40px;
+      margin: 24px 16px;
       text-align: left;
       h1{
         font-size: 28px;
