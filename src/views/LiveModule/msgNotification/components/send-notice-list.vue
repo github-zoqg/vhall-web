@@ -229,7 +229,7 @@
               });
               item.sms_souce_str = newSmsSouce.join(',')
               // 单独处理测试发送
-              item.remark = (item.is_test == 1 ? '测试发送' : item.remark);
+              item.remark = (item.is_test == 1 && item.send_status == 1 ? '测试发送' : item.remark);
             })
             this.noticeResults = res.data
           } else {
