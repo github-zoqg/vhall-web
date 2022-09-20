@@ -25,10 +25,13 @@
           <div class="left_top" v-if="isShowInteract" :style="videoBackground">
             <!-- 均匀 :style="videoBackground"-->
             <div class="left_top__even" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
-              <span><img src="./image/living/layout1.png" alt=""></span>
-              <span><img src="./image/living/layout2.png" alt=""></span>
-              <span><img src="./image/living/layout3.png" alt=""></span>
-              <span><img src="./image/living/layout4.png" alt=""></span>
+              <div class="imgs">
+                <span><img src="./image/living/layout6.png" alt=""></span>
+                <span><img src="./image/living/layout1.png" alt=""></span>
+                <span><img src="./image/living/layout2.png" alt=""></span>
+                <span><img src="./image/living/layout3.png" alt=""></span>
+                <span><img src="./image/living/layout4.png" alt=""></span>
+              </div>
             </div>
             <!-- 主次浮窗 -->
             <div class="left_top__float" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
@@ -386,11 +389,23 @@ export default {
               height: 100%;
               flex-wrap: wrap;
               // justify-content: center;
-              // align-items: center;
+              align-items: center;
+              .imgs {
+                height: fit-content;
+              }
               span{
                 display: inline-block;
-                width: 298px;
-                height: 167px;
+                width: 198px;
+                height: 111px;
+                &:nth-child(3) {
+                  width: 200px;
+                }
+                &:nth-child(1) {
+                  img {
+                    object-fit: contain;
+                    background: #000000;
+                  }
+                }
                 img{
                   width: 100%;
                   height: 100%;
