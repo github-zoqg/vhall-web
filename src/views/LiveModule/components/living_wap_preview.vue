@@ -34,10 +34,13 @@
       <div class="wap_player" v-if="type==1" :style="videoBackground">
         <template v-if="isShowInteract">
           <div class="watch_layout_1" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
-            <span><img src="./image/living/layout1.png" alt=""></span>
-            <span><img src="./image/living/layout2.png" alt=""></span>
-            <span><img src="./image/living/layout3.png" alt=""></span>
-            <span><img src="./image/living/layout4.png" alt=""></span>
+            <div>
+              <span><img src="./image/living/layout5.png" alt=""></span>
+              <span><img src="./image/living/layout1.png" alt=""></span>
+              <span><img src="./image/living/layout2.png" alt=""></span>
+              <span><img src="./image/living/layout3.png" alt=""></span>
+              <span><img src="./image/living/layout4.png" alt=""></span>
+            </div>
           </div>
           <div class="watch_layout_2" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
             <img src="./image/living/layout1.png" alt="">
@@ -469,10 +472,11 @@ export default {
           height: 100%;
           display: flex;
           flex-wrap: wrap;
+          align-items: center;
           span{
-            display: inline-block;
-            width: 187.5px;
-            height: 105px;
+            float: left;
+            width: 125px;
+            height: 70px;
             img{
               width: 100%;
               height: 100%;
