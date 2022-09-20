@@ -394,7 +394,7 @@ export default {
                 height: fit-content;
               }
               span{
-                display: inline-block;
+                float: left;
                 width: 198px;
                 height: 111px;
                 &:nth-child(3) {
