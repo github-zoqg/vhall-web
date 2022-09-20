@@ -78,37 +78,39 @@
             </span>
           </div>
         </div>
-        <div class="form_item">
-          <p class="form_item_title">主题背景</p>
-          <upload
-            class="upload__living"
-            id="living_pc_cropper"
-            v-model="livingPcForm.background"
-            :domain_url="livingPcForm.background"
-            :on-success="handlePcUploadSuccess"
-            :on-progress="uploadProcess"
-            :on-error="uploadError"
-            :on-preview="uploadPreview"
-            :heightImg="130"
-            :widthImg="231"
-            :before-upload="beforeUploadHandler"
-            @delete="resetLogoUrl">
-            <div slot="tip">
-              <p>建议尺寸：1920*1080px，小于4M</p>
-              <p>支持jpg、gif、png、bmp</p>
-            </div>
-          </upload>
-        </div>
-        <div class="form_item">
-          <span class="vague_theme">模糊程度</span>
-          <vh-slider v-model="livingPcForm.blurryDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="10"></vh-slider>
-          <span class="vague_num">{{livingPcForm.blurryDegree}}</span>
-        </div>
-        <div class="form_item">
-          <span class="vague_theme">背景亮度</span>
-          <vh-slider v-model="livingPcForm.lightDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="20"></vh-slider>
-          <span class="vague_num">{{livingPcForm.lightDegree}}</span>
-        </div>
+        <template v-if="livingPcPreviewType == 1">
+          <div class="form_item">
+            <p class="form_item_title">主题背景</p>
+            <upload
+              class="upload__living"
+              id="living_pc_cropper"
+              v-model="livingPcForm.background"
+              :domain_url="livingPcForm.background"
+              :on-success="handlePcUploadSuccess"
+              :on-progress="uploadProcess"
+              :on-error="uploadError"
+              :on-preview="uploadPreview"
+              :heightImg="130"
+              :widthImg="231"
+              :before-upload="beforeUploadHandler"
+              @delete="resetLogoUrl">
+              <div slot="tip">
+                <p>建议尺寸：1920*1080px，小于4M</p>
+                <p>支持jpg、gif、png、bmp</p>
+              </div>
+            </upload>
+          </div>
+          <div class="form_item">
+            <span class="vague_theme">模糊程度</span>
+            <vh-slider v-model="livingPcForm.blurryDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="10"></vh-slider>
+            <span class="vague_num">{{livingPcForm.blurryDegree}}</span>
+          </div>
+          <div class="form_item">
+            <span class="vague_theme">背景亮度</span>
+            <vh-slider v-model="livingPcForm.lightDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="20"></vh-slider>
+            <span class="vague_num">{{livingPcForm.lightDegree}}</span>
+          </div>
+        </template>
       </template>
       <!-- wap主题设置 -->
       <template v-if="livingPreview==2">
@@ -120,37 +122,39 @@
             </span>
           </div>
         </div>
-        <div class="form_item" v-if="livingWapForm.style==3">
-          <p class="form_item_title">主题背景</p>
-          <upload
-            class="upload__living"
-            id="living_wap_cropper"
-            v-model="livingWapForm.background"
-            :domain_url="livingWapForm.background"
-            :on-success="handleUploadSuccess"
-            :on-progress="uploadProcess"
-            :on-error="uploadError"
-            :on-preview="uploadPreview"
-            :heightImg="130"
-            :widthImg="231"
-            :before-upload="beforeUploadHandler"
-            @delete="resetLogoUrl">
-            <div slot="tip">
-              <p>建议尺寸：1080*1920px，小于4M</p>
-              <p>支持jpg、gif、png、bmp</p>
-            </div>
-          </upload>
-        </div>
-        <div class="form_item" v-if="livingWapForm.style==3">
-          <span class="vague_theme">模糊程度</span>
-          <vh-slider v-model="livingWapForm.blurryDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="10"></vh-slider>
-          <span class="vague_num">{{livingWapForm.blurryDegree}}</span>
-        </div>
-        <div class="form_item" v-if="livingWapForm.style==3">
-          <span class="vague_theme">背景亮度</span>
-          <vh-slider v-model="livingWapForm.lightDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="20"></vh-slider>
-          <span class="vague_num">{{livingWapForm.lightDegree}}</span>
-        </div>
+        <template v-if="livingPcPreviewType == 1">
+          <div class="form_item" v-if="livingWapForm.style==3">
+            <p class="form_item_title">主题背景</p>
+            <upload
+              class="upload__living"
+              id="living_wap_cropper"
+              v-model="livingWapForm.background"
+              :domain_url="livingWapForm.background"
+              :on-success="handleUploadSuccess"
+              :on-progress="uploadProcess"
+              :on-error="uploadError"
+              :on-preview="uploadPreview"
+              :heightImg="130"
+              :widthImg="231"
+              :before-upload="beforeUploadHandler"
+              @delete="resetLogoUrl">
+              <div slot="tip">
+                <p>建议尺寸：1080*1920px，小于4M</p>
+                <p>支持jpg、gif、png、bmp</p>
+              </div>
+            </upload>
+          </div>
+          <div class="form_item" v-if="livingWapForm.style==3">
+            <span class="vague_theme">模糊程度</span>
+            <vh-slider v-model="livingWapForm.blurryDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="10"></vh-slider>
+            <span class="vague_num">{{livingWapForm.blurryDegree}}</span>
+          </div>
+          <div class="form_item" v-if="livingWapForm.style==3">
+            <span class="vague_theme">背景亮度</span>
+            <vh-slider v-model="livingWapForm.lightDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="20"></vh-slider>
+            <span class="vague_num">{{livingWapForm.lightDegree}}</span>
+          </div>
+        </template>
       </template>
       <!-- 视频区域设置 -->
       <template v-if="livingPcPreviewType==1">
