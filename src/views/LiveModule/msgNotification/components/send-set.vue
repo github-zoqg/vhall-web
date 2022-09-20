@@ -108,8 +108,8 @@
       </div>
       <div class="set-dialog__footer">
         <p class="set-dialog__footer_left"><span class="set-item__test" @click="openTestDialog">发送测试短信</span></p>
-        <vh-button type="primary"  size="medium" round borderRadius="50" @click="saveInfo" :disabled="btnDisabled || saveLoading">{{ saveLoading ? '执行中' : '确定' }}</vh-button>
-        <vh-button @click="handleClose"  size="medium" plain borderRadius="50">取消</vh-button>
+        <vh-button type="primary"  size="medium" round borderRadius="50" @click="saveInfo" :disabled="btnDisabled || saveLoading" v-preventReClick>{{ saveLoading ? '执行中' : '确定' }}</vh-button>
+        <vh-button @click="handleClose" size="medium" plain borderRadius="50">取消</vh-button>
       </div>
       <!-- 发送测试短信 -->
       <vh-dialog
@@ -127,7 +127,7 @@
         </vh-form>
         <div class="dialog-footer">
           <span class="send-test__desc">注意：测试短信也将扣除您的短信余额</span>
-          <vh-button type="primary" round size="medium" borderRadius="50" @click="sendTest" :disabled="!phoneForm.phone || (phoneForm.phone && phoneForm.phone.length != 11)">立即发送</vh-button>
+          <vh-button type="primary" round size="medium" borderRadius="50" v-preventReClick @click="sendTest" :disabled="!phoneForm.phone || (phoneForm.phone && phoneForm.phone.length != 11)">立即发送</vh-button>
         </div>
       </vh-dialog>
       <!-- 余额不足提示 -->
@@ -140,7 +140,7 @@
         class="send-no-balance__dialog">
         <div class="tip">当前预计发送 <span class="color-blue">{{preSmsCount > 0 ? preSmsCount : noticeApp.sms_send_num}}</span> 条短信，余额不足，为避免影响您的业务请及时充值。</div>
         <div slot='footer'>
-          <vh-button type="primary" size="medium" round borderRadius="50" @click="closeNoBalanceDialog">我知道了</vh-button>
+          <vh-button type="primary" size="medium" round borderRadius="50" v-preventReClick @click="closeNoBalanceDialog">我知道了</vh-button>
         </div>
     </vh-dialog>
   </vh-dialog>
@@ -289,6 +289,7 @@
       },
       // 保持验证余额数量
       saveInfo() {
+        this.validRefer = 'save';
         // 预发短信数量是否大于余额
         if (this.noticeApp.sms_send_num > this.userSmsAmount) {
           this.preSmsCount = 0;
@@ -375,10 +376,8 @@
       // 余额不足提示
       closeNoBalanceDialog() {
         this.noBalanceVisible = false;
-        if (this.preSmsCount > 0) {
-          // 测试发送触发
-        } else {
-          // 发送设置触发
+        if (this.validRefer == 'save') {
+          // 如果是发送设置点击确定按钮触发的，调用接口
           this.ajaxSetSave()
         }
       },
@@ -388,6 +387,7 @@
       },
       // 测试发送
       sendTest() {
+        this.validRefer = 'test';
         this.$refs.phoneForm.validate((valid) => {
           if (valid) {
             if (this.userSmsAmount <= 0 || this.smsCensus.rowCount > this.userSmsAmount) {
