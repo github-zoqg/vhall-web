@@ -346,7 +346,7 @@ export default {
           subText: `对目标观众发送开播和回放提醒`,
           type: null, // TODO 需要上报KEY
           path: `/live/msgNotification/${this.$route.params.str}`,
-          isShow: perssionInfo.message_notice == 1
+          isShow: perssionInfo.message_notice == 1 && this.type != 4
         },
       ]),
         (this.brandList = [
