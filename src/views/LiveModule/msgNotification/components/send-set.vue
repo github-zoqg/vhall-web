@@ -47,7 +47,7 @@
         <label class="set-item__label">短信内容</label>
         <div class="set-item__content">
           <div class="set-item__content_center">
-            <div class="set-item__content_center__ctx">{{cardQueryVo && cardQueryVo.content_str_max ? cardQueryVo.content_str_max : ''}} <span @click="openShortLink" class="set-item__content_center__link">{{cardQueryVo && cardQueryVo.short_url ? hideString(cardQueryVo.short_url, 28) : ''}}</span></div>
+            <div class="set-item__content_center__ctx">{{cardQueryVo && cardQueryVo.content_str_max ? cardQueryVo.content_str_max : ''}} <span @click="openShortLink" class="set-item__content_center__link">{{cardQueryVo && cardQueryVo.short_url ? hideString(cardQueryVo.short_url, 20) : ''}}</span></div>
           </div>
           <p class="set-item__content_bottom">
             <span>短信字数：<strong>{{smsCensus.wordage}}</strong>（含退订后缀）</span>
@@ -429,7 +429,7 @@
           if (res.code == 200 && res.data) {
             if (res.data.sms_info && res.data.sms_info.content_template) {
               // 每个开播类型，最多支持展示的文字长度
-              let maxLen = [0, 44, 52, 70][this.cardInfo.config_type]
+              let maxLen = [0, 36, 44, 56][this.cardInfo.config_type]
               res.data.sms_info.content_str_max = this.formatContentStr(res.data, maxLen)
             }
             this.noticeDetailVo = res.data
@@ -458,8 +458,8 @@
         })
       },
       // 格式化短信部分内容呈现
-      formatContentStr(resVo, len = 96) {
-        console.log('当前resVo', resVo)
+      formatContentStr(resVo, len) {
+        console.log('当前resVo', resVo , len)
         if (!resVo.sms_info.content_template) {
           return ''
         }
@@ -467,8 +467,10 @@
         const subject = resVo?.webinar_info?.subject || ''
         // 举例 —— 最小展示规则：中文加签名长度16个字长度，若超出，活动名称长度=14-签名长度，拼接上...
         let subjectByType = (subject.length + smsSign.length) > len ? subject.substring(0, (len-2) - smsSign.length) + '...' : subject
+        let text = resVo.sms_info.content_template.replace('${sms_sign}', smsSign).replace('${subject}', subjectByType).replace(new RegExp(resVo.sms_info.short_url, 'g'), '')
         // 格式化列表展示文案
-        return resVo.sms_info.content_template.replace('${sms_sign}', smsSign).replace('${subject}', subjectByType).replace(new RegExp(resVo.sms_info.short_url, 'g'), '')
+        console.log('当前数据', text)
+        return text;
       },
       // 获取短信套餐余额
       getSmsBalance() {

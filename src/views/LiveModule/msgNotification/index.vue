@@ -27,8 +27,9 @@
           <vh-button borderRadius="4" type="text" round  @click="noticeConfigEdit('confirm')"  v-if="!isSignShow" size="mini" class="zdy-theme-red">确定</vh-button>
           <vh-button borderRadius="4" type="text" plain  @click="noticeConfigEdit('cancel')"  v-if="!isSignShow" size="mini" class="zdy-theme-gray">取消</vh-button>
         </div>
-        <!-- 开启了微信授权的时候，才有短信验证码开关设置 -->
-        <div class="switchBox" v-if="msgInfo && msgInfo.config_info && WEBINAR_PES && WEBINAR_PES['ui.hide_wechat']!=1">
+        <!-- 开启了微信授权的时候，才有短信验证码开关设置  ui.hide_wechat: [0不使用微信授权(关闭该权限) 1使用微信授权（未关闭该权限）
+        说明，在所有的scene=1的场景下，所有ui.hide_*** 的配置项都应该取反值  -->
+        <div class="switchBox" v-if="msgInfo && msgInfo.config_info && WEBINAR_PES && WEBINAR_PES['ui.hide_wechat']==1">
           <vh-switch
             v-model="msgInfo.config_info.phone_verify_status"
             @change="switchChangeOpen"
@@ -248,7 +249,7 @@ export default {
           ]
         } else {
           // 每个开播类型，最多支持展示的文字长度
-          let maxLen = [0, 18, 26, 45][item.config_type]
+          let maxLen = [0, 18, 26, 36][item.config_type]
           item.content_str_min = this.formatContentStr(item, msgInfo, maxLen)
         }
       })
