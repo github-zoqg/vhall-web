@@ -148,6 +148,19 @@ export default {
       }
       this.$emit('uploadKey', {key: '', isEdit: this.importExcelBase?.import_user_ur != this.fileUrl})
     },
+    //文案提示问题
+    messageInfo(title, type) {
+      if (this.vm) {
+        this.vm.close();
+      }
+      this.vm = this.$message({
+        showClose: true,
+        duration: 2000,
+        message: title,
+        type: type,
+        customClass: 'zdy-info-box',
+      })
+    },
     // 上传前检测
     beforeUploadHandler(file) {
       console.log(file);
@@ -304,13 +317,19 @@ export default {
     },
     // 下载无效数据
     downErrorHandle() {
-      this.$EventBus.$emit('saas_vs_download_change');
-      this.$message({
-        message: `无效数据导出申请成功，请去下载中心下载`,
-        showClose: true,
-        // duration: 0,
-        type: 'success',
-        customClass: 'zdy-info-box'
+      this.$fetch('downloadNoticeFailFile', this.$params({
+        webinar_id: this.cardInfo.webinar_id,
+        config_type: this.cardInfo.config_type,
+        key: this.checkImportKey || ''
+      })).then(resV => {
+        if (resV && resV.code == 200) {
+          this.$EventBus.$emit('saas_vs_download_change');
+          this.messageInfo('无效数据导出申请成功，请去下载中心下载', 'success')
+        } else {
+          this.messageInfo(resV.msg || '无效数据导出申请异常', 'error')
+        }
+      }).catch(resV => {
+        this.messageInfo(resV.msg || '无效数据导出申请异常', 'error')
       });
     },
     // 下载源文件

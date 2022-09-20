@@ -228,8 +228,10 @@
                 newSmsSouce.push(['--','预约/报名用户','白名单','导入','预约/报名中未观看直播用户'][sItem])
               });
               item.sms_souce_str = newSmsSouce.join(',')
-              // 单独处理测试发送
-              item.remark = (item.is_test == 1 && item.send_status == 1 ? '测试发送' : item.remark);
+              if (item.is_test == 1) {
+                // 当前是 测试发送
+                item.remark = item.send_status == 1 ? '测试发送' : `测试发送-${item.remark}`
+              }
             })
             this.noticeResults = res.data
           } else {
