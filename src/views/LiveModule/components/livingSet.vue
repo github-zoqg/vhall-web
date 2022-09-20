@@ -215,7 +215,16 @@
               <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoBackGroundColor"></color-set>
             </div>
             <div class="form_item">
-              <p class="form_item_title">视频区背景</p>
+              <p class="form_item_title">
+                <span class="mr">视频区背景</span>
+                <el-tooltip placement="right" v-tooltipMove>
+                  <div slot="content">
+                    <p>1.请勿手动修改图片后缀，否则有可能导致背景<br>&nbsp;&nbsp;&nbsp;图不生效</p>
+                    <p>2.视频区背景图在无延迟模式下或上麦时不生效</p>
+                  </div>
+                  <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
+                </el-tooltip>
+              </p>
               <upload
                 class="upload__living"
                 id="living_video_cropper"
@@ -688,6 +697,20 @@ export default {
         this.$refs.livingCropper.showModel(res.data.domain_url, 3)
       }
     },
+    getImgProfile(file) {
+      return new Promise((resolve, reject) => {
+        const url = window.URL || window.webkitURL
+        const img = new Image()
+        img.onload = function() {
+          resolve({
+            width: img.width,
+            height: img.height
+          })
+        }
+        img.src = url.createObjectURL(file)
+      })
+    },
+    // isVideo 为 true 表示视频背景图上传的回调
     beforeUploadHandler(file, isVideo){
       console.log(file);
       const typeList = !isVideo ? ['png', 'jpeg', 'gif', 'bmp'] : ['png', 'jpeg'];
@@ -695,6 +718,7 @@ export default {
       let typeArr = file.type.toLowerCase().split('/');
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 4;
+      let isLt4K = true
       if (!isType) {
         this.$message({
           message: `背景图片只能是 ${typeList.join('、')} 格式!`,
@@ -715,7 +739,26 @@ export default {
         });
         return false;
       }
-      return isType && isLt2M;
+      if (isVideo) {
+        return new Promise((resolve, reject) => {
+          this.getImgProfile(file).then(res => {
+            const { width, height } = res
+            isLt4K = width <= 3840 && height <= 3840
+            if (!isLt4K) {
+              this.$message({
+                message: `图片分辨率最高支持4k，请更换图片!`,
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
+              reject(false)
+            }
+            resolve(true)
+          })
+        })
+      }
+      return isType && isLt2M && isLt4K;
     },
     uploadProcess(event, file, fileList){
       console.log('uploadProcess', event, file, fileList);
@@ -875,6 +918,12 @@ export default {
           color: #262626;
           font-size: 14px;
           line-height: 20px;
+          .saasicon_help_m {
+            vertical-align: bottom;
+          }
+          .mr {
+            margin-right: 4px;
+          }
         }
         .title_tip{
           font-size: 14px;
