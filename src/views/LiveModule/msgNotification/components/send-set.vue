@@ -19,7 +19,7 @@
               <vh-checkbox :label="item.label" :key="`send_${index}`" v-if="item.isShow">{{item.text}}
                 <el-tooltip v-tooltipMove v-if="item.label == 1">
                   <div slot="content">
-                    <p>当活动专题下开启统一观看限制时，且已关联的活动下开启了开播提醒，<br/>则将分别对预约/报名用户进行消息触达</p>
+                    <p>当专题下开启统一观看限制或统一报名时，<br/>则不触发预约报名成功的通知消息</p>
                   </div>
                   <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
                 </el-tooltip>
@@ -51,7 +51,7 @@
           </div>
           <p class="set-item__content_bottom">
             <span>短信字数：<strong>{{smsCensus.wordage}}</strong>（含退订后缀）</span>
-            <span>计费条数 (条)：<strong>{{smsCensus.rowCount}}</strong>（70字符为一条）</span>
+            <span>单条计费 (条)：<strong>{{smsCensus.rowCount}}</strong>（70字符为一条）</span>
             <span>可用余额 (条)：<strong>{{userSmsAmount}}</strong></span>
           </p>
         </div>
@@ -175,7 +175,7 @@
         userSmsAmount: 0, // 用户短信余额
         smsCensus: {
           wordage: 0, // 短信字数
-          rowCount: 0 // 短信计费条数
+          rowCount: 0 // 短信单条计费
         },
         sms_send_num: 0, // 预发短信数量【消息类型】
         uploadKey: null,
@@ -391,7 +391,7 @@
         this.$refs.phoneForm.validate((valid) => {
           if (valid) {
             if (this.userSmsAmount <= 0 || this.smsCensus.rowCount > this.userSmsAmount) {
-              // 短信余额本身不足  或者 预计发送的计费条数>短信余额， 当前不可发送
+              // 短信余额本身不足  或者 预计发送的总数量>短信余额， 当前不可发送
               this.preSmsCount = this.smsCensus.rowCount;
               this.noBalanceVisible = true;
               return;
