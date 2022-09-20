@@ -215,7 +215,9 @@
       // 打开弹窗
       openDialog(type) {
         if (type === 'link') {
-         this.info.short_url && window.open(this.info.short_url, '_blank');
+         const short_url = this.info.short_url
+         const isJoinStr = short_url.indexOf('https://') != -1 || short_url.indexOf('http://') != -1 || short_url.indexOf('//') != -1
+         this.info.short_url && window.open(`${isJoinStr ? '' : '//'}${this.info.short_url}`, '_blank');
         } else {
           this[`${type}DialogVisible`] = true
         }
