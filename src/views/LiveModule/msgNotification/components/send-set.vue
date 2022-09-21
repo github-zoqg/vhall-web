@@ -138,7 +138,7 @@
         :close-on-press-escape="false"
         append-to-body
         class="send-no-balance__dialog">
-        <div class="tip">余额不足，为避免影响您的业务请及时充值</div>
+        <div class="tip">余额不足，请联系您的专属客服充值</div>
         <div slot='footer'>
           <vh-button type="primary" size="medium" round borderRadius="50" v-preventReClick @click="closeNoBalanceDialog">我知道了</vh-button>
         </div>
