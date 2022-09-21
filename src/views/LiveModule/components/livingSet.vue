@@ -57,6 +57,7 @@
           </div>
           <div class="preview_box_wap" v-show="livingPreview==2">
             <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm" :videoUrl="video_url" :isShowInteract="isShowInteract"></wap-preview>
+            <span v-show="livingWapForm.style==3 && livingPcPreviewType == 1" class="preview_box_wap_tip">注：简洁风格暂不支持展示菜单和文档</span>
           </div>
         </div>
       </div>
@@ -877,6 +878,13 @@ export default {
           background-image: url('./image/living/wap_show.png');
           background-repeat: no-repeat;
           background-size: 100% 100%;
+          &_tip {
+            display: block;
+            margin-top: 34px;
+            font-size: 14px;
+            line-height: 20px;
+            color: rgba(0, 0, 0, 0.25);
+          }
         }
       }
     }
