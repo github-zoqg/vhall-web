@@ -702,6 +702,7 @@ export default {
     handleUploadVideoSuccess(res, file) {
        console.log(res, file);
       if(res.data) {
+        this.ratio = 16/9;
         this.$refs.livingCropper.showModel(res.data.domain_url, 3)
       }
     },
