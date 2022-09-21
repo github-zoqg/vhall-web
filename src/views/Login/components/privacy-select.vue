@@ -1,7 +1,7 @@
 <template>
   <div :class="`privacy-select scene_${scene}`">
     <el-checkbox v-model.trim="isCheck" v-if="compType == 1" @change="emitCheckboxVal"></el-checkbox>
-    <div>{{compType == 1 ? '阅读并同意' : '提交即同意'}}<a :href="privacyUrl" target="_blank" rel="noopener noreferrer">《微吼隐私政策》</a>及<a :href="privacyUPoUrl" target="_blank" rel="noopener noreferrer">《微吼用户服务协议》</a></div>
+    <div>{{compType == 1 ? '阅读并同意' : '提交即同意'}}<a :href="privacyUrl" target="_blank" rel="noopener noreferrer">《隐私政策》</a>及<a :href="privacyUPoUrl" target="_blank" rel="noopener noreferrer">《用户服务协议》</a></div>
   </div>
 </template>
 <script>
