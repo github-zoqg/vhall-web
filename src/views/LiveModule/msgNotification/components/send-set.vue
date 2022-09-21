@@ -108,7 +108,7 @@
       </div>
       <div class="set-dialog__footer">
         <p class="set-dialog__footer_left"><span class="set-item__test" @click="openTestDialog">发送测试短信</span></p>
-        <vh-button type="primary"  size="medium" round borderRadius="50" @click="saveInfo" :disabled="(send_user.includes('3') && btnDisabled) || saveLoading" v-preventReClick>{{ saveLoading ? '执行中' : '确定' }}</vh-button>
+        <vh-button type="primary"  size="medium" round borderRadius="50" @click="saveInfo" :disabled="(send_user.includes('3') && btnDisabled) || saveLoading" v-preventReClick :loading="saveLoading">{{ saveLoading ? '导入中' : '确定' }}</vh-button>
         <vh-button @click="handleClose" size="medium" plain borderRadius="50">取消</vh-button>
       </div>
       <!-- 发送测试短信 -->
