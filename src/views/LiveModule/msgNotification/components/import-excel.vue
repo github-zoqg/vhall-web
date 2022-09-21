@@ -111,7 +111,18 @@ export default {
     },
     isUploadDisabled: function() {
       return this.uploadResult.status === 'progress'
+    },
+    setDisabled: function() {
+      return this.fileResult === 'error' || !this.isUploadEnd  || (this.importResult && this.importResult.success == 0)
     }
+  },
+  watch: {
+    setDisabled: {
+      handler() {
+        this.$emit('setBtnDisabled', this.setDisabled)
+      },
+      immediate: true
+    },
   },
   methods: {
     // 下载模板
@@ -223,20 +234,16 @@ export default {
             }
           } else if (progressResult.data.status == 2) {
             // 预检/导入 失败（轮询不在继续，直接终止）
-            that.clearPageTimes();
-            that.isUploadEnd = true;
-            that.fileResult = 'error';
-            that.uploadResult = {
-              status: 'error',
-              text: progressResult.msg || '预检失败，请重新上传'
-            }
-            that.importResult = null;
-            if (that.$refs.viewerUpload) {
-              that.$refs.viewerUpload.setError(progressResult.msg || '预检失败，请重新上传');
-            }
+            that.importIntervalError(that, progressResult.msg)
+          } else if (progressResult.data.status == 512053) {
+            that.importIntervalError(that, '您选择的模板不正确')
           } else {
             // 未开始
           }
+          // // 文件上传拿到结果，检测按钮是否可点击...
+          // that.$emit('setBtnDisabled', {
+          //   isDisabled: that.fileResult === 'error' || !that.isUploadEnd  || that.importResult.success == 0
+          // });
         }
         console.log('看看当前几秒轮询一次', id)
         setTimeout(pollingFn, 2000); // 2秒一轮询
@@ -247,6 +254,22 @@ export default {
         pollingFn();
       }, 2000)
     },
+    importIntervalError(that, msg) {
+      // 预检/导入 失败（轮询不在继续，直接终止）
+      that.clearPageTimes();
+      // 如果预检失败，重置外部的key，让其不可保存
+      that.$emit('uploadKey', {key: '', isEdit: this.importExcelBase?.import_user_ur != this.fileUrl})
+      that.isUploadEnd = true;
+      that.fileResult = 'error';
+      that.uploadResult = {
+        status: 'error',
+        text: msg || '预检失败，请重新上传'
+      }
+      that.importResult = null;
+      if (that.$refs.viewerUpload) {
+        that.$refs.viewerUpload.setError(msg || '预检失败，请重新上传');
+      }
+    },
     // 文件上传成功 & 文档预检
     uploadSuccess(res, file) {
       console.log('文件上传', res, file);
@@ -254,6 +277,7 @@ export default {
         this.fileUrl = res.data.file_url;
         this.fileName = file.name
         // 文件上传成功，检测观众
+        this.isUploadEnd = false;
         this.$fetch('importNoticeExcel', {
           webinar_id: this.cardInfo.webinar_id,
           config_type: this.cardInfo.config_type,
@@ -345,17 +369,6 @@ export default {
         aDom.click();
       }
       xHttp.send();
-    },
-    /* 报名导入-失败处理（代码冗余缩短） */
-    renderSaveError(msg) {
-      this.saveLoading = false
-      this.$message({
-        message: msg || '导入失败',
-        showClose: true,
-        // duration: 0,
-        type: 'error',
-        customClass: 'zdy-info-box'
-      });
     },
     // 清除定时器
     clearPageTimes() {

@@ -17,12 +17,12 @@
           <vh-checkbox-group v-model="send_user" @change="checkSelect" :disabled="senderUserShowLength == 1">
             <template v-for="(item, index) in senderUserOptions">
               <vh-checkbox :label="item.label" :key="`send_${index}`" v-if="item.isShow">{{item.text}}
-                <el-tooltip v-tooltipMove v-if="item.label == 1">
+                <vh-tooltip v-tooltipMove v-if="item.label == 1">
                   <div slot="content">
                     <p>当专题下开启统一观看限制或统一报名时，<br/>则不触发预约报名成功的通知消息</p>
                   </div>
                   <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
-                </el-tooltip>
+                </vh-tooltip>
               </vh-checkbox>
             </template>
           </vh-checkbox-group>
@@ -39,7 +39,7 @@
             import_user_url: noticeDetailVo.sms_info.import_user_url,
             import_user_fail_url: noticeDetailVo.sms_info.import_user_fail_url,
             import_result: noticeDetailVo.sms_info.import_result
-          }" @uploadKey="uploadKeySet" v-if="cardInfo && noticeDetailVo" :visible="cardInfo && noticeDetailVo"></import-excel>
+          }" @uploadKey="uploadKeySet" v-if="cardInfo && noticeDetailVo" :visible="cardInfo && noticeDetailVo" @setBtnDisabled="setBtnDisabled"></import-excel>
         </div>
       </div>
       <!-- 短信内容 -->
@@ -108,7 +108,7 @@
       </div>
       <div class="set-dialog__footer">
         <p class="set-dialog__footer_left"><span class="set-item__test" @click="openTestDialog">发送测试短信</span></p>
-        <vh-button type="primary"  size="medium" round borderRadius="50" @click="saveInfo" :disabled="btnDisabled || saveLoading" v-preventReClick>{{ saveLoading ? '执行中' : '确定' }}</vh-button>
+        <vh-button type="primary"  size="medium" round borderRadius="50" @click="saveInfo" :disabled="(send_user.includes('3') && btnDisabled) || saveLoading" v-preventReClick>{{ saveLoading ? '执行中' : '确定' }}</vh-button>
         <vh-button @click="handleClose" size="medium" plain borderRadius="50">取消</vh-button>
       </div>
       <!-- 发送测试短信 -->
@@ -138,7 +138,7 @@
         :close-on-press-escape="false"
         append-to-body
         class="send-no-balance__dialog">
-        <div class="tip">当前预计发送 <span class="color-blue">{{preSmsCount > 0 ? preSmsCount : noticeApp.sms_send_num}}</span> 条短信，余额不足，为避免影响您的业务请及时充值。</div>
+        <div class="tip">当前预计发送 <span class="color-blue">{{noticeApp.sms_send_num}}</span> 条短信，余额不足，为避免影响您的业务请及时充值。</div>
         <div slot='footer'>
           <vh-button type="primary" size="medium" round borderRadius="50" v-preventReClick @click="closeNoBalanceDialog">我知道了</vh-button>
         </div>
@@ -169,7 +169,6 @@
         },
         vm: null,
         noBalanceVisible: false,
-        preSmsCount: 0, // 预发短信数量【测试发送】
         noticeDetailVo: {}, // 短信模板详情
         cardQueryVo: {}, // 卡片sms_info设置内容
         userSmsAmount: 0, // 用户短信余额
@@ -259,6 +258,11 @@
           this.phoneForm.phone = ''
         }
       },
+      // 设置按钮是否禁用
+      setBtnDisabled(status) {
+        console.log('当前按钮是否禁用btnDisabled', status)
+        this.btnDisabled = status
+      },
       // 打开短链接
       openShortLink() {
         this.cardQueryVo.short_url && window.open(this.cardQueryVo.short_url, '_blank');
@@ -290,17 +294,10 @@
       // 保持验证余额数量
       saveInfo() {
         this.validRefer = 'save';
-        // 预发短信数量是否大于余额
-        if (this.noticeApp.sms_send_num > this.userSmsAmount) {
-          this.preSmsCount = 0;
-          this.noBalanceVisible = true;
-          return;
-        } else {
-          this.ajaxSetSave()
-        }
+        this.ajaxSetSave()
       },
       // 发送设置 - 接口发送组装
-      ajaxSetSave() {
+      async ajaxSetSave() {
         let params = {
           webinar_id: this.cardInfo.webinar_id,
           config_type: this.cardInfo.config_type,
@@ -356,6 +353,13 @@
             }
           }
         }
+        // 短信余额为0  或者 预计发送的总数量>短信余额， 当前不可发送； 预发短信量为0，没拿到数据不提示
+        await this.getSmsBalance(); // 获取最新的短信余额数量
+        if (this.noticeApp.sms_send_num > this.userSmsAmount && this.noticeApp.sms_send_num > 0) {
+          // 预发短信量 > 0，并且 预发短信量超过余额 [余额为0也满足]
+          this.noBalanceVisible = true;
+          return;
+        }
         this.saveLoading = true;
         this.$fetch('saveSendSet', this.$params(params)).then((res) => {
           this.saveLoading = false;
@@ -376,10 +380,6 @@
       // 余额不足提示
       closeNoBalanceDialog() {
         this.noBalanceVisible = false;
-        if (this.validRefer == 'save') {
-          // 如果是发送设置点击确定按钮触发的，调用接口
-          this.ajaxSetSave()
-        }
       },
       // 打开测试发送弹出框
       openTestDialog() {
@@ -388,11 +388,12 @@
       // 测试发送
       sendTest() {
         this.validRefer = 'test';
-        this.$refs.phoneForm.validate((valid) => {
+        this.$refs.phoneForm.validate(async (valid) => {
           if (valid) {
-            if (this.userSmsAmount <= 0 || this.smsCensus.rowCount > this.userSmsAmount) {
-              // 短信余额本身不足  或者 预计发送的总数量>短信余额， 当前不可发送
-              this.preSmsCount = this.smsCensus.rowCount;
+            // 短信余额为0  或者 预计发送的总数量>短信余额， 当前不可发送； 预发短信量为0，没拿到数据不提示
+            await this.getSmsBalance(); // 获取最新的短信余额数量
+            if (this.noticeApp.sms_send_num > this.userSmsAmount && this.noticeApp.sms_send_num > 0) {
+              // 预发短信量 > 0，并且 预发短信量超过余额 [余额为0也满足]
               this.noBalanceVisible = true;
               return;
             }
@@ -481,14 +482,16 @@
           } else {
             this.userSmsAmount = 0
           }
+          this.$emit('reloadBalance')
         })
         .catch((res) => {
           console.log('获取短信余额异常', res)
           this.userSmsAmount = 0
+          this.$emit('reloadBalance')
         })
       },
       // 获取观看限制是否是白名单
-      getWebianrVerify() {
+      getWebinarVerify() {
        return this.$fetch('viewerSetGet', {
          webinar_id: this.cardInfo.webinar_id
        })
@@ -512,7 +515,7 @@
       // this.isOpenWhite = noticeApp && noticeApp.WEBINAR_PES['white_list'] && isSetWhite;
       this.isLoading = true;
       await this.getSmsBalance();
-      await this.getWebianrVerify();
+      await this.getWebinarVerify();
       this.getNoticeDetail();
     }
   };
