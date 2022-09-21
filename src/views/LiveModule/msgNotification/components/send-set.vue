@@ -108,7 +108,7 @@
       </div>
       <div class="set-dialog__footer">
         <p class="set-dialog__footer_left"><span class="set-item__test" @click="openTestDialog">发送测试短信</span></p>
-        <vh-button type="primary"  size="medium" round borderRadius="50" @click="saveInfo" :disabled="(send_user.includes('3') && btnDisabled) || saveLoading" v-preventReClick :loading="saveLoading">{{ saveLoading ? '导入中' : '确定' }}</vh-button>
+        <vh-button type="primary"  size="medium" round borderRadius="50" @click="saveInfo" :disabled="send_user.includes('3') && btnDisabled" v-preventReClick>确定</vh-button>
         <vh-button @click="handleClose" size="medium" plain borderRadius="50">取消</vh-button>
       </div>
       <!-- 发送测试短信 -->
@@ -138,7 +138,7 @@
         :close-on-press-escape="false"
         append-to-body
         class="send-no-balance__dialog">
-        <div class="tip">当前预计发送 <span class="color-blue">{{noticeApp.sms_send_num}}</span> 条短信，余额不足，为避免影响您的业务请及时充值。</div>
+        <div class="tip">余额不足，为避免影响您的业务请及时充值</div>
         <div slot='footer'>
           <vh-button type="primary" size="medium" round borderRadius="50" v-preventReClick @click="closeNoBalanceDialog">我知道了</vh-button>
         </div>
@@ -299,7 +299,7 @@
           webinar_id: this.cardInfo.webinar_id,
           config_type: this.cardInfo.config_type,
           send_user: this.send_user.join(','),
-          notice_switch: 1
+          notice_switch: Number(this.cardInfo.notice_switch) // 开关影响收发短信消息
         }
         if (this.send_user && this.send_user.length == 0) {
           this.messageInfo('请选择发送对象', 'warning')
@@ -351,10 +351,9 @@
           }
         }
         this.saveSetParams = params;
-        // 短信余额为0  或者 预计发送的总数量>短信余额， 当前不可发送； 预发短信量为0，没拿到数据不提示
         await this.getSmsBalance(); // 获取最新的短信余额数量
-        if (this.noticeApp.sms_send_num > this.userSmsAmount && this.noticeApp.sms_send_num > 0) {
-          // 预发短信量 > 0，并且 预发短信量超过余额 [余额为0也满足]
+        if (this.userSmsAmount <= 0) {
+          // 余额不足提醒
           this.noBalanceVisible = true;
           return;
         }
@@ -374,12 +373,12 @@
             this.handleClose()
             this.$emit('saveChange')
           } else {
-            this.messageInfo(res.msg || '获取信息失败', 'error')
+            this.messageInfo(res.msg || '接口调用失败', 'error')
           }
         })
         .catch((res) => {
           this.saveLoading = false;
-          this.messageInfo(res.msg || '获取信息失败', 'error')
+          this.messageInfo(res.msg || '接口调用失败', 'error')
           console.log(res)
         })
       },
@@ -401,10 +400,9 @@
         this.validRefer = 'test';
         this.$refs.phoneForm.validate(async (valid) => {
           if (valid) {
-            // 短信余额为0  或者 预计发送的总数量>短信余额， 当前不可发送； 预发短信量为0，没拿到数据不提示
             await this.getSmsBalance(); // 获取最新的短信余额数量
-            if (this.noticeApp.sms_send_num > this.userSmsAmount && this.noticeApp.sms_send_num > 0) {
-              // 预发短信量 > 0，并且 预发短信量超过余额 [余额为0也满足]
+            if (this.userSmsAmount <= 0) {
+              // 余额不足提醒
               this.noBalanceVisible = true;
               return;
             }
@@ -425,10 +423,10 @@
             this.getSmsBalance();
             this.$emit('saveChange')
           } else {
-            this.messageInfo(res.msg || '发送失败', 'error')
+            this.messageInfo(res.msg || '接口调用失败', 'error')
           }
         }).catch(res => {
-          this.messageInfo(res.msg || '发送失败', 'error')
+          this.messageInfo(res.msg || '接口调用失败', 'error')
         });
       },
       checkSelect(oldVal) {
