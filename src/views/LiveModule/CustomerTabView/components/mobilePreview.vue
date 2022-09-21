@@ -1,5 +1,5 @@
 <template>
-  <div class="vh-mobile-preview-wrapbox" v-if="menus.length">
+  <div class="vh-mobile-preview-wrapbox clearFix" v-if="menus.length">
     <div class="vh-mobile-previe">
       <div class="vh-moblie-content-box" style="width:310px; overflow:hidden; position:relative; left: 20px">
       <div style="height:295px; overflow:hidden;">
