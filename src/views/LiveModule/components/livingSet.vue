@@ -124,7 +124,7 @@
           </div>
         </div>
         <template v-if="livingPcPreviewType == 1">
-          <div class="form_item" v-if="livingWapForm.style==3">
+          <div class="form_item form_item_wap_bg" v-if="livingWapForm.style==3">
             <p class="form_item_title">主题背景</p>
             <upload
               class="upload__living"
@@ -135,13 +135,13 @@
               :on-progress="uploadProcess"
               :on-error="uploadError"
               :on-preview="uploadPreview"
-              :heightImg="128"
-              :widthImg="228"
+              :heightImg="330"
+              :widthImg="151"
               :before-upload="beforeUploadHandler"
               @delete="resetLogoUrl">
               <div slot="tip">
-                <p>建议尺寸：1080*1920px，小于4M</p>
-                <p>支持jpg、gif、png、bmp</p>
+                <p>建议尺寸：750*1642px</p>
+                <p>支持jpg、gif、png、bmp，小于4M</p>
               </div>
             </upload>
           </div>
@@ -926,6 +926,12 @@ export default {
               object-fit: scale-down;
               border-radius: 2px;
             }
+          }
+        }
+        &_wap_bg {
+          /deep/ .el-upload--picture-card {
+            width: 153px;
+            height: 332px;
           }
         }
         &_title, .vague_theme{
