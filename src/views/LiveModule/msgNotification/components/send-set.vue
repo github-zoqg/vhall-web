@@ -182,7 +182,8 @@
         isSetWhite: '', // 观看限制 - 是否设置为白名单
         isLoading: false,
         btnDisabled: false, // 是否禁用按钮
-        saveLoading: false // 是否保存执行中
+        saveLoading: false, // 是否保存执行中
+        saveSetParams: null
       };
     },
     props: {
@@ -292,12 +293,8 @@
         this.isUploadChange = obj.isEdit || false
       },
       // 保持验证余额数量
-      saveInfo() {
+      async saveInfo() {
         this.validRefer = 'save';
-        this.ajaxSetSave()
-      },
-      // 发送设置 - 接口发送组装
-      async ajaxSetSave() {
         let params = {
           webinar_id: this.cardInfo.webinar_id,
           config_type: this.cardInfo.config_type,
@@ -353,6 +350,7 @@
             }
           }
         }
+        this.saveSetParams = params;
         // 短信余额为0  或者 预计发送的总数量>短信余额， 当前不可发送； 预发短信量为0，没拿到数据不提示
         await this.getSmsBalance(); // 获取最新的短信余额数量
         if (this.noticeApp.sms_send_num > this.userSmsAmount && this.noticeApp.sms_send_num > 0) {
@@ -360,8 +358,16 @@
           this.noBalanceVisible = true;
           return;
         }
+        this.ajaxSetSave()
+      },
+      // 发送设置 - 接口发送组装
+      async ajaxSetSave() {
+        if (!this.saveSetParams) {
+          console.log('参数处理错误，无法触发逻辑')
+          return
+        }
         this.saveLoading = true;
-        this.$fetch('saveSendSet', this.$params(params)).then((res) => {
+        this.$fetch('saveSendSet', this.$params(this.saveSetParams)).then((res) => {
           this.saveLoading = false;
           if (res.code == 200) {
             this.messageInfo('设置成功', 'success')
@@ -380,6 +386,11 @@
       // 余额不足提示
       closeNoBalanceDialog() {
         this.noBalanceVisible = false;
+        if (this.validRefer == 'save') {
+          this.ajaxSetSave()
+        } else {
+          this.ajaxSendTest()
+        }
       },
       // 打开测试发送弹出框
       openTestDialog() {
@@ -397,25 +408,28 @@
               this.noBalanceVisible = true;
               return;
             }
-            this.$fetch('noticeTestSend', this.$params({
-              webinar_id: this.cardVo.webinar_id,
-              phone: this.phoneForm.phone,
-              config_type: this.cardVo.config_type
-            })).then(res => {
-              if (res && res.code == 200) {
-                this.messageInfo('已发送，请观察短信是否能正常收到', 'success')
-                this.innerVisible = false;
-                // 刷新余额
-                this.getSmsBalance();
-                this.$emit('saveChange')
-              } else {
-                this.messageInfo(res.msg || '发送失败', 'error')
-              }
-            }).catch(res => {
-              this.messageInfo(res.msg || '发送失败', 'error')
-            });
+            this.ajaxSendTest();
           }
         })
+      },
+      ajaxSendTest() {
+        this.$fetch('noticeTestSend', this.$params({
+          webinar_id: this.cardVo.webinar_id,
+          phone: this.phoneForm.phone,
+          config_type: this.cardVo.config_type
+        })).then(res => {
+          if (res && res.code == 200) {
+            this.messageInfo('已发送，请观察短信是否能正常收到', 'success')
+            this.innerVisible = false;
+            // 刷新余额
+            this.getSmsBalance();
+            this.$emit('saveChange')
+          } else {
+            this.messageInfo(res.msg || '发送失败', 'error')
+          }
+        }).catch(res => {
+          this.messageInfo(res.msg || '发送失败', 'error')
+        });
       },
       checkSelect(oldVal) {
         console.log('数据', oldVal)
