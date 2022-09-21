@@ -40,7 +40,7 @@
         </div>
       </div>
       <div class="msg-notification-center">
-        <div class="title-layout"><span class="base_title">短信通知</span><span class="base_title_send" v-if="sms_send_num > 0">当前预计发送<strong :class="sms_send_num > 0 ? 'color-blue' : 'color-red'">{{sms_send_num}}</strong>条短信{{smsBalance && smsBalance.sms == 0 ? '，' : ''}}</span><span class="base_title_balance" v-if="smsBalance && smsBalance.sms == 0">余额不足，请联系您的专属客服充值。</span></div>
+        <div class="title-layout"><span class="base_title">短信通知</span><span class="base_title_send" v-if="sms_send_num > 0">当前预计发送<strong :class="sms_send_num > 0 ? 'color-blue' : 'color-red'">{{sms_send_num}}</strong>条短信{{smsBalance && smsBalance.sms == 0 ? '，' : ''}}</span><span class="base_title_balance" v-if="smsBalance && (smsBalance.sms < sms_send_num || smsBalance.sms == 0)">余额不足，请联系您的专属客服充值。</span></div>
         <el-row :gutter="24" class="base_row" v-if="msgInfo">
           <!-- xs	<768px	超小屏 如：手机
           sm	≥768px	小屏幕 如：平板
@@ -49,7 +49,7 @@
           xl	≥1920px	2k屏等 -->
           <template v-for="(item, index) in msgInfo.list">
             <el-col class="liveItem" :xs="8" :sm="8" :md="8" :lg="8" :xl="8" v-if="item"  :key="`base-item-${index}`">
-              <item-card :info="item" @changeSwitch="reloadAjax" @saveChange="reloadAjax"></item-card>
+              <item-card :info="item" @changeSwitch="reloadAjax" @saveChange="reloadAjax" @reloadBalance="reloadBalanceAjax"></item-card>
             </el-col>
            </template>
         </el-row>
@@ -154,8 +154,12 @@ export default {
     },
     // 刷新界面数据
     reloadAjax() {
-      this.getSmsBalance();
+      this.reloadBalanceAjax();
       this.getNoticePageList()
+    },
+    // 刷新界面余额
+    reloadBalanceAjax() {
+      this.getSmsBalance();
     },
     // 打开弹窗
     openDialog(type) {
