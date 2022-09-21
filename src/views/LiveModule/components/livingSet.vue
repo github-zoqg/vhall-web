@@ -90,8 +90,8 @@
               :on-progress="uploadProcess"
               :on-error="uploadError"
               :on-preview="uploadPreview"
-              :heightImg="130"
-              :widthImg="231"
+              :heightImg="128"
+              :widthImg="228"
               :before-upload="beforeUploadHandler"
               @delete="resetLogoUrl">
               <div slot="tip">
@@ -134,8 +134,8 @@
               :on-progress="uploadProcess"
               :on-error="uploadError"
               :on-preview="uploadPreview"
-              :heightImg="130"
-              :widthImg="231"
+              :heightImg="128"
+              :widthImg="228"
               :before-upload="beforeUploadHandler"
               @delete="resetLogoUrl">
               <div slot="tip">
@@ -234,8 +234,8 @@
                 :on-progress="uploadProcess"
                 :on-error="uploadError"
                 :on-preview="uploadPreview"
-                :heightImg="130"
-                :widthImg="231"
+                :heightImg="128"
+                :widthImg="228"
                 :before-upload="file => this.beforeUploadHandler(file, true)"
                 @delete="resetVideoUrl">
                 <div slot="tip">
@@ -429,13 +429,20 @@ export default {
           this.$refs.livingWapPreview.settingTheme(skin_json_wap.style, skin_json_wap.backGroundColor, 1)
           this.livingPcForm = { ...skin_json_pc }; //pc信息
           this.livingWapForm = { ...skin_json_wap }; //wap信息
+
+          this.livingPcForm.lightDegree = skin_json_pc.lightDegree && +skin_json_pc.lightDegree
+          this.livingPcForm.blurryDegree = skin_json_pc.blurryDegree && +skin_json_pc.blurryDegree
+
+          this.livingWapForm.lightDegree = skin_json_wap.lightDegree && +skin_json_pc.lightDegree
+          this.livingWapForm.blurryDegree = skin_json_wap.blurryDegree && +skin_json_pc.blurryDegree
+
           this.livingForm.chatLayout = skin_json_pc.chatLayout; // 公共信息 聊天布局
           this.livingForm.inavLayout = this.isDelay ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : skin_json_pc.inavLayout; // 公共信息 连麦布局
           this.livingForm.videoBackGround = skin_json_pc.videoBackGround; // 公共信息  视频区背景 图片地址
           this.livingForm.videoBackGroundColor = skin_json_pc.videoBackGroundColor == '#333338' ? '#000000' : skin_json_pc.videoBackGroundColor; // 公共信息  视频区背景 颜色
           this.livingForm.videoBackGroundSize = skin_json_pc.videoBackGroundSize; // 公共信息 视频区背景 裁剪信息
-          this.livingForm.videoBlurryDegree = skin_json_pc.videoBlurryDegree; // 公共信息 视频区背景 模糊度
-          this.livingForm.videoLightDegree = skin_json_pc.videoLightDegree; // 公共信息 视频区背景 亮度
+          this.livingForm.videoBlurryDegree = skin_json_pc.videoBlurryDegree && +skin_json_pc.videoBlurryDegree; // 公共信息 视频区背景 模糊度
+          this.livingForm.videoLightDegree = skin_json_pc.videoLightDegree && +skin_json_pc.videoLightDegree ; // 公共信息 视频区背景 亮度
 
           // 备份信息
           this.setBackupData(skin_json_pc, skin_json_wap);
@@ -1005,7 +1012,7 @@ export default {
     }
     /deep/ .el-upload--picture-card {
       width: 100%;
-      height: 128px;
+      height: 130px;
     }
     @media (max-width: 1920px) {
       .preview_box_pc{
