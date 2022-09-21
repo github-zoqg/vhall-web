@@ -40,7 +40,7 @@
         </div>
       </div>
       <div class="msg-notification-center">
-        <div class="title-layout"><span class="base_title">短信通知</span><span class="base_title_send" v-if="sms_send_num > 0">当前预计发送<strong :class="sms_send_num > 0 ? 'color-blue' : 'color-red'">{{sms_send_num}}</strong>条短信{{smsBalance && smsBalance.sms == 0 ? '，' : ''}}</span><span class="base_title_balance" v-if="smsBalance && (smsBalance.sms < sms_send_num || smsBalance.sms == 0)">余额不足，请联系您的专属客服充值。</span></div>
+        <div class="title-layout"><span class="base_title">短信通知</span><span class="base_title_send" v-if="sms_send_num > 0">当前预计发送<strong :class="sms_send_num > 0 ? 'color-blue padding-10' : 'color-red padding-10'">{{sms_send_num}}</strong>条短信（仅统计开播提醒及回放通知的预计发送量）</span><span class="base_title_balance" v-if="smsBalance && (smsBalance.sms < sms_send_num || smsBalance.sms == 0)">余额不足，请联系您的专属客服充值。</span></div>
         <el-row :gutter="24" class="base_row" v-if="msgInfo">
           <!-- xs	<768px	超小屏 如：手机
           sm	≥768px	小屏幕 如：平板
@@ -473,7 +473,10 @@ export default {
       }
       .color-blue {
         color: #1E4EDC;
-        padding-left: 10px;
+      }
+      .padding-10 {
+        padding-left: 8px;
+        padding-right: 8px;
       }
       .color-red {
         color: #FB2626;

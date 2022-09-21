@@ -98,7 +98,8 @@
     <!-- 发送设置 -->
     <send-set v-if="setVisible" :visible="setVisible" :cardInfo="{
       webinar_id: info.webinar_id,
-      config_type: info.config_type
+      config_type: info.config_type,
+      notice_switch: cardInfo.notice_switch
     }" @close="handleSetClose" @saveChange="saveChange"></send-set>
     <!-- 发送记录 -->
     <send-notice-list v-if="noticeVisible" :visible="noticeVisible" @close="handleNoticeClose"></send-notice-list>
