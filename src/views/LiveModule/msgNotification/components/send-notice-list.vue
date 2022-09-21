@@ -38,7 +38,7 @@
     </vh-tabs>
     <!-- 表格层 -->
     <div class="tab-content">
-      <vh-table ref="noticeTable" :data="noticeResults.list" max-height="288">
+      <vh-table ref="noticeTable" :data="noticeResults.list" max-height="384">
         <vh-table-column
           align="left"
           v-for="(item, index) in tableColumn"
@@ -53,26 +53,27 @@
               <!-- 发送状态 ，发送状态  0,发送中 1，发送成功 2，发送失败	 -->
               <span>{{ ['发送中', '发送成功', '发送失败'][scope.row[item.key]] || '' }}</span>
             </div>
-            <span v-else>{{ scope.row[item.key] || '- -' }}</span>
+            <span v-else>{{ scope.row[item.key] || '-' }}</span>
           </template>
         </vh-table-column>
         <div slot="empty"></div>
       </vh-table>
-      <noData :nullType="'nullData'" height=60 v-if="!noticeResults.total" :text="'暂未搜索到您想要的内容'"></noData>
-      <div class="tab-content_page" v-if="noticeResults.total > 0">
-        <p class="notice-info">发送成功：<span class="color-blue">{{noticeResults.success_num||0}}</span> 条<span class="span-between">&nbsp;</span>发送失败：<span class="color-red">{{noticeResults.fail_num || 0}}</span> 条</p>
-        <SPagination
-          :total="noticeResults.total"
-          v-show="noticeResults.total > 10"
-          :currentPage="pageNum"
-          :page-sizes="[100, 200, 300, 400]"
-          :page-size="query.limit"
-          layout="prev, pager, next"
-          @current-change="currentChangeHandler"
-          @size-change="handleSizeChange"
-          align="center"
-        >
-        </SPagination>
+      <noData :nullType="'nullData'" height=52 v-if="!noticeResults.total" :text="'暂未搜索到您想要的内容'"></noData>
+    </div>
+    <div class="tab-content_page" v-if="noticeResults.total > 0">
+      <p class="notice-info">发送成功：<span class="color-blue">{{noticeResults.success_num||0}}</span> 条<span class="span-between">&nbsp;</span>发送失败：<span class="color-red">{{noticeResults.fail_num || 0}}</span> 条</p>
+      <div class="pageBox">
+        <vh-pagination
+        background
+        :total="noticeResults.total"
+        v-show="noticeResults.total > 10"
+        :currentPage="pageNum"
+        :page-sizes="[100, 200, 300, 400]"
+        :page-size="query.limit"
+        layout="prev, pager, next"
+        @current-change="currentChangeHandler"
+        @size-change="handleSizeChange"
+        align="center"></vh-pagination>
       </div>
     </div>
   </vh-dialog>
@@ -225,7 +226,7 @@
               let smsSource = item.sms_source.split(',') || []
               const newSmsSouce = []
               smsSource.forEach(sItem => {
-                newSmsSouce.push(['--','预约/报名用户','白名单','导入','预约/报名中未观看直播用户'][sItem])
+                newSmsSouce.push(['-','预约/报名用户','白名单','导入','预约/报名中未观看直播用户'][sItem])
               });
               item.sms_souce_str = newSmsSouce.join(',')
               if (item.is_test == 1) {
@@ -347,7 +348,7 @@
     min-height: 0;
   }
   .tab-content {
-    min-height: 338px;
+    min-height: 314px;
     .icon-status {
       height: 20px;
       display: flex;
@@ -357,30 +358,31 @@
       line-height: 20px;
     }
     .icon-dot {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       display: block;
       margin-right: 8px;
       border-radius: 50%;
     }
-    &_page {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 16px;
-      .pageBox {
-        margin-left: 24px;
-        margin-right: auto;
-      }
+  }
+  .tab-content_page {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    .pageBox {
+      margin-left: 24px;
+      margin-right: auto;
     }
-    .color-red {
-      color: #FB2626;
-    }
-    .color-blue {
-      color: #1E4EDC;
-    }
-    .span-between {
-      width: 12px;
-    }
+  }
+  .color-red {
+    color: #FB2626;
+  }
+  .color-blue {
+    color: #1E4EDC;
+  }
+  .span-between {
+    display: inline-block;
+    width: 12px;
   }
 </style>
