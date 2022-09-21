@@ -385,6 +385,7 @@ export default {
         this.fileUrl = `${this.importExcelBase?.import_user_url || ''}`;
         this.fileName = this.importExcelBase?.import_result?.file_name || '';
         this.fileResult = 'success';
+        this.isUploadEnd = true;
         this.uploadResult = {
           status: 'success',
           text: '检测成功'
