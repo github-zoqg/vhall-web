@@ -36,6 +36,7 @@ const ssoAutoLogin = async () => {
         // 登出操作
         if (data.login_status === 0) return sessionOrLocal.removeItem('token', 'localStorage')
         data.token && sessionOrLocal.set('token', data.token, 'localStorage')
+        sessionOrLocal.set('tokenRefresh', new Date().getTime(), 'localStorage')
       }
     }).finally(() => {
       loaded = true // 不管接口是否成功, 往下执行
