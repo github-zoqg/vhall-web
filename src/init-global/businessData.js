@@ -11,3 +11,13 @@ export const bu_appId = {
   test: 'fd8d3653',
   production: '15df4d3f'
 };
+
+/**
+ * 宣传的视频
+ * paas回放在控制台指定死的产品定义的固定宣传视频回放id
+ *
+ */
+export const paas_record_id_propagandaVideo = {
+  test: '52b2be4a',
+  production: 'd57f42f4'
+};

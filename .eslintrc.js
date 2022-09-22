@@ -19,6 +19,7 @@ module.exports = {
     $: true,
     wx: true,
     WeixinJSBridge: true,
+    vp // 播放器对象的全局变量
   },
   extends: [
     'plugin:vue/essential', // vue2核心的lint的规则
