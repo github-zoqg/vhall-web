@@ -31,13 +31,16 @@
        </div>
     </div>
     <div class="living_preview_wap_body">
-      <div class="wap_player" v-if="type==1">
+      <div class="wap_player" v-if="type==1" :style="videoBackground">
         <template v-if="isShowInteract">
           <div class="watch_layout_1" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
-            <span><img src="./image/living/layout1.png" alt=""></span>
-            <span><img src="./image/living/layout2.png" alt=""></span>
-            <span><img src="./image/living/layout3.png" alt=""></span>
-            <span><img src="./image/living/layout4.png" alt=""></span>
+            <div>
+              <span><img src="./image/living/layout5.png" alt=""></span>
+              <span><img src="./image/living/layout1.png" alt=""></span>
+              <span><img src="./image/living/layout2.png" alt=""></span>
+              <span><img src="./image/living/layout3.png" alt=""></span>
+              <span><img src="./image/living/layout4.png" alt=""></span>
+            </div>
           </div>
           <div class="watch_layout_2" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
             <img src="./image/living/layout1.png" alt="">
@@ -270,6 +273,8 @@
 </template>
 <script>
 import skinsWap from '@/common/skins/wap/index';
+import { imgPositionSizeMap } from '@/utils/imgSizeMap'
+
 export default {
   props: {
     type: {
@@ -307,7 +312,7 @@ export default {
       if (this.videoUrl) {
         return {backgroundImage: `url(${this.videoUrl})`}
       } else {
-        return {backgroundColor: this.livingForm.videoColor}
+        return {backgroundColor: this.livingForm.videoBackGroundColor}
       }
     },
     wapBackground() {
@@ -316,7 +321,7 @@ export default {
         return {backgroundColor: this.livingWapForm.backGroundColor == 1 ? '#262626' : '#f0f0f0'}
       } else {
         if (this.livingWapForm.background && this.type == 1) {
-          return {backgroundImage: `url(${this.domainUrl})`}
+          return {backgroundImage: `url(${this.domainUrl})`, ...imgPositionSizeMap[this.livingWapForm.backgroundSize.imageCropMode]}
         } else {
           let style = this.type == 2 && this.livingWapForm.style == 3 ? 2 : this.livingWapForm.style
           let url = require(`./image/wap/bg_${style}/theme_${this.livingWapForm.backGroundColor}.png`);
@@ -467,10 +472,11 @@ export default {
           height: 100%;
           display: flex;
           flex-wrap: wrap;
+          align-items: center;
           span{
-            display: inline-block;
-            width: 187.5px;
-            height: 105px;
+            float: left;
+            width: 125px;
+            height: 70px;
             img{
               width: 100%;
               height: 100%;
@@ -506,7 +512,7 @@ export default {
           }
         }
         .watch_layout_3{
-          background-color: #262626;
+          // background-color: #262626;
           .layout_top{
             width: 100%;
             height: 167px;

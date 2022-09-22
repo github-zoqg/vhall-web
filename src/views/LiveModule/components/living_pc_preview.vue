@@ -22,13 +22,16 @@
       </div>
       <div class="pc_watch" v-if="type==1">
         <div class="watch_left">
-          <div class="left_top" v-if="isShowInteract">
+          <div class="left_top" v-if="isShowInteract" :style="videoBackground">
             <!-- 均匀 :style="videoBackground"-->
             <div class="left_top__even" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
-              <span><img src="./image/living/layout1.png" alt=""></span>
-              <span><img src="./image/living/layout2.png" alt=""></span>
-              <span><img src="./image/living/layout3.png" alt=""></span>
-              <span><img src="./image/living/layout4.png" alt=""></span>
+              <div class="imgs">
+                <span><img src="./image/living/layout6.png" alt=""></span>
+                <span><img src="./image/living/layout1.png" alt=""></span>
+                <span><img src="./image/living/layout2.png" alt=""></span>
+                <span><img src="./image/living/layout3.png" alt=""></span>
+                <span><img src="./image/living/layout4.png" alt=""></span>
+              </div>
             </div>
             <!-- 主次浮窗 -->
             <div class="left_top__float" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
@@ -51,7 +54,7 @@
               </div>
             </div>
           </div>
-          <div class="left_no_interact" v-else>
+          <div class="left_no_interact" v-else :style="videoBackground">
             <img src="./image/living/layout1.png" alt="">
           </div>
           <div class="left_bottom">
@@ -177,6 +180,8 @@
 </template>
 <script>
 import skinsPc from '@/common/skins/pc/index';
+import { imgPositionSizeMap } from '@/utils/imgSizeMap'
+
 export default {
   props: {
     type: {
@@ -215,12 +220,12 @@ export default {
       if (this.videoUrl) {
         return {backgroundImage: `url(${this.videoUrl})`}
       } else {
-        return {backgroundColor: this.livingForm.videoColor}
+        return {backgroundColor: this.livingForm.videoBackGroundColor}
       }
     },
     pcBackground() {
       if (this.livingPcForm.background) {
-        return {backgroundImage: `url(${this.domainUrl})`}
+        return {backgroundImage: `url(${this.domainUrl})`, ...imgPositionSizeMap[this.livingPcForm.backgroundSize.imageCropMode]}
       } else {
         if (this.livingPcForm.backGroundColor == 1 || (this.livingPcForm.style == 1 && this.livingPcForm.backGroundColor==2)) {
           return {backgroundColor: this.livingPcForm.backGroundColor == 1 ? '#1a1a1a' : 'rgba(0, 0, 0, 0.06)'}
@@ -384,11 +389,23 @@ export default {
               height: 100%;
               flex-wrap: wrap;
               // justify-content: center;
-              // align-items: center;
+              align-items: center;
+              .imgs {
+                height: fit-content;
+              }
               span{
-                display: inline-block;
-                width: 298px;
-                height: 167px;
+                float: left;
+                width: 198px;
+                height: 111px;
+                &:nth-child(3) {
+                  width: 200px;
+                }
+                &:nth-child(1) {
+                  img {
+                    object-fit: contain;
+                    background: #000000;
+                  }
+                }
                 img{
                   width: 100%;
                   height: 100%;
