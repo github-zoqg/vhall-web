@@ -266,7 +266,9 @@
       },
       // 打开短链接
       openShortLink() {
-        this.cardQueryVo.short_url && window.open(this.cardQueryVo.short_url, '_blank');
+        const short_url = this.cardQueryVo.short_url
+        const isJoinStr = short_url.indexOf('https://') != -1 || short_url.indexOf('http://') != -1 || short_url.indexOf('//') != -1
+        this.cardQueryVo.short_url && window.open(`${isJoinStr ? '' : '//'}${this.cardQueryVo.short_url}`, '_blank');
       },
       getCheckStatus(item) {
         if (this.noticeDetailVo && this.noticeDetailVo.sms_info && this.noticeDetailVo.sms_info.send_res) {
