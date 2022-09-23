@@ -39,18 +39,33 @@
                 <span><img src="./image/living/layout2.png" alt=""></span>
                 <span><img src="./image/living/layout3.png" alt=""></span>
                 <span><img src="./image/living/layout4.png" alt=""></span>
+                <span><img src="./image/living/layout5.png" alt=""></span>
               </div>
             </div>
             <!-- 主次平铺 -->
-            <div class="left_top__tiling" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
+            <div :class="`left_top__tiling ${livingForm.speakerAndShowLayout == 1 ? 'layout_join' : 'layout_split'}`" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
               <div class="host">
-                <img src="./image/living/layout1.png" alt="">
+                <img src="./image/living/ppt.png" alt="" v-show="livingForm.speakerAndShowLayout == 1">
+                <img src="./image/living/layout1.png" alt="" v-show="livingForm.speakerAndShowLayout != 1">
               </div>
+              <div class="imgs">
+                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.png" alt=""></span>
+                <span><img src="./image/living/layout2.png" alt=""></span>
+                <span><img src="./image/living/layout3.png" alt=""></span>
+                <span><img src="./image/living/layout4.png" alt=""></span>
+                <span><img src="./image/living/layout5.png" alt=""></span>
+              </div>
+            </div>
+            <!-- 顶部成员 -->
+            <div :class="`left_top__tiling ${livingForm.speakerAndShowLayout == 1 ? 'layout_join' : 'layout_split'}`" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE_EXTEND_1'">
               <div class="imgs">
                 <span><img src="./image/living/layout2.png" alt=""></span>
                 <span><img src="./image/living/layout3.png" alt=""></span>
                 <span><img src="./image/living/layout4.png" alt=""></span>
-                <!-- <span><img src="./image/living/layout5.png" alt=""></span> -->
+                <span><img src="./image/living/layout5.png" alt=""></span>
+              </div>
+              <div class="host">
+                <img src="./image/living/layout1.png" alt="">
               </div>
             </div>
           </div>
@@ -66,7 +81,7 @@
             <span class="left_bottom_tools"><img src="./image/living/tools@2x.png" alt=""></span>
           </div>
         </div>
-        <div class="watch_right">
+        <div :class="`watch_right ${livingForm.speakerAndShowLayout == 1 ? 'layout_join' : 'layout_split'}`">
           <div class="right_top">
             <img src="./image/living/ppt.png" alt="">
           </div>
@@ -422,15 +437,26 @@ export default {
                 position: absolute;
                 left: 0;
                 bottom: 0;
-                height: 84px;
                 span{
                   display: inline-block;
-                  width: 149px;
-                  height: 84px;
                   img{
                     width: 100%;
                     height: 100%;
                     object-fit: cover;
+                  }
+                }
+                &.col-5 {
+                  height: 65px;
+                  span {
+                    width: 118px;
+                    height: 65px;
+                  }
+                }
+                &.col-4 {
+                  height: 84px;
+                  span {
+                    width: 148px;
+                    height: 84px;
                   }
                 }
               }
@@ -438,7 +464,6 @@ export default {
             &__tiling{
               .host{
                 width: 446px;
-                height: 250px;
                 margin: 0 auto;
                 img{
                   width: 100%;
@@ -450,12 +475,34 @@ export default {
                 display: flex;
                 span{
                   display: inline-block;
-                  width: 149px;
-                  height: 84px;
                   img{
                     width: 100%;
                     height: 100%;
                     object-fit: cover;
+                  }
+                }
+              }
+              &.layout_join {
+                /* 合并模式 */
+                .host{
+                  height: 269px;
+                }
+                .imgs{
+                  span {
+                    width: 118px;
+                    height: 65px;
+                  }
+                }
+              }
+              &.layout_split {
+                /* 分离模式 */
+                .host{
+                  height: 250px;
+                }
+                .imgs{
+                  span {
+                    width: 148px;
+                    height: 84px;
                   }
                 }
               }
@@ -519,7 +566,6 @@ export default {
           }
           .right_bottom{
             width: 100%;
-            height: 269px;
             background: var(--background_pc_tabs_color);
             transition: all 0.5s linear;
             position: relative;
@@ -731,7 +777,25 @@ export default {
               }
             }
           }
-        }
+          }
+          &.layout_join {
+            /* 合并模式 */
+            .right_top {
+              display: none;
+            }
+            .right_bottom {
+              height: 362px;
+            }
+          }
+          &.layout_split {
+            /* 分离模式 */
+            .right_top {
+              display: block;
+            }
+            .right_bottom {
+              height: 269px;
+            }
+          }
         }
       }
       .pc_subscribe{

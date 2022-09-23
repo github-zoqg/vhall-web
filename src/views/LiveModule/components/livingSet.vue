@@ -2,6 +2,7 @@
   <div class="living-setting">
     <div class="living-setting_type">
       <template v-if="livingPreview==1">
+        <!-- PC切换左侧风格 -->
         <div class="type_item" @click="activeTheme(1)">
           <span class="type_item_title">传统风格</span>
           <p class="type_item_check" :class="livingPcForm.style==1 ? 'active' : ''">
@@ -25,6 +26,7 @@
         </div>
       </template>
       <template v-else>
+        <!-- WAP切换左侧风格 -->
         <div class="type_item" v-for="(item, index) in themeWapTypeList" :key="index">
           <span class="type_item_title title_center">{{ item.title }}</span>
           <p class="type_item_check item_checked" :class="livingWapForm.style==item.id ? 'active' : ''" @click="activeWapTheme(item)">
@@ -37,7 +39,7 @@
     <!-- 预览区域 -->
     <div class="living-setting_preview">
       <div class="preview_btn">
-        <vh-radio-group v-model="livingPreview" size="small">
+        <vh-radio-group v-model="livingPreview" size="small" @change="choseLivingPreview">
           <vh-radio-button round :label="1">PC预览</vh-radio-button>
           <vh-radio-button round :label="2">手机预览</vh-radio-button>
         </vh-radio-group>
@@ -170,7 +172,7 @@
           <div class="form_item_br">
             以下设置对PC端和移动端同时生效～
           </div>
-          <div class="form_item" v-if="isShowInteract">
+          <div class="form_item more__layout" v-if="isShowInteract">
             <div class="form_item_title">
               视频区【连麦】布局
               <p class="title_tip">
@@ -184,7 +186,7 @@
                 <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
               </el-tooltip> -->
             </div>
-            <div class="form_item_lay">
+            <div class="form_item_lay more__layout">
               <div class="item_lay" @click="choseMicrophone(0)">
                 <div class="item_lay_hidden" v-if="isDelay"></div>
                 <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE' ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
@@ -198,6 +200,30 @@
                 <div class="item_lay_hidden" v-if="isDelay"></div>
                 <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE' ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
                 <span>主次浮窗</span>
+              </div>
+              <div class="item_lay" @click="choseMicrophone(3)">
+                <div class="item_lay_hidden" v-if="isDelay"></div>
+                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE_EXTEND_1' ? 'active' : ''"><img src="./image/main_4.png" alt=""></p>
+                <span>顶部成员</span>
+              </div>
+            </div>
+          </div>
+          <div class="form_item inv_demo__layout" v-if="isShowInteract">
+            <div class="form_item_title">
+              视频区【连麦+演示】布局
+              <p class="title_tip">
+                注意：移动端模板选择了简洁风格会导致pc端分离模式不可用
+              </p>
+            </div>
+            <div class="form_item_lay inv_demo__layout">
+              <div class="item_lay" @click="choseInteractDemoLayout(0)">
+                <div class="item_lay_hidden" v-if="livingWapForm && livingWapForm.style == 3"></div>
+                <p :class="livingForm.speakerAndShowLayout != 1 ? 'active' : ''"><img src="./image/inav_main_0.png" alt=""></p>
+                <span>分离模式</span>
+              </div>
+              <div class="item_lay" @click="choseInteractDemoLayout(1)">
+                <p :class="livingForm.speakerAndShowLayout == 1 ? 'active' : ''"><img src="./image/inav_main_1.png" alt=""></p>
+                <span>合并模式</span>
               </div>
             </div>
           </div>
@@ -341,6 +367,7 @@ export default {
         chatLayout: 1,
         inavLayout: 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', //连麦布局
         inavDocumentLayout: 1, //连麦+演示布局
+        speakerAndShowLayout: 0, // 视频区【连麦+演示】布局
         finalVideoBackground: '',
         videoBackGround: '',
         videoBlurryDegree: 0,
@@ -439,6 +466,7 @@ export default {
 
           this.livingForm.chatLayout = skin_json_pc.chatLayout; // 公共信息 聊天布局
           this.livingForm.inavLayout = this.isDelay ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : skin_json_pc.inavLayout; // 公共信息 连麦布局
+          this.livingForm.speakerAndShowLayout = skin_json_wap.style == 3 ? 1 : skin_json_pc.speakerAndShowLayout; // 公共信息 视频区【连麦+演示】布局 (手机端简洁模式下，只能选择 合并模式)
           this.livingForm.videoBackGround = skin_json_pc.videoBackGround; // 公共信息  视频区背景 图片地址
           this.livingForm.videoBackGroundColor = skin_json_pc.videoBackGroundColor == '#333338' ? '#000000' : skin_json_pc.videoBackGroundColor; // 公共信息  视频区背景 颜色
           this.livingForm.videoBackGroundSize = skin_json_pc.videoBackGroundSize; // 公共信息 视频区背景 裁剪信息
@@ -452,12 +480,15 @@ export default {
         this.$message.error(err.msg || '获取信息失败')
       })
     },
+    // 切换预览效果
+    choseLivingPreview() {},
     activeTheme(index) {
       this.livingPcForm.style = index;
       if (index == this._livingPcForm.style) {
         this.livingPcForm = {...this._livingPcForm};
         this.livingForm.chatLayout = this._livingForm.chatLayout, // 公共信息 聊天布局
         this.livingForm.inavLayout = this._livingForm.inavLayout, // 公共信息 连麦布局
+        this.livingForm.speakerAndShowLayout = this.livingWapForm.style == 3 ? 1 : this._livingForm.speakerAndShowLayout, // 公共信息 视频区【连麦+演示】布局 (手机端简洁模式下，只能选择 合并模式)
         this.livingForm.videoBackGround = this._livingForm.videoBackGround, // 公共信息  视频区背景 图片地址
         this.livingForm.videoBackGroundColor = this._livingForm.videoBackGroundColor, // 公共信息  视频区背景 颜色
         this.livingForm.videoBackGroundSize = this._livingForm.videoBackGroundSize, // 公共信息 视频区背景 裁剪信息
@@ -471,10 +502,12 @@ export default {
     activeWapTheme(item) {
       this.livingWapForm.style = item.id;
       // 如果接口返回的是当前选中值，默认用备份
-      if (item.id == this._livingWapForm.style) {
+      if (item.id == this._livingWapForm?.style) {
         this.livingWapForm = { ...this._livingWapForm};
         this.livingForm.chatLayout = item.id  == 3 ? 2 : 1;
         this.livingForm.inavLayout = this._livingForm.inavLayout;
+        // 移动端选择简洁模式，连麦+演示 布局，只能是合并模式
+        this.livingForm.speakerAndShowLayout = this.livingWapForm.style == 3 ? 1 : this._livingForm.speakerAndShowLayout
         this.livingForm.videoBackGround = this._livingForm.videoBackGround, // 公共信息  视频区背景 图片地址
         this.livingForm.videoBackGroundColor = this._livingForm.videoBackGroundColor, // 公共信息  视频区背景 颜色
         this.livingForm.videoBackGroundSize = this._livingForm.videoBackGroundSize, // 公共信息 视频区背景 裁剪信息
@@ -516,6 +549,7 @@ export default {
       this._livingForm = {
         chatLayout: skin_json_pc.chatLayout, // 公共信息 聊天布局
         inavLayout: this.livingForm.inavLayout, // 公共信息 连麦布局
+        speakerAndShowLayout: skin_json_wap.style == 3 ? 1 : skin_json_pc.speakerAndShowLayout, // 公共信息 视频区【连麦+演示】布局 (手机端简洁模式下，只能选择 合并模式)
         videoBackGround: skin_json_pc.videoBackGround, // 公共信息  视频区背景 图片地址
         videoBackGroundColor: skin_json_pc.videoBackGroundColor, // 公共信息  视频区背景 颜色
         videoBackGroundSize: skin_json_pc.videoBackGroundSize, // 公共信息 视频区背景 裁剪信息
@@ -535,6 +569,7 @@ export default {
         videoBackGroundColor: '#000000', //视频区底色
         chatLayout: style == 1 ? 1 : 2,
         inavLayout: layout, //连麦布局
+        speakerAndShowLayout: this.livingWapForm.style == 3 ? 1 : 0, // 视频区【连麦+演示】布局 (手机端简洁模式下，只能选择 合并模式) — 默认设置
         videoBackGround: '',
         videoBlurryDegree: 0,
         videoLightDegree: 10,
@@ -683,8 +718,14 @@ export default {
     },
     choseMicrophone(index) {
       if (this.isDelay) return;
-      let arrLayout = ['CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE', 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE']
+      let arrLayout = ['CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE', 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE', 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE_EXTEND_1']
       this.livingForm.inavLayout = arrLayout[index];
+    },
+    // 视频区【连麦+演示】布局
+    choseInteractDemoLayout(val) {
+      // 如果是手机端简洁模式，点击分离模式时，不可切换。
+      if (val < 1 && this.livingWapForm.style == 3) return;
+      this.livingForm.speakerAndShowLayout = val;
     },
     handlePcUploadSuccess(res, file) {
       if(res.data) {
@@ -900,6 +941,9 @@ export default {
       }
       .form_item{
         padding-bottom: 24px;
+        &.more__layout {
+          padding-bottom: 16px;
+        }
         .theme_colors{
           width: 100%;
           display: flex;
@@ -991,9 +1035,22 @@ export default {
               background: rgba(255, 255, 255, 0.5);
             }
           }
+          &.more__layout {
+            justify-content: space-between;
+            flex-wrap: wrap;
+            .item_lay{
+              margin-bottom: 8px;
+            }
+          }
+          &.inv_demo__layout {
+            justify-content: flex-start;
+            .item_lay {
+              margin-left: 8px;
+            }
+          }
           p{
-            width: 68px;
-            height: 46px;
+            width: 72px;
+            height: 50px;
             border-radius: 4px;
             margin-bottom: 5px;
             border: 1px solid transparent;
