@@ -31,10 +31,12 @@
        </div>
     </div>
     <div class="living_preview_wap_body">
-      <div class="wap_player" v-if="type==1" :style="videoBackground">
+      <div :class="`wap_player ${livingForm.speakerAndShowLayout == 1 ? 'layout_join' : 'layout_split'}`"  v-if="type==1" :style="videoBackground">
         <template v-if="isShowInteract">
+          <!-- 均匀 -->
           <div class="watch_layout_1" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
             <div>
+              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/ppt.png" alt=""></span>
               <span><img src="./image/living/layout5.png" alt=""></span>
               <span><img src="./image/living/layout1.png" alt=""></span>
               <span><img src="./image/living/layout2.png" alt=""></span>
@@ -42,25 +44,44 @@
               <span><img src="./image/living/layout4.png" alt=""></span>
             </div>
           </div>
+          <!-- 主次浮窗 -->
           <div class="watch_layout_2" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
-            <img src="./image/living/layout1.png" alt="">
+            <img src="./image/living/ppt.png" alt="" v-if="livingForm.speakerAndShowLayout == 1">
+            <img src="./image/living/layout1.png" alt="" v-else>
             <div class="layout_float">
+              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.png" alt=""></span>
               <span><img src="./image/living/layout2.png" alt=""></span>
               <span><img src="./image/living/layout3.png" alt=""></span>
               <span><img src="./image/living/layout4.png" alt=""></span>
             </div>
           </div>
+          <!-- 主次平铺 -->
           <div class="watch_layout_3" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
             <div class="layout_top">
               <!-- :style="videoBackground" -->
-              <span><img src="./image/living/layout1.png" alt=""></span>
+              <span v-if="livingForm.speakerAndShowLayout == 1"><img src="./image/living/ppt.png" alt=""></span>
+              <span v-else><img src="./image/living/layout1.png" alt=""></span>
             </div>
             <div class="layout_bottom">
+              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.png" alt=""></span>
               <span><img src="./image/living/layout2.png" alt=""></span>
               <span><img src="./image/living/layout3.png" alt=""></span>
               <span><img src="./image/living/layout4.png" alt=""></span>
               <!-- <span><img src="./image/living/layout5.png" alt=""></span> -->
               <!-- <span><img src="./image/wap/video.png" alt=""></span> -->
+            </div>
+          </div>
+          <!-- 顶部成员 -->
+          <div class="watch_layout_4" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE_EXTEND_1'">
+            <div class="layout_top">
+              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.png" alt=""></span>
+              <span><img src="./image/living/layout2.png" alt=""></span>
+              <span><img src="./image/living/layout3.png" alt=""></span>
+              <span><img src="./image/living/layout4.png" alt=""></span>
+            </div>
+            <div class="layout_bottom">
+              <span v-if="livingForm.speakerAndShowLayout == 1"><img src="./image/living/ppt.png" alt=""></span>
+              <span v-else><img src="./image/living/layout1.png" alt=""></span>
             </div>
           </div>
         </template>
@@ -89,7 +110,7 @@
           </div>
         </div>
       </div>
-      <div class="wap_menus" v-else>
+      <div :class="`wap_menus ${livingForm.speakerAndShowLayout == 1 ? 'layout_join' : 'layout_split'}`" v-else>
         <div class="wap_menus_tabs" v-if="livingWapForm.style!=3">
           <!-- <div class="tabs_left">
             <i class="iconfont-v3 saasicon_arrowleft"></i>
@@ -539,6 +560,41 @@ export default {
               display: inline-block;
               width: 75px;
               height: 43px;
+              img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+          }
+        }
+        .watch_layout_4{
+          .layout_top{
+            width: 100%;
+            height: 43px;
+            display: flex;
+            span{
+              display: inline-block;
+              width: 75px;
+              height: 43px;
+              img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+          }
+          .layout_bottom{
+            width: 100%;
+            height: 167px;
+            padding: 0 38px;
+            transition: all 0.8s linear;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            span{
+              display: inline-block;
+              width: 298px;
+              height: 100%;
               img{
                 width: 100%;
                 height: 100%;
