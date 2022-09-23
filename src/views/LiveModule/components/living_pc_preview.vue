@@ -21,12 +21,13 @@
         </div>
       </div>
       <div class="pc_watch" v-if="type==1">
-        <div class="watch_left">
+        <div :class="`watch_left ${livingForm.speakerAndShowLayout == 1 ? 'layout_join' : 'layout_split'}`">
           <div class="left_top" v-if="isShowInteract" :style="videoBackground">
             <!-- 均匀 :style="videoBackground"-->
             <div class="left_top__even" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
               <div class="imgs">
-                <span><img src="./image/living/layout6.png" alt=""></span>
+                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/ppt.png" alt=""></span>
+                <span class="phone__center"><img src="./image/living/layout6.png" alt=""></span>
                 <span><img src="./image/living/layout1.png" alt=""></span>
                 <span><img src="./image/living/layout2.png" alt=""></span>
                 <span><img src="./image/living/layout3.png" alt=""></span>
@@ -36,6 +37,7 @@
             <!-- 主次浮窗 -->
             <div class="left_top__float" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
               <div class="imgs">
+                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.png" alt=""></span>
                 <span><img src="./image/living/layout2.png" alt=""></span>
                 <span><img src="./image/living/layout3.png" alt=""></span>
                 <span><img src="./image/living/layout4.png" alt=""></span>
@@ -43,7 +45,7 @@
               </div>
             </div>
             <!-- 主次平铺 -->
-            <div :class="`left_top__tiling ${livingForm.speakerAndShowLayout == 1 ? 'layout_join' : 'layout_split'}`" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
+            <div class="left_top__tiling" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
               <div class="host">
                 <img src="./image/living/ppt.png" alt="" v-show="livingForm.speakerAndShowLayout == 1">
                 <img src="./image/living/layout1.png" alt="" v-show="livingForm.speakerAndShowLayout != 1">
@@ -57,15 +59,17 @@
               </div>
             </div>
             <!-- 顶部成员 -->
-            <div :class="`left_top__tiling ${livingForm.speakerAndShowLayout == 1 ? 'layout_join' : 'layout_split'}`" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE_EXTEND_1'">
+            <div class="left_top__tiling" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE_EXTEND_1'">
               <div class="imgs">
+                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.png" alt=""></span>
                 <span><img src="./image/living/layout2.png" alt=""></span>
                 <span><img src="./image/living/layout3.png" alt=""></span>
                 <span><img src="./image/living/layout4.png" alt=""></span>
                 <span><img src="./image/living/layout5.png" alt=""></span>
               </div>
               <div class="host">
-                <img src="./image/living/layout1.png" alt="">
+                <img src="./image/living/ppt.png" alt="" v-show="livingForm.speakerAndShowLayout == 1">
+                <img src="./image/living/layout1.png" alt="" v-show="livingForm.speakerAndShowLayout != 1">
               </div>
             </div>
           </div>
@@ -415,7 +419,7 @@ export default {
                 &:nth-child(3) {
                   width: 200px;
                 }
-                &:nth-child(1) {
+                &.phone__center {
                   img {
                     object-fit: contain;
                     background: #000000;
@@ -432,7 +436,6 @@ export default {
               width: 100%;
               height: 100%;
               position: relative;
-              background: url('./image/living/layout1.png') no-repeat 50% 50%;
               .imgs{
                 position: absolute;
                 left: 0;
@@ -443,20 +446,6 @@ export default {
                     width: 100%;
                     height: 100%;
                     object-fit: cover;
-                  }
-                }
-                &.col-5 {
-                  height: 65px;
-                  span {
-                    width: 118px;
-                    height: 65px;
-                  }
-                }
-                &.col-4 {
-                  height: 84px;
-                  span {
-                    width: 148px;
-                    height: 84px;
                   }
                 }
               }
@@ -479,30 +468,6 @@ export default {
                     width: 100%;
                     height: 100%;
                     object-fit: cover;
-                  }
-                }
-              }
-              &.layout_join {
-                /* 合并模式 */
-                .host{
-                  height: 269px;
-                }
-                .imgs{
-                  span {
-                    width: 118px;
-                    height: 65px;
-                  }
-                }
-              }
-              &.layout_split {
-                /* 分离模式 */
-                .host{
-                  height: 250px;
-                }
-                .imgs{
-                  span {
-                    width: 148px;
-                    height: 84px;
                   }
                 }
               }
@@ -546,6 +511,58 @@ export default {
                 width: 100%;
                 height: 100%;
                 object-fit: contain;
+              }
+            }
+          }
+          &.layout_join {
+            /* 合并模式 */
+            .left_top__float {
+              background-image: url('./image/living/ppt.png');
+              background-repeat: no-repeat;
+              background-size: 596px 336px;
+              .imgs {
+                height: 65px;
+                span {
+                  width: 20%;
+                  height: 65px;
+                }
+              }
+            }
+            .left_top__tiling {
+              .host{
+                height: 269px;
+              }
+              .imgs{
+                span {
+                  width: 20%;
+                  height: 65px;
+                }
+              }
+            }
+          }
+          &.layout_split {
+            /* 分离模式 */
+            .left_top__float {
+              background-image: url('./image/living/layout1.png');
+              background-repeat: no-repeat;
+              background-size: 596px 336px;
+              .imgs {
+                height: 84px;
+                span {
+                  width: 25%;
+                  height: 84px;
+                }
+              }
+            }
+            .left_top__tiling {
+              .host{
+                height: 250px;
+              }
+              .imgs{
+                span {
+                  width: 25%;
+                  height: 84px;
+                }
               }
             }
           }
