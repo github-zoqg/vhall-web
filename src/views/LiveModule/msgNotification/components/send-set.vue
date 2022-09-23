@@ -18,8 +18,13 @@
             <template v-for="(item, index) in senderUserOptions">
               <vh-checkbox :label="item.label" :key="`send_${index}`" v-if="item.isShow">{{item.text}}
                 <vh-tooltip v-tooltipMove v-if="item.label == 1">
-                  <div slot="content">
+                  <div slot="content" v-if="cardInfo.config_type == 1">
                     <p>当专题下开启统一观看限制或统一报名时，<br/>则不触发预约报名成功的通知消息</p>
+                  </div>
+                  <div slot="content" v-else>
+                    <p>1. 无统一观看限制时，各活动下的短信通知正常发送</p>                    
+                    <p>2. 当开启专题统一观看限制、统一报名表单时（免费条件及密码条件无预约提交手机号功能因此无法触发短信）：</p>
+                    <p>如果专题下的多个活动开启了短信通知，则将对该活动下设置的短信发送对象+通过专题观看权限的用户发送开播提醒或回放提醒</p>
                   </div>
                   <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
                 </vh-tooltip>
