@@ -571,6 +571,8 @@
             1.设置了文档水印后，文字内容将以水印的形式出现在文档区域中，目前支持PC端、移动wap端。
           </span>
           <span>2.文档水印最多显示20个字，超出的水印内容将不会显示</span>
+<!--           <span>3.若活动下，视频区【连麦+演示】布局为合并模式时不支持显示水印 <span @click="toLivingSetPage">去设置</span></span> -->
+          <span>3.合并模式不支持显示水印 <a href="javascript:void(0);" class="safe__link" @click="toLivingSetPage">去设置</a></span>
         </div>
       </div>
       <div class="cut-line" v-if="activeName == 'second'"></div>
@@ -1845,6 +1847,15 @@ export default {
       //   this.getBaseOtherList();
       // }
     },
+    // 跳转进入直播间设置逻辑
+    toLivingSetPage() {
+      let { href } = this.$router.resolve({
+        path: `/live/livingSet/${this.$route.params.str}`,
+        query: { type: this.$route.query.type, isDelay: this.$route.query.isDelay }
+      })
+      window.open(href, '_blank')
+      let isDelay = this.hasDelayPermission && this.isDelay ? 1 : 0;
+    }
   },
 }
 </script>
@@ -2345,6 +2356,15 @@ export default {
         color: #999;
         line-height: 20px;
         font-size: 14px;
+      }
+      .safe__link {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        text-align: justify;
+        color: #4E76FB;
+        margin-left: 8px;
       }
     }
   }

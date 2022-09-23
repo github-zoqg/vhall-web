@@ -809,6 +809,14 @@ export default {
             query: { roomId: this.liveDetailInfo.vss_room_id },
           })
         } else if (item.path == `/live/livingSet/${this.$route.params.str}`) {
+          // 直播间设置
+          let isDelay = this.hasDelayPermission && this.isDelay ? 1 : 0;
+          this.$router.push({
+            path: item.path,
+            query: { type: this.liveDetailInfo.webinar_type, isDelay: isDelay },
+          })
+        } else if (item.path == `/live/safeScreenSet/${this.$route.params.str}`) {
+          // 防录屏
           let isDelay = this.hasDelayPermission && this.isDelay ? 1 : 0;
           this.$router.push({
             path: item.path,
