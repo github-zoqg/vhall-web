@@ -242,16 +242,18 @@
               <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoBackGroundColor"></color-set>
             </div>
             <div class="form_item">
-              <p class="form_item_title">
-                <span class="mr">视频区背景</span>
+              <div class="form_item_title">
+                视频区背景
+                <p class="title_tip">注意：1.请勿手动修改图片后缀，否则有可能导致背景图不生效；2.视频区背景图在无延迟模式下或上麦时不生效</p>
+                <!-- <span class="mr">视频区背景</span>
                 <el-tooltip placement="right" v-tooltipMove>
                   <div slot="content">
                     <p>1.请勿手动修改图片后缀，否则有可能导致背景<br>&nbsp;&nbsp;&nbsp;图不生效</p>
                     <p>2.视频区背景图在无延迟模式下或上麦时不生效</p>
                   </div>
                   <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
-                </el-tooltip>
-              </p>
+                </el-tooltip> -->
+              </div>
               <upload
                 class="upload__living"
                 id="living_video_cropper"

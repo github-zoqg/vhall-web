@@ -523,7 +523,7 @@ export default {
               .imgs {
                 height: 65px;
                 span {
-                  width: 20%;
+                  width: 119px;
                   height: 65px;
                 }
               }
@@ -534,7 +534,7 @@ export default {
               }
               .imgs{
                 span {
-                  width: 20%;
+                  width: 119px;
                   height: 65px;
                 }
               }
@@ -549,7 +549,7 @@ export default {
               .imgs {
                 height: 84px;
                 span {
-                  width: 25%;
+                  width: 149px;
                   height: 84px;
                 }
               }
@@ -560,7 +560,7 @@ export default {
               }
               .imgs{
                 span {
-                  width: 25%;
+                  width: 149px;
                   height: 84px;
                 }
               }
