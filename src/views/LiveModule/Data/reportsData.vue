@@ -32,6 +32,7 @@
         style="width: 240px;"
       />
       <el-select filterable clearable v-model="switchId" v-if="type=='2'" @change="getDataList"  style="width: 160px;vertical-align: top;">
+        <el-option value="-1" label="全部正式直播"></el-option>
         <el-option
           v-for="(opt, optIndex) in switchList"
           :key="optIndex"
@@ -241,7 +242,8 @@ export default {
     },
     //获取直播详情
     getLiveDetail() {
-      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str}).then(res=>{
+      // webinar/info调整-正常的信息展示使用 0
+      this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str, is_rehearsal: 0}).then(res=>{
         this.liveDetailInfo = res.data;
         if (this.liveDetailInfo.webinar_state != 4) {
           this.getLiveSwitchInfo();
@@ -266,7 +268,7 @@ export default {
       this.$fetch('getWebinarSwitchList', {webinar_id: this.$route.params.str}).then(res => {
         this.switchList = res.data.switch_list.map((item, index) => {
           return {
-            label: `第${index + 1}场`,
+            label: `第${index + 1}场 ${item.type == 2 ? '(彩排)':''}`,
             value: item.id
           }
         });

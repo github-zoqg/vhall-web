@@ -33,8 +33,9 @@
     <section class="viewItem">
       <p class="label">表单头图</p>
       <upload
-        :domain_url="imageUrl"
-        v-model.trim="imageUrl"
+        id="form_cropper"
+        :domain_url="domain_url"
+        v-model="imageUrl"
         :on-success="productLoadSuccess"
         :before-upload="beforeUploadHandler"
         :restPic="true"
@@ -49,6 +50,18 @@
       </upload>
       <span class="header-img-tip">建议尺寸：750*125 px，小于2MB（支持格式jpg、png、gif、bmp）</span>
       <div class="disable_wrap" v-show="!signUpSwtich"></div>
+      <div class="form_images" v-if="imageUrl">
+        <div class="form_images_item">
+          <span>模糊程度</span>
+          <vh-slider class="form-slider" v-model="blurryDegree" :max="10" style="width:540px"></vh-slider>
+          <span class="vague_num">{{blurryDegree}}</span>
+        </div>
+        <div class="form_images_item">
+          <span>背景亮度</span>
+          <vh-slider class="form-slider" v-model="lightDegree" :max="20" style="width:540px"></vh-slider>
+          <span class="vague_num">{{lightDegree}}</span>
+        </div>
+      </div>
     </section>
     <!-- 表单名称、表单简介与表单头图为固定字段 -->
     <draggable
@@ -230,7 +243,7 @@
             <div
               :class="[
                 'addBtn',
-                (item.nodes[0].children && item.nodes[0].children.length >= 20) || item.nodes.length >= 20 ? 'isoverflow' : ''
+                (item.nodes[0].children && item.nodes[0].children.length >= 30) || item.nodes.length >= 30 ? 'isoverflow' : ''
               ]">
               <el-button
                 type="text"
@@ -308,6 +321,8 @@
     <section class="viewItem sureBtn" v-if="signUpPageType === 'webinar'">
       <el-button :disabled="!signUpSwtich" round type="primary" v-preventReClick @click="sureQuestionnaire">保存</el-button>
     </section>
+    <!-- 裁剪图片弹窗 -->
+    <cropper ref="formCropper" @cropComplete="cropComplete" @resetUpload="resetUpload" :ratio="750/125"></cropper>
   </div>
 </template>
 
@@ -316,10 +331,13 @@ import draggable from "vuedraggable";
 import upload from '@/components/Upload/main';
 import Env from "@/api/env";
 import defaultHeader from './images/formHeader.png'
+import {parseImgOssQueryString, cropperImage, getImageQuery} from "@/utils/utils";
+import cropper from '@/components/Cropper/index'
 export default {
   components:{
     draggable,
-    upload
+    upload,
+    cropper
   },
   props: {
     questionArr: {
@@ -337,6 +355,13 @@ export default {
     }
   },
   watch:{
+    imageParamsUrl: {
+      handler(newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.$emit('setBaseInfo', { cover: this.imageParamsUrl });
+        }
+      }
+    },
     regionalOptions: {
       handler(newVal){
         this.regionalLevel = { ...newVal }
@@ -355,7 +380,7 @@ export default {
       handler(newVal){
         this.title = newVal.title;
         this.intro = newVal.intro;
-        this.imageUrl = newVal.cover ? `${Env.staticLinkVo.uploadBaseUrl}${ newVal.cover }` : this.defaultHeader;
+        this.handlerImage(newVal);
       },
       deep: true,
       immediate: true
@@ -368,8 +393,17 @@ export default {
       drag: false,
       radio: 3,
       imageUrl: '',
+      imageCropMode: 1,
+      blurryDegree: 0,
+      lightDegree: 10,
       defaultHeader: defaultHeader,
       renderQuestion: [],
+      backgroundSize: {
+        x: 0,
+        y:0,
+        width: 0,
+        height: 0
+      },
       regionalLevel: {
         1: true, // 市
         2: true // 区/县
@@ -394,6 +428,16 @@ export default {
         disabled: false,
         ghostClass: "ghost"
       };
+    },
+    imageParamsUrl() {
+      return `${this.imageUrl}?x-oss-process=image/crop,x_${this.backgroundSize.x.toFixed()},y_${this.backgroundSize.y.toFixed()},w_${this.backgroundSize.width.toFixed()},h_${this.backgroundSize.height.toFixed()}${this.blurryDegree > 0 ? `,/blur,r_10,s_${this.blurryDegree * 2}` : ''},/bright,${(this.lightDegree - 10) * 5}&mode=${this.imageCropMode}`
+    },
+    domain_url() {
+      if (this.imageUrl) {
+        return `${Env.staticLinkVo.uploadBaseUrl}${this.imageParamsUrl}`;
+      } else {
+        return this.defaultHeader;
+      }
     }
   },
   filters: {
@@ -434,6 +478,28 @@ export default {
         return false
       } else {
         return true
+      }
+    },
+    // 处理图片
+    handlerImage(val) {
+      if (!val.cover) {
+        this.imageUrl = '';
+        return;
+      }
+      let url = `https:${Env.staticLinkVo.uploadBaseUrl}${val.cover}`
+      this.imageUrl = getImageQuery(val.cover);
+      if (cropperImage(val.cover)) {
+        let obj = parseImgOssQueryString(url);
+        const { blur, crop } = obj;
+        this.backgroundSize = {
+          x: Number(crop.x),
+          y: Number(crop.y),
+          width: Number(crop.w),
+          height: Number(crop.h)
+        };
+        this.blurryDegree = blur && Number(blur.s) / 2 || 0;
+        this.lightDegree = obj.bright ? 10 + Number(obj.bright) / 5 : 10;
+        this.imageCropMode = obj.mode;
       }
     },
     // 保存表单
@@ -485,9 +551,9 @@ export default {
     },
     // 添加一个题目选项
     addOption(data, other){
-      if ((data.nodes[0].children && data.nodes[0].children.length >= 20) || data.nodes.length >= 20) {
+      if ((data.nodes[0].children && data.nodes[0].children.length >= 30) || data.nodes.length >= 30) {
         this.$message({
-          message: `最多可添加20个选项`,
+          message: `最多可添加30个选项`,
           showClose: true,
           type: 'error',
           customClass: 'zdy-info-box'
@@ -814,14 +880,28 @@ export default {
     productLoadSuccess(res, file) {
       if (res.data.file_url) {
         // 文件上传成功，保存信息
-        this.imageUrl = res.data.file_url;
-        this.$emit('setBaseInfo', { cover: res.data.file_url });
+        this.$refs.formCropper.showModel(res.data.domain_url);
+        this._imageUrl = res.data.file_url;
+        // this.$emit('setBaseInfo', { cover: res.data.file_url });
       }
     },
     // 删除头图
     deleteBanner() {
-      this.imageUrl = this.defaultHeader;
+      this.imageUrl = '';
+      this.blurryDegree = 0;
+      this.lightDegree = 10;
       this.$emit('setBaseInfo', { cover: '' });
+    },
+    cropComplete(cropperData, url, mode) {
+      this.backgroundSize = cropperData;
+      // this.imageUrl = url;
+      this.imageUrl = this._imageUrl;
+      this.imageCropMode = mode;
+      // this.$emit('setBaseInfo', { cover: this.imageParamsUrl });
+    },
+    resetUpload() {
+      let dom = document.querySelector('#form_cropper .el-upload__input');
+      dom.click();
     },
     // 题目顺序修改
     sortChange(val, arr){
@@ -975,6 +1055,18 @@ export default {
   &.viewItemHover{
     /deep/.el-input__suffix{
       right: 5px;
+    }
+  }
+  .form_images{
+    padding-top: 24px;
+    &_item{
+      padding-bottom: 12px;
+      display: flex;
+      justify-items: center;
+      align-items: center;
+      .form-slider{
+        margin: 0 16px ;
+      }
     }
   }
   &.privacyItem {

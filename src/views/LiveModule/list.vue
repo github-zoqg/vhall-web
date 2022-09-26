@@ -92,7 +92,7 @@
                   <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
                 </span>
                 <div class="img-box">
-                  <img :src="`${item.img_url}`" alt="">
+                  <img :class="`img_box_bg webinar_bg_${item.itemMode}`" :src="`${item.img_url}`" alt="">
                 </div>
                 <!-- <div class=""></div> -->
               </div>
@@ -151,7 +151,7 @@
 import PageTitle from '@/components/PageTitle';
 import Env from '@/api/env.js';
 import noData from '@/views/PlatformModule/Error/nullPage';
-import { sessionOrLocal } from '@/utils/utils';
+import { sessionOrLocal, parseImgOssQueryString, cropperImage} from "@/utils/utils";
 export default {
   data() {
     return {
@@ -407,6 +407,11 @@ export default {
       this.pagePos = parseInt((current - 1) * this.pageSize);
       this.getLiveList();
     },
+    // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      return Number(obj.mode) || 3;
+    },
     getLiveList(){
       let data = {
         pos: this.pagePos,
@@ -421,7 +426,12 @@ export default {
         const liveList = res.data.list
         liveList.map(item => {
           // 非化蝶活动，若超过1v5，默认展示1v5
-          item.zdy_inav_num = item.is_new_version != 3 && item.inav_num > 6 ? 6 : item.inav_num
+          item.zdy_inav_num = item.is_new_version != 3 && item.inav_num > 6 ? 6 : item.inav_num;
+          if (cropperImage(item.img_url)) {
+            item.itemMode = this.handlerImageInfo(item.img_url);
+          } else {
+            item.itemMode = 3;
+          }
         })
         this.liveList = liveList;
         this.totalElement = res.data.total;
@@ -780,12 +790,20 @@ export default {
           left: 0;
           border-radius: 4px 4px 0 0;
           overflow: hidden;
-          img{
+          .img_box_bg{
             width: 100%;
             height: 100%;
-            object-fit: scale-down;
+            object-fit: contain;
+            object-position: center;
             cursor: pointer;
             font-size: 0;
+            &.webinar_bg_1{
+              object-fit: fill;
+            }
+            &.webinar_bg_2{
+              object-fit: cover;
+              object-position: left top;
+            }
             // border-radius: 4px 8px 0 0;
           }
         }

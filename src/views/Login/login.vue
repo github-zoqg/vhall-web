@@ -71,16 +71,21 @@
           <el-button class="submit" type="primary" @click="loginAccount" round>登&nbsp;&nbsp;&nbsp;录</el-button>
         </div>
         <div class="login-just">
-          现在注册，就送20G流量<span @click="$router.push({path: '/register'})">立即注册</span>
+          现在注册，就送20G流量<span @click="toRegister">立即注册</span>
         </div>
-        <div class="login-other">
-          其他登录方式<span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
+        <div class="login-other inline">
+          其他登录方式<!-- 旧版 <span @click="openOther">&nbsp;&nbsp;展开 <i :class="isOpenOther ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span> -->
           <div :class="['other-img', !isOpenOther ? 'noVisible' : '']">
+            <!-- 旧版
             <img v-show="isOpenOther" src="../../common/images/icon/qq.png" alt="" @click="thirdLogin('/v3/commons/auth/qq?jump_url=')">
             <img v-show="isOpenOther" src="../../common/images/icon/wechat.png" alt="" @click="thirdLogin('/v3/commons/auth/weixin?source=pc&jump_url=')">
-            <!-- <img src="../../common/images/icon/weibo.png" alt=""> -->
+            -->
+            <span class="third__login__qq" v-show="isOpenOther"  @click="thirdLogin('/v3/commons/auth/qq?jump_url=')"></span>
+            <span class="third__login__wechat" v-show="isOpenOther"  @click="thirdLogin('/v3/commons/auth/weixin?source=pc&jump_url=')"></span>
           </div>
         </div>
+        <!-- 隐私协议合规 -->
+        <privacy-select :scene="isOpenOther ? 'login' : 'login_normal'" ref="loginPrivacyCompliance" @check="checkResult"></privacy-select>
       </el-form>
      </div>
      <!-- 手机号登录 -->
@@ -130,6 +135,8 @@
           <div class="login-btn">
             <el-button class="submit top" type="primary" @click="loginDynamic" round>登 录</el-button>
           </div>
+          <!-- 隐私协议合规 -->
+          <privacy-select scene="loginDynamic" ref="loginDynamicPrivacyCompliance" @check="checkResult"></privacy-select>
        </el-form>
      </div>
     </div>
@@ -200,12 +207,13 @@
               <p class="errorText" v-show="registerText">{{registerText}}</p>
             </el-form-item>
             <div class="login-btn">
-              <el-button class="submit" type="primary" @click="registerAccount" :disabled="!checked" round>立即注册</el-button>
+              <el-button class="submit" type="primary" @click="registerAccount" round>立即注册</el-button>
             </div>
             <el-form-item class="auto-login register-checked">
-              <el-checkbox v-model="checked">同意遵守<a href="https://t.e.vhall.com/home/vhallapi/serviceterms" target="_blank" rel="noopener noreferrer">《服务条款及隐私协议》</a></el-checkbox>
               <span class="toLogin" @click="$router.push({path: '/login'})">去登录</span>
             </el-form-item>
+            <!-- 隐私协议合规 -->
+            <privacy-select scene="register" ref="registerPrivacyCompliance" @check="checkResult"></privacy-select>
         </el-form>
       </div>
     </div>
@@ -217,13 +225,15 @@
 import {sessionOrLocal, getQueryString} from "@/utils/utils";
 import Cookies from 'js-cookie'
 import footerSection from '../../components/Footer/index';
+import PrivacySelect from './components/privacy-select.vue';
 import Env from "@/api/env";
 import pwdinput from './components/pwdInput'
 import { JSEncrypt } from 'jsencrypt'
 export default {
   components: {
     footerSection,
-    pwdinput
+    pwdinput,
+    PrivacySelect
   },
   data() {
     var validatePhone = (rule, value, callback) => {
@@ -367,7 +377,9 @@ export default {
           { required: true, message: '请输入短信验证码', trigger: 'blur' }
         ]
       },
-      checked: true,
+      loginChecked: false, // 登录(账号密码登录)——默认未选中
+      loginDynamicChecked: false, // 登录(快捷短信登录)——默认未选中
+      registerChecked: false, // 注册——默认未选中
       showCaptcha: false, // 专门用于 校验登录次数 接口返回 需要显示图形验证码时使用
       captchakey: 'b7982ef659d64141b7120a6af27e19a0', // 云盾key
       mobileKey: '', // 云盾值
@@ -377,7 +389,8 @@ export default {
       isValidaregisterPhone: false,
       time: 60,
       isActive: 1,
-      isOpenOther: true
+      isOpenOther: true,
+      vm: null
     };
   },
   watch: {
@@ -391,7 +404,10 @@ export default {
     }
   },
   created() {
-    this.judgeIswap()
+    this.judgeIsWap()
+    window.addEventListener('resize', () => {
+      this.judgeIsWap()
+    });
   },
   mounted() {
     this.$nextTick(() => {
@@ -400,7 +416,7 @@ export default {
   },
   methods: {
     // 手机适配
-    judgeIswap() {
+    judgeIsWap() {
       const uA = navigator.userAgent.toLowerCase();
       const ipad = uA.match(/ipad/i) == "ipad";
       const iphone = uA.match(/iphone os/i) == "iphone os";
@@ -445,6 +461,15 @@ export default {
       this.errorMsgShow = '';
       this.errorText = '';
       this.callCaptcha();
+      if (index == 1) {
+        // 去填写 账号登录，重置 账号登录 状态
+        this.loginChecked = false;
+        this.$refs.loginPrivacyCompliance && this.$refs.loginPrivacyCompliance.resetChecked();
+      }else if (index == 2) {
+        // 去填写 验证码登录，重置 账号登录 状态
+        this.loginDynamicChecked = false;
+        this.$refs.loginDynamicPrivacyCompliance && this.$refs.loginDynamicPrivacyCompliance.resetChecked();
+      }
     },
     getDyCode() {
       // 获取短信验证码
@@ -463,6 +488,10 @@ export default {
     },
     // 账号登录
     loginAccount() {
+      if (!this.loginChecked) {
+        this.messageInfo('请先阅读并同意隐私政策及用户服务协议', 'warning')
+        return
+      }
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.checkedAccount();
@@ -474,6 +503,10 @@ export default {
     },
     // 快捷登录
     loginDynamic() {
+      if (!this.loginDynamicChecked) {
+        this.messageInfo('请先阅读并同意隐私政策及用户服务协议', 'warning')
+        return
+      }
       this.$refs.dynamicForm.validate((valid) => {
         if (valid) {
           this.checkedAccount();
@@ -560,6 +593,7 @@ export default {
         this.errorText = '';
         this.errorMsgShow = '';
         sessionOrLocal.set('token', res.data.token || '', 'localStorage');
+        sessionOrLocal.set( 'tokenRefresh', new Date().getTime(), 'localStorage')
         sessionOrLocal.set('tokenExpiredTime', res.data.exp_time || '', 'localStorage');
         // 存储控制台-channel_id频道
         sessionOrLocal.set('SAAS_V3_CHANNEL_ID', res.data.channel_id || '', 'localStorage');
@@ -661,7 +695,24 @@ export default {
         });
       }
     },
+    //文案提示问题
+    messageInfo(title, type) {
+      if (this.vm) {
+        this.vm.close();
+      }
+      this.vm = this.$message({
+        showClose: true,
+        duration: 2000,
+        message: title,
+        type: type,
+        customClass: 'zdy-info-box'
+      });
+    },
     registerAccount() {
+      if (!this.registerChecked) {
+        this.messageInfo('请先阅读并同意隐私政策及用户服务协议', 'warning')
+        return
+      }
       if (!this.registerText) {
         this.$refs.registerForm.validate(async (valid) => {
           if (valid) {
@@ -768,6 +819,15 @@ export default {
         }
       });
     },
+    /* 隐私合规选择结果标记 */
+    checkResult(obj) {
+      this[`${['login','login_normal'].includes(obj.scene) ? 'login' : obj.scene}Checked`] = obj.checked
+    },
+    toRegister() {
+      this.registerChecked = false;
+      this.$refs.registerPrivacyCompliance && this.$refs.registerPrivacyCompliance.resetChecked()
+      this.$router.push({path: '/register'})
+    }
   }
 };
 </script>
@@ -1002,6 +1062,14 @@ export default {
       cursor: pointer;
     }
   }
+  &.register-checked {
+    text-align: center;
+    margin-top: 16px;
+    span.toLogin {
+      float: unset;
+      color: #3562FA;
+    }
+  }
 }
 #captcha-box {
   .captcha {
@@ -1100,7 +1168,7 @@ export default {
   color: #333333;
   line-height: 17px;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 16px;
   span {
     color: #3562FA;
     margin-left: 8px;
@@ -1114,9 +1182,51 @@ export default {
   color: #999999;
   line-height: 17px;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 36px;
   span {
     cursor: pointer;
+  }
+  &.inline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .other-img {
+      margin-top: 0;
+      margin-left: 16px;
+      img {
+        &:first-child {
+          margin-right: 16px;
+        }
+      }
+      span {
+        display: inline-block;
+        vertical-align: middle;
+        text-align: center;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        &:first-child {
+          margin-right: 16px;
+        }
+      }
+      span.third__login__qq {
+        background: url('./images/qq@2x.png') center center no-repeat;
+        background-size: 100% 100%;
+        margin-right: 16px;
+        &:hover {
+          background: url('./images/qq_hover@2x.png') center center no-repeat;
+          background-size: 100% 100%;
+        }
+      }
+      span.third__login__wechat {
+        background: url('./images/wechat@2x.png') center center no-repeat;
+        background-size: 100% 100%;
+        &:hover {
+          background: url('./images/wechat_hover@2x.png') center center no-repeat;
+          background-size: 100% 100%;
+        }
+      }
+    }
   }
 }
 
@@ -1245,14 +1355,17 @@ export default {
       }
     }
  }
-  .errorText{
-    line-height: 20px;
-    color:#fc5659;
-    font-size: 12px;
-    position: absolute;
-    i{
-      color: #fc5659;
-      padding-right: 5px;
-    }
+.errorText{
+  line-height: 20px;
+  color:#fc5659;
+  font-size: 12px;
+  position: absolute;
+  i{
+    color: #fc5659;
+    padding-right: 5px;
   }
+}
+/deep/.el-checkbox__label {
+  padding-left: 8px!important;
+}
 </style>

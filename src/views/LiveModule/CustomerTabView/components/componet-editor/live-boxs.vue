@@ -18,7 +18,7 @@
     :infinite-scroll-immediate="true"
     v-show="total"
   >
-    <vhscroll>
+    <vue-scroll>
       <!-- 单个视频 -->
       <div class="vh-chose-active-item"
         v-for="(item) in activeList"
@@ -29,7 +29,7 @@
         <i class="iconfont-v3 saasicon-choose-01" v-show="item.checked"></i>
         <div class="vh-chose-active-item__cover">
           <!-- TODO 右侧直播选择区域 -->
-          <img :src="item.img_url" alt="">
+          <img :class="`img_box_bg box_bg_${item.itemMode}`" :src="item.img_url" alt="">
           <div class="vh-chose-active-item__cover-status">
             <span class="liveTag">
               <label class="live-status" v-if="item.webinar_state == 1">
@@ -51,7 +51,7 @@
           {{ item.start_time }}
         </div>
       </div>
-    </vhscroll>
+    </vue-scroll>
   </div>
 </div>
 </template>
@@ -59,7 +59,7 @@
 import noData from '@/views/PlatformModule/Error/nullPage';
 import EventBus from '../../bus'
 import eventsType from '../../EventConts'
-import { sessionOrLocal } from '@/utils/utils';
+import {sessionOrLocal, parseImgOssQueryString, cropperImage} from "@/utils/utils";
 
 export default {
   props: ['checkedList'],
@@ -77,7 +77,8 @@ export default {
       loading: false,
       visible: true,
       isSearch: false,
-      hasDelayPermission: false
+      hasDelayPermission: false,
+      selectWebinars: this.checkedList
     }
   },
   computed: {
@@ -141,8 +142,13 @@ export default {
             this.loading = false
           }else {
             this.activeList =  this.activeList.concat(res.data.list.map(item => {
+              let mode = 3;
+              if (cropperImage(item.img_url)) {
+                mode = this.handlerImageInfo(item.img_url);
+              }
               return {
                 ...item,
+                itemMode: mode,
                 checked: false
               }
             }))
@@ -159,12 +165,17 @@ export default {
         }
       })
     },
-
+    // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      return Number(obj.mode) || 3;
+    },
     // 同步 选中状态
     syncCheckStatus(ids, del_id) {
       let checkIds = this.checkedList
       if(ids && ids.length > 0) {
         checkIds = ids
+        this.selectWebinars = ids
       }
       if (checkIds.length > 0) {
         const checked = checkIds.map((item) => {
@@ -209,12 +220,19 @@ export default {
 
       item.checked = !item.checked;
       this.selectedOption = this.activeList.filter(item => item.checked);
+      
+      // 按时间排序
+      // let webinars = this.selectedOption.map((item) => {
+      //   return item.webinar_id
+      // })
 
-      let webinars = this.selectedOption.map((item) => {
-        return item.webinar_id
-      })
+      // 按选择顺序排序
+      item.checked && this.selectWebinars.push(item.webinar_id)
+      if( !item.checked ) {
+        this.selectWebinars = this.selectWebinars.filter(i => i != item.webinar_id)
+      }
 
-      this.$emit('seleclted', webinars)
+      this.$emit('seleclted', this.selectWebinars)
     },
   },
 
@@ -246,7 +264,7 @@ export default {
   .vh-chose-active-item{
     cursor: pointer;
     display: inline-block;
-    width: 215px;
+    width: 175px;
     height: 182px;
     overflow: hidden;
     background: #F7F7F7;
@@ -299,13 +317,21 @@ export default {
         color: #fff;
         font-size: 14px;
       }
-      img{
+      .img_box_bg{
         width: 100%;
         height: 100%;
-        object-fit: scale-down;
+        object-fit: contain;
+        object-position: center;
         position: absolute;
         top:0;
         left: 0;
+        &.box_bg_1{
+          object-fit: fill;
+        }
+        &.box_bg_2{
+          object-fit: cover;
+          object-position: left top;
+        }
       }
       &-status{
         position: absolute;
@@ -359,6 +385,11 @@ export default {
       border-radius: 20px;
       position: relative;
       z-index: 2;
+    }
+  }
+  @media (min-width: 1920px) {
+    .vh-chose-active-item {
+      width: 215px;
     }
   }
   .select-option{

@@ -1,11 +1,8 @@
 module.exports = {
   root: true,
   env: {
-    node: true
-  },
-  extends: ['plugin:vue/essential', 'eslint:recommended'],
-  parserOptions: {
-    parser: 'babel-eslint'
+    node: true,
+    browser: true
   },
   globals: {
     BMap: true,
@@ -21,34 +18,22 @@ module.exports = {
     VhallReport: true,
     $: true,
     wx: true,
-    WeixinJSBridge: true
+    WeixinJSBridge: true,
+    vp // 播放器对象的全局变量
+  },
+  extends: [
+    'plugin:vue/essential', // vue2核心的lint的规则
+    'eslint:recommended', // eslint的建议规则，参考：https://eslint.bootcss.com/docs/rules/
+    // 是@vue/eslint-config-prettier的简写, 告诉eslint把prettier规则做为拓展引用到我们自己的项目中来
+    '@vue/prettier'
+  ],
+  parserOptions: {
+    parser: 'babel-eslint'
   },
   rules: {
-    'semi': [0],
-    'no-unused-vars': [0],
-    'no-undef': [0],
-    eqeqeq: [0],
-    camelcase: 0,
-    'space-before-function-paren': [0],
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'vue/no-parsing-error': [
-      1,
-      {
-        'x-invalid-end-tag': false,
-        'invalid-first-character-of-tag-name': false
-      }
-    ]
-  },
-  overrides: [
-    {
-      files: [
-        '**/__tests__/*.{j,t}s?(x)',
-        '**/tests/unit/**/*.spec.{j,t}s?(x)'
-      ],
-      env: {
-        jest: true
-      }
-    }
-  ]
+    'no-console': 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'prettier/prettier': 'error',
+    'no-unused-vars': 'off'
+  }
 };

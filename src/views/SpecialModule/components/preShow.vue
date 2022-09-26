@@ -1,3 +1,4 @@
+<!-- 此页面已废弃 -->
 <template>
   <div v-loading='loading' element-loading-background="#1a1a1a" element-loading-text="加载中..." v-if="!loading"
     style="height:100%">
@@ -28,9 +29,9 @@
                 </div>
               </div>
               <div class="special-detail">
-                <vhscroll>
+                <vue-scroll>
                   <div class="text" v-html="specialInfo.intro"></div>
-                </vhscroll>
+                </vue-scroll>
               </div>
             </div>
           </div>
@@ -97,7 +98,6 @@ export default {
       shareVo: {
         url: `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.query.id}`,
         pcUrl: `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.query.id}`
-        // pcUrl:`${process.env.VUE_APP_WEB_URL}/special/detail?id=${this.$route.query.id}`
       },
       totalList: [], //总数
       liveList: [],

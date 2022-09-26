@@ -10,7 +10,7 @@
       :before-close="cancelSelect"
       custom-class="choose-gift"
     >
-      <div class="subject_tip">若专题统一鉴权，当前列表只展示未关联任何专题的直播活动</div>
+      <div class="subject_tip">若直播在其他专题已设置统一观看限制，当前列表不展示该直播。</div>
       <VhallInput style="width: 230px" v-model="keyword" v-clearEmoij placeholder="请输入直播标题或者直播ID" @keyup.enter.native="inputChange"  @clear="inputChange" class="head-btn search resetRightBrn" clearable>
         <i slot="prefix" class="el-icon-search el-input__icon" :class="{'disabled': !keyword}" @click="inputChange(true)"></i>
       </VhallInput>
@@ -25,7 +25,7 @@
             >
             <label  class="img-tangle" v-show="item.checked"><img src="../../../common/images/icon-choose.png" alt=""></label>
               <div class="vh-chose-active-item__cover">
-                <img :src="item.img_url" alt="">
+                <img :class="`img_box_bg box_bg_${item.itemMode}`" :src="item.img_url" alt="">
                 <div class="vh-chose-active-item__cover-status">
                   <span class="liveTag">
                     <label class="live-status" v-if="item.webinar_state == 1">
@@ -65,7 +65,7 @@
 </template>
 <script>
 import noData from '@/views/PlatformModule/Error/nullPage';
-import { sessionOrLocal } from '@/utils/utils';
+import { sessionOrLocal, parseImgOssQueryString, cropperImage } from '@/utils/utils';
 
 export default {
   props: {
@@ -181,7 +181,16 @@ export default {
             this.text = '';
             this.isSearch = true;
           }
-          this.activeList = this.activeList.concat(res.data.list)
+          this.activeList = this.activeList.concat(res.data.list).map(item => {
+            let mode = 3;
+            if (cropperImage(item.img_url)) {
+              mode = this.handlerImageInfo(item.img_url);
+            }
+            return {
+              ...item,
+              itemMode: mode
+            }
+          })
           this.total = res.data.total
           this.maxPage = Math.ceil(res.data.total / this.pageInfo.limit);
           this.loading = false;
@@ -191,7 +200,11 @@ export default {
         }
       })
     },
-
+    // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      return Number(obj.mode) || 3;
+    },
     // 同步 选中状态
     syncCheckStatus() {
       if (this.checkedList.length > 0) {
@@ -313,13 +326,21 @@ export default {
       background: #1A1A1A;
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
-      img{
+      .img_box_bg{
         width: 100%;
         height: 100%;
-        object-fit: scale-down;
+        object-fit: contain;
+        object-position: center;
         position: absolute;
         top:0;
         left: 0;
+        &.box_bg_1{
+          object-fit: fill;
+        }
+        &.box_bg_2{
+          object-fit: cover;
+          object-position: left top;
+        }
       }
       &-status{
         position: absolute;

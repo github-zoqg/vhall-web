@@ -64,7 +64,8 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
     platform: sessionOrLocal.get('platform', 'localStorage') || 17,
     token: token,
     origin: window.location.origin,
-    'request-id': uuidV1()
+    'request-id': uuidV1(),
+    zone: Intl.DateTimeFormat().resolvedOptions().timeZone
   };
   // header 可能传gray-id，可能传递token，可能传递Content-Type
   if (header['token'] !== null && header['token'] !== undefined) {

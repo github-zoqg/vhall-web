@@ -11,6 +11,7 @@
         <div class="img-box">
            <upload
               class="giftUpload"
+              id="advise_cropper"
               v-model="advertisement.img_url"
               :domain_url="domain_url"
               :saveData="{
@@ -62,7 +63,7 @@
         <el-scrollbar v-loadMore="moreLoadData" v-show="total" style="height:328px">
           <div class="ad-list">
             <div class="ad-item" v-for="(item, index) in adList" :key="index" :class="item.isChecked ? 'active' : ''" @click="choiseAdvisetion(item)">
-              <span class="spanImg"> <img :src="`${item.img_url}`" alt=""></span>
+              <span class="spanImg"> <img :class="`img_box_bg box_bg_${item.itemMode}`" :src="`${item.img_url}`" alt=""></span>
               <p>{{ item.subject }}</p>
               <label  class="img-tangle" v-show="item.isChecked"><img src="../../../../common/images/icon-choose.png" alt=""></label>
               <!-- <label class="img-tangle" v-show="item.isChecked">
@@ -102,12 +103,16 @@
         </div>
       </div>
     </VhallDialog>
+    <!-- 裁剪组件 -->
+    <cropper ref="adviseCropper" @cropComplete="cropComplete" @resetUpload="resetUpload" :ratio="400/225"></cropper>
   </div>
 </template>
 <script>
 import upload from '@/components/Upload/main';
 import Env from "@/api/env";
 import noData from '@/views/PlatformModule/Error/nullPage';
+import cropper from '@/components/Cropper/index'
+import { parseImgOssQueryString, cropperImage} from "@/utils/utils";
 export default {
   data() {
     const linkValidate = (rule, value, callback) => {
@@ -181,7 +186,8 @@ export default {
   },
   components: {
     upload,
-    noData
+    noData,
+    cropper
   },
   watch: {
     dialogVisible() {
@@ -317,7 +323,7 @@ export default {
         this.advertisement.webinar_id = this.$route.params.str;
       }
       let params = Object.assign({}, this.advertisement) ;
-      params.img_url = this.$parseURL(params.img_url).path;
+      params.img_url = this.$parseURL(this.domain_url).path;
       this.$fetch(url, params).then(res => {
         if (res && res.code === 200) {
           if (this.$route.params.str) {
@@ -398,6 +404,11 @@ export default {
           this.total = res.data.total;
           adList.map(item => {
             item.isChecked = false;
+            if (cropperImage(item.img_url)) {
+              item.itemMode = this.handlerImageInfo(item.img_url);
+            } else {
+              item.itemMode = 3;
+            }
           });
           this.adList.push(...adList);
           this.maxPage = Math.ceil(res.data.total / this.advertPageInfo.limit);
@@ -405,6 +416,11 @@ export default {
           this.adList = [];
         }
       });
+    },
+     // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      return Number(obj.mode) || 3;
     },
     changeAdverment() {
       this.advertPageInfo = {
@@ -471,16 +487,26 @@ export default {
       this.advertisement.img_url = '';
       this.domain_url = '';
     },
+    resetUpload() {
+      let dom = document.querySelector('#advise_cropper .el-upload__input');
+      dom.click();
+    },
+    cropComplete(cropperData, url, mode) {
+      console.log(cropperData, url, '?????')
+      this.domain_url = `${url}?x-oss-process=image/crop,x_${cropperData.x.toFixed()},y_${cropperData.y.toFixed()},w_${cropperData.width.toFixed()},h_${cropperData.height.toFixed()}&mode=${mode}`
+      this.advertisement.img_url = url;
+      // 触发验证
+      this.$refs.advertisementForm.validateField('img_url');
+    },
     uploadAdvSuccess(res, file) {
       console.log(res, file);
       if(res.data) {
-        let domain_url = res.data.domain_url || ''
-        let file_url = res.data.file_url || '';
-        this.advertisement.img_url = file_url;
-        this.domain_url = domain_url;
+        this.$refs.adviseCropper.showModel(res.data.domain_url);
+        // let domain_url = res.data.domain_url || ''
+        // let file_url = res.data.file_url || '';
+        // this.advertisement.img_url = file_url;
+        // this.domain_url = domain_url;
       }
-      // 触发验证
-      this.$refs.advertisementForm.validateField('img_url');
     },
     beforeUploadHnadler(file){
       console.log(file);
@@ -684,10 +710,18 @@ export default {
           height: 93px;
           background: #1A1A1A;
           border-radius: 4px 4px 0 0;
-          img{
+          .img_box_bg{
            width:100%;
            height:100%;
-           object-fit: scale-down;
+           object-fit: contain;
+           object-position: center;
+           &.box_bg_1{
+              object-fit: fill;
+            }
+            &.box_bg_2{
+              object-fit: cover;
+              object-position: left top;
+            }
          }
         }
          p{

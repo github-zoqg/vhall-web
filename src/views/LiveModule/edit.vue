@@ -178,8 +178,9 @@
       <el-form-item class="margin32" :label="`${webinarTypeToZH}封面`">
         <upload
           class="upload__avatar"
+          id="webinar_cropper"
           v-model="formData.imageUrl"
-          :domain_url="formData.domain_url"
+          :domain_url="domain_url"
           :saveData="{
              path: pathUrl,
              type: 'image',
@@ -189,12 +190,24 @@
           :on-error="uploadError"
           :on-preview="uploadPreview"
           :before-upload="beforeUploadHnadler"
-          @delete="formData.imageUrl = '', formData.domain_url=''">
+          @delete="deleteImage">
           <div slot="tip">
             <p>建议尺寸：1280*720px，小于4M</p>
             <p>支持jpg、gif、png、bmp</p>
           </div>
         </upload>
+        <div class="image_cropper">
+          <div class="image_cropper_item">
+            <span>模糊程度</span>
+            <vh-slider v-model="formData.blurryDegree" :max="10" :disabled="!formData.imageUrl" style="width:500px"></vh-slider>
+            <span class="wid_block">{{formData.blurryDegree}}</span>
+          </div>
+          <div class="image_cropper_item">
+            <span>背景亮度</span>
+            <vh-slider v-model="formData.lightDegree" :max="20" :disabled="!formData.imageUrl" style="width:500px"></vh-slider>
+            <span class="wid_block">{{ formData.lightDegree}}</span>
+          </div>
+        </div>
       </el-form-item>
       <el-form-item label="选择视频"  v-if="webinarType=='vod' || webinarType=='time'" required>
         <div class="mediaBox" @mouseenter="showMenu" @mouseleave="hiddenMenu">
@@ -338,7 +351,7 @@
     </el-form>
     <selectMedia ref="selecteMedia" @selected='mediaSelected' :isVodVideo="true" :selectedList=[]></selectMedia>
     <template v-if="showDialog">
-      <el-dialog class="vh-dialog" :visible.sync="showDialog" width="30%" center
+      <el-dialog class="vh-saas-dialog" :visible.sync="showDialog" width="30%" center
       :close-on-press-escape=false>
         <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
       </el-dialog>
@@ -374,7 +387,8 @@
         </div>
       </div>
     </div>
-
+    <!-- 裁剪图片弹窗 -->
+     <cropper ref="webinarCropper" @cropComplete="cropComplete" @resetUpload="resetUpload"></cropper>
     <!-- 活动标签选择弹框 -->
     <VhallDialog title="标签引用" :visible.sync="selectTagDialog" class="zdy-async-dialog selectTagDia" width="480px">
     <div v-if='tagList.length'>
@@ -426,7 +440,8 @@ import beginPlay from '@/components/beginBtn';
 import upload from '@/components/Upload/main';
 import selectMedia from './selecteMedia';
 import VEditor from '@/components/Tinymce';
-import { sessionOrLocal } from '@/utils/utils';
+import {sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery} from "@/utils/utils";
+import cropper from '@/components/Cropper/index'
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 import NullPage from '@/views/PlatformModule/Error/nullPage.vue'
 
@@ -438,9 +453,14 @@ export default {
     VEditor,
     VideoPreview,
     beginPlay,
-    NullPage
+    NullPage,
+    cropper
   },
   computed: {
+    domain_url() {
+      if (!this.formData.imageUrl) return '';
+      return `${this.formData.imageUrl}?x-oss-process=image/crop,x_${this.formData.backgroundSize.x.toFixed()},y_${this.formData.backgroundSize.y.toFixed()},w_${this.formData.backgroundSize.width.toFixed()},h_${this.formData.backgroundSize.height.toFixed()}${this.formData.blurryDegree > 0 ? `,/blur,r_10,s_${this.formData.blurryDegree * 2}` : ''},/bright,${(this.formData.lightDegree - 10) * 5}&mode=${this.imageCropMode}`;
+    },
     rangHourMins() {
       let sysDate = new Date().getTime();
       let str = this.$moment().format('HH:mm');
@@ -672,6 +692,7 @@ export default {
       showDelayMask: false,
       selectDelayMode: 'common',
       selectDirectorMode: 0,
+      imageCropMode: 1,
       formData: {
         title: '',
         date1: '',
@@ -687,6 +708,14 @@ export default {
         limitCapacitySwtich: false,
         imageUrl: '',
         domain_url: '',
+        blurryDegree: 0,
+        lightDegree: 10,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        },
         titleList: [],
         contentList: []
       },
@@ -1093,6 +1122,7 @@ export default {
       this.selectDirectorMode = mode
     },
     getLiveBaseInfo(id, flag) {
+      // webinar/info调整-直播中不能操作的使用1
       this.$fetch('getWebinarInfo', {webinar_id: id}).then(async res=>{
         if( res.code != 200 ){
           return this.$message.warning(res.msg)
@@ -1105,9 +1135,8 @@ export default {
         this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
         this.formData.date2 = this.liveDetailInfo.start_time.substring(11, 16);
         this.liveMode = this.liveDetailInfo.webinar_type;
-        this.formData.imageUrl = this.liveDetailInfo.img_url;
-        this.formData.domain_url = this.liveDetailInfo.img_url;
-        console.log(this.domain_url, this.imageUrl, '封面地址');
+        // this.formData.imageUrl = this.liveDetailInfo.img_url;
+        // this.formData.domain_url = this.liveDetailInfo.img_url;
         this.tagIndex = this.liveDetailInfo.category - 1;
         this.formData.home = this.liveDetailInfo.is_private == 1 ? false : true;
         this.formData.docSwtich = Boolean(this.liveDetailInfo.is_adi_watch_doc);
@@ -1116,6 +1145,10 @@ export default {
         this.formData.content = this.liveDetailInfo.introduction;
         this.formData.hot = Boolean(this.liveDetailInfo.hide_pv);
         this.speakSwitch = Boolean(res.data.auto_speak);
+        // 图片处理
+        if (this.liveDetailInfo.img_url) {
+          this.handlerImageInfo(this.liveDetailInfo.img_url);
+        }
         // 当前还有其它语种
         await this.getLanguageList(id)
         if (this.liveDetailInfo.webinar_curr_num) {
@@ -1161,6 +1194,24 @@ export default {
       }).finally(()=>{
         this.loading = false;
       });
+    },
+    // 处理图片
+    handlerImageInfo(url) {
+      this.formData.imageUrl = getImageQuery(url);
+       // 有参数
+      if (cropperImage(url)) {
+        let obj = parseImgOssQueryString(url);
+        const { blur, crop } = obj;
+        this.formData.backgroundSize = {
+          x: Number(crop.x),
+          y: Number(crop.y),
+          width: Number(crop.w),
+          height: Number(crop.h)
+        };
+        this.formData.blurryDegree = blur && Number(blur.s) / 2 || 0;
+        this.formData.lightDegree = obj.bright ? 10 + Number(obj.bright) / 5 : 10;
+        this.imageCropMode = obj.mode;
+      }
     },
     setQueryLang(text, lang, type) {
       // 当前只有默认语种
@@ -1236,14 +1287,25 @@ export default {
         this.selectDirectorMode = 0
       }
     },
+    cropComplete(cropperData, url, mode) {
+      console.log(cropperData, url, '?????')
+      this.formData.backgroundSize = cropperData;
+      this.formData.imageUrl = url;
+      this.imageCropMode = mode;
+    },
+    resetUpload() {
+      let dom = document.querySelector('#webinar_cropper .el-upload__input');
+      dom.click();
+    },
     handleUploadSuccess(res, file) {
       console.log(res, file);
       // 文件上传成功，保存信息
       if(res.data) {
-        let domain_url = res.data.domain_url || ''
-        let file_url = res.data.file_url || '';
-        this.formData.imageUrl = file_url;
-        this.formData.domain_url = domain_url;
+        this.$refs.webinarCropper.showModel(res.data.domain_url);
+        // let domain_url = res.data.domain_url || ''
+        // let file_url = res.data.file_url || '';
+        // this.formData.imageUrl = file_url;
+        // this.formData.domain_url = domain_url;
       }
     },
     beforeUploadHnadler(file){
@@ -1289,6 +1351,12 @@ export default {
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
+    },
+    // 删除图片
+    deleteImage() {
+      this.formData.imageUrl = '';
+      this.formData.blurryDegree = 0;
+      this.formData.lightDegree = 10;
     },
     submitForm(formName) {
       if (this.formData.limitCapacitySwtich && this.formData.limitCapacity < 1) {
@@ -1364,7 +1432,7 @@ export default {
         hide_pv: Number(this.formData.hot),// 是否显示活动热度 1 是 0 否
         webinar_curr_num: this.formData.limitCapacitySwtich ? this.formData.limitCapacity : 0,// 	最高并发 0 无限制
         is_capacity: Number(this.formData.capacity),// 是否扩容 1 是 0 否
-        img_url: this.$parseURL(this.formData.imageUrl).path, // 封面图
+        img_url: this.$parseURL(this.domain_url).path, // 封面图
         copy_webinar_id: this.title == '复制' ? this.webinarId : '',
         no_delay_webinar: this.liveMode == 6 ? 1 : this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status [分组直播默认无延迟]
         is_timing: this.webinarVideo ? (this.$route.meta.webinarType == 'vod' ? 0 : 1) : '',
@@ -1867,6 +1935,25 @@ export default {
     //   }
     // }
   }
+  .form-slider{
+    position: relative;
+  }
+  .image_cropper{
+    width: 100%;
+    margin-top: 16px;
+    &_item{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      span{
+        color: #595959;
+      }
+      .wid_block{
+        display: inline-block;
+        width: 16px;
+      }
+    }
+  }
   .item-time {
     p{
       color: #666;
@@ -2323,7 +2410,7 @@ export default {
       }
     }
   }
-  .vh-dialog{
+  .vh-saas-dialog{
     /deep/ .el-dialog {
       width: 624px!important;
       background: transparent!important;
