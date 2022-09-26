@@ -539,9 +539,7 @@
           <span>1.移动端全屏播放时，跑马灯会失效；</span>
           <span>2.安卓手机浏览器劫持可能导致跑马灯失效；</span>
           <span>3.因浏览器自身策略，开启自动播放也会出现无法自动播放情况;</span>
-          <span
-            >4.无延迟直播/分组直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能。</span
-          >
+          <span>4.无延迟直播/分组直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能。</span>
         </p>
       </div>
       <div class="docMark" v-if="activeName == 'second'">
@@ -568,11 +566,11 @@
         <div class="alert">
           <span>提示：</span>
           <span>
-            1.设置了文档水印后，文字内容将以水印的形式出现在文档区域中，目前支持PC端、移动wap端。
+            1.设置了文档水印后，文字内容将以水印的形式出现在文档区域中，目前支持PC端、移动wap端；
           </span>
-          <span>2.文档水印最多显示20个字，超出的水印内容将不会显示</span>
+          <span>2.文档水印最多显示20个字，超出的水印内容将不会显示；</span>
 <!--           <span>3.若活动下，视频区【连麦+演示】布局为合并模式时不支持显示水印 <span @click="toLivingSetPage">去设置</span></span> -->
-          <span>3.合并模式不支持显示水印 <a href="javascript:void(0);" class="safe__link" @click="toLivingSetPage">去设置</a></span>
+          <span>3.合并模式不支持显示水印。<a href="javascript:void(0);" class="safe__link" @click="toLivingSetPage">去设置</a></span>
         </div>
       </div>
       <div class="cut-line" v-if="activeName == 'second'"></div>
@@ -2365,6 +2363,7 @@ export default {
         text-align: justify;
         color: #4E76FB;
         margin-left: 8px;
+        margin-right: 8px;
       }
     }
   }
