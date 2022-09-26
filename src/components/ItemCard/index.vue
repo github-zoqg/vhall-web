@@ -220,7 +220,7 @@ export default {
         return item.isShow == true
       })
       return isIntact
-    },
+    }
   },
   methods: {
     getLanguagePermission() {
@@ -254,6 +254,7 @@ export default {
         })
     },
     resetList(perssionInfo) {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
       ;(this.readyList = [
         {
           icon: 'icon_information@2x',
@@ -346,7 +347,7 @@ export default {
           subText: `对目标观众发送开播和回放提醒`,
           type: null, // TODO 需要上报KEY
           path: `/live/msgNotification/${this.$route.params.str}`,
-          isShow: perssionInfo.message_notice == 1 && this.type != 4
+          isShow: perssionInfo.message_notice == 1 && this.type != 4 && userInfo.user_extends.extends_remark != 1 // 不是知学云账号 & 开启了 短信通知配置项权限
         },
       ]),
         (this.brandList = [
