@@ -299,10 +299,10 @@
       <div class="footer_left">
         <img src="./image/living/chat5.png" alt="">
       </div>
-      <div class="footer_center">
+      <div :class="['footer_center ', livingWapForm && livingWapForm.style == 3 ? 'style_concise' : '']">
         <span><i class="iconfont-v3 saasline-audit"></i> | 参与聊天</span>
       </div>
-      <div class="footer_right"></div>
+      <div :class="['footer_right ', livingWapForm && livingWapForm.style == 3 ? 'style_concise' : '']"></div>
     </div>
   </div>
 </template>
@@ -1066,6 +1066,9 @@ export default {
         .iconfont-v3{
           font-size: 13px;
         }
+        &.style_concise {
+          width: 151px;
+        }
       }
       .footer_right{
         width: 120px;
@@ -1074,6 +1077,12 @@ export default {
         background-image: url('./image/wap/tools.png');
         background-repeat: no-repeat;
         background-size: 100% 100%;
+        &.style_concise {
+          width: 164px;
+          height: 32px;
+          // margin-left: 15px;
+          background-image: url('./image/wap/tools_concise.png');
+        }
       }
     }
   }
