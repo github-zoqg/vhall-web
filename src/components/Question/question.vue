@@ -236,11 +236,17 @@ export default {
         title: title,
         description: description,
         img_url: this.questionDataInfo.imgUrl,
-        playback_filling: extension.playback_filling
+        playback_filling: extension.playback_filling,
+        privacy_agreement: extension.openPrivacy ? 1: 0,
       }
       if(this.alias){
         params.alias = this.alias
       }
+      this.questionDataInfo.detail.forEach(i=>{
+        if(i.detail.format == 'phone'){
+          params.phone_verification_switch = i.verification=='Y'? 1: 0
+        }
+      })
       this.$fetch('createLiveQuestion', params).then(res => {
         this.$vhall_paas_port({
           k: 100333,
@@ -276,6 +282,11 @@ export default {
       if(this.alias){
         params.alias = this.alias
       }
+      this.questionDataInfo.detail.forEach(i=>{
+        if(i.detail.format == 'phone'){
+          params.phone_verification_switch = i.verification=='Y'? 1: 0
+        }
+      })
       this.$fetch('editLiveQuestion', params).then(res => {
         this.$vhall_paas_port({
           k: 100334,
