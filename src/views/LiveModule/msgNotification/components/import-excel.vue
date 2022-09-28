@@ -7,7 +7,7 @@
       </p>
       <p class="upload__top__bottom">
         <span class="down-span-text" v-show="importResult && importResult.fail > 0" @click.prevent.stop="downErrorHandle">下载无效数据</span>
-        <span class="down-span-text" @click.prevent.stop="downBaseFileHandle" v-show="importExcelBase && importExcelBase.import_user_url">下载原文件</span>
+        <span class="down-span-text" @click.prevent.stop="downBaseFileHandle" v-show="(importExcelBase && importExcelBase.import_user_url) || domainFileUrl">下载原文件</span>
       </p>
     </div>
     <file-upload ref="viewerUpload"
@@ -94,6 +94,7 @@ export default {
       percent: 0,
       downloadUrl: StaticFileUrlsMap.getSmsNoticeDownTemplateUrl(process.env.VUE_APP_NODE_ENV), // 下载模板地址
       fileUrl: '', // 文件地址
+      domainFileUrl: '', // 上传文件全地址
       fileName: '', // 文件名称
       fileResult: '', // 文件上传结果
       importResult: null,
@@ -143,6 +144,7 @@ export default {
     cancelImport() {
       this.isUploadEnd = false;
       this.fileUrl = '';
+      this.domainFileUrl = '';
       this.uploadResult = {
         status: 'start',
         text: '请上传文件'
@@ -276,6 +278,7 @@ export default {
       if (res.data.file_url) {
         this.fileUrl = res.data.file_url;
         this.fileName = file.name
+        this.domainFileUrl = res.data.domain_url;
         // 文件上传成功，检测观众
         this.isUploadEnd = false;
         this.$fetch('importNoticeExcel', {
@@ -296,6 +299,7 @@ export default {
           this.renderCheckImportError(resV.msg, true)
         });
       } else {
+        this.domainFileUrl = ''
         this.renderCheckImportError(res.msg, false)
       }
     },
@@ -359,7 +363,7 @@ export default {
     // 下载源文件
     downBaseFileHandle() {
       const xHttp = new window.XMLHttpRequest();
-      xHttp.open('GET', `${StaticFileUrlsMap.getDownBaseUrl(process.env.VUE_APP_NODE_ENV) + this.importExcelBase.import_user_url}`, true);
+      xHttp.open('GET', this.domainFileUrl ? this.domainFileUrl : `${StaticFileUrlsMap.getDownBaseUrl(process.env.VUE_APP_NODE_ENV) + this.importExcelBase.import_user_url}`, true);
       xHttp.responseType = 'blob';
       xHttp.onload = () => {
         const url = window.URL.createObjectURL(xHttp.response);
@@ -384,6 +388,7 @@ export default {
       if (this.importExcelBase && this.importExcelBase.import_user_url) {
         this.fileUrl = `${this.importExcelBase?.import_user_url || ''}`;
         this.fileName = this.importExcelBase?.import_result?.file_name || '';
+        this.domainFileUrl = '';
         this.fileResult = 'success';
         this.isUploadEnd = true;
         this.uploadResult = {
@@ -396,6 +401,7 @@ export default {
         };
       } else {
         this.fileUrl = null;
+        this.domainFileUrl = '';
         this.fileName = '';
         this.fileResult = '';
         this.importResult = null;
