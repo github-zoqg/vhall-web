@@ -60,9 +60,9 @@
                     </div>
                     <p style="color:#999">建议尺寸：240*240px，小于2M 支持jpg、gif、png、bmp</p>
                 </el-form-item>
-                <el-form-item label="标题">
+                <!-- <el-form-item label="标题">
                     <VhallInput v-model="formData.title" autocomplete="off" v-clearEmoij :maxlength="10"  placeholder="请输入抽奖标题" show-word-limit></VhallInput>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="说明">
                     <VhallInput v-model="formData.description" autocomplete="off" v-clearEmoij :maxlength="20" placeholder="正在进行抽奖" show-word-limit></VhallInput>
                 </el-form-item>
@@ -73,7 +73,7 @@
             </div>
             <div class="give-show">
               <div class="give-people">
-                <h3>{{ formData.title || '抽奖' }}</h3>
+                <h3>抽奖</h3>
                 <div class="prize-show" :style="`backgroundImage: url(${backgroundImg})`">
                 </div>
                 <div class="sureBtn">{{ formData.description || '正在进行抽奖' }}</div>
@@ -151,9 +151,9 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import prizeList from '../../MaterialModule/prize';
 import beginPlay from '@/components/beginBtn';
-import prize0 from './images/prize0.gif'
-import prize1 from './images/prize1.gif'
-import prize2 from './images/prize2.gif'
+import prize0 from '@/common/images/gif/prize03.gif'
+import prize1 from '@/common/images/gif/prize01.gif'
+import prize2 from '@/common/images/gif/prize02.gif'
 import {sessionOrLocal} from "@/utils/utils";
 export default {
   name: 'prizeSet',
