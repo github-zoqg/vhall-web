@@ -54,7 +54,7 @@
                     <p :class="isChecked == 1 ? 'active' : ''"
                       class="przieImg"
                       @click="changeType(1)">
-                      <img src="../../../common/images/gif/prize03.gif"
+                      <img src="../../../common/images/gif/prize01.gif"
                         alt="">
                       <label class="img-tangle"
                         v-show="isChecked == 1"><img src="../../../common/images/icon-choose.png"
@@ -63,7 +63,7 @@
                     <p :class="isChecked == 2 ? 'active' : ''"
                       class="przieImg"
                       @click="changeType(2)">
-                      <img src="../../../common/images/gif/prize01.gif"
+                      <img src="../../../common/images/gif/prize02.gif"
                         alt="">
                       <label class="img-tangle"
                         v-show="isChecked == 2"><img src="../../../common/images/icon-choose.png"
@@ -72,7 +72,7 @@
                     <p :class="isChecked == 3 ? 'active' : ''"
                       class="przieImg"
                       @click="changeType(3)">
-                      <img src="../../../common/images/gif/prize02.gif"
+                      <img src="../../../common/images/gif/prize03.gif"
                         alt="">
                       <label class="img-tangle"
                         v-show="isChecked == 3"><img src="../../../common/images/icon-choose.png"
@@ -212,9 +212,9 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import prizeList from '../../MaterialModule/prize';
 import beginPlay from '@/components/beginBtn';
-import prize0 from '@/common/images/gif/prize03.gif'
-import prize1 from '@/common/images/gif/prize01.gif'
-import prize2 from '@/common/images/gif/prize02.gif'
+import prize0 from '@/common/images/gif/prize01.gif'
+import prize1 from '@/common/images/gif/prize02.gif'
+import prize2 from '@/common/images/gif/prize03.gif'
 import { sessionOrLocal } from "@/utils/utils";
 export default {
   name: 'prizeSet',
@@ -378,10 +378,12 @@ export default {
           this.localLottery = res.data
           if (parseInt(res.data.img_order) > 0) {
             this.isChecked = parseInt(res.data.img_order);
-            this.backgroundImg = res.data.img_path;
+            // this.backgroundImg = res.data.img_path;
+            this.backgroundImg = this.prizeUrl[data.img_order - 1];
           } else {
             this.isChecked = 0;
-            this.backgroundImg = res.data.img_path;
+            // this.backgroundImg = res.data.img_path;
+            this.backgroundImg = this.prizeUrl[data.img_order - 1];
             this.previewSrc = res.data.img_path;
           }
         }
@@ -852,11 +854,11 @@ export default {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        margin: 10px auto;
+        margin: 0 auto;
         text-align: center;
         // border-radius: 50%;
         width: 200px;
-        height: 200px;
+        height: 230px;
         background-size: 100%;
         background-repeat: no-repeat;
         margin-top: 16px;
