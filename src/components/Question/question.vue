@@ -513,9 +513,9 @@ export default {
 }
 </script>
 <style lang="less" >
-// .__vuescroll  .__bar-is-vertical {
-//   background: #e0e0e0 !important;
-// }
+.__vuescroll  .__bar-is-vertical {
+  background: #e0e0e0 !important;
+}
   .qs-preview-box-content .cef-q-wrap{
     z-index: 3000;
   }
