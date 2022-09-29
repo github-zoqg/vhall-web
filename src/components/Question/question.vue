@@ -243,7 +243,7 @@ export default {
         params.alias = this.alias
       }
       this.questionDataInfo.detail.forEach(i=>{
-        if(i.detail.format == 'phone'){
+        if(i.detail&&i.detail.format == 'phone'){
           params.phone_verification_switch = i.verification=='Y'? 1: 0
         }
       })
@@ -283,7 +283,7 @@ export default {
         params.alias = this.alias
       }
       this.questionDataInfo.detail.forEach(i=>{
-        if(i.detail.format == 'phone'){
+        if(i.detail&&i.detail.format == 'phone'){
           params.phone_verification_switch = i.verification=='Y'? 1: 0
         }
       })
