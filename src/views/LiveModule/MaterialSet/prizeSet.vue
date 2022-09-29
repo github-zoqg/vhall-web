@@ -379,15 +379,16 @@ export default {
           if (parseInt(res.data.img_order) > 0) {
             this.isChecked = parseInt(res.data.img_order);
             // this.backgroundImg = res.data.img_path;
-            this.backgroundImg = this.prizeUrl[data.img_order - 1];
+            this.backgroundImg = this.prizeUrl[res.data.img_order - 1] || res.data.img_path;
           } else {
             this.isChecked = 0;
             // this.backgroundImg = res.data.img_path;
-            this.backgroundImg = this.prizeUrl[data.img_order - 1];
+            this.backgroundImg = this.prizeUrl[res.data.img_order - 1] || res.data.img_path;
             this.previewSrc = res.data.img_path;
           }
         }
       }).catch((err) => {
+        console.log("🚀 ~ file: prizeSet.vue ~ line 391 ~ this.$fetch ~ err", err)
         this.$message({
           message: err.msg || `获取信息失败`,
           showClose: true,
