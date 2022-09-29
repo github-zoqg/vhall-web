@@ -131,14 +131,14 @@
             <h1 class="custom-font-barlow">{{ trendData.max_uv || 0 }}</h1>
           </div>
         </div>
-        <div class="grid-item" v-if="showSmsModule && smsInfo && smsInfo.sms">
+        <div class="grid-item" v-if="showSmsPanel">
           <div class="grid-content">
             <p>短信消耗(条)</p>
             <h1 class="custom-font-barlow">{{ smsInfo.sms || 0 }}</h1>
           </div>
         </div>
       </div>
-      <div :class="['content-grid', showSmsModule && smsInfo && smsInfo.sms ? 'include_sms' : '']" v-else>
+      <div :class="['content-grid', showSmsPanel ? 'include_sms' : '']" v-else>
         <div class="content-item">
           <div class="grid-content">
             <p>累计活动（个）</p>
@@ -187,7 +187,7 @@
             <h1 class="custom-font-barlow">{{ versionType == 1 ? trendData.vod_flow || 0 : trendData.vod_duration || 0}}</h1>
           </div>
         </div>
-        <div class="content-item" v-if="showSmsModule && smsInfo && smsInfo.sms">
+        <div class="content-item" v-if="showSmsPanel">
           <div class="grid-content">
             <p>短信消耗(条)</p>
             <h1 class="custom-font-barlow">{{ smsInfo.sms || 0 }}</h1>
@@ -289,6 +289,9 @@ export default {
       const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
       // 不是知学云账号 & 开启了 短信通知配置项权限
       return userInfo.user_extends.extends_remark != 1 && isNoticeMessage == 1;
+    },
+    showSmsPanel () {
+      return  this.showSmsModule && ((this.smsInfo && this.smsInfo.sms) || this.trendType == 'sms')
     }
   },
   filters:{
