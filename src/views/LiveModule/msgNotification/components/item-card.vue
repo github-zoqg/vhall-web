@@ -88,10 +88,10 @@
           <span class="margin-l10"></span>
         </template>
         <template v-if="info && info.is_allow_set">
-          <el-button type="primary" round size="mini" @click="openSetDialog">发送设置</el-button>
+          <vh-button type="primary" round size="mini" @click="openSetDialog">发送设置</vh-button>
         </template>
         <template>
-          <el-button round size="mini" @click="openNoticeDialog">发送记录</el-button>
+          <vh-button round type="danger" ghost size="mini" @click="openNoticeDialog">发送记录</vh-button>
         </template>
       </div>
     </div>
@@ -371,11 +371,11 @@
         color: rgba(0, 0, 0, 0.85);
         img {
           display: inline-block;
-          width: 12px;
-          height: 12px;
+          width: 14px;
+          height: 14px;
           vertical-align: middle;
           margin-right: 4px;
-          margin-top: -1px;
+          margin-top: -2px;
         }
       }
     }

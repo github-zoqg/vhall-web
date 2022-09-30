@@ -305,6 +305,12 @@
 </script>
 <style lang="less" scoped>
   .send-notice-list__dialog {
+    /deep/.saasicon_help_m {
+      color: #999999;
+      &:hover {
+        color: #666666;
+      }
+    }
     .dialog__title {
       &__icon {
         color: rgba(0, 0, 0, 0.45);

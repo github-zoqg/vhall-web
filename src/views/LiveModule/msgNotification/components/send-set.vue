@@ -4,116 +4,117 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :before-close="handleClose"
-    v-loading="isLoading"
     width="744px"
     title="发送设置">
-      <!-- 发送对象 -->
-      <div class="set-item">
-        <label class="set-item__label">发送对象</label>
-        <div class="set-item__content">
-          <!-- 预约发送：预约/报名用户、白名单用户 -->
-          <!-- 开播提醒发送设置：预约/报名用户、导入用户、白名单用户 -->
-          <!-- 回放通知发送设置：预约/报名用户、预约/报名中未观看直播用户、导入用户、白名单用户 -->
-          <vh-checkbox-group v-model="send_user" @change="checkSelect" :disabled="senderUserShowLength == 1">
-            <template v-for="(item, index) in senderUserOptions">
-              <vh-checkbox :label="item.label" :key="`send_${index}`" v-if="item.isShow">{{item.text}}
-                <vh-tooltip v-tooltipMove v-if="item.label == 1">
-                  <div slot="content" v-if="cardInfo.config_type == 1">
-                    <p>当专题下开启统一观看限制或统一报名时，<br/>则不触发预约报名成功的通知消息</p>
-                  </div>
-                  <div slot="content" v-else>
-                    <p>1. 无统一观看限制时，各活动下的短信通知正常发送；</p>                    
-                    <p>2. 当开启专题统一观看限制、统一报名表单时（免费条件及密码条件无<br/>预约提交手机号功能因此无法触发短信）：如果专题下的多个活动开启了<br/>短信通知，则将对该活动下设置的短信发送对象+通过专题观看权限的用<br/>户发送开播提醒或回放提醒。</p>
-                  </div>
-                  <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
-                </vh-tooltip>
-              </vh-checkbox>
-            </template>
-          </vh-checkbox-group>
-        </div>
-      </div>
-      <!-- 导入用户模板 -->
-      <div class="set-item import_excel_info" v-if="send_user.includes('3')">
-        <label class="set-item__label">导入文件</label>
-        <div class="set-item__content">
-          <import-excel ref="importNoticeExcel" :cardInfo="{
-            webinar_id: cardInfo.webinar_id,
-            config_type: cardInfo.config_type
-          }" :importExcelBase="{
-            import_user_url: noticeDetailVo.sms_info.import_user_url,
-            import_user_fail_url: noticeDetailVo.sms_info.import_user_fail_url,
-            import_result: noticeDetailVo.sms_info.import_result
-          }" @uploadKey="uploadKeySet" v-if="cardInfo && noticeDetailVo" :visible="cardInfo && noticeDetailVo" @setBtnDisabled="setBtnDisabled"></import-excel>
-        </div>
-      </div>
-      <!-- 短信内容 -->
-      <div class="set-item send_info">
-        <label class="set-item__label">短信内容</label>
-        <div class="set-item__content">
-          <div class="set-item__content_center">
-            <div class="set-item__content_center__ctx">{{cardQueryVo && cardQueryVo.content_str_max ? cardQueryVo.content_str_max : ''}} <span @click="openShortLink" class="set-item__content_center__link">{{cardQueryVo && cardQueryVo.short_url ? hideString(cardQueryVo.short_url, 20) : ''}}</span></div>
+      <div v-loading="isLoading">
+        <!-- 发送对象 -->
+        <div class="set-item">
+          <label class="set-item__label">发送对象</label>
+          <div class="set-item__content">
+            <!-- 预约发送：预约/报名用户、白名单用户 -->
+            <!-- 开播提醒发送设置：预约/报名用户、导入用户、白名单用户 -->
+            <!-- 回放通知发送设置：预约/报名用户、预约/报名中未观看直播用户、导入用户、白名单用户 -->
+            <vh-checkbox-group v-model="send_user" @change="checkSelect" :disabled="senderUserShowLength == 1">
+              <template v-for="(item, index) in senderUserOptions">
+                <vh-checkbox :label="item.label" :key="`send_${index}`" v-if="item.isShow">{{item.text}}
+                  <vh-tooltip v-tooltipMove v-if="item.label == 1" :visible-arrow="false" placement="right-start">
+                    <div slot="content" v-if="cardInfo.config_type == 1">
+                      <p>当专题下开启统一观看限制或统一报名时，<br/>则不触发预约报名成功的通知消息</p>
+                    </div>
+                    <div slot="content" v-else>
+                      <p>1. 无统一观看限制时，各活动下的短信通知正常发送；</p>
+                      <p>2. 当开启专题统一观看限制、统一报名表单时（免费条件及密码条件无<br/>预约提交手机号功能因此无法触发短信）：如果专题下的多个活动开启了<br/>短信通知，则将对该活动下设置的短信发送对象+通过专题观看权限的用<br/>户发送开播提醒或回放提醒。</p>
+                    </div>
+                    <i class="iconfont-v3 saasicon_help_m tip"></i>
+                  </vh-tooltip>
+                </vh-checkbox>
+              </template>
+            </vh-checkbox-group>
           </div>
-          <p class="set-item__content_bottom">
-            <span>短信字数：<strong>{{smsCensus.wordage}}</strong>（含退订后缀）</span>
-            <span>单条计费 (条)：<strong>{{smsCensus.rowCount}}</strong>（70字符为一条）</span>
-            <span>可用余额 (条)：<strong>{{userSmsAmount}}</strong></span>
-          </p>
         </div>
-      </div>
-      <!-- 发送时间 -->
-      <div class="set-item send_time">
-        <label class="set-item__label">发送时间</label>
-        <div class="set-item__content">
-          <vh-checkbox-group v-model="send_time" v-if="cardInfo.config_type == 2">
-            <vh-checkbox v-for="item in [{
-              label: '开播前1天',
-              value: '86400'
-            },{
-              label: '开播前2小时',
-              value: '7200'
-            },{
-              label: '开播前1小时',
-              value: '3600'
-            },{
-              label: '开播前30分钟',
-              value: '1800'
-            },{
-              label: '开播前10分钟',
-              value: '600'
-            }]"
-            :key="item.value"
-            :label="item.value"
-            border
-            round
-            size="medium">
-             <span>{{item.label}}</span>
-             <template v-if="send_time.includes(item.value)">
-              <!-- 1=已发送，0=未发送（默认），2=发送中 ，3=已过时-->
-              <template v-if="getCheckStatus(item) == 1">
-                <span class="send_time_status"><img src="../images/fill-success.svg"/>已发送</span>
-              </template>
-              <template v-else-if="getCheckStatus(item) == 2">
-                <span class="send_time_status"><img src="../images/fill-send.svg"/>发送中</span>
-              </template>
-              <template v-else-if="getCheckStatus(item) == 3">
-                <span class="send_time_status"><img src="../images/fill-warning.svg"/>已过时</span>
-              </template>
-              <template v-if="getCheckStatus(item) === 0">
-                <span class="send_time_status"><img src="../images/fill-wait.svg"/>未发送</span>
-              </template>
-             </template>
-            </vh-checkbox>
-          </vh-checkbox-group>
-          <span class="set-item__content__default" v-else-if="cardInfo.config_type == 1">预约/报名成功后发送</span>
-          <span class="set-item__content__default" v-else-if="cardInfo.config_type == 3">设置默认回放后发送</span>
-          <span class="set-item__content__default" v-else>——</span>
-          <p v-if="[2,3].includes(cardInfo.config_type)" class="set-item__content__desc">{{cardInfo.config_type == 2 ? `注意：若勾选已错过的时间点将不进行发送，当前开播时间：${noticeDetailVo && noticeDetailVo.webinar_info && noticeDetailVo.webinar_info.start_time ? noticeDetailVo.webinar_info.start_time : '--'}` : '注意：当前活动仅发送一次'}}</p>
+        <!-- 导入用户模板 -->
+        <div class="set-item import_excel_info" v-if="send_user.includes('3')">
+          <label class="set-item__label">导入文件</label>
+          <div class="set-item__content">
+            <import-excel ref="importNoticeExcel" :cardInfo="{
+              webinar_id: cardInfo.webinar_id,
+              config_type: cardInfo.config_type
+            }" :importExcelBase="{
+              import_user_url: noticeDetailVo.sms_info.import_user_url,
+              import_user_fail_url: noticeDetailVo.sms_info.import_user_fail_url,
+              import_result: noticeDetailVo.sms_info.import_result
+            }" :isOneChange="isOneChange" @uploadKey="uploadKeySet" v-if="cardInfo && noticeDetailVo" :visible="cardInfo && noticeDetailVo" @setBtnDisabled="setBtnDisabled"></import-excel>
+          </div>
         </div>
-      </div>
-      <div class="set-dialog__footer">
-        <p class="set-dialog__footer_left"><span class="set-item__test" @click="openTestDialog">发送测试短信</span></p>
-        <vh-button type="primary"  size="medium" round borderRadius="50" @click="saveInfo" :disabled="send_user.includes('3') && btnDisabled" v-preventReClick>确定</vh-button>
-        <vh-button @click="handleClose" size="medium" plain borderRadius="50">取消</vh-button>
+        <!-- 短信内容 -->
+        <div class="set-item send_info">
+          <label class="set-item__label">短信内容</label>
+          <div class="set-item__content">
+            <div class="set-item__content_center">
+              <div class="set-item__content_center__ctx">{{cardQueryVo && cardQueryVo.content_str_max ? cardQueryVo.content_str_max : ''}} <span @click="openShortLink" class="set-item__content_center__link">{{cardQueryVo && cardQueryVo.short_url ? hideString(cardQueryVo.short_url, 20) : ''}}</span></div>
+            </div>
+            <p class="set-item__content_bottom">
+              <span>短信字数：<strong>{{smsCensus.wordage}}</strong>（含退订后缀）</span>
+              <span>单条计费 (条)：<strong>{{smsCensus.rowCount}}</strong>（70字符为一条）</span>
+              <span>可用余额 (条)：<strong>{{userSmsAmount}}</strong></span>
+            </p>
+          </div>
+        </div>
+        <!-- 发送时间 -->
+        <div class="set-item send_time">
+          <label class="set-item__label">发送时间</label>
+          <div class="set-item__content">
+            <vh-checkbox-group v-model="send_time" v-if="cardInfo.config_type == 2" size="small">
+              <vh-checkbox v-for="item in [{
+                label: '开播前1天',
+                value: '86400'
+              },{
+                label: '开播前2小时',
+                value: '7200'
+              },{
+                label: '开播前1小时',
+                value: '3600'
+              },{
+                label: '开播前30分钟',
+                value: '1800'
+              },{
+                label: '开播前10分钟',
+                value: '600'
+              }]"
+              :key="item.value"
+              :label="item.value"
+              border
+              round
+              :class="send_time.includes(item.value) && getCheckStatus(item) == 3 ? 'old-timer' : (send_time.includes(item.value) && getCheckStatus(item) != 3 ? 'yes-timer' : '')">
+              <span>{{item.label}}</span>
+              <template v-if="send_time.includes(item.value)">
+                <!-- 1=已发送，0=未发送（默认），2=发送中 ，3=已过时-->
+                <template v-if="getCheckStatus(item) == 1">
+                  <span class="send_time_status"><img src="../images/fill-success.svg"/>已发送</span>
+                </template>
+                <template v-else-if="getCheckStatus(item) == 2">
+                  <span class="send_time_status"><img src="../images/fill-send.svg"/>发送中</span>
+                </template>
+                <template v-else-if="getCheckStatus(item) == 3">
+                  <span class="send_time_status"><img src="../images/fill-warning.svg"/>已过时</span>
+                </template>
+                <template v-if="getCheckStatus(item) === 0">
+                  <span class="send_time_status"><img src="../images/fill-wait.svg"/>未发送</span>
+                </template>
+              </template>
+              </vh-checkbox>
+            </vh-checkbox-group>
+            <span class="set-item__content__default" v-else-if="cardInfo.config_type == 1">预约/报名成功后发送</span>
+            <span class="set-item__content__default" v-else-if="cardInfo.config_type == 3">设置默认回放后发送</span>
+            <span class="set-item__content__default" v-else>——</span>
+            <p v-if="[2,3].includes(cardInfo.config_type)" class="set-item__content__desc">{{cardInfo.config_type == 2 ? `注意：若勾选已错过的时间点将不进行发送，当前开播时间：${noticeDetailVo && noticeDetailVo.webinar_info && noticeDetailVo.webinar_info.start_time ? noticeDetailVo.webinar_info.start_time : '--'}` : '注意：当前活动仅发送一次'}}</p>
+          </div>
+        </div>
+        <div class="set-dialog__footer">
+          <p class="set-dialog__footer_left"><span class="set-item__test" @click="openTestDialog">发送测试短信</span></p>
+          <vh-button type="primary"  size="medium" round borderRadius="50" @click="saveInfo" :disabled="send_user.includes('3') && btnDisabled" v-preventReClick>确定</vh-button>
+          <vh-button type="info" ghost @click="handleClose" size="medium" borderRadius="50">取消</vh-button>
+        </div>
       </div>
       <!-- 发送测试短信 -->
       <vh-dialog
@@ -187,7 +188,8 @@
         isLoading: false,
         btnDisabled: false, // 是否禁用按钮
         saveLoading: false, // 是否保存执行中
-        saveSetParams: null
+        saveSetParams: null,
+        isOneChange: null
       };
     },
     props: {
@@ -297,6 +299,7 @@
       uploadKeySet(obj = {}) {
         this.uploadKey = obj.key || ''
         this.isUploadChange = obj.isEdit || false
+        this.isOneChange = obj.isOneChange || false
       },
       // 保持验证余额数量
       async saveInfo() {
@@ -437,6 +440,7 @@
       },
       checkSelect(oldVal) {
         console.log('数据', oldVal)
+        this.isOneChange = false;
       },
       // 获取消息模板详情
       getNoticeDetail() {
@@ -463,6 +467,7 @@
             this.send_user = res.data.sms_info.send_user.split(',')
             // 转换发送时间
             this.send_time = res.data.sms_info.send_time.split(',')
+            this.isOneChange = this.send_user.includes('3') ? true : false;
           } else {
             this.noticeDetailVo = {}
             this.cardQueryVo = {}
@@ -534,6 +539,7 @@
       this.isLoading = true;
       await this.getSmsBalance();
       await this.getWebinarVerify();
+      // 设置当前是否是初次修改(每次修改时，此时的值都会发生变化)
       this.getNoticeDetail();
     }
   };
@@ -544,6 +550,12 @@
   justify-content: flex-start;
   align-items: flex-start;
   margin-bottom: 16px;
+  /deep/.saasicon_help_m {
+    color: #999999;
+    &:hover {
+      color: #666666;
+    }
+  }
   &__label {
     margin-right: 12px;
     font-style: normal;
@@ -626,6 +638,9 @@
     padding-bottom: 40px;
   }
 }
+.vh-input /deep/.vh-input__count {
+  font-size: 14px;
+}
 /deep/.send_time {
   .vh-checkbox-group {
     width: 612px;
@@ -649,6 +664,45 @@
   .vh-checkbox:nth-child(6) {
     margin-bottom: 8px!important;
   }
+  .vh-checkbox.is-bordered.vh-checkbox--small {
+    padding: 5px 12px;
+    line-height: 20px;
+    border-radius: 4px;
+    .vh-checkbox__inner::after {
+      left: 4px;
+      top: 1px;
+    }
+    &:hover {
+      border: 1px solid #FFAAA1;
+      .vh-checkbox__inner {
+        border-color: #fb2626;
+      }
+    }
+    &:active {
+      background: #FFF2F0;
+      border: 1px solid #FFAAA1;
+      color: #262626;
+    }
+    &.is-checked {
+      background: #FFF2F0;
+      border: 1px solid #FFAAA1;
+      color: #262626;
+      &.yes-timer {
+        border: 1px solid #D9D9D9;
+        background: unset;
+      }
+    }
+    &.old-timer {
+      background: #F5F5F5;
+      border: 1px solid #D9D9D9;
+      border-radius: 4px;
+      color: rgba(0, 0, 0, 0.25);
+      .vh-checkbox__input.is-checked .vh-checkbox__inner, .vh-checkbox__input.is-indeterminate .vh-checkbox__inner {
+        background-color: #BFBFBF;
+        border-color: #BFBFBF;
+      }
+    }
+  }
   .send_time_status {
     font-style: normal;
     font-weight: 400;
@@ -657,6 +711,7 @@
     color: rgba(0, 0, 0, 0.45);
     position: absolute;
     right: 12px;
+    top: 5px;
     img {
       width: 12px;
       height: 12px;
