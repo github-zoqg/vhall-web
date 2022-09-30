@@ -24,6 +24,7 @@
         :picker-options="pickerOptions"
         @change="searchSendNoticeList"
         class="search-data__date"
+        size="medium"
       />
       <vh-input
         type="text"
@@ -337,8 +338,8 @@
     .search-data__input {
       margin-left: auto;
       width: 180px;
-      height: 40px;
-      line-height: 40px;
+      height: 36px;
+      line-height: 36px;
       /deep/.vh-input__inner {
         border-radius: 100px;
       }
