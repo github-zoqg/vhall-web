@@ -345,6 +345,17 @@ export default {
 
 <style lang="less" scoped>
 .msg-notification-page {
+  /deep/.saasicon_help_m {
+    color: #999999;
+    &:hover {
+      color: #666666;
+    }
+  }
+  /deep/.vh-input {
+    .vh-input__inner, .vh-input__count {
+    font-size: 14px;
+  }
+  }
   /deep/.titleBox {
     margin-bottom: 28px;
     .balance__right {
@@ -360,9 +371,6 @@ export default {
     }
     .color-red {
       color:#FB2626;
-    }
-    .saasicon_help_m {
-      color: #666666;
     }
   }
   /deep/.vh-switch__label {
@@ -408,14 +416,13 @@ export default {
         font-size: 14px;
         line-height: 22px;
         color: #1A1A1A;
-        margin-right: 8px;
         font-style: normal;
         font-weight: 400;
         font-size: 14px;
         line-height: 22px;
       }
       .is_no_edit {
-        color: rgba(0, 0, 0, 0.65);
+        color: rgba(0, 0, 0, 0.85);
         font-style: normal;
         font-weight: 400;
         font-size: 14px;
