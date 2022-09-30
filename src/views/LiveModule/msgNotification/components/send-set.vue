@@ -22,7 +22,7 @@
                     <p>当专题下开启统一观看限制或统一报名时，<br/>则不触发预约报名成功的通知消息</p>
                   </div>
                   <div slot="content" v-else>
-                    <p>1. 无统一观看限制时，各活动下的短信通知正常发送；</p>                    
+                    <p>1. 无统一观看限制时，各活动下的短信通知正常发送；</p>
                     <p>2. 当开启专题统一观看限制、统一报名表单时（免费条件及密码条件无<br/>预约提交手机号功能因此无法触发短信）：如果专题下的多个活动开启了<br/>短信通知，则将对该活动下设置的短信发送对象+通过专题观看权限的用<br/>户发送开播提醒或回放提醒。</p>
                   </div>
                   <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
@@ -43,7 +43,7 @@
             import_user_url: noticeDetailVo.sms_info.import_user_url,
             import_user_fail_url: noticeDetailVo.sms_info.import_user_fail_url,
             import_result: noticeDetailVo.sms_info.import_result
-          }" @uploadKey="uploadKeySet" v-if="cardInfo && noticeDetailVo" :visible="cardInfo && noticeDetailVo" @setBtnDisabled="setBtnDisabled"></import-excel>
+          }" :isOneChange="isOneChange" @uploadKey="uploadKeySet" v-if="cardInfo && noticeDetailVo" :visible="cardInfo && noticeDetailVo" @setBtnDisabled="setBtnDisabled"></import-excel>
         </div>
       </div>
       <!-- 短信内容 -->
@@ -187,7 +187,8 @@
         isLoading: false,
         btnDisabled: false, // 是否禁用按钮
         saveLoading: false, // 是否保存执行中
-        saveSetParams: null
+        saveSetParams: null,
+        isOneChange: null
       };
     },
     props: {
@@ -297,6 +298,7 @@
       uploadKeySet(obj = {}) {
         this.uploadKey = obj.key || ''
         this.isUploadChange = obj.isEdit || false
+        this.isOneChange = obj.isOneChange || false
       },
       // 保持验证余额数量
       async saveInfo() {
@@ -437,6 +439,7 @@
       },
       checkSelect(oldVal) {
         console.log('数据', oldVal)
+        this.isOneChange = false;
       },
       // 获取消息模板详情
       getNoticeDetail() {
@@ -463,6 +466,7 @@
             this.send_user = res.data.sms_info.send_user.split(',')
             // 转换发送时间
             this.send_time = res.data.sms_info.send_time.split(',')
+            this.isOneChange = this.send_user.includes('3') ? true : false;
           } else {
             this.noticeDetailVo = {}
             this.cardQueryVo = {}
@@ -534,6 +538,7 @@
       this.isLoading = true;
       await this.getSmsBalance();
       await this.getWebinarVerify();
+      // 设置当前是否是初次修改(每次修改时，此时的值都会发生变化)
       this.getNoticeDetail();
     }
   };
