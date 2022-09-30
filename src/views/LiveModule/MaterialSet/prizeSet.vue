@@ -847,7 +847,7 @@ export default {
         left: 50px;
         width: 276px;
         height: 500px;
-        background: #444;
+        background: rgba(#000, 0.7);
         border-radius: 0 0 15px 15px;
       }
       .prize-show {
