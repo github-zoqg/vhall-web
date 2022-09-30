@@ -5,7 +5,8 @@
     :close-on-press-escape="false"
     :before-close="handleClose"
     width="744px"
-    title="发送设置">
+    title="发送设置"
+    class="send-set-dialog">
       <div v-loading="isLoading">
         <!-- 发送对象 -->
         <div class="set-item">
@@ -766,6 +767,14 @@
   }
   .color-blue {
     color: #1E4EDC;
+  }
+}
+.send-set-dialog {
+  /deep/.el-loading-mask {
+    background-color: rgba(255,255,255,.65);
+  }
+  /deep/.vh-button+.vh-button {
+    margin-left: 12px;
   }
 }
 </style>
