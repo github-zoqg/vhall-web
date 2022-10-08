@@ -7,6 +7,9 @@
       <div slot="content" v-if="title == '聊天' && $route.query.wType == 6">
         1.分组模式下，聊天数据仅展示主直播间聊天数据<br />2.点击“导出分组数据”，将导出每个小组内的聊天数据
       </div>
+      <div slot="content" v-if="title == '关注用户'">
+        此列表用户来自于微信，在直播页中主动点击关注接受发送消息通知的用户（非微信粉丝）
+      </div>
     </pageTitle>
     <div class="operaBox">
       <div class="searchBox" v-show="totalNum || isSearch">
@@ -34,7 +37,7 @@
           end-placeholder="结束日期"
           :picker-options="pickerOptions"
           style="width: 240px;margin-right: 20px;"
-          v-if="title==='聊天' || title==='问答'"
+          v-if="title==='聊天' || title==='问答' || title === '关注用户'"
         />
         <el-button size="medium" round v-if="title==='聊天' || title==='问答'" :disabled="!isSeletedCheckout" @click="deleteAll(null)">批量删除</el-button>
       </div>
@@ -308,6 +311,33 @@ export default {
           width: 120
         }
       ],
+      // 关注用户
+      followersColumn: [
+        {
+          label: '微信信息',
+          key: 'wechat_info',
+        },
+        {
+          label: 'OpenID',
+          key: 'open_id',
+          width: 120
+        },
+        {
+          label: '手机号',
+          key: 'phone',
+          width: 120
+        },
+        {
+          label: '关注时间',
+          key: 'created_at',
+          width: 120
+        },
+        {
+          label: '观看时长',
+          key: 'timer',
+          width: 120
+        }
+      ],
       tableRowBtnFun: [],
       inviteBtnFun: [
         {
@@ -424,6 +454,13 @@ export default {
           this.isCheckout = false;
           this.tableRowBtnFun = this.inviteBtnFun;
           this.getCodeRedpacketList();
+          break;
+        case '关注用户':
+          this.isCheckout = false;
+          this.tabelColumn = this.followersColumn;
+          this.placeholder = '搜索微信昵称/手机号';
+          this.text = '还没有人关注哦'
+          this.getFollowersList();
           break;
         default:
           break;
@@ -889,6 +926,32 @@ export default {
 
       });
     },
+    // 关注用户列表
+    getFollowersList() {
+      let params = {
+        room_id: this.roomId
+      };
+      if (this.searchTime) {
+        this.$refs.tableList.clearSelect();
+        params.start_time = this.searchTime[0];
+        params.end_time = this.searchTime[1];
+      }
+      this.tableList = [];
+      let obj = Object.assign({}, pageInfo, params);
+      this.params = params;
+      this.$fetch('getFollowersList', obj).then(res => {
+        this.tableList = res.data.data;
+        this.totalNum = res.data.total;
+        if (!res.data.total) {
+          this.nullText = 'nullData';
+          this.text = '还没有人关注哦';
+        } else {
+           this.tableList.map((item, index) => {
+            item.index = index + 1;
+          })
+        }
+      });
+    },
     getTableList(params) {
       this.changeColumn(this.title);
     },
@@ -944,8 +1007,11 @@ export default {
         case '现金红包':
           this.exportRedpacketInfo();
           break;
-           case '口令红包':
+        case '口令红包':
           this.exportCodeRedpacketInfo();
+          break;
+        case '关注用户':
+          this.exportFollowersInfo();
           break;
         default:
           break;
@@ -1235,6 +1301,30 @@ export default {
     // 口令红包--导出明细详情（单个）
     exportCodeRedpacketDetailInfo(uuid, type) {
       this.$fetch('exportDetailCodeRedpacket',{webinar_id: this.webinarId, red_packet_uuid: uuid, type: type}).then(res => {
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      })
+    },
+    // 关注用户 - 导出全部（支持条件筛选）
+    exportFollowersInfo() {
+      let params = {
+        webinar_id: this.webinar_id
+      };
+      if (this.searchTime) {
+        params.start_time = this.searchTime[0] + ' 00:00:00';
+        params.end_time = this.searchTime[1] + ' 23:59:59';
+      }
+      this.$fetch('exportFollowersInfo', params).then(res => {
+        this.$vhall_paas_port({
+          k: 100473,
+          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,

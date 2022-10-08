@@ -105,7 +105,7 @@ module.exports = {
   // }
       const externals = {
         vue: 'Vue',
-        "vhall-ui": "VHALLUI",
+        "vhall-ui": "VHALLUI"
       }
       return {
         // optimization,

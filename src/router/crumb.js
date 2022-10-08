@@ -324,7 +324,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
-  else if (metaName === 'langCard') {// 推广嵌入
+  else if (metaName === 'langCard') {// 多语言链接
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -335,6 +335,22 @@ export function CrumbSet(metaName, that) {
       {
         title: '多语言链接',
         path: `/live/langCard/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
+  else if (metaName === 'msgNotification') {// 开播提醒
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '直播详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '开播提醒',
+        path: `/live/msgNotification/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'
       }

@@ -138,6 +138,12 @@ const router = [
         hidden: true
       },
       {
+        path: 'msgNotification/:str(\\d+)',
+        component: () => import('@/views/LiveModule/msgNotification'),
+        meta:{ auth: true, title: '开播提醒', name: 'msgNotification', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'livingSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/livingSetting'),
         meta:{ auth: true, title: '直播间设置', name: 'livingSetting', activeMenu: '/live/list'},
