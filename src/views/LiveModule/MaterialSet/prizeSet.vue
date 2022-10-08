@@ -54,7 +54,7 @@
                     <p :class="isChecked == 1 ? 'active' : ''"
                       class="przieImg"
                       @click="changeType(1)">
-                      <img src="../../../common/images/gif/prize01.gif"
+                      <img src="../../../common/images/gif/prize01.png"
                         alt="">
                       <label class="img-tangle"
                         v-show="isChecked == 1"><img src="../../../common/images/icon-choose.png"
@@ -63,7 +63,7 @@
                     <p :class="isChecked == 2 ? 'active' : ''"
                       class="przieImg"
                       @click="changeType(2)">
-                      <img src="../../../common/images/gif/prize02.gif"
+                      <img src="../../../common/images/gif/prize02.png"
                         alt="">
                       <label class="img-tangle"
                         v-show="isChecked == 2"><img src="../../../common/images/icon-choose.png"
@@ -72,7 +72,7 @@
                     <p :class="isChecked == 3 ? 'active' : ''"
                       class="przieImg"
                       @click="changeType(3)">
-                      <img src="../../../common/images/gif/prize03.gif"
+                      <img src="../../../common/images/gif/prize03.png"
                         alt="">
                       <label class="img-tangle"
                         v-show="isChecked == 3"><img src="../../../common/images/icon-choose.png"
@@ -156,28 +156,33 @@
             </div>
             <div class="give-show">
               <div class="give-people">
-                <h3>领奖</h3>
-                <el-scrollbar class="scroll-bar">
-                  <div class="give-msg">
-                    <el-form :model="givePrizeForm">
-                      <el-form-item v-for="(item, index) in givePrizeList"
-                        :key="index">
-                        <span class="red"
-                          v-if="item.is_required==1">*</span>
-                        <el-input v-model="givePrizeForm[item.field_key]"
-                          readonly
-                          type="text"
-                          :placeholder="item.placeholder"></el-input>
-                      </el-form-item>
-                    </el-form>
-                    <div class="sureBtn">
-                      <el-button type="primary"
-                        v-preventReClick
-                        round>确定</el-button>
-                    </div>
-                  </div>
-                </el-scrollbar>
+                <div class="prize-mask">
+                  <div class="accept-review">
+                    <!-- <el-scrollbar class="scroll-bar"> -->
+                    <div class="padding-container">
 
+                      <div class="give-msg">
+                        <el-form :model="givePrizeForm">
+                          <el-form-item v-for="(item, index) in givePrizeList"
+                            :key="index">
+                            <span class="red"
+                              v-if="item.is_required==1">*</span>
+                            <el-input v-model="givePrizeForm[item.field_key]"
+                              readonly
+                              type="text"
+                              :placeholder="item.placeholder"></el-input>
+                          </el-form-item>
+                        </el-form>
+                        <div class="sureBtn">
+                          <el-button type="primary"
+                            v-preventReClick
+                            round>确定</el-button>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- </el-scrollbar> -->
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -786,19 +791,18 @@ export default {
       background-size: cover;
       margin-top: -25px;
       position: relative;
-      .give-show-title {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 16px;
-        color: #666666;
-        line-height: 24px;
-      }
       .give-people {
-        margin: auto;
-        margin-top: 275px;
-        width: 290px;
-        margin-left: 45px;
+        .accept-review {
+          margin: auto;
+          margin-top: 227px;
+          width: 276px;
+          height: 279px;
+          margin-left: 0;
+          background-image: url('../../../common/images/gif/accept-review.png');
+          background-size: 100%;
+          border-radius: 0 0 20px 20px;
+        }
+
         h3 {
           text-align: center;
           font-size: 14px;
@@ -822,12 +826,20 @@ export default {
             // margin-top: 25px;
           }
         }
+        .padding-container {
+          padding-top: 45px;
+        }
+        ::-webkit-scrollbar {
+          display: none;
+        }
         .give-msg {
           text-align: center;
           margin: auto;
-          height: 260px;
-          padding: 20px 20px 0;
+          height: 235px;
+          padding: 0 20px;
           width: 94%;
+          overflow-y: auto;
+
           p {
             margin-top: 24px;
           }
