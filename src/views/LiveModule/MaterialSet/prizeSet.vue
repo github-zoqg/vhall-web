@@ -108,7 +108,7 @@
                     :style="`backgroundImage: url(${backgroundImg})`">
                   </div>
                 </div>
-                <div class="sureBtn">{{ formData.description || '正在进行抽奖' }}</div>
+                <!-- <div class="sureBtn">{{ formData.description || '正在进行抽奖' }}</div> -->
               </div>
             </div>
           </div>
@@ -794,13 +794,13 @@ export default {
       .give-people {
         .accept-review {
           margin: auto;
-          margin-top: 227px;
+          margin-top: 225px;
           width: 276px;
           height: 279px;
           margin-left: 0;
           background-image: url('../../../common/images/gif/accept-review.png');
           background-size: 100%;
-          border-radius: 0 0 20px 20px;
+          border-radius: 0 0 15px 15px;
         }
 
         h3 {
@@ -822,9 +822,6 @@ export default {
           margin: auto;
           text-align: center;
           color: #fb3a32;
-          /deep/.el-button {
-            // margin-top: 25px;
-          }
         }
         .padding-container {
           padding-top: 45px;
@@ -855,7 +852,7 @@ export default {
       }
       .prize-mask {
         position: absolute;
-        top: 82px;
+        top: 85px;
         left: 50px;
         width: 276px;
         height: 500px;
@@ -869,18 +866,12 @@ export default {
         transform: translate(-50%, -50%);
         margin: 0 auto;
         text-align: center;
-        // border-radius: 50%;
         width: 200px;
         height: 230px;
         background-size: 100%;
         background-repeat: no-repeat;
         margin-top: 16px;
         background-position: center;
-        // img{
-        //   width: 200px;
-        //   height: 200px;
-        //   border-radius: 50%;
-        // }
       }
     }
     .prize-type {
@@ -936,9 +927,6 @@ export default {
           height: 86px;
         }
       }
-      /deep/.el-upload--picture-card {
-        // height: 88px;
-      }
     }
   }
   .prize-no {
@@ -946,9 +934,6 @@ export default {
     text-align: center;
     margin-top: 268px;
   }
-}
-.prize--set {
-  // position: absolute;
 }
 /deep/.saasicon_help_m {
   color: #999999;
