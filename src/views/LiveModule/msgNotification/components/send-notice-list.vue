@@ -8,7 +8,7 @@
     class="send-notice-list__dialog">
     <div slot="title" class="dialog__title">
       <span class="el-dialog__title vh-dialog__title">发送记录</span>
-      <vh-tooltip effect="dark" content="仅保留近一年的发送记录" placement="right">
+      <vh-tooltip effect="dark" content="仅保留近一年的发送记录" :visible-arrow="false" placement="right">
         <i class="iconfont-v3 saasicon_help_m dialog__title__icon"></i>
       </vh-tooltip>
     </div>
@@ -353,6 +353,9 @@
   }
   /deep/.vh-table__empty-block {
     min-height: 0;
+  }
+  /deep/.vh-input__prefix {
+    top: -2px;
   }
   .tab-content {
     min-height: 314px;
