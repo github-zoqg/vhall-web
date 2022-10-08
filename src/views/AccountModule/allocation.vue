@@ -1218,9 +1218,9 @@
     }
   }
   /deep/.vh-button--text.zdy-theme-gray {
-    color: rgba(0, 0, 0, 0.65);
+    color: rgba(0, 0, 0, 0.65) !important;
     &:hover {
-      color: rgba(0, 0, 0, 0.85);
+      color: rgba(0, 0, 0, 0.85) !important;
     }
   }
 </style>
