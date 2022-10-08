@@ -56,7 +56,8 @@
             <!-- </transition> -->
           </div>
           <div class="preview_box_wap" v-show="livingPreview==2">
-            <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm" :isShowInteract="isShowInteract"></wap-preview>
+            <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm" :videoUrl="video_url" :isShowInteract="isShowInteract"></wap-preview>
+            <span v-show="livingWapForm.style==3 && livingPcPreviewType == 1" class="preview_box_wap_tip">注：简洁风格暂不支持展示菜单和文档</span>
           </div>
         </div>
       </div>
@@ -78,37 +79,39 @@
             </span>
           </div>
         </div>
-        <div class="form_item">
-          <p class="form_item_title">主题背景</p>
-          <upload
-            class="upload__living"
-            id="living_pc_cropper"
-            v-model="livingPcForm.background"
-            :domain_url="livingPcForm.background"
-            :on-success="handlePcUploadSuccess"
-            :on-progress="uploadProcess"
-            :on-error="uploadError"
-            :on-preview="uploadPreview"
-            :heightImg="130"
-            :widthImg="231"
-            :before-upload="beforeUploadHandler"
-            @delete="resetLogoUrl">
-            <div slot="tip">
-              <p>建议尺寸：1920*1080px，小于4M</p>
-              <p>支持jpg、gif、png、bmp</p>
-            </div>
-          </upload>
-        </div>
-        <div class="form_item">
-          <span class="vague_theme">模糊程度</span>
-          <vh-slider v-model="livingPcForm.blurryDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="10"></vh-slider>
-          <span class="vague_num">{{livingPcForm.blurryDegree}}</span>
-        </div>
-        <div class="form_item">
-          <span class="vague_theme">背景亮度</span>
-          <vh-slider v-model="livingPcForm.lightDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="20"></vh-slider>
-          <span class="vague_num">{{livingPcForm.lightDegree}}</span>
-        </div>
+        <template v-if="livingPcPreviewType == 1">
+          <div class="form_item">
+            <p class="form_item_title">主题背景</p>
+            <upload
+              class="upload__living"
+              id="living_pc_cropper"
+              v-model="livingPcForm.background"
+              :domain_url="livingPcForm.background"
+              :on-success="handlePcUploadSuccess"
+              :on-progress="uploadProcess"
+              :on-error="uploadError"
+              :on-preview="uploadPreview"
+              :heightImg="128"
+              :widthImg="228"
+              :before-upload="beforeUploadHandler"
+              @delete="resetLogoUrl">
+              <div slot="tip">
+                <p>建议尺寸：1920*1080px，小于4M</p>
+                <p>支持jpg、gif、png、bmp</p>
+              </div>
+            </upload>
+          </div>
+          <div class="form_item">
+            <span class="vague_theme">模糊程度</span>
+            <vh-slider v-model="livingPcForm.blurryDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="10"></vh-slider>
+            <span class="vague_num">{{livingPcForm.blurryDegree}}</span>
+          </div>
+          <div class="form_item">
+            <span class="vague_theme">背景亮度</span>
+            <vh-slider v-model="livingPcForm.lightDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="20"></vh-slider>
+            <span class="vague_num">{{livingPcForm.lightDegree}}</span>
+          </div>
+        </template>
       </template>
       <!-- wap主题设置 -->
       <template v-if="livingPreview==2">
@@ -120,37 +123,39 @@
             </span>
           </div>
         </div>
-        <div class="form_item" v-if="livingWapForm.style==3">
-          <p class="form_item_title">主题背景</p>
-          <upload
-            class="upload__living"
-            id="living_wap_cropper"
-            v-model="livingWapForm.background"
-            :domain_url="livingWapForm.background"
-            :on-success="handleUploadSuccess"
-            :on-progress="uploadProcess"
-            :on-error="uploadError"
-            :on-preview="uploadPreview"
-            :heightImg="130"
-            :widthImg="231"
-            :before-upload="beforeUploadHandler"
-            @delete="resetLogoUrl">
-            <div slot="tip">
-              <p>建议尺寸：1080*1920px，小于4M</p>
-              <p>支持jpg、gif、png、bmp</p>
-            </div>
-          </upload>
-        </div>
-        <div class="form_item" v-if="livingWapForm.style==3">
-          <span class="vague_theme">模糊程度</span>
-          <vh-slider v-model="livingWapForm.blurryDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="10"></vh-slider>
-          <span class="vague_num">{{livingWapForm.blurryDegree}}</span>
-        </div>
-        <div class="form_item" v-if="livingWapForm.style==3">
-          <span class="vague_theme">背景亮度</span>
-          <vh-slider v-model="livingWapForm.lightDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="20"></vh-slider>
-          <span class="vague_num">{{livingWapForm.lightDegree}}</span>
-        </div>
+        <template v-if="livingPcPreviewType == 1">
+          <div class="form_item form_item_wap_bg" v-if="livingWapForm.style==3">
+            <p class="form_item_title">主题背景</p>
+            <upload
+              class="upload__living"
+              id="living_wap_cropper"
+              v-model="livingWapForm.background"
+              :domain_url="livingWapForm.background"
+              :on-success="handleUploadSuccess"
+              :on-progress="uploadProcess"
+              :on-error="uploadError"
+              :on-preview="uploadPreview"
+              :heightImg="330"
+              :widthImg="151"
+              :before-upload="beforeUploadHandler"
+              @delete="resetLogoUrl">
+              <div slot="tip">
+                <p>建议尺寸：750*1642px</p>
+                <p>支持jpg、gif、png、bmp，小于4M</p>
+              </div>
+            </upload>
+          </div>
+          <div class="form_item" v-if="livingWapForm.style==3">
+            <span class="vague_theme">模糊程度</span>
+            <vh-slider v-model="livingWapForm.blurryDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="10"></vh-slider>
+            <span class="vague_num">{{livingWapForm.blurryDegree}}</span>
+          </div>
+          <div class="form_item" v-if="livingWapForm.style==3">
+            <span class="vague_theme">背景亮度</span>
+            <vh-slider v-model="livingWapForm.lightDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="20"></vh-slider>
+            <span class="vague_num">{{livingWapForm.lightDegree}}</span>
+          </div>
+        </template>
       </template>
       <!-- 视频区域设置 -->
       <template v-if="livingPcPreviewType==1">
@@ -161,11 +166,11 @@
             <vh-radio-button round :label="2">左右显示</vh-radio-button>
           </vh-radio-group>
         </div>
-        <template v-if="isShowInteract">
+        <template v-if="isShowVideoBackground || isShowInteract">
           <div class="form_item_br">
             以下设置对PC端和移动端同时生效～
           </div>
-          <div class="form_item">
+          <div class="form_item" v-if="isShowInteract">
             <div class="form_item_title">
               视频区【连麦】布局
               <p class="title_tip">
@@ -205,57 +210,66 @@
               </div>
             </div>
           </div> -->
-          <!-- <div class="form_item">
-            <p class="form_item_title">视频区底色</p>
-            <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoColor"></color-set>
-          </div> -->
-          <!-- <div class="form_item">
-            <p class="form_item_title">视频区背景</p>
-            <upload
-              class="upload__living"
-              id="living_video_cropper"
-              v-model="livingForm.videoBackGround"
-              :domain_url="livingForm.videoBackGround"
-              :saveData="{
-                path: pathUrl,
-                type: 'image',
-              }"
-              :on-success="handleUploadVideoSuccess"
-              :on-progress="uploadProcess"
-              :on-error="uploadError"
-              :on-preview="uploadPreview"
-              :heightImg="130"
-              :widthImg="231"
-              :before-upload="beforeUploadHandler"
-              @delete="resetVideoUrl">
-              <div slot="tip">
-                <p>建议尺寸：1920*1080px，小于4M</p>
-                <p>支持jpg、gif、png、bmp</p>
-              </div>
-            </upload>
-          </div> -->
-          <!-- <div class="form_item">
-            <span class="vague_theme">模糊程度</span>
-            <vh-slider v-model="livingForm.videoBlurryDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="10"></vh-slider>
-            <span class="vague_num">{{livingForm.videoBlurryDegree}}</span>
-          </div> -->
-          <!-- <div class="form_item">
-          <span class="vague_theme">背景亮度</span>
-          <vh-slider v-model="livingForm.videoLightDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="20"></vh-slider>
-          <span class="vague_num">{{livingForm.videoLightDegree}}</span>
-        </div> -->
+          <template v-if="isShowVideoBackground">
+            <div class="form_item">
+              <p class="form_item_title">视频区底色</p>
+              <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoBackGroundColor"></color-set>
+            </div>
+            <div class="form_item">
+              <p class="form_item_title">
+                <span class="mr">视频区背景</span>
+                <el-tooltip placement="right" v-tooltipMove>
+                  <div slot="content">
+                    <p>1.请勿手动修改图片后缀，否则有可能导致背景<br>&nbsp;&nbsp;&nbsp;图不生效</p>
+                    <p>2.视频区背景图在无延迟模式下或上麦时不生效</p>
+                  </div>
+                  <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
+                </el-tooltip>
+              </p>
+              <upload
+                class="upload__living"
+                id="living_video_cropper"
+                v-model="livingForm.videoBackGround"
+                :domain_url="livingForm.videoBackGround"
+                :on-success="handleUploadVideoSuccess"
+                :on-progress="uploadProcess"
+                :on-error="uploadError"
+                :on-preview="uploadPreview"
+                :heightImg="128"
+                :widthImg="228"
+                :before-upload="file => this.beforeUploadHandler(file, true)"
+                @delete="resetVideoUrl">
+                <div slot="tip">
+                  <p>建议尺寸：1300*730px，小于4M</p>
+                  <p>支持jpg、png</p>
+                </div>
+              </upload>
+            </div>
+            <div class="form_item">
+              <span class="vague_theme">模糊程度</span>
+              <vh-slider v-model="livingForm.videoBlurryDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="10"></vh-slider>
+              <span class="vague_num">{{livingForm.videoBlurryDegree}}</span>
+            </div>
+            <div class="form_item">
+              <span class="vague_theme">背景亮度</span>
+              <vh-slider v-model="livingForm.videoLightDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="20"></vh-slider>
+              <span class="vague_num">{{livingForm.videoLightDegree}}</span>
+            </div>
+          </template>
         </template>
       </template>
     </div>
     <div class="living-setting_hidden" v-if="webinarId && livingConfig==2"></div>
     <cropper @cropComplete="cropComplete" ref="livingCropper" :ratio="ratio" cropperDom="living_cropper" @deleteComplete="deleteComplete"></cropper>
+    <cropper2 @cropComplete="cropComplete2" ref="livingCropper2" :ratio="ratio" @resetUpload="deleteComplete"></cropper2>
     <living-preview ref="livingPreview"></living-preview>
   </div>
 </template>
 <script>
 import Upload from '@/components/Upload/main';
-// import ColorSet from '@/components/ColorSelect';
+import ColorSet from '@/components/ColorSelect';
 import cropper from './Cropper/index.vue';
+import cropper2 from '@/components/Cropper/index'
 import { sessionOrLocal } from "@/utils/utils";
 import livingPreview from './livingPreview.vue';
 import pcPreview from './living_pc_preview.vue'
@@ -304,7 +318,8 @@ export default {
           x: 0,
           y:0,
           width: 0,
-          height: 0
+          height: 0,
+          imageCropMode: 2
         }
       },
       livingPcForm: {
@@ -317,14 +332,16 @@ export default {
           x: 0,
           y:0,
           width: 0,
-          height: 0
+          height: 0,
+          imageCropMode: 2
         }
       },
       livingForm: {
-        videoColor: '#000000', //视频区底色
+        videoBackGroundColor: '#000000', //视频区底色
         chatLayout: 1,
         inavLayout: 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', //连麦布局
         inavDocumentLayout: 1, //连麦+演示布局
+        finalVideoBackground: '',
         videoBackGround: '',
         videoBlurryDegree: 0,
         videoLightDegree: 10,
@@ -340,8 +357,9 @@ export default {
   components: {
     pcPreview,
     wapPreview,
-    // ColorSet,
+    ColorSet,
     cropper,
+    cropper2,
     Upload,
     livingPreview
   },
@@ -370,9 +388,22 @@ export default {
         return false;
       }
     },
+    isShowVideoBackground() {
+      if (this.webinarId) {
+        // 活动下互动和分组模式显示
+        if (this.webinarType == 3 || this.webinarType == 6) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        // 账号下默认显示
+        return true;
+      }
+    },
     video_url() {
       if (!this.livingForm.videoBackGround) return '';
-      return `${this.livingForm.videoBackGround}?x-oss-process=image/crop,x_${this.livingForm.videoBackGroundSize.x.toFixed()},y_${this.livingForm.videoBackGroundSize.y.toFixed()},w_${this.livingForm.videoBackGroundSize.width.toFixed()},h_${this.livingForm.videoBackGroundSize.height.toFixed()}${this.livingForm.videoBlurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingForm.videoBlurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.livingForm.videoLightDegree - 10) * 5} `;
+      return `${this.livingForm.videoBackGround}?x-oss-process=image/crop,x_${this.livingForm.videoBackGroundSize.x.toFixed()},y_${this.livingForm.videoBackGroundSize.y.toFixed()},w_${this.livingForm.videoBackGroundSize.width.toFixed()},h_${this.livingForm.videoBackGroundSize.height.toFixed()}${this.livingForm.videoBlurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.livingForm.videoBlurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.livingForm.videoLightDegree - 10) * 5}`;
     }
   },
   methods: {
@@ -399,8 +430,20 @@ export default {
           this.$refs.livingWapPreview.settingTheme(skin_json_wap.style, skin_json_wap.backGroundColor, 1)
           this.livingPcForm = { ...skin_json_pc }; //pc信息
           this.livingWapForm = { ...skin_json_wap }; //wap信息
+
+          this.livingPcForm.lightDegree = skin_json_pc.lightDegree && +skin_json_pc.lightDegree
+          this.livingPcForm.blurryDegree = skin_json_pc.blurryDegree && +skin_json_pc.blurryDegree
+
+          this.livingWapForm.lightDegree = skin_json_wap.lightDegree && +skin_json_pc.lightDegree
+          this.livingWapForm.blurryDegree = skin_json_wap.blurryDegree && +skin_json_pc.blurryDegree
+
           this.livingForm.chatLayout = skin_json_pc.chatLayout; // 公共信息 聊天布局
           this.livingForm.inavLayout = this.isDelay ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : skin_json_pc.inavLayout; // 公共信息 连麦布局
+          this.livingForm.videoBackGround = skin_json_pc.videoBackGround; // 公共信息  视频区背景 图片地址
+          this.livingForm.videoBackGroundColor = skin_json_pc.videoBackGroundColor == '#333338' ? '#000000' : skin_json_pc.videoBackGroundColor; // 公共信息  视频区背景 颜色
+          this.livingForm.videoBackGroundSize = skin_json_pc.videoBackGroundSize; // 公共信息 视频区背景 裁剪信息
+          this.livingForm.videoBlurryDegree = skin_json_pc.videoBlurryDegree && +skin_json_pc.videoBlurryDegree; // 公共信息 视频区背景 模糊度
+          this.livingForm.videoLightDegree = skin_json_pc.videoLightDegree && +skin_json_pc.videoLightDegree ; // 公共信息 视频区背景 亮度
 
           // 备份信息
           this.setBackupData(skin_json_pc, skin_json_wap);
@@ -413,8 +456,13 @@ export default {
       this.livingPcForm.style = index;
       if (index == this._livingPcForm.style) {
         this.livingPcForm = {...this._livingPcForm};
-        this.livingForm.chatLayout = this._livingForm.chatLayout;
-        this.livingForm.inavLayout = this._livingForm.inavLayout;
+        this.livingForm.chatLayout = this._livingForm.chatLayout, // 公共信息 聊天布局
+        this.livingForm.inavLayout = this._livingForm.inavLayout, // 公共信息 连麦布局
+        this.livingForm.videoBackGround = this._livingForm.videoBackGround, // 公共信息  视频区背景 图片地址
+        this.livingForm.videoBackGroundColor = this._livingForm.videoBackGroundColor, // 公共信息  视频区背景 颜色
+        this.livingForm.videoBackGroundSize = this._livingForm.videoBackGroundSize, // 公共信息 视频区背景 裁剪信息
+        this.livingForm.videoBlurryDegree = this._livingForm.videoBlurryDegree, // 公共信息 视频区背景 模糊度
+        this.livingForm.videoLightDegree = this._livingForm.videoLightDegree, // 公共信息 视频区背景 亮度
         this.$refs.livingPcPreview.settingTheme(index, this.livingPcForm.backGroundColor);
       } else {
         this.resetFormPcColor(index, 0);
@@ -427,6 +475,12 @@ export default {
         this.livingWapForm = { ...this._livingWapForm};
         this.livingForm.chatLayout = item.id  == 3 ? 2 : 1;
         this.livingForm.inavLayout = this._livingForm.inavLayout;
+        this.livingForm.videoBackGround = this._livingForm.videoBackGround, // 公共信息  视频区背景 图片地址
+        this.livingForm.videoBackGroundColor = this._livingForm.videoBackGroundColor, // 公共信息  视频区背景 颜色
+        this.livingForm.videoBackGroundSize = this._livingForm.videoBackGroundSize, // 公共信息 视频区背景 裁剪信息
+        this.livingForm.videoBlurryDegree = this._livingForm.videoBlurryDegree, // 公共信息 视频区背景 模糊度
+        this.livingForm.videoLightDegree = this._livingForm.videoLightDegree, // 公共信息 视频区背景 亮度
+
         this.$refs.livingWapPreview.settingTheme(item.id, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
       } else {
         this.resetFormWapColor(item.id, 0)
@@ -442,7 +496,7 @@ export default {
     },
     // 选择视频区底色
     changeVideoColor(color) {
-      this.livingForm.videoColor = color;
+      this.livingForm.videoBackGroundColor = color;
     },
     // 恢复默认（pc默认黑色，wap默认白色）
     resetForm() {
@@ -461,7 +515,12 @@ export default {
       this._livingWapForm = { ...skin_json_wap }; //wap信息
       this._livingForm = {
         chatLayout: skin_json_pc.chatLayout, // 公共信息 聊天布局
-        inavLayout: this.livingForm.inavLayout // 公共信息 连麦布局
+        inavLayout: this.livingForm.inavLayout, // 公共信息 连麦布局
+        videoBackGround: skin_json_pc.videoBackGround, // 公共信息  视频区背景 图片地址
+        videoBackGroundColor: skin_json_pc.videoBackGroundColor, // 公共信息  视频区背景 颜色
+        videoBackGroundSize: skin_json_pc.videoBackGroundSize, // 公共信息 视频区背景 裁剪信息
+        videoBlurryDegree: skin_json_pc.videoBlurryDegree, // 公共信息 视频区背景 模糊度
+        videoLightDegree: skin_json_pc.videoLightDegree, // 公共信息 视频区背景 亮度
       }
     },
     // 共用表单颜色
@@ -473,7 +532,7 @@ export default {
         layout = style == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE';
       }
       this.livingForm = {
-        videoColor: '#000000', //视频区底色
+        videoBackGroundColor: '#000000', //视频区底色
         chatLayout: style == 1 ? 1 : 2,
         inavLayout: layout, //连麦布局
         videoBackGround: '',
@@ -500,7 +559,8 @@ export default {
           x: 0,
           y:0,
           width: 0,
-          height: 0
+          height: 0,
+          imageCropMode: 2
         }
       };
       this.commonColor(style);
@@ -522,7 +582,8 @@ export default {
           x: 0,
           y:0,
           width: 0,
-          height: 0
+          height: 0,
+          imageCropMode: 2
         }
       };
       this.commonColor(style);
@@ -538,6 +599,7 @@ export default {
       if (this.livingWapForm.background) {
         this.livingWapForm.wapBackground = this.domain_wap_url;
       }
+      this.livingForm.finalVideoBackground = this.video_url;
       let skin_json_pc = Object.assign({}, this.livingPcForm, this.livingForm);
       let skin_json_wap = Object.assign({}, this.livingWapForm, this.livingForm);
       console.log(skin_json_pc, skin_json_wap, '??????????我是直播间设置参数')
@@ -564,17 +626,33 @@ export default {
     goPreviewLiving(){
       this.$refs.livingPreview.dialogVisible = true
     },
+    toFloorEven(num) {
+      const floorNum = Math.floor(num)
+      return floorNum % 2 == 1 ? floorNum + 1 : floorNum
+    },
     cropComplete(cropedData, url, index) {
       console.log(cropedData, url, index)
+      this.livingForm.videoBackGround = url;
+      this.livingForm.videoBackGroundSize = {
+        ...cropedData,
+        width: this.toFloorEven(cropedData.width),
+        height: this.toFloorEven(cropedData.height)
+      };
+    },
+    cropComplete2(cropedData, url, mode, index) {
+      console.log(cropedData, url, mode, index)
       if (index == 1) {
         this.livingPcForm.background = url;
-        this.livingPcForm.backgroundSize = cropedData;
+        this.livingPcForm.backgroundSize = {
+          ...cropedData,
+          imageCropMode: mode
+        };
       } else if (index == 2) {
         this.livingWapForm.background = url;
-          this.livingWapForm.backgroundSize = cropedData;
-      } else {
-        this.livingForm.videoBackGround = url;
-        this.livingForm.videoBackGroundSize = cropedData;
+        this.livingWapForm.backgroundSize = {
+          ...cropedData,
+          imageCropMode: mode
+        };
       }
     },
     deleteComplete(index) {
@@ -599,6 +677,9 @@ export default {
     // 视频区域图片删除
     resetVideoUrl() {
       this.livingForm.videoBackGround = '';
+      this.livingForm.finalVideoBackground = '';
+      this.livingForm.videoBlurryDegree = 0;
+      this.livingForm.videoLightDegree = 10;
     },
     choseMicrophone(index) {
       if (this.isDelay) return;
@@ -608,29 +689,45 @@ export default {
     handlePcUploadSuccess(res, file) {
       if(res.data) {
         this.ratio = 16/9;
-        this.$refs.livingCropper.showModel(res.data.domain_url, 1)
+        this.$refs.livingCropper2.showModel(res.data.domain_url, 1)
       }
     },
     handleUploadSuccess(res, file){
       console.log(res, file);
       if(res.data) {
         this.ratio = 9/19.48;
-        this.$refs.livingCropper.showModel(res.data.domain_url, 2)
+        this.$refs.livingCropper2.showModel(res.data.domain_url, 2)
       }
     },
     handleUploadVideoSuccess(res, file) {
        console.log(res, file);
       if(res.data) {
+        this.ratio = 16/9;
         this.$refs.livingCropper.showModel(res.data.domain_url, 3)
       }
     },
-    beforeUploadHandler(file){
+    getImgProfile(file) {
+      return new Promise((resolve, reject) => {
+        const url = window.URL || window.webkitURL
+        const img = new Image()
+        img.onload = function() {
+          resolve({
+            width: img.width,
+            height: img.height
+          })
+        }
+        img.src = url.createObjectURL(file)
+      })
+    },
+    // isVideo 为 true 表示视频背景图上传的回调
+    beforeUploadHandler(file, isVideo){
       console.log(file);
-      const typeList = ['png', 'jpeg', 'gif', 'bmp'];
+      const typeList = !isVideo ? ['png', 'jpeg', 'gif', 'bmp'] : ['png', 'jpeg'];
       console.log(file.type.toLowerCase())
       let typeArr = file.type.toLowerCase().split('/');
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 4;
+      let isLt4K = true
       if (!isType) {
         this.$message({
           message: `背景图片只能是 ${typeList.join('、')} 格式!`,
@@ -651,7 +748,26 @@ export default {
         });
         return false;
       }
-      return isType && isLt2M;
+      if (isVideo) {
+        return new Promise((resolve, reject) => {
+          this.getImgProfile(file).then(res => {
+            const { width, height } = res
+            isLt4K = width <= 3840 && height <= 3840
+            if (!isLt4K) {
+              this.$message({
+                message: `图片分辨率最高支持4k，请更换图片!`,
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
+              reject(false)
+            }
+            resolve(true)
+          })
+        })
+      }
+      return isType && isLt2M && isLt4K;
     },
     uploadProcess(event, file, fileList){
       console.log('uploadProcess', event, file, fileList);
@@ -763,6 +879,13 @@ export default {
           background-image: url('./image/living/wap_show.png');
           background-repeat: no-repeat;
           background-size: 100% 100%;
+          &_tip {
+            display: block;
+            margin-top: 34px;
+            font-size: 14px;
+            line-height: 20px;
+            color: rgba(0, 0, 0, 0.25);
+          }
         }
       }
     }
@@ -806,11 +929,23 @@ export default {
             }
           }
         }
+        &_wap_bg {
+          /deep/ .el-upload--picture-card {
+            width: 153px;
+            height: 332px;
+          }
+        }
         &_title, .vague_theme{
           margin-bottom: 10px;
           color: #262626;
           font-size: 14px;
           line-height: 20px;
+          .saasicon_help_m {
+            vertical-align: bottom;
+          }
+          .mr {
+            margin-right: 4px;
+          }
         }
         .title_tip{
           font-size: 14px;
@@ -892,7 +1027,7 @@ export default {
     }
     /deep/ .el-upload--picture-card {
       width: 100%;
-      height: 128px;
+      height: 130px;
     }
     @media (max-width: 1920px) {
       .preview_box_pc{

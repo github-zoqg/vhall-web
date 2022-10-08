@@ -104,6 +104,11 @@ export default {
       this.colors = color || '';
     }
   },
+  watch: {
+    colorDefault() {
+      this.colors = this.colorDefault
+    }
+  },
   created() {
     this.colors = this.colorDefault || '';
     this.resetColor = this.colorDefault || '';

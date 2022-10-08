@@ -1,9 +1,5 @@
 <template>
   <div class="vh-customer-menu-wrap">
-    <div class="vh-customer-menu-btns">
-      <span @click="workHelp" class="link__left">使用帮助</span>
-      <el-button type="primary" :disabled = 'buttonDis' style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab" >保存</el-button>
-    </div>
     <!-- <page-title
       style="position: relative"
       pageTitle="自定义菜单"
@@ -50,6 +46,10 @@
             :menus="customMenus"
             :pre="activeIndex"
           ></pc-preview>
+        </div>
+        <div class="vh-customer-menu-btns">
+          <el-button type="primary" :disabled = 'buttonDis' round @click.prevent.stop="saveCustomTab" >保存</el-button>
+          <span @click="workHelp" class="link__left">使用帮助</span>
         </div>
       </div>
     </div>
@@ -363,6 +363,9 @@ export default {
     float: right;
     position: relative;
   }
+  .vh-customer__preview-pc {
+    margin-bottom: 40px;
+  }
   .vh-customer-menu-wrap{
     padding: 0 32px;
     min-height: 530px;
@@ -370,15 +373,16 @@ export default {
     overflow: hidden;
   }
   .vh-customer-menu-btns{
-    margin: 24px 0;
+    // margin: 24px 0;
     display: flex;
-    justify-content: flex-end;
+    // justify-content: flex-end;
     align-items: center;
     // position: absolute;
     // right: 10px;
     // top: 0;
   }
   .link__left {
+    margin-left: 24px;
     font-size: 14px;
     font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
     font-weight: 400;
