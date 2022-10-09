@@ -681,7 +681,7 @@
           type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量 2-时长
           pid: sessionOrLocal.get('userId'),
           kv: [paramsKv],
-          scene: 1 // 1 全部修改；2 只修改短信；3 修改套餐or扩展包。
+          scene: this.showSmsModule ? 1 : 3 // 1 全部修改；2 只修改短信；3 修改套餐or扩展包。
         };
         flag ? this.sendAllocSet(params, row) :  this.$message({
           message: '请输入数量',
