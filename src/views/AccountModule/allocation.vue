@@ -107,7 +107,8 @@
             <vh-table-column
               label="分配短信"
               align="left"
-              width="230">
+              width="230"
+              v-if="showSmsModule">
               <template slot-scope="scope">
                 <VhallInput v-model.trim="scope.row.inputSms"  :maxlength="11" v-if="scope.row.isHide" class="btn-relative" autocomplete="off"  @input="formatBFInputs($event, scope.row, 'inputSms')">
                   <template slot="append">条</template>
@@ -680,7 +681,7 @@
           type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量 2-时长
           pid: sessionOrLocal.get('userId'),
           kv: [paramsKv],
-          scene: 1 // 1 全部修改；2 只修改短信；3 修改套餐or扩展包。
+          scene: this.showSmsModule ? 1 : 3 // 1 全部修改；2 只修改短信；3 修改套餐or扩展包。
         };
         flag ? this.sendAllocSet(params, row) :  this.$message({
           message: '请输入数量',
@@ -1218,9 +1219,9 @@
     }
   }
   /deep/.vh-button--text.zdy-theme-gray {
-    color: rgba(0, 0, 0, 0.65);
+    color: rgba(0, 0, 0, 0.65) !important;
     &:hover {
-      color: rgba(0, 0, 0, 0.85);
+      color: rgba(0, 0, 0, 0.85) !important;
     }
   }
 </style>
