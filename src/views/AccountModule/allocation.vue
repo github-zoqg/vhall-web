@@ -107,7 +107,8 @@
             <vh-table-column
               label="分配短信"
               align="left"
-              width="230">
+              width="230"
+              v-if="showSmsModule">
               <template slot-scope="scope">
                 <VhallInput v-model.trim="scope.row.inputSms"  :maxlength="11" v-if="scope.row.isHide" class="btn-relative" autocomplete="off"  @input="formatBFInputs($event, scope.row, 'inputSms')">
                   <template slot="append">条</template>
