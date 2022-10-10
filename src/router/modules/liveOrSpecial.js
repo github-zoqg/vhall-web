@@ -140,7 +140,7 @@ const router = [
       {
         path: 'livingSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/Brands/livingSetting'),
-        meta:{ auth: true, title: '直播间设置', name: 'livingSetting', activeMenu: '/live/list'},
+        meta:{ auth: true, title: '直播间设计器', name: 'livingSetting', activeMenu: '/live/list'},
         hidden: true
       },
       {
