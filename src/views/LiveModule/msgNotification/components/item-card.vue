@@ -91,7 +91,7 @@
           <vh-button type="primary" round size="mini" @click="openSetDialog">发送设置</vh-button>
         </template>
         <template>
-          <vh-button round type="danger" ghost size="mini" @click="openNoticeDialog">发送记录</vh-button>
+          <vh-button round type="default" ghost size="mini" @click="openNoticeDialog">发送记录</vh-button>
         </template>
       </div>
     </div>
