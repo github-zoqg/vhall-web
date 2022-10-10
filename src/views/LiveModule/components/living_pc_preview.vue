@@ -422,7 +422,7 @@ export default {
                 &.phone__center {
                   img {
                     object-fit: contain;
-                    background: #000000;
+                    background: transparent;
                   }
                 }
                 img{
