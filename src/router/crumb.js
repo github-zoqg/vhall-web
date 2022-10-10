@@ -365,7 +365,7 @@ export function CrumbSet(metaName, that) {
         isClick: true
       },
       {
-        title: '直播间设置',
+        title: '直播间设计器',
         path: `/live/livingSet/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'
@@ -1248,7 +1248,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('setting'),
       {
-        title: '直播间设置',
+        title: '直播间设计器',
         path: '/setting/brand',
         isClick: false,
         redirect: 'noRedirect'
