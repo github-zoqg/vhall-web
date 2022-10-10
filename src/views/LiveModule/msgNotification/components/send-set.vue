@@ -714,8 +714,8 @@
     right: 12px;
     top: 5px;
     img {
-      width: 12px;
-      height: 12px;
+      width: 14px;
+      height: 14px;
       display: inline-block;
       vertical-align: middle;
       margin-right: 4px;

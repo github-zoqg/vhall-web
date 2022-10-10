@@ -440,12 +440,6 @@ export default {
       height: 100px;
     }
   }
-  .p-right {
-    font-weight: 400;
-    margin-top: -5px;
-    color: #888;
-    font-size: 14px;
-  }
   .p-error {
     font-weight: 400;
     margin-top: -5px;
@@ -477,16 +471,27 @@ export default {
     color: #595959;
   }
   /deep/.mask {
-    background: rgba(0, 0, 0, 0.55)
+    background: rgba(0, 0, 0, 0.55);
+    i {
+      color: #fff;
+      font-size: 18px;
+    }
+    span {
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 20px;
+      text-align: center;
+      color: #fff;
+    }
   }
   /deep/.file-name {
     margin: 8px 20px 4px 20px;
     line-height: 22px;
   }
-  /deep/.upload-dialog-content .p-right {
+  /deep/.p-right {
     font-style: normal;
     font-weight: 400;
-    font-size: 12px;
+    font-size: 12px !important;
     line-height: 20px;
     text-align: center;
     color: rgba(0, 0, 0, 0.45);
