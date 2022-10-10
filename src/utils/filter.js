@@ -137,7 +137,7 @@ export const wordStatusCss = (ext) => {
   }
 }
 export const filterSource = (value) => {
-  let arrType = ['线下购买', '线上购买', '商务合作', '客户试用', ' 员工账号', '研发测试'];
+  let arrType = ['线下购买', '线上购买', '商务合作', '客户试用', ' 员工账号', '研发测试', '客户延期'];
   return arrType[value - 5];
 }
 

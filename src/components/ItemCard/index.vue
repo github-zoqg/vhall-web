@@ -220,7 +220,7 @@ export default {
         return item.isShow == true
       })
       return isIntact
-    },
+    }
   },
   methods: {
     getLanguagePermission() {
@@ -254,6 +254,7 @@ export default {
         })
     },
     resetList(perssionInfo) {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
       ;(this.readyList = [
         {
           icon: 'icon_information@2x',
@@ -339,9 +340,18 @@ export default {
           path: `/live/langCard/${this.$route.params.str}`,
           isShow: perssionInfo.multilingual == 1 && this.webinarType != 6,
         },
+        {
+          icon: 'icon_notice@2x',
+          id: 10,
+          title: '开播提醒',
+          subText: `对目标观众发送开播和回放提醒`,
+          type: null, // TODO 需要上报KEY
+          path: `/live/msgNotification/${this.$route.params.str}`,
+          isShow: perssionInfo.message_notice == 1 && this.type != 4 && userInfo.user_extends.extends_remark != 1 // 不是知学云账号 & 开启了 短信通知配置项权限
+        },
       ]),
         (this.brandList = [
-          { icon: 'icon_brand@2x', id: 1, title: '直播间设置', subText: '设置直播间的主题和布局', type: 100066, path: `/live/livingSet/${this.$route.params.str}`,isShow: true},
+          { icon: 'icon_brand@2x', id: 1, title: '直播间设计器', subText: '设置直播间的主题和布局', type: 100066, path: `/live/livingSet/${this.$route.params.str}`,isShow: true},
           // {
           //   icon: 'icon_brand@2x',
           //   id: 1,
@@ -650,6 +660,8 @@ export default {
     .subText {
       font-size: 14px;
       color: #666666;
+      max-width: 200px;
+      line-height: 20px;
     }
   }
 }

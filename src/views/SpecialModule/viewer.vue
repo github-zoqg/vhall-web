@@ -156,6 +156,12 @@
           <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="saveSubjectViewer">保 存</el-button>
         </el-form>
       </div>
+      <!-- 内容提示 -->
+      <div class="subject-viewer_remark">
+        <p>针对短信通知需注意如下说明：</p>
+        <p>1. 无统一观看限制时，各活动下的短信通知正常发送；</p>
+        <p>2. 当开启专题统一观看限制、统一报名表单时（免费条件及密码条件无预约提交手机号功能因此无法触发短信）：<br/>如果专题下的多个活动开启了短信通知，则将对该活动下设置的短信发送对象+通过专题观看权限的用户发送开播提醒或回放提醒。</p>
+      </div>
       <VhallDialog :visible='visiblePreview' title="权限验证" width='400px' @close="visiblePreview = false;">
         <span  class="subject-viewer_dialog" v-if='!showPwd'>
           <el-input :placeholder="showText" v-model="stash" type="password" maxlength="12"></el-input>
@@ -749,6 +755,16 @@ export default {
     }
     &_save{
       margin-top: 8px;
+    }
+    &_remark {
+      margin-top: 16px;
+      p {
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 22px;
+        color: #999999;
+      }
     }
     &_dialog{
       position: relative;

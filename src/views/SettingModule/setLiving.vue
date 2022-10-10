@@ -1,9 +1,9 @@
 <template>
   <div class="setting-living">
-    <pageTitle pageTitle="直播间设置"></pageTitle>
+    <pageTitle pageTitle="直播间设计器"></pageTitle>
     <div class="setting-living_container">
       <el-tabs v-model="tabType" @tab-click="handleClick">
-        <el-tab-pane label="直播间设置" name="livingSet"></el-tab-pane>
+        <el-tab-pane label="直播间设计器" name="livingSet"></el-tab-pane>
         <el-tab-pane label="标识设置" name="signSet" v-if="perssionInfo['ui.brand_setting'] > 0"></el-tab-pane>
       </el-tabs>
       <!-- 设置区域 -->

@@ -47,7 +47,7 @@
                 <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
               </div>
               <!-- 隐私协议合规（资料管理下） -->
-              <privacy-select scene="question" compType="2"></privacy-select>
+              <!-- <privacy-select scene="question" compType="2"></privacy-select> -->
             </div>
           </vue-scroll>
         </div>
