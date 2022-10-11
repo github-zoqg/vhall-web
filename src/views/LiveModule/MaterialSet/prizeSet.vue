@@ -102,7 +102,6 @@
             </div>
             <div class="give-show">
               <div class="give-people">
-                <h3>抽奖</h3>
                 <div class="prize-mask">
                   <div class="prize-show"
                     :style="`backgroundImage: url(${backgroundImg})`">
@@ -158,9 +157,7 @@
               <div class="give-people">
                 <div class="prize-mask">
                   <div class="accept-review">
-                    <!-- <el-scrollbar class="scroll-bar"> -->
                     <div class="padding-container">
-
                       <div class="give-msg">
                         <el-form :model="givePrizeForm">
                           <el-form-item v-for="(item, index) in givePrizeList"
@@ -794,13 +791,13 @@ export default {
       .give-people {
         .accept-review {
           margin: auto;
-          margin-top: 225px;
+          margin-top: 227px;
           width: 276px;
           height: 279px;
           margin-left: 0;
           background-image: url('../../../common/images/gif/accept-review.png');
           background-size: 100%;
-          border-radius: 0 0 15px 15px;
+          border-radius: 0 0 24px 24px;
         }
 
         h3 {
@@ -855,9 +852,9 @@ export default {
         top: 85px;
         left: 50px;
         width: 276px;
-        height: 500px;
+        height: 505px;
         background: rgba(#000, 0.7);
-        border-radius: 0 0 15px 15px;
+        border-radius: 0 0 24px 24px;
       }
       .prize-show {
         position: absolute;
