@@ -30,7 +30,7 @@
             <el-table-column
               :prop="activeIndex==1 ? 'order_id' : 'id'"
               label="订单编号"
-              width="145"
+              min-width="145"
               >
             </el-table-column>
             <el-table-column
@@ -192,6 +192,10 @@ export default {
         {
           label: '时长包',
           value: 'duration'
+        },
+        {
+          label: '短信',
+          value: '19'
         }
       ],
       orderOptions: [
@@ -409,10 +413,18 @@ export default {
         },
         {
           label: '失效日期',
-          key: 'end_time',
+          key: 'end_time'
         }
       ]
     };
+  },
+  computed: {
+    showSmsModule: function () {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
+      // 不是知学云账号 & 开启了 短信通知配置项权限
+      return userInfo.user_extends.extends_remark != 1 && isNoticeMessage == 1;
+    }
   },
   components: {
     PageTitle,
@@ -438,6 +450,10 @@ export default {
   methods: {
     getRoleList() {
       let arrList = JSON.parse(JSON.stringify(this.options));
+      if (!this.showSmsModule) {
+        // 如果是知学云，不考虑短信数据
+        arrList = arrList.filters(item => Number(item.value) != 19)
+      }
       this.$fetch('getRoleRbacList', {category_id: 1,limit: 50, pos: 0}).then(res => {
         res.data.list.map(item => {
           arrList.push({
@@ -550,6 +566,7 @@ export default {
         }
       }
       paramsObj.type = formParams.orderType || '';
+      paramsObj = this.formatSmsQuery(paramsObj); // 短信查询入参格式化
       let obj = Object.assign({}, this.pageInfo, paramsObj);
       this.params = paramsObj;
       let url = this.activeIndex == 1 ? "buyDetail" : "orderDetail";
@@ -580,6 +597,23 @@ export default {
       }).catch(e=>{
         console.log(e);
       });
+    },
+    formatSmsQuery(obj) {
+      try {
+        if (this.activeIndex != 1) {
+          // 如果当前是 开通明细，当前是短信包，传递一个serviceType传递，否则不需要
+          if (obj.type == 19) {
+            delete obj.orderType;
+            delete obj.type;
+            obj.serviceType = 19;
+          } else {
+            delete obj.serviceType;
+          }
+        }
+      } catch(e) {
+        // 去除无效key
+      }
+      return obj
     },
     // 页码改变按钮事件
     currentChangeHandler(current) {

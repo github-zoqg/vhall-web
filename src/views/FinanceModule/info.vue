@@ -60,7 +60,7 @@
         <span>消费账单</span>
         <el-tooltip effect="dark" placement="right" v-tooltipMove>
           <div slot="content" v-if="versionType==1">
-           数据更新频率：直播使用流量1小时更新，回放/点播使用流量1小时更新<br>删除活动或者删除子账号，不影响已统计的历史数据
+           数据更新频率：直播使用流量1小时更新，回放/点播使用流量1小时更新，短信消耗实时更新，<br>删除活动或者删除子账号，不影响已统计的历史数据
           </div>
           <div slot="content" v-if="versionType==2">
            1.时长统计每小时更新一次<br>2.时长套餐按人/分钟进行时长消耗<br>3.删除活动或者删除子账号，不影响已统计的历史数据<br>4.时长消耗保留2位小数，累计/直播/回放使用时长为实际消耗，与列表中的时长存在误差，但扣费以实际消耗为准
@@ -70,25 +70,39 @@
           </div>
           <i class="iconfont-v3 saasicon_help_m"></i>
         </el-tooltip>
-         <div class="search-data">
+        <div class="search-data">
           <el-date-picker
-          v-model="accountSearchDate"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          prefix-icon="iconfont-v3 saasicon_date"
-          @change="getSearchList"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :picker-options="pickerOptionsTwo"
-          style="width: 240px"
-        />
-        <VhallInput v-model="subject"  placeholder="请输入活动名称" class="search-tag" style="width: 220px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" v-clearEmoij clearable>
-          <i slot="prefix" class="el-icon-search el-input__icon" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
-        </VhallInput>
+            v-model="accountSearchDate"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            prefix-icon="iconfont-v3 saasicon_date"
+            @change="getSearchList"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            :picker-options="pickerOptionsTwo"
+            style="width: 240px"
+          />
+          <VhallInput v-model="subject"  placeholder="请输入活动名称" class="search-tag" style="width: 220px;marginLeft:15px;"  @keyup.enter.native="getSearchList" maxlength="50" @clear="getSearchList" v-clearEmoij clearable>
+            <i slot="prefix" class="el-icon-search el-input__icon" @click="getSearchList" style="cursor: pointer;line-height: 36px;"></i>
+          </VhallInput>
           <el-select filterable v-model="accountType" style="width: 160px;marginLeft:15px" @change="getTypeList" v-if="type">
             <el-option
               v-for="(opt, optIndex) in versionList"
+              :key="optIndex"
+              :label="opt.label"
+              :value="opt.value"
+            />
+          </el-select>
+          <el-select filterable v-model="trendType" style="width: 160px;marginLeft:15px" @change="getTypeList" v-if="showSmsModule">
+            <el-option
+              v-for="(opt, optIndex) in [{
+                label: '套餐消费',
+                value: 'other'
+              },{
+                label: '短信消费',
+                value: 'sms'
+              }]"
               :key="optIndex"
               :label="opt.label"
               :value="opt.value"
@@ -98,7 +112,7 @@
             <el-button round  size="medium" @click="exportAccount">导出数据</el-button>
           </div>
         </div>
-      <div class="content-grid" v-if="!versionType">
+      <div :class="['content-grid', showSmsModule && smsInfo && smsInfo.sms >= 0 ? 'include_sms' : '']" v-if="!versionType">
          <div class="grid-item">
           <div class="grid-content">
             <p>累计直播（个）</p>
@@ -111,14 +125,20 @@
             <h1 class="custom-font-barlow">{{ trendData.webinar_num || 0 }}</h1>
           </div>
         </div>
-         <div class="grid-item">
+        <div class="grid-item">
           <div class="grid-content">
             <p>最高并发（方）</p>
             <h1 class="custom-font-barlow">{{ trendData.max_uv || 0 }}</h1>
           </div>
         </div>
+        <div class="grid-item" v-if="showSmsPanel">
+          <div class="grid-content">
+            <p>短信消耗(条)</p>
+            <h1 class="custom-font-barlow">{{ smsInfo.sms || 0 }}</h1>
+          </div>
+        </div>
       </div>
-      <div class="content-grid" v-else>
+      <div :class="['content-grid', showSmsPanel ? 'include_sms' : '']" v-else>
         <div class="content-item">
           <div class="grid-content">
             <p>累计活动（个）</p>
@@ -167,19 +187,25 @@
             <h1 class="custom-font-barlow">{{ versionType == 1 ? trendData.vod_flow || 0 : trendData.vod_duration || 0}}</h1>
           </div>
         </div>
+        <div class="content-item" v-if="showSmsPanel">
+          <div class="grid-content">
+            <p>短信消耗(条)</p>
+            <h1 class="custom-font-barlow">{{ smsInfo.sms || 0 }}</h1>
+          </div>
+        </div>
       </div>
       <div class="list_info">
         <table-list
           ref="accountTableList"
-          :manageTableData="tableList"
-          :tabelColumnLabel="tabelColumn"
+          :manageTableData="trendType == 'sms' ? tableCmsList : tableList"
+          :tabelColumnLabel="trendType == 'sms' ? tableCmsColumn : tableColumn"
           :isCheckout="false"
           :isHandle="false"
-          :totalNum="totalNum"
+          :totalNum="trendType == 'sms' ? cmsTotalNum : totalNum"
           @getTableList="getAccountList"
           >
         </table-list>
-        <noData :nullType="'nullData'" v-if="!totalNum" :text="'暂无数据'"></noData>
+        <noData :nullType="'nullData'" v-if="trendType == 'sms' ? !cmsTotalNum : !totalNum" :text="'暂无数据'"></noData>
       </div>
       </div>
     </div>
@@ -231,39 +257,18 @@ export default {
       },
       time: '',
       versionType: '',
+      trendType: 'other', // 默认查询套餐情况，兼容知学云不要短信功能
       lineParams: {},
       dataParams: {},
       totalNum: 0,
+      cmsTotalNum: 0,
       vm: {},
       status: 0,
       tableList: [],
-      tabelColumn: [],
-      tabelColumns: [
-        {
-          label: '消费时间',
-          key: 'pay_date',
-          width: 120
-        },
-        {
-          label: '活动ID',
-          key: 'webinar_id',
-          width: 120
-        },
-        {
-          label: '活动名称',
-          key: 'subject',
-        },
-        {
-          label: '消费类型',
-          key: 'typePay',
-          width: 120
-        },
-        {
-          label: '账号类型',
-          key: 'typeText',
-          width: 120
-        },
-      ],
+      tableCmsList: [],
+      tableColumn: [], // 消费表格
+      tableCmsColumn: [], // 消息表格
+      smsInfo: null, // 消息对象
       pickerOptions: {
         // disabledDate是一个函数,参数是当前选中的日期值,这个函数需要返回一个Boolean值,
         disabledDate: (time) => {
@@ -277,6 +282,17 @@ export default {
         }
       }
     };
+  },
+  computed: {
+    showSmsModule: function () {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
+      // 不是知学云账号 & 开启了 短信通知配置项权限
+      return userInfo.user_extends.extends_remark != 1 && isNoticeMessage == 1;
+    },
+    showSmsPanel () {
+      return  this.showSmsModule && ((this.smsInfo && this.smsInfo.sms) || this.trendType == 'sms')
+    }
   },
   filters:{
     formatMoney
@@ -325,7 +341,8 @@ export default {
         }
         this.getLineList();
         this.getAccountList();
-        this.getCumlus(this.versionType)
+        // 格式化表格
+        this.compareTableColumns()
         this.status = res.data.arrears.total_fee
         if (this.status) {
           this.initPayMessage(res.data.arrears);
@@ -334,21 +351,59 @@ export default {
         console.log(e);
       });
     },
-    getCumlus(versionType) {
+    compareTableColumns() {
+      const defaultColumns = [
+        {
+          label: '消费时间',
+          key: 'pay_date',
+          width: 120
+        },
+        {
+          label: '活动ID',
+          key: 'webinar_id',
+          width: 120
+        },
+        {
+          label: '活动名称',
+          key: 'subject',
+        },
+        {
+          label: '消费类型',
+          key: 'typePay',
+          width: 120
+        },
+        {
+          label: '账号类型',
+          key: 'typeText',
+          width: 120
+        }
+      ]
+      if (this.trendType == 'sms') {
+        defaultColumns[5] = {
+          label: '短信消耗（条）',
+          key: 'sms',
+          width: 150
+        }
+        this.tableCmsColumn = defaultColumns
+      } else {
+        this.getColumns(defaultColumns, this.versionType)
+      }
+    },
+    getColumns(defaultColumns, versionType) {
       if (versionType == 1) {
-         this.tabelColumn = this.tabelColumns.concat({
+        this.tableColumn = defaultColumns.concat({
           label: '消耗流量（GB）',
           key: 'webinar_flow',
           width: 150
         })
       } else if (versionType == 2) {
-        this.tabelColumn = this.tabelColumns.concat({
+        this.tableColumn = defaultColumns.concat({
           label: '消耗时长（分钟）',
           key: 'webinar_duration',
           width: 150
         })
       } else {
-        this.tabelColumn = this.tabelColumns.concat({
+        this.tableColumn = defaultColumns.concat({
           label: '最高并发（方）',
           key: 'webinar_max_uv',
           width: 150
@@ -440,8 +495,20 @@ export default {
       let obj = Object.assign({}, pageInfo, paramsObj);
 
       this.getOnlinePay(this.$params(this.dataParams));
-      this.getDataList(this.$params(obj));
+      this.getUserSmsPay(this.$params(this.dataParams));
+      // 格式化表格头
+      this.compareTableColumns()
+      this.$nextTick(() => {
+        if (this.trendType == 'sms') {
+          // 获取短信消耗明细
+          this.getUserSmsPayByPage(this.$params(obj));
+        } else {
+          // 获取流量消耗明细
+          this.getDataList(this.$params(obj));
+        }
+      })
     },
+    // 流量消费等查询
     getDataList(obj) {
       let url = this.versionType == 1 ? 'getBusinessList' : this.versionType == 2 ? 'getDurationList' : 'getAccountList';
       this.$fetch(url, obj).then(res =>{
@@ -449,9 +516,31 @@ export default {
         this.totalNum = res.data.total;
          costList.map(item => {
             item.typeText = item.type == 1 ? '主账号' : '子账号';
-            item.typePay = item.pay_type >= 0 && item.pay_type <= 3 ? ['', '并发', '流量', '时长'][item.pay_type] : ''
+            item.typePay = item.pay_type >= 0 && item.pay_type <= 4 ? ['', '并发', '流量', '时长', '短信'][item.pay_type] : ''
           });
         this.tableList = costList;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    // 短信消耗总数查询
+    getUserSmsPay(obj) {
+      this.$fetch('getUserSmsPay', obj).then(res =>{
+        this.smsInfo = res.data;
+      }).catch(e=>{
+        console.log(e);
+      });
+    },
+    // 短信分页查询
+    getUserSmsPayByPage(obj) {
+      this.$fetch('getUserSmsPayByPage', obj).then(res =>{
+        let costList = res.data.list;
+        this.cmsTotalNum = res.data.total;
+         costList.map(item => {
+            item.typeText = item.type == 1 ? '主账号' : '子账号';
+            item.typePay = item.pay_type >= 0 && item.pay_type <= 4 ? ['', '并发', '流量', '时长', '短信'][item.pay_type] : ''
+          });
+        this.tableCmsList = costList;
       }).catch(e=>{
         console.log(e);
       });
@@ -539,14 +628,20 @@ export default {
     },
     // 导出消费账单
     exportAccount() {
-      let url = this.versionType == 1 ? 'exportFlowDetail' : this.versionType == 2 ? 'exportDurationDetail' : 'exportOnlineDetail';
+      let url = ''
+      if (this.trendType == 'sms') {
+        // 短信导出
+        url = 'exportUserSmsPayDetail'
+      } else {
+        url = this.versionType == 1 ? 'exportFlowDetail' : this.versionType == 2 ? 'exportDurationDetail' : 'exportOnlineDetail';
+      }
       this.$fetch(url, this.dataParams).then(res => {
         this.$vhall_paas_port({
           k: 100702,
           data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
        this.$message({
-        message: `${this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发'}消费账单导出申请成功，请去下载中心下载`,
+        message: `${this.trendType == 'sms' ? '短信' : (this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发')}消费账单导出申请成功，请去下载中心下载`,
         showClose: true,
         // duration: 0,
         type: 'success',
@@ -555,7 +650,7 @@ export default {
        this.$EventBus.$emit('saas_vs_download_change');
       }).catch(res => {
         this.$message({
-          message: res.msg || `${this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发'}消费账单导出失败`,
+          message: res.msg || `${this.trendType == 'sms' ? '短信' : (this.versionType == 1 ? '流量' : this.versionType == 2 ? '时长' : '并发')}消费账单导出失败`,
           showClose: true,
           // duration: 0,
           type: 'error',
@@ -669,8 +764,16 @@ export default {
       height:100px;
       border-radius: 4px;
     }
+    &.include_sms {
+      .content-item {
+        width: 19%;
+      }
+      .grid-item{
+        width: 33%;
+      }
+    }
     .grid-content{
-      margin: 22px 40px;
+      margin: 24px 16px;
       text-align: left;
       h1{
         font-size: 28px;

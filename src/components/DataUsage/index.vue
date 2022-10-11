@@ -1,5 +1,7 @@
 <template>
+  <!-- .data-finance 财务总览（typeChange==true）；.data-usage 首页（typeChange==false） -->
   <div :class=" typeChange ? 'data-finance' : 'data-usage'">
+    <!-- 计费：并发 -->
     <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.concurrency">
       <el-col :span="buttonList.includes('extend') ? (typeChange ? 8 : 6) : (typeChange ? 15 : 9)">
         <div class="top-item first-version">
@@ -24,21 +26,37 @@
               若无扩展包，则不可发直播且直播回放不可播放<br>
               2.扩展包欠费则不可发直播，回放不受影响
             </div>
-           <i class="iconfont-v3 saasicon_help_m"></i>
+           <i class="iconfont-v3 saasicon_help_m icon__max_show"></i>
           </el-tooltip>
           </p>
           <h2 class="custom-big custom-font-barlow">{{ userInfo.concurrency.extend || userInfo.arrears.extend }}</h2>
           <!-- <p class="account pointer" @click="goAccountDetail" v-if="buttonList.includes('details') && this.$route.path==='/finance/info'">订单明细</p> -->
+          <el-tooltip effect="dark" placement="right" v-tooltipMove v-if="typeChange && userInfo && userInfo.sms">
+            <div slot="content">
+              1.当全部并发套餐到期，若有扩展包则会开始扣除扩展包；<br>
+              若无扩展包，则不可发直播且直播回放不可播放<br>
+              2.扩展包欠费则不可发直播，回放不受影响
+            </div>
+           <i class="iconfont-v3 saasicon_help_m icon__min_show"></i>
+          </el-tooltip>
         </div>
       </el-col>
-      <el-col :span="typeChange ? 8 : 6" v-if="userInfo.concurrency.display_extend_day">
+      <el-col :span="buttonList.includes('extend') ? (typeChange ? 8 : 6) : (typeChange ? 15 : 9)" v-if="userInfo.concurrency.display_extend_day">
         <div class="top-item">
           <p>并发扩展包（天）</p>
           <h2 class="custom-big custom-font-barlow">{{ userInfo.concurrency.extend_day }}</h2>
           <p>{{ userInfo.concurrency.extend_day_start }} 至 {{ userInfo.concurrency.extend_day_end }}</p>
         </div>
       </el-col>
+      <el-col :span="buttonList.includes('extend') ? (typeChange ? 8 : 6) : (typeChange ? 15 : 9)" v-if="showSmsModule && typeChange">
+        <div class="top-item">
+          <p>短信余额（条）</p>
+          <h2 class="custom-big custom-font-barlow">{{ userInfo && userInfo.sms && userInfo.sms.sms ? userInfo.sms.sms || 0 : 0 }}</h2>
+          <p v-if="userInfo.concurrency.concurrency_valid_time">有效期: {{ userInfo.edition_valid_time || '' }}<span v-if="isOutTime">(已过期)</span></p>
+        </div>
+      </el-col>
     </el-row>
+    <!-- 计费：流量 -->
     <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.flow">
       <el-col :span="typeChange ? 15 : 9">
         <div class="top-item usage-item">
@@ -79,7 +97,15 @@
           <!-- <p class="account"  @click="goAccountDetail" v-if="this.$route.path==='/finance/info' && buttonList.includes('details')">订单明细</p> -->
         </div>
       </el-col>
+      <el-col :span="typeChange ? 15 : 9" v-if="showSmsModule && typeChange">
+        <div class="top-item usage-item">
+          <p>短信余额（条）</p>
+          <h2 class="custom-big custom-font-barlow">{{ userInfo && userInfo.sms && userInfo.sms.sms ? userInfo.sms.sms || 0 : 0 }}</h2>
+          <p v-if="userInfo.edition_valid_time">有效期: {{ userInfo.edition_valid_time }}<span v-if="isOutTime">(已过期)</span></p>
+        </div>
+      </el-col>
     </el-row>
+    <!-- 计费：时长 -->
     <el-row type="flex" class="row-top" justify="space-around" v-if="userInfo.duration">
       <el-col :span="typeChange ? 15 : 9">
         <div class="top-item usage-item">
@@ -101,6 +127,13 @@
             </el-tooltip>
           </p>
           <h2 class="custom-big custom-font-barlow" v-if="userInfo.duration">{{ userInfo.duration.total_duration}}/{{ userInfo.duration.duration }}</h2>
+        </div>
+      </el-col>
+      <el-col :span="typeChange ? 15 : 9" v-if="showSmsModule && typeChange">
+        <div class="top-item usage-item">
+          <p>短信余额（条）</p>
+          <h2 class="custom-big custom-font-barlow">{{ userInfo && userInfo.sms && userInfo.sms.sms ? userInfo.sms.sms || 0 : 0 }}</h2>
+          <p v-if="userInfo.edition_valid_time">有效期: {{ userInfo.edition_valid_time }}<span v-if="isOutTime">(已过期)</span></p>
         </div>
       </el-col>
     </el-row>
@@ -136,6 +169,14 @@ export default {
       },
       concurrentPrice: {}
     };
+  },
+  computed: {
+    showSmsModule: function () {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
+      // 不是知学云账号 & 开启了 短信通知配置项权限
+      return userInfo.user_extends.extends_remark != 1 && isNoticeMessage == 1;
+    }
   },
   components: {
     upVersion
@@ -337,7 +378,7 @@ export default {
     margin: 24px 0;
   }
   /deep/.el-col {
-    margin-right: 20px;
+    margin-right: 16px;
     background: #fff;
     border-radius: 4px;
   }
@@ -348,7 +389,7 @@ export default {
     text-align: left;
     max-width: 445px;
     height: 140px;
-    padding: 32px 25px;
+    padding: 32px 16px 32px 24px;
     position: relative;
     background: #fff;
     border-radius: 4px;
@@ -363,8 +404,9 @@ export default {
       cursor: pointer;
     }
     p {
-      font-size: 14px;
+      font-size: 12px;
       color: #999;
+      line-height: 20px;
     }
     i{
       font-size: 14px;
@@ -387,6 +429,20 @@ export default {
       color: #3562FA;
       font-size: 14px;
       cursor: pointer;
+    }
+    .icon__max_show {
+      display: none;
+    }
+    .icon__min_show {
+      display: block;
+    }
+    @media (min-width: 1920px) {
+      .icon__max_show {
+        display: inline-block;
+      }
+      .icon__min_show {
+        display: none;
+      }
     }
   }
   .usage-item{
