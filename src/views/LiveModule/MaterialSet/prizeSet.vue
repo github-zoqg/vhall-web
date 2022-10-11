@@ -161,7 +161,7 @@
                       <div class="give-msg">
                         <el-form :model="givePrizeForm">
                           <el-form-item v-for="(item, index) in givePrizeList"
-                            :key="index">
+                            :key="index" class="form-item">
                             <span class="red"
                               v-if="item.is_required==1">*</span>
                             <el-input v-model="givePrizeForm[item.field_key]"
@@ -170,12 +170,12 @@
                               :placeholder="item.placeholder"></el-input>
                           </el-form-item>
                         </el-form>
+                      </div>
                         <div class="sureBtn">
                           <el-button type="primary"
                             v-preventReClick
                             round>确定</el-button>
                         </div>
-                      </div>
                     </div>
                     <!-- </el-scrollbar> -->
                   </div>
@@ -758,14 +758,6 @@ export default {
         height: 240px;
       }
     }
-    .give-live {
-      /deep/.el-form-item {
-        margin-bottom: 10px;
-        &:last-child {
-          padding-top: 10px;
-        }
-      }
-    }
     .add-prize {
       position: absolute;
       left: 100px;
@@ -829,9 +821,8 @@ export default {
         .give-msg {
           text-align: center;
           margin: auto;
-          height: 235px;
-          padding: 0 20px;
-          width: 94%;
+          height: 190px;
+          padding: 0 16px;
           overflow-y: auto;
 
           p {
@@ -839,11 +830,21 @@ export default {
           }
           .red {
             position: absolute;
-            left: -15px;
-            top: 0;
+            left: 0px;
+            top: 2px;
             display: inline-block;
             color: #fe6a6a;
             margin-right: 10px;
+          }
+        }
+        .form-item {
+          padding-left: 15px;
+          background: #fff;
+          border-radius: 4px;
+          margin-bottom: 9px;
+          /deep/ input {
+            border: 0;
+            color: #BFBFBF;
           }
         }
       }
