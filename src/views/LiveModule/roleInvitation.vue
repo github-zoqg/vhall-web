@@ -378,7 +378,8 @@ export default {
         'webinar_notice', // 公告
         'disable_msg', // 全员禁言
         'share', // 分享
-        'speak_manage'
+        'speak_manage',
+        'desktop_share' // 桌面共享
       ]
       const obj = {}
       defaultSortArr.forEach((item) => {

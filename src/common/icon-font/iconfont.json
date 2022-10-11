@@ -6,6 +6,48 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "31632304",
+      "name": "回放提醒",
+      "font_class": "huifangtixing",
+      "unicode": "e7b9",
+      "unicode_decimal": 59321
+    },
+    {
+      "icon_id": "31632807",
+      "name": "fill-wait",
+      "font_class": "fill-wait",
+      "unicode": "e7ba",
+      "unicode_decimal": 59322
+    },
+    {
+      "icon_id": "31632808",
+      "name": "fill-warning",
+      "font_class": "fill-warning",
+      "unicode": "e7bb",
+      "unicode_decimal": 59323
+    },
+    {
+      "icon_id": "31632809",
+      "name": "fill-success",
+      "font_class": "fill-success",
+      "unicode": "e7bc",
+      "unicode_decimal": 59324
+    },
+    {
+      "icon_id": "31632302",
+      "name": "开播提醒",
+      "font_class": "kaibotixing",
+      "unicode": "e7b3",
+      "unicode_decimal": 59315
+    },
+    {
+      "icon_id": "31632303",
+      "name": "预约报名",
+      "font_class": "yuyuebaoming",
+      "unicode": "e7b8",
+      "unicode_decimal": 59320
+    },
+    {
       "icon_id": "30082633",
       "name": "line-public",
       "font_class": "line-public1",
