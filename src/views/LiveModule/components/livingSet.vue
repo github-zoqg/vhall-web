@@ -59,7 +59,7 @@
           </div>
           <div class="preview_box_wap" v-show="livingPreview==2">
             <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm" :videoUrl="video_url" :isShowInteract="isShowInteract"></wap-preview>
-            <span v-show="livingWapForm.style==3 && livingPcPreviewType == 1" class="preview_box_wap_tip">注：简洁风格暂不支持展示菜单和文档</span>
+            <span v-show="livingWapForm.style==3 && livingPcPreviewType == 1" class="preview_box_wap_tip">注意：用pc客户端或app发起直播且为视频模式，合并模式无法展示文档，使用此风格模板建议使用电脑网页端发起</span>
           </div>
         </div>
       </div>
@@ -212,7 +212,7 @@
             <div class="form_item_title">
               视频区【连麦+演示】布局
               <p class="title_tip">
-                注意：移动端模板选择了简洁风格会导致pc端分离模式不可用
+                注意：移动端模板选择了简洁风格会导致pc端分离模式不可用；使用客户端和app发起直播，视频直播无法展示合并模式效果。
               </p>
             </div>
             <div class="form_item_lay inv_demo__layout">
@@ -328,7 +328,8 @@ export default {
       ],
       skinId: '',
       isDelay: this.$route.query.isDelay == 1 ? true : false,
-      webinarType: sessionOrLocal.get("webinarType"),
+      webinarType: sessionOrLocal.get("webinarType"), // 1.音频  2.视频 3.互动  5.定时直播	6.分组直播
+      webinarState: sessionOrLocal.get('webinarState'), // 2.预告 1.直播 3.结束 5.回放 4.点播
       defaultImage: 'https://cnstatic01.e.vhall.com/common-static/images/livingSetting.png',
       pcThemeColors: 5,
       videoColors: ['000000', '262626', '595959', '8C8C8C', 'F5F5F5'],
@@ -406,12 +407,8 @@ export default {
      // 是否显示互动
     isShowInteract() {
       if (this.webinarId) {
-        // 活动下互动和分组模式显示
-        if (this.webinarType == 3 || this.webinarType == 6) {
-          return true;
-        } else {
-          return false;
-        }
+        // 活动下 视频、互动、分组模式显示
+        return [3,6].includes(Number(this.webinarType)) || (this.webinarType == 2 && this.webinarState != 4);
       } else {
         // 账号下默认不显示
         return false;
@@ -420,11 +417,7 @@ export default {
     isShowVideoBackground() {
       if (this.webinarId) {
         // 活动下互动和分组模式显示
-        if (this.webinarType == 3 || this.webinarType == 6) {
-          return true;
-        } else {
-          return false;
-        }
+        return [3,6].includes(Number(this.webinarType)) || (this.webinarType == 2 && this.webinarState != 4);
       } else {
         // 账号下默认显示
         return true;
