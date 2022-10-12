@@ -11,7 +11,7 @@
         <i class="iconfont-v3 saasa-line-collectionsuccess"></i>
       </div>
     </div>
-    <div class="living_preview_wap_simpleHeader" v-else>
+    <div :class="['living_preview_wap_simpleHeader', livingWapForm.style==3 ? 'page__concise' : '']" v-else>
       <div class="header_left">
         <div class="header_left_avatar"><img src="./image/living/chat1.png" alt=""></div>
         <div class="header_left_name">
@@ -126,7 +126,7 @@
             <i class="iconfont-v3 saasicon_arrowright1"></i>
           </div> -->
         </div>
-        <div class="wap_menus_chat" v-if="wapMenusType == 'chat'">
+        <div :class="['wap_menus_chat', livingWapForm.style==3 ? 'page__concise' : '']" v-if="wapMenusType == 'chat'">
           <div class="wap_menus_chat_topBottom chat_clear" v-if="livingWapForm.style==1">
             <div class="chat_item">
               <div class="chat_item_avatar">
@@ -223,9 +223,9 @@
             </div>
           </div>
           <div class="wap_menus_chat_leftRight chat_clear wap_chat_simple" v-if="livingWapForm.style==3">
-            <div class="chat_item_simple">
+            <!-- <div class="chat_item_simple">
               <div class="chat_item_simple_content"><span class="name">Mr Liu</span>😊😊😊</div>
-            </div>
+            </div> -->
             <div class="chat_item_simple">
               <div class="chat_item_simple_content">
                 <span class="name">
@@ -266,12 +266,12 @@
                 推送了问卷 <span class="chat_blue">点击查看</span>
               </div>
             </div>
-            <div class="chat_item_simple">
+            <!-- <div class="chat_item_simple">
               <div class="chat_item_simple_content">
                 <span class="name">阿曼达</span>
                 0万+行业标杆企业都在用
               </div>
-            </div>
+            </div> -->
              <div class="chat_item_simple">
               <div class="chat_item_simple_content">
                 <span class="name">董主任</span>
@@ -503,6 +503,9 @@ export default {
             color: #fff;
           }
         }
+      }
+      &.page__concise {
+        padding: 8px 12px 72px 12px;
       }
     }
     &_body{
@@ -895,6 +898,10 @@ export default {
             content: "";
             display: block;
             clear: both;
+          }
+          &.page__concise {
+            padding: 32px 10px 0 10px;
+            height: 302px;
           }
         }
         &_doc {
