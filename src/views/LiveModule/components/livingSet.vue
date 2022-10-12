@@ -477,6 +477,7 @@ export default {
     },
     // 切换预览效果
     choseLivingPreview() {},
+    // PC端切换风格
     activeTheme(index) {
       this.livingPcForm.style = index;
       if (index == this._livingPcForm.style) {
@@ -494,6 +495,7 @@ export default {
         this.resetFormPcColor(index, 0);
       }
     },
+    // 手机端切换风格
     activeWapTheme(item) {
       this.livingWapForm.style = item.id;
       // 如果接口返回的是当前选中值，默认用备份
@@ -553,18 +555,27 @@ export default {
       }
     },
     // 共用表单颜色
-    commonColor(style) {
-      let layout = '';
+    commonColor(style, type) {
+      let layout = '', speakerAndShowLayout = 0;
       if (this.isDelay) {
+        // 不论什么风格，无延迟都是默认
         layout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE';
+      } else if (style == 1){
+        // 传统风格
+        layout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE';
+      } else if ((style == 2 && type == 'pc') || (style == 3 && type == 'wap')) {
+        // 极简风格
+        layout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE_EXTEND_1'
+        speakerAndShowLayout = 1
       } else {
-        layout = style == 1 ? 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' : 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE';
+        // 时尚风格
+        layout = 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'
       }
       this.livingForm = {
         videoBackGroundColor: '#000000', //视频区底色
         chatLayout: style == 1 ? 1 : 2,
         inavLayout: layout, //连麦布局
-        speakerAndShowLayout: this.livingWapForm.style == 3 ? 1 : 0, // 视频区【连麦+演示】布局 (手机端简洁模式下，只能选择 合并模式) — 默认设置
+        speakerAndShowLayout: speakerAndShowLayout, // 视频区【连麦+演示】布局 (手机端简洁模式下，只能选择 合并模式) — 默认设置
         videoBackGround: '',
         videoBlurryDegree: 0,
         videoLightDegree: 10,
@@ -593,7 +604,7 @@ export default {
           imageCropMode: 2
         }
       };
-      this.commonColor(style);
+      this.commonColor(style, 'pc');
       this.$refs.livingPcPreview.settingTheme(style, this.livingPcForm.backGroundColor);
       // 如果当前备份需要恢复默认值，需要重置备份数据
       if (index == 1) {
@@ -616,7 +627,7 @@ export default {
           imageCropMode: 2
         }
       };
-      this.commonColor(style);
+      this.commonColor(style, 'wap');
       this.$refs.livingWapPreview.settingTheme(style, this.livingWapForm.backGroundColor, this.livingPcPreviewType);
       if (index == 1) {
         this.setBackupData(this.livingPcForm, this.livingWapForm)
