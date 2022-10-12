@@ -571,6 +571,10 @@ export default {
         // 时尚风格
         layout = 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'
       }
+      if (this.livingWapForm.style == 3) {
+        // 如果手机端已经选择为极简模式了，PC端只能选择合并模式
+        speakerAndShowLayout = 1
+      }
       this.livingForm = {
         videoBackGroundColor: '#000000', //视频区底色
         chatLayout: style == 1 ? 1 : 2,
