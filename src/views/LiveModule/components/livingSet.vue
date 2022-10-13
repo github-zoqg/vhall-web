@@ -210,9 +210,11 @@
           </div>
           <div class="form_item inv_demo__layout" v-if="isShowInteract">
             <div class="form_item_title">
-              视频区【连麦+演示】布局
+              视频区【连麦+演示】布局<vh-tooltip effect="dark" content="移动端模板选择了简洁风格会导致pc端分离模式不可用；" :visible-arrow="false" placement="right-start">
+                <i class="iconfont-v3 saasicon_help_m dialog__title__icon"></i>
+              </vh-tooltip>
               <p class="title_tip">
-                注意：移动端模板选择了简洁风格会导致pc端分离模式不可用；使用客户端和app发起直播，视频直播无法展示合并模式效果。
+                注意：使用客户端和app发起直播，视频直播无法展示合并模式效果。
               </p>
             </div>
             <div class="form_item_lay inv_demo__layout">
@@ -844,6 +846,15 @@ export default {
     padding-top: 16px;
     display: flex;
     position: relative;
+    /deep/.saasicon_help_m {
+      color: #999999;
+      &:hover {
+        color: #666666;
+      }
+    }
+    .saasicon_help_m {
+      margin-left: 8px;
+    }
     &_type{
       display: flex;
       flex-direction: column;
