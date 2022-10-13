@@ -59,7 +59,8 @@
           </div>
           <div class="preview_box_wap" v-show="livingPreview==2">
             <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm" :videoUrl="video_url" :isShowInteract="isShowInteract"></wap-preview>
-            <span v-show="livingWapForm.style==3 && livingPcPreviewType == 1" class="preview_box_wap_tip">注意：用pc客户端或app发起直播且为视频模式，合并模式无法展示文档，使用此风格模板建议使用电脑网页端发起</span>
+            <span v-show="livingWapForm.style==3 && livingPcPreviewType == 1" class="preview_box_wap_tip">注意：用电脑客户端和app发起非无延迟视频直播，
+简洁风格无法展示文档，建议使用电脑网页端发起。</span>
           </div>
         </div>
       </div>
@@ -224,7 +225,7 @@
                 <span>分离模式</span>
               </div>
               <div class="item_lay" @click="choseInteractDemoLayout(1)">
-                <div class="item_lay_hidden" v-if="webinarIsDirector"></div>
+                <div class="item_lay_hidden" v-if="webinarIsDirector == 1"></div>
                 <p :class="livingForm.speakerAndShowLayout == 1 ? 'active' : ''"><img src="./image/inav_main_1.png" alt=""></p>
                 <span>合并模式</span>
               </div>
@@ -333,7 +334,7 @@ export default {
       isDelay: this.$route.query.isDelay == 1 ? true : false,
       webinarType: sessionOrLocal.get("webinarType"), // 1.音频  2.视频 3.互动  5.定时直播	6.分组直播
       webinarState: sessionOrLocal.get('webinarState'), // 2.预告 1.直播 3.结束 5.回放 4.点播
-      webinarIsDirector: sessionOrLocal.get(`webinar_is_director__${this.$route.params.str}`),
+      webinarIsDirector: sessionOrLocal.get(`webinar_is_director__${this.$route.params.str}`) || 0,
       defaultImage: 'https://cnstatic01.e.vhall.com/common-static/images/livingSetting.png',
       pcThemeColors: 5,
       videoColors: ['000000', '262626', '595959', '8C8C8C', 'F5F5F5'],
@@ -501,7 +502,7 @@ export default {
     },
     // 手机端切换风格
     activeWapTheme(item) {
-      if (this.webinarIsDirector && item.id == 3) {
+      if (this.webinarIsDirector == 1 && item.id == 3) {
         // 当前是云导播，且选择为极简模式时，不可点击
         return;
       }
@@ -513,7 +514,7 @@ export default {
         this.livingForm.inavLayout = this._livingForm.inavLayout;
         // 移动端选择简洁模式，连麦+演示 布局，只能是合并模式
         let speakerAndShowLayout = 0
-        if (this.webinarIsDirector) {
+        if (this.webinarIsDirector == 1) {
           // 云导播模式，只能是分离模式
           speakerAndShowLayout = 0
         } else if (this.livingWapForm.style == 3) {
@@ -561,7 +562,7 @@ export default {
       this._livingPcForm = { ...skin_json_pc }; //pc信息
       this._livingWapForm = { ...skin_json_wap }; //wap信息
       let speakerAndShowLayout = skin_json_pc.speakerAndShowLayout = 0
-      if (this.webinarIsDirector) {
+      if (this.webinarIsDirector == 1) {
         // 云导播活动下，只能是分离模式
         speakerAndShowLayout = 0
       } else if (skin_json_wap.style == 3) {
@@ -603,7 +604,7 @@ export default {
         speakerAndShowLayout = 1
       }
       // 如果当前是云导播模式，连麦演示只能是分离模式
-      if (this.webinarIsDirector) {
+      if (this.webinarIsDirector == 1) {
         speakerAndShowLayout = 0
       }
       this.livingForm = {
