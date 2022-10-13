@@ -208,6 +208,7 @@ export default {
     this.childNum = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['child_num_limit'];
   },
   mounted() {
+    this.setTimeStr()
     this.getDataList();
   },
   methods: {
@@ -310,6 +311,24 @@ export default {
         data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
     },
+    timeToStr(data){
+      let y,m,d;
+      if(data){
+        y = data.getFullYear()
+        m = data.getMonth()
+        d = data.getDate()
+        return y+"-"+(m>9?m:'0'+m)+"-"+(d>9?d:'0'+d)
+      }
+    },
+    // 设置默认值
+    setTimeStr(){
+      const end = new Date();
+      const start = new Date();
+      end.setTime(end.getTime() - 3600 * 1000 * 24);
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+
+      this.dateValue = [this.timeToStr(start),this.timeToStr(end)]
+    }
   },
 };
 </script>
