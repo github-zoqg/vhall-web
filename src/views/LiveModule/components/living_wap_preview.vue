@@ -72,7 +72,7 @@
             </div>
           </div>
           <!-- 顶部成员 -->
-          <div class="watch_layout_4" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE_EXTEND_1'">
+          <div class="watch_layout_4" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_EXT1_MODE'">
             <div class="layout_top">
               <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.png" alt=""></span>
               <span><img src="./image/living/layout2.png" alt=""></span>

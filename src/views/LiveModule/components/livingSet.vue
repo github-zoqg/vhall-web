@@ -205,7 +205,7 @@
               </div>
               <div class="item_lay" @click="choseMicrophone(3)">
                 <div class="item_lay_hidden" v-if="isDelay"></div>
-                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE_EXTEND_1' ? 'active' : ''"><img src="./image/main_4.png" alt=""></p>
+                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_TILED_EXT1_MODE' ? 'active' : ''"><img src="./image/main_4.png" alt=""></p>
                 <span>顶部成员</span>
               </div>
             </div>
@@ -594,7 +594,7 @@ export default {
         layout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE';
       } else if ((style == 2 && type == 'pc') || (style == 3 && type == 'wap')) {
         // 极简风格
-        layout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE_EXTEND_1'
+        layout = 'CANVAS_ADAPTIVE_LAYOUT_TILED_EXT1_MODE'
         speakerAndShowLayout = 1
       } else {
         // 时尚风格
@@ -761,7 +761,7 @@ export default {
     },
     choseMicrophone(index) {
       if (this.isDelay) return;
-      let arrLayout = ['CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE', 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE', 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE_EXTEND_1']
+      let arrLayout = ['CANVAS_ADAPTIVE_LAYOUT_GRID_MODE', 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE', 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE', 'CANVAS_ADAPTIVE_LAYOUT_TILED_EXT1_MODE']
       this.livingForm.inavLayout = arrLayout[index];
     },
     // 视频区【连麦+演示】布局
