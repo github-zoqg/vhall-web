@@ -820,8 +820,8 @@ export default {
         }
         .give-msg {
           text-align: center;
-          margin: auto;
-          height: 190px;
+          margin: 10px auto;
+          height: 160px;
           padding: 0 16px;
           overflow-y: auto;
 
