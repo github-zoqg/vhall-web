@@ -1104,7 +1104,7 @@ export default {
             height: 50px;
             border-radius: 4px;
             margin-bottom: 5px;
-            border: 1px solid #D9D9D9;
+            border: 1px solid #D9D9D9 ;
             img{
               width: 100%;
               height: 100%;
