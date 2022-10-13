@@ -18,6 +18,7 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           :picker-options="pickerOptions"
+          @focus="pickerFocus"
           style="width: 240px;margin-right:16px"
         />
         <el-select filterable v-model="versionType" v-if="parentId == 0 && childNum == 1" @change="getVersionList"  style="width: 160px;vertical-align: top;">
@@ -152,20 +153,24 @@ export default {
                 item.style.color = '#666'
               })
               picker.$el.firstChild.firstChild.children[0].style.color = '#FB3A32'
+              picker.$el.firstChild.firstChild.children[1].style.color = '#666'
+              picker.$el.firstChild.firstChild.children[2].style.color = '#666'
               const end = '';
               const start = '';
               picker.$emit('pick', [start, end]);
               _this.timeType = 0;
             }
-          },
-          {
+          },{
             text: '近7日',
             onClick(picker) {
               let childrenArray = Array.from(picker.$el.firstChild.firstChild.children)
               childrenArray.forEach((item)=>{
                 item.style.color = '#666'
               })
+              console.log(picker,'picker')
               picker.$el.firstChild.firstChild.children[1].style.color = '#FB3A32'
+              picker.$el.firstChild.firstChild.children[0].style.color = '#666'
+              picker.$el.firstChild.firstChild.children[2].style.color = '#666'
               const end = new Date();
               const start = new Date();
               end.setTime(end.getTime() - 3600 * 1000 * 24);
@@ -173,7 +178,7 @@ export default {
               picker.$emit('pick', [start, end]);
               _this.timeType = 1;
             }
-          }, {
+          },{
             text: '近30日',
             onClick(picker) {
               let childrenArray = Array.from(picker.$el.firstChild.firstChild.children)
@@ -181,6 +186,8 @@ export default {
                 item.style.color = '#666'
               })
               picker.$el.firstChild.firstChild.children[2].style.color = '#FB3A32'
+              picker.$el.firstChild.firstChild.children[1].style.color = '#666'
+              picker.$el.firstChild.firstChild.children[0].style.color = '#666'
               const end = new Date();
               const start = new Date();
               end.setTime(end.getTime() - 3600 * 1000 * 24);
@@ -199,7 +206,8 @@ export default {
       lineDataList: [],
       areaDataList: {},
       browerDataList: [],
-      deviceDataList: []
+      deviceDataList: [],
+      pickerClickFlag: false,
     };
   },
   created() {
@@ -212,6 +220,14 @@ export default {
     this.getDataList();
   },
   methods: {
+    pickerFocus(e) {
+      if(this.pickerClickFlag)return
+      this.pickerClickFlag = true
+      this.$nextTick(()=>{
+        e.picker.$el.firstChild.firstChild.children[0].style.color = '#666'
+        e.picker.$el.firstChild.firstChild.children[1].style.color = '#FB3A32'
+      })
+    },
     dealDisabledData(time) {
       // return time.getTime() > Date.now(); //设置选择今天以及今天以前的日期
       return time.getTime() > Date.now() - 8.64e7 //设置选择今天之前的日期（不能选择当天）
@@ -315,7 +331,7 @@ export default {
       let y,m,d;
       if(data){
         y = data.getFullYear()
-        m = data.getMonth()
+        m = data.getMonth() + 1
         d = data.getDate()
         return y+"-"+(m>9?m:'0'+m)+"-"+(d>9?d:'0'+d)
       }
