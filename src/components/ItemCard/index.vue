@@ -351,7 +351,7 @@ export default {
         },
       ]),
         (this.brandList = [
-          { icon: 'icon_brand@2x', id: 1, title: '直播间设计器', subText: '设置直播间的主题和布局', type: 100066, path: `/live/livingSet/${this.$route.params.str}`,isShow: true},
+          { icon: 'icon_brand@2x', id: 1, title: '直播间设计器', subText: '设置直播间的主题、布局和自定义菜单', type: 100066, path: `/live/livingSet/${this.$route.params.str}`,isShow: true},
           // {
           //   icon: 'icon_brand@2x',
           //   id: 1,

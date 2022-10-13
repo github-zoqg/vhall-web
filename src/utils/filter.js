@@ -131,7 +131,7 @@ export const wordStatusCss = (ext) => {
   } else if (ext === 'media') {
     return 'saasyinpinwenjian color-3562FA';
   } else if (ext === 'zip') {
-    return 'saasyasuowenjian'
+    return 'saasyasuowenjian color-676971'
   } else  {
     return 'saasexcelwendang color-14BA6A';
   }
