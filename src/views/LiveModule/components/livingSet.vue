@@ -224,6 +224,7 @@
                 <span>分离模式</span>
               </div>
               <div class="item_lay" @click="choseInteractDemoLayout(1)">
+                <div class="item_lay_hidden" v-if="webinarIsDirector"></div>
                 <p :class="livingForm.speakerAndShowLayout == 1 ? 'active' : ''"><img src="./image/inav_main_1.png" alt=""></p>
                 <span>合并模式</span>
               </div>
@@ -332,6 +333,7 @@ export default {
       isDelay: this.$route.query.isDelay == 1 ? true : false,
       webinarType: sessionOrLocal.get("webinarType"), // 1.音频  2.视频 3.互动  5.定时直播	6.分组直播
       webinarState: sessionOrLocal.get('webinarState'), // 2.预告 1.直播 3.结束 5.回放 4.点播
+      webinarIsDirector: sessionOrLocal.get(`webinar_is_director__${this.$route.params.str}`),
       defaultImage: 'https://cnstatic01.e.vhall.com/common-static/images/livingSetting.png',
       pcThemeColors: 5,
       videoColors: ['000000', '262626', '595959', '8C8C8C', 'F5F5F5'],
@@ -499,6 +501,10 @@ export default {
     },
     // 手机端切换风格
     activeWapTheme(item) {
+      if (this.webinarIsDirector && item.id == 3) {
+        // 当前是云导播，且选择为极简模式时，不可点击
+        return;
+      }
       this.livingWapForm.style = item.id;
       // 如果接口返回的是当前选中值，默认用备份
       if (item.id == this._livingWapForm?.style) {
@@ -506,7 +512,16 @@ export default {
         this.livingForm.chatLayout = item.id  == 3 ? 2 : 1;
         this.livingForm.inavLayout = this._livingForm.inavLayout;
         // 移动端选择简洁模式，连麦+演示 布局，只能是合并模式
-        this.livingForm.speakerAndShowLayout = this.livingWapForm.style == 3 ? 1 : this._livingForm.speakerAndShowLayout
+        let speakerAndShowLayout = 0
+        if (this.webinarIsDirector) {
+          // 云导播模式，只能是分离模式
+          speakerAndShowLayout = 0
+        } else if (this.livingWapForm.style == 3) {
+          speakerAndShowLayout = 1
+        } else {
+          speakerAndShowLayout = this._livingForm.speakerAndShowLayout
+        }
+        this.livingForm.speakerAndShowLayout = speakerAndShowLayout;
         this.livingForm.videoBackGround = this._livingForm.videoBackGround, // 公共信息  视频区背景 图片地址
         this.livingForm.videoBackGroundColor = this._livingForm.videoBackGroundColor, // 公共信息  视频区背景 颜色
         this.livingForm.videoBackGroundSize = this._livingForm.videoBackGroundSize, // 公共信息 视频区背景 裁剪信息
@@ -545,10 +560,20 @@ export default {
       // 备份信息
       this._livingPcForm = { ...skin_json_pc }; //pc信息
       this._livingWapForm = { ...skin_json_wap }; //wap信息
+      let speakerAndShowLayout = skin_json_pc.speakerAndShowLayout = 0
+      if (this.webinarIsDirector) {
+        // 云导播活动下，只能是分离模式
+        speakerAndShowLayout = 0
+      } else if (skin_json_wap.style == 3) {
+        // 极简模式下，只能是合并模式
+        speakerAndShowLayout = 1
+      } else {
+        speakerAndShowLayout = skin_json_pc.speakerAndShowLayout
+      }
       this._livingForm = {
         chatLayout: skin_json_pc.chatLayout, // 公共信息 聊天布局
         inavLayout: this.livingForm.inavLayout, // 公共信息 连麦布局
-        speakerAndShowLayout: skin_json_wap.style == 3 ? 1 : skin_json_pc.speakerAndShowLayout, // 公共信息 视频区【连麦+演示】布局 (手机端简洁模式下，只能选择 合并模式)
+        speakerAndShowLayout: speakerAndShowLayout, // 公共信息 视频区【连麦+演示】布局
         videoBackGround: skin_json_pc.videoBackGround, // 公共信息  视频区背景 图片地址
         videoBackGroundColor: skin_json_pc.videoBackGroundColor, // 公共信息  视频区背景 颜色
         videoBackGroundSize: skin_json_pc.videoBackGroundSize, // 公共信息 视频区背景 裁剪信息
@@ -576,6 +601,10 @@ export default {
       if (this.livingWapForm.style == 3) {
         // 如果手机端已经选择为极简模式了，PC端只能选择合并模式
         speakerAndShowLayout = 1
+      }
+      // 如果当前是云导播模式，连麦演示只能是分离模式
+      if (this.webinarIsDirector) {
+        speakerAndShowLayout = 0
       }
       this.livingForm = {
         videoBackGroundColor: '#000000', //视频区底色
@@ -846,10 +875,10 @@ export default {
     padding-top: 16px;
     display: flex;
     position: relative;
-    /deep/.saasicon_help_m {
-      color: #999999;
+    /deep/.vh-tooltip.saasicon_help_m {
+      color: #8c8c8c;
       &:hover {
-        color: #666666;
+        color: #595959;
       }
     }
     .saasicon_help_m {

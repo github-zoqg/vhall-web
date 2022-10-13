@@ -345,10 +345,10 @@ export default {
 
 <style lang="less" scoped>
 .msg-notification-page {
-  /deep/.saasicon_help_m {
-    color: #999999;
+  /deep/.vh-tooltip.saasicon_help_m {
+    color: #8c8c8c;
     &:hover {
-      color: #666666;
+      color: #595959;
     }
   }
   /deep/.vh-input {
