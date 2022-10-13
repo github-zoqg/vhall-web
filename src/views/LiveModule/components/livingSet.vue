@@ -210,7 +210,7 @@
           </div>
           <div class="form_item inv_demo__layout" v-if="isShowInteract">
             <div class="form_item_title">
-              视频区【连麦+演示】布局<vh-tooltip effect="dark" content="移动端模板选择了简洁风格会导致pc端分离模式不可用；" :visible-arrow="false" placement="right-start">
+              视频区【连麦+演示】布局<vh-tooltip effect="dark" content="移动端模板选择了简洁风格会导致pc端分离模式不可用；" :visible-arrow="false" placement="bottom-end">
                 <i class="iconfont-v3 saasicon_help_m dialog__title__icon"></i>
               </vh-tooltip>
               <p class="title_tip">
