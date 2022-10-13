@@ -539,8 +539,8 @@ export default {
           }
           this.isDelay = res.data.no_delay_webinar == 1 ? true : false
           this.isDirector = res.data.is_director == 1 ? true : false
-          // 是否云导播活动
-          sessionOrLocal.set(`webinar_is_director__${id}`, this.webinarDirector && this.isDirector ? 1 : 0)
+          // 是否活动标记为云导播活动
+          sessionOrLocal.set(`webinar_is_director__${id}`, res.data.is_director)
           if (this.isDirector) {
             this.getLiveDirectorResolution()
           }

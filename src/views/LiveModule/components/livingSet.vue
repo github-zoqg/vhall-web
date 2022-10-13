@@ -504,7 +504,7 @@ export default {
     // 手机端切换风格
     activeWapTheme(item) {
       if (this.webinarIsDirector == 1 && item.id == 3) {
-        // 当前是云导播，且选择为极简模式时，不可点击
+        // 当前活动标记为云导播类型，且选择为极简模式时，不可点击
         return;
       }
       this.livingWapForm.style = item.id;
@@ -516,7 +516,7 @@ export default {
         // 移动端选择简洁模式，连麦+演示 布局，只能是合并模式
         let speakerAndShowLayout = 0
         if (this.webinarIsDirector == 1) {
-          // 云导播模式，只能是分离模式
+          // 当前活动标记为云导播类型，只能是分离模式
           speakerAndShowLayout = 0
         } else if (this.livingWapForm.style == 3) {
           speakerAndShowLayout = 1
@@ -564,7 +564,7 @@ export default {
       this._livingWapForm = { ...skin_json_wap }; //wap信息
       let speakerAndShowLayout = skin_json_pc.speakerAndShowLayout = 0
       if (this.webinarIsDirector == 1) {
-        // 云导播活动下，只能是分离模式
+        // 当前活动标记为云导播类型，只能是分离模式
         speakerAndShowLayout = 0
       } else if (skin_json_wap.style == 3) {
         // 极简模式下，只能是合并模式
@@ -604,7 +604,7 @@ export default {
         // 如果手机端已经选择为极简模式了，PC端只能选择合并模式
         speakerAndShowLayout = 1
       }
-      // 如果当前是云导播模式，连麦演示只能是分离模式
+      // 如果活动标记为云导播模式，连麦演示只能是分离模式
       if (this.webinarIsDirector == 1) {
         speakerAndShowLayout = 0
       }
@@ -766,7 +766,7 @@ export default {
     },
     // 视频区【连麦+演示】布局
     choseInteractDemoLayout(val) {
-      // 如果是云导播模式，不可切换为合并模式
+      // 如果活动标记为云导播模式，不可切换为合并模式
       if (this.webinarIsDirector == 1 && val == 1) return;
       // 如果是手机端简洁模式，点击分离模式时，不可切换。
       if (val < 1 && this.livingWapForm.style == 3) return;
