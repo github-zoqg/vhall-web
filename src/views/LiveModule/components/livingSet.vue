@@ -211,11 +211,11 @@
           </div>
           <div class="form_item inv_demo__layout" v-if="isShowInteract">
             <div class="form_item_title">
-              视频区【连麦+演示】布局<vh-tooltip effect="dark" content="移动端模板选择了简洁风格会导致pc端分离模式不可用；" :visible-arrow="false" placement="bottom-end">
+              视频区【连麦+演示】布局<vh-tooltip effect="dark" content="移动端模版选择了简洁风格会导致pc端分离模式不可用" :visible-arrow="false" placement="bottom-end">
                 <i class="iconfont-v3 saasicon_help_m dialog__title__icon"></i>
               </vh-tooltip>
               <p class="title_tip">
-                注意：使用客户端和app发起直播，视频直播无法展示合并模式效果。
+                注意：非无延迟视频直播且选择了【合并模式】布局，无法用电脑客户端和app发起。
               </p>
             </div>
             <div class="form_item_lay inv_demo__layout">
@@ -1104,7 +1104,7 @@ export default {
             height: 50px;
             border-radius: 4px;
             margin-bottom: 5px;
-            border: 1px solid transparent;
+            border: 1px solid #D9D9D9;
             img{
               width: 100%;
               height: 100%;
