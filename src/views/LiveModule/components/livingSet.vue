@@ -27,12 +27,13 @@
       </template>
       <template v-else>
         <!-- WAP切换左侧风格 -->
-        <div class="type_item" v-for="(item, index) in themeWapTypeList" :key="index">
+        <div class="type_item" :class="webinarIsDirector == 1 && item.id == 3 ? 'checked-not-allow' : ''" v-for="(item, index) in themeWapTypeList" :key="index">
           <span class="type_item_title title_center">{{ item.title }}</span>
           <p class="type_item_check item_checked" :class="livingWapForm.style==item.id ? 'active' : ''" @click="activeWapTheme(item)">
             <img :src="require(`./image/wap/style_${index+1}.png`)" class="item_check_style" alt="">
             <span class="checked_img" v-if="livingWapForm.style==item.id"><img src="../../../common/images/icon-choose.png" alt=""></span>
           </p>
+          <div class="not-allow" v-if="webinarIsDirector && item.id == 3"></div>
         </div>
       </template>
     </div>
@@ -933,6 +934,18 @@ export default {
               height: 100%;
               object-fit: scale-down;
             }
+          }
+        }
+        &.checked-not-allow {
+          position: relative;
+          .not-allow {
+            position: absolute;
+            height: 173px;
+            width: 80px;
+            background: rgba(255, 255, 255, 0.5);
+            left: calc(50% - 40px);
+            bottom: 24px;
+            cursor: not-allowed;
           }
         }
       }

@@ -570,7 +570,7 @@
           </span>
           <span>2.文档水印最多显示20个字，超出的水印内容将不会显示；</span>
 <!--           <span>3.若活动下，视频区【连麦+演示】布局为合并模式时不支持显示水印 <span @click="toLivingSetPage">去设置</span></span> -->
-          <span>3.非无延迟直播选择合并模式后，未上麦的观众端无法显示水印。<a href="javascript:void(0);" class="safe__link" @click="toLivingSetPage">去设置</a></span>
+          <span>3.非无延迟直播选择【合并模式】后，未上麦的观众端无法显示水印<a href="javascript:void(0);" class="safe__link" @click="toLivingSetPage">去设置</a></span>
         </div>
       </div>
       <div class="cut-line" v-if="activeName == 'second'"></div>
