@@ -255,11 +255,10 @@
             </div>
           </div>
         </div>
-        <div class="base-item" @click="lookOption('关注用户', 100445)">
+        <!-- 二期关注用户入口，先隐藏 <div class="base-item" @click="lookOption('关注用户', 100445)">
           <p>查看</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_ranking@2x.png" alt=""></label>
-            <!-- <icon icon-class="saasicon_yaoqingpaiming"></icon> -->
             <div class="base-text">
               <span>关注用户（人）</span>
               <h1 class="custom-font-barlow">
@@ -271,7 +270,7 @@
               </h1>
             </div>
           </div>
-        </div>
+        </div> -->
          <div class="base-item" v-if="isStatus!=4&&[3,6,'3','6'].includes(webinarType)" @click="exportSpeak">
           <p>导出</p>
           <div class="base-main">
