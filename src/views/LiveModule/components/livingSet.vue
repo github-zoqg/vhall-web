@@ -766,6 +766,8 @@ export default {
     },
     // 视频区【连麦+演示】布局
     choseInteractDemoLayout(val) {
+      // 如果是云导播模式，不可切换为合并模式
+      if (this.webinarIsDirector == 1 && val == 1) return;
       // 如果是手机端简洁模式，点击分离模式时，不可切换。
       if (val < 1 && this.livingWapForm.style == 3) return;
       this.livingForm.speakerAndShowLayout = val;
