@@ -8,8 +8,7 @@
         maxlength="50"
         show-word-limit
         placeholder="请输入表单标题"
-        v-model.trim="title"
-        v-clearEmoij
+        v-model="title"
         @change="baseInfoChange('title')"
       ></VhallInput>
       <div class="disable_wrap" v-show="!signUpSwtich"></div>
@@ -19,7 +18,7 @@
       <VhallInput
         :maxlength="500"
         autocomplete="off"
-        v-model.trim="intro"
+        v-model="intro"
         show-word-limit
         placeholder="请输入表单简介"
         type="textarea"
@@ -95,8 +94,7 @@
               autocomplete="off"
               show-word-limit
               placeholder="请输入题目"
-              v-model.trim="item.label"
-              v-clearEmoij
+              v-model="item.label"
               class="radioInput titleInput"
               @change="subjectChange(item)"
             ></VhallInput>
@@ -110,7 +108,7 @@
             >
               <VhallInput
                 :disabled="item.disabledEdit"
-                v-model.trim="node.value"
+                v-model="node.value"
                 v-bind="node.props"
                 show-word-limit
                 autocomplete="off"
@@ -164,7 +162,7 @@
                   autocomplete="off"
                   show-word-limit
                   placeholder="选项"
-                  v-model.trim="radioItem.value"
+                  v-model="radioItem.value"
                   class="radioInput"
                   :class="{'radioGender': item.reqType == 0 && item.default_type == 4}"
                 >
@@ -208,7 +206,7 @@
                   autocomplete="off"
                   show-word-limit
                   placeholder="选项"
-                  v-model.trim="radioItem.value"
+                  v-model="radioItem.value"
                   class="radioInput"
                   @change="chooseOptChange(item, radioItem)"
                 >
