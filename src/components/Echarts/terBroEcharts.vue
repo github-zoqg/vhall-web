@@ -1,7 +1,7 @@
 <template>
   <div class="terBroCharts">
     <div class="terBro-title">
-      <span>{{ isTerBar === 1 ? '终端设备占比' : '浏览器占比'}}</span>
+      <span>{{ isTerBar === 1 ? '观看终端' : '浏览器'}}</span>
       <el-tooltip effect="dark" placement="right" v-tooltipMove>
         <div slot="content">{{ isTerBar === 1 ?  '统计观看终端占比情况' : '统计观看浏览器占比情况' }}</div>
         <i class="iconfont-v3 saasicon_help_m"></i>

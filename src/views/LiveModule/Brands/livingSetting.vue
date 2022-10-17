@@ -115,7 +115,7 @@ export default {
         } else {
           this.type = 2;
           this.$message({
-            message:"正在使用账号下直播间设置",
+            message:"正在使用账号下直播间设计器",
             showClose: true,
             type: 'warning',
             customClass: 'zdy-info-box'
