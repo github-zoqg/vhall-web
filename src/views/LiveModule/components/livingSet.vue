@@ -73,224 +73,226 @@
         <vh-button size="small" plain  round v-preventReClick @click="goPreviewLiving" v-if="webinarId">预览</vh-button>
         <vh-button type="primary" size="small" round v-preventReClick @click="saveSettingLivingInfo">保存</vh-button>
       </div>
-      <!-- pc主题设置 -->
-      <template v-if="livingPreview==1">
-        <div class="form_item">
-          <p class="form_item_title">主题色</p>
-          <div class="theme_colors">
-            <span v-for="(item, index) in pcThemeColors" :key="index" :class="livingPcForm.backGroundColor == index + 1 ? 'active' : ''" @click="changePcTheme(index)">
-              <img :src="require(`./image/pc/theme_${index+1}.png`)" alt="">
-            </span>
-          </div>
-        </div>
-        <template v-if="livingPcPreviewType == 1">
+      <div class="living-setting_form_scroll">
+        <!-- pc主题设置 -->
+        <template v-if="livingPreview==1">
           <div class="form_item">
-            <p class="form_item_title">主题背景</p>
-            <upload
-              class="upload__living"
-              id="living_pc_cropper"
-              v-model="livingPcForm.background"
-              :domain_url="livingPcForm.background"
-              :on-success="handlePcUploadSuccess"
-              :on-progress="uploadProcess"
-              :on-error="uploadError"
-              :on-preview="uploadPreview"
-              :heightImg="128"
-              :widthImg="228"
-              :before-upload="beforeUploadHandler"
-              @delete="resetLogoUrl">
-              <div slot="tip">
-                <p>建议尺寸：1920*1080px，小于4M</p>
-                <p>支持jpg、gif、png、bmp</p>
-              </div>
-            </upload>
-          </div>
-          <div class="form_item">
-            <span class="vague_theme">模糊程度</span>
-            <vh-slider v-model="livingPcForm.blurryDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="10"></vh-slider>
-            <span class="vague_num">{{livingPcForm.blurryDegree}}</span>
-          </div>
-          <div class="form_item">
-            <span class="vague_theme">背景亮度</span>
-            <vh-slider v-model="livingPcForm.lightDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="20"></vh-slider>
-            <span class="vague_num">{{livingPcForm.lightDegree}}</span>
-          </div>
-        </template>
-      </template>
-      <!-- wap主题设置 -->
-      <template v-if="livingPreview==2">
-        <div class="form_item">
-          <p class="form_item_title">主题色</p>
-          <div class="theme_colors">
-            <span v-for="(item, index) in pcThemeColors" :key="index" :class="livingWapForm.backGroundColor == index + 1 ? 'active' : ''"  @click="changeWapTheme(index)">
-              <img :src="require(`./image/wap/theme_${livingWapForm.style}/theme_${index+1}.png`)" alt="">
-            </span>
-          </div>
-        </div>
-        <template v-if="livingPcPreviewType == 1">
-          <div class="form_item form_item_wap_bg" v-if="livingWapForm.style==3">
-            <p class="form_item_title">主题背景</p>
-            <upload
-              class="upload__living"
-              id="living_wap_cropper"
-              v-model="livingWapForm.background"
-              :domain_url="livingWapForm.background"
-              :on-success="handleUploadSuccess"
-              :on-progress="uploadProcess"
-              :on-error="uploadError"
-              :on-preview="uploadPreview"
-              :heightImg="330"
-              :widthImg="151"
-              :before-upload="beforeUploadHandler"
-              @delete="resetLogoUrl">
-              <div slot="tip">
-                <p>建议尺寸：750*1642px</p>
-                <p>支持jpg、gif、png、bmp，小于4M</p>
-              </div>
-            </upload>
-          </div>
-          <div class="form_item" v-if="livingWapForm.style==3">
-            <span class="vague_theme">模糊程度</span>
-            <vh-slider v-model="livingWapForm.blurryDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="10"></vh-slider>
-            <span class="vague_num">{{livingWapForm.blurryDegree}}</span>
-          </div>
-          <div class="form_item" v-if="livingWapForm.style==3">
-            <span class="vague_theme">背景亮度</span>
-            <vh-slider v-model="livingWapForm.lightDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="20"></vh-slider>
-            <span class="vague_num">{{livingWapForm.lightDegree}}</span>
-          </div>
-        </template>
-      </template>
-      <!-- 视频区域设置 -->
-      <template v-if="livingPcPreviewType==1">
-        <div class="form_item" v-if="livingPreview==1">
-          <span class="vague_theme">聊天布局</span>
-          <vh-radio-group v-model="livingForm.chatLayout" size="mini">
-            <vh-radio-button round :label="1">上下显示</vh-radio-button>
-            <vh-radio-button round :label="2">左右显示</vh-radio-button>
-          </vh-radio-group>
-        </div>
-        <template v-if="isShowVideoBackground || isShowInteract">
-          <div class="form_item_br">
-            以下设置对PC端和移动端同时生效～
-          </div>
-          <div class="form_item more__layout" v-if="isShowInteract">
-            <div class="form_item_title">
-              视频区【连麦】布局
-              <p class="title_tip">
-                注意：无延迟模式下，暂只支持主次平铺；直播中修改连麦布局，需要刷新发起端才能生效。
-              </p>
-              <!-- <el-tooltip v-tooltipMove>
-                <div slot="content">
-                  <p>1.无延迟模式下，只支持主次平铺；</p>
-                  <p>2.直播中修改布局，需要主持人刷新页面<br/>或重启客户端后生效</p>
-                </div>
-                <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
-              </el-tooltip> -->
-            </div>
-            <div class="form_item_lay more__layout">
-              <div class="item_lay" @click="choseMicrophone(0)">
-                <div class="item_lay_hidden" v-if="isDelay"></div>
-                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE' ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
-                <span>均匀排列</span>
-              </div>
-              <div class="item_lay" @click="choseMicrophone(1)">
-                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' ? 'active' : ''"><img src="./image/main_2.png" alt=""></p>
-                <span>主次平铺</span>
-              </div>
-              <div class="item_lay" @click="choseMicrophone(2)">
-                <div class="item_lay_hidden" v-if="isDelay"></div>
-                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE' ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
-                <span>主次浮窗</span>
-              </div>
-              <div class="item_lay" @click="choseMicrophone(3)">
-                <div class="item_lay_hidden" v-if="isDelay"></div>
-                <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_TILED_EXT1_MODE' ? 'active' : ''"><img src="./image/main_4.png" alt=""></p>
-                <span>顶部成员</span>
-              </div>
+            <p class="form_item_title">主题色</p>
+            <div class="theme_colors">
+              <span v-for="(item, index) in pcThemeColors" :key="index" :class="livingPcForm.backGroundColor == index + 1 ? 'active' : ''" @click="changePcTheme(index)">
+                <img :src="require(`./image/pc/theme_${index+1}.png`)" alt="">
+              </span>
             </div>
           </div>
-          <div class="form_item inv_demo__layout" v-if="isShowInteract">
-            <div class="form_item_title">
-              视频区【连麦+演示】布局<vh-tooltip effect="dark" content="移动端模版选择了简洁风格会导致pc端分离模式不可用" :visible-arrow="false" placement="bottom-end">
-                <i class="iconfont-v3 saasicon_help_m dialog__title__icon"></i>
-              </vh-tooltip>
-              <p class="title_tip">
-                注意：非无延迟视频直播且选择了【合并模式】布局，无法用电脑客户端和app发起。
-              </p>
-            </div>
-            <div class="form_item_lay inv_demo__layout">
-              <div class="item_lay" @click="choseInteractDemoLayout(0)">
-                <div class="item_lay_hidden" v-if="livingWapForm && livingWapForm.style == 3"></div>
-                <p :class="livingForm.speakerAndShowLayout != 1 ? 'active' : ''"><img src="./image/inav_main_0.png" alt=""></p>
-                <span>分离模式</span>
-              </div>
-              <div class="item_lay" @click="choseInteractDemoLayout(1)">
-                <div class="item_lay_hidden" v-if="webinarIsDirector == 1"></div>
-                <p :class="livingForm.speakerAndShowLayout == 1 ? 'active' : ''"><img src="./image/inav_main_1.png" alt=""></p>
-                <span>合并模式</span>
-              </div>
-            </div>
-          </div>
-          <!-- <div class="form_item" v-if="livingPreview == 2">
-            <p class="form_item_title">视频区【连麦 + 演示】布局</p>
-            <div class="form_item_lay form_item_video">
-              <div class="item_lay">
-                <p class="active"><img src="./image/main_1.png" alt=""></p>
-                <span>上下模式</span>
-              </div>
-            </div>
-          </div> -->
-          <template v-if="isShowVideoBackground">
+          <template v-if="livingPcPreviewType == 1">
             <div class="form_item">
-              <p class="form_item_title">视频区底色</p>
-              <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoBackGroundColor"></color-set>
-            </div>
-            <div class="form_item">
-              <div class="form_item_title">
-                视频区背景
-                <p class="title_tip">注意：1.请勿手动修改图片后缀，否则有可能导致背景图不生效；2.视频区背景图在无延迟模式下或上麦时不生效</p>
-                <!-- <span class="mr">视频区背景</span>
-                <el-tooltip placement="right" v-tooltipMove>
-                  <div slot="content">
-                    <p>1.请勿手动修改图片后缀，否则有可能导致背景<br>&nbsp;&nbsp;&nbsp;图不生效</p>
-                    <p>2.视频区背景图在无延迟模式下或上麦时不生效</p>
-                  </div>
-                  <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
-                </el-tooltip> -->
-              </div>
+              <p class="form_item_title">主题背景</p>
               <upload
                 class="upload__living"
-                id="living_video_cropper"
-                v-model="livingForm.videoBackGround"
-                :domain_url="livingForm.videoBackGround"
-                :on-success="handleUploadVideoSuccess"
+                id="living_pc_cropper"
+                v-model="livingPcForm.background"
+                :domain_url="livingPcForm.background"
+                :on-success="handlePcUploadSuccess"
                 :on-progress="uploadProcess"
                 :on-error="uploadError"
                 :on-preview="uploadPreview"
                 :heightImg="128"
                 :widthImg="228"
-                :before-upload="file => this.beforeUploadHandler(file, true)"
-                @delete="resetVideoUrl">
+                :before-upload="beforeUploadHandler"
+                @delete="resetLogoUrl">
                 <div slot="tip">
-                  <p>建议尺寸：1300*730px，小于4M</p>
-                  <p>支持jpg、png</p>
+                  <p>建议尺寸：1920*1080px，小于4M</p>
+                  <p>支持jpg、gif、png、bmp</p>
                 </div>
               </upload>
             </div>
             <div class="form_item">
               <span class="vague_theme">模糊程度</span>
-              <vh-slider v-model="livingForm.videoBlurryDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="10"></vh-slider>
-              <span class="vague_num">{{livingForm.videoBlurryDegree}}</span>
+              <vh-slider v-model="livingPcForm.blurryDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="10"></vh-slider>
+              <span class="vague_num">{{livingPcForm.blurryDegree}}</span>
             </div>
             <div class="form_item">
               <span class="vague_theme">背景亮度</span>
-              <vh-slider v-model="livingForm.videoLightDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="20"></vh-slider>
-              <span class="vague_num">{{livingForm.videoLightDegree}}</span>
+              <vh-slider v-model="livingPcForm.lightDegree" :disabled="!livingPcForm.background" style="width: 131px" :max="20"></vh-slider>
+              <span class="vague_num">{{livingPcForm.lightDegree}}</span>
             </div>
           </template>
         </template>
-      </template>
+        <!-- wap主题设置 -->
+        <template v-if="livingPreview==2">
+          <div class="form_item">
+            <p class="form_item_title">主题色</p>
+            <div class="theme_colors">
+              <span v-for="(item, index) in pcThemeColors" :key="index" :class="livingWapForm.backGroundColor == index + 1 ? 'active' : ''"  @click="changeWapTheme(index)">
+                <img :src="require(`./image/wap/theme_${livingWapForm.style}/theme_${index+1}.png`)" alt="">
+              </span>
+            </div>
+          </div>
+          <template v-if="livingPcPreviewType == 1">
+            <div class="form_item form_item_wap_bg" v-if="livingWapForm.style==3">
+              <p class="form_item_title">主题背景</p>
+              <upload
+                class="upload__living"
+                id="living_wap_cropper"
+                v-model="livingWapForm.background"
+                :domain_url="livingWapForm.background"
+                :on-success="handleUploadSuccess"
+                :on-progress="uploadProcess"
+                :on-error="uploadError"
+                :on-preview="uploadPreview"
+                :heightImg="330"
+                :widthImg="151"
+                :before-upload="beforeUploadHandler"
+                @delete="resetLogoUrl">
+                <div slot="tip">
+                  <p>建议尺寸：750*1642px</p>
+                  <p>支持jpg、gif、png、bmp，小于4M</p>
+                </div>
+              </upload>
+            </div>
+            <div class="form_item" v-if="livingWapForm.style==3">
+              <span class="vague_theme">模糊程度</span>
+              <vh-slider v-model="livingWapForm.blurryDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="10"></vh-slider>
+              <span class="vague_num">{{livingWapForm.blurryDegree}}</span>
+            </div>
+            <div class="form_item" v-if="livingWapForm.style==3">
+              <span class="vague_theme">背景亮度</span>
+              <vh-slider v-model="livingWapForm.lightDegree" :disabled="!livingWapForm.background" style="width: 131px" :max="20"></vh-slider>
+              <span class="vague_num">{{livingWapForm.lightDegree}}</span>
+            </div>
+          </template>
+        </template>
+        <!-- 视频区域设置 -->
+        <template v-if="livingPcPreviewType==1">
+          <div class="form_item" v-if="livingPreview==1">
+            <span class="vague_theme">聊天布局</span>
+            <vh-radio-group v-model="livingForm.chatLayout" size="mini">
+              <vh-radio-button round :label="1">上下显示</vh-radio-button>
+              <vh-radio-button round :label="2">左右显示</vh-radio-button>
+            </vh-radio-group>
+          </div>
+          <template v-if="isShowVideoBackground || isShowInteract">
+            <div class="form_item_br">
+              以下设置对PC端和移动端同时生效～
+            </div>
+            <div class="form_item more__layout" v-if="isShowInteract">
+              <div class="form_item_title">
+                视频区【连麦】布局
+                <p class="title_tip">
+                  注意：无延迟模式下，暂只支持主次平铺；直播中修改连麦布局，需要刷新发起端才能生效。
+                </p>
+                <!-- <el-tooltip v-tooltipMove>
+                  <div slot="content">
+                    <p>1.无延迟模式下，只支持主次平铺；</p>
+                    <p>2.直播中修改布局，需要主持人刷新页面<br/>或重启客户端后生效</p>
+                  </div>
+                  <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
+                </el-tooltip> -->
+              </div>
+              <div class="form_item_lay more__layout">
+                <div class="item_lay" @click="choseMicrophone(0)">
+                  <div class="item_lay_hidden" v-if="isDelay"></div>
+                  <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_GRID_MODE' ? 'active' : ''"><img src="./image/main_3.png" alt=""></p>
+                  <span>均匀排列</span>
+                </div>
+                <div class="item_lay" @click="choseMicrophone(1)">
+                  <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_TILED_MODE' ? 'active' : ''"><img src="./image/main_2.png" alt=""></p>
+                  <span>主次平铺</span>
+                </div>
+                <div class="item_lay" @click="choseMicrophone(2)">
+                  <div class="item_lay_hidden" v-if="isDelay"></div>
+                  <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE' ? 'active' : ''"><img src="./image/main_1.png" alt=""></p>
+                  <span>主次浮窗</span>
+                </div>
+                <div class="item_lay" @click="choseMicrophone(3)">
+                  <div class="item_lay_hidden" v-if="isDelay"></div>
+                  <p :class="livingForm.inavLayout == 'CANVAS_ADAPTIVE_LAYOUT_TILED_EXT1_MODE' ? 'active' : ''"><img src="./image/main_4.png" alt=""></p>
+                  <span>顶部成员</span>
+                </div>
+              </div>
+            </div>
+            <div class="form_item inv_demo__layout" v-if="isShowInteract">
+              <div class="form_item_title">
+                视频区【连麦+演示】布局<vh-tooltip effect="dark" content="移动端模版选择了简洁风格会导致pc端分离模式不可用" :visible-arrow="false" placement="bottom-end">
+                  <i class="iconfont-v3 saasicon_help_m dialog__title__icon"></i>
+                </vh-tooltip>
+                <p class="title_tip">
+                  注意：非无延迟视频直播且选择了【合并模式】布局，无法用电脑客户端和app发起。
+                </p>
+              </div>
+              <div class="form_item_lay inv_demo__layout">
+                <div class="item_lay" @click="choseInteractDemoLayout(0)">
+                  <div class="item_lay_hidden" v-if="livingWapForm && livingWapForm.style == 3"></div>
+                  <p :class="livingForm.speakerAndShowLayout != 1 ? 'active' : ''"><img src="./image/inav_main_0.png" alt=""></p>
+                  <span>分离模式</span>
+                </div>
+                <div class="item_lay" @click="choseInteractDemoLayout(1)">
+                  <div class="item_lay_hidden" v-if="webinarIsDirector == 1"></div>
+                  <p :class="livingForm.speakerAndShowLayout == 1 ? 'active' : ''"><img src="./image/inav_main_1.png" alt=""></p>
+                  <span>合并模式</span>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="form_item" v-if="livingPreview == 2">
+              <p class="form_item_title">视频区【连麦 + 演示】布局</p>
+              <div class="form_item_lay form_item_video">
+                <div class="item_lay">
+                  <p class="active"><img src="./image/main_1.png" alt=""></p>
+                  <span>上下模式</span>
+                </div>
+              </div>
+            </div> -->
+            <template v-if="isShowVideoBackground">
+              <div class="form_item">
+                <p class="form_item_title">视频区底色</p>
+                <color-set ref="videoColors" :isShowMain="false"  :themeKeys="videoColors" @color="changeVideoColor"  :colorDefault="livingForm.videoBackGroundColor"></color-set>
+              </div>
+              <div class="form_item">
+                <div class="form_item_title">
+                  视频区背景
+                  <p class="title_tip">注意：1.请勿手动修改图片后缀，否则有可能导致背景图不生效；2.视频区背景图在无延迟模式下或上麦时不生效</p>
+                  <!-- <span class="mr">视频区背景</span>
+                  <el-tooltip placement="right" v-tooltipMove>
+                    <div slot="content">
+                      <p>1.请勿手动修改图片后缀，否则有可能导致背景<br>&nbsp;&nbsp;&nbsp;图不生效</p>
+                      <p>2.视频区背景图在无延迟模式下或上麦时不生效</p>
+                    </div>
+                    <i class="iconfont-v3 saasicon_help_m tip" style="color: #999999;"></i>
+                  </el-tooltip> -->
+                </div>
+                <upload
+                  class="upload__living"
+                  id="living_video_cropper"
+                  v-model="livingForm.videoBackGround"
+                  :domain_url="livingForm.videoBackGround"
+                  :on-success="handleUploadVideoSuccess"
+                  :on-progress="uploadProcess"
+                  :on-error="uploadError"
+                  :on-preview="uploadPreview"
+                  :heightImg="128"
+                  :widthImg="228"
+                  :before-upload="file => this.beforeUploadHandler(file, true)"
+                  @delete="resetVideoUrl">
+                  <div slot="tip">
+                    <p>建议尺寸：1300*730px，小于4M</p>
+                    <p>支持jpg、png</p>
+                  </div>
+                </upload>
+              </div>
+              <div class="form_item">
+                <span class="vague_theme">模糊程度</span>
+                <vh-slider v-model="livingForm.videoBlurryDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="10"></vh-slider>
+                <span class="vague_num">{{livingForm.videoBlurryDegree}}</span>
+              </div>
+              <div class="form_item">
+                <span class="vague_theme">背景亮度</span>
+                <vh-slider v-model="livingForm.videoLightDegree" :disabled="!livingForm.videoBackGround" style="width: 131px" :max="20"></vh-slider>
+                <span class="vague_num">{{livingForm.videoLightDegree}}</span>
+              </div>
+            </template>
+          </template>
+        </template>
+      </div>
     </div>
     <div class="living-setting_hidden" v-if="webinarId && livingConfig==2"></div>
     <cropper @cropComplete="cropComplete" ref="livingCropper" :ratio="ratio" cropperDom="living_cropper" @deleteComplete="deleteComplete"></cropper>
@@ -970,7 +972,7 @@ export default {
         }
         .preview_container{
           padding: 12px 32px 48px 32px;
-          min-height: 919px;
+          min-height: 670px;
         }
         &_pc{
           width: 880px;
@@ -998,15 +1000,21 @@ export default {
     }
     &_form{
       width: 270px;
-      padding: 0 20px;
+      padding: 0 0 0 20px;
       &_opera{
         padding-bottom: 40px;
         .vh-button+.vh-button{
           margin-left: 10px;
         }
       }
+      &_scroll {
+        height: 665px;
+        margin-bottom: 40px;
+        overflow-y: auto;
+      }
       .form_item{
         padding-bottom: 24px;
+        margin-right: 15px;
         &.more__layout {
           padding-bottom: 16px;
         }
@@ -1112,6 +1120,9 @@ export default {
             justify-content: flex-start;
             .item_lay {
               margin-left: 8px;
+              &:first-child {
+                margin-left: 0;
+              }
             }
           }
           p{
@@ -1165,6 +1176,32 @@ export default {
       .living-setting_preview{
         // width: 594px;
          width: 944px;
+      }
+    }
+    /deep/ .living-setting_form_scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    /deep/ .living-setting_form_scroll::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 0 rgba(240,240,240, 0.5);
+      border-radius: 3px;
+      background-color: transparent;
+    }
+    /deep/ .living-setting_form_scroll::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      transition: all 0.3s;
+      cursor: pointer;
+      display: none;
+      background-color: rgba(0, 0, 0, 0.25);
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.25);
+      }
+      &:active {
+        background-color: rgba(0, 0, 0, 0.25);
+      }
+    }
+    &:hover {
+      /deep/ .living-setting_form_scroll::-webkit-scrollbar-thumb {
+        display: block;
       }
     }
   }
