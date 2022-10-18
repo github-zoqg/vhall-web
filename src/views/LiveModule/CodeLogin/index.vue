@@ -77,9 +77,11 @@ import { liveTag } from '@/utils/filter';
     methods: {
       getUserMess(){
         console.warn(this.$route);
+        // webinar/info调整-正常的信息展示使用 0
         this.$fetch('getWebinarInfo', {
           webinar_id: this.$route.params.id,
-          is_no_check:1
+          is_no_check:1,
+          is_rehearsal: 0
         }, {
           token: ''
         }).then(res=>{

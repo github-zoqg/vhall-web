@@ -1,6 +1,8 @@
 <template>
   <div class="editBox">
-    <pageTitle :pageTitle="`${$route.query.title || '创建'}专题`"></pageTitle>
+    <pageTitle :pageTitle="`${$route.query.title || '创建'}专题`">
+      <div class="title_text" v-if="!isOldSubject && $route.params.id">该专题是旧版系统创建，不能设置统一的观看限制。</div>
+    </pageTitle>
     <el-form :model="formData" ref="ruleForm" :rules="rules" v-loading="loading" label-width="80px">
       <el-form-item label="专题标题" prop="title">
         <VhallInput v-model="formData.title" v-clearEmoij :maxlength="100" autocomplete="off" placeholder="请输入专题标题" show-word-limit></VhallInput>
@@ -8,8 +10,9 @@
       <el-form-item label="专题封面">
         <upload
           class="upload__avatar"
+          id="subject_cropper"
           v-model="formData.imageUrl"
-          :domain_url="formData.domain_url"
+          :domain_url="domain_url"
           :saveData="{
              path: 'webinars/subject-imgs',
              type: 'image',
@@ -25,6 +28,18 @@
             <p>支持jpg、gif、png、bmp</p>
           </div>
         </upload>
+        <div class="image_cropper">
+          <div class="image_cropper_item">
+            <span>模糊程度</span>
+            <vh-slider v-model="cropperImage.blurryDegree" :disabled="!formData.imageUrl" :max="10" style="width:480px"></vh-slider>
+            <span class="wid_block">{{cropperImage.blurryDegree}}</span>
+          </div>
+          <div class="image_cropper_item">
+            <span>背景亮度</span>
+            <vh-slider v-model="cropperImage.lightDegree" :disabled="!formData.imageUrl" :max="20" style="width:480px"></vh-slider>
+            <span class="wid_block">{{ cropperImage.lightDegree}}</span>
+          </div>
+        </div>
       </el-form-item>
       <el-form-item label="专题简介" required>
         <v-editor save-type='special' :isReturn=true @returnChange="sendData" ref="unitImgTxtEditor" v-model="formData.content"></v-editor>
@@ -38,18 +53,7 @@
           :active-text="reservationDesc">
         </el-switch>
       </p>
-      <!-- <el-form-item label="预约人数">
-        <p class="switch__box">
-          <el-switch
-            v-model="formData.reservation"
-            active-color="#FB3A32"
-            inactive-color="#CECECE"
-            :active-text="reservationDesc">
-          </el-switch>
-        </p>
-      </el-form-item> -->
-      <!-- <el-form-item label="专题热度"> -->
-        <p class="switch__box">
+      <p class="switch__box">
           <el-switch
             v-model="formData.hot"
             active-color="#FB3A32"
@@ -57,10 +61,8 @@
             inactive-text="专题热度"
             :active-text="hotDesc">
           </el-switch>
-        </p>
-      <!-- </el-form-item> -->
-      <!-- <el-form-item label="关联主页"> -->
-        <p class="switch__box">
+      </p>
+      <p class="switch__box">
           <el-switch
             v-model="formData.home"
             active-color="#FB3A32"
@@ -68,10 +70,10 @@
             inactive-text="关联主页"
             :active-text="homeDesc">
           </el-switch>
-        </p>
-      <!-- </el-form-item> -->
+      </p>
       <el-form-item label="专题目录" required>
         <el-button size="small" round @click="showActiveSelect = true">添加</el-button>
+        <span class="form_tip"> {{ $route.params.id ? '标红活动在其他专题重复使用' : '专题保存成功后，可设置观看限制' }}</span>
         <div class="vh-sort-tables" v-show="formData.selectedActives.length">
           <div class="vh-sort-tables__theader">
             <div class="vh-sort-tables__theader-id">
@@ -100,6 +102,7 @@
             >
               <div
                 class="vh-sort-tables__tbody-tr"
+                :class="$route.params.id && item.is_coincide == 1 ? 'tr_active' : ''"
                 v-for="(item, index) in formData.selectedActives"
                 :key="item.webinar_id"
                 >
@@ -111,23 +114,9 @@
                 </div>
                 <div class="vh-sort-tables__tbody-status">
                   <template>
+                    <span :class="'statusTag tag_' + item.webinar_state"></span>
                    {{ item.webinar_state | actionText }}
                   </template>
-                  <!-- <template v-if="item.webinar_type == 1">
-                    直播
-                  </template>
-                  <template v-if="item.webinar_type == 2">
-                    预告
-                  </template>
-                  <template v-if="item.webinar_type == 3">
-                    结束
-                  </template>
-                  <template v-if="item.webinar_type == 4">
-                    点播
-                  </template>
-                  <template v-if="item.webinar_type == 5">
-                    回放
-                  </template> -->
                 </div>
                 <div class="vh-sort-tables__tbody-hots">
                   {{ item.pv | formatNum }}
@@ -155,9 +144,13 @@
     <chose-actives
       v-if="showActiveSelect"
       :checkedList="formData.selectedActives"
+      :checkedTotal="formData.total"
+      :checkAuth="formData.viewer"
       @cacelSelect="showActiveSelect = false"
       @selectedEvent="doSelectedActives"
     ></chose-actives>
+    <!-- 裁剪组件 -->
+    <cropper ref="subjectCropper" @cropComplete="cropComplete" @resetUpload="resetUpload"></cropper>
   </div>
 </template>
 
@@ -166,9 +159,9 @@ import draggable from "vuedraggable";
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import VEditor from '@/components/Tinymce';
-import Env from "@/api/env";
 import ChoseActives from './components/choseLiveList'
-import { sessionOrLocal } from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery} from "@/utils/utils";
+import cropper from '@/components/Cropper/index';
 
 export default {
   components: {
@@ -176,9 +169,14 @@ export default {
     VEditor,
     upload,
     ChoseActives,
-    draggable
+    draggable,
+    cropper
   },
   computed: {
+    domain_url() {
+      if (!this.formData.imageUrl) return '';
+      return `${this.formData.imageUrl}?x-oss-process=image/crop,x_${this.cropperImage.backgroundSize.x.toFixed()},y_${this.cropperImage.backgroundSize.y.toFixed()},w_${this.cropperImage.backgroundSize.width.toFixed()},h_${this.cropperImage.backgroundSize.height.toFixed()}${this.cropperImage.blurryDegree > 0 ? `,/blur,r_10,s_${this.cropperImage.blurryDegree * 2}` : ''},/bright,${(this.cropperImage.lightDegree - 10) * 5}&mode=${this.cropperImage.imageCropMode}`
+    },
     reservationDesc(){
       return this.formData.reservation ?  '已开启，专题页显示预约人数' : '开启后，专题页显示预约人数';
     },
@@ -200,14 +198,14 @@ export default {
         title: '',
         reservation: true,
         imageUrl: '',
-        domain_url:'',
         content: '',
         hot: true,
         home: true,
+        total: 0,
+        viewer: 0
       },
       subject_id: '',
-      subjectInfo: {
-      },
+      isOldSubject: true,
       userId:JSON.parse(sessionOrLocal.get("userId")),
       loading: false,
       webinarIds: [],
@@ -216,6 +214,17 @@ export default {
           { required: true, message: '请输入专题标题', trigger: 'blur' }
         ],
       },
+      cropperImage: {
+        imageCropMode: 1,
+        lightDegree: 10,
+        blurryDegree: 0,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
+      },
       isChange: false
     };
   },
@@ -223,7 +232,7 @@ export default {
     window.scrollTo(0,0)
   },
   mounted() {
-    if (this.$route.query.id) {
+    if (this.$route.params.id) {
       this.initInfo()
     }
   },
@@ -241,7 +250,6 @@ export default {
           title: '',
           reservation: true,
           imageUrl: '',
-          domain_url:'',
           content: '',
           hot: true,
           home: true
@@ -271,22 +279,25 @@ export default {
     // 获取专题 - 详情
     initInfo() {
       this.$fetch('subjectInfo', {
-        subject_id: this.$route.query.id
+        subject_id: this.$route.params.id
       }).then(res => {
         if (res.code == 200) {
-          this.subjectInfo = {...res.data.webinar_subject};
-          this.formData.selectedActives = Array.from(res.data.webinar_subject.webinar_list)
+          this.isOldSubject = Boolean(res.data.webinar_subject.is_new_version);
+          this.formData.selectedActives = Array.from(res.data.webinar_subject.webinar_list) || []
           this.subject_id = res.data.webinar_subject.id
-          this.formData.title = res.data.webinar_subject.title
-          res.data.webinar_subject.cover && (this.formData.imageUrl = res.data.webinar_subject.cover)
-          this.formData.domain_url = res.data.webinar_subject.cover;
+          this.formData.title = res.data.webinar_subject.title;
+          if (res.data.webinar_subject.cover) {
+            this.handlerImageInfo(res.data.webinar_subject.cover)
+          }
+          // res.data.webinar_subject.cover && (this.formData.imageUrl = res.data.webinar_subject.cover)
+          // this.formData.domain_url = res.data.webinar_subject.cover;
           this.formData.content = res.data.webinar_subject.intro
-
+          this.formData.total = res.data.webinar_subject.webinar_num;
           // 配置项
           this.formData.home = res.data.webinar_subject.is_open ? false : true // 是否显示个人主页
           this.formData.hot = Boolean(res.data.webinar_subject.hide_pv) // 是否显示 人气
           this.formData.reservation = Boolean(res.data.webinar_subject.hide_appointment) // 是否显示预约人数
-
+          this.formData.viewer = Number(res.data.webinar_subject.subject_verify);
           // 重置修改状态
           setTimeout(() => {
             this.isChange = false
@@ -294,18 +305,46 @@ export default {
         }
       })
     },
-
+    handlerImageInfo(url) {
+      this.formData.imageUrl = getImageQuery(url);
+      if (cropperImage(url)) {
+        let obj = parseImgOssQueryString(url);
+        const { blur, crop } = obj;
+        this.cropperImage = {
+          backgroundSize: {
+            x: Number(crop.x),
+            y: Number(crop.y),
+            width: Number(crop.w),
+            height: Number(crop.h)
+          },
+          blurryDegree: blur && Number(blur.s) / 2 || 0,
+          lightDegree: obj.bright ? 10 + Number(obj.bright) / 5 : 10,
+          imageCropMode: obj.mode
+        }
+      }
+    },
     sendData(content) {
       this.formData.content = content;
       console.log(content, "1111111111111111");
     },
+    cropComplete(cropperData, url, mode) {
+      console.log(cropperData, url, '?????')
+      this.cropperImage.backgroundSize = cropperData;
+      this.cropperImage.imageCropMode = mode;
+      this.formData.imageUrl = url;
+    },
+    resetUpload() {
+      let dom = document.querySelector('#subject_cropper .el-upload__input');
+      dom.click();
+    },
     handleUploadSuccess(res, file){
       console.log(res, file);
       if(res.data) {
-        let domain_url = res.data.domain_url || ''
-        let file_url = res.data.file_url || '';
-        this.formData.imageUrl = file_url;
-        this.formData.domain_url = domain_url;
+        this.$refs.subjectCropper.showModel(res.data.domain_url);
+        // let domain_url = res.data.domain_url || ''
+        // let file_url = res.data.file_url || '';
+        // this.formData.imageUrl = file_url;
+        // this.formData.domain_url = domain_url;
       }
     },
     beforeUploadHnadler(file){
@@ -354,9 +393,9 @@ export default {
     uploadPreview(file){
       console.log('uploadPreview', file);
     },
-
+    // 保存
     submitForm(formName) {
-    window.cd = this.formData
+        window.cd = this.formData
       if (!this.formData.content) {
         this.$message({
           message: `请输入专题简介`,
@@ -385,10 +424,11 @@ export default {
           let data = {
             subject: this.formData.title,
             introduction: this.formData.content,
-            img_url: this.formData.imageUrl,
+            img_url: this.$parseURL(this.domain_url).path,
             is_private: this.formData.home ? 0 : 1,
             hide_appointment: Number(this.formData.reservation),
             hide_pv: Number(this.formData.hot),
+            subject_verify: this.formData.viewer
           };
 
           if (webinar_ids.length) {
@@ -396,17 +436,17 @@ export default {
           }
 
           this.loading = true;
-          let url = this.$route.query.id ? 'subjectEdit' : 'subjectCreate';
+          let url = this.$route.params.id ? 'subjectEdit' : 'subjectCreate';
 
           if(url == 'subjectEdit') {
             data.id = this.subject_id
           }
           this.$fetch(url, data).then(res=>{
-            if (!this.$route.query.id) {
+            if (!this.$route.params.id) {
               let refer = this.$route.query.refer || 2
               this.$vhall_paas_port({
                 k: 100489,
-                data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: refer, s: '', report_extra: {}, ref_url: '', req_url: ''}
+                data: {business_uid: this.userId, user_id: '', webinar_id: '',subject_id: '', refer: refer, s: '', report_extra: {}, ref_url: '', req_url: ''}
               })
             }
 
@@ -414,7 +454,7 @@ export default {
               this.setReportData(webinar_ids.length)
               this.subject_id = res.data.subject_id;
               this.$message({
-                message: this.$route.query.id ? '编辑成功' : `创建成功`,
+                message: this.$route.params.id ? '编辑成功' : `创建成功`,
                 showClose: true,
                 // duration: 0,
                 type: 'success',
@@ -422,14 +462,17 @@ export default {
               });
               // 保存或创建成功重置更改状态
               this.isChange = false
+              let subject_id = this.subject_id || this.$route.params.id;
+              if (!this.isOldSubject && subject_id) {
+                this.$router.push({path: `/special/list`});
+              } else {
+                this.$router.push({path: `/special/details/${subject_id}`});
+              }
               console.log(res);
-              setTimeout(()=>{
-                this.$router.push({path: '/special'});
-              }, 500);
             }
           }).catch(error=>{
             this.$message({
-              message: this.$route.query.id ? '编辑失败' : `创建失败，${error.msg}`,
+              message: this.$route.params.id ? '编辑失败' : `创建失败，${error.msg}`,
               showClose: true,
               // duration: 0,
               type: 'error',
@@ -458,24 +501,24 @@ export default {
       if (this.formData.imageUrl) {
         this.$vhall_paas_port({
           k: 100498,
-          data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          data: {business_uid: this.userId, user_id: '', webinar_id: '', subject_id: this.$route.params.id || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
       }
       this.$vhall_paas_port({
         k: this.formData.reservation ? 100499 : 100500,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', subject_id: this.$route.params.id || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({
         k: this.formData.hot ? 100501 : 100502,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', subject_id: this.$route.params.id || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({
         k: this.formData.home ? 100503 : 100504,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', subject_id: this.$route.params.id || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       this.$vhall_paas_port({
         k: 100505,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {vip:len}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', subject_id: this.$route.params.id || '', refer: '', s: '', report_extra: {vip:len}, ref_url: '', req_url: ''}
       })
     },
     // 判断是否填写数据
@@ -506,15 +549,18 @@ export default {
     },
     deleteImg() {
       this.formData.imageUrl = '';
-      this.formData.domain_url = '';
+      this.cropperImage.lightDegree = 10;
+      this.cropperImage.blurryDegree = 0;
     },
     doSelectedActives (selectedActives) {
-      selectedActives.map(item => {
-        this.formData.selectedActives.push(item);
-      })
-      let id = 'webinar_id';
-      this.formData.selectedActives = this.formData.selectedActives.reduce((all, next) => all.some((atom) => atom[id] == next[id]) ? all : [...all, next],[]);
+      this.formData.selectedActives = selectedActives;
       this.showActiveSelect = false
+      // selectedActives.map(item => {
+      //   this.formData.selectedActives.push(item);
+      // })
+      // let id = 'webinar_id';
+      // this.formData.selectedActives = this.formData.selectedActives.reduce((all, next) => all.some((atom) => atom[id] == next[id]) ? all : [...all, next],[]);
+      // this.showActiveSelect = false
     },
     // 删除事件
     deleteSpecial(id) {
@@ -565,7 +611,7 @@ export default {
     updateDrag(e) {
       this.$vhall_paas_port({
         k: 100506,
-        data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: {business_uid: this.userId, user_id: '', webinar_id: '', subject_id: this.$route.params.id || '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
     },
     dragEnd(e) {
@@ -604,6 +650,10 @@ export default {
   }
   /deep/.el-upload--picture-card i.saasicon_shangchuan{
     font-size: 40px;
+  }
+  .title_text{
+    color: #999;
+    font-size: 14px;
   }
   .switch__box{
     line-height: 35px;
@@ -650,6 +700,22 @@ export default {
       height: 180px;
     }
   }
+  .image_cropper{
+    width: 100%;
+    margin-top: 10px;
+    &_item{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      span{
+        color: #595959;
+      }
+      .wid_block{
+        display: inline-block;
+        width: 16px;
+      }
+    }
+  }
  /* .editBox {
     padding: 0px 40px;
   }
@@ -668,6 +734,7 @@ export default {
     width: 640px;
     font-size: 14px;
     font-weight: 400;
+    margin-top: 10px;
 
 
     &__theader{
@@ -708,6 +775,9 @@ export default {
         font-size: 14px;
         color: #1A1A1A;
         word-break: keep-all;
+        &.tr_active{
+          background: rgba(251, 58, 50, 0.1);
+        }
         &>div{
           display: inline-block;
           vertical-align: top;
@@ -730,9 +800,9 @@ export default {
         word-break: break-all;
         cursor: pointer;
         color: #3562FA;
-        &:hover{
-          color: #FB3A32;
-        }
+        // &:hover{
+        //   color: #FB3A32;
+        // }
       }
       &-status{
         width: 88px;
@@ -750,6 +820,28 @@ export default {
             color: #FB3A32;
           }
         }
+      }
+      .statusTag{
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 4px;
+      }
+      .tag_1{
+        background: #FB3A32;
+      }
+      .tag_2{
+        background: #3562FA;
+      }
+      .tag_3{
+        background: #999;
+      }
+      .tag_4{
+        background: #fa9a32;
+      }
+      .tag_5{
+        background: #14BA6A;
       }
     }
   }

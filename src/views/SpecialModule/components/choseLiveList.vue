@@ -10,6 +10,7 @@
       :before-close="cancelSelect"
       custom-class="choose-gift"
     >
+      <div class="subject_tip">若直播在其他专题已设置统一观看限制，当前列表不展示该直播。</div>
       <VhallInput style="width: 230px" v-model="keyword" v-clearEmoij placeholder="请输入直播标题或者直播ID" @keyup.enter.native="inputChange"  @clear="inputChange" class="head-btn search resetRightBrn" clearable>
         <i slot="prefix" class="el-icon-search el-input__icon" :class="{'disabled': !keyword}" @click="inputChange(true)"></i>
       </VhallInput>
@@ -24,7 +25,7 @@
             >
             <label  class="img-tangle" v-show="item.checked"><img src="../../../common/images/icon-choose.png" alt=""></label>
               <div class="vh-chose-active-item__cover">
-                <img :src="item.img_url" alt="">
+                <img :class="`img_box_bg box_bg_${item.itemMode}`" :src="item.img_url" alt="">
                 <div class="vh-chose-active-item__cover-status">
                   <span class="liveTag">
                     <label class="live-status" v-if="item.webinar_state == 1">
@@ -54,7 +55,7 @@
         </div>
       </div>
       <div class="control">
-        <span>当前选中<span class="choosed-num"> {{selectedOption.length}} </span>个直播</span>
+        <span>当前选中<span class="choosed-num"> {{ selectedOption.length }} </span>个直播</span>
         <div class="control-btn" style="text-align: right;">
           <el-button @click="saveSelect" v-preventReClick :disabled="!selectedOption.length" type="primary" round>确定</el-button>
           <el-button @click="cancelSelect" round>取消</el-button>
@@ -64,10 +65,29 @@
 </template>
 <script>
 import noData from '@/views/PlatformModule/Error/nullPage';
-import { sessionOrLocal } from '@/utils/utils';
+import { sessionOrLocal, parseImgOssQueryString, cropperImage } from '@/utils/utils';
 
 export default {
-  props: ['checkedList'],
+  props: {
+    // 选中的数组
+    checkedList: {
+      required: true,
+      type: Array,
+      default: () => []
+    },
+    // 选中的总数
+    checkedTotal: {
+      required: true,
+      type:Number,
+      default: 0
+    },
+    // 专题权限
+    checkAuth: {
+      required: true,
+      type: Number,
+      default: 0
+    }
+  },
   data() {
     return {
       hasDelayPermission: false,
@@ -94,6 +114,8 @@ export default {
     noData
   },
   created() {
+    this.selectedOption = this.checkedList.length && JSON.parse(JSON.stringify(this.checkedList)) || []
+    console.log(this.selectedOption, '???123124')
     this.getActiveList();
   },
 
@@ -112,8 +134,9 @@ export default {
         })
       }
       this.activeList = [];
-      // this.activeList.map(item => item.checked = false);
-      this.selectedOption = [];
+      if(!this.checkedList.length) {
+        this.selectedOption = [];
+      }
       this.pageInfo = {
         pos: 0,
         page: 1,
@@ -138,7 +161,9 @@ export default {
       const userId = sessionStorage.getItem('userId')
       let params = {
         title: this.keyword,
+        subject_id: this.$route.params.id || undefined,
         order_type: 1,
+        is_subject: this.checkAuth > 0 ? 1 : 2,
         webinar_state: 0,
         ...this.pageInfo
       }
@@ -156,20 +181,34 @@ export default {
             this.text = '';
             this.isSearch = true;
           }
-          this.activeList = this.activeList.concat(res.data.list)
+          this.activeList = this.activeList.concat(res.data.list).map(item => {
+            let mode = 3;
+            if (cropperImage(item.img_url)) {
+              mode = this.handlerImageInfo(item.img_url);
+            }
+            return {
+              ...item,
+              itemMode: mode
+            }
+          })
           this.total = res.data.total
           this.maxPage = Math.ceil(res.data.total / this.pageInfo.limit);
           this.loading = false;
+          this.syncCheckStatus()
         } else {
           this.loading = false
         }
       })
     },
-
+    // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      return Number(obj.mode) || 3;
+    },
     // 同步 选中状态
     syncCheckStatus() {
       if (this.checkedList.length > 0) {
-      const checked = this.checkedList.map((item) => {
+      const checked = this.selectedOption.map((item) => {
         return item.webinar_id || item.id
       })
       this.activeList = this.activeList.map((item) => {
@@ -193,12 +232,23 @@ export default {
     doSelect(item) {
       console.log( item )
       item.checked = !item.checked;
-      this.selectedOption = this.activeList.filter(item => item.checked);
+      if (this.checkedList.length > 0) {
+        const checkedIds = this.selectedOption.map((item) => {
+          return item.webinar_id || item.id
+        })
+        if (item.checked && !checkedIds.includes(item.webinar_id)) {
+          this.selectedOption.push(item)
+        } else {
+          this.selectedOption = this.selectedOption.filter(items => items.webinar_id != item.webinar_id || items.id != item.id);
+        }
+      } else {
+        this.selectedOption = this.activeList.filter(item => item.checked);
+      }
     },
 
     saveSelect() {
-      const checkedActives = this.activeList.filter(item => item.checked)
-      this.$emit('selectedEvent', checkedActives)
+      // const checkedActives = this.activeList.filter(item => item.checked)
+      this.$emit('selectedEvent', this.selectedOption)
     },
 
     cancelSelect() {
@@ -217,8 +267,11 @@ export default {
   padding: 16px 0 0 32px;
   overflow: hidden;
   .material-box {
-    height: 328px;
+    height: 327px;
     margin-bottom: 10px;
+  }
+  /deep/.el-scrollbar__wrap {
+    overflow-x: hidden;
   }
   // .head-btn{
   //   width: 100%;
@@ -273,13 +326,21 @@ export default {
       background: #1A1A1A;
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
-      img{
+      .img_box_bg{
         width: 100%;
         height: 100%;
-        object-fit: scale-down;
+        object-fit: contain;
+        object-position: center;
         position: absolute;
         top:0;
         left: 0;
+        &.box_bg_1{
+          object-fit: fill;
+        }
+        &.box_bg_2{
+          object-fit: cover;
+          object-position: left top;
+        }
       }
       &-status{
         position: absolute;
@@ -357,6 +418,12 @@ export default {
         }
     }
   }
+}
+.subject_tip{
+  position: absolute;
+  top: 32px;
+  left: 120px;
+  color: #999;
 }
 .control{
   padding: 24px 32px;

@@ -78,12 +78,15 @@
           <div class="submit-footer">
             <el-button class="length152" type="primary" disabled size="medium" round>提交</el-button>
           </div>
-        </div>
+        <!-- 隐私协议合规（活动下） -->
+              <!-- <privacy-select scene="question" compType="2"></privacy-select> -->
+            </div>
       </div>
   </template>
   </div>
 </template>
 <script>
+// import PrivacySelect from '@/views/Login/components/privacy-select.vue';
 import preQuestion from '@/components/Question/preQuestion';
 import noData from '@/views/PlatformModule/Error/nullPage';
 export default {
@@ -109,7 +112,8 @@ export default {
   },
   components: {
     preQuestion,
-    noData
+    noData,
+    // PrivacySelect
   },
   watch: {
     dataBaseVisible() {

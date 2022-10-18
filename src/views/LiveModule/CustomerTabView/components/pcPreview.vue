@@ -3,7 +3,7 @@
     <img class="cover" src="./images/pc-cover@1x.png" alt="">
     <div class="pc-menus" v-show="activeIndex != null">
       <ul>
-        <vhscroll>
+        <vue-scroll>
           <template
             v-for="(item, index) in menus"
           >
@@ -18,7 +18,7 @@
             </span>
           </li>
           </template>
-        </vhscroll>
+        </vue-scroll>
       </ul>
     </div>
     <div class="tab-content">

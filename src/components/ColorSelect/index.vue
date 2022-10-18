@@ -2,7 +2,7 @@
   <div class="color--select">
     <div class="theme--box">
       <i v-for="item in themeKeys" :key="'themes__' + item" :class="'themes__' + item + ' ' + ('#'+item.toUpperCase() === colors.toUpperCase() ? 'active' : '')" @click.prevent.stop="setColorsValue('#' + item)"></i>
-      <div class="theme--select-main">
+      <div class="theme--select-main" v-if="isShowMain">
         <i  class="themes__select" v-if="openSelect" @click.prevent.stop="openSelectPanel" key="themes__ul" :style="`background:${colors}`"></i>
         <div class="div__sketch" v-show="selectPanelShow">
           <sketch-picker :value="colors" :preset-colors="presetColors"  @input="updateValue"
@@ -38,6 +38,10 @@ export default {
     colorDefault: {
       type: String,
       default: ''
+    },
+    isShowMain: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -100,6 +104,11 @@ export default {
       this.colors = color || '';
     }
   },
+  watch: {
+    colorDefault() {
+      this.colors = this.colorDefault
+    }
+  },
   created() {
     this.colors = this.colorDefault || '';
     this.resetColor = this.colorDefault || '';
@@ -138,6 +147,18 @@ export default {
   background: #1A1A1A;
   border: 1px solid #1A1A1A;
 }
+.themes__FB2626 {
+  background: #FB2626;
+  border: 1px solid  #FB2626;
+}
+.themes__D9A90B {
+  background: #D9A90B;
+  border: 1px solid  #D9A90B;
+}
+.themes__1E4EDC {
+  background: #1E4EDC;
+  border: 1px solid  #1E4EDC;
+}
 .themes__FB3A32 {
   background: #FB3A32;
   border: 1px solid  #FB3A32;
@@ -157,6 +178,26 @@ export default {
 .themes__DC12D2 {
   background: #DC12D2;
   border: 1px solid #DC12D2;
+}
+.themes__000000 {
+  background: #000000;
+  border: 1px solid  #000000;
+}
+.themes__262626 {
+  background: #262626;
+  border: 1px solid #262626;
+}
+.themes__595959 {
+  background: #595959;
+  border: 1px solid #595959;
+}
+.themes__8C8C8C {
+  background: #8C8C8C;
+  border: 1px solid #8C8C8C;
+}
+.themes__F5F5F5 {
+  background: #F5F5F5;
+  border: 1px solid #D9D9D9;
 }
 /*样式选择器重置*/
 .theme--select-main {

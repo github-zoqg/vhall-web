@@ -527,7 +527,7 @@ export default {
         const isWebinarLiving = await this.isCanDelete()
         if (isWebinarLiving) {
           this.$message({
-            message: `正在直播中，请直播结束后操作`,
+            message: `正在${this._rehearsal_type ? '彩排' : '直播'}中，请${this._rehearsal_type ? '彩排' : '直播'}结束后操作`,
             showClose: true,
             // duration: 0,
             type: 'warning',
@@ -761,7 +761,7 @@ export default {
     async handleBatchDelete() {
       const isWebinarLiving = await this.isCanDelete()
       if (isWebinarLiving) {
-        this.$message.warning('正在直播中，请直播结束后操作！')
+        this.$message.warning(`正在${this._rehearsal_type ? '彩排' : '直播'}中，请${this._rehearsal_type ? '彩排' : '直播'}结束后操作！`)
         return false;
       }
       this.$confirm('观众端礼物显示将受到影响, 确认删除?', '提示', {
@@ -780,7 +780,7 @@ export default {
         const isWebinarLiving = await this.isCanDelete()
         if (isWebinarLiving) {
           this.$message({
-            message: `正在直播中，请直播结束后操作`,
+            message: `正在${this._rehearsal_type ? '彩排' : '直播'}中，请${this._rehearsal_type ? '彩排' : '直播'}结束后操作`,
             showClose: true,
             // duration: 0,
             type: 'warning',
@@ -833,10 +833,12 @@ export default {
     },
     isCanDelete () {
       return new Promise(resolve => {
+        // webinar/info调整-直播中不能操作的使用1
         this.$fetch('getWebinarInfo', {
           webinar_id: this.webinar_id
         }).then(res => {
           // 活动直播中不支持删除礼物
+          this._rehearsal_type = res.data.rehearsal_type
           resolve(res.data.webinar_state == 1)
         })
       })

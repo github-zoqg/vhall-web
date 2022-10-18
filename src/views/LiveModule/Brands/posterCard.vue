@@ -14,32 +14,56 @@
           <el-form label-width="120px" :model="form" ref="officialForm" :rules="formRules">
             <el-form-item label="手机图片" prop="m_img">
               <div class="img-box">
-                <upload class="giftUpload" v-model="form.m_img" :domain_url="m_domain_url" :saveData="{
+                <upload class="giftUpload" id="poster_wap_cropper" v-model="form.m_img" :domain_url="form.m_img" :saveData="{
                      path: pathUrl,
                      type: 'image',
-                  }" :widthImg="231" :heightImg="130" :on-success="pcUploadAdvSuccess" :on-progress="pcUploadProcess"
+                  }" :widthImg="231" :heightImg="130" :on-success="wapUploadAdvSuccess" :on-progress="pcUploadProcess"
                   :on-error="pcUploadError" :on-preview="pcUploadPreview" @handleFileChange="handlePcFileChange"
-                  :before-upload="beforePcUploadHnadler" @delete="form.m_img = '', m_domain_url = ''">
+                  :before-upload="beforePcUploadHnadler" @delete="deleteWapImage">
                   <div slot="tip">
                     <p>建议尺寸：750*1334px</p>
                     <p>小于4M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
               </div>
+              <div class="image_cropper">
+                <div class="image_cropper_item">
+                  <span>模糊程度</span>
+                  <vh-slider v-model="formWapImage.blurryDegree" :max="10" :disabled="!form.m_img"  style="width:260px"></vh-slider>
+                  <span class="wid_block">{{formWapImage.blurryDegree}}</span>
+                </div>
+                <div class="image_cropper_item">
+                  <span>背景亮度</span>
+                  <vh-slider v-model="formWapImage.lightDegree" :max="20" :disabled="!form.m_img"  style="width:260px"></vh-slider>
+                  <span class="wid_block">{{ formWapImage.lightDegree}}</span>
+                </div>
+              </div>
             </el-form-item>
             <el-form-item label="PC图片" prop="img">
               <div class="img-box">
-                <upload class="giftUpload" v-model="form.img" :domain_url="domain_url" :saveData="{
+                <upload class="giftUpload" id="poster_pc_cropper" v-model="form.img" :domain_url="form.img" :saveData="{
                      path: pathUrl,
                      type: 'image',
                   }" :widthImg="231" :heightImg="130" :on-success="uploadAdvSuccess" :on-progress="uploadProcess"
                   :on-error="uploadError" :on-preview="uploadPreview" @handleFileChange="handleFileChange"
-                  :before-upload="beforeUploadHnadler" @delete="form.img = '', domain_url = ''">
+                  :before-upload="beforeUploadHnadler" @delete="deletePcImage">
                   <div slot="tip">
                     <p>建议尺寸：1920*1080px</p>
                     <p>小于4M(支持jpg、gif、png、bmp)</p>
                   </div>
                 </upload>
+              </div>
+              <div class="image_cropper">
+                <div class="image_cropper_item">
+                  <span>模糊程度</span>
+                  <vh-slider v-model="formPcImage.blurryDegree" :max="10" :disabled="!form.img"  style="width:260px"></vh-slider>
+                  <span class="wid_block">{{formPcImage.blurryDegree}}</span>
+                </div>
+                <div class="image_cropper_item">
+                  <span>背景亮度</span>
+                  <vh-slider v-model="formPcImage.lightDegree" :max="20" :disabled="!form.img"  style="width:260px"></vh-slider>
+                  <span class="wid_block">{{ formPcImage.lightDegree}}</span>
+                </div>
               </div>
             </el-form-item>
             <el-form-item label="链接" prop="url">
@@ -76,9 +100,9 @@
                 <img class="hb_bg_default" src="../../../common/images/poster/pc-2.png" alt="" />
                 <!-- 开启 并且有图-->
                 <div class="pc-poster-wrap">
-                  <el-image v-show="status <= 0 && domain_url"  class="hb_img v-poster-preview" :src="domain_url" fit="cover"></el-image>
-                  <el-image v-show="!domain_url" class="hb_img v-poster-preview"
-                    src="../../../common/images/poster/pc-1.png" fit="cover"></el-image>
+                  <el-image v-show="status <= 0 && domain_pc_url"  class="hb_img v-poster-preview" :src="form.img" :fit="ImgsSize[formPcImage.imageCropMode - 1]" :class="formPcImage.imageCropMode == 2 ? 'isCover' : ''"></el-image>
+                  <el-image v-show="!domain_pc_url" class="hb_img v-poster-preview"
+                    :src="pcPoster" fit="cover"></el-image>
                 </div>
                 <!--  <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s后关闭' : '关闭'}}</el-button> -->
                 <div :class="['poster-btn', {'five': alertType > 0}]"></div>
@@ -92,10 +116,10 @@
             <!-- 开屏海报 -->
             <div class="hb_app">
               <div class="poster-img">
-                <el-image v-show="status <= 0 && m_domain_url" class="domain_url" :src="m_domain_url" fit="cover">
+                <el-image v-show="status <= 0 && domain_wap_url" class="domain_url" :src="domain_wap_url" :fit="ImgsSize[formWapImage.imageCropMode - 1]" :class="formWapImage.imageCropMode == 2 ? 'isCover' : ''">
                 </el-image>
-                <el-image v-show="!m_domain_url" class="default"
-                  src="../../../common/images/poster/phone_poster_default@2x.png" fit="cover">
+                <el-image v-show="!domain_wap_url" class="default"
+                  :src="h5Poster" fit="cover">
                 </el-image>
               </div>
               <el-button class="poster-btn" size="mini" round @click="closePoster">{{alertType > 0 ? '5s 关闭' : '关闭'}}
@@ -107,6 +131,8 @@
       </div>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
+    <!-- 裁剪组件 -->
+    <cropper ref="posterCropper" @cropComplete="cropComplete" @resetUpload="resetUpload" :ratio="posterRadio"></cropper>
   </div>
 </template>
 <script>
@@ -114,10 +140,16 @@ import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 // import Env from '@/api/env.js';
 import beginPlay from '@/components/beginBtn';
-import { sessionOrLocal } from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery, ImgsSize} from "@/utils/utils";
+import cropper from '@/components/Cropper/index'
+import pcPoster from '../../../common/images/poster/pc-1.png'
+import h5Poster from '../../../common/images/poster/phone_poster_default@2x.png'
 export default {
   data() {
     return {
+      pcPoster,
+      h5Poster,
+      ImgsSize,
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
       domain_url: '',
       m_domain_url: '',
@@ -127,10 +159,33 @@ export default {
       switchType: 'app',
       showPoster: false,
       userId: '',
+      posterRadio: 750/1344,
+      formPcImage: {
+        imageCropMode: 1,
+        lightDegree: 10,
+        blurryDegree: 0,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
+      },
+      formWapImage: {
+        imageCropMode: 1,
+        lightDegree: 10,
+        blurryDegree: 0,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
+      },
       form: {
         img: '',
         m_img: '',
-        url: ''
+        url: '',
       },
       formRules: {
         img: [
@@ -152,6 +207,14 @@ export default {
     pathUrl: function() {
       return `interacts/screen-imgs`;
     },
+    domain_wap_url() {
+      if (!this.form.m_img) return '';
+      return `${this.form.m_img}?x-oss-process=image/crop,x_${this.formWapImage.backgroundSize.x.toFixed()},y_${this.formWapImage.backgroundSize.y.toFixed()},w_${this.formWapImage.backgroundSize.width.toFixed()},h_${this.formWapImage.backgroundSize.height.toFixed()}${this.formWapImage.blurryDegree > 0 ? `,/blur,r_10,s_${this.formWapImage.blurryDegree * 2}` : ''},/bright,${(this.formWapImage.lightDegree - 10) * 5}&mode=${this.formWapImage.imageCropMode}`;
+    },
+    domain_pc_url() {
+      if (!this.form.img) return '';
+      return `${this.form.img}?x-oss-process=image/crop,x_${this.formPcImage.backgroundSize.x.toFixed()},y_${this.formPcImage.backgroundSize.y.toFixed()},w_${this.formPcImage.backgroundSize.width.toFixed()},h_${this.formPcImage.backgroundSize.height.toFixed()}${this.formPcImage.blurryDegree > 0 ? `,/blur,r_10,s_${this.formPcImage.blurryDegree * 2}` : ''},/bright,${(this.formPcImage.lightDegree - 10) * 5}&mode=${this.formPcImage.imageCropMode}`;
+    },
     activeTitle() {
       return this.status ? '开启后，观看直播前展示广告图' : '已开启，观看直播前展示广告图';
     },
@@ -163,6 +226,7 @@ export default {
     domain_url: {
       handler(val) {
         if (val) {
+          console.log(val,'val')
           this.showPoster = true
         }
       },
@@ -172,7 +236,8 @@ export default {
   components: {
     PageTitle,
     upload,
-    beginPlay
+    beginPlay,
+    cropper
   },
   mounted() {
     this.userId = JSON.parse(sessionOrLocal.get("userId"))
@@ -223,16 +288,41 @@ export default {
         }
       } */
     },
+    // 图片裁剪数据
+    handlerImageInfo(img) {
+      if (cropperImage(img)) {
+        let obj = parseImgOssQueryString(img);
+        const { blur, crop } = obj;
+        return {
+          backgroundSize: {
+            x: Number(crop.x),
+            y: Number(crop.y),
+            width: Number(crop.w),
+            height: Number(crop.h)
+          },
+          blurryDegree: blur && Number(blur.s) / 2 || 0,
+          lightDegree: obj.bright ? 10 + Number(obj.bright) / 5 : 10,
+          imageCropMode: obj.mode
+        }
+      } else {
+        return false;
+      }
+    },
     getData() {
       this.$fetch('getPosterInfo', {
         webinar_id: this.$route.params.str
       }).then(res => {
         if (res && res.code === 200) {
-          this.form.img = res.data.img || '';
-          this.form.m_img = res.data.m_img || '';
+          // 图片解析
+          if (res.data.img && res.data.m_img) {
+            this.form.m_img = getImageQuery(res.data.m_img);
+            this.form.img = getImageQuery(res.data.img);
+            this.formWapImage = this.handlerImageInfo(res.data.m_img) || this.formWapImage;
+            this.formPcImage = this.handlerImageInfo(res.data.img) || this.formPcImage
+          }
           this.form.url = res.data.url || '';
-          this.domain_url = res.data.img || '';
-          this.m_domain_url = res.data.m_img || '';
+          // this.domain_url = res.data.img || '';
+          // this.m_domain_url = res.data.m_img || '';
           /* if (this.domain_url) {
             if (this.switchType == 'pc') {
               this.resizePcImg(this.domain_url)
@@ -258,8 +348,10 @@ export default {
       let params = {
         webinar_id: this.$route.params.str,
         status: this.status, //是否展示公众号/是否展示开屏海报：0开启1关闭
-        img: this.form.img ? this.$parseURL(this.form.img).path : '', // 开屏海报  PC图片地址
-        m_img: this.form.m_img ? this.$parseURL(this.form.m_img).path : '' // 开屏海报  手机图片地址
+        img: this.$parseURL(this.domain_pc_url).path, // 开屏海报  PC图片地址
+        m_img: this.$parseURL(this.domain_wap_url).path // 开屏海报  手机图片地址
+        // img: this.form.img ? this.$parseURL(this.form.img).path : '', // 开屏海报  PC图片地址
+        // m_img: this.form.m_img ? this.$parseURL(this.form.m_img).path : '' // 开屏海报  手机图片地址
       };
       let type = this.alertType;
       params.shutdown_type = type;
@@ -295,14 +387,38 @@ export default {
         }
       });
     },
+    cropComplete(cropperData, url, mode,  index) {
+      console.log(cropperData, url, '?????')
+      if (index == 1) {
+        // 手机
+        this.formWapImage.backgroundSize = cropperData;
+        this.formWapImage.imageCropMode = mode;
+        this.form.m_img = url;
+        // 触发验证
+        this.$refs.officialForm.validateField('m_img');
+      } else {
+        this.formPcImage.backgroundSize = cropperData;
+        this.formPcImage.imageCropMode = mode;
+        this.form.img = url;
+        // 触发验证
+        this.$refs.officialForm.validateField('img');
+      }
+    },
+    resetUpload(index) {
+      let dom = document.querySelector(`#poster_${index == 1 ? 'wap' : 'pc'}_cropper .el-upload__input`);
+      dom.click();
+    },
+    // pc上传成功
     uploadAdvSuccess(res, file) {
       console.log(res, file);
       // this.img = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
       if (res.data) {
-        let domain_url = res.data.domain_url || ''
-        let file_url = res.data.file_url || '';
-        this.form.img = file_url;
-        this.domain_url = domain_url;
+        this.posterRadio = 192/108;
+        this.$refs.posterCropper.showModel(res.data.domain_url, 2);
+        // let domain_url = res.data.domain_url || ''
+        // let file_url = res.data.file_url || '';
+        // this.form.img = file_url;
+        // this.domain_url = domain_url;
         /* if (this.domain_url) {
           if (this.switchType == 'pc') {
             this.resizePcImg(this.domain_url)
@@ -311,8 +427,6 @@ export default {
           }
         } */
       }
-      // 触发验证
-      this.$refs.officialForm.validateField('img');
     },
     beforeUploadHnadler(file) {
       console.log(file);
@@ -390,15 +504,28 @@ export default {
         }
       })
     },
-    // pc
-    pcUploadAdvSuccess(res, file) {
+    deletePcImage() {
+      this.form.img = '';
+      this.formPcImage.blurryDegree = 0;
+      this.formPcImage.lightDegree = 10;
+    },
+    // 删除
+    deleteWapImage() {
+      this.form.m_img = '';
+      this.formWapImage.blurryDegree = 0;
+      this.formWapImage.lightDegree = 10;
+    },
+    // wap
+    wapUploadAdvSuccess(res, file) {
       console.log(res, file);
       // this.img = Env.staticLinkVo.uploadBaseUrl + res.data.file_url;
       if (res.data) {
-        let m_domain_url = res.data.domain_url || ''
-        let m_file_url = res.data.file_url || '';
-        this.form.m_img = m_file_url;
-        this.m_domain_url = m_domain_url;
+        this.posterRadio = 750/1344;
+        this.$refs.posterCropper.showModel(res.data.domain_url, 1);
+        // let m_domain_url = res.data.domain_url || ''
+        // let m_file_url = res.data.file_url || '';
+        // this.form.m_img = m_file_url;
+        // this.m_domain_url = m_domain_url;
         /* if (this.domain_url) {
           if (this.switchType == 'pc') {
             this.resizePcImg(this.domain_url)
@@ -407,8 +534,6 @@ export default {
           }
         } */
       }
-      // 触发验证
-      this.$refs.officialForm.validateField('m_img');
     },
     beforePcUploadHnadler(file) {
       console.log(file);
@@ -499,6 +624,11 @@ export default {
   user-select: none;
 }
 .offical-show {
+  .isCover {
+    /deep/ .el-image__inner {
+      object-position: left top;
+    }
+  }
   .show-on {
     position: absolute;
     top: 42px;
@@ -671,6 +801,7 @@ export default {
       height: 568px;
       border-bottom-right-radius: 26px;
       border-bottom-left-radius: 26px;
+      background: rgba(0, 0, 0, 0.5);
       .domain_url {
         display: inline-block;
         position: absolute;
@@ -687,13 +818,13 @@ export default {
       }
       .default {
         display: inline-block;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        object-fit: cover;
-        max-width: 312px;
-        max-height: 568px;
+        // position: absolute;
+        // top: 50%;
+        // left: 50%;
+        // transform: translate(-50%, -50%);
+        // object-fit: cover;
+        // max-width: 100%;
+        // max-height: 100%;
         border-bottom-right-radius: 26px;
         border-bottom-left-radius: 26px;
       }
@@ -726,6 +857,22 @@ export default {
   height: 140px;
   /deep/.el-upload--picture-card {
     height: 130px;
+  }
+}
+.image_cropper{
+  width: 100%;
+  // margin-top: 10px;
+  &_item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    span{
+      color: #595959;
+    }
+    .wid_block{
+      display: inline-block;
+      width: 16px;
+    }
   }
 }
 /deep/.length152 {

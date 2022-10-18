@@ -279,6 +279,10 @@ export default {
         if (msg.data.type === 'waiting_sign_trans_code') {
           EventBus.$emit('waiting_sign_trans_code', msg.data);
         }
+        if (msg.data.type == "notice_sms_send_num" && msg.data.user_id == sessionOrLocal.get('userId')) {
+          // 消息通知-预发短信量
+          EventBus.$emit('notice_sms_send_num', msg.data);
+        }
       })
     },
     // 初始化

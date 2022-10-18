@@ -127,7 +127,7 @@
     </div>
     <!-- 静态预览功能 -->
     <template v-if="showDialog">
-      <!--<el-dialog class="vh-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
+      <!--<el-dialog class="vh-saas-dialog" title="预览" :visible.sync="showDialog" width="30%" center>
         <doc-preview ref="videoPreview" :docParam='docParam' v-if="docParam"></doc-preview>
       </el-dialog>-->
       <VhallDialog
@@ -221,7 +221,6 @@ import Env from '@/api/env'
 import { sessionOrLocal } from '@/utils/utils'
 import beginPlay from '@/components/beginBtn'
 import EventBus from '@/utils/Events'
-/* import FileUpload from '@/components/FileUpload/main'; */
 import { v1 as uuidV1 } from 'uuid'
 
 export default {
@@ -977,6 +976,7 @@ export default {
       this.getTableWordList()
     },
     getWebinarInfo() {
+      // webinar/info调整-与活动状态无关的调用
       this.$fetch('getWebinarInfo', { webinar_id: this.$route.params.str })
         .then((res) => {
           if (res && res.code === 200) {
@@ -1393,7 +1393,7 @@ export default {
   /deep/.el-card__body {
     padding: 32px 24px;
   }
-  ::v-deep .vh-dialog {
+  ::v-deep .vh-saas-dialog {
     .el-dialog {
       width: 960px !important;
       height: 623px;

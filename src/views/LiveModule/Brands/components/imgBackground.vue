@@ -1,46 +1,51 @@
 <template>
-  <VhallDialog title="选择封面背景" :visible.sync="dialogVisible" :close-on-click-modal="false" style="overflow: hidden;"
-    width="670px">
-    <el-scrollbar class="scrollbar scroll-modify">
-      <div class="background-list">
-        <div :class="['list-item', isType === 0 ? 'active' : '']" @click.stop="domain_url && choseBackground(-1)">
-          <upload v-model="imageUrl" :domain_url="domain_url" :saveData="{
-               path: 'interacts/invite-card-imgs',
-               type: 'image',
-            }" :on-success="handleuploadSuccess" :on-progress="uploadProcess" :on-error="uploadError"
-            :on-preview="uploadPreview" :restPic="true" @delete="daleteImg()" @fullCover="choseBackground(-1)"
-            :isFullCover="false" :widthImg="138" :heightImg="138" @handleFileChange="handleFileChange"
-            :before-upload="beforeUploadHnadler">
-            <div slot="tip">
-              <p>建议尺寸：750*1334px,小于4M</p>
-              <p>支持jpg、png、bmp</p>
-            </div>
-          </upload>
-          <label class="img-tangle" v-if="isType === 0"><img src="../../../../common/images/icon-choose.png"
-              alt=""></label>
-          <!-- <label class="img-tangle" v-show="isType==0">
-            <i class="el-icon-check"></i>
-          </label> -->
+  <div>
+    <VhallDialog title="选择封面背景" :visible.sync="dialogVisible" :close-on-click-modal="false" style="overflow: hidden;"
+      width="670px">
+      <el-scrollbar class="scrollbar scroll-modify">
+        <div class="background-list">
+          <div :class="['list-item', isType === 0 ? 'active' : '']" @click.stop="domain_url && choseBackground(-1)">
+            <upload v-model="imageUrl" id="invitation_cropper" :domain_url="domain_url" :saveData="{
+                path: 'interacts/invite-card-imgs',
+                type: 'image',
+              }" :on-success="handleuploadSuccess" :on-progress="uploadProcess" :on-error="uploadError"
+              :on-preview="uploadPreview" :restPic="true" @delete="daleteImg()" @fullCover="choseBackground(-1)"
+              :isFullCover="false" :widthImg="138" :heightImg="138" @handleFileChange="handleFileChange"
+              :before-upload="beforeUploadHnadler">
+              <div slot="tip">
+                <p>建议尺寸：750*1334px,小于4M</p>
+                <p>支持jpg、png、bmp</p>
+              </div>
+            </upload>
+            <label class="img-tangle" v-if="isType === 0"><img src="../../../../common/images/icon-choose.png"
+                alt=""></label>
+            <!-- <label class="img-tangle" v-show="isType==0">
+              <i class="el-icon-check"></i>
+            </label> -->
+          </div>
+          <div :class="['list-item', 'list-imgs', 'is-success', isType === index + 1 ? 'active' : '']"
+            v-for="(item, index) in fileList" :key="index">
+            <label class="img-tangle" v-if="isType === index + 1"><img src="../../../../common/images/icon-choose.png"
+                alt=""></label>
+            <!-- <label class="img-tangle" v-if="isType === index + 1">
+              <i class="el-icon-check"></i>
+            </label> -->
+            <img :src="item" alt="" class="bgImg" @click="choseBackground(index)" />
+          </div>
         </div>
-        <div :class="['list-item', 'list-imgs', 'is-success', isType === index + 1 ? 'active' : '']"
-          v-for="(item, index) in fileList" :key="index">
-          <label class="img-tangle" v-if="isType === index + 1"><img src="../../../../common/images/icon-choose.png"
-              alt=""></label>
-          <!-- <label class="img-tangle" v-if="isType === index + 1">
-            <i class="el-icon-check"></i>
-          </label> -->
-          <img :src="item" alt="" class="bgImg" @click="choseBackground(index)" />
-        </div>
+      </el-scrollbar>
+      <div slot="footer" class="dialog-footer">
+        <el-button round size="medium" v-preventReClick type="primary" @click.prevent.stop="changePic">选 择</el-button>
+        <el-button round size="medium" @click.prevent.stop="dialogVisible = false">取 消</el-button>
       </div>
-    </el-scrollbar>
-    <div slot="footer" class="dialog-footer">
-      <el-button round size="medium" v-preventReClick type="primary" @click.prevent.stop="changePic">选 择</el-button>
-      <el-button round size="medium" @click.prevent.stop="dialogVisible = false">取 消</el-button>
-    </div>
-  </VhallDialog>
+    </VhallDialog>
+    <!-- 裁剪组件 -->
+    <cropper ref="invitationCropper" @cropComplete="cropComplete" @resetUpload="resetUpload" :ratio="750/1334"></cropper>
+  </div>
 </template>
 <script>
 import upload from '@/components/Upload/main';
+import cropper from '@/components/Cropper/index'
 import Env from '@/api/env';
 export default {
   data() {
@@ -61,17 +66,19 @@ export default {
         `${Env.staticImgs.invitation[7]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
         `${Env.staticImgs.invitation[8]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
       ],
+      imageCropper: {}
     };
   },
   components: {
-    upload
+    upload,
+    cropper
   },
-  props: ['url', 'type'],
+  props: ['url', 'type', 'mode'],
   watch: {
     dialogVisible() {
       if (this.dialogVisible) {
-        this.domain_url = this.url || '';
-        this.imageUrl = this.url;
+        this.domain_url = this.type == 0 ? (this.domain_url || this.url) : '';
+        this.imageUrl = this.type == 0 ? this.url : '';
         if (this.imageUrl) {
           this.isType = 0;
         } else {
@@ -85,7 +92,10 @@ export default {
       this.isType = index + 1;
     },
     changePic() {
-      this.$emit('onChangePic', this.isType, this.imageUrl, this.domain_url);
+      if (this.isType > 0) {
+         this.domain_url = '';
+      }
+      this.$emit('onChangePic', this.isType, this.domain_url, this.imageCropper);
       this.dialogVisible = false;
     },
     daleteImg() {
@@ -94,14 +104,29 @@ export default {
       this.domain_url = '';
       this.url = '';
     },
+    cropComplete(cropperData, url, mode) {
+      console.log(cropperData, url, '?????')
+      this.imageCropper.backgroundSize = cropperData;
+      this.imageCropper.imageCropMode = mode;
+      this.domain_url = url;
+    },
+    resetUpload() {
+      let dom = document.querySelector('#invitation_cropper .el-upload__input');
+      dom.click();
+    },
     handleuploadSuccess(res, file) {
       console.log(res, file);
       // this.imageUrl = URL.createObjectURL(file.raw);
       if (res.data) {
-        let domain_url = res.data.domain_url || ''
-        let file_url = res.data.file_url || '';
-        this.imageUrl = file_url;
-        this.domain_url = domain_url;
+        if(this.$route.meta.name == 'invCard'){
+          let domain_url = res.data.domain_url || ''
+          let file_url = res.data.file_url || '';
+          this.imageUrl = file_url;
+          this.domain_url = domain_url;
+          this.cropComplete({height: 0,width: 0,x: 0,y: 0},this.domain_url,'')
+        } else {
+          this.$refs.invitationCropper.showModel(res.data.domain_url);
+        }
         this.isType = 0;
       }
     },

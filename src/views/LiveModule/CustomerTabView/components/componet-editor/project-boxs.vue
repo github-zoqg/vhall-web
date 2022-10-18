@@ -18,7 +18,7 @@
     :infinite-scroll-immediate="true"
     v-show="total"
   >
-    <vhscroll>
+    <vue-scroll>
       <!-- 单个视频 -->
       <div class="vh-chose-active-item"
         v-for="(item) in activeList"
@@ -29,7 +29,7 @@
         <i class="iconfont-v3 saasicon-choose-01" v-show="item.checked"></i>
         <div class="vh-chose-active-item__cover">
           <!-- TODO 右侧专题选择区域 -->
-          <img :src="item.cover" alt="">
+          <img :class="`img_box_bg box_bg_${item.itemMode}`" :src="item.cover" alt="">
           <div class="vh-chose-active-item__cover-status">
             <!-- <span class="liveTag"> -->
               <!-- <label class="live-status" v-if="item.webinar_state == 1">
@@ -51,7 +51,7 @@
           {{ item.created_at | unitTime }}
         </div>
       </div>
-    </vhscroll>
+    </vue-scroll>
   </div>
 </div>
 </template>
@@ -59,6 +59,7 @@
 import noData from '@/views/PlatformModule/Error/nullPage';
 import EventBus from '../../bus'
 import eventsType from '../../EventConts'
+import { sessionOrLocal, parseImgOssQueryString, cropperImage } from '@/utils/utils';
 export default {
   props: ['checkedList'],
   data() {
@@ -74,7 +75,8 @@ export default {
       lock: false,
       loading: false,
       visible: true,
-      isSearch: false
+      isSearch: false,
+      selectWebinars: this.checkedList
     }
   },
   computed: {
@@ -129,8 +131,13 @@ export default {
             this.total = 0
           } else {
             this.activeList =  this.activeList.concat(res.data.list.map(item => {
+              let mode = 3;
+              if (cropperImage(item.cover)) {
+                mode = this.handlerImageInfo(item.cover);
+              }
               return {
                 ...item,
+                itemMode: mode,
                 checked: false
               }
             }))
@@ -144,13 +151,18 @@ export default {
         }
       })
     },
-
+    // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      return Number(obj.mode) || 3;
+    },
     // 同步 选中状态
     syncCheckStatus(ids, del_id) {
 
       let checkIds = this.checkedList
       if(ids && ids.length > 0) {
         checkIds = ids
+        this.selectWebinars = ids
       }
       if (checkIds.length > 0) {
         const checked = checkIds.map((item) => {
@@ -194,10 +206,18 @@ export default {
 
       item.checked = !item.checked;
       this.selectedOption = this.activeList.filter(item => item.checked);
-      let webinars = this.selectedOption.map((item) => {
-        return item.id
-      })
-      this.$emit('seleclted', webinars)
+
+      // 按时间排序
+      // let webinars = this.selectedOption.map((item) => {
+      //   return item.id
+      // })
+
+      // 按选择顺序排序
+      item.checked && this.selectWebinars.push(item.id)
+      if( !item.checked ) {
+        this.selectWebinars = this.selectWebinars.filter(i => i != item.id)
+      }
+      this.$emit('seleclted', this.selectWebinars)
     },
   },
 
@@ -226,7 +246,7 @@ export default {
   .vh-chose-active-item{
     cursor: pointer;
     display: inline-block;
-    width: 215px;
+    width: 175px;
     height: 182px;
     overflow: hidden;
     background: #F7F7F7;
@@ -266,13 +286,21 @@ export default {
       background: #1A1A1A;
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
-      img{
+      .img_box_bg{
         width: 100%;
         height: 100%;
-        object-fit: scale-down;
+        object-fit: contain;
+        object-position: center;
         position: absolute;
         top:0;
         left: 0;
+        &.box_bg_1{
+          object-fit: fill;
+        }
+        &.box_bg_2{
+          object-fit: cover;
+          object-position: left top;
+        }
       }
       &-status{
         position: absolute;
@@ -324,6 +352,11 @@ export default {
       border-radius: 20px;
       position: relative;
       z-index: 2;
+    }
+  }
+  @media (min-width: 1920px) {
+    .vh-chose-active-item {
+      width: 215px;
     }
   }
   .select-option{

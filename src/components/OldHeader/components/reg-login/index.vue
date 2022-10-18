@@ -188,7 +188,7 @@
               <el-button class="vhsaas-red-button length-max vhsaas-reg-btn" round @click="registerHandler">立即注册</el-button>
             </div>
             <el-form-item class="auto-login register-checked">
-              <el-checkbox v-model="checked">我已阅读并同意<a href="https://t.e.vhall.com/home/vhallapi/serviceterms" target="_blank" rel="noopener noreferrer">服务条款及隐私协议</a></el-checkbox>
+              <el-checkbox v-model="checked">我已阅读并同意<a href="https://e.vhall.com/home/vhallapi/serviceterms" target="_blank" rel="noopener noreferrer">服务条款及隐私协议</a></el-checkbox>
             </el-form-item>
         </el-form>
         </div>

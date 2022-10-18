@@ -3,7 +3,7 @@
     <pageTitle pageTitle="分享设置"></pageTitle>
     <div class="share-container">
       <div class="share-left">
-        <el-form :model="formShareInfo" ref="ruleShareForm" label-width="60px" :rules="ruleShareForm">
+        <el-form :model="formShareInfo" ref="ruleShareForm" label-width="90px" :rules="ruleShareForm">
         <el-form-item label="标题" prop="title">
           <VhallInput
             v-model="formShareInfo.title"
@@ -33,10 +33,11 @@
         <el-form-item label="图片" prop="img_url">
           <upload
             class="giftUpload"
+            id="share_cropper"
             :heightImg="138"
             :widthImg="138"
             v-model="formShareInfo.img_url"
-            :domain_url="domain_url"
+            :domain_url="formShareInfo.img_url"
             :on-success="uploadAdvSuccess"
             :on-progress="uploadProcess"
             :on-error="uploadError"
@@ -49,6 +50,18 @@
               <p>支持jpg、png</p>
             </div>
           </upload>
+          <div class="image_cropper">
+            <div class="image_cropper_item">
+              <span>模糊程度</span>
+              <vh-slider v-model="imageCropper.blurryDegree" :max="10" style="width:300px"></vh-slider>
+              <span class="wid_block">{{imageCropper.blurryDegree}}</span>
+            </div>
+            <div class="image_cropper_item">
+              <span>背景亮度</span>
+              <vh-slider v-model="imageCropper.lightDegree" :max="20" style="width:300px"></vh-slider>
+              <span class="wid_block">{{ imageCropper.lightDegree}}</span>
+            </div>
+          </div>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" round v-preventReClick @click="sureShareSetting('ruleShareForm')">保存</el-button>
@@ -69,24 +82,39 @@
       </div>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
+    <!-- 裁剪组件 -->
+    <cropper ref="shareCropper" @cropComplete="cropComplete" @resetUpload="resetUpload" :ratio="1/1"></cropper>
   </div>
 </template>
 <script>
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import beginPlay from '@/components/beginBtn';
-import {sessionOrLocal} from "@/utils/utils";
 import defaultAvatar from '@/utils/avatar';
+import {sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery} from "@/utils/utils";
+import cropper from '@/components/Cropper/index'
 export default {
   name: 'shareSet',
   components: {
     PageTitle,
     upload,
-    beginPlay
+    beginPlay,
+    cropper
   },
   data() {
     return {
       webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
+      imageCropper: {
+        blurryDegree: 0,
+        lightDegree: 10,
+        imageCropMode: 1,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
+      },
       formShareInfo: {
         title: '',
         img_url: '',
@@ -104,9 +132,15 @@ export default {
           { required: true, message: '请输入简介', trigger: 'blur' },
         ],
       },
-      domain_url: '',
       avatar: defaultAvatar,
+      // domain_url: '',
       img: require('../../../common/images/share/img.jpg')
+    }
+  },
+  computed: {
+    domain_url() {
+      if (!this.formShareInfo.img_url) return '';
+      return `${this.formShareInfo.img_url}?x-oss-process=image/crop,x_${this.imageCropper.backgroundSize.x.toFixed()},y_${this.imageCropper.backgroundSize.y.toFixed()},w_${this.imageCropper.backgroundSize.width.toFixed()},h_${this.imageCropper.backgroundSize.height.toFixed()}${this.imageCropper.blurryDegree > 0 ? `,/blur,r_10,s_${this.imageCropper.blurryDegree * 2}` : ''},/bright,${(this.imageCropper.lightDegree - 10) * 5}&mode=${this.imageCropper.imageCropMode}`;
     }
   },
   created() {
@@ -120,23 +154,47 @@ export default {
           title = title.length - 30 > 0 ? title.substring(0, 30) : title;
           this.formShareInfo = {
             title: title,
-            img_url: res.data.img_url,
             introduction: this.repalceHtml(res.data.introduction)
           }
-          this.domain_url = res.data.img_url
-          this.reImgUrl = res.data.img_url;
+          if (res.data.img_url) {
+            this.handlerImageInfo(res.data.img_url);
+          }
         }
       }).catch(res => {});
+    },
+    // 处理图片
+    handlerImageInfo(url) {
+      this.formShareInfo.img_url = getImageQuery(url);
+      console.log(this.formShareInfo.img_url, '??fenx分享图片')
+      if (cropperImage(url)) {
+        let obj = parseImgOssQueryString(url);
+        const { blur, crop } = obj;
+        this.imageCropper = {
+          backgroundSize: {
+            x: Number(crop.x),
+            y: Number(crop.y),
+            width: Number(crop.w),
+            height: Number(crop.h)
+          },
+          blurryDegree: blur && Number(blur.s) / 2 || 0,
+          lightDegree: obj.bright ? 10 + Number(obj.bright) / 5 : 10,
+          imageCropMode: obj.mode
+        }
+      }
+      this.reImgUrl = this.formShareInfo.img_url;
     },
     // 保存设置项
     sureShareSetting(formName) {
       this.formShareInfo.webinar_id = this.$route.params.str;
-      this.formShareInfo.img_url = this.$parseURL(this.formShareInfo.img_url).path
+      let params = {
+        ...this.formShareInfo,
+        img_url: this.$parseURL(this.domain_url).path
+      }
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.$fetch('setShareSettingInfo', this.formShareInfo).then(res => {
+          this.$fetch('setShareSettingInfo', params).then(res => {
           if (res.code === 200) {
-            this.reImgUrl = this.domain_url;
+            this.reImgUrl = this.formShareInfo.img_url;
             this.$message({
               message: `保存成功`,
               showClose: true,
@@ -166,16 +224,28 @@ export default {
       return desc
     },
     deleteImg() {
-      this.domain_url = this.reImgUrl;
-      this.formShareInfo.img_url = '';
+      this.formShareInfo.img_url = this.reImgUrl;
+      this.imageCropper.blurryDegree = 0;
+      this.imageCropper.lightDegree = 10;
+    },
+    cropComplete(cropperData, url, mode) {
+      console.log(cropperData, url, '?????')
+      this.imageCropper.backgroundSize = cropperData;
+      this.imageCropper.imageCropMode = mode;
+      this.formShareInfo.img_url = url;
+    },
+    resetUpload() {
+      let dom = document.querySelector('#share_cropper .el-upload__input');
+      dom.click();
     },
     uploadAdvSuccess(res, file) {
       console.log(res, file);
       if(res.data) {
-        let domain_url = res.data.domain_url || ''
-        let file_url = res.data.file_url || '';
-        this.formShareInfo.img_url = file_url;
-        this.domain_url = domain_url;
+        this.$refs.shareCropper.showModel(res.data.domain_url);
+        // let domain_url = res.data.domain_url || ''
+        // let file_url = res.data.file_url || '';
+        // this.formShareInfo.img_url = file_url;
+        // this.domain_url = domain_url;
       }
     },
     beforeUploadHnadler(file){
@@ -236,7 +306,7 @@ export default {
       padding: 48px 32px;
     }
     .share-left{
-      width: 460px;
+      width: 500px;
       .tip{
         color: #999;
         line-height: 30px;
@@ -258,6 +328,22 @@ export default {
       }
       /deep/.el-button.is-round{
         padding: 9px 55px;
+      }
+     .image_cropper{
+        width: 100%;
+        margin-top: 10px;
+        &_item{
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          span{
+            color: #595959;
+          }
+          .wid_block{
+            display: inline-block;
+            width: 16px;
+          }
+        }
       }
     }
     .share{

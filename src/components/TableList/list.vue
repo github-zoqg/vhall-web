@@ -71,7 +71,7 @@
               <img :src="scope.row.img" />
             </div>
             <div v-else-if="item.key === 'img_url'" class="advImg">
-              <img :src="scope.row.img_url" />
+              <img :class="`img_box_bg box_bg_${scope.row.itemMode}`" :src="scope.row.img_url" />
             </div>
             <div v-else-if="item.key === 'watch'">
               <p class="switch__box">
@@ -220,7 +220,7 @@
                     :class="[scope.row.fileStatusCss, 'statusTag']"
                     :key="ins"
                     >{{ item }}</span
-                  ><br />
+                  ><br/>
                 </template>
               </div>
             </div>
@@ -391,7 +391,8 @@
     </el-table>
     <SPagination
       :total="totalNum"
-      v-if="needPagination && totalNum > 10"
+      :page-size="pageInfo.limit"
+      v-if="needPagination && totalNum > pageInfo.limit"
       :currentPage="pageInfo.pageNum"
       @current-change="currentChangeHandler"
       align="center"
@@ -407,8 +408,7 @@ export default {
     return {
       pageInfo: {
         pageNum: 1,
-        pos: 0,
-        limit: 10,
+        pos: 0
       },
       isUpdate: 0,
       oldVal: [],
@@ -451,6 +451,10 @@ export default {
       type: String,
       default: 'normal', // 场景，按场景展示
     },
+    pageLimit: {
+      type: Number,
+      default: 10
+    }
   },
   watch: {
     manageTableData: {
@@ -463,8 +467,9 @@ export default {
     },
   },
   created() {
+    this.pageInfo.limit = this.pageLimit
     // console.log('tabelColumnLabel', this.tabelColumnLabel);
-    // console.log('manageTableData', this.manageTableData);
+    console.log('manageTableData', this.manageTableData);
   },
   methods: {
     // 开关状态切换的回调
@@ -517,6 +522,7 @@ export default {
     // 页码改变按钮事件
     currentChangeHandler(current) {
       this.pageInfo.pageNum = current
+      this.pageInfo.limit = this.pageLimit || 10
       this.pageInfo.pos = parseInt((current - 1) * this.pageInfo.limit)
       this.$emit('getTableList', this.pageInfo)
     },
@@ -609,10 +615,18 @@ export default {
     background: #fff;
     border: 1px solid #e6e6e6;
     border-radius: 4px;
-    img {
+    .img_box_bg {
       width: 100%;
       height: 100%;
-      object-fit: scale-down;
+      object-fit: contain;
+      object-position: center;
+      &.box_bg_1{
+        object-fit: fill;
+      }
+      &.box_bg_2{
+        object-fit: cover;
+        object-position: left top;
+      }
     }
   }
   /deep/.cell .prizeImg {

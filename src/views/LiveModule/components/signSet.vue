@@ -72,7 +72,7 @@
             <el-button type="primary" round v-preventReClick @click.prevent.stop="signSetSave">保 存</el-button>
           </el-form-item>
         </el-form>
-        <div class="hide-white" v-show="!brandConfig"></div>
+        <div class="hide-white" v-show="brandType==1 && brandConfig==2"></div>
       </div>
       <!-- 预览区域 -->
       <brand-set-preview ref="brandSetPreviewComp" class="brand--preview" :brandType="brandType" :tabType="'signSet'"></brand-set-preview>
@@ -86,7 +86,7 @@ import BrandSetPreview from '../../LiveModule/components/brandSetPreview';
 import Env from "@/api/env";
 export default {
   name: "signSet.vue",
-  props: ['brandConfig'],
+  props: ['brandConfig', 'brandType'],
   components: {
     Upload,
     BrandSetPreview
@@ -100,7 +100,7 @@ export default {
         logo_url: null,
         skip_url: null
       },
-      brandType: 1,
+      // brandType: 1,
       domain_url: '',
       signSetFormRules: {
         logo_url: [
@@ -114,13 +114,13 @@ export default {
       }
     };
   },
-  watch: {
-    '$parent.type'() {
-      if (this.brandType) {
-        this.initComp();
-      }
-    }
-  },
+  // watch: {
+  //   '$parent.type'() {
+  //     if (this.brandType) {
+  //       this.initComp();
+  //     }
+  //   }
+  // },
   methods: {
     handleUploadSuccess(res, file){
       console.log(res, file);
@@ -197,8 +197,8 @@ export default {
     // 获取活动标记记录
     getSignInfo() {
       let params = {
-        type: this.$route.params.str ? this.brandType : 2,
-        webinar_id: this.brandType == 1 ? this.$route.params.str : ''
+        type: this.brandType,
+        webinar_id: this.$route.params.str || ''
       }
       this.$fetch('getInterWebinarTag', this.$params(params)).then(res => {
         console.log(res);
@@ -234,7 +234,7 @@ export default {
       });
     },
     initComp() {
-      this.brandType = this.$parent.type;
+      // this.brandType = this.$parent.type;
       this.getSignInfo();// 获取活动标志内容
     },
     // 保存
@@ -243,7 +243,7 @@ export default {
         if(valid) {
           console.log(this.signSetForm, 'signSetForm');
           let params = Object.assign(this.signSetForm, {webinar_id: this.$route.params.str || '', type: this.brandType});
-          let signObj = {}
+          // let signObj = {}
           this.$fetch('setInterWebinarTag', this.$params(params)).then(res => {
             this.setReportData(this.$params(params))
             this.$message({

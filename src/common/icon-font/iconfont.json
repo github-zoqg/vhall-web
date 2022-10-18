@@ -6,25 +6,109 @@
   "description": "",
   "glyphs": [
     {
-      "icon_id": "30565421",
-      "name": "line-barrage-on",
-      "font_class": "line-barrage-on",
-      "unicode": "e8c9",
-      "unicode_decimal": 59593
+      "icon_id": "31632304",
+      "name": "回放提醒",
+      "font_class": "huifangtixing",
+      "unicode": "e7b9",
+      "unicode_decimal": 59321
     },
     {
-      "icon_id": "30565422",
-      "name": "line-barrage-off",
-      "font_class": "line-barrage-off",
-      "unicode": "e8d1",
-      "unicode_decimal": 59601
+      "icon_id": "31632807",
+      "name": "fill-wait",
+      "font_class": "fill-wait",
+      "unicode": "e7ba",
+      "unicode_decimal": 59322
     },
     {
-      "icon_id": "30565423",
-      "name": "line-barrage-set up",
-      "font_class": "a-line-barrage-setup1",
-      "unicode": "e912",
-      "unicode_decimal": 59666
+      "icon_id": "31632808",
+      "name": "fill-warning",
+      "font_class": "fill-warning",
+      "unicode": "e7bb",
+      "unicode_decimal": 59323
+    },
+    {
+      "icon_id": "31632809",
+      "name": "fill-success",
+      "font_class": "fill-success",
+      "unicode": "e7bc",
+      "unicode_decimal": 59324
+    },
+    {
+      "icon_id": "31632302",
+      "name": "开播提醒",
+      "font_class": "kaibotixing",
+      "unicode": "e7b3",
+      "unicode_decimal": 59315
+    },
+    {
+      "icon_id": "31632303",
+      "name": "预约报名",
+      "font_class": "yuyuebaoming",
+      "unicode": "e7b8",
+      "unicode_decimal": 59320
+    },
+    {
+      "icon_id": "30082633",
+      "name": "line-public",
+      "font_class": "line-public1",
+      "unicode": "e871",
+      "unicode_decimal": 59505
+    },
+    {
+      "icon_id": "28506459",
+      "name": "line-collection success",
+      "font_class": "a-line-collectionsuccess",
+      "unicode": "e876",
+      "unicode_decimal": 59510
+    },
+    {
+      "icon_id": "28506508",
+      "name": "line-house",
+      "font_class": "line-house",
+      "unicode": "e8a7",
+      "unicode_decimal": 59559
+    },
+    {
+      "icon_id": "28506523",
+      "name": "line-collection",
+      "font_class": "line-collection",
+      "unicode": "e8b6",
+      "unicode_decimal": 59574
+    },
+    {
+      "icon_id": "30564863",
+      "name": "line-audit",
+      "font_class": "line-audit",
+      "unicode": "e911",
+      "unicode_decimal": 59665
+    },
+    {
+      "icon_id": "28506489",
+      "name": "line-user",
+      "font_class": "line-user",
+      "unicode": "e894",
+      "unicode_decimal": 59540
+    },
+    {
+      "icon_id": "28506507",
+      "name": "line-expression",
+      "font_class": "line-expression",
+      "unicode": "e8a6",
+      "unicode_decimal": 59558
+    },
+    {
+      "icon_id": "28506470",
+      "name": "line-send",
+      "font_class": "line-send",
+      "unicode": "e881",
+      "unicode_decimal": 59521
+    },
+    {
+      "icon_id": "28644051",
+      "name": "line-zhi kan zhubanfang",
+      "font_class": "a-line-zhikanzhubanfang",
+      "unicode": "e845",
+      "unicode_decimal": 59461
     },
     {
       "icon_id": "28506480",

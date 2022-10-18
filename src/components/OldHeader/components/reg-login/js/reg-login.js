@@ -460,6 +460,7 @@ export default {
         sessionOrLocal.set('vhsaas_userId', res.data.user_id || '')
         sessionOrLocal.set('vhsaas_loginUUid', res.data.user_id || '')
         sessionOrLocal.set('vhsaas_tokenExpiredTime', res.data.exp_time || '', 'localStorage')
+        sessionOrLocal.set('vhsaas_tokenRefresh', new Date().getTime(), 'localStorage')
       }
     },
     // 获取用户信息

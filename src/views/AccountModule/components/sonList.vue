@@ -37,7 +37,7 @@
         </el-select>
       </div>
       <!-- 有消息内容 -->
-      <div>
+      <div v-if="sonTableColumn.length > 0">
         <!-- 表格与分页 -->
         <table-list
           ref="sonTab"
@@ -161,7 +161,8 @@ export default {
     }
   },
   created() {
-    this.userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+    const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+    this.userInfo = userInfo
   },
   data() {
     /*let validNums = (rule, value, callback) => {
@@ -212,34 +213,6 @@ export default {
       },
       sonCountVo: {},
       isHandle: false, // 是否有操作项
-      sonTableColumn: [
-        {
-          label: '账号',
-          key: 'name',
-          width: 'auto'
-        },
-        {
-          label: '昵称',
-          key: 'nick_name',
-          width: 'auto',
-          customTooltip: true
-        },
-        {
-          label: '手机号码',
-          key: 'phone',
-          width: 'auto'
-        },
-        {
-          label: '角色',
-          key: 'role_name',
-          width: 'auto'
-        },
-        {
-          label: '用量分配',
-          key: 'round',
-          width: 'auto'
-        }
-      ],
       tableRowBtnFun: [
         {
           name: "详情",
@@ -640,6 +613,15 @@ export default {
           } else if (this.vipType === 2){
             item.round = `时长（${item.vip_info.duration}分钟）`;
           }
+          if (this.userInfo.user_extends.extends_remark != 1) {
+            if (item.is_dynamic > 0) {
+              // 短信动态
+              item.sms = `动态分配`;
+            } else {
+              // 短信（XXX条）
+              item.sms = `${item.vip_info.sms || 0}条`;
+            }
+          }
           // item.round = `${item && item.vip_info && item.vip_info.type > 0 ? '流量' : '并发' }（${item && item.is_dynamic > 0 ? '动态' : item.vip_info.type > 0 ? `${item.vip_info.total_flow}GB` : `${item.vip_info.total}方`}）`;
         });
         this.sonDao = dao;
@@ -719,6 +701,50 @@ export default {
     },
     isForbidCreate() {
       return this.sonCountVo.available_num == 0
+    },
+    sonTableColumn() {
+      const tableColumns = [
+        {
+          label: '账号',
+          key: 'name',
+          width: 'auto'
+        },
+        {
+          label: '昵称',
+          key: 'nick_name',
+          width: 'auto',
+          customTooltip: true
+        },
+        {
+          label: '手机号码',
+          key: 'phone',
+          width: 'auto'
+        },
+        {
+          label: '角色',
+          key: 'role_name',
+          width: 'auto'
+        },
+        {
+          label: '用量分配',
+          key: 'round',
+          width: 'auto'
+        }
+      ]
+      if (this.showSmsModule) {
+        tableColumns.push({
+          label: '短信分配',
+          key: 'sms',
+          width: 'auto'
+        })
+      }
+      return tableColumns
+    },
+    showSmsModule: function () {
+      const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
+      // 不是知学云账号 & 开启了 短信通知配置项权限
+      return userInfo.user_extends.extends_remark != 1 && isNoticeMessage == 1;
     }
   }
 };

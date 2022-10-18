@@ -1,3 +1,4 @@
+<!-- 该组件已废弃 -->
 <template>
   <div>
     <pageTitle pageTitle="品牌设置"></pageTitle>

@@ -324,7 +324,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
-  else if (metaName === 'langCard') {// 推广嵌入
+  else if (metaName === 'langCard') {// 多语言链接
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -340,7 +340,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
-  else if (metaName === 'brandSet') {// 品牌设置
+  else if (metaName === 'msgNotification') {// 开播提醒
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -349,8 +349,24 @@ export function CrumbSet(metaName, that) {
         isClick: true
       },
       {
-        title: '品牌设置',
-        path: `/live/brandSet/${that.$route.params.str}`,
+        title: '开播提醒',
+        path: `/live/msgNotification/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
+  else if (metaName === 'livingSetting') {// 直播间设置
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '直播详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '直播间设计器',
+        path: `/live/livingSet/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'
       }
@@ -915,8 +931,8 @@ export function CrumbSet(metaName, that) {
   else if (metaName === 'specialList') {// 专题列表
     return CrumbLiveList('specialList');
   }
-  else if (metaName === 'specialEdit') {// 创建专题、编辑专题
-    return that.$route.query.id ? [
+  else if (metaName === 'subjectEdit') {// 创建专题、编辑专题
+    return that.$route.params.id ? [
       {
         title: '专题管理',
         path: '/special',
@@ -929,8 +945,13 @@ export function CrumbSet(metaName, that) {
         isClick: true
       },
       {
+        title: '专题详情',
+        path: `/special/details/${that.$route.params.id}`,
+        isClick: true
+      },
+      {
         title: '编辑专题',
-        path: '/special/edit',
+        path: `/special/edit/${that.$route.params.id}`,
         isClick: true
       }
     ] : [
@@ -946,6 +967,73 @@ export function CrumbSet(metaName, that) {
         isClick: true
       }
     ];
+  } else if (metaName === 'subjectViewer') {
+    return [
+      {
+        title: '专题管理',
+        path: '/special',
+        isClick: false,
+        redirect: 'noRedirect'
+      },
+      {
+        title: '专题列表',
+        path: '/special/list',
+        isClick: true
+      },
+      {
+        title: '专题详情',
+        path: `/special/details/${that.$route.params.id}`,
+        isClick: true
+      },
+      {
+        title: '观看限制',
+        path: '/special/viewer',
+        isClick: true
+      }
+    ]
+  } else if (metaName === 'subjectDetails') {
+    return [
+      {
+        title: '专题管理',
+        path: '/special',
+        isClick: false,
+        redirect: 'noRedirect'
+      },
+      {
+        title: '专题列表',
+        path: '/special/list',
+        isClick: true
+      },
+      {
+        title: '专题详情',
+        path: `/special/details/${that.$route.params.id}`,
+        isClick: true
+      }
+    ]
+  } else if (metaName === 'subjectData') {
+    return [
+      {
+        title: '专题管理',
+        path: '/special',
+        isClick: false,
+        redirect: 'noRedirect'
+      },
+      {
+        title: '专题列表',
+        path: '/special/list',
+        isClick: true
+      },
+      {
+        title: '专题详情',
+        path: `/special/details/${that.$route.params.id}`,
+        isClick: true
+      },
+      {
+        title: '导出数据',
+        path: '/special/data',
+        isClick: true
+      }
+    ]
   }
 
   /** 资料管理 **/
@@ -1156,12 +1244,23 @@ export function CrumbSet(metaName, that) {
       }
     ]
   }
-  else if (metaName === 'brandMgr') {//设置中心-品牌设置
+  else if (metaName === 'livingMgr') {//设置中心-直播间设置
     return [
       ...CrumbLiveList('setting'),
       {
-        title: '品牌设置',
-        path: '/setting/brandMgr',
+        title: '直播间设计器',
+        path: '/setting/brand',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ]
+  }
+  else if (metaName === 'protocolMgr') {//设置中心-观看协议
+    return [
+      ...CrumbLiveList('setting'),
+      {
+        title: '观看协议',
+        path: '/setting/protocol',
         isClick: false,
         redirect: 'noRedirect'
       }

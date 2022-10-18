@@ -69,7 +69,7 @@ export default {
     margin-left: 10px;
     display: inline-block;
     /deep/ input{
-      width: 392px;
+      width: 312px;
       line-height: 40px;
       height: 40px;
       padding: 0 12px;

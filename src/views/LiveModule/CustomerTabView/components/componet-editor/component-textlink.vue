@@ -102,7 +102,7 @@ export default {
     font-size: 14px;
     display: inline-block;
     /deep/ input{
-      width: 364px;
+      width: 312px;
       height: 40px;
       line-height: 40px;
       border-radius: 4px;

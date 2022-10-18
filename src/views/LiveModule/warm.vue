@@ -17,8 +17,9 @@
           <span style="color:#999">设置暖场封面后，预告状态将会使用该封面</span>
           <upload
             class="upload__avatar"
+            id="warm_pc_cropper"
             v-model="warmForm.imageUrl"
-            :domain_url="domain_url"
+            :domain_url="domainUrl"
             :saveData="{
               path: 'users/logo-imgs',
               type: 'image',
@@ -35,8 +36,20 @@
               <p>支持jpg、gif、png、bmp</p>
             </div>
           </upload>
+          <div class="image_cropper">
+            <div class="image_cropper_item">
+              <span>模糊程度</span>
+              <vh-slider v-model="warmForm.blurryDegree" :max="10" :disabled="!warmForm.imageUrl"  style="width:540px"></vh-slider>
+              <span class="wid_block">{{warmForm.blurryDegree}}</span>
+            </div>
+            <div class="image_cropper_item">
+              <span>背景亮度</span>
+              <vh-slider v-model="warmForm.lightDegree" :max="20" :disabled="!warmForm.imageUrl"  style="width:540px"></vh-slider>
+              <span class="wid_block">{{ warmForm.lightDegree}}</span>
+            </div>
+          </div>
         </el-form-item>
-         <el-form-item label="播放模式" required  prop="playType">
+        <el-form-item label="播放模式" required  prop="playType">
            <el-radio-group v-model="warmForm.playType">
               <el-radio :label="1">单次播放</el-radio>
               <el-radio :label="2">循环播放</el-radio>
@@ -123,32 +136,6 @@
               </div>
           </div>
         </el-form-item>
-        <!-- <el-form-item label="选择视频" required>
-          <div class="selet-video" @mouseenter="showMenu" @mouseleave="hiddenMenu">
-            <div class="mediaSlot" v-if="!selectMedia.paas_record_id" @click="warmForm.warmFlag && changeVideo()">
-              <div class="picInco">
-                <i class="iconfont-v3 saasicon_shangchuan"></i>
-              </div>
-              视频仅支持MP4格式，文件大小不超过200M<br>
-              上传视频标题不能带有特殊字符和空格，需转码完成才能预览和观看<br>
-              点播、音频直播不支持暖场视频
-            </div>
-            <div class="mediaSlot mediaOther" v-else>
-              <icon icon-class="saasshipinwenjian"></icon>
-              <p class="selectMediaName">{{selectMedia.name}}</p>
-            </div>
-            <div class="abRight" v-if="selectMedia.paas_record_id&&showChecked">
-              <div class="tool" @click.stop="previewVideo">
-                <i class="iconfont-v3 saasicon-eye"></i>
-                <el-button type="text" class="operaBtn" >预览</el-button>
-              </div>
-              <div class="tool" @click.stop="deleteVideo">
-                <i class="iconfont-v3 saasicon_shanchu"></i>
-                <el-button type="text" class="operaBtn" >删除</el-button>
-              </div>
-            </div>
-          </div>
-        </el-form-item> -->
         <el-form-item class="warm_submit">
           <el-button round class="length152" :disabled='!warmForm.warmFlag' type="primary" @click="submitForm('warmForm')" v-preventReClick>提交</el-button>
         </el-form-item>
@@ -157,10 +144,11 @@
       </div>
     </div>
     <selectMedias ref="selecteMedia" :isWarmVideo="true" @selected='mediaSelected' :selectedList="warmVideoList" :videoSize="videoSize" :videoType="videoType" @closeWarm="closeWarm"></selectMedias>
+    <cropper ref="warmCropper" @cropComplete="cropComplete" @resetUpload="resetUpload"></cropper>
     <!-- 预览 -->
     <template v-if="showDialog">
       <div class="preview-wrap">
-        <el-dialog class="vh-dialog" title="" :visible.sync="showDialog" width="30%" center
+        <el-dialog class="vh-saas-dialog" title="" :visible.sync="showDialog" width="30%" center
         :close-on-press-escape=false>
           <video-preview ref="videoPreview" :videoParam='selectMedia'></video-preview>
         </el-dialog>
@@ -175,7 +163,8 @@ import Upload from '@/components/Upload/main';
 import beginPlay from '@/components/beginBtn';
 import selectMedias from './selecteMedia';
 import draggable from "vuedraggable";
-import {sessionOrLocal} from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery} from "@/utils/utils";
+import cropper from '@/components/Cropper/index'
 import VideoPreview from '../MaterialModule/VideoPreview/index.vue';
 export default {
   components: {
@@ -184,7 +173,8 @@ export default {
     selectMedias,
     VideoPreview,
     beginPlay,
-    draggable
+    draggable,
+    cropper
   },
    watch: {
     warmForm: {
@@ -206,12 +196,21 @@ export default {
       userId: '',
       selectMedia: {},
       showDialog: false,
+      imageCropMode: 1,
       warmForm: {
         record_id: '',
         imageUrl: '',
         playType: 1,
         selectedList:[],
-        warmFlag: false
+        warmFlag: false,
+        blurryDegree: 0,
+        lightDegree: 10,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
       },
       domain_url: ''
     };
@@ -219,6 +218,10 @@ export default {
   computed: {
     warmVideoList() {
       return JSON.parse(JSON.stringify(this.warmForm.selectedList || []))
+    },
+    domainUrl() {
+      if (!this.warmForm.imageUrl) return '';
+      return `${this.warmForm.imageUrl}?x-oss-process=image/crop,x_${this.warmForm.backgroundSize.x.toFixed()},y_${this.warmForm.backgroundSize.y.toFixed()},w_${this.warmForm.backgroundSize.width.toFixed()},h_${this.warmForm.backgroundSize.height.toFixed()}${this.warmForm.blurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.warmForm.blurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.warmForm.lightDegree - 10) * 5}&mode=${this.imageCropMode}`;
     }
   },
   created() {
@@ -296,22 +299,36 @@ export default {
         if (res.code == 200) {
           this.warmForm.warmFlag = Boolean(res.data.is_open_warm_video);
           this.warmId = res.data.warm_id;
-          this.domain_url = res.data.img_url;
-          this.warmForm.imageUrl = res.data.img_url;
+          // this.domain_url = res.data.img_url;
+          // this.warmForm.imageUrl = res.data.img_url;
           this.warmForm.playType = res.data.player_type || 1;
           this.warmForm.selectedList = res.data.record_list || [];
-          // if (res.data.record_id) {
-          //   this.selectMedia.paas_record_id = res.data.record_id;
-          //   this.selectMedia.name = res.data.record_name;
-          //   this.selectMedia.msg_url = '.mp4';
-          // }
-          // this.warmForm.record_id = res.data.record_id;
+          if (res.data.img_url) {
+            this.handlerImageInfo(res.data.img_url)
+          }
           // 重置修改状态
           setTimeout(() => {
             this.isChange = false
           }, 300)
         }
       })
+    },
+    // 处理图片
+    handlerImageInfo(url) {
+      this.warmForm.imageUrl = getImageQuery(url);
+      if (cropperImage(url)) {
+        let obj = parseImgOssQueryString(url);
+        const { blur, crop } = obj;
+        this.warmForm.backgroundSize = {
+          x: Number(crop.x),
+          y: Number(crop.y),
+          width: Number(crop.w),
+          height: Number(crop.h)
+        };
+        this.warmForm.blurryDegree = blur && Number(blur.s) / 2 || 0;
+        this.warmForm.lightDegree = obj.bright ? 10 + Number(obj.bright) / 5 : 10;
+        this.imageCropMode = obj.mode;
+      }
     },
     changeVideo() {
       this.$refs.selecteMedia.dialogVisible = true;
@@ -357,12 +374,23 @@ export default {
       this.selectMedia = {};
       this.warmForm.record_id = '';
     },
+    cropComplete(cropperData, url, mode) {
+      console.log(cropperData, url, '?????')
+      this.warmForm.backgroundSize = cropperData;
+      this.warmForm.imageUrl = url;
+      this.imageCropMode = mode;
+    },
+    resetUpload() {
+      let dom = document.querySelector('#warm_pc_cropper .el-upload__input');
+      dom.click();
+    },
     handleUploadSuccess(res, file) {
       if(res.data) {
-        let domain_url = res.data.domain_url || ''
-        let file_url = res.data.file_url || '';
-        this.warmForm.imageUrl = file_url;
-        this.domain_url = domain_url;
+        this.$refs.warmCropper.showModel(res.data.domain_url);
+        // let domain_url = res.data.domain_url || ''
+        // let file_url = res.data.file_url || '';
+        // this.warmForm.imageUrl = file_url;
+        // this.domain_url = domain_url;
       }
     },
     beforeUploadHandler(file){
@@ -430,14 +458,14 @@ export default {
     saveWarmInfo(recordId) {
       let params = {
         is_open_warm_video: Number(this.warmForm.warmFlag),
-        img_url:  this.warmForm.imageUrl,
+        img_url: this.$parseURL(this.domainUrl).path,
         player_type: this.warmForm.playType,
         webinar_id: this.$route.params.str,
         warm_id: this.warmId,
         record_id: recordId.join(',')
       }
       this.$fetch('warnEdit', this.$params(params)).then(res => {
-        if (this.warmForm.imageUrl) {
+        if (this.domainUrl) {
           this.$vhall_paas_port({
             k: 100135,
             data: {business_uid: this.userId, user_id: this.$route.params.str, webinar_id: '', refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
@@ -471,7 +499,8 @@ export default {
     // 删除图片
     deleteImg() {
       this.warmForm.imageUrl = '';
-      this.domain_url = '';
+      this.warmForm.blurryDegree = 0;
+      this.warmForm.lightDegree = 10;
     }
   }
 };
@@ -513,7 +542,7 @@ export default {
   }
 }
 .demo-ruleForm {
-  width: 600px;
+  width: 740px;
 }
 .switch__box {
   display: inline-block;
@@ -658,7 +687,23 @@ export default {
     }
    }
 }
-.vh-dialog{
+.image_cropper{
+  width: 100%;
+  margin-top: 16px;
+  &_item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    span{
+      color: #595959;
+    }
+    .wid_block{
+      display: inline-block;
+      width: 16px;
+    }
+  }
+}
+.vh-saas-dialog{
     /deep/ .el-dialog {
       width: 624px!important;
       background: transparent!important;
@@ -689,7 +734,7 @@ export default {
       border-radius: 4px;
       padding: 0 4px;
     }
-  }
+}
 .box{
   text-align: center;
 }
@@ -710,7 +755,7 @@ export default {
   }
 
 }
- .vh-sort-tables{
+.vh-sort-tables{
     position: relative;
     width: 640px;
     font-size: 14px;
@@ -813,7 +858,7 @@ export default {
         }
       }
     }
-  }
+}
 
 
 </style>

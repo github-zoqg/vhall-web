@@ -751,7 +751,8 @@ export default {
             } else {
               // this.getTableList()
               this.tableData.map((item) => {
-                if (item.watch && this.liveInfo.webinar_state == 1) {
+                // 直播中并且不是彩排中直接修改
+                if (item.watch && this.liveInfo.webinar_state == 1 && this.liveInfo.rehearsal_type != 1) {
                   item.push_status = 1
                   item.statusText = PushStatus[item.push_status]
                   item.status = 1

@@ -47,7 +47,7 @@
                  <i class="iconfont-v3 saasicon_redu"> {{ item.pv | formatNum}}</i>
               </span>
               <a :href="toPageHandle(item)" target="_blank" v-if="tabType === 'live' ? item.img_url : item.cover">
-                <img :src="tabType === 'live' ? item.img_url : item.cover" alt="" />
+                <img :class="`img_box_bg home_bg_${item.itemMode}`"  :src="tabType === 'live' ? item.img_url : item.cover" alt="" />
               </a>
             </div>
             <div class="bottom">
@@ -85,7 +85,7 @@
 <script>
 import Env from "@/api/env";
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
-import {sessionOrLocal} from "@/utils/utils";
+import {sessionOrLocal, parseImgOssQueryString, cropperImage} from "@/utils/utils";
 export default {
   name: "list.vue",
   components: {
@@ -166,7 +166,12 @@ export default {
         if (res && res.code === 200) {
           let list = res.data.list;
           list.map(item => {
-            item.share_link = `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${item.webinar_id}`
+            item.share_link = `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${item.webinar_id}`;
+            if (cropperImage(item.img_url)) {
+              item.itemMode = this.handlerImageInfo(item.img_url);
+            } else {
+              item.itemMode = 3;
+            }
           });
           this.dataList = list;
           this.tabList[0].total = res.data.total;
@@ -204,6 +209,11 @@ export default {
           let list = res.data.list;
           list.map(item => {
             item.share_link = `${window.location.origin + (process.env.VUE_APP_WEB_KEY || '')}/special/detail?id=${item.id}`;
+            if (cropperImage(item.cover)) {
+              item.itemMode = this.handlerImageInfo(item.cover);
+            } else {
+              item.itemMode = 3;
+            }
             // item.img_url = this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, item.cover) || `${Env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`;
           });
           this.dataList = list;
@@ -217,6 +227,11 @@ export default {
       }).finally(()=>{
         this.loading = false;
       });
+    },
+    // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      return Number(obj.mode) || 3;
     },
     // 去设置
     toHomeSetInfo() {
@@ -505,15 +520,23 @@ export default {
       @media (max-width:1919px) {
         height: 170px;
       }
-      img{
+      .img_box_bg{
         width: 100%;
         height: 100%;
-        object-fit: scale-down;
+        object-fit: contain;
+        object-position: center;
         position: absolute;
         border-radius: 4px 4px 0 0;
         top:0;
         left: 0;
-      }
+          &.home_bg_1{
+            object-fit: fill;
+          }
+          &.home_bg_2{
+            object-fit: cover;
+            object-position: left top;
+          }
+        }
       .liveTag{
         background: rgba(0,0,0, .7);
         color: #fff;

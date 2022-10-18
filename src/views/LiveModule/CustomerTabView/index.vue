@@ -1,6 +1,6 @@
 <template>
   <div class="vh-customer-menu-wrap">
-    <page-title
+    <!-- <page-title
       style="position: relative"
       pageTitle="自定义菜单"
     >
@@ -9,7 +9,7 @@
         <span @click="workHelp" class="link__left">使用帮助</span>
         <el-button type="primary" :disabled = 'buttonDis' style="padding-left: 24px;padding-right: 24px;width: 88px;height: 36px;line-height: 14px; margin-left:24px" round @click.prevent.stop="saveCustomTab" >保存</el-button>
       </div>
-    </page-title>
+    </page-title> -->
     <div class="vh-customer-menu-contentBox">
       <div class="vh-customer-menu-contentBox__components">
         <drag-components></drag-components>
@@ -46,6 +46,10 @@
             :menus="customMenus"
             :pre="activeIndex"
           ></pc-preview>
+        </div>
+        <div class="vh-customer-menu-btns">
+          <el-button type="primary" :disabled = 'buttonDis' round @click.prevent.stop="saveCustomTab" >保存</el-button>
+          <span @click="workHelp" class="link__left">使用帮助</span>
         </div>
       </div>
     </div>
@@ -112,7 +116,7 @@ export default {
     this.qrCode = `//aliqr.e.vhall.com/qr.png?t=${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`
     this.link = `${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}`
     this.userId = sessionOrLocal.get('userId')
-    this.getInitMenus()
+    this.initComp()
   },
 
   methods: {
@@ -140,7 +144,7 @@ export default {
       });
     },
 
-    getInitMenus() {
+    initComp() {
       this.activeIndex = 0
       this.$fetch('customMenuList', {
         webinar_id: this.$route.params.str
@@ -207,7 +211,7 @@ export default {
           this.showWatch = true
           this.deleteStack = []
           this.$nextTick(() => {
-            this.getInitMenus()
+            this.initComp()
           })
         }
       }).catch(res=>{
@@ -359,17 +363,26 @@ export default {
     float: right;
     position: relative;
   }
+  .vh-customer__preview-pc {
+    margin-bottom: 40px;
+  }
   .vh-customer-menu-wrap{
+    padding: 0 32px;
     min-height: 530px;
     height: 100%;
     overflow: hidden;
   }
   .vh-customer-menu-btns{
-    position: absolute;
-    right: 10px;
-    top: 0;
+    // margin: 24px 0;
+    display: flex;
+    // justify-content: flex-end;
+    align-items: center;
+    // position: absolute;
+    // right: 10px;
+    // top: 0;
   }
   .link__left {
+    margin-left: 24px;
     font-size: 14px;
     font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
     font-weight: 400;
@@ -408,7 +421,7 @@ export default {
   }
   .vh-customer-menu-contentBox{
     overflow: hidden;
-    background: #F7F7F7;
+    // background: #F7F7F7;
     .vh-customer-menu-contentBox__components{
       height: 100%;
       float: left;

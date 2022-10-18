@@ -23,7 +23,7 @@
             prop="title"
           >
             <VhallInput :disabled="viewingProtocolForm.is_open === 0" v-model="viewingProtocolForm.title" v-clearEmoij :maxlength="50" autocomplete="off" placeholder="请输入《观看协议》标题"  show-word-limit></VhallInput>
-            
+
           </el-form-item>
           <el-form-item class="margin32" prop="content" :label="`协议内容`">
             <v-editor
@@ -66,7 +66,7 @@
               @click="privacyAdd"
             ></i>
           </el-form-item>
-          
+
           <el-form-item class="protocol-item item-link"  v-if="viewingProtocolForm.statement_status" prop="proptocolLink_0">
             <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 0, 'link')" :maxlength="100"  v-model="viewingProtocolForm.proptocolLink_0" class="title-inform" show-word-limit autocomplete="off" placeholder="请输入http://或https://开头的链接"  > </VhallInput>
           </el-form-item>
@@ -78,7 +78,7 @@
               v-if="viewingProtocolForm.is_open === 1 && statementList && statementList.length == 2"
             ></i>
           </el-form-item>
-            
+
           <el-form-item class="protocol-item item-link"  v-if="statementList.length > 1" v-show="viewingProtocolForm.statement_status" prop="proptocolLink_1">
             <VhallInput :disabled="viewingProtocolForm.is_open === 0"  @input="handleInput($event, 1, 'link')" :maxlength="100" class="title-inform" v-model="viewingProtocolForm.proptocolLink_1" show-word-limit autocomplete="off" placeholder="请输入http://或https://开头的链接"  > </VhallInput>
           </el-form-item>
@@ -86,7 +86,7 @@
             <el-button :disabled="viewingProtocolForm.is_open === 0" type="primary" round v-preventReClick @click.prevent.stop="protocolSave">保 存</el-button>
           </el-form-item>
         </el-form>
-        <div class="hide-white" v-show="!brandConfig"></div>
+        <div class="hide-white" v-show="!viewingProtocolForm.is_open"></div>
       </div>
       <!-- 预览区域 -->
       <protocol-preview
@@ -249,7 +249,7 @@ export default {
         }
 
       }else {
-        
+
         this.viewingProtocolForm[linkName] = value
         this.statementList[index].link = value;
         // console.log(this.viewingProtocolForm, linkName, 'linkName')
@@ -385,7 +385,7 @@ export default {
               let statement_info = res.data.statement_info;
               if(statement_info && statement_info.length > 0){
                 this.statementList = statement_info;
-              
+
                 statement_info.forEach((item, index)=>{
                   let titleName = `proptocolTitle_${index}`
                   let linkName = `proptocolLink_${index}`
@@ -394,10 +394,10 @@ export default {
                 })
               }
             }
-            
+
             // console.log(this.viewingProtocolForm, this.statementList, ' this.statementList')
           }
-          
+
         }
       }).catch(err=>{
         console.log(err);
@@ -427,7 +427,7 @@ export default {
           let params = Object.assign(this.viewingProtocolForm, {webinar_id: this.$route.params.str || '', type: this.type});
           this.$fetch('saveAgreement', this.$params(params)).then(res => {
             console.log(res, 'res')
-            
+
             this.$message({
               message:  `保存基本设置成功`,
               showClose: true,
@@ -486,7 +486,7 @@ export default {
     position: absolute;
     width: 100%;
     height: 100%;
-    top:0;
+    top: 50px;
     left:0;
     background: rgba(255, 255, 255, 0.5);
     z-index: 9;

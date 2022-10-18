@@ -8,7 +8,7 @@
         maxlength="50"
         show-word-limit
         placeholder="请输入表单标题"
-        v-model="title"
+        v-model.trim="title"
         v-clearEmoij
         @change="baseInfoChange('title')"
       ></VhallInput>
@@ -19,7 +19,7 @@
       <VhallInput
         :maxlength="500"
         autocomplete="off"
-        v-model="intro"
+        v-model.trim="intro"
         show-word-limit
         placeholder="请输入表单简介"
         type="textarea"
@@ -33,7 +33,8 @@
     <section class="viewItem">
       <p class="label">表单头图</p>
       <upload
-        :domain_url="imageUrl"
+        id="form_cropper"
+        :domain_url="domain_url"
         v-model="imageUrl"
         :on-success="productLoadSuccess"
         :before-upload="beforeUploadHandler"
@@ -49,6 +50,18 @@
       </upload>
       <span class="header-img-tip">建议尺寸：750*125 px，小于2MB（支持格式jpg、png、gif、bmp）</span>
       <div class="disable_wrap" v-show="!signUpSwtich"></div>
+      <div class="form_images" v-if="imageUrl">
+        <div class="form_images_item">
+          <span>模糊程度</span>
+          <vh-slider class="form-slider" v-model="blurryDegree" :max="10" style="width:540px"></vh-slider>
+          <span class="vague_num">{{blurryDegree}}</span>
+        </div>
+        <div class="form_images_item">
+          <span>背景亮度</span>
+          <vh-slider class="form-slider" v-model="lightDegree" :max="20" style="width:540px"></vh-slider>
+          <span class="vague_num">{{lightDegree}}</span>
+        </div>
+      </div>
     </section>
     <!-- 表单名称、表单简介与表单头图为固定字段 -->
     <draggable
@@ -82,7 +95,7 @@
               autocomplete="off"
               show-word-limit
               placeholder="请输入题目"
-              v-model="item.label"
+              v-model.trim="item.label"
               v-clearEmoij
               class="radioInput titleInput"
               @change="subjectChange(item)"
@@ -97,7 +110,7 @@
             >
               <VhallInput
                 :disabled="item.disabledEdit"
-                v-model="node.value"
+                v-model.trim="node.value"
                 v-bind="node.props"
                 show-word-limit
                 autocomplete="off"
@@ -151,7 +164,7 @@
                   autocomplete="off"
                   show-word-limit
                   placeholder="选项"
-                  v-model="radioItem.value"
+                  v-model.trim="radioItem.value"
                   class="radioInput"
                   :class="{'radioGender': item.reqType == 0 && item.default_type == 4}"
                 >
@@ -195,7 +208,7 @@
                   autocomplete="off"
                   show-word-limit
                   placeholder="选项"
-                  v-model="radioItem.value"
+                  v-model.trim="radioItem.value"
                   class="radioInput"
                   @change="chooseOptChange(item, radioItem)"
                 >
@@ -230,17 +243,18 @@
             <div
               :class="[
                 'addBtn',
-                (item.nodes[0].children && item.nodes[0].children.length >= 20) || item.nodes.length >= 20 ? 'isoverflow' : ''
+                (item.nodes[0].children && item.nodes[0].children.length >= 30) || item.nodes.length >= 30 ? 'isoverflow' : ''
               ]">
               <el-button
                 type="text"
                 v-if="item.bottomBtn.includes('addBtn')"
+                v-preventReOneClick
                 @click="addOption(item)"
               ><i class="el-icon-plus"></i>添加选项</el-button>
               <template v-if="item.bottomBtn.includes('addOther')">
                 <span class="line"></span>
                 <el-button
-                  el-button
+                  v-preventReOneClick
                   type="text"
                   @click="addOption(item, 'other')"
                 ><i class="el-icon-plus"></i>添加其他</el-button>
@@ -304,9 +318,11 @@
         </li>
       </transition-group>
     </draggable>
-    <section class="viewItem sureBtn">
-      <el-button :disabled="!signUpSwtich" round type="primary" @click="sureQuestionnaire">保存</el-button>
+    <section class="viewItem sureBtn" v-if="signUpPageType === 'webinar'">
+      <el-button :disabled="!signUpSwtich" round type="primary" v-preventReClick @click="sureQuestionnaire">保存</el-button>
     </section>
+    <!-- 裁剪图片弹窗 -->
+    <cropper ref="formCropper" @cropComplete="cropComplete" @resetUpload="resetUpload" :ratio="750/125"></cropper>
   </div>
 </template>
 
@@ -315,10 +331,13 @@ import draggable from "vuedraggable";
 import upload from '@/components/Upload/main';
 import Env from "@/api/env";
 import defaultHeader from './images/formHeader.png'
+import {parseImgOssQueryString, cropperImage, getImageQuery} from "@/utils/utils";
+import cropper from '@/components/Cropper/index'
 export default {
   components:{
     draggable,
-    upload
+    upload,
+    cropper
   },
   props: {
     questionArr: {
@@ -336,6 +355,13 @@ export default {
     }
   },
   watch:{
+    imageParamsUrl: {
+      handler(newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.$emit('setBaseInfo', { cover: this.imageParamsUrl });
+        }
+      }
+    },
     regionalOptions: {
       handler(newVal){
         this.regionalLevel = { ...newVal }
@@ -354,7 +380,7 @@ export default {
       handler(newVal){
         this.title = newVal.title;
         this.intro = newVal.intro;
-        this.imageUrl = newVal.cover ? `${Env.staticLinkVo.uploadBaseUrl}${ newVal.cover }` : this.defaultHeader;
+        this.handlerImage(newVal);
       },
       deep: true,
       immediate: true
@@ -362,18 +388,36 @@ export default {
   },
   data(){
     return {
-      webinar_id: this.$route.params.str,
       title: '', // 基本信息——表单名称
       intro: '', // 基本信息——表单简介
       drag: false,
       radio: 3,
       imageUrl: '',
+      imageCropMode: 1,
+      blurryDegree: 0,
+      lightDegree: 10,
       defaultHeader: defaultHeader,
       renderQuestion: [],
+      backgroundSize: {
+        x: 0,
+        y:0,
+        width: 0,
+        height: 0
+      },
       regionalLevel: {
         1: true, // 市
         2: true // 区/县
-      }
+      },
+      signUpPageType: (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) ? 'webinar'
+        : (window.location.href.indexOf('/special/viewer/') != -1 || window.location.href.indexOf('/special/entryform') != -1) ? 'subject'
+        : '',
+      webinarOrSubjectId:
+        (window.location.href.indexOf('/live/signup/') != -1)
+        ? this.$route.params.str :
+        (
+          (window.location.href.indexOf('/special/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/special/entryform') != -1)
+          ? (this.$route.params.id || this.$route.params.str) : ''
+        )
     };
   },
   computed: {
@@ -385,6 +429,16 @@ export default {
         ghostClass: "ghost"
       };
     },
+    imageParamsUrl() {
+      return `${this.imageUrl}?x-oss-process=image/crop,x_${this.backgroundSize.x.toFixed()},y_${this.backgroundSize.y.toFixed()},w_${this.backgroundSize.width.toFixed()},h_${this.backgroundSize.height.toFixed()}${this.blurryDegree > 0 ? `,/blur,r_10,s_${this.blurryDegree * 2}` : ''},/bright,${(this.lightDegree - 10) * 5}&mode=${this.imageCropMode}`
+    },
+    domain_url() {
+      if (this.imageUrl) {
+        return `${Env.staticLinkVo.uploadBaseUrl}${this.imageParamsUrl}`;
+      } else {
+        return this.defaultHeader;
+      }
+    }
   },
   filters: {
     numFormmat(val){
@@ -392,6 +446,15 @@ export default {
     }
   },
   methods: {
+    // 设置接口入参，是活动维度 还是 专题维度
+    setParamsIdByRoute(params) {
+      if (this.signUpPageType === 'webinar') {
+        params.webinar_id = this.webinarOrSubjectId
+      } else if (this.signUpPageType === 'subject') {
+        params.subject_id = this.webinarOrSubjectId
+      }
+      return params
+    },
     // 区域级别下拉菜单开启状态控制
     regionalLevelChange(level, question) {
       if (level == 1 && !this.regionalLevel[1]) {
@@ -417,25 +480,50 @@ export default {
         return true
       }
     },
+    // 处理图片
+    handlerImage(val) {
+      if (!val.cover) {
+        this.imageUrl = '';
+        return;
+      }
+      let url = `https:${Env.staticLinkVo.uploadBaseUrl}${val.cover}`
+      this.imageUrl = getImageQuery(val.cover);
+      if (cropperImage(val.cover)) {
+        let obj = parseImgOssQueryString(url);
+        const { blur, crop } = obj;
+        this.backgroundSize = {
+          x: Number(crop.x),
+          y: Number(crop.y),
+          width: Number(crop.w),
+          height: Number(crop.h)
+        };
+        this.blurryDegree = blur && Number(blur.s) / 2 || 0;
+        this.lightDegree = obj.bright ? 10 + Number(obj.bright) / 5 : 10;
+        this.imageCropMode = obj.mode;
+      }
+    },
     // 保存表单
     sureQuestionnaire() {
+      if (this.signUpPageType === 'subject') {
+        return
+      }
       let userId = this.$parent.userId;
       console.log(this.renderQuestion)
       this.renderQuestion.filter(item => item.name !== 'name').map(item => {
         this.$vhall_paas_port({
           k: item.reporType,
-          data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
         if (item.reqType !== 6) {
           this.$vhall_paas_port({
             k: item.required ? item.reporType + 1 : item.reporType + 2,
-            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
           })
         }
         if (item.reqType === 4) {
           this.$vhall_paas_port({
             k: item.reporType + 4,
-            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {num: item.nodes.length}, ref_url: '', req_url: ''}
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {num: item.nodes.length}, ref_url: '', req_url: ''}
           })
         } else if (item.reqType === 2 || item.reqType === 3) {
           let other = 0;
@@ -445,11 +533,11 @@ export default {
           }
           this.$vhall_paas_port({
             k: item.reporType + 4,
-            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '',  s: '', report_extra: {num: total - other}, ref_url: '', req_url: ''}
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '',  s: '', report_extra: {num: total - other}, ref_url: '', req_url: ''}
           })
           this.$vhall_paas_port({
             k: item.reporType + 5,
-            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {num: other}, ref_url: '', req_url: ''}
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {num: other}, ref_url: '', req_url: ''}
           })
         }
       })
@@ -463,9 +551,9 @@ export default {
     },
     // 添加一个题目选项
     addOption(data, other){
-      if ((data.nodes[0].children && data.nodes[0].children.length >= 20) || data.nodes.length >= 20) {
+      if ((data.nodes[0].children && data.nodes[0].children.length >= 30) || data.nodes.length >= 30) {
         this.$message({
-          message: `最多可添加20个选项`,
+          message: `最多可添加30个选项`,
           showClose: true,
           type: 'error',
           customClass: 'zdy-info-box'
@@ -567,7 +655,7 @@ export default {
         } else {
           // 如果更改自定义添加的隐私声明，调用更新隐私协议的接口
           let options = {
-            webinar_id: this.webinar_id,
+            ...this.setParamsIdByRoute({}), // 活动ID 或者 专题ID
             privacy_id: node.privacy_id,
             content: question.nodes[0].value,
             color_text: question.nodes[3].value,
@@ -603,10 +691,12 @@ export default {
           question_id: arr[index].question_id
         }).then(res => {
           let userId = this.$parent.userId;
-          this.$vhall_paas_port({
-            k: item.reporType + 3,
-            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-          })
+          if (this.signUpPageType === 'webinar') {
+            this.$vhall_paas_port({
+              k: item.reporType + 3,
+              data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
           arr.splice(index, 1);
           console.log(res);
         }).catch(err => {
@@ -624,7 +714,7 @@ export default {
 
         // 删除隐私协议接口
         this.$fetch('regRrivacyDelete', {
-          webinar_id: this.webinar_id,
+          ...this.setParamsIdByRoute({}), // 活动ID 或者 专题ID
           privacy_id: item.nodes[index].privacy_id
         }).then(res => {
           // 删除成功调用题目编辑接口更新 content
@@ -714,7 +804,7 @@ export default {
       nodes.push(cloneNode2);
       console.log(nodes[0].value, 'nodes[0].value')
       this.$fetch('regRrivacyAdd', {
-        webinar_id: this.webinar_id,
+        ...this.setParamsIdByRoute({}), // 活动ID 或者 专题ID
         content: nodes[0].value,
         color_text: '《隐私声明2》',
         url: ''
@@ -790,14 +880,28 @@ export default {
     productLoadSuccess(res, file) {
       if (res.data.file_url) {
         // 文件上传成功，保存信息
-        this.imageUrl = res.data.file_url;
-        this.$emit('setBaseInfo', { cover: res.data.file_url });
+        this.$refs.formCropper.showModel(res.data.domain_url);
+        this._imageUrl = res.data.file_url;
+        // this.$emit('setBaseInfo', { cover: res.data.file_url });
       }
     },
     // 删除头图
     deleteBanner() {
-      this.imageUrl = this.defaultHeader;
+      this.imageUrl = '';
+      this.blurryDegree = 0;
+      this.lightDegree = 10;
       this.$emit('setBaseInfo', { cover: '' });
+    },
+    cropComplete(cropperData, url, mode) {
+      this.backgroundSize = cropperData;
+      // this.imageUrl = url;
+      this.imageUrl = this._imageUrl;
+      this.imageCropMode = mode;
+      // this.$emit('setBaseInfo', { cover: this.imageParamsUrl });
+    },
+    resetUpload() {
+      let dom = document.querySelector('#form_cropper .el-upload__input');
+      dom.click();
     },
     // 题目顺序修改
     sortChange(val, arr){
@@ -811,7 +915,7 @@ export default {
 
       // 以问题数组的 index + 1 作为顺序提交更新顺序接口
       this.$fetch('regQSort', {
-        webinar_id: this.webinar_id,
+        ...this.setParamsIdByRoute({}), // 活动ID 或者专题ID
         question_ids
       }).then(res => {
         console.log(res);
@@ -843,19 +947,23 @@ export default {
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
-          this.$vhall_paas_port({
-            k: 100139,
-            data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-          })
+          if (this.signUpPageType === 'webinar') {
+            this.$vhall_paas_port({
+              k: 100139,
+              data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            })
+          }
         }).catch(() => {
           isConfirm = false;
           question.phoneValide = true;
         });
       } else {
-        this.$vhall_paas_port({
-          k: 100080,
-          data: {business_uid: userId, user_id: '', webinar_id: this.webinar_id, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
+        if (this.signUpPageType === 'webinar') {
+          this.$vhall_paas_port({
+            k: 100080,
+            data: {business_uid: userId, user_id: '', webinar_id: this.webinarOrSubjectId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+          })
+        }
       }
       if (!isConfirm) return false;
       const options = {
@@ -947,6 +1055,18 @@ export default {
   &.viewItemHover{
     /deep/.el-input__suffix{
       right: 5px;
+    }
+  }
+  .form_images{
+    padding-top: 24px;
+    &_item{
+      padding-bottom: 12px;
+      display: flex;
+      justify-items: center;
+      align-items: center;
+      .form-slider{
+        margin: 0 16px ;
+      }
     }
   }
   &.privacyItem {

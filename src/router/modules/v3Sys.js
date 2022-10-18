@@ -1,4 +1,6 @@
 import Layout from "@/layout/index";
+import EmptyLayout from "@/layout/emptyLayout";
+
 const router = [
   {
     path: '/login',
@@ -84,6 +86,17 @@ const router = [
     path: '/cMiddle/:str(\\d+)',
     meta: { auth: false, name: 'cMiddle', title: 'C端第三方登录授权' },
     component: () => import('@/views/Login/thirdLogin'),
+    hidden: true
+  },
+  {
+    path: '/privacyPolicy',
+    meta: { auth: false, name: 'privacyPolicy', title: '隐私政策' },
+    component: () => import('@/views/PrivacyModule/privacyPolicy'),
+    hidden: true
+  },{
+    path: '/privacyUPo',
+    meta: { auth: false, name: 'userProtection', title: '用户服务协议' },
+    component: () => import('@/views/PrivacyModule/userProtection'),
     hidden: true
   },
   { path: '*', redirect: '/warning/404', hidden: true }

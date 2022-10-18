@@ -7,17 +7,20 @@
         <el-tabs v-model="tabType" @tab-click="handleClick">
           <el-tab-pane :label="item.label" :name="item.value" v-for="(item, ins) in tabList" :key="ins"></el-tab-pane>
         </el-tabs>
-        <el-button round @click.prevent.stop="multiSetHandle()" :class="['panel-btn length104', {'btn-right': resourcesVo && resourcesVo.extend_end_time != ''}]"
-                   size="medium"
-                   v-if="!(is_dynamic > 0) && dataList.length > 0" :disabled="!multipleSelection.length">{{resourcesVo && Number(resourcesVo.type) !== 0 ? '批量分配' : '分配并发包'}}</el-button>
-        <el-button round @click.prevent.stop="multiSetHandle('more')" class="panel-btn length104" size="medium"
-                   v-if="!(is_dynamic > 0) && dataList.length > 0 && resourcesVo && resourcesVo.extend_end_time != ''" :disabled="!multipleSelection.length">分配扩展包</el-button>
+        <vh-select v-if="tabType == 'regular'" v-model="clickType" round size="medium" placeholder="批量分配" :disabled="!multipleSelection.length" class="panel-select-btn" @change="multiSetHandle">
+          <vh-option
+            v-for="item in clickOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </vh-option>
+        </vh-select>
         <!-- 固定分配，有查询列表。 -->
         <div v-if="tabType === 'regular'" :class="['regular-ctx', {'regular-list': !(is_dynamic > 0)}]">
           <p v-if="is_dynamic > 0">每个子账号可单独分配用量，<br/>所有用量之和不能大于可分配用量</p>
-          <el-button type="primary" class="length152" round v-preventReClick @click="allocationSave('regular')" v-if="is_dynamic > 0">保存</el-button>
+          <vh-button type="primary" class="length152" round v-preventReClick @click="allocationSave('regular')" v-if="is_dynamic > 0">保存</vh-button>
           <!-- 当前数据库中已经是固定分配 -->
-          <el-table
+          <vh-table
             ref="multipleTable"
             :data="dataList"
             tooltip-effect="dark"
@@ -25,20 +28,21 @@
             @selection-change="handleSelectionChange"
             :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
             v-if="!(is_dynamic > 0) && dataList.length > 0">
-            <el-table-column
+            <vh-table-column
               type="selection"
               width="55">
-            </el-table-column>
-            <el-table-column
+            </vh-table-column>
+            <vh-table-column
               label="帐号 / 昵称"
               align="left"
               show-overflow-tooltip
+              min-width="230"
             >
               <template slot-scope="scope">
                 {{scope.row.child_id}} / {{ scope.row.nick_name }}
               </template>
-            </el-table-column>
-            <el-table-column
+            </vh-table-column>
+            <vh-table-column
               label="手机号"
               width="160"
               align="left"
@@ -46,22 +50,19 @@
               <template slot-scope="scope">
                 {{scope.row.phone || '----'}}
               </template>
-            </el-table-column>
-            <el-table-column
+            </vh-table-column>
+            <vh-table-column
               label="分配流量" v-if="resourcesVo && resourcesVo.type === 1"
               align="left"
               width="230">
               <template slot-scope="scope">
-                <!-- <el-input type="text" v-model.trim="scope.row.inputCount" v-if="scope.row.isHide"  class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
-                  <template slot="append">GB</template>
-                </el-input> -->
                 <VhallInput v-model.trim="scope.row.inputCount"  :maxlength="11" v-if="scope.row.isHide" class="btn-relative" autocomplete="off"  @input="formatGBInputs($event, scope.row, 'inputCount')">
                   <template slot="append">GB</template>
                 </VhallInput>
                 <span v-else>{{scope.row.count | unitCovert}} GB</span>
               </template>
-            </el-table-column>
-            <el-table-column
+            </vh-table-column>
+            <vh-table-column
               label="分配并发" v-if="resourcesVo && resourcesVo.type === 0"
               align="left"
               width="230">
@@ -74,8 +75,8 @@
                 </VhallInput>
                 <span v-else>{{scope.row.count | unitCovert}} 方</span>
               </template>
-            </el-table-column>
-            <el-table-column
+            </vh-table-column>
+            <vh-table-column
               label="分配时长" v-if="resourcesVo && resourcesVo.type === 2"
               align="left"
               width="230">
@@ -88,8 +89,8 @@
                 </VhallInput>
                 <span v-else>{{scope.row.count | unitCovert}} 分钟</span>
               </template>
-            </el-table-column>
-            <el-table-column
+            </vh-table-column>
+            <vh-table-column
               label="分配扩展包" v-if="resourcesVo && resourcesVo.extend_end_time != ''"
               align="left"
               width="230">
@@ -102,19 +103,32 @@
                 </VhallInput>
                 <span v-else>{{scope.row.extend_day | unitCovert}} 方</span>
               </template>
-            </el-table-column>
-            <el-table-column
+            </vh-table-column>
+            <vh-table-column
+              label="分配短信"
+              align="left"
+              width="230"
+              v-if="showSmsModule">
+              <template slot-scope="scope">
+                <VhallInput v-model.trim="scope.row.inputSms"  :maxlength="11" v-if="scope.row.isHide" class="btn-relative" autocomplete="off"  @input="formatBFInputs($event, scope.row, 'inputSms')">
+                  <template slot="append">条</template>
+                </VhallInput>
+                <span v-else>{{scope.row.sms | unitCovert}} 条</span>
+              </template>
+            </vh-table-column>
+            <vh-table-column
               label="操作"
               align="left"
               class="btn-rows"
+              fixed="right"
               width="114">
               <template slot-scope="scope">
-                <el-button type="text" @click="save(scope.row)" v-if="scope.row.isHide">保存</el-button>
+                <vh-button borderRadius="4" type="text" round @click="save(scope.row)" v-if="scope.row.isHide" size="mini" class="zdy-theme-red">保存</vh-button>
                 <el-button type="text" @click="showInput(scope.row)" v-if="!scope.row.isHide">编辑</el-button>
-                <el-button type="text" @click="hideInput(scope.row)" v-if="scope.row.isHide">取消</el-button>
+                <vh-button borderRadius="4" type="text" plain  @click="hideInput(scope.row)" v-if="scope.row.isHide" size="mini" class="zdy-theme-gray">取消</vh-button>
               </template>
-            </el-table-column>
-          </el-table>
+            </vh-table-column>
+          </vh-table>
           <SPagination
             :total="total"
             :currentPage="query.pageNumber"
@@ -125,8 +139,8 @@
         </div>
         <!-- 动态分配，无查询列表 -->
         <div v-if="tabType === 'trends'" :class="['trends-ctx', {'trends-list': vipStatus === 'trends_1'}]">
-          <p>所有子账号共用所有可用的并发/流量/时长资源，<br />无需为单个账户分配</p>
-          <el-button type="primary" class="length152" round v-preventReClick @click="allocationSave('trends')" v-if="!(is_dynamic > 0)">保存</el-button>
+          <p>所有子账号共用所有可用的并发/流量/时长资源，以及短信资源，<br />无需为单个账户分配</p>
+          <vh-button type="primary" class="length152" round v-preventReClick @click="allocationSave('trends')" v-if="!(is_dynamic > 0)">保存</vh-button>
         </div>
       </div>
       <!-- 右侧名片 -->
@@ -149,7 +163,7 @@
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
           </ul>
           <ul class="allocation_one" v-if="resourcesVo && resourcesVo.type === 1">
-            
+
             <li class="custom-font-barlow">{{ (resourcesVo ? resourcesVo.flow : 0) | unitCovert }}  </li>
             <li>可分配流量（GB）</li>
             <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
@@ -165,42 +179,55 @@
             <li>有效期至 {{resourcesVo && resourcesVo.extend_end_time ? resourcesVo.extend_end_time : '--'}}</li>
           </ul>
         </div>
+        <ul class="ac__allocation--msg" v-if="showSmsModule">
+          <div class="allocation_icon">
+            <img src="../../common/images/account/saasliuliang_tubiao.png" alt="" v-show="tabType === 'trends'"/>
+            <img src="../../common/images/account/saasbingfa_tubiao.png" alt="" v-show="tabType === 'regular'"/>
+            <!-- <i :class="`${resourcesVo && resourcesVo.type > 0 ? 'iconfont-v3 saasliuliang_tubiao' : 'iconfont-v3 saasbingfa_tubiao'}`"></i> -->
+          </div>
+          <ul class="allocation_one">
+            <li class="custom-font-barlow">{{resourcesVo && resourcesVo.sms ? resourcesVo.sms || 0 : 0}}</li>
+            <li >可分配短信（条）</li>
+            <li>有效期至 {{resourcesVo && resourcesVo.end_time ? resourcesVo.end_time : '--'}}</li>
+          </ul>
+        </ul>
         <ul class="ac__allocation--info">
           <li>提示：</li>
-          <li><span>1.</span><span>动态分配方式：所有子账户共用所有可用的并发、流量或时长，无需为单个账户分配</span></li>
+          <li><span>1.</span><span>动态分配方式：所有子账户共用所有可用的并发、流量、时长及短信，无需为单个账户分配</span></li>
           <li><span>2.</span><span>固定分配方式：请为每个子账号分配用量，所有账号用量之和不能大于可分配用量</span></li>
         </ul>
       </div>
     </div>
     <!-- 批量分配-弹出框 -->
-    <VhallDialog title="批量分配" :visible.sync="multiAllocShow" class="dialog__group" width="380px" v-if="multiAllocShow" @close="closeAllocDialog">
-      <el-form :model="multiAllocForm" ref="multiAllocForm" :rules="multiAllocFormRules" label-width="80px">
-        <!--  <el-form-item label="分配数量" prop="count">
-          <el-input v-model.trim="multiAllocForm.count" maxlength="5" auto-complete="off" placeholder="请输入分配数量" class="btn-relative" oninput="this.value=this.value.replace(/[^\d^\.]+/g, '')">
-            <template slot="append"> {{resourcesVo && Number(resourcesVo.type) === 1 ? 'GB' : '方' }}</template>
-          </el-input>
-        </el-form-item> -->
-         <el-form-item label="分配数量" prop="count" v-if="resourcesVo && Number(resourcesVo.type) === 1">
+    <vh-dialog title="批量分配" :visible.sync="multiAllocShow" class="dialog__group" width="380px" v-if="multiAllocShow" @close="closeAllocDialog"  close-on-click-modal="false"
+    close-on-press-escape="false">
+      <vh-form :model="multiAllocForm" ref="multiAllocForm" :rules="multiAllocFormRules" label-width="80px">
+         <vh-form-item label="分配流量" prop="count" v-if="dialogType === 2">
           <VhallInput v-model.trim="multiAllocForm.count"  :maxlength="11" class="btn-relative" autocomplete="off" placeholder="请输入分配数量" @input="formatGBInputs($event, 'multiAllocForm', 'count')">
             <template slot="append">GB</template>
           </VhallInput>
-         </el-form-item>
-         <el-form-item label="分配数量" prop="count1" v-if="resourcesVo && Number(resourcesVo.type) === 0">
+         </vh-form-item>
+         <vh-form-item :label="`分配${dialogType === 1 ? '并发包':'扩展包'}`" prop="count1" v-if="[1,3].includes(dialogType)">
           <VhallInput v-model.trim="multiAllocForm.count1" :maxlength="8" class="btn-relative" autocomplete="off" placeholder="请输入分配数量" @input="formatBFInputs($event, 'multiAllocForm', 'count1')">
             <template slot="append">方</template>
           </VhallInput>
-         </el-form-item>
-         <el-form-item label="分配数量" prop="count2" v-if="resourcesVo && Number(resourcesVo.type) === 2">
+         </vh-form-item>
+         <vh-form-item label="分配时长" prop="count2" v-if="dialogType === 4">
           <VhallInput v-model.trim="multiAllocForm.count2"  :maxlength="11" class="btn-relative" autocomplete="off" placeholder="请输入分配数量" @input="formatTimeInputs($event, 'multiAllocForm', 'count2')">
             <template slot="append">分钟</template>
           </VhallInput>
-         </el-form-item>
-      </el-form>
+         </vh-form-item>
+         <vh-form-item label="分配短信" prop="count2" v-if="dialogType === 19">
+          <VhallInput v-model.trim="multiAllocForm.count2"  :maxlength="11" class="btn-relative top2" autocomplete="off" placeholder="请输入分配数量" @input="formatTimeInputs($event, 'multiAllocForm', 'count2')">
+            <template slot="append">条</template>
+          </VhallInput>
+         </vh-form-item>
+      </vh-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary"  size="medium" round @click="saveMultiSetHandle">确 定</el-button>
-        <el-button @click="closeAllocDialog"  size="medium" round>取 消</el-button>
+        <vh-button type="primary"  size="medium" round @click="saveMultiSetHandle" borderRadius="50">确定</vh-button>
+        <vh-button @click="closeAllocDialog"  size="medium" round plain borderRadius="50">取消</vh-button>
       </div>
-    </VhallDialog>
+    </vh-dialog>
   </div>
 </template>
 
@@ -211,6 +238,53 @@
     name: 'info.vue',
     components: {
       PageTitle
+    },
+    computed:{
+      showSmsModule: function () {
+        const userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+        const isNoticeMessage = JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['message_notice'];
+        // 不是知学云账号 & 开启了 短信通知配置项权限
+        return userInfo.user_extends.extends_remark != 1 && isNoticeMessage == 1;
+      },
+      // 批量分配可操作按钮（只有固定分配才有按钮）
+      clickOptions: function () {
+        let list = []
+        // 套餐包
+        if (!(this.is_dynamic > 0) && this.dataList.length > 0 && this.tabType=='regular') {
+          if(this.resourcesVo && Number(this.resourcesVo.type) === 1) {
+            list.push({
+              value: '2',
+              label: '分配流量'
+            })
+          } else if (this.resourcesVo && Number(this.resourcesVo.type) === 2) {
+            list.push({
+              value: '4',
+              label: '分配时长'
+            })
+          } else if (this.resourcesVo && Number(this.resourcesVo.type) === 0) {
+            list.push({
+              value: '1',
+              label: '分配并发包'
+            })
+          }
+        }
+        // 并发扩展包
+        if (!(this.is_dynamic > 0) && this.dataList.length > 0 && this.tabType=='regular' && this.resourcesVo && this.resourcesVo.extend_end_time != '') {
+          // 有分配扩展包
+          list.push({
+            value: '3',
+            label: '分配扩展包'
+          })
+        }
+        // 流量包
+        if (this.showSmsModule) {
+          list.push({
+            value: '19',
+            label: '分配短信'
+          })
+        }
+        return list
+      }
     },
     data() {
       let checkGB = (rule, value, callback) => {
@@ -264,7 +338,7 @@
             { required: true, message: '请输入分配数量', trigger: 'blur' },
            /*  { pattern: /^\d{0,8}$/, message: '请输入正整数' , trigger: 'blur'} */
           ],
-          
+
         },
         sonDao: {},
         multipleSelection: [],
@@ -274,7 +348,8 @@
           pageNumber: 1
         },
         typeNumber: '',
-        typeName: ''
+        typeName: '',
+        clickType: null
       };
     },
     methods: {
@@ -401,26 +476,14 @@
         // trends_0 动态重分配；trends_1 动态已分配；regular_0 固定重分配；regular_1 固定已分配。
         this.vipSelectStatus = this.tabType === 'trends' ? `trends_0` : `regular_0`;
       },
-      multiSetHandle(type) {
+      // 按钮切换的时候，选择
+      multiSetHandle() {
         // 按钮限制，若没有选中信息，不可展示
         if (this.multipleSelection && this.multipleSelection.length > 0) {
-          if(type === 'more') {
-            // 当前为批量-并发分配扩展包
-            this.dialogType = 3;
-          } else {
-            if (Number(this.resourcesVo.type) === 1) {
-              // 当前为流量-批量分配
-              this.dialogType = 2;
-            } else if (Number(this.resourcesVo.type) === 0){
-              // 当前为并发-分配并发包
-              this.dialogType = 1;
-            } else if (Number(this.resourcesVo.type) === 2){
-              // 当前为时长
-              this.dialogType = 4;
-            }
-          }
+          this.dialogType = Number(this.clickType);
           this.multiAllocShow = true;
         } else {
+          this.multiAllocShow = false;
           this.$message({
             message:  '请至少选择一条子账号',
             showClose: true,
@@ -518,14 +581,15 @@
                 item.inputCount = item.vip_info.total;
                 item.count = item.vip_info.total;
               }
-            }else if(Number(this.resourcesVo.type) == 2){
-              
+            } else if(Number(this.resourcesVo.type) == 2){
               item.count = item.vip_info.duration;
               item.inputCount = item.vip_info.duration;
-              
-            } 
+            }
             item.extend_day = item.vip_info.extend_day;
             item.inputExtendDay = item.vip_info.extend_day;
+            // 短信用量
+            item.sms = item.vip_info.sms || 0;
+            item.inputSms = item.vip_info.sms || 0;
             item.isHide = false;
           });
           this.dataList = dao.list;
@@ -583,6 +647,7 @@
         let regA = Number(this.resourcesVo.type) === 1 ? /^\d+(\.\d{1,2})?$/ :  /^\d+$/; // 允许二位小数点输入
         console.log(regA);
         let flag = true;
+        // 验证——套餐数据（非扩展包）
         if (row === null || row === undefined || row === '') {
           this.$message({
             message: '请输入数量',
@@ -603,14 +668,20 @@
         // 右侧最大可分配数据
         let maxVla = this.resourcesVo.type > 0 ? this.resourcesVo.flow : this.resourcesVo.total;
         // 判断流量是否超出可分配流量
+        let paramsKv = {
+          user_id: row.child_id,
+          resources: row.inputCount || 0,
+          extend_day: row.inputExtendDay || 0
+        }
+        if (this.showSmsModule) {
+          // 增加短信设置
+          paramsKv.sms = Number(row.inputSms) || 0
+        }
         let params = {
-          type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量,
+          type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量 2-时长
           pid: sessionOrLocal.get('userId'),
-          kv: [{
-            user_id: row.child_id,
-            resources: row.inputCount || 0,
-            extend_day: row.inputExtendDay || 0
-          }]
+          kv: [paramsKv],
+          scene: this.showSmsModule ? 1 : 3 // 1 全部修改；2 只修改短信；3 修改套餐or扩展包。
         };
         flag ? this.sendAllocSet(params, row) :  this.$message({
           message: '请输入数量',
@@ -625,9 +696,7 @@
           if (valid) {
             let childIdList = this.multipleSelection.map(item => {
               let result = {
-                user_id: item.child_id,
-                resources: 0,
-                extend_day: 0
+                user_id: item.child_id
               }
               console.log(this.multiAllocForm, 'this.multiAllocForm')
               if (this.dialogType === 1) {
@@ -646,17 +715,24 @@
                 // 并发-分配时长，设置 extend_day， type为时长
                 result.extend_day = item.extend_day;
                 result.resources = Number(this.multiAllocForm.count2);
-                
+              }
+              if (this.showSmsModule && this.dialogType === 19) {
+                // 短信分配，设置cms，增量
+                result.sms = Number(this.multiAllocForm.count2);
+                result.resources = 0;
+                result.extend_day = 0; // 如果是短信分配，批量，其它字段传递0
+              } else {
+                result.sms = 0; // 如果是其它分配，短信字段值传0
               }
               console.log(result, '批量数据')
-              
               return result;
             })
             this.multiAllocForm.count2 = null;
             let params = {
               type: Number(this.resourcesVo.type), // 分配类型 0-并发 1-流量,
               pid: sessionOrLocal.get('userId'),
-              kv: childIdList
+              kv: childIdList,
+              scene: this.showSmsModule && this.dialogType === 19 ? 2 : 3
             };
             this.sendAllocSet(params);
           }
@@ -664,6 +740,8 @@
       },
       closeAllocDialog() {
         this.multiAllocShow = false;
+        // 设置完成，按钮归位
+        this.clickType = null
         this.$nextTick(() => {
           this.multiAllocForm.count = null;
           this.multiAllocForm.count1 = null;
@@ -709,6 +787,9 @@
         }
         if(row.inputCount) {
           row.inputCount = `${row.count}`;
+        }
+        if(row.inputSms) {
+          row.inputSms = `${row.sms}`;
         }
         row.isHide = false;
       },
@@ -860,6 +941,62 @@
       margin-top: 10px;
     }
   }
+  .ac__allocation--msg {
+    border-top: 1px solid #E6E6E6;
+    margin-top: 32px;
+    padding-top: 16px;
+    .allocation_icon {
+      text-align: center;
+      height: 62px;
+      i.iconfont-v3 {
+        font-size: 62px;
+      }
+      img {
+        width: 62px;
+        height: 62px;
+      }
+    }
+    .allocation_one {
+      margin-top: 24px;
+      li {
+        text-align: center;
+        list-style-type: none;
+        font-family: @fontRegular;
+        font-size: 14px;
+        font-weight: 400;
+        color: #1A1A1A;
+        line-height: 20px;
+        &:first-child {
+          font-size: 32px;
+          font-weight: bold;
+          color: #1A1A1A;
+          line-height: 24px;
+          padding-bottom: 8px;
+        }
+        &:last-child {
+          margin-top: 4px;
+          font-size: 14px;
+          font-weight: 400;
+          color: #999999;
+          line-height: 20px;
+        }
+      }
+      &.mt32 {
+        margin-top: 32px;
+      }
+    }
+    .result_val {
+      font-size: 36px;
+      font-family: @fontDINAL;
+      font-weight: bold;
+      color: #1A1A1A;
+      line-height: 42px;
+      margin-top: 24px;
+    }
+    .date {
+      margin-top: 10px;
+    }
+  }
   .ac__allocation--info {
     border-top: 1px solid #E6E6E6;
     margin-top: 32px;
@@ -899,6 +1036,87 @@
       margin-right: 132px;
     }
   }
+  /* 下拉切换 */
+  /deep/.vh-select.panel-select-btn {
+    position: absolute;
+    right: 32px;
+    top: 9px;
+    width: 116px;
+    .vh-select__caret {
+      color: #bfbfbf;
+    }
+    &:hover, &:hover .vh-input.is-focus {
+      .vh-input__inner {
+        border-color: #FB2626;
+      }
+      .vh-select__caret {
+        color: #FB2626;
+      }
+      .vh-input__inner::-webkit-input-placeholder {
+        color: #FB2626;
+      }
+      .vh-input__inner::-moz-placeholder {
+        color: #FB2626;
+      }
+      .vh-input__inner:-ms-input-placeholder {
+        color: #FB2626;
+      }
+      .vh-input__inner::-ms-input-placeholder {
+        color: #FB2626;
+      }
+      .vh-input__inner::placeholder {
+        color: #FB2626;
+      }
+    }
+    .vh-input.is-disabled {
+      .vh-input__inner {
+        border-color: #d9d9d9;
+        background-color: transparent;
+      }
+      .vh-select__caret {
+        color: #bfbfbf;
+      }
+      .vh-input__inner::-webkit-input-placeholder {
+        color: #bfbfbf;
+      }
+      .vh-input__inner::-moz-placeholder {
+        color: #bfbfbf;
+      }
+      .vh-input__inner:-ms-input-placeholder {
+        color: #bfbfbf;
+      }
+      .vh-input__inner::-ms-input-placeholder {
+        color: #bfbfbf;
+      }
+      .vh-input__inner::placeholder {
+        color: #bfbfbf;
+      }
+    }
+    /* 切换要选择的时候 */
+    .vh-input.is-focus {
+      .vh-input__inner {
+        border-color: #d9d9d9;
+      }
+      .vh-select__caret {
+        color: #595959;
+      }
+      .vh-input__inner::-webkit-input-placeholder {
+        color: rgba(0, 0, 0, 0.85);
+      }
+      .vh-input__inner::-moz-placeholder {
+        color: rgba(0, 0, 0, 0.85);
+      }
+      .vh-input__inner:-ms-input-placeholder {
+        color: rgba(0, 0, 0, 0.85);
+      }
+      .vh-input__inner::-ms-input-placeholder {
+        color: rgba(0, 0, 0, 0.85);
+      }
+      .vh-input__inner::placeholder {
+        color: rgba(0, 0, 0, 0.85);
+      }
+    }
+  }
   /* 选项卡 */
   /deep/.el-tabs__header {
     margin: 0 0;
@@ -935,11 +1153,16 @@
     .el-input__inner {
       padding: 0 36px 0 12px;
     }
+    &.top2 {
+      .el-input-group__append {
+        top: 7px;
+      }
+    }
   }
   /deep/.el-input-group__append {
     position: absolute;
     right: 10px;
-    top: 7px;
+    top: 9px;
     width: 20px!important;
     background-color: transparent;
     border: 0;
@@ -948,16 +1171,57 @@
     color: #1A1A1A;
   }
   .dialog__group{
+    /deep/.vh-dialog__body {
+      padding: 0 32px;
+    }
     /deep/.el-input__inner{
       border-radius: 4px;
     }
     /deep/.el-form-item {
       margin-bottom: 0;
     }
+    /deep/.vh-select-dropdown__item {
+      &.hover {
+        background-color: #d9d9d9;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 36px;
+        color: rgba(0, 0, 0, 0.85);
+        &:active {
+          background-color: #f0f0f0;
+        }
+      }
+      &:active {
+        background-color: #f0f0f0;
+      }
+    }
+    /deep/.vh-form-item__label {
+      font-style: normal;
+      font-weight: 400;
+      font-size: 14px;
+      text-align: right;
+      color: rgba(0, 0, 0, 0.65);
+    }
+    /deep/.vh-button+.vh-button {
+      margin-left: 12px;
+    }
   }
   .el-table__row {
     /deep/.el-input-group {
       width: 130px;
+    }
+  }
+  /deep/.vh-button--text.zdy-theme-red {
+    color: #FB2626;
+    &:hover {
+      color: #D4151C;
+    }
+  }
+  /deep/.vh-button--text.zdy-theme-gray {
+    color: rgba(0, 0, 0, 0.65) !important;
+    &:hover {
+      color: rgba(0, 0, 0, 0.85) !important;
     }
   }
 </style>

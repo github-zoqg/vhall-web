@@ -229,8 +229,8 @@ export default {
     let checkPassword = (rule, value, callback) => {
       if (value === null || value === undefined || value === '') {
         return callback(new Error('请输入口令'));
-      } else if (!/^[0-9]*$/.test(value)) {
-        return callback(new Error('口令必须是数字'));
+      } else if (!/^[0-9a-zA-Z]*$/.test(value)) {
+        return callback(new Error('口令必须是数字或字母'));
       } else if (value.length < 6) {
         return callback(new Error('口令长度不能少于6位！'));
       } else {
@@ -378,7 +378,8 @@ export default {
         'webinar_notice', // 公告
         'disable_msg', // 全员禁言
         'share', // 分享
-        'speak_manage'
+        'speak_manage',
+        'desktop_share' // 桌面共享
       ]
       const obj = {}
       defaultSortArr.forEach((item) => {
@@ -391,17 +392,19 @@ export default {
     async updateSwitch() {
       let roleSwitch = this.roleSwitch; // 目标
       this.roleSwitch = Number(!roleSwitch);
+      // webinar/info调整-直播中不能操作的使用1
       let result = await this.$fetch('getWebinarInfo', {
         webinar_id: this.$route.params.str,
       })
       if (result.data) {
         this.webinarVo = result.data;
       }
+      // TODO:彩排-彩排中不能设置
       if(this.webinarVo.webinar_state === 1) {
         // 如果為~直播中
         this.$message({
           showClose: true,
-          message: '直播中不能设置该功能',
+          message: `${this.webinarVo.rehearsal_type ? '彩排' : '直播' }中不能设置该功能`,
           // duration: 0,
           type: 'error',
           customClass: 'zdy-info-box'
@@ -688,6 +691,7 @@ export default {
         clipboard.destroy();
       });
     },
+    // 直播中不能操作的使用1
     getWebinarInfo() {
       this.$fetch('getWebinarInfo', {
         webinar_id: this.$route.params.str,

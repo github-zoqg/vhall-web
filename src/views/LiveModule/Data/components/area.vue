@@ -2,7 +2,7 @@
   <div class="area-list">
      <el-row>
       <el-col :span="14"
-        ><div :style="{ height: '400px', width: '100%' }" ref="mapEchart"></div
+        ><div :style="{ height: '540px', width: '100%' }" ref="mapEchart"></div
       ></el-col>
       <el-col :span="10">
         <div class="grid-table">
@@ -27,7 +27,8 @@
 </template>
 <script>
 import echarts from 'echarts';
-import '../../../../../node_modules/echarts/map/js/china.js'; // 引入中国地图数据
+// import '../../../../../node_modules/echarts/map/js/china.js'; // 引入中国地图数据
+import jsonData from '@/common/json/china.json'
 export default {
   props: ['areaDataList'],
   mounted() {
@@ -54,6 +55,7 @@ export default {
       this.initMapEcharts(this.areaDataList, this.maxNum);
     },
     initMapEcharts(data, maxNum) {
+      echarts.registerMap('chinas', jsonData);
       this.mapChart = echarts.init(this.$refs.mapEchart); //这里是为了获得容器所在位置
       let options = {
         backgroundColor: '#fff',
@@ -85,21 +87,22 @@ export default {
         series: [
           {
             type: 'map',
-            mapType: 'china',
+            mapType: 'chinas',
             label: {
               normal: {
                 textStyle: {
                   color: '#000',
+                  fontSize: 14
                 },
               },
             },
-            left: '120',
+            left: '50',
             top: '30',
             itemStyle: {
               normal: {
-                borderColor: '#d1d1d1',
+                borderColor: '#7f7f7f',
                 label: {
-                  show: true,
+                  show: false,
                 },
                 areaStyle: {
                   color: '#f4f4f4',
@@ -130,8 +133,11 @@ export default {
 </script>
 <style lang="less" scoped>
   .grid-table{
-    max-height: 400px;
+    max-height: 540px;
     overflow: auto;
+    table {
+      width: 360px;
+    }
     th{
       background: #F7F7F7;
       height: 32px;

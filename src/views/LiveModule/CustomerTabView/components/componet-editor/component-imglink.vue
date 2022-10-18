@@ -216,7 +216,7 @@ export default {
   }
   .editorContent{
     margin-left: 10px;
-    width: 362px;
+    width: 321px;
     height: 180px;
     display: inline-block;
     position: relative;

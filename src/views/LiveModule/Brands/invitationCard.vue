@@ -51,6 +51,18 @@
               <div class="advor_img"><img :src="img" alt="" /></div>
               <span class="choseImg">选择封面</span>
             </div>
+            <!-- <div class="image_cropper" v-if="formInvitation.img_type==0">
+              <div class="image_cropper_item">
+                <span>模糊程度</span>
+                <vh-slider v-model="imageCropper.blurryDegree" :max="10" style="width:220px"></vh-slider>
+                <span class="wid_block">{{ imageCropper.blurryDegree }}</span>
+              </div>
+              <div class="image_cropper_item">
+                <span>背景亮度</span>
+                <vh-slider v-model="imageCropper.lightDegree" :max="20" style="width:220px"></vh-slider>
+                <span class="wid_block">{{ imageCropper.lightDegree }}</span>
+              </div>
+            </div> -->
           </el-form-item>
           <el-form-item label="展示方式">
             <div class="data-show">
@@ -175,7 +187,8 @@
         <!-- <p>移动端预览</p> -->
         <div
           class="show-img"
-          :style="`backgroundImage: url(${img})`"
+          :style="`backgroundImage: url(${ formInvitation.img_type ? img :domain_url })`"
+          :class="`show-img__${imageCropper.imageCropMode}`"
           v-if="formInvitation.show_type == 1"
           id="shopInvent"
         >
@@ -184,13 +197,14 @@
               <div class="show-avator">
                 <img :src="avatar" alt="" />
               </div>
-              <p>{{ formInvitation.company || '微吼直播' }}</p>
+              <p>{{ nickName || '微吼直播' }}</p>
               <p>邀请你一起看直播</p>
             </div>
             <div class="show-text">
               <h1>{{ formInvitation.title }}</h1>
               <p>{{ formInvitation.desciption }}</p>
               <div class="show-time">
+                <p>{{ formInvitation.company }}</p>
                 <p>{{ formInvitation.webinar_date }}</p>
                 <p>{{ formInvitation.location }}</p>
               </div>
@@ -211,7 +225,8 @@
           class="watch-img"
           v-else-if="formInvitation.show_type === 2"
           id="shopInvent"
-          :style="`backgroundImage: url(${img})`"
+          :style="`backgroundImage: url(${formInvitation.img_type ? img :domain_url})`"
+          :class="`watch-img__${imageCropper.imageCropMode}`"
         >
           <div class="watch-container">
             <div class="watch-bg">
@@ -221,7 +236,7 @@
                     <img :src="avatar" alt="" />
                   </div>
                   <p style="color: #fff">
-                    {{ formInvitation.company || '微吼直播' }}
+                    {{ nickName || '微吼直播' }}
                   </p>
                   <p style="color: #fff">邀请你一起看直播</p>
                 </div>
@@ -234,6 +249,9 @@
                 <div class="watch-code"><img :src="qrcode" alt="" /></div>
                 <div class="watch-action">
                   <!-- <p>扫码观看视频</p> -->
+                  <h1 :title="formInvitation.company">
+                    {{ formInvitation.company }}
+                  </h1>
                   <h1 :title="formInvitation.webinar_date">
                     {{ formInvitation.webinar_date }}
                   </h1>
@@ -247,7 +265,8 @@
         </div>
         <div
           class="look-img"
-          :style="`backgroundImage: url(${img})`"
+          :style="`backgroundImage: url(${formInvitation.img_type ? img :domain_url})`"
+          :class="`look-img__${imageCropper.imageCropMode}`"
           id="shopInvent"
           v-else
         >
@@ -257,7 +276,7 @@
               <div class="look-avator">
                 <img :src="avatar" alt="" />
               </div>
-              <p>{{ formInvitation.company || '微吼直播' }}</p>
+              <p>{{ nickName || '微吼直播' }}</p>
               <p>邀请你一起看直播</p>
             </div>
             <div
@@ -268,6 +287,9 @@
               <p>{{ formInvitation.desciption }}</p>
             </div>
             <div class="look-time">
+              <span v-if="formInvitation.company"></span>
+              <p v-if="formInvitation.company">主办方</p>
+              <p>{{ formInvitation.company }}</p>
               <span v-if="formInvitation.webinar_date"></span>
               <p v-if="formInvitation.webinar_date">时间</p>
               <p>{{ formInvitation.webinar_date }}</p>
@@ -301,7 +323,8 @@
     <add-background
       ref="background"
       @onChangePic="onSubmitImg"
-      :url="imgUrl"
+      :url="img"
+      :mode="imageCropper.imageCropMode"
       :type="formInvitation.img_type"
     ></add-background>
     <begin-play
@@ -312,7 +335,7 @@
 </template>
 <script>
 import addBackground from './components/imgBackground'
-import { sessionOrLocal } from '@/utils/utils'
+import { sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery } from '@/utils/utils'
 import { isBrower } from '@/utils/getBrowserType'
 import Env from '@/api/env'
 import html2canvas from 'html2canvas'
@@ -357,6 +380,7 @@ export default {
       }
     }
     return {
+      nickName: '',
       invitation: true,
       isInit: false,
       isSave: true,
@@ -373,12 +397,11 @@ export default {
         img_type: 0,
         is_show_watermark: false,
       },
-      imgUrl: '',
       downloadImg: '',
       formInvitation: {
         show_type: 1,
         img_type: 0,
-        is_show_watermark: false,
+        is_show_watermark: false
       },
       fileList: [
         `${Env.staticImgs.invitation[0]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
@@ -391,6 +414,17 @@ export default {
         `${Env.staticImgs.invitation[7]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
         `${Env.staticImgs.invitation[8]}?x-oss-process=image/resize,m_fill,w_100,h_100,limit_0`,
       ],
+      imageCropper: {
+        imageCropMode: 1,
+        lightDegree: 10,
+        blurryDegree: 0,
+        backgroundSize: {
+          x: 0,
+          y:0,
+          width: 0,
+          height: 0
+        }
+      },
       rules: {
         title: [{ required: false, validator: titleValidate, trigger: 'blur' }],
         desciption: [
@@ -410,6 +444,14 @@ export default {
     }
   },
   watch: {
+    // domain_url(newVal) {
+    //   if (newVal.indexOf('?x-oss-process') > -1) {
+    //     let obj = parseImgOssQueryString(this.coverImgUrl);
+    //     this.coverImageMode = Number(obj.mode) || 3;
+    //   } else {
+    //     this.coverImageMode = 1;
+    //   }
+    // },
     formInvitation: {
       deep: true,
       immediate: true,
@@ -428,6 +470,12 @@ export default {
       },
     },
   },
+  computed: {
+    domain_url() {
+      if (this.formInvitation.img_type) return '';
+      return `${this.img}?x-oss-process=image/crop,x_${this.imageCropper.backgroundSize.x.toFixed()},y_${this.imageCropper.backgroundSize.y.toFixed()},w_${this.imageCropper.backgroundSize.width.toFixed()},h_${this.imageCropper.backgroundSize.height.toFixed()}${this.imageCropper.blurryDegree > 0 ? `,/blur,r_10,s_${this.imageCropper.blurryDegree * 2}` : ''},/bright,${(this.imageCropper.lightDegree - 10) * 5}&mode=${this.imageCropper.imageCropMode}`;
+    }
+  },
   async created() {
     this.webinarId = this.$route.params.str
     this.userId = JSON.parse(sessionOrLocal.get('userId'))
@@ -435,7 +483,8 @@ export default {
     const lookUrl = `${process.env.VUE_APP_WAP_WATCH}/lives/invite/${this.$route.params.str}?invite_id=&type=1`
     this.showCode = `${Env.staticLinkVo.aliQr}${encodeURIComponent(lookUrl)}`
     try {
-      const result = await this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str})
+      // webinar/info调整-正常的信息展示使用 0
+      const result = await this.$fetch('getWebinarInfo', {webinar_id: this.$route.params.str, is_rehearsal: 0})
       if (result.code == 200 && result.data) {
         this.liveDetail = result.data
       }
@@ -520,21 +569,45 @@ export default {
           ...res.data.invite_card,
           is_show_watermark: Boolean(res.data.invite_card.is_show_watermark),
         }
+        this.nickName = res.data.nick_name
         this.information = {
           ...res.data.invite_card,
           is_show_watermark: Boolean(res.data.invite_card.is_show_watermark),
         }
-        this.qrcode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}?invite=${res.data.invite}`
-        this.img = this.formInvitation.img || this.fileList[0]
-        if (!this.formInvitation.img_type) {
-          this.img = this.formInvitation.img || this.fileList[0]
-        } else {
+        this.qrcode = `${Env.staticLinkVo.aliQr}${process.env.VUE_APP_WAP_WATCH}/lives/watch/${this.$route.params.str}?invite=${res.data.invite}`;
+        // 图片处理
+        if (res.data.invite_card.img_type) {
           this.img = this.fileList[this.formInvitation.img_type - 1]
+        } else {
+          this.formInvitation.img_type = 0;
+          if (this.formInvitation.img) {
+            this.handlerImageInfo(this.formInvitation.img)
+          } else {
+            this.img = this.fileList[0]
+          }
         }
-        this.imgUrl = this.formInvitation.img || ''
         this.invitation = Boolean(res.data.status)
         // this.formInvitation.is_show_watermark = Boolean(this.formInvitation.is_show_watermark);
       })
+    },
+    // 处理图片
+    handlerImageInfo(url) {
+      this.img = getImageQuery(url);
+      if (cropperImage(url)) {
+        let obj = parseImgOssQueryString(url);
+        const { blur, crop } = obj;
+        this.imageCropper = {
+          backgroundSize: {
+            x: Number(crop.x),
+            y: Number(crop.y),
+            width: Number(crop.w),
+            height: Number(crop.h)
+          },
+          blurryDegree: blur && Number(blur.s) / 2 || 0,
+          lightDegree: obj.bright ? 10 + Number(obj.bright) / 5 : 10,
+          imageCropMode: Number(obj.mode)
+        }
+      }
     },
     changeImg() {
       this.$refs.background.dialogVisible = true
@@ -542,10 +615,16 @@ export default {
     code() {
       this.$router.push({ path: '/code' })
     },
-    onSubmitImg(type, url, trueImg) {
+    onSubmitImg(type, url, imageObj) {
       if (!type) {
-        this.formInvitation.img = url
-        this.img = trueImg
+        this.img = url;
+        this.imageCropper = {
+          backgroundSize: imageObj.backgroundSize,
+          imageCropMode: imageObj.imageCropMode,
+          blurryDegree: 0,
+          lightDegree: 10
+        };
+        this.formInvitation.img_type = 0;
       } else {
         this.img = this.fileList[type - 1]
       }
@@ -560,7 +639,7 @@ export default {
       this.formInvitation.is_show_watermark = Number(
         this.formInvitation.is_show_watermark
       )
-      this.formInvitation.img = this.formInvitation.img_type ? '' : this.img
+      this.formInvitation.img = this.formInvitation.img_type ? '' : this.$parseURL(this.domain_url).path
       let arrShowType = [100276, 100277, 100278]
       let obj = Object.assign({}, ids, this.formInvitation)
       // 字段里面若对象值为空，也要传递。
@@ -774,6 +853,22 @@ export default {
       cursor: pointer;
     }
   }
+  .image_cropper{
+    width: 320px;
+    margin-top: 12px;
+    &_item{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      span{
+        color: #595959;
+      }
+      .wid_block{
+        display: inline-block;
+        width: 16px;
+      }
+    }
+  }
   .data-show {
     margin-right: 100px;
     display: flex;
@@ -847,8 +942,21 @@ export default {
       border-radius: 4px;
       border: 1px solid #e6e6e6;
       background-image: url('../../../common/images/v35-webinar.png');
+      background-repeat: no-repeat;
       background-size: 100% 100%;
       height: 622px;
+      &__1 {
+        background-size: 100% 100%;
+        background-position: center;
+      }
+      &__2 {
+        background-size: cover;
+        background-position: left top;
+      }
+      &__3 {
+        background-size: contain;
+        background-position: center;
+      }
       .show-container {
         margin: 50px 24px;
         width: 282px;
@@ -969,6 +1077,18 @@ export default {
       background-repeat: no-repeat;
       border-radius: 4px;
       z-index: 0;
+      &__1 {
+        background-size: 100% 100%;
+        background-position: center;
+      }
+      &__2 {
+        background-size: cover;
+        background-position: left top;
+      }
+      &__3 {
+        background-size: contain;
+        background-position: center;
+      }
       .watch-container {
         width: 100%;
         height: 100%;
@@ -1097,6 +1217,18 @@ export default {
       background-size: 100% 100%;
       background-repeat: no-repeat;
       position: relative;
+      &__1 {
+        background-size: 100% 100%;
+        background-position: center;
+      }
+      &__2 {
+        background-size: cover;
+        background-position: left top;
+      }
+      &__3 {
+        background-size: contain;
+        background-position: center;
+      }
       .look-color-shadow {
         width: 100%;
         height: 100%;
@@ -1166,7 +1298,7 @@ export default {
         }
       }
       .look-time {
-        margin-top: 30px;
+        margin-top: 20px;
         // padding-left: 24px;
         p {
           padding: 0;

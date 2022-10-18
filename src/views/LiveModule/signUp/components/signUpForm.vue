@@ -1,11 +1,11 @@
 <template>
   <div :class="['signFormBox']" @click.self="closePreview">
     <div :class="['signWrap']">
-      <vhscroll @handle-scroll="handleAutoCloseSelect">
+      <vue-scroll @handle-scroll="handleAutoCloseSelect">
         <div class="entryFormBox">
           <header>
             <img v-if="!baseInfo.cover" src="../images/formHeader.png" alt="">
-            <img v-else :src="`${ Env.staticLinkVo.uploadBaseUrl }${ baseInfo.cover }`" alt="">
+            <img v-else :class="`signWrap__header-${coverImageMode}`" :src="`${ Env.staticLinkVo.uploadBaseUrl }${ baseInfo.cover }`" alt="">
           </header>
           <article>
             <h1 class="pageTitle">{{ baseInfo.title }}</h1>
@@ -48,7 +48,7 @@
                       v-if="question.type == 0 && question.default_type == 2"
                       :maxlength="question.type == 0 ? '' : 60"
                       :show-word-limit="question.type != 0"
-                      v-model.number="form[question.id]"
+                      v-model.number.trim="form[question.id]"
                       type="number"
                       autocomplete="off"
                       :placeholder="placeholderList[question.default_type] || '请输入'"></VhallInput>
@@ -56,7 +56,7 @@
                       v-else
                       :maxlength="question.type == 0 ? '' : 60"
                       :show-word-limit="question.type != 0"
-                      v-model="form[question.id]"
+                      v-model.trim="form[question.id]"
                       autocomplete="off"
                       :placeholder="placeholderList[question.default_type] || '请输入'"></VhallInput>
                   </template>
@@ -89,7 +89,7 @@
                               placeholder="请输入描述内容"
                               v-show="form[question.id] == radioItem.id"
                               style="margin-top: 10px;"
-                              v-model="form[`${question.id}${radioItem.id}`]"
+                              v-model.trim="form[`${question.id}${radioItem.id}`]"
                               class="radioInput"
                             ></VhallInput>
                           </template>
@@ -117,7 +117,7 @@
                             autocomplete="off"
                             v-show="form[question.id].some(id => id == checkItem.id)"
                             style="margin-top: 10px;"
-                            v-model="form[`${question.id}${checkItem.id}`]"
+                            v-model.trim="form[`${question.id}${checkItem.id}`]"
                             class="radioInput"
                           ></VhallInput>
                         </template>
@@ -143,7 +143,7 @@
                   >
                     <el-row :gutter="20">
                       <el-col :span="question.colNum">
-                        <VhallInput v-show="false" v-model="form[question.id]" autocomplete="off" ></VhallInput>
+                        <VhallInput v-show="false" v-model.trim="form[question.id]" autocomplete="off" ></VhallInput>
                         <el-select ref="autoCloseRefFlag" v-model="province" @change="regionalChange('province')" placeholder="请选择省份">
                           <el-option
                             v-for="opt in provinces"
@@ -189,6 +189,7 @@
                       <el-button
                         :disabled="time !== 60 || isPreview"
                         class="no-border" size="mini"
+                        v-preventReClick
                         @click="getDyCode(true)"
                       >{{ time === 60 ? '发送验证码' : `${time}s` }}</el-button>
                     </el-col>
@@ -203,8 +204,10 @@
                   </template>
                 </el-form-item>
                 <div class="btnBox">
-                  <el-button style="margin-top: 11px;" :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitForm">报名</el-button>
+                  <el-button style="margin-top: 11px;" :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click="submitForm">报名</el-button>
                 </div>
+                <!-- 隐私协议合规 -->
+                <privacy-select scene="signForm" compType="2"></privacy-select>
               </el-form>
             </template>
 
@@ -231,19 +234,22 @@
                         :disabled="verifyTime !== 60 || isPreview"
                         class="no-border"
                         size="mini"
+                        v-preventReClick
                         @click="getDyCode(false)"
                       >{{ verifyTime === 60 ? '发送验证码' : `${verifyTime}s` }}</el-button>
                     </el-col>
                   </el-row>
                 </el-form-item>
                 <div class="btnBox">
-                  <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" @click="submitVerify">提交</el-button>
+                  <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click="submitVerify">提交</el-button>
                 </div>
+                <!-- 隐私协议合规 -->
+                <privacy-select scene="signForm" compType="2"></privacy-select>
               </el-form>
             </template>
           </article>
         </div>
-      </vhscroll>
+      </vue-scroll>
       <i v-if="!isEntryForm" class="closeBtn" @click="closePreview">
         <i class="iconfont-v3 saasicon_close"></i>
       </i>
@@ -255,14 +261,32 @@
   import axios from 'axios';
   import Env from "@/api/env";
   import { validPhone } from '@/utils/validate.js'
+  import PrivacySelect from '../../../Login/components/privacy-select.vue';
+  import { parseImgOssQueryString, cropperImage } from '@/utils/utils.js'
   // import DevicePixelRatio from '@/utils/devicePixelRatio'
   export default {
+    components: {
+      PrivacySelect
+    },
     created() {
-      this.getWebinarType();
+      if (this.signUpPageType == 'webinar') {
+        this.getWebinarType();
+      } else {
+        this.isSubscribe = 1
+        this.tabs = 1
+      }
       this.getBaseInfo();
       this.getQuestionList();
     },
     watch: {
+      coverUrl(newVal) {
+        if (cropperImage(newVal)) {
+          let obj = parseImgOssQueryString(`https:${newVal}`);
+          this.coverImageMode = Number(obj.mode) || 3;
+        } else {
+          this.coverImageMode = 2;
+        }
+      },
       province(newVal, oldVal) {
         if (newVal != oldVal) {
           this.city = ''
@@ -432,14 +456,16 @@
       },
       countyList() {
         return this.counties[this.city]
+      },
+      coverUrl() {
+        return `${ this.Env.staticLinkVo.uploadBaseUrl }${ this.baseInfo.cover }`
       }
     },
     data() {
       return {
         Env: Env,
-        webinar_id: this.$route.params.id || this.$route.params.str,
         isEntryForm: this.$route.path.startsWith('/entryform'), // 是否是独立表单
-        isPreview: this.$route.path.startsWith('/live/signup'),
+        isPreview: this.$route.path.startsWith('/live/signup') || this.$route.path.startsWith('/special/viewer'),
         isSubscribe: 0,
         colorIndex: 'red',
         tabs: 0,
@@ -506,25 +532,45 @@
         colNum: 8,
         regionalId: '',
         isVerifyCodeErr: false,
-        overflowStatus: 0 // 文本溢出的状态，0 未溢出；1 溢出未展开；2溢出展开
+        overflowStatus: 0, // 文本溢出的状态，0 未溢出；1 溢出未展开；2溢出展开
+        signUpPageType: (window.location.href.indexOf('/live/signup/') != -1 || window.location.href.indexOf('/lives/entryform') != -1) ? 'webinar'
+        : (window.location.href.indexOf('/special/viewer/') != -1 || window.location.href.indexOf('/special/entryform') != -1) ? 'subject'
+        : '',
+        webinarOrSubjectId:
+          (window.location.href.indexOf('/live/signup/') != -1)
+          ? this.$route.params.str :
+          (
+            (window.location.href.indexOf('/special/viewer/') != -1 || window.location.href.indexOf('/lives/entryform') != -1 || window.location.href.indexOf('/special/entryform') != -1)
+            ? (this.$route.params.id || this.$route.params.str) : ''
+          ),
+        coverImageMode: 2
       };
     },
     mounted() {
       // new DevicePixelRatio('#signFormBox');
     },
     methods: {
+      // 设置接口入参，是活动维度 还是 专题维度
+      setParamsIdByRoute(params) {
+        if (this.signUpPageType === 'webinar') {
+          params.webinar_id = this.webinarOrSubjectId
+        } else if (this.signUpPageType === 'subject') {
+          params.subject_id = this.webinarOrSubjectId
+        }
+        return params
+      },
       handleAutoCloseSelect() {
-        this.$refs.autoCloseRefFlag.forEach(item => {
+        this.$refs.autoCloseRefFlag &&  this.$refs.autoCloseRefFlag.forEach(item => {
           item.blur()
         })
       },
       // 获取当前活动类型
       getWebinarType() {
-        this.$fetch('watchInit', {
-          webinar_id: this.webinar_id
-        }).then(res => {
-          this.isSubscribe = res.data.webinar.type == 2 ? 1 : 2
-          this.tabs = res.data.webinar.type == 2 ? 1 : 2
+        // webinar/info调整-正常的信息展示使用0
+        this.$fetch('getWebinarInfo', this.setParamsIdByRoute({is_rehearsal: 0})).then(res => {
+          // webinar_state  1直播 2预约 3结束 4点播 5回放
+          this.isSubscribe = res.data.webinar_state == 2 ? 1 : 2
+          this.tabs = res.data.webinar_state == 2 ? 1 : 2
         })
       },
       handleUnfold(val) {
@@ -561,9 +607,7 @@
       },
       // 获取表单基本信息
       getBaseInfo() {
-        this.$fetch('regFromGet', {
-          webinar_id: this.webinar_id
-        }).then(res => {
+        this.$fetch('regFromGet', this.setParamsIdByRoute({})).then(res => {
           if (res.code === 200) {
             this.baseInfo = res.data;
             this.$nextTick(() => {
@@ -621,7 +665,7 @@
         // 获取短信验证码
         if (this.mobileKey) {
           this.$fetch('regSendVerifyCode', {
-            webinar_id: this.webinar_id,
+            ...this.setParamsIdByRoute({}), // 活动ID 或者 专题ID
             phone: phone,
             captcha: this.mobileKey,
           }).then(() => {
@@ -674,23 +718,27 @@
           }
         });
       },
-      // 获取当前活动状态，如果直播中，跳转到直播间
+      // 验证 or  提交答案后，逻辑跳转处理
+      renderEndToPage() {
+        if (this.signUpPageType === 'webinar') {
+          this.getWebinarStatus()
+        }
+      },
+       // 获取当前活动状态，如果直播中，跳转到直播间
       getWebinarStatus() {
-        this.$fetch('watchInit', {
-          webinar_id: this.webinar_id
-        }).then(res => {
+        this.$fetch('watchInit', this.setParamsIdByRoute({})).then(res => {
           // const type = res.data.webinar.type
           const status = res.data.status
           if (res.code == 200) {
             if (res.data.status == 'live') {
               this.$router.push({
-                path: `/live/watch/${this.webinar_id}`
+                path: `/live/watch/${this.webinarOrSubjectId || this.$route.params.id || this.$route.params.str}`
               })
             } else {
               // 如果预约或结束，跳转到预约页
               if(this.isEntryForm) {
                 this.$router.push({
-                  path: `/subscribe/${this.webinar_id}`
+                  path: `/subscribe/${this.webinarOrSubjectId || this.$route.params.id || this.$route.params.str}`
                 })
               } else {
                 this.$router.go(0)
@@ -705,7 +753,7 @@
           if (valid) {
             this.formHandler()
             const options = {
-              webinar_id: this.webinar_id,
+              ...this.setParamsIdByRoute({}), // 活动ID 或者 专题ID
               form: JSON.stringify(this.answer),
             }
             this.isPhoneValidate && (options.verify_code = this.form.code);
@@ -716,8 +764,8 @@
                 res.data.visit_id && sessionStorage.setItem("visitor_id", res.data.visit_id);
                 // 报名成功的操作，跳转到直播间
                 this.closePreview()
-                // 判断当前直播状态，进行相应的跳转
-                this.getWebinarStatus()
+                // 提交答案后，逻辑跳转处理
+                this.renderEndToPage()
               }
             }).catch(err => {
               if (err.code == 512809 || err.code == 512570) {
@@ -732,8 +780,8 @@
                 // res.data.visit_id && sessionStorage.setItem("visitor_id", res.data.visit_id);
                 // 报名成功的操作，跳转到直播间
                 this.closePreview()
-                // 判断当前直播状态，进行相应的跳转
-                this.getWebinarStatus()
+                // 提交答案后，逻辑跳转处理
+                this.renderEndToPage()
               }
             })
           } else {
@@ -746,7 +794,7 @@
         this.$refs['verifyForm'].validate((valid) => {
           if (valid) {
             const options = {
-              webinar_id: this.webinar_id,
+              ...this.setParamsIdByRoute({}), // 活动ID 或者 专题ID
               phone: this.verifyForm.phone,
               verify_code: this.verifyForm.code,
             }
@@ -758,8 +806,8 @@
                   // 已报名，跳转到直播间
                   this.closePreview()
                   res.data.visit_id && sessionStorage.setItem('visitor_id', res.data.visit_id)
-                  // 判断当前直播状态，进行相应的跳转
-                  this.getWebinarStatus()
+                  // 验证提交答案后，逻辑跳转处理
+                  this.renderEndToPage()
                 } else {
                   this.$message.warning('请先报名！');
                   this.tabs = 1;
@@ -923,9 +971,7 @@
             return value1 - value2;
           };
         }
-        this.$fetch('regQListGet', {
-          webinar_id: this.webinar_id
-        }).then(res => {
+        this.$fetch('regQListGet', this.setParamsIdByRoute({})).then(res => {
           // 按照 order_num 从小到大排序
           const list = res.data.ques_list.sort(compare('order_num'));
           !this.isPreview && (this.currentPhone = res.data.phone);
@@ -1033,9 +1079,24 @@
         align-items: center;
         img{
           width: 100%;
+          height: 100%;
           object-fit: cover;
         }
+        .signWrap__header {
+          &-1 {
+            object-fit: fill;
+          }
+          &-2 {
+            object-fit: cover;
+            object-position: left top;
+          }
+          &-3 {
+            object-fit: contain;
+            object-position: center;
+          }
+        }
       }
+
       .pageTitle{
         font-size: 22px;
         color: #1A1A1A;

@@ -30,7 +30,7 @@
     >
       <div class="vh-chose-active-item__cover">
         <!-- TODO 选择专题后，反显已选择面板（至少有一个已选中的，后续选择都在此面板） -->
-        <img :src="item.cover" alt="">
+        <img :class="`img_box_bg box_bg_${item.itemMode}`" :src="item.cover" alt="">
         <span class="vh-chose-active-item__del" @click.stop="delProjectItem(item.id, item.type)"><img src="../images/icon-trash-line-01.png" alt=""></span>
         <div class="vh-chose-active-item__cover-status">
           <!-- <span class="liveTag"> -->
@@ -58,6 +58,7 @@
 <script>
 import EventBus from '../../bus'
 import eventsType from '../../EventConts'
+import { parseImgOssQueryString, cropperImage } from '@/utils/utils';
 export default {
   props: ['checkedList'],
   data() {
@@ -93,13 +94,28 @@ export default {
             this.loading = false
             this.total = 0
           } else {
-            this.activeList = res.data.list
+            this.activeList = res.data.list.map(item => {
+              let mode = 3;
+              if (cropperImage(item.cover)) {
+                mode = this.handlerImageInfo(item.cover);
+              }
+              return {
+                ...item,
+                itemMode: mode,
+                checked: false
+              }
+            })
             this.loading = false
           }
         } else {
           this.loading = false
         }
       })
+    },
+    // 解析图片地址
+    handlerImageInfo(url) {
+      let obj = parseImgOssQueryString(url);
+      return Number(obj.mode) || 3;
     },
     delProjectItem(project_id, type) {
       if(type == 2) {// 双语flash专题
@@ -155,13 +171,21 @@ export default {
       // background-size: 400% 400%;
       // animation: gradientBG 15s ease infinite;
       // background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.2));
-      img{
+      .img_box_bg{
         width: 100%;
         height: 100%;
-        object-fit: scale-down;
+        object-fit: contain;
+        object-position: center;
         position: absolute;
         top:0;
         left: 0;
+        &.box_bg_1{
+          object-fit: fill;
+        }
+        &.box_bg_2{
+          object-fit: cover;
+          object-position: left top;
+        }
       }
       &-status{
         position: absolute;

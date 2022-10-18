@@ -112,7 +112,7 @@ export default {
       let scrollLeft = window.pageLOffset || document.documentElement.scrollLeft || document.body.scrollLeft
       let offsetTop = document.querySelector('#settingBox').offsetTop
       let offsetLeft = document.querySelector('#settingBox').offsetLeft
-      console.warn('当前左侧滚动距离', scrollLeft, offsetLeft)
+      console.warn('当前左侧滚动距离', scrollLeft, offsetLeft, scrollTop, offsetTop)
       if (document.body.clientWidth > 1280) {
         if (scrollTop > offsetTop) {
           this.menuBarFixed = 'isFixed'
@@ -209,12 +209,12 @@ export default {
 <style lang="less">
   .vh-menus-dragComponents{
     width: 140px;
-    height: 100%;
-    background: #F7F7F7;
+    // height: 100%;
+    background: #fff;
     user-select: none;
     &.isFixed {
       position:fixed!important;
-      top:70px;
+      top:120px;
       z-index:999;
       &.isShow {
         display: block;
@@ -226,7 +226,7 @@ export default {
     &.isFixedBottom {
       position:fixed!important;
       z-index:999;
-      top:70px;
+      top:120px;
       &.isShow {
         display: block;
       }
