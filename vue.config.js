@@ -11,7 +11,7 @@ let cdn = {
     '//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.6.js',
     '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.min.js',
     // '//cnstatic01.e.vhall.com/3rdlibs/common-libs/ui-frame/element-UI.js',
-    '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.7/questionnaire_service.js',
+    '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.8/questionnaire_service.js',
     '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.js'
   ],
   css: [
