@@ -341,7 +341,7 @@ import Env from '@/api/env'
 import html2canvas from 'html2canvas'
 import beginPlay from '@/components/beginBtn'
 import { isEqual } from 'lodash'
-import defaultAvatar from '@/utils/avatar';
+import { defaultAvatar } from '@/utils/ossImgConfig';
 export default {
   data() {
     const locationValidate = (rule, value, callback) => {

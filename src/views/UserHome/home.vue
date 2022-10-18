@@ -99,13 +99,13 @@
 
 <script>
 import { sessionOrLocal } from '@/utils/utils'
-// import Env from '@/api/env'
+import Env from '@/api/env'
 import PageTitle from '@/components/PageTitle'
 import HomeMain from './components/main.vue'
 import ShareDialog from './components/shareDialog'
 import OldHeader from '@/components/OldHeader'
 import defaultbg from './images/defaultbg.png'
-import defaultAvatar from '@/utils/avatar';
+import { defaultAvatar } from '@/utils/ossImgConfig';
 import {
   parseImgOssQueryString,
   cropperImage,

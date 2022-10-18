@@ -77,7 +77,7 @@
 import { sessionOrLocal, clearCookies } from "@/utils/utils";
 import Env from "@/api/env";
 import RegLogin from './components/reg-login/index'
-import defaultAvatar from '@/utils/avatar';
+import { defaultAvatar } from '@/utils/ossImgConfig';
 
 export default {
   name: "index.vue",

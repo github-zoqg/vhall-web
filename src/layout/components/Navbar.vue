@@ -85,7 +85,7 @@ import Cookies from 'js-cookie'
 import Env from "@/api/env";
 import EventBus from "@/utils/Events";
 import { throttle } from '@/utils/utils';
-import defaultAvatar from '@/utils/avatar';
+import { defaultAvatar } from '@/utils/ossImgConfig';
 export default {
   components: {
     Breadcrumb

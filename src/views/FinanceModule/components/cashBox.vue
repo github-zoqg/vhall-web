@@ -111,7 +111,7 @@
 </template>
 <script>
 import { sessionOrLocal } from '@/utils/utils';
-import defaultAvatar from '@/utils/avatar';
+import { defaultAvatar } from '@/utils/ossImgConfig';
 export default {
   props: ['money', 'type'],
   data() {

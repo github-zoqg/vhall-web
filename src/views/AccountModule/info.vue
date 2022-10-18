@@ -52,7 +52,7 @@ import AccountSet from '../AccountModule/accountSet';
 import {getQueryString, sessionOrLocal} from "@/utils/utils";
 import Env from "@/api/env";
 import fetchData from "@/api/fetch";
-import defaultAvatar from '@/utils/avatar';
+import { defaultAvatar } from '@/utils/ossImgConfig';
 export default {
   name: 'info.vue',
   components: {

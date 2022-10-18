@@ -90,7 +90,7 @@
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import beginPlay from '@/components/beginBtn';
-import defaultAvatar from '@/utils/avatar';
+import { defaultAvatar } from '@/utils/ossImgConfig';
 import {sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery} from "@/utils/utils";
 import cropper from '@/components/Cropper/index'
 export default {
