@@ -37,22 +37,23 @@
           <div class="watch_layout_1" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
             <div>
               <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/ppt.png" alt=""></span>
-              <span><img src="./image/living/layout5.png" alt=""></span>
-              <span><img src="./image/living/layout1.png" alt=""></span>
-              <span><img src="./image/living/layout2.png" alt=""></span>
-              <span><img src="./image/living/layout3.png" alt=""></span>
-              <span><img src="./image/living/layout4.png" alt=""></span>
+              <span><img src="./image/living/layout1.jpg" alt=""></span>
+              <span><img src="./image/living/layout2.jpg" alt=""></span>
+              <span><img src="./image/living/layout3.jpg" alt=""></span>
+              <span><img src="./image/living/layout4.jpg" alt=""></span>
+              <span><img src="./image/living/layout5.jpg" alt=""></span>
             </div>
           </div>
           <!-- 主次浮窗 -->
           <div class="watch_layout_2" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
             <img src="./image/living/ppt.png" alt="" v-if="livingForm.speakerAndShowLayout == 1">
-            <img src="./image/living/layout1.png" alt="" v-else>
+            <img src="./image/living/layout1.jpg" alt="" v-else>
             <div class="layout_float">
-              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.png" alt=""></span>
-              <span><img src="./image/living/layout2.png" alt=""></span>
-              <span><img src="./image/living/layout3.png" alt=""></span>
-              <span><img src="./image/living/layout4.png" alt=""></span>
+              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.jpg" alt=""></span>
+              <span><img src="./image/living/layout2.jpg" alt=""></span>
+              <span><img src="./image/living/layout3.jpg" alt=""></span>
+              <span><img src="./image/living/layout4.jpg" alt=""></span>
+              <span><img src="./image/living/layout5.jpg" alt=""></span>
             </div>
           </div>
           <!-- 主次平铺 -->
@@ -60,34 +61,34 @@
             <div class="layout_top">
               <!-- :style="videoBackground" -->
               <span v-if="livingForm.speakerAndShowLayout == 1"><img src="./image/living/ppt.png" alt=""></span>
-              <span v-else><img src="./image/living/layout1.png" alt=""></span>
+              <span v-else><img src="./image/living/layout1.jpg" alt=""></span>
             </div>
             <div class="layout_bottom">
-              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.png" alt=""></span>
-              <span><img src="./image/living/layout2.png" alt=""></span>
-              <span><img src="./image/living/layout3.png" alt=""></span>
-              <span><img src="./image/living/layout4.png" alt=""></span>
-              <!-- <span><img src="./image/living/layout5.png" alt=""></span> -->
-              <!-- <span><img src="./image/wap/video.png" alt=""></span> -->
+              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.jpg" alt=""></span>
+              <span><img src="./image/living/layout2.jpg" alt=""></span>
+              <span><img src="./image/living/layout3.jpg" alt=""></span>
+              <span><img src="./image/living/layout4.jpg" alt=""></span>
+              <span><img src="./image/living/layout5.jpg" alt=""></span>
             </div>
           </div>
           <!-- 顶部成员 -->
           <div class="watch_layout_4" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_EXT1_MODE'">
             <div class="layout_top">
-              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.png" alt=""></span>
-              <span><img src="./image/living/layout2.png" alt=""></span>
-              <span><img src="./image/living/layout3.png" alt=""></span>
-              <span><img src="./image/living/layout4.png" alt=""></span>
+              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.jpg" alt=""></span>
+              <span><img src="./image/living/layout2.jpg" alt=""></span>
+              <span><img src="./image/living/layout3.jpg" alt=""></span>
+              <span><img src="./image/living/layout4.jpg" alt=""></span>
+              <span><img src="./image/living/layout5.jpg" alt=""></span>
             </div>
             <div class="layout_bottom">
               <span v-if="livingForm.speakerAndShowLayout == 1"><img src="./image/living/ppt.png" alt=""></span>
-              <span v-else><img src="./image/living/layout1.png" alt=""></span>
+              <span v-else><img src="./image/living/layout1.jpg" alt=""></span>
             </div>
           </div>
         </template>
         <template v-else>
           <div class="watch_layout">
-            <img src="./image/living/layout1.png" alt="">
+            <img src="./image/living/layout1.jpg" alt="">
           </div>
         </template>
       </div>
@@ -555,7 +556,7 @@ export default {
             height: 42px;
             span{
               display: inline-block;
-              width: 74px;
+              width: 20%; // 74px;
               height: 42px;
               img{
                 width: 100%;

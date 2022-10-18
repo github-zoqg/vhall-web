@@ -27,54 +27,54 @@
             <div class="left_top__even" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
               <div class="imgs">
                 <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/ppt.png" alt=""></span>
-                <span class="phone__center"><img src="./image/living/layout6.png" alt=""></span>
-                <span><img src="./image/living/layout1.png" alt=""></span>
-                <span><img src="./image/living/layout2.png" alt=""></span>
-                <span><img src="./image/living/layout3.png" alt=""></span>
-                <span><img src="./image/living/layout4.png" alt=""></span>
+                <span><img src="./image/living/layout1.jpg" alt=""></span>
+                <span><img src="./image/living/layout2.jpg" alt=""></span>
+                <span><img src="./image/living/layout3.jpg" alt=""></span>
+                <span><img src="./image/living/layout4.jpg" alt=""></span>
+                <span><img src="./image/living/layout5.jpg" alt=""></span>
               </div>
             </div>
             <!-- 主次浮窗 -->
             <div class="left_top__float" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
               <div class="imgs">
-                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.png" alt=""></span>
-                <span><img src="./image/living/layout2.png" alt=""></span>
-                <span><img src="./image/living/layout3.png" alt=""></span>
-                <span><img src="./image/living/layout4.png" alt=""></span>
-                <span><img src="./image/living/layout5.png" alt=""></span>
+                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.jpg" alt=""></span>
+                <span><img src="./image/living/layout2.jpg" alt=""></span>
+                <span><img src="./image/living/layout3.jpg" alt=""></span>
+                <span><img src="./image/living/layout4.jpg" alt=""></span>
+                <span><img src="./image/living/layout5.jpg" alt=""></span>
               </div>
             </div>
             <!-- 主次平铺 -->
             <div class="left_top__tiling" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
               <div class="host">
                 <img src="./image/living/ppt.png" alt="" v-show="livingForm.speakerAndShowLayout == 1">
-                <img src="./image/living/layout1.png" alt="" v-show="livingForm.speakerAndShowLayout != 1">
+                <img src="./image/living/layout1.jpg" alt="" v-show="livingForm.speakerAndShowLayout != 1">
               </div>
               <div class="imgs">
-                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.png" alt=""></span>
-                <span><img src="./image/living/layout2.png" alt=""></span>
-                <span><img src="./image/living/layout3.png" alt=""></span>
-                <span><img src="./image/living/layout4.png" alt=""></span>
-                <span><img src="./image/living/layout5.png" alt=""></span>
+                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.jpg" alt=""></span>
+                <span><img src="./image/living/layout2.jpg" alt=""></span>
+                <span><img src="./image/living/layout3.jpg" alt=""></span>
+                <span><img src="./image/living/layout4.jpg" alt=""></span>
+                <span><img src="./image/living/layout5.jpg" alt=""></span>
               </div>
             </div>
             <!-- 顶部成员 -->
             <div class="left_top__tiling" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_EXT1_MODE'">
               <div class="imgs">
-                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.png" alt=""></span>
-                <span><img src="./image/living/layout2.png" alt=""></span>
-                <span><img src="./image/living/layout3.png" alt=""></span>
-                <span><img src="./image/living/layout4.png" alt=""></span>
-                <span><img src="./image/living/layout5.png" alt=""></span>
+                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.jpg" alt=""></span>
+                <span><img src="./image/living/layout2.jpg" alt=""></span>
+                <span><img src="./image/living/layout3.jpg" alt=""></span>
+                <span><img src="./image/living/layout4.jpg" alt=""></span>
+                <span><img src="./image/living/layout5.jpg" alt=""></span>
               </div>
               <div class="host">
                 <img src="./image/living/ppt.png" alt="" v-show="livingForm.speakerAndShowLayout == 1">
-                <img src="./image/living/layout1.png" alt="" v-show="livingForm.speakerAndShowLayout != 1">
+                <img src="./image/living/layout1.jpg" alt="" v-show="livingForm.speakerAndShowLayout != 1">
               </div>
             </div>
           </div>
           <div class="left_no_interact" v-else :style="videoBackground">
-            <img src="./image/living/layout1.png" alt="">
+            <img src="./image/living/layout1.jpg" alt="">
           </div>
           <div class="left_bottom">
             <span class="left_bottom_setting">
@@ -107,7 +107,7 @@
                 </div>
                 <div class="chat_box_item chat_box_top">
                   <div class="item_img">
-                    <p><img src="./image/living/layout3.png" alt=""></p>
+                    <p><img src="./image/living/layout3.jpg" alt=""></p>
                   </div>
                   <div class="item_chat">
                     <p class="chat_role">邓浩杰</p>
@@ -125,7 +125,7 @@
                 </div>
                   <div class="chat_box_item">
                   <div class="item_img">
-                    <p><img src="./image/living/layout2.png" alt=""></p>
+                    <p><img src="./image/living/layout2.jpg" alt=""></p>
                   </div>
                   <div class="item_chat">
                     <p class="chat_role"><span class="ass">助理</span> 小助理</p>
@@ -151,7 +151,7 @@
                 </div>
                 <div class="chat_right_item">
                   <div class="chat_right_item-box">
-                    <span class="item_avatar"><img src="./image/living/layout2.png" alt=""></span>
+                    <span class="item_avatar"><img src="./image/living/layout2.jpg" alt=""></span>
                     <span class="item_ass"> 助理</span>
                     <span class="item_name"> 小助理 </span>
                     获取PPT，加官微哦
@@ -543,7 +543,7 @@ export default {
           &.layout_split {
             /* 分离模式 */
             .left_top__float {
-              background-image: url('./image/living/layout1.png');
+              background-image: url('./image/living/layout1.jpg');
               background-repeat: no-repeat;
               background-size: 596px 336px;
               .imgs {
