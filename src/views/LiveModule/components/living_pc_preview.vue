@@ -584,7 +584,7 @@ export default {
           .right_bottom{
             width: 100%;
             background: var(--background_pc_tabs_color);
-            transition: all 0.5s linear;
+            // transition: all 0.5s linear;
             position: relative;
             border-radius: 0 0 4px 4px;
             &_chat{
@@ -596,7 +596,7 @@ export default {
                 background: var(--background_pc_tabs_color);
                 position: relative;
                 border-bottom: 1px solid var(--border_pc_tabs_color);
-                transition: all 0.5s linear;
+                // transition: all 0.5s linear;
                 p{
                   color: var(--color_pc_text_active);
                   font-size: 14px;

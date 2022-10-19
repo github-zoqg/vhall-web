@@ -30,8 +30,8 @@
         <span><i class="iconfont-v3 saasline-public1"></i></span>
        </div>
     </div>
-    <div class="living_preview_wap_body">
-      <div :class="`wap_player ${livingForm.speakerAndShowLayout == 1 ? 'layout_join' : 'layout_split'}`"  v-if="type==1" :style="videoBackground">
+    <div :class="['living_preview_wap_body', `${['default', 'default', 'fashion', 'concise'][livingWapForm.style]}_${livingForm.speakerAndShowLayout == 1 ? 'join' : 'split'}`]">
+      <div class="wap_player"  v-if="type==1" :style="videoBackground">
         <template v-if="isShowInteract">
           <!-- 均匀 -->
           <div class="watch_layout_1" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
@@ -111,7 +111,7 @@
           </div>
         </div>
       </div>
-      <div :class="`wap_menus ${livingForm.speakerAndShowLayout == 1 ? 'layout_join' : 'layout_split'}`" v-else>
+      <div class="wap_menus" v-else>
         <div class="wap_menus_tabs" v-if="livingWapForm.style!=3">
           <!-- <div class="tabs_left">
             <i class="iconfont-v3 saasicon_arrowleft"></i>
@@ -553,11 +553,11 @@ export default {
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 42px;
+            height: 43px;
             span{
               display: inline-block;
               width: 20%; // 74px;
-              height: 42px;
+              height: 43px;
               img{
                 width: 100%;
                 height: 100%;
@@ -572,7 +572,6 @@ export default {
             width: 100%;
             height: 167px;
             padding: 0 38px;
-            // transition: all 0.8s linear;
             background-size: 100% 100%;
             background-repeat: no-repeat;
             span{
@@ -622,7 +621,6 @@ export default {
             width: 100%;
             height: 167px;
             padding: 0 38px;
-            transition: all 0.8s linear;
             background-size: 100% 100%;
             background-repeat: no-repeat;
             span{
@@ -1090,6 +1088,169 @@ export default {
           height: 32px;
           // margin-left: 15px;
           background-image: url('./image/wap/tools_concise.png');
+        }
+      }
+    }
+  }
+
+  .living_preview_wap_body {
+    // 简洁 & 分离模式
+    &.concise_split {
+      // 均匀排列
+      .watch_layout_1 {}
+      // 主次浮窗
+      .watch_layout_2 {}
+      // 主次平铺
+      .watch_layout_3 {}
+      // 顶部成员
+      .watch_layout_4 {}
+    }
+    // 简洁 & 合并模式
+    &.concise_join {
+      // 均匀排列
+      .watch_layout_1 {}
+      // 主次浮窗
+      .watch_layout_2 {
+        .layout_float {
+          span {
+            width: 20%;
+          }
+        }
+      }
+      // 主次平铺
+      .watch_layout_3 {
+        .layout_bottom {
+          span {
+            width: 20%;
+          }
+        }
+      }
+      // 顶部成员
+      .watch_layout_4 {
+        .layout_top {
+          span {
+            width: 20%;
+          }
+        }
+      }
+    }
+
+    // 时尚 & 分离模式
+    &.fashion_split {
+      // 均匀排列
+      .watch_layout_1 {}
+      // 主次浮窗
+      .watch_layout_2 {
+        .layout_float {
+          span {
+            width: 25%;
+          }
+        }
+      }
+      // 主次平铺
+      .watch_layout_3 {
+        .layout_bottom {
+          span {
+            width: 25%;
+          }
+        }
+      }
+      // 顶部成员
+      .watch_layout_4 {
+        .layout_top {
+          span {
+            width: 25%;
+          }
+        }
+      }
+    }
+
+    // 时尚 & 合并模式
+    &.fashion_join {
+      // 均匀排列
+      .watch_layout_1 {}
+      // 主次浮窗
+      .watch_layout_2 {
+        .layout_float {
+          span {
+            width: 20%;
+          }
+        }
+      }
+      // 主次平铺
+      .watch_layout_3 {
+        .layout_bottom {
+          span {
+            width: 20%;
+          }
+        }
+      }
+      // 顶部成员
+      .watch_layout_4 {
+        .layout_top {
+          span {
+            width: 20%;
+          }
+        }
+      }
+    }
+
+    // 传统 & 分离模式
+    &.default_split {
+      // 均匀排列
+      .watch_layout_1 {}
+      // 主次浮窗
+      .watch_layout_2 {
+        .layout_float {
+          span {
+            width: 25%;
+          }
+        }
+      }
+      // 主次平铺
+      .watch_layout_3 {
+        .layout_top {
+          transition: all 0.8s linear;
+        }
+        .layout_bottom {
+          span {
+            width: 25%;
+          }
+        }
+      }
+      // 顶部成员
+      .watch_layout_4 {
+        .layout_top {
+          span {
+            width: 25%;
+          }
+        }
+      }
+    }
+
+    // 传统 & 合并模式
+    &.default_join {
+      // 均匀排列
+      .watch_layout_1 {}
+      // 主次浮窗
+      .watch_layout_2 {}
+      // 主次平铺
+      .watch_layout_3 {
+        .layout_top {
+          transition: all 0.8s linear;
+        }
+        .layout_bottom {
+          span {
+            width: 20%;
+          }
+        }
+      }
+      // 顶部成员
+      .watch_layout_4 {
+        .layout_top {
+          span {
+            width: 20%;
+          }
         }
       }
     }
