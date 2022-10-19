@@ -4,8 +4,6 @@ import router from './router';
 import VhallUI from 'vhall-ui';
 import 'cropperjs/dist/cropper.css'
 import Cookies from 'js-cookie'
-import vuescroll from 'vuescroll';
-
 // element-ui 样式重置
 import '@/common/css/theme/index.css';
 import vuescroll from 'vuescroll';
@@ -16,7 +14,6 @@ import './utils/prototype'
 import '@/components/Icon/index';
 import * as filters from './utils/filter';
 import { getParams } from './utils/general';
-import Cookies from 'js-cookie'
 // css相关
 import 'nprogress/nprogress.css';
 import '@/common/css/index.less';
