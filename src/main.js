@@ -148,8 +148,6 @@ if (!userGrayId && pageGrayTag) {
   window.location.reload()
 }
 let clientTokenVal = clientToken('token');
-  sessionOrLocal.set('token', clientTokenVal , 'localStorage');
-  sessionOrLocal.set('tokenRefresh', new Date().getTime(), 'localStorage')
 if (clientTokenVal) {
   sessionOrLocal.set('token', clientTokenVal, 'localStorage');
   sessionOrLocal.set('platform', clientToken('platform'), 'localStorage');
