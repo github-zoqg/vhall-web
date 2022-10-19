@@ -901,7 +901,7 @@ export default {
             clear: both;
           }
           &.page__concise {
-            padding: 32px 10px 0 10px;
+            padding: 56px 10px 0 10px;
             height: 302px;
           }
         }
