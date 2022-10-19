@@ -1,5 +1,8 @@
-const { debug } = require('console')
 const path = require('path')
+const vueURL = ['production', 'pre'].includes(process.env.VUE_APP_NODE_ENV) ?
+  '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.min.js' :
+  '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.js'
+
 let cdn = {
   js: [
     '//static.vhallyun.com/jssdk/vhall-jssdk-player/latest/vhall-jssdk-player-2.3.0.js',
@@ -9,21 +12,22 @@ let cdn = {
     '//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js',
     '//cnstatic01.e.vhall.com/vhall-new-saas/static/polyfill.js?v=202',
     '//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.6.js',
-    '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.min.js',
-    // '//cnstatic01.e.vhall.com/3rdlibs/common-libs/ui-frame/element-UI.js',
     '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.8/questionnaire_service.js',
-    '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.js'
+    vueURL, // 必须在elementUI 之前
+    '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.js', // vhallUI
+    '//s1.e.vhall.com/common-static/middle/vue-i18n/8.26.7/vue-i18n.min.js', // VueI18n
+    '//s1.e.vhall.com/common-static/middle/vue-router/3.5.3/dist/vue-router.min.js', // VueRouter
+    '//s2.e.vhall.com/common-static/middle/dayjs/1.10.8/dayjs.min.js', // dayjs
+    '//s1.e.vhall.com/common-static/middle/element-ui/lib/2.15.6/index.js', //elementUI
+    '//s1.e.vhall.com/common-static/middle/lodash/4.17.21/lodash.min.js', // lodash
+    '//s1.e.vhall.com/common-static/middle/moment/2.29.1/dist/moment.min.js', // lodash
+    '//s1.e.vhall.com/common-static/middle/echarts/4.9.0/echarts.min.js', // echarts
   ],
   css: [
-    '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.css'
+    '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.css',
+    '//s1.e.vhall.com/common-static/middle/element-ui/lib/2.15.6/theme/index.css', //ElementUi
   ]
 }
-
-if (process.env.NODE_ENV === 'development') {
-  const vueIndex = cdn.js.findIndex(item => item.indexOf('vue.min.js') > -1)
-  cdn.js.splice(vueIndex, 1, '//t-alistatic01.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.js')
-}
-
 // console.warn(process)
 let publicPath = process.env.VUE_APP_PUBLIC_PATH || './'
 console.warn('配置环境变量----', {
@@ -88,34 +92,35 @@ module.exports = {
     //   .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
   },
   configureWebpack: (config) => {
-  //   if (process.env.NODE_ENV === 'production') {
-  // 为生产环境修改配置...
-  // const optimization = {
-  //   splitChunks: {
-  //     cacheGroups: {
-  //       common: {
-  //         name: 'chunk-common',
-  //         minChunks: 2,
-  //         priority: -20,
-  //         chunks: 'all',
-  //         reuseExistingChunk: true
-  //       }
-  //     }
-  //   }
-  // }
-      const externals = {
-        vue: 'Vue',
-        "vhall-ui": "VHALLUI"
-      }
-      return {
-        // optimization,
-        externals
-      }
-  //   } else {
-  //     // 为开发环境修改配置...
-  //   }
+    //   if (process.env.NODE_ENV === 'production') {
+    // 为生产环境修改配置...
+    // const optimization = {
+    //   splitChunks: {
+    //     cacheGroups: {
+    //       common: {
+    //         name: 'chunk-common',
+    //         minChunks: 2,
+    //         priority: -20,
+    //         chunks: 'all',
+    //         reuseExistingChunk: true
+    //       }
+    //     }
+    //   }
+    // }
+    const externals = {
+      vue: 'Vue',
+      "vhall-ui": "VHALLUI",
+      'vue-router': 'VueRouter',
+      'element-ui': 'ELEMENT',
+      lodash: '_',
+      VueI18n: 'VueI18n',
+      echarts: 'echarts',
+    }
+    return {
+      // optimization,
+      externals
+    }
   },
-
   pluginOptions: {
     'style-resources-loader': {
       preProcessor: 'less',

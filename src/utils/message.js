@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import Vue from 'vue'
 import { Message } from 'element-ui';
 // 全局配置 message 的 offset 值
 const offset = 8

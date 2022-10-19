@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router';
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'
 import { checkAuth } from "@/utils/utils"; // progress bar style
