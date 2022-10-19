@@ -572,7 +572,7 @@ export default {
             width: 100%;
             height: 167px;
             padding: 0 38px;
-            transition: all 0.8s linear;
+            // transition: all 0.8s linear;
             background-size: 100% 100%;
             background-repeat: no-repeat;
             span{
