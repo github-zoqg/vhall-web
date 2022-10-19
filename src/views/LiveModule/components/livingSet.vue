@@ -173,7 +173,7 @@
           </div>
           <template v-if="isShowVideoBackground || isShowInteract">
             <div class="form_item_br">
-              以下设置对PC端和移动端同时生效～
+              以下设置对PC和移动端同时生效～
             </div>
             <div class="form_item more__layout" v-if="isShowInteract">
               <div class="form_item_title">
@@ -999,8 +999,8 @@ export default {
       }
     }
     &_form{
-      width: 270px;
-      padding: 0 0 0 20px;
+      width: 275px;
+      padding: 0 0 0 18px;
       &_opera{
         padding-bottom: 40px;
         .vh-button+.vh-button{
@@ -1014,7 +1014,7 @@ export default {
       }
       .form_item{
         padding-bottom: 24px;
-        margin-right: 15px;
+        margin-right: 17px;
         &.more__layout {
           padding-bottom: 16px;
         }
@@ -1088,7 +1088,7 @@ export default {
           font-size: 14px;
           line-height: 22px;
           padding: 8px 0 24px 0;
-          text-align: center;
+          text-align: left;
           border-top: 1px solid #f0f0f0;
         }
         &_lay {
