@@ -972,7 +972,7 @@ export default {
         }
         .preview_container{
           padding: 12px 32px 48px 32px;
-          min-height: 670px;
+          min-height: 892px;
         }
         &_pc{
           width: 880px;
@@ -1008,8 +1008,8 @@ export default {
         }
       }
       &_scroll {
-        height: 665px;
-        margin-bottom: 40px;
+        height: 908px;
+        margin-bottom: 20px;
         overflow-y: auto;
       }
       .form_item{
