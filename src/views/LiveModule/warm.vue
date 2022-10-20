@@ -198,7 +198,6 @@ export default {
       showDialog: false,
       imageCropMode: 1,
       warmForm: {
-        record_id: '',
         imageUrl: '',
         playType: 1,
         selectedList:[],
@@ -212,7 +211,8 @@ export default {
           height: 0
         }
       },
-      domain_url: ''
+      domain_url: '',
+      vm: null
     };
   },
   computed: {
@@ -224,9 +224,9 @@ export default {
       return `${this.warmForm.imageUrl}?x-oss-process=image/crop,x_${this.warmForm.backgroundSize.x.toFixed()},y_${this.warmForm.backgroundSize.y.toFixed()},w_${this.warmForm.backgroundSize.width.toFixed()},h_${this.warmForm.backgroundSize.height.toFixed()}${this.warmForm.blurryDegree > 0 ? `,x-oss-process=image/blur,r_10,s_${this.warmForm.blurryDegree * 2}` : ''},x-oss-process=image/bright,${(this.warmForm.lightDegree - 10) * 5}&mode=${this.imageCropMode}`;
     }
   },
-  created() {
+  async created() {
     this.userId = JSON.parse(sessionOrLocal.get('userId'));
-    this.getWarmVideoInfo();
+    await this.getWarmVideoInfo();
   },
   beforeRouteLeave (to, from, next) {
      if (!this.isChange) {
@@ -239,14 +239,26 @@ export default {
         customClass: 'zdy-message-box',
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
-      }).then(() => {
-        if (!this.warmForm.record_id) {
-          this.warmForm.warmFlag = false;
-          this.openCloseWarm(1);
+      }).then(async (status) => {
+        if (status === 'confirm') { // 点击确定按钮
+          // 如果当前活动下暖场视频 - 设置有视频，这个时候不应该关闭；
+          // 如果当前活动下暖场视频 - 未设置过视频，并且选择视频也没内容，这个时候应该弹出提示。
+          let warnResult = await this.$fetch('warnInfo', {webinar_id: this.$route.params.str})
+          if (warnResult && warnResult.code == 200) {
+            let recordList = warnResult.data?.record_list || []
+            if (recordList.length > 0) {
+              next();
+            } else {
+              this.warmForm.warmFlag = false;
+              this.openCloseWarm(1);
+            }
+          } else {
+            this.messageInfo('获取暖场视频信息失败，请稍后重试', 'error')
+          }
         }
-        next();
       }).catch(() => {
-      });
+        this.messageInfo('获取暖场视频信息失败，请稍后重试', 'error')
+      })
   },
   methods: {
     // 鼠标离开
@@ -256,6 +268,19 @@ export default {
     //鼠标滑上去
     showMenu () {
       this.showChecked = true
+    },
+    //文案提示问题
+    messageInfo(msg, type) {
+      if (this.vm) {
+        this.vm.close();
+      }
+      this.vm = this.$message({
+        showClose: true,
+        // duration: 2000,
+        message: msg,
+        type: type,
+        customClass: 'zdy-info-box',
+      })
     },
     closeWarm() {
       this.warmForm.warmFlag = false
@@ -275,22 +300,10 @@ export default {
               data: {business_uid: this.userId, user_id: '', webinar_id: this.$route.params.str, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
             })
           }
-          this.$message({
-            message: this.warmForm.warmFlag ? '开启暖场视频成功' : '关闭暖场视频成功',
-            showClose: true,
-            // duration: 0,
-            type: 'success',
-            customClass: 'zdy-info-box'
-          });
+          this.messageInfo(this.warmForm.warmFlag ? '开启暖场视频成功' : '关闭暖场视频成功', 'success')
         }
       }).catch(res => {
-        this.$message({
-          message: res.msg || (this.warmForm.warmFlag ? '开启暖场视频失败' : '关闭暖场视频失败'),
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
+        this.messageInfo(res.msg || (this.warmForm.warmFlag ? '开启暖场视频失败' : '关闭暖场视频失败'), 'error')
       });
     },
     // 获取暖场视频详情
@@ -369,11 +382,6 @@ export default {
       this.selectMedia.msg_url = '.mp4';
       this.showDialog = true;
     },
-    // 删除
-    deleteVideo() {
-      this.selectMedia = {};
-      this.warmForm.record_id = '';
-    },
     cropComplete(cropperData, url, mode) {
       console.log(cropperData, url, '?????')
       this.warmForm.backgroundSize = cropperData;
@@ -400,23 +408,11 @@ export default {
       const isType = typeList.includes(typeArr[typeArr.length - 1]);
       const isLt2M = file.size / 1024 / 1024 < 4;
       if (!isType) {
-        this.$message({
-          message: `上传封面图片只能是 ${typeList.join('、')} 格式`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
+        this.messageInfo(`上传封面图片只能是 ${typeList.join('、')} 格式`, 'error')
         return false;
       }
       if (!isLt2M) {
-        this.$message({
-          message: "上传封面图片大小不能超过 4M",
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
+        this.messageInfo('上传封面图片大小不能超过 4M', 'error')
         return false;
       }
       return isType && isLt2M;
@@ -426,13 +422,7 @@ export default {
     },
     uploadError(err, file, fileList){
       console.log('uploadError', err, file, fileList);
-      this.$message({
-        message: "封面图片上传失败",
-        showClose: true,
-        // duration: 0,
-        type: 'error',
-        customClass: 'zdy-info-box'
-      });
+      this.messageInfo('封面图片上传失败', 'error')
     },
     uploadPreview(file){
       console.log('uploadPreview', file);
@@ -444,13 +434,7 @@ export default {
       })
       console.log(recordId, '???12312435')
       if(!recordId.length){
-        this.$message({
-          message: "请上传暖场视频",
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
+        this.messageInfo('请上传暖场视频', 'error')
       }else{
         this.saveWarmInfo(recordId);
       }
@@ -482,18 +466,13 @@ export default {
           type: 'success',
           customClass: 'zdy-info-box'
         });
+
         this.isChange = false;
         setTimeout(()=>{
           this.$router.push({path: `/live/detail/${this.$route.params.str}`});
         }, 500);
       }).catch(res => {
-        this.$message({
-          message: res.msg || "保存暖场视频失败",
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
+        this.messageInfo(res.msg || "保存暖场视频失败", 'error');
       });
     },
     // 删除图片
