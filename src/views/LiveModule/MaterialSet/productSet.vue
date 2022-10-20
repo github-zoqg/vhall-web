@@ -22,6 +22,7 @@
           @getTableList="getTableList"
           @changeTableCheckbox="changeTableCheckbox"
           @switchChange="onSwitchChange"
+          @changeInput="changeItemInput"
         >
         </table-list>
         <noData :nullType="'search'" v-if="!total"></noData>
@@ -59,6 +60,12 @@ export default {
         }
       ],
       tabelColumn: [
+        {
+          label: '排序',
+          key: 'order_num',
+          width: 120,
+          type: 'input'
+        },
         {
           label: '图片',
           key: 'img',
@@ -246,14 +253,15 @@ export default {
     },
     // 编辑
     edit(that, {rows}) {
-      if (!rows.status) {
-        that.$alert('商品已上架，如需编辑请先做下架处理', '提示', {
-          confirmButtonText: '我知道了',
-          customClass: 'zdy-message-box',
-          lockScroll: false,
-        });
-        return;
-      }
+      // v7.6.9商品实时处理-1027上线-删除判断
+      // if (!rows.status) {
+      //   that.$alert('商品已上架，如需编辑请先做下架处理', '提示', {
+      //     confirmButtonText: '我知道了',
+      //     customClass: 'zdy-message-box',
+      //     lockScroll: false,
+      //   });
+      //   return;
+      // }
       that.$router.push({
         path: `/live/editProduct/${that.$route.params.str}`,
         query: {
@@ -351,6 +359,31 @@ export default {
         return;
       }
       this.$router.push({path: `/live/addProduct/${this.$route.params.str}`});
+    },
+    // 
+    changeItemInput(data) {
+      // console.log(data,'changeItemInput')
+      this.$fetch('goodsUpdate', data).then(res => {
+        this.$vhall_paas_port({
+          k: this.$route.query.goodId ? 100391 : 100390,
+          data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+        })
+        this.$message({
+          message: '修改成功',
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+      }).catch(res => {
+        this.$message({
+          message: res.msg || '修改失败',
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      });
     }
   },
 };

@@ -67,6 +67,9 @@
                 >
               </p>
             </div>
+            <div v-else-if="item.type === 'input'">
+              <el-input v-model="scope.row.order_num" @blur="changeInput(scope.row)" @keyup.enter.native="$enent=>$enent.target.blur()"></el-input>
+            </div>
             <div v-else-if="item.key === 'img'" class="prizeImg">
               <img :src="scope.row.img" />
             </div>
@@ -477,6 +480,10 @@ export default {
       this.$emit('switchChange', option)
 
       console.log(option)
+    },
+    // input修改
+    changeInput(data) {
+      this.$emit('changeInput', data)
     },
     isImg(_data) {
       if (['.png', '.jpg', 'jpeg'].includes(_data.substr(-4))) {

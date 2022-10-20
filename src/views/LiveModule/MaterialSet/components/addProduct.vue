@@ -3,6 +3,9 @@
     <pageTitle :pageTitle="$route.meta.title"></pageTitle>
     <div class="add-product">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="商品排序" prop="order_num">
+          <VhallInput v-model.number="form.order_num" v-clearEmoij  autocomplete="off"  placeholder="请输入商品名称"></VhallInput>
+        </el-form-item>
         <el-form-item label="商品名称" prop="name">
           <VhallInput v-model="form.name" v-clearEmoij :maxlength="30" autocomplete="off"  show-word-limit placeholder="请输入商品名称"></VhallInput>
         </el-form-item>
@@ -63,6 +66,12 @@
         </el-form-item>
         <el-form-item label="店铺链接" prop="shop_url">
           <VhallInput v-model.trim="form.shop_url" v-clearEmoij placeholder="请输入以http://或https://开头的店铺链接" autocomplete="off" show-word-limit :maxlength="200"></VhallInput>
+        </el-form-item>
+        <el-form-item label="上下架" prop="status">
+         <el-radio-group v-model="form.status">
+          <el-radio :label="0">上架</el-radio>
+          <el-radio :label="1">下架</el-radio>
+        </el-radio-group>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" round class="length152" v-preventReClick @click="onSubmit">保存</el-button>
@@ -161,10 +170,15 @@ export default {
         url: '',
         shop_url: '',
         name: '',
-        description: ''
+        description: '',
+        status: '1'
       },
       fileList: [],
       rules: {
+        order_num: [
+          { required: true, message: '请输入商品排序', trigger: 'blur' },
+          { type: 'number', message: '商品排序必须为数字值', trigger: 'blur'}
+        ],
         name: [
           { required: true, validator: nameValidate, trigger: 'blur' },
         ],
@@ -185,7 +199,10 @@ export default {
         ],
         shop_url: [
           { required: false, validator: shopValidate, trigger: 'blur'},
-        ]
+        ],
+        status: [
+          { required: true, message: '', trigger: 'blur' }
+        ],
       },
     };
   },
@@ -216,6 +233,7 @@ export default {
         this.form = {
           ...this.form,
           ...res.data,
+          status: res.data.status || 1,
           url: res.data.goods_url
         };
         this.form.description = this.repalceHtml(this.form.description)
@@ -535,7 +553,7 @@ export default {
           margin-right: 0;
         }
         .cover-item{
-          z-index: 100;
+          z-index: 99;
           position: absolute;
           top:0;
           left:0;
