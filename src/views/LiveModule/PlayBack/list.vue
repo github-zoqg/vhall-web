@@ -15,6 +15,7 @@
     <template v-if="no_show === false">
       <div v-if="!isDemand" class="operaBlock">
         <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
+        <el-button size="medium" class="transparent-btn" round @click="uploadBut">上传</el-button>
         <el-button v-if="WEBINAR_PES.btn_record"  class="transparent-btn" size="medium" plain round @click="toRecord">录制</el-button>
         <el-button size="medium"  class="transparent-btn" round @click="settingHandler">回放设置</el-button>
         <el-button size="medium" class="transparent-btn" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','), 1)">批量删除</el-button>
@@ -244,11 +245,14 @@
       </el-dialog>
     </template>
     <begin-play :webinarId="$route.params.str" v-if="webinarState!=4 && $route.query.type!=5"></begin-play>
+    <!-- 上传回放视频 -->
+    <PlaybackUpload ref="playbackUpload" @playbackUploadPreview='preview'></PlaybackUpload>
   </div>
 </template>
 
 <script>
 import VideoPreview from './components/previewVideo';
+import PlaybackUpload from './components/playbackUpload';
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
@@ -1047,6 +1051,11 @@ export default {
     // 加密介绍
     openTip(){
       window.open('https://saas-doc.vhall.com/docs/show/1417')
+    },
+    // 上传音视频
+    uploadBut(){
+      this.$refs['playbackUpload'].dialogVisible = true;
+      this.$refs['playbackUpload'].getSearchList()
     }
   },
   filters: {
@@ -1101,7 +1110,8 @@ export default {
     PageTitle,
     VideoPreview,
     NullPage,
-    beginPlay
+    beginPlay,
+    PlaybackUpload
   }
 };
 </script>
