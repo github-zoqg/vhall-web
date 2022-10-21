@@ -5,18 +5,23 @@ import VhallUI from 'vhall-ui';
 import 'cropperjs/dist/cropper.css'
 import Cookies from 'js-cookie'
 // element-ui 样式重置
-import '@/common/css/theme/index.css';
 import vuescroll from 'vuescroll';
 import PaasPort from '@vhall/paas-report-data'
 import { sessionOrLocal, refreshToken } from './utils/utils';
 import { loadMore, tooltipMove, clearEmoij } from '@/utils/directive';
 import './utils/prototype'
-import '@/components/Icon/index';
 import * as filters from './utils/filter';
 import { getParams } from './utils/general';
+import ElementUI from 'element-ui';
 // css相关
+import '@/common/css/theme/index.css';
+import '@/components/Icon/index';
+// 页面加载进度样式
 import 'nprogress/nprogress.css';
+// 系统通用重置样式
 import '@/common/css/index.less';
+
+
 // 自定义组件
 import SPagination from '@/components/Spagination/main';
 import tableList from '@/components/TableList/list';
@@ -95,6 +100,7 @@ Object.keys(filters).forEach(key => {
 });
 // 插件
 Vue.use(VhallUI)
+Vue.use(ElementUI)
 Vue.use(vuescroll, {
  ops: {
    // The global config

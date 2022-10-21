@@ -25,7 +25,6 @@ let cdn = {
   ],
   css: [
     '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.css',
-    '//s1.e.vhall.com/common-static/middle/element-ui/lib/2.15.6/theme/index.css', //ElementUi
   ]
 }
 // console.warn(process)
