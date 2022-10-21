@@ -36,6 +36,7 @@
     "babel-plugin-transform-remove-console": "^6.9.4",
     "better-scroll": "^2.0.6",
     "core-js": "^3.6.5",
+    "css-vars-ponyfill": "^2.4.7",
     "echarts": "^4.9.0",
     "element-ui": "^2.14.0",
     "html2canvas": "^1.4.0",
@@ -51,7 +52,6 @@
     "vue-router": "^3.2.0",
     "vuedraggable": "^2.24.3",
     "vuescroll": "^4.17.0",
-    "css-vars-ponyfill": "^2.4.7",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
@@ -80,7 +80,7 @@
     "vue-count-to": "^1.0.13",
     "vue-i18n": "^8.16.0",
     "vue-loader": "^14.2.4",
-    "vue-template-compiler": "2.6.11",
+    "vue-template-compiler": "^2.6.11",
     "webpack-bundle-analyzer": "^4.3.0"
   }
 }
