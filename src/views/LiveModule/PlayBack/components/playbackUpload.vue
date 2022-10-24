@@ -142,7 +142,7 @@
         :close-on-click-modal="true"
         :close-on-press-escape="false"
       >
-			<i class="el-icon el-icon-close" @click="closeBefore"></i>
+        <i class="el-icon el-icon-close" @click="closeBefore"></i>
         <video-preview
           ref="videoPreview"
           :videoParam="videoParam"
@@ -165,7 +165,7 @@ export default {
       pageInfo: {
         pageNum: 1,
         pos: 0,
-        limit: 20
+        limit: 10
       },
       tableData: [],
       total: 0,
@@ -227,7 +227,7 @@ export default {
                   break
               }
             })
-            this.tableData = res.data.list
+            this.tableData = this.tableData.concat(res.data.list)
             for (let i = 0; i < 30; i++) {
               this.tableData.push(res.data.list[0])
             }
@@ -255,8 +255,18 @@ export default {
     handleScroll() {
       let domHeight = document.querySelector('.table_base').offsetHeight
       let scrollTop = document.querySelector('.table_base').scrollTop
-      let contentH = document.querySelector('.table_base').querySelector('.el-table__body-wrapper').offsetHeight
-      console.log(scrollTop, domHeight,contentH, '.scrollTop')
+      let contentH = document
+        .querySelector('.table_base')
+        .querySelector('.el-table__body-wrapper').offsetHeight
+      if (
+        contentH + 56 <= scrollTop + domHeight &&
+        this.total > this.tableData.length
+      ) {
+        this.pageInfo.pos += 10
+        this.pageInfo.pageNum += 1
+        this.getSearchList()
+      }
+      console.log(scrollTop, domHeight, contentH, '.scrollTop')
     },
     //
     confirmEdit() {},
@@ -306,16 +316,16 @@ export default {
     overflow: auto;
   }
   .vh-saas-dialog {
-		.el-icon-close{
-			position: absolute;
-			right: 0;
-			top: 20px;
-			font-size: 16px;
-			color: #fff;
-			cursor: pointer;
-		}
+    .el-icon-close {
+      position: absolute;
+      right: 0;
+      top: 20px;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+    }
     .el-dialog {
-			box-shadow: none;
+      box-shadow: none;
       background: transparent !important;
     }
     .el-dialog__header {
