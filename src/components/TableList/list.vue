@@ -68,7 +68,7 @@
               </p>
             </div>
             <div v-else-if="item.type === 'input'">
-              <el-input v-model="scope.row.order_num" @blur="changeInput(scope.row)" @keyup.enter.native="$enent=>$enent.target.blur()"></el-input>
+              <el-input v-model.number="scope.row.order_num" @blur="changeInput(scope.row)" @keyup.enter.native="$enent=>$enent.target.blur()"></el-input>
             </div>
             <div v-else-if="item.key === 'img'" class="prizeImg">
               <img :src="scope.row.img" />

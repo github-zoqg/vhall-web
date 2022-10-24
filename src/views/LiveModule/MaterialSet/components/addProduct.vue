@@ -4,7 +4,7 @@
     <div class="add-product">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="商品排序" prop="order_num">
-          <VhallInput v-model.number="form.order_num" v-clearEmoij  autocomplete="off"  placeholder="请输入商品名称"></VhallInput>
+          <VhallInput v-model.number="form.order_num" v-clearEmoij maxLength='4' autocomplete="off"  placeholder="请输入商品名称"></VhallInput>
         </el-form-item>
         <el-form-item label="商品名称" prop="name">
           <VhallInput v-model="form.name" v-clearEmoij :maxlength="30" autocomplete="off"  show-word-limit placeholder="请输入商品名称"></VhallInput>
@@ -171,13 +171,13 @@ export default {
         shop_url: '',
         name: '',
         description: '',
-        status: '1'
+        status: 1
       },
       fileList: [],
       rules: {
         order_num: [
           { required: true, message: '请输入商品排序', trigger: 'blur' },
-          { type: 'number', message: '商品排序必须为数字值', trigger: 'blur'}
+          { type: 'number', min:0, max:9999, message: '商品排序必须为0-9999数字值', trigger: 'blur'}
         ],
         name: [
           { required: true, validator: nameValidate, trigger: 'blur' },
@@ -233,7 +233,7 @@ export default {
         this.form = {
           ...this.form,
           ...res.data,
-          status: res.data.status || 1,
+          status: res.data.status==0?0: 1,
           url: res.data.goods_url
         };
         this.form.description = this.repalceHtml(this.form.description)

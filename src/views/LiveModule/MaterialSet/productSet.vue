@@ -21,7 +21,7 @@
           @onHandleBtnClick='onHandleBtnClick'
           @getTableList="getTableList"
           @changeTableCheckbox="changeTableCheckbox"
-          @switchChange="onSwitchChange"
+          @switchChange="debounceSwitchChange"
           @changeInput="changeItemInput"
         >
         </table-list>
@@ -41,6 +41,7 @@ import PageTitle from '@/components/PageTitle';
 import noData from '@/views/PlatformModule/Error/nullPage';
 import beginPlay from '@/components/beginBtn';
 import {sessionOrLocal} from "@/utils/utils";
+import { debounce } from '@/utils/utils'
 export default {
   name: "prize",
   data() {
@@ -95,7 +96,8 @@ export default {
        {name:'编辑', methodName: 'edit'},{name:'复制', methodName: 'cope'},{name:'删除', methodName: 'del'}
       ],
       vm: null,
-      tableData: []
+      tableData: [],
+      switchChangeTimer: null
     };
   },
   components: {
@@ -107,6 +109,12 @@ export default {
     this.getTableList();
   },
   methods: {
+    // 防抖
+    debounceSwitchChange(option){
+      debounce(()=>{
+        this.onSwitchChange(option)
+      },500)
+    },
     onSwitchChange(option) {
       this.$vhall_paas_port({
         k: option.watch ? 100395 : 100396,
@@ -203,6 +211,7 @@ export default {
         });
         this.total = res.data.total;
         this.tableData = tableData;
+        this.tableDataCopy = JSON.parse(JSON.stringify(tableData))
         this.addCover();
         this.getSaleGoodsList();
       }).catch(e => {
@@ -247,7 +256,7 @@ export default {
         that.$message.success("复制成功！");
         that.getTableList();
       }).catch(err => {
-        that.$message.error("复制失败！");
+        that.$message.error(err.msg);
         console.log(err);
       });
     },
@@ -362,8 +371,18 @@ export default {
     },
     // 
     changeItemInput(data) {
-      // console.log(data,'changeItemInput')
-      this.$fetch('goodsUpdate', data).then(res => {
+      console.log( data,'changeItemInput')
+      let obj = this.tableDataCopy.find(i=>i.goods_id == data.goods_id)
+      if(data.order_num === '' || data.order_num > 9999 || data.order_num < 0 || data.order_num == obj.order_num){
+        data.order_num = obj.order_num;
+        return false
+      }
+      let params = {
+        webinar_id: this.$route.params.str,
+        goods_id: data.goods_id,
+        order_num: Number(data.order_num),
+      }
+      this.$fetch('setGoodOrder', params).then(res => {
         this.$vhall_paas_port({
           k: this.$route.query.goodId ? 100391 : 100390,
           data: {business_uid: this.$parent.userId, user_id: '', webinar_id: this.$route.params.str, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
@@ -375,6 +394,7 @@ export default {
           type: 'success',
           customClass: 'zdy-info-box'
         });
+        this.getTableList()
       }).catch(res => {
         this.$message({
           message: res.msg || '修改失败',
