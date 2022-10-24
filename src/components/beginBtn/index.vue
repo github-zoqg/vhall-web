@@ -74,9 +74,9 @@ export default {
         await this.getAppersInfo();
       }, 500)
     },
-    getLiveBaseInfo() {
+    getLiveBaseInfo(id) {
       // webinar/info调整-与活动状态无关的调用
-      this.$fetch('getWebinarInfo', { webinar_id: this.$route.params.str })
+      this.$fetch('getWebinarInfo', { webinar_id: id })
         .then((res) => {
           if (res.code != 200) {
             return this.$message.warning(res.msg)
@@ -96,7 +96,8 @@ export default {
     },
   },
   mounted(){
-    this.getLiveBaseInfo()
+    const id = this.$route.query.id || this.$route.params.id || this.$route.params.str
+    this.getLiveBaseInfo(id)
   }
 }
 </script>
