@@ -44,9 +44,10 @@
                     <span class="hot" v-if="item.hide_pv">
                       <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
                     </span>
-                    <span class="liveTag">{{ item | actionTag }}<span
-                        v-if="item.webinar_type != 6 && hasDelayPermission && item.no_delay_webinar == 1"> |
-                        无延迟</span></span>
+                    <span class="liveTag">{{ item | actionTag }}
+                      <span v-if="item.webinar_type != 6 && hasDelayPermission && item.no_delay_webinar == 1"> | 无延迟</span>
+                      <span v-if="item.webinar_show_type == 0"> | 竖屏</span>
+                    </span>
                     <div class="img-box"><img
                         :src="item.img_url || `${env.staticLinkVo.tmplDownloadUrl}/img/v35-subject.png`" alt=""></div>
                   </div>

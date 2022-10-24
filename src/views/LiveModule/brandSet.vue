@@ -83,7 +83,7 @@ export default {
     } else if(this.perssionInfo['watch.viewing_protocol'] > 0){
       this.tabType = 'viewingProtocol'
     }
-    
+
   },
   beforeDestroy() {
     if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
@@ -229,7 +229,6 @@ export default {
     }
   },
   mounted() {
-    console.log(11111122233)
     this.getPermission();
 
     // this.$refs[`signSetComp`].initComp();

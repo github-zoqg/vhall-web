@@ -42,7 +42,7 @@
       <div class="preview_btn">
         <vh-radio-group v-model="livingPreview" size="small" @change="choseLivingPreview">
           <vh-radio-button round :label="1">PC预览</vh-radio-button>
-          <vh-radio-button round :label="2">手机预览</vh-radio-button>
+          <vh-radio-button round :label="2" :disabled="baseInfo&&baseInfo.webinar_show_type==0">手机预览</vh-radio-button>
         </vh-radio-group>
       </div>
       <div class="preview_box">
@@ -171,7 +171,7 @@
               <vh-radio-button round :label="2">左右显示</vh-radio-button>
             </vh-radio-group>
           </div>
-          <template v-if="isShowVideoBackground || isShowInteract">
+          <template v-if="baseInfo&&baseInfo.webinar_show_type==1&&(isShowVideoBackground || isShowInteract)">
             <div class="form_item_br">
               以下设置对PC和移动端同时生效～
             </div>
@@ -315,6 +315,10 @@ export default {
     livingConfig: {
       type: Number,
       default: 0
+    },
+    baseInfo: {
+      type: Object,
+      default: null
     }
   },
   data() {

@@ -1,7 +1,7 @@
 <template>
   <div class="editBox">
     <pageTitle v-if="title" :pageTitle="Number($route.query.type) === 2 ? '编辑信息' : `${title||''}${webinarTypeToZHTitle}`"></pageTitle>
-    <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="80px">
+    <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="100px">
       <!-- 观看语种 -->
       <el-form-item label="观看语种" prop="languageVa" class="margin32">
         <div class="titleBox">
@@ -107,6 +107,13 @@
         </div>
         <div class="modeHide" v-if="$route.query.type==2"></div>
       </el-form-item>
+      <el-form-item label="横竖屏设置" required v-if="webinarType=='live'&& liveMode== 2" class="max-column">
+        <div class="group">
+          <div class="btn" :class="{active: isFullScreen ==1}" @click="choseFullScreen(1)">横屏直播</div>
+          <div class="btn" :class="{active: isFullScreen !=1, disableBox: selectDirectorMode === 1&&liveMode==2}"  @click="choseFullScreen(0)">竖屏直播</div>
+        </div>
+        <p>注意：横竖屏设置在创建直播后，将无法修改</p>
+      </el-form-item>
       <el-form-item label="云导播" required v-if="showDelayTag && liveMode==2" class="max-column">
         <div class="titleBox">
           <div class="pageTitle">
@@ -118,7 +125,7 @@
           <div class="mode-common" :class="{directorActive: selectDirectorMode === 0}" @click.stop="handleSelectDirectorMode(0)">
             <i class="vh-saas-iconfont vh-saas-line-mixeroff ft20"></i> 不启用云导播
           </div>
-          <div v-if="webinarDirector" class="mode-director" :class="{ directorActive: selectDirectorMode === 1, disableBox: selectDelayMode == 'delay'}" @click.stop="handleSelectDirectorMode(1)">
+          <div v-if="webinarDirector" class="mode-director" :class="{ directorActive: selectDirectorMode === 1, disableBox: selectDelayMode == 'delay'|| isFullScreen==0}" @click.stop="handleSelectDirectorMode(1)">
             <span class="text-content"><i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播</span>
           </div>
           <div v-if="!webinarDirector" class="mode-director noDirector" :class="{disableBox: selectDelayMode == 'delay'}">
@@ -851,7 +858,8 @@ export default {
       tagName: '',  // 新建标签名称
       tagList: [1,2,3,4],   // 所有标签集合
       SAAS_VS_PES: null,
-      WEBINAR_PES: null
+      WEBINAR_PES: null,
+      isFullScreen: 1 // 横竖屏设置
     };
   },
   beforeRouteEnter (to, from, next) {
@@ -1119,6 +1127,7 @@ export default {
     handleSelectDirectorMode(mode) {
       if (this.title === '编辑') return
       if (this.selectDelayMode == 'delay'&&mode== 1) return
+      if(this.isFullScreen==0) return
       this.selectDirectorMode = mode
     },
     getLiveBaseInfo(id, flag) {
@@ -1437,7 +1446,8 @@ export default {
         no_delay_webinar: this.liveMode == 6 ? 1 : this.selectDelayMode == 'delay' ? 1 : 0, // 是否为无延迟直播 默认为0  1:无延迟 0:默认 对应知客delay_status [分组直播默认无延迟]
         is_timing: this.webinarVideo ? (this.$route.meta.webinarType == 'vod' ? 0 : 1) : '',
         inav_num: (this.liveMode == 3 || this.liveMode == 6) && this.webinarType=='live' ? Number(this.zdy_inav_num.replace("1v","")) + 1 : '',
-        is_director: this.selectDirectorMode || 0
+        is_director: this.selectDirectorMode || 0,
+        webinar_show_type: this.liveMode == 2 ? this.isFullScreen: 1
       };
       if (this.liveMode == 6) {
         data.auto_speak = Number(this.speakSwitch)
@@ -1888,6 +1898,11 @@ export default {
     unSureSelectTag(){
       this.checkedTagsBefore = this.checkedTags
       this.selectTagDialog = false;
+    },
+    // 选择横竖屏直播设置
+    choseFullScreen(type){
+      if (this.selectDirectorMode ===1 && this.liveMode==2) return
+      this.isFullScreen = type
     }
   }
 };
@@ -1987,13 +2002,33 @@ export default {
   }
   /deep/ .el-form-item{
     // width: 100%;
-    max-width: 668px;
+    max-width: 700px;
     margin-bottom: 22px;
     &.max-column {
       max-width: 868px;
       margin-bottom: 26px;
       .titleBox {
         padding-bottom: 4px;
+      }
+       .group{
+        display: flex;
+        align-items: center;
+        .btn{
+          height: 36px;
+          line-height: 36px;
+          border-radius: 4px;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          color: #666;
+          padding: 0 10px;
+          margin-right: 10px;
+          cursor: pointer;
+          &.active{
+            background-color: #FB3A32;
+            border-color: #FB3A32;
+            color: #FFF;
+          }
+        }
       }
     }
   }

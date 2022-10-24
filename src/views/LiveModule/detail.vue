@@ -47,6 +47,7 @@
                 | 无延迟</span
               >
               <span v-if="webinarDirector && isDirector"> | 云导播</span>
+              <span v-if="portraitScreen"> | 竖屏</span>
             </span>
             <span class="hot">
               <i class="iconfont-v3 saasicon_redu">
@@ -234,14 +235,17 @@
             round
             type="primary"
             @click="toRoom"
-            :disabled="isAnginOpen"
+            :disabled="isAnginOpen||portraitScreen"
             v-if="liveDetailInfo.webinar_type != 5"
             >发起直播</el-button
           >
+          <div>竖屏直播只支持由app端发起
+            <span>扫码下载</span>
+          </div>
         </div>
         <div
           class="inner liveTime"
-          v-if="outLiveTime && liveDetailInfo.webinar_state == 2"
+          v-if="outLiveTime && liveDetailInfo.webinar_state == 2 && !portraitScreen"
         >
           <p class="subColor">直播即将开始</p>
           <p><span>观众等待中</span></p>
@@ -292,6 +296,7 @@ export default {
       lowerGradeInterval: null,
       isDelay: false,
       isDirector: false,
+      portraitScreen: false,
       hasDelayPermission: false,
       msg: '',
       userId: '',
@@ -368,7 +373,7 @@ export default {
     this.getPermission(this.$route.params.str)
   },
   mounted() {
-    console.log(this.$route.meta.title, '1111111111111111')
+    // console.log(this.$route.meta.title, '1111111111111111')
   },
   beforeDestroy() {
     if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
@@ -539,6 +544,7 @@ export default {
           }
           this.isDelay = res.data.no_delay_webinar == 1 ? true : false
           this.isDirector = res.data.is_director == 1 ? true : false
+          this.portraitScreen = res.data.webinar_show_type == 1 ? false : true
           // 是否活动标记为云导播活动
           sessionOrLocal.set(`webinar_is_director__${id}`, res.data.is_director)
           if (this.isDirector) {
