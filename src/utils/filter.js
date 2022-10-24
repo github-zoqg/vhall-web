@@ -131,13 +131,13 @@ export const wordStatusCss = (ext) => {
   } else if (ext === 'media') {
     return 'saasyinpinwenjian color-3562FA';
   } else if (ext === 'zip') {
-    return 'saasyasuowenjian'
+    return 'saasyasuowenjian color-676971'
   } else  {
     return 'saasexcelwendang color-14BA6A';
   }
 }
 export const filterSource = (value) => {
-  let arrType = ['线下购买', '线上购买', '商务合作', '客户试用', ' 员工账号', '研发测试'];
+  let arrType = ['线下购买', '线上购买', '商务合作', '客户试用', ' 员工账号', '研发测试', '客户延期'];
   return arrType[value - 5];
 }
 

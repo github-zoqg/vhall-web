@@ -1,6 +1,6 @@
 <template>
   <div class="living_setting">
-    <pageTitle pageTitle="直播间设置">
+    <pageTitle pageTitle="直播间设计器">
       <div class="living_setting_tip">
         <p class="switch__box" v-show="tabType!='customSet'">
         <el-switch
@@ -10,13 +10,13 @@
           @change="closeLivingSettingOpen"
           :active-text="reservationDesc">
         </el-switch>
-        <span @click="toSettingDetail">查看账号下{{ permissionInfo['ui.brand_setting'] == 1 ? '品牌' : ''}}直播间设置</span>
+        <span @click="toSettingDetail">查看账号下{{ permissionInfo['ui.brand_setting'] == 1 ? '品牌' : ''}}直播间设计器</span>
       </p>
       </div>
     </pageTitle>
     <div class="living_setting_container">
       <el-tabs v-model="tabType" @tab-click="handleClick">
-        <el-tab-pane label="直播间设置" name="livingSet"></el-tab-pane>
+        <el-tab-pane label="直播间设计器" name="livingSet"></el-tab-pane>
         <el-tab-pane label="自定义菜单" name="customSet" v-if="isCustomSetting"></el-tab-pane>
         <el-tab-pane label="标识设置" name="signSet" v-if="permissionInfo['ui.brand_setting'] > 0"></el-tab-pane>
       </el-tabs>
@@ -60,9 +60,9 @@ export default {
   computed: {
     reservationDesc() {
       if(this.livingSettingOpen){
-        return `已开启，使用当前活动【直播间设置】${this.permissionInfo['ui.brand_setting'] == 1 ? '和【标识设置】' : ''}`;
+        return `已开启，使用当前活动【直播间设计器】${this.permissionInfo['ui.brand_setting'] == 1 ? '和【标识设置】' : ''}`;
       }else{
-        return `开启后，将使用当前活动【直播间设置】${this.permissionInfo['ui.brand_setting'] == 1 ? '和【标识设置】' : ''}`;
+        return `开启后，将使用当前活动【直播间设计器】${this.permissionInfo['ui.brand_setting'] == 1 ? '和【标识设置】' : ''}`;
       }
     }
   },
@@ -115,7 +115,7 @@ export default {
         } else {
           this.type = 2;
           this.$message({
-            message:"正在使用账号下直播间设置",
+            message:"正在使用账号下直播间设计器",
             showClose: true,
             type: 'warning',
             customClass: 'zdy-info-box'

@@ -192,6 +192,12 @@ export function parseURL(url) {
    return {
      path: a.pathname.replace(/^([^\/])/,'/$1').replace('/upload/', '')
    };*/
+  // 如果图片域名不是 saas 的域名，直接返回原路径
+  if (!(url.indexOf('t-alistatic01.e.vhall.com') > -1) && !(url.indexOf('cnstatic01.e.vhall.com') > -1)) {
+    return {
+      path: url
+    }
+  }
   // 查找/upload/位置，保留之后的路径
 
   let targetIndex = url.indexOf('/upload/');

@@ -13,7 +13,7 @@ let cdn = {
     '//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.6.js',
     '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.min.js',
     // '//cnstatic01.e.vhall.com/3rdlibs/common-libs/ui-frame/element-UI.js',
-    '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.6/questionnaire_service.js',
+    '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.8/questionnaire_service.js',
     '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.js'
   ],
   css: [
@@ -21,6 +21,12 @@ let cdn = {
   ]
 }
 
+if (process.env.NODE_ENV === 'development') {
+  const vueIndex = cdn.js.findIndex(item => item.indexOf('vue.min.js') > -1)
+  cdn.js.splice(vueIndex, 1, '//t-alistatic01.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.js')
+}
+
+// console.warn(process)
 let publicPath = process.env.VUE_APP_PUBLIC_PATH || './'
 console.warn('配置环境变量----', {
   // MODE: process.VUE_CLI_SERVICE,
@@ -112,7 +118,7 @@ module.exports = {
   // }
       const externals = {
         vue: 'Vue',
-        "vhall-ui": "VHALLUI",
+        "vhall-ui": "VHALLUI"
       }
       return {
         // optimization,

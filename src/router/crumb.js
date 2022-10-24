@@ -324,7 +324,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
-  else if (metaName === 'langCard') {// 推广嵌入
+  else if (metaName === 'langCard') {// 多语言链接
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -340,6 +340,22 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
+  else if (metaName === 'msgNotification') {// 开播提醒
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '直播详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '开播提醒',
+        path: `/live/msgNotification/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
   else if (metaName === 'livingSetting') {// 直播间设置
     return [
       ...CrumbLiveList('liveList'),
@@ -349,7 +365,7 @@ export function CrumbSet(metaName, that) {
         isClick: true
       },
       {
-        title: '直播间设置',
+        title: '直播间设计器',
         path: `/live/livingSet/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'
@@ -1232,7 +1248,7 @@ export function CrumbSet(metaName, that) {
     return [
       ...CrumbLiveList('setting'),
       {
-        title: '直播间设置',
+        title: '直播间设计器',
         path: '/setting/brand',
         isClick: false,
         redirect: 'noRedirect'
