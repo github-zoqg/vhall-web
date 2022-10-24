@@ -143,7 +143,7 @@
       <div class="white-box" v-show="!warmForm.warmFlag">
       </div>
     </div>
-    <selectMedias ref="selecteMedia" :isWarmVideo="true" @selected='mediaSelected' :selectedList="warmVideoList" :videoSize="videoSize" :videoType="videoType" @closeWarm="closeWarm"></selectMedias>
+    <selectMedias ref="selecteMedia" :isWarmVideo="true" @selected='mediaSelected' :selectedList="warmVideoList" :videoSize="videoSize" :videoType="videoType" @closeWarm="isNeedCloseWarm"></selectMedias>
     <cropper ref="warmCropper" @cropComplete="cropComplete" @resetUpload="resetUpload"></cropper>
     <!-- 预览 -->
     <template v-if="showDialog">
@@ -239,22 +239,9 @@ export default {
         customClass: 'zdy-message-box',
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
-      }).then(async (status) => {
+      }).then(status => {
         if (status === 'confirm') { // 点击确定按钮
-          // 如果当前活动下暖场视频 - 设置有视频，这个时候不应该关闭；
-          // 如果当前活动下暖场视频 - 未设置过视频，并且选择视频也没内容，这个时候应该弹出提示。
-          let warnResult = await this.$fetch('warnInfo', {webinar_id: this.$route.params.str})
-          if (warnResult && warnResult.code == 200) {
-            let recordList = warnResult.data?.record_list || []
-            if (recordList.length > 0) {
-              next();
-            } else {
-              this.warmForm.warmFlag = false;
-              this.openCloseWarm(1);
-            }
-          } else {
-            this.messageInfo('获取暖场视频信息失败，请稍后重试', 'error')
-          }
+          this.isNeedCloseWarm(next);
         }
       }).catch(() => {
         this.messageInfo('获取暖场视频信息失败，请稍后重试', 'error')
@@ -282,6 +269,26 @@ export default {
         customClass: 'zdy-info-box',
       })
     },
+    // 是否需要关闭暖场视频
+    async isNeedCloseWarm(next) {
+      // 如果当前活动下暖场视频 - 设置有视频，这个时候不应该关闭；
+      // 如果当前活动下暖场视频 - 未设置过视频，并且选择视频也没内容，这个时候应该弹出提示。
+      let warnResult = await this.$fetch('warnInfo', {webinar_id: this.$route.params.str})
+      if (warnResult && warnResult.code == 200) {
+        let recordList = warnResult.data?.record_list || []
+        if (recordList.length > 0 && next) {
+          // 当前界面去往别的界面
+          next();
+        } else if (recordList.length > 0 && !next) {
+          // 音视频上传跳转别的界面，什么也不做
+        } else {
+          this.closeWarm();
+        }
+      } else {
+        this.messageInfo('获取暖场视频信息失败，请稍后重试', 'error')
+      }
+    },
+    // 关闭暖场视频
     closeWarm() {
       this.warmForm.warmFlag = false
       this.openCloseWarm(1);
