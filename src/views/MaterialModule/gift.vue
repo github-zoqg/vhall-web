@@ -213,7 +213,7 @@ export default {
     NullPage
   },
   created() {
-    this.getTableList()
+    this.searchHandle()
   },
   methods: {
     /**
@@ -288,6 +288,9 @@ export default {
           data: {business_uid: this.userId, user_id: '', webinar_id: '', refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
       }
+      this.searchHandle()
+    },
+    searchHandle() {
       this.searchParams.page = 1
       this.pos = 0;
       this.getTableList(true)
@@ -457,7 +460,7 @@ export default {
             type: 'success',
             customClass: 'zdy-info-box'
           });
-          this.getTableList()
+          this.searchHandle()
           this.handleCancelEdit()
         }
       }).catch((e) => {
@@ -487,7 +490,7 @@ export default {
             type: 'success',
             customClass: 'zdy-info-box'
           });
-          this.getTableList()
+          this.searchHandle()
           this.handleCancelEdit()
         }
       }).catch((res) => {
@@ -542,7 +545,7 @@ export default {
             type: 'success',
             customClass: 'zdy-info-box'
           });
-          this.getTableList()
+          this.searchHandle()
           this.selectIds = []
         }
       }).catch((res) => {

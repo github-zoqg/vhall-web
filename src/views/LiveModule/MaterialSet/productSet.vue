@@ -181,6 +181,9 @@ export default {
       if (params == 'search') {
         pageInfo.pageNum= 1;
         pageInfo.pos= 0;
+        if (this.$refs.tableProductList) {
+          this.$refs.tableProductList.currentChangeHandler(1)
+        }
       }
       let obj = {
         ...pageInfo,
@@ -283,7 +286,7 @@ export default {
               customClass: 'zdy-info-box'
             });
             this.checkedGoodsId = [];
-            this.getTableList('delete');
+            this.getTableList('search');
           }
         }).catch(res => {
           this.$message({
