@@ -11,11 +11,11 @@
         <i class="iconfont-v3 saasa-line-collectionsuccess"></i>
       </div>
     </div>
-    <div class="living_preview_wap_simpleHeader" v-else>
+    <div :class="['living_preview_wap_simpleHeader', livingWapForm.style==3 ? 'page__concise' : '']" v-else>
       <div class="header_left">
         <div class="header_left_avatar"><img src="./image/living/chat1.png" alt=""></div>
         <div class="header_left_name">
-          <p class="header_host">戈里瑰夏 </p>
+          <p class="header_host">戈里瑰夏</p>
           <p class="header_hot">
             <i class="iconfont-v3 saasline-user">&nbsp;1234&nbsp;&nbsp;</i>
             <i class="iconfont-v3 saasicon_redu">&nbsp;2345</i>
@@ -30,43 +30,65 @@
         <span><i class="iconfont-v3 saasline-public1"></i></span>
        </div>
     </div>
-    <div class="living_preview_wap_body">
-      <div class="wap_player" v-if="type==1" :style="videoBackground">
+    <div :class="['living_preview_wap_body', `${['default', 'default', 'fashion', 'concise'][livingWapForm.style]}_${livingForm.speakerAndShowLayout == 1 ? 'join' : 'split'}`]">
+      <div class="wap_player"  v-if="type==1" :style="videoBackground">
         <template v-if="isShowInteract">
+          <!-- 均匀 -->
           <div class="watch_layout_1" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
             <div>
-              <span><img src="./image/living/layout5.png" alt=""></span>
-              <span><img src="./image/living/layout1.png" alt=""></span>
-              <span><img src="./image/living/layout2.png" alt=""></span>
-              <span><img src="./image/living/layout3.png" alt=""></span>
-              <span><img src="./image/living/layout4.png" alt=""></span>
+              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/ppt.png" alt=""></span>
+              <span><img src="./image/living/layout1.jpg" alt=""></span>
+              <span><img src="./image/living/layout2.jpg" alt=""></span>
+              <span><img src="./image/living/layout3.jpg" alt=""></span>
+              <span><img src="./image/living/layout4.jpg" alt=""></span>
+              <span><img src="./image/living/layout5.jpg" alt=""></span>
             </div>
           </div>
+          <!-- 主次浮窗 -->
           <div class="watch_layout_2" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
-            <img src="./image/living/layout1.png" alt="">
+            <img src="./image/living/ppt.png" alt="" v-if="livingForm.speakerAndShowLayout == 1">
+            <img src="./image/living/layout1.jpg" alt="" v-else>
             <div class="layout_float">
-              <span><img src="./image/living/layout2.png" alt=""></span>
-              <span><img src="./image/living/layout3.png" alt=""></span>
-              <span><img src="./image/living/layout4.png" alt=""></span>
+              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.jpg" alt=""></span>
+              <span><img src="./image/living/layout2.jpg" alt=""></span>
+              <span><img src="./image/living/layout3.jpg" alt=""></span>
+              <span><img src="./image/living/layout4.jpg" alt=""></span>
+              <span><img src="./image/living/layout5.jpg" alt=""></span>
             </div>
           </div>
+          <!-- 主次平铺 -->
           <div class="watch_layout_3" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
             <div class="layout_top">
               <!-- :style="videoBackground" -->
-              <span><img src="./image/living/layout1.png" alt=""></span>
+              <span v-if="livingForm.speakerAndShowLayout == 1"><img src="./image/living/ppt.png" alt=""></span>
+              <span v-else><img src="./image/living/layout1.jpg" alt=""></span>
             </div>
             <div class="layout_bottom">
-              <span><img src="./image/living/layout2.png" alt=""></span>
-              <span><img src="./image/living/layout3.png" alt=""></span>
-              <span><img src="./image/living/layout4.png" alt=""></span>
-              <!-- <span><img src="./image/living/layout5.png" alt=""></span> -->
-              <!-- <span><img src="./image/wap/video.png" alt=""></span> -->
+              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.jpg" alt=""></span>
+              <span><img src="./image/living/layout2.jpg" alt=""></span>
+              <span><img src="./image/living/layout3.jpg" alt=""></span>
+              <span><img src="./image/living/layout4.jpg" alt=""></span>
+              <span><img src="./image/living/layout5.jpg" alt=""></span>
+            </div>
+          </div>
+          <!-- 顶部成员 -->
+          <div class="watch_layout_4" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_EXT1_MODE'">
+            <div class="layout_top">
+              <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.jpg" alt=""></span>
+              <span><img src="./image/living/layout2.jpg" alt=""></span>
+              <span><img src="./image/living/layout3.jpg" alt=""></span>
+              <span><img src="./image/living/layout4.jpg" alt=""></span>
+              <span><img src="./image/living/layout5.jpg" alt=""></span>
+            </div>
+            <div class="layout_bottom">
+              <span v-if="livingForm.speakerAndShowLayout == 1"><img src="./image/living/ppt.png" alt=""></span>
+              <span v-else><img src="./image/living/layout1.jpg" alt=""></span>
             </div>
           </div>
         </template>
         <template v-else>
           <div class="watch_layout">
-            <img src="./image/living/layout1.png" alt="">
+            <img src="./image/living/layout1.jpg" alt="">
           </div>
         </template>
       </div>
@@ -95,16 +117,17 @@
             <i class="iconfont-v3 saasicon_arrowleft"></i>
           </div> -->
           <div class="tabs_center">
-            <!-- <span>简介</span> -->
-            <span class="active">聊天</span>
+            <span :class="wapMenusType == 'doc' ? 'active' : ''" @click="choseMenusTab('doc')" v-if="livingWapForm.style != 3 && livingForm.speakerAndShowLayout != 1">文档</span>
+            <span :class="wapMenusType == 'chat' ? 'active' : ''" @click="choseMenusTab('chat')">聊天</span>
             <!-- <span class="circle">问答<b></b></span>
-            <span>私聊</span> -->
+            <span>私聊</span>
+            <span>简介</span> -->
           </div>
           <!-- <div class="tabs_right">
             <i class="iconfont-v3 saasicon_arrowright1"></i>
           </div> -->
         </div>
-        <div class="wap_menus_chat">
+        <div :class="['wap_menus_chat', livingWapForm.style==3 ? 'page__concise' : '']" v-if="wapMenusType == 'chat'">
           <div class="wap_menus_chat_topBottom chat_clear" v-if="livingWapForm.style==1">
             <div class="chat_item">
               <div class="chat_item_avatar">
@@ -201,9 +224,9 @@
             </div>
           </div>
           <div class="wap_menus_chat_leftRight chat_clear wap_chat_simple" v-if="livingWapForm.style==3">
-            <div class="chat_item_simple">
+            <!-- <div class="chat_item_simple">
               <div class="chat_item_simple_content"><span class="name">Mr Liu</span>😊😊😊</div>
-            </div>
+            </div> -->
             <div class="chat_item_simple">
               <div class="chat_item_simple_content">
                 <span class="name">
@@ -244,12 +267,12 @@
                 推送了问卷 <span class="chat_blue">点击查看</span>
               </div>
             </div>
-            <div class="chat_item_simple">
+            <!-- <div class="chat_item_simple">
               <div class="chat_item_simple_content">
                 <span class="name">阿曼达</span>
                 0万+行业标杆企业都在用
               </div>
-            </div>
+            </div> -->
              <div class="chat_item_simple">
               <div class="chat_item_simple_content">
                 <span class="name">董主任</span>
@@ -258,16 +281,29 @@
             </div>
           </div>
         </div>
+        <div class="wap_menus_doc" v-if="wapMenusType == 'doc' && livingForm.speakerAndShowLayout != 1">
+          <div class="wap_menus_doc_image">
+            <img src="./image/living/ppt.png" alt="">
+            <span class="wap_doc_left"><i class="iconfont-v3 saasicon_arrowleft"></i></span>
+            <span class="wap_doc_right"><i class="iconfont-v3 saasicon_arrowright1"></i></span>
+          </div>
+          <div class="wap_menus_doc_tools">
+            <span class="wap_doc_tools_count">1/4</span>
+            <span><i class="iconfont-v3 saasline-public1"></i></span>
+            <span><i class="iconfont-v3 saasbofangqi_11"></i></span>
+            <span><i class="iconfont-v3 saasline-public1"></i></span>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="living_preview_wap_footer" v-if="type==1">
+    <div class="living_preview_wap_footer" v-if="type==1 && wapMenusType == 'chat'">
       <div class="footer_left">
         <img src="./image/living/chat5.png" alt="">
       </div>
-      <div class="footer_center">
+      <div :class="['footer_center ', livingWapForm && livingWapForm.style == 3 ? 'style_concise' : '']">
         <span><i class="iconfont-v3 saasline-audit"></i> | 参与聊天</span>
       </div>
-      <div class="footer_right"></div>
+      <div :class="['footer_right ', livingWapForm && livingWapForm.style == 3 ? 'style_concise' : '']"></div>
     </div>
   </div>
 </template>
@@ -276,6 +312,11 @@ import skinsWap from '@/common/skins/wap/index';
 import { imgPositionSizeMap } from '@/utils/imgSizeMap'
 
 export default {
+  data() {
+    return {
+      menusTab: 'doc'
+    }
+  },
   props: {
     type: {
       // 是直播页还是引导页
@@ -328,6 +369,14 @@ export default {
           return {backgroundImage: `url(${url})`}
         }
       }
+    },
+    wapMenusType() {
+      if (this.livingWapForm.style == 3 || this.livingForm.speakerAndShowLayout == 1) {
+        // 当前手机端简洁风格 或者 视频区【连麦+演示】布局选择为合并模式
+        return 'chat'
+      } else {
+        return this.menusTab
+      }
     }
   },
   methods: {
@@ -336,6 +385,9 @@ export default {
       let wapStyle = (type == 2 && style == 3) ? 2 : style;
       let key = `style_${Number(wapStyle)}_theme_${Number(index)}`
       skinsWap.setTheme(skinsWap.themes[key], '.living_preview_wap');
+    },
+    choseMenusTab(type) {
+      this.menusTab = type
     }
   }
 }
@@ -453,6 +505,9 @@ export default {
           }
         }
       }
+      &.page__concise {
+        padding: 8px 12px 72px 12px;
+      }
     }
     &_body{
       .wap_player{
@@ -498,11 +553,11 @@ export default {
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 42px;
+            height: 43px;
             span{
               display: inline-block;
-              width: 74px;
-              height: 42px;
+              width: 20%; // 74px;
+              height: 43px;
               img{
                 width: 100%;
                 height: 100%;
@@ -517,7 +572,6 @@ export default {
             width: 100%;
             height: 167px;
             padding: 0 38px;
-            transition: all 0.8s linear;
             background-size: 100% 100%;
             background-repeat: no-repeat;
             span{
@@ -539,6 +593,40 @@ export default {
               display: inline-block;
               width: 75px;
               height: 43px;
+              img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+          }
+        }
+        .watch_layout_4{
+          .layout_top{
+            width: 100%;
+            height: 43px;
+            display: flex;
+            span{
+              display: inline-block;
+              width: 75px;
+              height: 43px;
+              img{
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+              }
+            }
+          }
+          .layout_bottom{
+            width: 100%;
+            height: 167px;
+            padding: 0 38px;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            span{
+              display: inline-block;
+              width: 298px;
+              height: 100%;
               img{
                 width: 100%;
                 height: 100%;
@@ -574,6 +662,7 @@ export default {
             color: var(--color_tab_text);
             span{
               margin: 0 15px;
+              cursor: pointer;
             }
             .active{
               padding-bottom: 5px;
@@ -809,6 +898,63 @@ export default {
             display: block;
             clear: both;
           }
+          &.page__concise {
+            padding: 56px 10px 0 10px;
+            height: 302px;
+          }
+        }
+        &_doc {
+          width: 100%;
+          height: 342px;
+          &_image {
+            position: relative;
+            img{
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+            span {
+              display: block;
+              width: 28px;
+              height: 28px;
+              background: rgba(0, 0, 0, 0.45);
+              color: #ffffff;
+              position: absolute;
+              top: 70px;
+              border-radius: 32px;
+              text-align: center;
+              line-height: 28px;
+              &.wap_doc_left {
+                left: 16px;
+              }
+              &.wap_doc_right {
+                right: 16px;
+              }
+            }
+          }
+          &_tools {
+            margin-top: 16px;
+            text-align: right;
+            span {
+              display: inline-block;
+              width: 28px;
+              height: 28px;
+              background: var(--background_doc_tools_color);
+              color: var(--color_doc_tools_text);
+              text-align: center;
+              line-height: 28px;
+              border-radius: 32px;
+              margin-right: 12px;
+              &.wap_doc_tools_count {
+                width: auto;
+                padding: 0 12px;
+                font-style: normal;
+                font-weight: 400;
+                font-size: 14px;
+                margin-right: 8px;
+              }
+            }
+          }
         }
       }
       .wap_subscribe{
@@ -926,6 +1072,9 @@ export default {
         .iconfont-v3{
           font-size: 13px;
         }
+        &.style_concise {
+          width: 151px;
+        }
       }
       .footer_right{
         width: 120px;
@@ -934,6 +1083,175 @@ export default {
         background-image: url('./image/wap/tools.png');
         background-repeat: no-repeat;
         background-size: 100% 100%;
+        &.style_concise {
+          width: 164px;
+          height: 32px;
+          // margin-left: 15px;
+          background-image: url('./image/wap/tools_concise.png');
+        }
+      }
+    }
+  }
+
+  .living_preview_wap_body {
+    // 简洁 & 分离模式
+    &.concise_split {
+      // 均匀排列
+      .watch_layout_1 {}
+      // 主次浮窗
+      .watch_layout_2 {}
+      // 主次平铺
+      .watch_layout_3 {}
+      // 顶部成员
+      .watch_layout_4 {}
+    }
+    // 简洁 & 合并模式
+    &.concise_join {
+      // 均匀排列
+      .watch_layout_1 {}
+      // 主次浮窗
+      .watch_layout_2 {
+        .layout_float {
+          span {
+            width: 20%;
+          }
+        }
+      }
+      // 主次平铺
+      .watch_layout_3 {
+        .layout_bottom {
+          span {
+            width: 20%;
+          }
+        }
+      }
+      // 顶部成员
+      .watch_layout_4 {
+        .layout_top {
+          span {
+            width: 20%;
+          }
+        }
+      }
+    }
+
+    // 时尚 & 分离模式
+    &.fashion_split {
+      // 均匀排列
+      .watch_layout_1 {}
+      // 主次浮窗
+      .watch_layout_2 {
+        .layout_float {
+          span {
+            width: 25%;
+          }
+        }
+      }
+      // 主次平铺
+      .watch_layout_3 {
+        .layout_bottom {
+          span {
+            width: 25%;
+          }
+        }
+      }
+      // 顶部成员
+      .watch_layout_4 {
+        .layout_top {
+          span {
+            width: 25%;
+          }
+        }
+      }
+    }
+
+    // 时尚 & 合并模式
+    &.fashion_join {
+      // 均匀排列
+      .watch_layout_1 {}
+      // 主次浮窗
+      .watch_layout_2 {
+        .layout_float {
+          span {
+            width: 20%;
+          }
+        }
+      }
+      // 主次平铺
+      .watch_layout_3 {
+        .layout_bottom {
+          span {
+            width: 20%;
+          }
+        }
+      }
+      // 顶部成员
+      .watch_layout_4 {
+        .layout_top {
+          span {
+            width: 20%;
+          }
+        }
+      }
+    }
+
+    // 传统 & 分离模式
+    &.default_split {
+      // 均匀排列
+      .watch_layout_1 {}
+      // 主次浮窗
+      .watch_layout_2 {
+        .layout_float {
+          span {
+            width: 25%;
+          }
+        }
+      }
+      // 主次平铺
+      .watch_layout_3 {
+        .layout_top {
+          transition: all 0.8s linear;
+        }
+        .layout_bottom {
+          span {
+            width: 25%;
+          }
+        }
+      }
+      // 顶部成员
+      .watch_layout_4 {
+        .layout_top {
+          span {
+            width: 25%;
+          }
+        }
+      }
+    }
+
+    // 传统 & 合并模式
+    &.default_join {
+      // 均匀排列
+      .watch_layout_1 {}
+      // 主次浮窗
+      .watch_layout_2 {}
+      // 主次平铺
+      .watch_layout_3 {
+        .layout_top {
+          transition: all 0.8s linear;
+        }
+        .layout_bottom {
+          span {
+            width: 20%;
+          }
+        }
+      }
+      // 顶部成员
+      .watch_layout_4 {
+        .layout_top {
+          span {
+            width: 20%;
+          }
+        }
       }
     }
   }

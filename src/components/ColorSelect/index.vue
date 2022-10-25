@@ -117,6 +117,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.color--select {
+  padding-left: 4px;
+}
 .theme--box {
   i {
     display: inline-block;
@@ -125,6 +128,9 @@ export default {
     border-radius: 2px;
     margin-right: 12px;
     cursor: pointer;
+    &:last-child {
+      margin-right: 0;
+    }
     &.active {
       // border: 1px solid #FB3A32;
       transform: scale(1.2);
