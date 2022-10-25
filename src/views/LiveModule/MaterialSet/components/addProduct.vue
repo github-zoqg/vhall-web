@@ -4,7 +4,7 @@
     <div class="add-product">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="商品排序" prop="order_num">
-          <VhallInput v-model.number="form.order_num" v-clearEmoij maxLength='4' autocomplete="off"  placeholder="请输入商品排序"></VhallInput>
+          <VhallInput v-model.number="form.order_num" v-clearEmoij maxLength='4' autocomplete="off"  placeholder="根据输入的数字大小进行列表排序"></VhallInput>
         </el-form-item>
         <el-form-item label="商品名称" prop="name">
           <VhallInput v-model="form.name" v-clearEmoij :maxlength="30" autocomplete="off"  show-word-limit placeholder="请输入商品名称"></VhallInput>

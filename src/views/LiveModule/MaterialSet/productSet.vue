@@ -371,9 +371,11 @@ export default {
     },
     // 
     changeItemInput(data) {
-      console.log( data,'changeItemInput')
+      console.log( data, typeof data.order_num,'changeItemInput')
       let obj = this.tableDataCopy.find(i=>i.goods_id == data.goods_id)
-      if(data.order_num === '' || data.order_num > 9999 || data.order_num < 0 || data.order_num == obj.order_num){
+      if(data.order_num === '' || data.order_num > 9999 || data.order_num < 0 || 
+      data.order_num == obj.order_num || (data.order_num > 0 && data.order_num < 1 || 
+      typeof data.order_num != 'number')){
         data.order_num = obj.order_num;
         return false
       }
