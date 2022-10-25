@@ -29,6 +29,17 @@ const router = [
         hidden: true
       },
       {
+        path: 'exam',
+        component: () => import('@/views/MaterialModule/ExamMgr/exam'),
+        meta: { auth: true, title: '快问快答', name: 'examMgr', auth_key: 'exam'}
+      },
+      {
+        path: 'addExam',
+        component: () => import('@/views/MaterialModule/ExamMgr/addExam'),
+        meta:{ auth: true, title: '创建问卷', name: 'addExamMgr', auth_key: 'exam'},
+        hidden: true
+      },
+      {
         path: 'prize',
         component: () => import('@/views/MaterialModule/prize'),
         meta: { auth: true, title: '奖品', name: 'prizeMgr', auth_key: 'ui.hide_lottery'}
