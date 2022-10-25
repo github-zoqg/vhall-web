@@ -17,7 +17,7 @@
             <span><i class="iconfont-v3 saasicon_guanzhu"></i> 关注</span>
             <span><i class="iconfont-v3 saasicon-share"></i> 分享</span>
           </div>
-          <div class="right_login"><span><img src="./image/living/avatar@2x.png" alt=""></span> 登录</div>
+          <div class="right_login"><span><img :src="avatarImgUrl" alt=""></span> 登录</div>
         </div>
       </div>
       <div class="pc_watch" v-if="type==1">
