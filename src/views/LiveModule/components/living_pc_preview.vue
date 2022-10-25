@@ -116,7 +116,7 @@
                 </div>
                 <div class="chat_box_item">
                   <div class="item_img">
-                    <p><img src="../../../common/images/avatar.png" alt=""></p>
+                    <p><img :src="avatarImgUrl" alt=""></p>
                   </div>
                   <div class="item_chat">
                     <p class="chat_role">王觉</p>
@@ -166,7 +166,7 @@
                 </div>
                 <div class="chat_right_item">
                   <div class="chat_right_item-box">
-                    <span class="item_avatar"><img src="../../../common/images/avatar.png" alt=""></span>
+                    <span class="item_avatar"><img :src="avatarImgUrl" alt=""></span>
                     <span class="item_name"> 刘林一 </span>
                     30分钟直播运营实操特训营 终于开营啦，快来加入吧
                   </div>
@@ -200,7 +200,7 @@
 <script>
 import skinsPc from '@/common/skins/pc/index';
 import { imgPositionSizeMap } from '@/utils/imgSizeMap'
-
+import { defaultAvatar } from '@/utils/ossImgConfig';
 export default {
   props: {
     type: {
@@ -265,6 +265,7 @@ export default {
   },
   data() {
     return {
+      avatarImgUrl: defaultAvatar
     }
   }
 }

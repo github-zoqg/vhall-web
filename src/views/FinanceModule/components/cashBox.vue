@@ -111,6 +111,7 @@
 </template>
 <script>
 import { sessionOrLocal } from '@/utils/utils';
+import { defaultAvatar } from '@/utils/ossImgConfig';
 export default {
   props: ['money', 'type'],
   data() {
@@ -193,7 +194,7 @@ export default {
         this.callCaptcha();
         const cashWechat = JSON.parse(sessionOrLocal.get("cashWechat"));
         this.$nextTick(() => {
-          this.avatar = cashWechat.wechat_profile || require('../../../common/images/avatar.png');
+          this.avatar = cashWechat.wechat_profile || defaultAvatar;
           this.nickName = cashWechat.wechat_name_wap || '微吼直播';
           console.log('当前用户头像', this.avatar, this.nickName)
         })
@@ -236,8 +237,6 @@ export default {
   },
   created() {
     this.userInfo = JSON.parse(sessionOrLocal.get("userInfo"));
-    // this.avatar = this.userInfo.user_extends.wechat_profile || require('../../../common/images/avatar.png');
-    // this.nickName = this.userInfo.user_extends.wechat_name_wap || '微吼直播';
   },
   methods: {
     /**

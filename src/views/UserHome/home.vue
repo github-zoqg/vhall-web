@@ -1,18 +1,13 @@
 <template>
   <div class="home-main console">
-    <OldHeader
-      class="head-wrap"
+    <OldHeader class="head-wrap"
       v-if="$route.meta.type !== 'owner'"
       scene="userHome"
       :isWhiteBg="true"
-      :isShowLogin="false"
-    ></OldHeader>
-    <pageTitle
-      pageTitle="个人主页"
-      v-if="$route.meta.type === 'owner'"
-    ></pageTitle>
-    <div
-      class="v-home-bg"
+      :isShowLogin="false"></OldHeader>
+    <pageTitle pageTitle="个人主页"
+      v-if="$route.meta.type === 'owner'"></pageTitle>
+    <div class="v-home-bg"
       v-if="$route.meta.type !== 'owner'"
       :style="{
         backgroundImage: `url(${
@@ -21,10 +16,8 @@
             : static_img_url
         })`,
         backgroundSize: BgImgsSize[bgImgMode - 1]
-      }"
-    ></div>
-    <div
-      :class="
+      }"></div>
+    <div :class="
         $route.meta.type !== 'owner'
           ? userHomeVo &&
             Number(userHomeVo.show_subject) === 0 &&
@@ -32,20 +25,15 @@
             ? 'pc_bg no-creates'
             : 'pc_bg'
           : ''
-      "
-    >
+      ">
       <!-- 内容区域 -->
-      <div
-        :class="[
+      <div :class="[
           'user__layout--title',
           { 'ctrl-layout': $route.meta.type === 'owner' }
-        ]"
-      >
+        ]">
         <ul>
           <li>
-            <span class="image-contain"
-              ><img
-                :src="
+            <span class="image-contain"><img :src="
                   userHomeVo && userHomeVo.homepage_avatar
                     ? userHomeVo.homepage_avatar || avatarImgUrl
                     : avatarImgUrl
@@ -55,75 +43,56 @@
                   objectPosition: imgMode == 2 ? 'left top' : ''
                 }"
                 alt=""
-                class="user__avatar"
-            /></span>
+                class="user__avatar" /></span>
           </li>
-          <li
-            :class="
+          <li :class="
               `layout__center ${
                 !(userHomeVo && Number(userHomeVo.show_share) === 1)
                   ? 'one--btn'
                   : ''
               }`
-            "
-          >
+            ">
             <h1>
               {{ userHomeVo && userHomeVo.title ? userHomeVo.title : '' }}
             </h1>
-            <div ref="intro" :class="open_hide ? 'open_hide user__remark' : 'user__remark'">
+            <div ref="intro"
+              :class="open_hide ? 'open_hide user__remark' : 'user__remark'">
               {{ userHomeVo.content }}
             </div>
-            <span
-              v-show="showToggle && userHomeVo && userHomeVo.content"
+            <span v-show="showToggle && userHomeVo && userHomeVo.content"
               class="user__show__btn"
-              @click="showBtnChange"
-              >{{ open_hide ? '展开' : '收起'
-              }}<i
-                :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"
-              ></i
-            ></span>
+              @click="showBtnChange">{{ open_hide ? '展开' : '收起'
+              }}<i :class="open_hide ? 'el-icon-arrow-down' : 'el-icon-arrow-up'"></i></span>
           </li>
-          <li
-            :class="
+          <li :class="
               !(userHomeVo && Number(userHomeVo.show_share) === 1)
                 ? 'one--btn'
                 : ''
-            "
-          >
-            <el-button
-              size="medium"
+            ">
+            <el-button size="medium"
               round
               v-if="setHomeCheck"
-              @click.prevent.stop="toHomeSetPage"
-              >设置</el-button
-            >
-            <el-button
-              size="medium"
+              @click.prevent.stop="toHomeSetPage">设置</el-button>
+            <el-button size="medium"
               round
               @click="openDialog('share')"
-              v-if="userHomeVo && Number(userHomeVo.show_share) === 1"
-              >分享</el-button
-            >
+              v-if="userHomeVo && Number(userHomeVo.show_share) === 1">分享</el-button>
           </li>
         </ul>
       </div>
       <!-- 功能区 -->
       <div class="user__layout--main">
-        <home-main
-          @showSet="showSetHandle"
+        <home-main @showSet="showSetHandle"
           v-if="!isSetShow"
-          ref="homeMain"
-        ></home-main>
+          ref="homeMain"></home-main>
       </div>
 
-      <shareDialog
-        :baseInfo="{
+      <shareDialog :baseInfo="{
           title: this.userHomeVo.title,
           intro: this.userHomeVo.content,
           pic: this.userHomeVo.homepage_avatar || this.avatarImgUrl
         }"
-        ref="share"
-      ></shareDialog>
+        ref="share"></shareDialog>
     </div>
   </div>
 </template>
@@ -136,6 +105,7 @@ import HomeMain from './components/main.vue'
 import ShareDialog from './components/shareDialog'
 import OldHeader from '@/components/OldHeader'
 import defaultbg from './images/defaultbg.png'
+import { defaultAvatar } from '@/utils/ossImgConfig';
 import {
   parseImgOssQueryString,
   cropperImage,
@@ -245,47 +215,46 @@ export default {
               ? sessionOrLocal.get('userId')
               : this.$route.params.str
         }
-      )
-        .then(res => {
-          console.log(res)
-          if (res && res.code === 200) {
-            // 粉丝数、是否关注、主页信息
-            let { avatar, attentioned_count, follow, homepage_info } = res.data
-            if (homepage_info && homepage_info.img_url === '0') {
-              homepage_info.img_url = ''
-            }
-            this.userHomeVo = homepage_info
-            this.$nextTick(() => {
-              this.calculateText();
-            });
-            if (this.$route.meta.type == 'new') {
-              document.title = this.userHomeVo.title
-            }
-
-            if (this.userHomeVo.img_url) {
-              this.handlerImageInfo(this.userHomeVo.img_url, 'bgImgMode')
-            }
-            if (this.userHomeVo.homepage_avatar) {
-              this.handlerImageInfo(this.userHomeVo.homepage_avatar, 'imgMode')
-            }
-            // console.log(BgImgsSize, '-------', this.bgmMode)
-
-            this.attentioned_count = attentioned_count
-            this.follow = follow
-            this.content = homepage_info.content
-            if (this.$route.meta.type !== 'owner') {
-              this.avatarImgUrl =
-                avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`
-            }
-            try {
-              this.$refs.homeMain.initComp(homepage_info)
-            } catch (e) {
-              console.log(e)
-            }
-          } else {
-            this.userHomeVo = null
+      ).then(res => {
+        console.log(res)
+        if (res && res.code === 200) {
+          // 粉丝数、是否关注、主页信息
+          let { avatar, attentioned_count, follow, homepage_info } = res.data
+          if (homepage_info && homepage_info.img_url === '0') {
+            homepage_info.img_url = ''
           }
-        })
+          this.userHomeVo = homepage_info
+          this.$nextTick(() => {
+            this.calculateText();
+          });
+          if (this.$route.meta.type == 'new') {
+            document.title = this.userHomeVo.title
+          }
+
+          if (this.userHomeVo.img_url) {
+            this.handlerImageInfo(this.userHomeVo.img_url, 'bgImgMode')
+          }
+          if (this.userHomeVo.homepage_avatar) {
+            this.handlerImageInfo(this.userHomeVo.homepage_avatar, 'imgMode')
+          }
+          // console.log(BgImgsSize, '-------', this.bgmMode)
+
+          this.attentioned_count = attentioned_count
+          this.follow = follow
+          this.content = homepage_info.content
+          if (this.$route.meta.type !== 'owner') {
+            this.avatarImgUrl =
+              avatar || defaultAvatar
+          }
+          try {
+            this.$refs.homeMain.initComp(homepage_info)
+          } catch (e) {
+            console.log(e)
+          }
+        } else {
+          this.userHomeVo = null
+        }
+      })
         .catch(err => {
           console.log(err)
           this.userHomeVo = null
@@ -305,21 +274,18 @@ export default {
   },
   created() {
     this.static_img_url = `${defaultbg}`
-    this.userId = sessionOrLocal.get('userId')
-    this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`
-    this.getHomePageInfo()
+    this.userId = sessionOrLocal.get('userId');
+    this.avatarImgUrl = defaultAvatar;
+    this.getHomePageInfo();
   },
   mounted() {
-    let userInfo = sessionOrLocal.get('userInfo')
+    let userInfo = sessionOrLocal.get('userInfo');
     if (userInfo !== null) {
-      this.userInfo = JSON.parse(userInfo)
+      this.userInfo = JSON.parse(userInfo);
       if (this.userInfo) {
-        this.avatarImgUrl =
-          this.userInfo.avatar ||
-          `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`
-        // this.$domainCovert(Env.staticLinkVo.uploadBaseUrl, this.userInfo.avatar || '') || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+        this.avatarImgUrl = this.userInfo.avatar || defaultAvatar;
       } else {
-        this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`
+        this.avatarImgUrl = defaultAvatar;
       }
     }
   }
