@@ -1,6 +1,6 @@
 {
   "name": "saas-v3-web",
-  "version": "1.0.1",
+  "version": "1.0.2-gray.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -17,6 +17,8 @@
     "build:test4": "vue-cli-service build --mode test4",
     "build:test5": "vue-cli-service build --mode test5",
     "build:test6": "vue-cli-service build --mode test6",
+    "build:test01": "vue-cli-service build --mode test01",
+    "build:test02": "vue-cli-service build --mode test02",
     "build:pre": "vue-cli-service build --mode pre",
     "preview": "node build/index.js --preview",
     "test:unit": "vue-cli-service test:unit",
@@ -29,13 +31,12 @@
     "@better-scroll/pull-up": "^2.0.6",
     "@better-scroll/scroll-bar": "^2.0.6",
     "@better-scroll/slide": "^2.0.6",
-    "@sentry/browser": "^6.10.0",
-    "@sentry/integrations": "^6.10.0",
     "@vhall/paas-report-data": "^1.0.3",
     "axios": "^0.19.0",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "better-scroll": "^2.0.6",
     "core-js": "^3.6.5",
+    "css-vars-ponyfill": "^2.4.7",
     "echarts": "^4.9.0",
     "element-ui": "^2.14.0",
     "html2canvas": "^1.4.0",
@@ -51,7 +52,6 @@
     "vue-router": "^3.2.0",
     "vuedraggable": "^2.24.3",
     "vuescroll": "^4.17.0",
-    "css-vars-ponyfill": "^2.4.7",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
@@ -61,16 +61,19 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-unit-jest": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
+    "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/test-utils": "^1.0.3",
     "babel-eslint": "^10.1.0",
     "babel-plugin-component": "^1.1.1",
     "clipboard": "^2.0.8",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
+    "eslint-plugin-prettier": "^3.3.1",
     "js-cookie": "^2.2.1",
     "less": "^3.0.4",
     "less-loader": "^7.1.0",
     "moment": "^2.24.0",
+    "n-readlines": "^1.0.1",
     "nprogress": "^0.2.0",
     "path-to-regexp": "^6.2.0",
     "style-resources-loader": "^1.3.3",
@@ -81,6 +84,7 @@
     "vue-i18n": "^8.16.0",
     "vue-loader": "^14.2.4",
     "vue-template-compiler": "^2.6.11",
-    "webpack-bundle-analyzer": "^4.3.0"
+    "webpack-bundle-analyzer": "^4.3.0",
+    "prettier": "^2.2.1"
   }
 }

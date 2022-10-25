@@ -1,5 +1,7 @@
 const { debug } = require('console')
 const path = require('path')
+const btool = require('./scripts/btool');
+
 let cdn = {
   js: [
     '//static.vhallyun.com/jssdk/vhall-jssdk-player/latest/vhall-jssdk-player-2.3.0.js',
@@ -10,6 +12,7 @@ let cdn = {
     '//cnstatic01.e.vhall.com/vhall-new-saas/static/polyfill.js?v=202',
     '//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.6.js',
     '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.min.js',
+    '//s1.e.vhall.com/common-static/middle/middle-util/1.1.3/utils/index.min.js',
     // '//cnstatic01.e.vhall.com/3rdlibs/common-libs/ui-frame/element-UI.js',
     '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.8/questionnaire_service.js',
     '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.js'
@@ -32,7 +35,17 @@ console.warn('配置环境变量----', {
   VUE_APP_NODE_ENV: process.env.VUE_APP_NODE_ENV,
   VUE_APP_WEB_URL: process.env.VUE_APP_WEB_URL,
   VUE_APP_BASE_URL: process.env.VUE_APP_BASE_URL,
-})
+});
+
+// 解析参数成key-value形式：
+// {
+//   _: ['serve'],
+//   lob: 'demo',
+//   project: 'live-pc',
+//   mode: 'development'
+// };
+const argv = btool.parseArgv(process.argv);
+console.warn('argv------>', argv)
 
 module.exports = {
   lintOnSave: false,
@@ -80,8 +93,9 @@ module.exports = {
   // },
   chainWebpack: (config) => {
     config.plugin('html').tap((options) => {
-      options[0].cdn = cdn
-      options[0].version = process.VUE_CLI_SERVICE.pkg.version
+      options[0].cdn = cdn;
+      options[0].version = process.VUE_CLI_SERVICE.pkg.version;
+      options[0].gitlabHash = argv.hash; //gitlab jenkins对应的项目hash
       return options
     })
     // config.plugin('webpack-bundle-analyzer')
