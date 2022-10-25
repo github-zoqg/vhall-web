@@ -744,6 +744,9 @@ const apis = {
   getExamList: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 查询快问快答列表
   copyExamById: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 复制
   deleteExam: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 删除（单个 or 批量）
+  getExamSubmitNum: ['/v3/vss/survey/get-webinar-submit-nums', 'GET'], // 获取互动统计-房间下快问快答提交人数
+  getExamUsageInfo: ['/v3/vss/survey/get-webinar-published-survey-usage', 'GET'], // 获取活动下快问快答使用数据概览
+  exportExam: ['/v3/vss/survey/export-webinar-published-survey-usage', 'GET'], //导出快问快答数据
 };
 
 const getApi = api => {
