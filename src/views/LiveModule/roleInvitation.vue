@@ -368,6 +368,7 @@ export default {
         'waiting_video_file', // 插播文件
         'webinar_award', // 抽奖
         'survey', // 问卷
+        'exam', // 快问快答
         'personal_chat', // 问答
         'sign_in', // 签到
         'timer', // 计时器

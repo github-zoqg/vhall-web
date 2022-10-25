@@ -740,6 +740,10 @@ const apis = {
   // 获取短信余额
   getSmsBalance: ['/v3/fin/user-vip/get-sms-balance', 'GET'], // 根据token查询短信余额
 
+  // 快问快答
+  getExamList: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 查询快问快答列表
+  copyExamById: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 复制
+  deleteExam: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 删除（单个 or 批量）
 };
 
 const getApi = api => {

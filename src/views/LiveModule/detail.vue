@@ -476,11 +476,19 @@ export default {
         .then((res) => {
           if (res.code == 200) {
             if (res.data.permissions) {
-              sessionOrLocal.set(
+              //TODO，模拟赋值
+              let temp = JSON.parse(res.data.permissions)
+temp.exam = 1;
+sessionOrLocal.set(
                 'WEBINAR_PES',
-                res.data.permissions,
+                temp,
                 'localStorage'
               )
+              // sessionOrLocal.set(
+              //   'WEBINAR_PES',
+              //   res.data.permissions,
+              //   'localStorage'
+              // )
               this.perssionInfo = JSON.parse(
                 sessionOrLocal.get('WEBINAR_PES', 'localStorage')
               )
@@ -786,6 +794,16 @@ export default {
             query: {
               roomId: this.liveDetailInfo.vss_room_id,
               query: { type: this.liveDetailInfo.webinar_type },
+            },
+          })
+        }  else if (item.path === '/live/exam') {
+          // 快问快答
+          this.$router.push({
+            path: `${item.path}/${this.$route.params.str}`,
+            query: {
+              roomId: this.liveDetailInfo.vss_room_id,
+              tab: 1,
+              query: { type: this.liveDetailInfo.webinar_type }
             },
           })
         } else if (

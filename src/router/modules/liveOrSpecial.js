@@ -228,6 +228,18 @@ const router = [
         hidden: true
       },
       {
+        path: 'exam/:str(\\d+)',
+        component: () => import('@/views/LiveModule/Exam/main'),
+        meta:{ auth: true, title: '快问快答', name: 'exam', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
+        path: 'addExam',
+        component: () => import('@/views/LiveModule/Exam/components/addExam'),
+        meta:{ auth: true, title: '创建', name: 'addExam', activeMenu: '/live/list'},
+        hidden: true
+      },
+      {
         path: 'productSet/:str(\\d+)',
         component: () => import('@/views/LiveModule/MaterialSet/productSet'),
         meta:{ auth: true, title: '商品', name: 'productSet', activeMenu: '/live/list'},

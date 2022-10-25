@@ -483,7 +483,16 @@ export default {
             isShow:
               this.webinarType != 5 &&
               perssionInfo['ui.hide_survey'] == 1 &&
-              this.type != 4,
+              this.type != 4 // 定时直播、点播直播不支持；没权限也不支持
+          },
+          {
+            icon: 'icon_questionnaire@2x',
+            id: 7,
+            title: '快问快答',
+            subText: '提升答题趣味性，强化知识掌握',
+            type: 100075,
+            path: '/live/exam',
+            isShow: perssionInfo['exam'] == 1 && this.type != 4 // 点播直播不支持；没权限也不支持
           },
           {
             icon: 'icon_goods@2x',

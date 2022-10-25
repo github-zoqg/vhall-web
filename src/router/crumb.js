@@ -621,6 +621,48 @@ export function CrumbSet(metaName, that) {
       }
     ];
   }
+  else if (metaName === 'exam') {// 快问快答
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '直播详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '快问快答',
+        path: `/live/exam/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
+   else if (metaName === 'addExam') {// 创建快问快答
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '直播详情',
+        path: `/live/detail/${that.$route.query.webinarId}`,
+        isClick: true
+      },
+      {
+        title: '快问快答',
+        path: `/live/exam/${that.$route.query.webinarId}`,
+        query: {
+          roomId: that.$route.query.roomId,
+          tab: 1
+        },
+        isClick: true
+      },
+      {
+        title: '创建问卷',
+        path: `/live/addQuestion`,
+        query: that.$route.query,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  }
   else if (metaName === 'productSet') {// 商品
     return [
       ...CrumbLiveList('liveList'),
@@ -1081,6 +1123,33 @@ export function CrumbSet(metaName, that) {
       {
         title: that.$route.query.questionId ? '编辑问卷' : '创建问卷',
         path: '/material/addQuestion',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ]
+  }
+  else if (metaName === 'examMgr') {// 资料-快问快答
+    return [
+      ...CrumbLiveList('material'),
+      {
+        title: '快问快答',
+        path: '/material/exam',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ]
+  }
+  else if (metaName === 'addExamMgr') {// 资料-快问快答-创建
+    return [
+      ...CrumbLiveList('material'),
+      {
+        title: '快问快答',
+        path: '/material/exam',
+        isClick: true
+      },
+      {
+        title: that.$route.query.examId ? '编辑' : '创建',
+        path: '/material/addExam',
         isClick: false,
         redirect: 'noRedirect'
       }
