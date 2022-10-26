@@ -146,7 +146,6 @@ export default {
     shareSubject() {
       this.reportData(100855);
       this.shareVo.url = `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.params.id}`;
-      // this.shareVo.pcUrl = `${process.env.VUE_APP_WEB_URL}/special/detail?id=${id}`;
       this.shareVo.pcUrl = `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.params.id}`;
       this.$refs.share.dialogVisible = true;
     }

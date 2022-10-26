@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router';
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css'
 import { checkAuth } from "@/utils/utils"; // progress bar style
@@ -32,7 +31,11 @@ const envList = [
   'test_zt',
   'test4',
   'test5',
-  'test6'
+  'test6',
+  'test01',
+  'test02',
+  'test03',
+  'test04'
 ]
 const base = envList.includes(process.env.VUE_APP_NODE_ENV) ? '/v3/' : '/'
 console.log(`路由地址base=${base}`)
