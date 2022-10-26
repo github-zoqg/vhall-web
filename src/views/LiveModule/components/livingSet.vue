@@ -56,12 +56,17 @@
           <div class="preview_box_pc" v-show="livingPreview==1">
             <!-- <transition name="fade" mode="out-in"> -->
               <pc-preview ref="livingPcPreview" :type="livingPcPreviewType" :domainUrl="domain_pc_url" :livingPcForm="livingPcForm" :livingForm="livingForm" :videoUrl="video_url" :isShowInteract="isShowInteract"></pc-preview>
+              <span v-show="livingPcForm.style==2 && livingPcPreviewType == 1 && webinarType == 1 && webinarId" class="preview_box_pc_tip">注意：音频模式使用简洁风格，观看页无法展示文档和白板。</span>
+              <span v-show="livingPcPreviewType == 1 && webinarType == 1 && !webinarId" class="preview_box_pc_tip">注意：直播中请勿切换风格模板，以免出现问题。</span>
             <!-- </transition> -->
           </div>
           <div class="preview_box_wap" v-show="livingPreview==2">
             <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm" :videoUrl="video_url" :isShowInteract="isShowInteract"></wap-preview>
-            <span v-show="livingWapForm.style==3 && livingPcPreviewType == 1" class="preview_box_wap_tip">注意：用电脑客户端和app发起非无延迟视频直播，
+            <span v-if="livingWapForm.style==3 && livingPcPreviewType == 1 && webinarType == 1" class="preview_box_wap_tip">注意：<br/>1. 用电脑客户端和app发起非无延迟视频直播，
+简洁风格无法展示文档，建议使用电脑网页端发起。<br/><template v-if="webinarId">2. 音频模式使用简洁风格，观看页无法展示文档和白板。</template><template v-if="!webinarId">2. 直播中请勿切换风格模板，以免出现问题。</template></span>
+            <span v-if="livingWapForm.style==3 && livingPcPreviewType == 1 &&  webinarType != 1" class="preview_box_wap_tip">注意：用电脑客户端和app发起非无延迟视频直播，
 简洁风格无法展示文档，建议使用电脑网页端发起。</span>
+            <span v-if="livingWapForm.style!=3 && livingPcPreviewType == 1 && !webinarId" class="preview_box_wap_tip">注意：直播中请勿切换风格模板，以免出现问题。</span>
           </div>
         </div>
       </div>
@@ -976,6 +981,13 @@ export default {
         }
         &_pc{
           width: 880px;
+           &_tip {
+            display: block;
+            margin-top: 24px;
+            font-size: 14px;
+            line-height: 20px;
+            color: rgba(0, 0, 0, 0.25);
+          }
         }
         &_wap{
           width: 395px;
