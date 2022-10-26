@@ -53,10 +53,10 @@
           <VhallInput type="textarea" v-model="form.description" :maxlength="140" autocomplete="off"  show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></VhallInput>
         </el-form-item>
         <el-form-item label="商品原价" prop="price">
-          <VhallInput v-model.trim="form.price" placeholder="请输入价格" autocomplete="off"  :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></VhallInput>
+          <VhallInput v-model.trim="form.price" placeholder="请输入价格" autocomplete="off" :maxlength="11"><i slot="suffix">元</i></VhallInput>
         </el-form-item>
         <el-form-item label="优惠价" prop="discount_price">
-         <VhallInput v-model.trim="form.discount_price" placeholder="请输入价格" autocomplete="off" :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></VhallInput>
+         <VhallInput v-model.trim="form.discount_price" placeholder="请输入价格" autocomplete="off" :maxlength="11"><i slot="suffix">元</i></VhallInput>
         </el-form-item>
         <el-form-item label="商品链接" prop="url">
           <VhallInput v-model.trim="form.url" v-clearEmoij placeholder="请输入以http://或https://开头的商品链接" autocomplete="off" show-word-limit :maxlength="200"></VhallInput>
@@ -171,6 +171,7 @@ export default {
         shop_url: '',
         name: '',
         description: '',
+        price: '',
         status: 1
       },
       fileList: [],
@@ -214,6 +215,15 @@ export default {
   components: {
     upload,
     PageTitle
+  },
+  watch: {
+    'form.price'(val){
+      // console.log(val,'form.price')
+      this.form.price = val.match(/\d+(\.\d{0,2})?/) ? val.match(/\d+(\.\d{0,2})?/)[0] : ''
+    },
+    'form.discount_price'(val){
+      this.form.discount_price = val.match(/\d+(\.\d{0,2})?/) ? val.match(/\d+(\.\d{0,2})?/)[0] : ''
+    }
   },
   methods: {
     // 验证商品链接和店铺链接
