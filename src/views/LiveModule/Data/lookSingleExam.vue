@@ -327,6 +327,15 @@ export default {
     },
     // 查询成绩排名
     getExamScoreList() {
+      this.resultVo = {
+        total: 2,
+        list: [
+          {
+            time: ''
+          }
+        ]
+      }
+      return
       let params = {
         pos: this.query.pos,
         limit: this.query.limit,
@@ -358,8 +367,10 @@ export default {
       this.query.limit = 10;
       // 表格切换到第一页
       try {
-        this.$refs.tableList.pageInfo.pageNum = 1;
-        this.$refs.tableList.pageInfo.pos = 0;
+        if(this.$refs.tableList) {
+          this.$refs.tableList.pageInfo.pageNum = 1;
+          this.$refs.tableList.pageInfo.pos = 0;
+        }
       } catch (e) {
         console.log(e);
       }

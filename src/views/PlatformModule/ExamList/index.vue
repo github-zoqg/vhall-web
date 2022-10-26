@@ -6,11 +6,11 @@
     <div class="all-no-data" v-if="isDefaultShow">
       <null-page nullType="nullData" text="您还没有快问快答，快来创建吧！" :height="0"  v-if="pageLevel == 'user'">
         <el-button type="primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="addExam">创建</el-button>
-        <el-button type="white-primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="openSelectDialog">资料库</el-button>
+        <el-button type="white-primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="openSelectDialog" v-if="pageLevel == 'webinar'">资料库</el-button>
       </null-page>
       <null-page nullType="nullData" text="您还没有快问快答，快来创建吧！" :height="0" v-else>
         <el-button type="primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="addExam">创建</el-button>
-        <el-button type="white-primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="openSelectDialog">资料库</el-button>
+        <el-button type="white-primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="openSelectDialog" v-if="pageLevel == 'webinar'">资料库</el-button>
       </null-page>
     </div>
     <!-- 全部有结果 -->
@@ -18,7 +18,7 @@
       <!-- 搜索 -->
       <div class="list--search">
         <el-button type="primary" size="medium" round class="head-btn set-upload" @click="addExam">创建</el-button>
-        <el-button round  @click="openSelectDialog" class="transparent-btn" size="white-medium">资料库</el-button>
+        <el-button round class="transparent-btn" size="white-medium" @click="openSelectDialog" v-if="pageLevel == 'webinar'">资料库</el-button>
         <el-button round class="transparent-btn" @click="deleteAll(null)" size="medium" :disabled="!selectChecked.length">批量删除</el-button>
         <VhallInput placeholder="请输入名称" v-model.trim="keyword"
           clearable
@@ -33,36 +33,73 @@
       <!-- 有消息内容 -->
       <div class="list-table-panel">
         <!-- 表格与分页 -->
-        <table-list
-          ref="tableList"
-          :manageTableData="resultVo.list||[]"
-          :tabelColumnLabel="baseTableColumn"
-          :tableRowBtnFun="tableRowBtnFun"
-          :totalNum="resultVo.total||0"
-          :pageLimit=query.limit
-          :needPagination=true
-          maxHeight="100%"
-          width="240"
-          fixedBtn='right'
-          @getTableList="getExamList"
-          @onHandleBtnClick="onHandleBtnClick"
-          @changeTableCheckbox="changeTableCheckbox"
-        >
-        </table-list>
+         <div class="tab-content">
+          <vh-table ref="tableList" :data="resultVo.list"
+            tooltip-effect="dark"
+            style="width: 100%"
+            :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+            @selection-change="changeTableCheckbox"
+          >
+            <vh-table-column
+              type="selection"
+              width="55"
+              align="left"
+            />
+            <template  v-for="(item, index) in tableColumns">
+              <vh-table-column
+                v-if="pageLevel === 'user' && item.key !== 'status' || pageLevel === 'webinar'"
+                align="left"
+                :key="index"
+                :width="item.width"
+                :label="item.label"
+                :show-overflow-tooltip="!item.customTooltip"
+              >
+                <template slot-scope="scope">
+                  <span>{{ scope.row[item.key] || '-' }}</span>
+                </template>
+              </vh-table-column>
+            </template>
+            <vh-table-column
+              label="操作"
+              align="left"
+              class="btn-rows"
+              fixed="right"
+              width="240">
+              <template slot-scope="scope">
+                <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" @click="preview(scope.row)">预览</vh-button>
+                <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" @click="cope(scope.row)">复制</vh-button>
+                <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" @click="edit(scope.row)">编辑</vh-button>
+                <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" @click="del(scope.row)">删除</vh-button>
+              </template>
+            </vh-table-column>
+            <div slot="empty" style="height: 0"></div>
+          </vh-table>
+        </div>
+        <SPagination
+          :total="resultVo.total"
+          :currentPage="query.pageNumber"
+          @current-change="currentChangeHandler"
+          align="center"
+          v-if="resultVo.total > query.limit">
+        </SPagination>
       </div>
       <!-- 无消息内容 -->
       <null-page class="search-no-data" :height="0" v-if="resultVo && resultVo.total === 0"></null-page>
     </div>
+    <!-- 资料库：选择列表-->
+    <select-exam ref="selectExamDom" @getTableList="getExamList"></select-exam>
   </div>
 </template>
 
 <script>
 import NullPage from '../Error/nullPage.vue';
 import { sessionOrLocal } from '@/utils/utils';
+import SelectExam from './selectExam.vue'
 export default {
   name: "ExamList",
   components: {
-    NullPage
+    NullPage,
+    SelectExam
   },
   props: {
     // 查询层级
@@ -90,7 +127,7 @@ export default {
         total: 0,
         list: []
       },
-      baseTableColumn: [
+      tableColumns: [
         {
           label: '名称',
           key: 'title',
@@ -99,35 +136,34 @@ export default {
         },
         {
           label: '创建时间',
-          key: 'created_at',
+          key: 'created_at_str',
           width: '180'
         },
         {
           label: '更新时间',
-          key: 'updated_at',
+          key: 'updated_at_str',
           width: '180'
         },
         {
           label: '总分',
-          key: 'score',
+          key: 'total_score',
           width: '120'
         },
         {
           label: '题数',
-          key: 'topic_num',
+          key: 'questions_count',
           width: '120'
         },
         {
           label: '限时（分）',
-          key: 'timer',
+          key: 'limit_time_str',
+          width: '120'
+        },
+        {
+          label: '状态',
+          key: 'status',
           width: '120'
         }
-      ],
-      tableRowBtnFun: [
-        {name:'预览', methodName: 'preview'},
-        {name:'复制', methodName: 'cope'} ,
-        {name:'编辑', methodName: 'edit'},
-        {name:'删除', methodName: 'del'}
       ],
       /*--------------------快速报名参数定义--------------------*/
       addUserVisible: false,
@@ -141,10 +177,6 @@ export default {
     }
   },
   methods: {
-    onHandleBtnClick(val) {
-      let methodsList = this.$options.methods;
-      methodsList[val.type](this, val);
-    },
     clear(e) {
       e.stopPropagation()
     },
@@ -154,85 +186,71 @@ export default {
       }
     },
     // 预览
-    preview(that, {rows}) {
-      that.isShowQuestion = true;
-      that.examId = rows.exam_id;
+    preview(rows) {
+      this.isShowQuestion = true;
+      this.examId = rows.id;
     },
     // 复制 - 单个快问快答
-    cope(that, {rows}) {
-      const params = {survey_id: rows.exam_id}
-      if(this.alias){
-        params.alias = this.alias
-      }
-      that.$fetch('copyExamById', params).then(res => {
-        that.$message({
+    cope(rows) {
+      this.$fetch(this.pageLevel == 'user' ? 'copyExamById' : 'copyExamByIdIsWebinar', this.pageLevel == 'user' ? {id: rows.id} : {
+        id: rows.id,
+        source_id: this.$route.params.str,
+        source_type: 1
+      }).then(res => {
+        this.$message({
           message: res.code == 200 ? '复制成功' : '复制失败',
           showClose: true,
           type: res.code == 200 ? 'success' : 'error',
           customClass: 'zdy-info-box'
         });
-        that.getTableList();
+        this.initQueryList();
       })
     },
     // 编辑 - 单个快问快答
-    edit(that, {rows}) {
-      console.log('编辑', rows);
-      that.$router.push({
+    edit(rows) {
+      this.$router.push({
         path: '/material/addExam',
         query: {
-          examId: rows.exam_id,
-          type: 1,
-          alias: rows.alias,
+          examId: rows.id,
+          type: 1
         }
       });
     },
     // 删除 - 单条记录
-    del(that, {rows}) {
-      that.deleteConfirm(rows.exam_id, 2);
+    del(rows) {
+      this.deleteConfirm(rows.id, 2);
     },
     deleteConfirm(id, index) {
-      this.$confirm(index == 1 ? '删除后，此题目将无法使用，确认删除？' : '删除后，此快问快答将无法使用，确认删除？', '提示', {
+      this.$confirm('删除后，此快问快答将无法使用，确认删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           customClass: 'zdy-message-box',
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
-          this.$fetch('deleteExam', {survey_ids: id}).then(res => {
-            this.getTableList('search');
-            this.$message({
-              message: `删除成功`,
-              showClose: true,
-              type: 'success',
-              customClass: 'zdy-info-box'
-            });
+          this.$fetch(this.pageLevel == 'user' ? 'deleteExam' : 'deleteExamIsWebinar', this.pageLevel == 'user' ? {ids: id} : {
+            ids: id,
+            source_type: 1,
+            source_id: this.$route.params.str
+          }).then(res => {
+            if (res.data?.is_success == 1) {
+              // 删除成功
+              this.messageInfo('删除成功', 'success');
+              this.initQueryList();
+            } else {
+              this.messageInfo(res.msg || '删除失败', 'error');
+            }
           }).catch(res => {
-            this.$message({
-              message: res.msg || '删除失败',
-              showClose: true,
-              type: 'error',
-              customClass: 'zdy-info-box'
-            });
+            this.messageInfo(res.msg || '删除失败', 'error');
           })
         }).catch(() => {
-          this.$message({
-            message:  `已取消删除`,
-            showClose: true,
-            type: 'info',
-            customClass: 'zdy-info-box'
-          });
+          this.messageInfo('已取消删除', 'info');
         });
     },
     // 批量删除
     deleteAll(id) {
       if (this.selectChecked.length < 1) {
-        this.$message({
-          message: `请选择要操作的选项`,
-          showClose: true,
-          // duration: 0,
-          type: 'warning',
-          customClass: 'zdy-info-box'
-        });
+        this.messageInfo('请选择要操作的选项', 'warning');
       } else {
         id = this.selectChecked.join(',');
         this.deleteConfirm(id, 1);
@@ -240,8 +258,7 @@ export default {
     },
     // 选中
     changeTableCheckbox(val) {
-      this.selectChecked = val.map(val => val.exam_id)
-      console.log(this.selectChecked);
+      this.selectChecked = val.map(val => val.id)
     },
     // 创建-快问快答
     addExam() {
@@ -257,8 +274,51 @@ export default {
     closeClose(done){
       this.isShowQuestion = false;
     },
+    mockExamList() {
+      return {
+        total: 10,
+        list: [
+          {
+            id: 1,
+            title: 'Apple产品功能知识点①',
+            created_at: '2022-10-23 00:00:00',
+            updated_at: '2022-10-23 00:00:00',
+            total_score: 100,
+            questions_count: 10,
+            limit_time_switch: 1,
+            limit_time: 70,
+            auto_push_switch: 0
+          },
+          {
+            id: 2,
+            title: 'Apple产品功能知识点2',
+            created_at: '2022-10-23 00:00:00',
+            updated_at: '2022-10-23 00:00:00',
+            total_score: 100,
+            questions_count: 10,
+            limit_time_switch: 0,
+            limit_time: 0,
+            auto_push_switch: 0
+          }
+        ]
+      }
+    },
+    // 页码改变按钮事件
+    currentChangeHandler(current) {
+      this.query.pageNumber = current;
+      this.query.pos = parseInt((current - 1) * this.query.limit);
+      this.getExamList();
+    },
     // 获取列表数据
-    getExamList(row) {
+    getExamList() {
+      let resData = this.mockExamList();
+      resData.list.map(item => {
+        item.created_at_str = item.created_at.substring(0, 16)
+        item.updated_at_str = item.updated_at.substring(0, 16)
+        item.limit_time_str = item.limit_time_switch == 1 ? item.limit_time : '不限时'
+      });
+      this.resultVo = resData
+      return
       this.loading = true;
       if (row) {
         this.query.pos = row.pos;
@@ -270,17 +330,20 @@ export default {
         limit: this.query.limit
       }, this.pageLevel == 'webinar' ? {
           keyword: this.keyword,
-          webinar_id:this.$route.params.str,
-          room_id:this.$route.query.roomId
+          source_id: this.$route.params.str,
+          source_type: 1 // 活动ID
         } : {
           keyword: this.keyword
       });
       this.$fetch('getExamList', this.$params(obj)).then(res =>{
         this.loading = false;
-        this.resultVo = res.data ?? {
-          total: 0,
-          list: []
-        }
+        let resData = res.data;
+        resData.list.map(item => {
+          item.created_at_str = item.created_at.substring(0, 16)
+          item.updated_at_str = item.updated_at.substring(0, 16)
+          item.limit_time_str = item.limit_time_switch == 1 ? item.limit_time : '不限时'
+        });
+        this.resultVo = resData;
       }).catch(e=>{
         this.loading = false;
         console.log(e);
@@ -289,8 +352,6 @@ export default {
           list: []
         }
       });
-      // this.loading = false;
-      // this.resultVo = {"msg":"操作成功！","code":200,"data":{"pos":0,"limit":10,"total":10,"list":[{"description":"问卷简介","alias":"11","webinar_id":237221962,"question_id":718358,"question_no":"WJ1584831762566090752","topic_num":1,"title":"a1","img_url":"null","has_tpl":0,"playback_filling":1,"user_id":"16422680","app_id":"fd8d3653","publish":0,"is_public":0,"source_id":null,"created_at":"2022-10-25 16:58:32","updated_at":"2022-10-25 16:58:32"},{"description":"","alias":"问卷","webinar_id":237221962,"question_id":718350,"question_no":"WJ1584831758220791808","topic_num":1,"title":"标题","img_url":"null","has_tpl":0,"playback_filling":1,"user_id":"16422680","app_id":"fd8d3653","publish":0,"is_public":0,"source_id":null,"created_at":"2022-10-25 16:58:31","updated_at":"2022-10-25 16:58:31"},{"description":"","alias":"问卷t1","webinar_id":237221962,"question_id":718351,"question_no":"WJ1584831758795411456","topic_num":1,"title":"标题","img_url":"null","has_tpl":0,"playback_filling":1,"user_id":"16422680","app_id":"fd8d3653","publish":0,"is_public":0,"source_id":null,"created_at":"2022-10-25 16:58:31","updated_at":"2022-10-25 16:58:31"},{"description":"问卷简介","alias":"啊","webinar_id":237221962,"question_id":718352,"question_no":"WJ1584831759281950720","topic_num":1,"title":"t-2","img_url":"null","has_tpl":0,"playback_filling":1,"user_id":"16422680","app_id":"fd8d3653","publish":0,"is_public":0,"source_id":null,"created_at":"2022-10-25 16:58:31","updated_at":"2022-10-25 16:58:31"},{"description":"所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题型001所有题","alias":"问卷","webinar_id":237221962,"question_id":718353,"question_no":"WJ1584831760309555200","topic_num":13,"title":"所有题型001","img_url":"null","has_tpl":0,"playback_filling":1,"user_id":"16422680","app_id":"fd8d3653","publish":0,"is_public":0,"source_id":null,"created_at":"2022-10-25 16:58:31","updated_at":"2022-10-25 16:58:31"},{"description":"问卷简介","alias":"问卷","webinar_id":237221962,"question_id":718354,"question_no":"WJ1584831760783511552","topic_num":1,"title":"问卷标题","img_url":"null","has_tpl":0,"playback_filling":1,"user_id":"16422680","app_id":"fd8d3653","publish":0,"is_public":0,"source_id":null,"created_at":"2022-10-25 16:58:31","updated_at":"2022-10-25 16:58:31"},{"description":"","alias":"aaa","webinar_id":237221962,"question_id":718355,"question_no":"WJ1584831761228107776","topic_num":1,"title":"标题ttt","img_url":"null","has_tpl":0,"playback_filling":1,"user_id":"16422680","app_id":"fd8d3653","publish":0,"is_public":0,"source_id":null,"created_at":"2022-10-25 16:58:31","updated_at":"2022-10-25 16:58:31"},{"description":"","alias":"ttt","webinar_id":237221962,"question_id":718356,"question_no":"WJ1584831761664315392","topic_num":1,"title":"标题t","img_url":"","has_tpl":0,"playback_filling":1,"user_id":"16422680","app_id":"fd8d3653","publish":0,"is_public":0,"source_id":null,"created_at":"2022-10-25 16:58:31","updated_at":"2022-10-25 16:58:31"},{"description":"问卷简介","alias":"","webinar_id":237221962,"question_id":718357,"question_no":"WJ1584831762108911616","topic_num":1,"title":"问卷标题","img_url":"null","has_tpl":0,"playback_filling":1,"user_id":"16422680","app_id":"fd8d3653","publish":0,"is_public":0,"source_id":null,"created_at":"2022-10-25 16:58:31","updated_at":"2022-10-25 16:58:31"},{"description":"","alias":"","webinar_id":237221962,"question_id":718349,"question_no":"WJ1584831757772001280","topic_num":1,"title":"标题","img_url":"","has_tpl":0,"playback_filling":1,"user_id":"16422680","app_id":"fd8d3653","publish":0,"is_public":0,"source_id":null,"created_at":"2022-10-25 16:58:30","updated_at":"2022-10-25 16:58:30"}]},"request_id":"815ab4d0-5447-11ed-99b9-cd8ac6028a26"}.data
     },
     initComp() {
       this.initQueryList();
@@ -309,20 +370,22 @@ export default {
       })
     },
     //文案提示问题
-    messageInfo(message) {
+    messageInfo(msg, type) {
       if (this.vm) {
         this.vm.close();
       }
       this.vm = this.$message({
         showClose: true,
         duration: 2000,
-        message: message,
-        type: 'success',
+        message: msg,
+        type: type,
         customClass: 'zdy-info-box'
       });
     },
     // 打开资料库
-    openSelectDialog() {},
+    openSelectDialog() {
+      this.$refs.selectExamDom.selectDialogVisible = true;
+    },
   },
   mounted() {
     this.initComp();

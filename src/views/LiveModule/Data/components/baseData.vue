@@ -197,7 +197,7 @@
             </div>
           </div>
         </div>
-        <div class="base-item" v-if="isStatus!=4"  @click="lookOption('快问快答', 'TODO')">
+        <div class="base-item" v-if="isStatus!=4 && WEBINAR_PES && WEBINAR_PES['exam']==1"  @click="lookOption('快问快答', 'TODO')">
           <p>查看</p>
          <div class="base-main">
            <label><img src="../../../../common/images/icon/icon_questionnaire@2x.png" alt=""></label>
@@ -376,8 +376,9 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     this.roomId = this.$route.query.roomId;
+    await this.getConfigListIsOpen(1, this.$route.params.str)
     this.getAllDataInfo();
      if (this.isStatus != 4) {
       // 点播不需要调用
@@ -393,6 +394,24 @@ export default {
         message: '导出申请成功，请去下载中心下载',
         type: 'success',
         customClass: 'zdy-info-box'
+      });
+    },
+    // 获取活动层级 —— 配置项开关 / 具体配置项值
+    getConfigListIsOpen(scene = 1, webinar_id = '') {
+      let params = {
+        webinar_id: webinar_id,
+        webinar_user_id: this.userId,
+        scene_id: scene,
+      }
+      return this.$fetch('planFunctionGet', this.$params(params),{
+        'gray-id': this.userId
+      }).then(res => {
+        if (res && res.code === 200 && res.data.permissions) {
+          const data = JSON.parse(res.data.permissions)
+          this.WEBINAR_PES = data;
+        }
+      }).catch(e => {
+        console.log('刷新等情况下获取活动下接口配置项情况，异常不做任何处理')
       });
     },
     getAllDataInfo() {
@@ -651,11 +670,11 @@ export default {
         border: 1px solid transparent;
         cursor: pointer;
         transition: all 0.15s ease-in;
-        &:nth-child(3n) {
-          margin-right: 0;
-        }
         &:nth-child(4n) {
           margin-right: 24px;
+        }
+        &:nth-child(3n) {
+          margin-right: 0;
         }
         p{
           position: absolute;
@@ -708,7 +727,7 @@ export default {
       }
     }
   }
-  @media screen and (min-width: 1920px) {
+  @media (min-width: 1920px) {
     .base-data .liveItem .base-item{
       &:nth-child(3n) {
         margin-right: 24px;

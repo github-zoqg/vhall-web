@@ -1,6 +1,6 @@
 <template>
   <div class="exam-add-page">
-    <pageTitle pageTitle="创建"></pageTitle>
+    <pageTitle :pageTitle="$route.query.examId ? '编辑' : '创建'"></pageTitle>
   </div>
 </template>
 <script>

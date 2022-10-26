@@ -741,9 +741,11 @@ const apis = {
   getSmsBalance: ['/v3/fin/user-vip/get-sms-balance', 'GET'], // 根据token查询短信余额
 
   // 快问快答
-  getExamList: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 查询快问快答列表
-  copyExamById: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 复制
-  deleteExam: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 删除（单个 or 批量）
+  getExamList: ['/v1/fqas/paper-view/list', 'POST'], // 查询快问快答列表
+  copyExamById: ['/v1/fqas/paper-view/copy', 'POST'], // 复制 —— 用户维度
+  copyExamByIdIsWebinar: ['/v1/fqas/webinar-paper-view/copy', 'POST'], // 复制 —— 活动维度
+  deleteExam: ['/v1/fqas/paper-view/delete', 'POST'], // 删除（单个 or 批量）—— 用户维度
+  deleteExamIsWebinar: ['/v1/fqas/webinar-paper-view/delete', 'POST'], // 删除（单个 or 批量） —— 活动维度
   getExamSubmitNum: ['/v3/vss/survey/get-webinar-submit-nums', 'GET'], // 获取互动统计-房间下快问快答提交人数
   getExamUsageInfo: ['/v3/vss/survey/get-webinar-published-survey-usage', 'GET'], // 获取活动下快问快答使用数据概览
   exportExam: ['/v3/vss/survey/export-webinar-published-survey-usage', 'GET'], //导出快问快答数据
@@ -751,6 +753,7 @@ const apis = {
   editDataStatus: ['/v3/vss/survey/export-webinar-published-survey-usage', 'GET'], // 编辑数据
   getExamScoreList: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 查询快问快答 - 成绩列表
   getTranscriptInfo: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 查询快问快答 - 个人成绩单信息
+  selectExamToWebinar: ['/v1/fqas/webinar-paper-view/create-by-data-bank', 'POST'], // 资料库下选择快问快答同步到活动
 
 };
 
