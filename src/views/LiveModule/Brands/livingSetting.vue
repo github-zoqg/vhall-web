@@ -150,7 +150,7 @@ export default {
       let params = {
         webinar_id: this.$route.params.str,
         permission_key: 'is_brand_cofig',
-        status: Number(this.livingSettingOpen)
+        status: Number(this.uiLivingSettingOpen)
       }
       console.log('当前参数传递：', params)
       this.$fetch('planFunctionEdit', params)
