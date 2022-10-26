@@ -322,6 +322,12 @@ const router = [
         component: () => import('@/views/LiveModule/Data/lookSingleQuestion'),
         meta:{ auth: true, title: '查看问卷详情', name: 'lookSingleQuestion', activeMenu: '/live/list'},
         hidden: true
+      },
+      {
+        path: 'lookSingleExam/:str(\\d+)',
+        component: () => import('@/views/LiveModule/Data/lookSingleExam'),
+        meta:{ auth: true, title: '查看快问快答明细', name: 'lookSingleExam', activeMenu: '/live/list'},
+        hidden: true
       }
     ]
   },

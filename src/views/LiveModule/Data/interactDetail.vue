@@ -10,6 +10,12 @@
       <div slot="content" v-if="title == '关注用户'">
         此列表用户来自于微信，在直播页中主动点击关注接受发送消息通知的用户（非微信粉丝）
       </div>
+      <div slot="content" v-if="title == '快问快答'">
+        1.查看人数：主办方推送快问快答至观看端，仅查看题目未进行作答的人数，人数排重<br/>
+        2.答题人数：主办方推送快问快答至观看端，参与答题的人数（包含主动交卷、人工及系统收卷），人数排重<br/>
+        3.满分率：（满分人数/提交人数）*100%<br/>
+        4.平均分：本次答题的总分数除以答题人数<br/>
+      </div>
     </pageTitle>
     <div class="operaBox">
       <div class="searchBox" v-show="totalNum || isSearch">
@@ -222,6 +228,37 @@ export default {
           key: 'filled_number',
         },
       ],
+      // 快问快答
+      examColumn: [
+        {
+          label: '推送时间',
+          key: 'send_time',
+        },
+        {
+          label: '名称',
+          key: 'subject',
+        },
+        {
+          label: '填写人数',
+          key: 'filled_number',
+        },
+        {
+          label: '查看人数',
+          key: 'filled_number',
+        },
+        {
+          label: '答题人数',
+          key: 'filled_number',
+        },
+        {
+          label: '满分率',
+          key: 'filled_number',
+        },
+        {
+          label: '平均分',
+          key: 'filled_number',
+        },
+      ],
       // 签到
       signColumn: [
         {
@@ -363,6 +400,13 @@ export default {
           methodName: 'lookDetail',
           path: '/live/lookSingleQuestion',
         }
+      ],
+      examBtnFun: [
+        {
+          name: '查看明细',
+          methodName: 'lookDetail',
+          path: '/live/lookSingleExam',
+        }
       ]
     };
   },
@@ -442,6 +486,12 @@ export default {
           this.tabelColumn= this.questnaireColumn;
           this.tableRowBtnFun = this.questnaireBtnFun;
           this.getQuestionInfo();
+          break;
+        case '快问快答':
+          this.isCheckout = false;
+          this.tabelColumn= this.examColumn;
+          this.tableRowBtnFun = this.examBtnFun;
+          this.getExamInfo();
           break;
         case '现金红包':
           this.tabelColumn= this.packetColumn;
@@ -751,6 +801,31 @@ export default {
         }
       });
     },
+    // 问卷
+    getExamInfo() {
+      let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+      let params = {
+        room_id: this.roomId,
+        webinar_id: this.webinarId
+      }
+      let obj = Object.assign({}, pageInfo, params);
+      // this.$fetch('getExamUsageInfo', obj).then(res => {
+      //   this.tableList = res.data.list;
+      //   this.totalNum = res.data.total;
+      //   if (!res.data.total) {
+      //     this.nullText = 'nullData';
+      //     this.text = '您还没有快问快答数据！';
+      //   }
+      // });
+
+     let res =  {"code":200,"msg":"","data":{"total":122,"list":[{"id":79934,"sequence":1,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"12312312","join_id":2093663,"status":0,"created_at":"2022-10-25 14:23:56","updated_at":"2022-10-25 14:23:56","answer":[],"phone":"","email":"","third_user_id":""},{"id":79933,"sequence":2,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"12","join_id":2093663,"status":0,"created_at":"2022-10-25 12:25:44","updated_at":"2022-10-25 12:25:44","answer":[],"phone":"","email":"","third_user_id":""},{"id":79932,"sequence":1,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"123123","join_id":2093663,"status":0,"created_at":"2022-10-25 12:04:42","updated_at":"2022-10-25 12:04:42","answer":[],"phone":"","email":"","third_user_id":""},{"id":79767,"sequence":120,"nick_name":"1ak","content":"154","join_id":2093815,"status":0,"created_at":"2022-10-21 17:34:45","updated_at":"2022-10-21 17:34:45","answer":[],"phone":"","email":"","third_user_id":""},{"id":79766,"sequence":119,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"54","join_id":2093663,"status":0,"created_at":"2022-10-21 17:34:39","updated_at":"2022-10-21 17:34:39","answer":[],"phone":"","email":"","third_user_id":""},{"id":79765,"sequence":118,"nick_name":"1ak","content":"153","join_id":2093815,"status":0,"created_at":"2022-10-21 17:34:23","updated_at":"2022-10-21 17:34:23","answer":[],"phone":"","email":"","third_user_id":""},{"id":79764,"sequence":117,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"53","join_id":2093663,"status":0,"created_at":"2022-10-21 17:34:17","updated_at":"2022-10-21 17:34:17","answer":[],"phone":"","email":"","third_user_id":""},{"id":79763,"sequence":116,"nick_name":"1ak","content":"152","join_id":2093815,"status":0,"created_at":"2022-10-21 17:34:04","updated_at":"2022-10-21 17:34:04","answer":[],"phone":"","email":"","third_user_id":""},{"id":79762,"sequence":115,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"52","join_id":2093663,"status":0,"created_at":"2022-10-21 17:33:58","updated_at":"2022-10-21 17:33:58","answer":[],"phone":"","email":"","third_user_id":""},{"id":79761,"sequence":114,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"51","join_id":2093663,"status":0,"created_at":"2022-10-21 17:33:37","updated_at":"2022-10-21 17:33:37","answer":[],"phone":"","email":"","third_user_id":""}],"start_time":"","end_time":""},"request_id":"fc1f8d40-544b-11ed-8893-83ffba550ab5"}
+ this.tableList = res.data.list;
+        this.totalNum = res.data.total;
+        if (!res.data.total) {
+          this.nullText = 'nullData';
+          this.text = '您还没有快问快答数据！';
+        }
+    },
     // 抽奖
     prizeList() {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
@@ -1004,6 +1079,9 @@ export default {
         case '问卷':
           this.exportQuestionInfo();
           break;
+        case '快问快答':
+          this.exportExamInfo();
+          break;
         case '现金红包':
           this.exportRedpacketInfo();
           break;
@@ -1197,6 +1275,19 @@ export default {
           k: 100469,
           data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
+        this.$message({
+          message: `导出申请成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      })
+    },
+    // 快问快答导出
+    exportExamInfo() {
+      this.$fetch('exportExam',{webinar_id: this.webinarId, room_id: this.roomId}).then(res => {
         this.$message({
           message: `导出申请成功，请去下载中心下载`,
           showClose: true,

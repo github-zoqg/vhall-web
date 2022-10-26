@@ -111,7 +111,7 @@
           1.聊天：{{ webinarType == 6 ? '统计当前活动总计发送了多少条聊天，条数显示为主直播间的，支持查看明细，支持小组聊天记录导出' : '统计当前活动总计发送了多少条聊天，支持查看明细' }}
           <br />2.问答：开启问答后，当前活动总计发送了多少条问答，支持查看明细
           <br>3.点赞：当前活动总计收到多少次点赞，数据统计不去重<br>4.签到：推送签到后，统计多少人进行了签到，支持查看明细<br>5.问卷：推送问卷后，统计多少人填写了问卷，支持查看明细
-          <br>6.抽奖：推送抽奖后，统计多少人中奖，支持查看明细<br>7.发群红包：发送红包后，统计发送红包的金额，支持查看明细<br>8.打赏：观众对当前活动打赏的金额统计<br>9.礼物：观众对当前活动赠送礼物的金额统计<br>10.连麦：分组活动支持，统计多少条连麦数据<br>11.分组：分组讨论后，统计分组时间、分组次数、支持查看明细
+          <br>6.快问快答：推送快问快答后，统计多少人提交了快问快答，支持查看明细<br>7.抽奖：推送抽奖后，统计多少人中奖，支持查看明细<br>8.发群红包：发送红包后，统计发送红包的金额，支持查看明细<br>9.打赏：观众对当前活动打赏的金额统计<br>10.礼物：观众对当前活动赠送礼物的金额统计<br>11.连麦：分组活动支持，统计多少条连麦数据<br>12.分组：分组讨论后，统计分组时间、分组次数、支持查看明细
         </div>
         <i class="iconfont-v3 saasicon_help_m"></i>
       </el-tooltip>
@@ -181,7 +181,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4&&webinarType!=5"  @click="lookOption('问卷', 100450)">
+        <div class="base-item" v-if="isStatus!=4&&webinarType!=5"  @click="lookOption('问卷', 100450)">
           <p>查看</p>
          <div class="base-main">
            <label><img src="../../../../common/images/icon/icon_questionnaire@2x.png" alt=""></label>
@@ -192,6 +192,22 @@
                   :endVal="dataInfo.submitNum"
                   :duration="1500"
                   v-if="dataInfo.submitNum >= 0">
+                </count-to>
+              </h1>
+            </div>
+          </div>
+        </div>
+        <div class="base-item" v-if="isStatus!=4"  @click="lookOption('快问快答', 'TODO')">
+          <p>查看</p>
+         <div class="base-main">
+           <label><img src="../../../../common/images/icon/icon_questionnaire@2x.png" alt=""></label>
+            <div class="base-text">
+              <span>快问快答(人)</span>
+              <h1 class="custom-font-barlow">
+                <count-to :startVal="0"
+                  :endVal="dataInfo.examSubmitNum"
+                  :duration="1500"
+                  v-if="dataInfo.examSubmitNum >= 0">
                 </count-to>
               </h1>
             </div>
@@ -423,6 +439,10 @@ export default {
       // 问卷提交人数
       this.$fetch('getSurveyInfo', {room_id: this.roomId}).then(res => {
         this.dataInfo.submitNum = res.data.submit_nums || 0;
+      });
+      // 快问快答提交人数
+      this.$fetch('getExamSubmitNum', {room_id: this.roomId}).then(res => {
+        this.dataInfo.examSubmitNum = res.data.submit_nums || 0;
       });
       // 获取抽奖人数
       this.$fetch('getPrizeUserInfo', {webinar_id: this.$route.params.str}).then(res => {
