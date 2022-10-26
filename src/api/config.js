@@ -750,6 +750,7 @@ const apis = {
   resetExamStatus: ['/v3/vss/survey/export-webinar-published-survey-usage', 'GET'], // 还原数据
   editDataStatus: ['/v3/vss/survey/export-webinar-published-survey-usage', 'GET'], // 编辑数据
   getExamScoreList: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 查询快问快答 - 成绩列表
+  getTranscriptInfo: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 查询快问快答 - 个人成绩单信息
 
 };
 

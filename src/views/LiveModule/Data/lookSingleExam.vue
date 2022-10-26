@@ -4,16 +4,16 @@
     <div class="single-exam-detail__header">
       <p class="exam-webinar-title">xxxx快问快答标题名称</p>
       <div class="single-exam-detail__data">
-        <el-row type="flex" class="row-bg" justify="space-around">
-          <el-col :span="7">
+        <vh-row type="flex" class="row-bg" justify="space-around">
+          <vh-col :span="7">
             <div class="grid-content">
               <span>查看人数</span>
-              <el-tooltip effect="dark" placement="right" v-tooltipMove>
+              <vh-tooltip effect="dark" placement="right" v-tooltipMove>
                 <div slot="content">
                   主办方推送快问快答至观看端，仅查看题目未进行作答的人数，人数排重
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
-              </el-tooltip>
+              </vh-tooltip>
               <h3 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="examData.showNum"
@@ -22,16 +22,16 @@
                 </count-to>
               </h3>
             </div>
-          </el-col>
-          <el-col :span="7">
+          </vh-col>
+          <vh-col :span="7">
             <div class="grid-content">
               <span>答题人数</span>
-              <el-tooltip effect="dark" placement="right" v-tooltipMove>
+              <vh-tooltip effect="dark" placement="right" v-tooltipMove>
                 <div slot="content">
                   主办方推送快问快答至观看端，参与答题的人数（包含主动交卷、人工及系统收卷），人数排重
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
-              </el-tooltip>
+              </vh-tooltip>
               <h3 class="custom-font-barlow">
                 <count-to :startVal="0"
                   :endVal="examData.submitNum"
@@ -40,16 +40,16 @@
                 </count-to>
               </h3>
             </div>
-          </el-col>
-          <el-col :span="10">
+          </vh-col>
+          <vh-col :span="10">
             <div class="grid-content">
               <span>满分率</span>
-              <el-tooltip effect="dark" placement="right" v-tooltipMove>
+              <vh-tooltip effect="dark" placement="right" v-tooltipMove>
                 <div slot="content">
                   （满分人数 / 提交人数）*100%
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
-              </el-tooltip>
+              </vh-tooltip>
               <h3 class="custom-font-barlow">
                <span>{{examData.percent}}%，</span>
                <count-to :startVal="0"
@@ -59,40 +59,40 @@
                 </count-to><span>人</span>
               </h3>
             </div>
-          </el-col>
-        </el-row>
-        <el-row type="flex" class="row-bg" justify="space-around">
-          <el-col :span="7">
+          </vh-col>
+        </vh-row>
+        <vh-row type="flex" class="row-bg" justify="space-around">
+          <vh-col :span="7">
             <div class="grid-content">
               <span>最高分</span>
               <h3 class="custom-font-barlow">
                 {{examData.maxScore}}
               </h3>
             </div>
-          </el-col>
-          <el-col :span="7">
+          </vh-col>
+          <vh-col :span="7">
             <div class="grid-content">
               <span>最低分</span>
               <h3 class="custom-font-barlow">
                 {{examData.minScore}}
               </h3>
             </div>
-          </el-col>
-          <el-col :span="10">
+          </vh-col>
+          <vh-col :span="10">
             <div class="grid-content">
               <span>平均分</span>
-              <el-tooltip effect="dark" placement="right" v-tooltipMove>
+              <vh-tooltip effect="dark" placement="right" v-tooltipMove>
                 <div slot="content">
                   本次答题的总分数 / 答题人数
                 </div>
                 <i class="iconfont-v3 saasicon_help_m"></i>
-              </el-tooltip>
+              </vh-tooltip>
               <h3 class="custom-font-barlow">
                 {{examData.advScore}}
               </h3>
             </div>
-          </el-col>
-        </el-row>
+          </vh-col>
+        </vh-row>
       </div>
     </div>
     <!-- 下半部分区间 -->
@@ -127,47 +127,85 @@
             @keyup.enter.native="initQueryList">
             <i class="el-icon-search el-input__icon" slot="prefix" @click="initQueryList"></i>
           </VhallInput>
-          <el-select placeholder="全部数据" round v-model="query.dataType" @change="initQueryList" style="width:102px">
-            <el-option value="">全部数据</el-option>
-            <el-option
+          <vh-select placeholder="全部数据" round v-model="query.dataType" @change="initQueryList" style="width:102px">
+            <vh-option value="">全部数据</vh-option>
+            <vh-option
               v-for="item in [{
-                label: '1',
-                value: '有效数据'
+                label: '有效数据',
+                value: '1'
               }, {
-                label: '0',
-                value: '无效数据'
+                label: '无效数据',
+                value: '0'
               }]"
               :key="'data_' + item.label"
               :label="item.label"
               :value="item.value">
-            </el-option>
-          </el-select>
-          <el-button size="medium" round @click="downloadHandle">导出</el-button>
+            </vh-option>
+          </vh-select>
+          <vh-button type="info" ghost @click="downloadHandle" size="medium" borderRadius="50">导出</vh-button>
         </div>
         <!-- 表格与分页 -->
-        <table-list
-          ref="tableList"
-          :isHandle=true
-          :isCheckout=false
-          :manageTableData="resultVo.list||[]"
-          :tabelColumnLabel="tableColumns"
-          :totalNum="resultVo.total||0"
-          :tableRowBtnFun="tableRowBtnFun"
-          :needPagination=true
-          width="150px"
-          max-height="auto"
-          scene="singleExam"
-          @getTableList="getExamScoreList"
-          @onHandleBtnClick="onHandleBtnClick"
-        >
-        </table-list>
+        <div class="tab-content">
+          <vh-table ref="tableList" :data="resultVo.list"
+            tooltip-effect="dark"
+            style="width: 100%"
+            :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
+          >
+            <vh-table-column
+              align="left"
+              v-for="(item, index) in tableColumns"
+              :key="index"
+              :width="item.width"
+              :label="item.label"
+              :show-overflow-tooltip="!item.customTooltip"
+            >
+              <template slot-scope="scope">
+                <div class="icon-status" v-if="item.key === 'send_status'">
+                  sfsdf
+                </div>
+                <span v-else>{{ scope.row[item.key] || '-' }}</span>
+              </template>
+            </vh-table-column>
+            <vh-table-column
+              label="操作"
+              align="left"
+              class="btn-rows"
+              fixed="right"
+              width="210">
+              <template slot-scope="scope">
+                <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" @click="openScoreDialog(scope.row)">查看成绩</vh-button>
+                <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" @click="editDataStatus(scope.row)" v-if="scope.row.status > 0">标记无效</vh-button>
+                <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" @click="resetExamStatus(scope.row)" v-else>还原数据</vh-button>
+              </template>
+            </vh-table-column>
+            <div slot="empty"></div>
+          </vh-table>
+          <null-page :nullType="'nullData'" :height=52 v-if="resultVo.total<=0" :text="'暂未搜索到您想要的内容'"></null-page>
+        </div>
+        <SPagination
+          :total="resultVo.total"
+          :currentPage="query.pageNumber"
+          @current-change="currentChangeHandler"
+          align="center"
+          v-if="resultVo.total > query.limit">
+        </SPagination>
+      </div>
     </div>
-    </div>
+    <!-- 个人成绩单 -->
+    <vh-dialog width="800px"
+      title="成绩单"
+      :visible.sync="transcriptVisible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      append-to-body>
+      <transcript ref="transition" :select="currentRow" v-if="transcriptVisible"></transcript>
+    </vh-dialog>
   </div>
 </template>
 <script>
-import NullPage from '../../PlatformModule/Error/nullPage.vue';
+import NullPage from '@/views/PlatformModule/Error/nullPage';
 import CountTo from 'vue-count-to';
+import Transcript from '@/components/Transcript'
 export default {
   data() {
     return {
@@ -236,20 +274,8 @@ export default {
           width: 'auto'
         }
       ],
-      tableRowBtnFun: [
-        {
-          name: "查看成绩",
-          methodName: 'openScoreDialog'
-        },
-        {
-          name: "标记无效",
-          methodName: 'editDataStatus'
-        },
-        {
-          name: "还原数据",
-          methodName: 'resetExamStatus'
-        },
-      ]
+      transcriptVisible: false, // 个人成绩单
+      currentRow: null,
     };
   },
   computed: {
@@ -259,7 +285,8 @@ export default {
   },
   components: {
     CountTo,
-    NullPage
+    NullPage,
+    Transcript
   },
   mounted() {
     this.initComp()
@@ -292,12 +319,14 @@ export default {
       }).finally(()=>{
       });
     },
+    // 页码改变按钮事件
+    currentChangeHandler(current) {
+      this.query.pageNumber = current;
+      this.query.pos = parseInt((current - 1) * this.query.limit);
+      this.getExamScoreList();
+    },
     // 查询成绩排名
-    getExamScoreList(row) {
-      if (row) {
-        this.query.pos = row.pos;
-        this.query.pageNumber = row.pageNum;
-      }
+    getExamScoreList() {
       let params = {
         pos: this.query.pos,
         limit: this.query.limit,
@@ -339,44 +368,47 @@ export default {
     // 导出
     downloadHandle() {},
     // 查看成绩
-    openScoreDialog() {},
+    openScoreDialog(row) {
+      this.transcriptVisible = true
+      this.currentRow = row
+    },
     // 标记无效
-    editDataStatus(that, {rows}) {
-      that.$confirm('「标记无效」后，当前数据默认不计入统计分析和成绩排名中，确定标为无效数据？', '提示', {
+    editDataStatus(rows) {
+      this.$confirm('「标记无效」后，当前数据默认不计入统计分析和成绩排名中，确定标为无效数据？', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
         customClass: 'zdy-message-box',
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        that.$fetch('editDataStatus', {
+        this.$fetch('editDataStatus', {
           id: rows.id
         }).then(res => {
-          that.messageInfo('标记成功', 'success')
-          that.initQueryList();
+          this.messageInfo('标记成功', 'success')
+          this.initQueryList();
         }).catch(e => {
         })
       }).catch(() => {
       });
     },
     // 还原数据
-    resetExamStatus(that, {rows}) {
-      that.$confirm('「还原数据」后，当前数据重新计入统计分析和成绩排名中，确定进行还原？', '提示', {
+    resetExamStatus(rows) {
+      this.$confirm('「还原数据」后，当前数据重新计入统计分析和成绩排名中，确定进行还原？', '提示', {
         cancelButtonText: '取消',
         confirmButtonText: '确定',
         customClass: 'zdy-message-box',
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        that.$fetch('resetExamStatus', {
+        this.$fetch('resetExamStatus', {
           id: rows.id
         }).then(res => {
-          that.messageInfo('还原成功', 'success')
-          that.initQueryList();
-        }).catch(e => {
+          this.messageInfo('还原成功', 'success')
+          this.initQueryList();
+        }).catch(res => {
+          this.messageInfo(res.msg || '还原失败', 'error')
         })
-      }).catch((res) => {
-        that.messageInfo(res.msg || '还原失败', 'error')
+      }).catch(() => {
       });
     },
     // 表格操作列回调函数， val表示每行
@@ -452,7 +484,7 @@ export default {
   }
   .single-exam-detail__list {
     margin-top: 24px;
-    padding: 24px 32px;
+    padding: 24px 32px 40px 32px;
     background: #fff;
     border-radius: 4px;
     // 初始化查询子账号列表信息
@@ -482,10 +514,10 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      .el-select {
+      .vh-select {
         width: 100px;
         margin-right: 20px;
-        .el-input__inner {
+        .vh-input__inner {
           user-select: none;
           border-radius: 50px;
           font-size: 14px;
@@ -493,7 +525,7 @@ export default {
           height: 36px;
           line-height: 36px;
         }
-        .el-select__caret.el-input__icon.el-icon-arrow-up{
+        .vh-select__caret.vh-input__icon.vh-icon-arrow-up{
           line-height: 36px;
         }
       }
@@ -513,6 +545,30 @@ export default {
         .el-input__prefix {
           cursor: pointer;
         }
+      }
+    }
+    .pageBox {
+      margin-top: 32px;
+    }
+    // 表格
+    .el-table__row {
+      /deep/.el-input-group {
+        width: 130px;
+      }
+    }
+    /deep/.vh-table__empty-block {
+      min-height: 0;
+    }
+    /deep/.vh-button--text.zdy-theme-red {
+      color: #FB2626;
+      &:hover {
+        color: #D4151C;
+      }
+    }
+    /deep/.vh-button--text.zdy-theme-gray {
+      color: rgba(0, 0, 0, 0.65) !important;
+      &:hover {
+        color: rgba(0, 0, 0, 0.85) !important;
       }
     }
   }
