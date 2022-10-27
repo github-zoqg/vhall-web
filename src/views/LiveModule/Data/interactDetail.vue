@@ -232,31 +232,27 @@ export default {
       examColumn: [
         {
           label: '推送时间',
-          key: 'send_time',
+          key: 'push_time',
         },
         {
           label: '名称',
-          key: 'subject',
-        },
-        {
-          label: '填写人数',
-          key: 'filled_number',
+          key: 'title',
         },
         {
           label: '查看人数',
-          key: 'filled_number',
+          key: 'check_num',
         },
         {
           label: '答题人数',
-          key: 'filled_number',
+          key: 'answer_num',
         },
         {
-          label: '满分率',
-          key: 'filled_number',
+          label: '满分率(%)',
+          key: 'full_score_rate',
         },
         {
           label: '平均分',
-          key: 'filled_number',
+          key: 'avg_score',
         },
       ],
       // 签到
@@ -404,7 +400,7 @@ export default {
       examBtnFun: [
         {
           name: '查看明细',
-          methodName: 'lookDetail',
+          methodName: 'lookExamDetail',
           path: '/live/lookSingleExam',
         }
       ]
@@ -805,26 +801,23 @@ export default {
     getExamInfo() {
       let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
       let params = {
-        room_id: this.roomId,
-        webinar_id: this.webinarId
+        source_type: 1,
+        source_id: this.webinarId
       }
       let obj = Object.assign({}, pageInfo, params);
-      // this.$fetch('getExamUsageInfo', obj).then(res => {
-      //   this.tableList = res.data.list;
-      //   this.totalNum = res.data.total;
-      //   if (!res.data.total) {
-      //     this.nullText = 'nullData';
-      //     this.text = '您还没有快问快答数据！';
-      //   }
-      // });
-
-     let res =  {"code":200,"msg":"","data":{"total":122,"list":[{"id":79934,"sequence":1,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"12312312","join_id":2093663,"status":0,"created_at":"2022-10-25 14:23:56","updated_at":"2022-10-25 14:23:56","answer":[],"phone":"","email":"","third_user_id":""},{"id":79933,"sequence":2,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"12","join_id":2093663,"status":0,"created_at":"2022-10-25 12:25:44","updated_at":"2022-10-25 12:25:44","answer":[],"phone":"","email":"","third_user_id":""},{"id":79932,"sequence":1,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"123123","join_id":2093663,"status":0,"created_at":"2022-10-25 12:04:42","updated_at":"2022-10-25 12:04:42","answer":[],"phone":"","email":"","third_user_id":""},{"id":79767,"sequence":120,"nick_name":"1ak","content":"154","join_id":2093815,"status":0,"created_at":"2022-10-21 17:34:45","updated_at":"2022-10-21 17:34:45","answer":[],"phone":"","email":"","third_user_id":""},{"id":79766,"sequence":119,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"54","join_id":2093663,"status":0,"created_at":"2022-10-21 17:34:39","updated_at":"2022-10-21 17:34:39","answer":[],"phone":"","email":"","third_user_id":""},{"id":79765,"sequence":118,"nick_name":"1ak","content":"153","join_id":2093815,"status":0,"created_at":"2022-10-21 17:34:23","updated_at":"2022-10-21 17:34:23","answer":[],"phone":"","email":"","third_user_id":""},{"id":79764,"sequence":117,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"53","join_id":2093663,"status":0,"created_at":"2022-10-21 17:34:17","updated_at":"2022-10-21 17:34:17","answer":[],"phone":"","email":"","third_user_id":""},{"id":79763,"sequence":116,"nick_name":"1ak","content":"152","join_id":2093815,"status":0,"created_at":"2022-10-21 17:34:04","updated_at":"2022-10-21 17:34:04","answer":[],"phone":"","email":"","third_user_id":""},{"id":79762,"sequence":115,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"52","join_id":2093663,"status":0,"created_at":"2022-10-21 17:33:58","updated_at":"2022-10-21 17:33:58","answer":[],"phone":"","email":"","third_user_id":""},{"id":79761,"sequence":114,"nick_name":"admin\u6ce8\u518c\u7528\u62372222","content":"51","join_id":2093663,"status":0,"created_at":"2022-10-21 17:33:37","updated_at":"2022-10-21 17:33:37","answer":[],"phone":"","email":"","third_user_id":""}],"start_time":"","end_time":""},"request_id":"fc1f8d40-544b-11ed-8893-83ffba550ab5"}
- this.tableList = res.data.list;
-        this.totalNum = res.data.total;
-        if (!res.data.total) {
+      this.$fetch('getExamUsageInfo', obj).then(res => {
+        this.tableList = res.data.list;
+        this.totalNum = res.data.count || 0;
+        if (!res.data.count) {
           this.nullText = 'nullData';
           this.text = '您还没有快问快答数据！';
         }
+      }).catch(res => {
+        this.tableList = [];
+        this.totalNum = 0;
+        this.nullText = 'nullData';
+        this.text = '您还没有快问快答数据！';
+      });
     },
     // 抽奖
     prizeList() {
@@ -1434,6 +1427,11 @@ export default {
         data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
       })
       that.$router.push({path: `${val.path}/${that.webinarId}`, query: {surveyId: rows.survey_id,roomId:that.$route.query.roomId, subject: rows.subject, number: rows.filled_number}});
+    },
+    // 快问快答查看
+    lookExamDetail(that, val) {
+      let rows = val.rows;
+      that.$router.push({path: `${val.path}/${that.webinarId}`, query: { paperId: rows.paper_id, roomId: that.$route.query.roomId }});
     }
   }
 };
