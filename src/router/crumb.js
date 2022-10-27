@@ -655,8 +655,8 @@ export function CrumbSet(metaName, that) {
         isClick: true
       },
       {
-        title: '创建问卷',
-        path: `/live/addQuestion`,
+        title: '创建',
+        path: `/live/addExam`,
         query: that.$route.query,
         isClick: false,
         redirect: 'noRedirect'
