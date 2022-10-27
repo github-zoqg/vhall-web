@@ -1,50 +1,69 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="version" content="<%= htmlWebpackPlugin.options.version %>">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="version" content="<%= htmlWebpackPlugin.options.version %>" />
     <meta name="gitlab-hash" content="<%= htmlWebpackPlugin.options.gitlabHash %>" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="renderer" content="webkit">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <meta name="renderer" content="webkit" />
     <title></title>
-    <meta name="keywords" content="微吼,微吼直播,在线直播,视频会议,远程培训,直播软件,直播,现场直播,网络直播,视频直播,网络教学平台,视频会议软件,在线教育平台,教育在线互动平台,网络视频直播平台,活动策划直播,多屏互动浏览">
-    <meta name="description" content="微吼，全球在线商务活动平台专业服务提供商，最大的网络直播平台；提供网络直播、在线教育和视频会议等服务，支持多屏互动浏览；租用热线:400-888-9970。">
+    <meta
+      name="keywords"
+      content="微吼,微吼直播,在线直播,视频会议,远程培训,直播软件,直播,现场直播,网络直播,视频直播,网络教学平台,视频会议软件,在线教育平台,教育在线互动平台,网络视频直播平台,活动策划直播,多屏互动浏览"
+    />
+    <meta
+      name="description"
+      content="微吼，全球在线商务活动平台专业服务提供商，最大的网络直播平台；提供网络直播、在线教育和视频会议等服务，支持多屏互动浏览；租用热线:400-888-9970。"
+    />
     <!-- <link rel="icon" href="<%= htmlWebpackPlugin.options.favicon %>"> -->
-    <script type="text/javascript">
-      function isIE() {
-        if (!!window.ActiveXObject || 'ActiveXObject' in window || navigator.userAgent.indexOf("Edge") > -1) return true
-        else return false
-      }
-      if (!isIE()) {
-        window.onload = function () { // 不是IE浏览器才加载互动sdk
-          var script = document.createElement("script");
-          script.src = '//static.vhallyun.com/jssdk/vhall-jssdk-interaction/latest/vhall-jssdk-interaction-2.2.4.js'
-          document.body.appendChild(script);
-        }
-      }
-    </script>
-    <script src="//cnstatic01.e.vhall.com/3rdlibs/jquery/1.11.2/jquery.min.js"></script>
-    <!-- 引入JS -->
-    <% for(var js of htmlWebpackPlugin.options.cdn.js) { %>
-      <script src="<%=js%>"></script>
-    <% } %>
-
-    <style>
-
-    </style>
   </head>
   <body>
     <!-- 使用CDN的CSS文件 -->
     <% for (const css of Object.values(htmlWebpackPlugin.options.cdn.css)) { %> <%if(css){%>
-      <link rel="stylesheet" href="<%= css %>" />
+    <link rel="stylesheet" href="<%= css %>" />
     <% } }%>
     <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+      <strong>
+        We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without
+        JavaScript enabled. Please enable it to continue.
+      </strong>
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+
+    <script src="//cnstatic01.e.vhall.com/3rdlibs/jquery/1.11.2/jquery.min.js"></script>
     <!-- 验证码 -->
     <script src="//cstaticdun.126.net/load.min.js?t=201903281201"></script>
+
+    <!-- 引入JS -->
+    <% for(var js of htmlWebpackPlugin.options.cdn.js) { %>
+    <script src="<%=js%>"></script>
+    <% } %>
+
+    <!-- 单独js逻辑 -->
+    <script type="text/javascript">
+      function isIE() {
+        if (
+          !!window.ActiveXObject ||
+          'ActiveXObject' in window ||
+          navigator.userAgent.indexOf('Edge') > -1
+        )
+          return true;
+        else return false;
+      }
+      if (!isIE()) {
+        EventListenerUtil.addEvent('load', window, function () {
+          // 不是IE浏览器才加载互动sdk
+          var script = document.createElement('script');
+          script.src =
+            '//static.vhallyun.com/jssdk/vhall-jssdk-interaction/latest/vhall-jssdk-interaction-2.2.4.js';
+          document.body.appendChild(script);
+        });
+      }
+    </script>
   </body>
 </html>
