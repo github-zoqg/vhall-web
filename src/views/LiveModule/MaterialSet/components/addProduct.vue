@@ -3,6 +3,9 @@
     <pageTitle :pageTitle="$route.meta.title"></pageTitle>
     <div class="add-product">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="商品排序" prop="order_num">
+          <VhallInput v-model.number="form.order_num" v-clearEmoij maxLength='4' autocomplete="off"  placeholder="根据输入的数字大小进行列表排序"></VhallInput>
+        </el-form-item>
         <el-form-item label="商品名称" prop="name">
           <VhallInput v-model="form.name" v-clearEmoij :maxlength="30" autocomplete="off"  show-word-limit placeholder="请输入商品名称"></VhallInput>
         </el-form-item>
@@ -50,10 +53,10 @@
           <VhallInput type="textarea" v-model="form.description" :maxlength="140" autocomplete="off"  show-word-limit :autosize="{ minRows: 4}" placeholder="请输入商品描述"></VhallInput>
         </el-form-item>
         <el-form-item label="商品原价" prop="price">
-          <VhallInput v-model.trim="form.price" placeholder="请输入价格" autocomplete="off"  :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></VhallInput>
+          <VhallInput v-model.trim="form.price" placeholder="请输入价格" autocomplete="off" :maxlength="11"><i slot="suffix">元</i></VhallInput>
         </el-form-item>
         <el-form-item label="优惠价" prop="discount_price">
-         <VhallInput v-model.trim="form.discount_price" placeholder="请输入价格" autocomplete="off" :maxlength="11" onkeyup="this.value= this.value.match(/\d+(\.\d{0,2})?/) ? this.value.match(/\d+(\.\d{0,2})?/)[0] : ''"><i slot="suffix">元</i></VhallInput>
+         <VhallInput v-model.trim="form.discount_price" placeholder="请输入价格" autocomplete="off" :maxlength="11"><i slot="suffix">元</i></VhallInput>
         </el-form-item>
         <el-form-item label="商品链接" prop="url">
           <VhallInput v-model.trim="form.url" v-clearEmoij placeholder="请输入以http://或https://开头的商品链接" autocomplete="off" show-word-limit :maxlength="200"></VhallInput>
@@ -63,6 +66,12 @@
         </el-form-item>
         <el-form-item label="店铺链接" prop="shop_url">
           <VhallInput v-model.trim="form.shop_url" v-clearEmoij placeholder="请输入以http://或https://开头的店铺链接" autocomplete="off" show-word-limit :maxlength="200"></VhallInput>
+        </el-form-item>
+        <el-form-item label="上下架" prop="status">
+         <el-radio-group v-model="form.status">
+          <el-radio :label="0">上架</el-radio>
+          <el-radio :label="1">下架</el-radio>
+        </el-radio-group>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" round class="length152" v-preventReClick @click="onSubmit">保存</el-button>
@@ -161,10 +170,16 @@ export default {
         url: '',
         shop_url: '',
         name: '',
-        description: ''
+        description: '',
+        price: '',
+        status: 1
       },
       fileList: [],
       rules: {
+        order_num: [
+          { required: true, message: '请输入商品排序', trigger: 'blur' },
+          { type: 'number', min:0, max:9999, message: '商品排序必须为0-9999数字值', trigger: 'blur'}
+        ],
         name: [
           { required: true, validator: nameValidate, trigger: 'blur' },
         ],
@@ -185,7 +200,10 @@ export default {
         ],
         shop_url: [
           { required: false, validator: shopValidate, trigger: 'blur'},
-        ]
+        ],
+        status: [
+          { required: true, message: '', trigger: 'blur' }
+        ],
       },
     };
   },
@@ -197,6 +215,15 @@ export default {
   components: {
     upload,
     PageTitle
+  },
+  watch: {
+    'form.price'(val){
+      // console.log(val,'form.price')
+      this.form.price = val.match(/\d+(\.\d{0,2})?/) ? val.match(/\d+(\.\d{0,2})?/)[0] : ''
+    },
+    'form.discount_price'(val){
+      this.form.discount_price = val.match(/\d+(\.\d{0,2})?/) ? val.match(/\d+(\.\d{0,2})?/)[0] : ''
+    }
   },
   methods: {
     // 验证商品链接和店铺链接
@@ -216,6 +243,7 @@ export default {
         this.form = {
           ...this.form,
           ...res.data,
+          status: res.data.status==0?0: 1,
           url: res.data.goods_url
         };
         this.form.description = this.repalceHtml(this.form.description)
@@ -535,7 +563,7 @@ export default {
           margin-right: 0;
         }
         .cover-item{
-          z-index: 100;
+          z-index: 99;
           position: absolute;
           top:0;
           left:0;
