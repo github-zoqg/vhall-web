@@ -239,8 +239,8 @@
             v-if="liveDetailInfo.webinar_type != 5"
             >发起直播</el-button
           >
-          <div>竖屏直播只支持由app端发起
-            <span>扫码下载</span>
+          <div class="alert" v-if="portraitScreen">竖屏直播只支持由app端发起
+            <a class="qr" href="http://e.vhall.com/app" target="_blank">立即下载</a>
           </div>
         </div>
         <div
@@ -1257,7 +1257,6 @@ export default {
     text-align: right;
   }
 }
-
 .mainColor {
   color: #1a1a1a;
 }
@@ -1337,6 +1336,18 @@ export default {
   .el-button {
     width: 160px;
     margin: 22px auto 0;
+  }
+
+  .alert{
+    margin-top: 24px;
+    font-weight: 400;
+    font-size: 12px;
+    color: #666666;
+    text-align: center;
+    .qr{
+      color: #3562FA;
+      cursor: pointer;
+    }
   }
 }
 /*.detailBox {

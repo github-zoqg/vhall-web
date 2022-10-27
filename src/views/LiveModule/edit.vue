@@ -108,11 +108,23 @@
         <div class="modeHide" v-if="$route.query.type==2"></div>
       </el-form-item>
       <el-form-item label="横竖屏设置" required v-if="webinarType=='live'&& liveMode== 2" class="max-column">
-        <div class="group">
-          <div class="btn" :class="{active: isFullScreen ==1}" @click="choseFullScreen(1)">横屏直播</div>
-          <div class="btn" :class="{active: isFullScreen !=1, disableBox: selectDirectorMode === 1&&liveMode==2}"  @click="choseFullScreen(0)">竖屏直播</div>
+        <div class="titleBox">
+          <div class="pageTitle">
+            <span >创建直播后，横竖屏设置将无法修改</span>
+          </div>
         </div>
-        <p>注意：横竖屏设置在创建直播后，将无法修改</p>
+        <div class="delay-director">
+          <div class="mode-common" :class="{directorActive: isFullScreen ==1}" @click.stop="choseFullScreen(1)">
+            <i class="vh-saas-iconfont vh-saas-line-vertical-screen ft20"></i> 横屏直播
+          </div>
+          <div v-if="webinarPortraitScreen" class="mode-director" :class="{ directorActive: isFullScreen !=1, disableBox: selectDirectorMode === 1}" @click.stop="choseFullScreen(0)">
+            <span class="text-content"><i class="vh-saas-iconfont vh-saas-line-landscape ft20"></i> 竖屏直播</span>
+          </div>
+          <div v-if="!webinarPortraitScreen" class="mode-director noDirector" :class="{ disableBox: selectDirectorMode === 1}">
+            <span class="text-content"><i class="vh-saas-iconfont vh-saas-line-landscape ft20"></i> 竖屏直播</span>
+            <span class="no-open">未开通</span>
+          </div>
+        </div>
       </el-form-item>
       <el-form-item label="云导播" required v-if="showDelayTag && liveMode==2" class="max-column">
         <div class="titleBox">
@@ -850,6 +862,7 @@ export default {
         } // 1固定，表示西班牙语
       },
       webinarDirector: false,    // admin无云导播活动权限
+      webinarPortraitScreen: false,    // admin无竖屏权限
       tags_name: [],
       checkedTags: [],  // 选中标签
       checkedTagsBefore: [],  // 选中标签确认前
@@ -963,10 +976,16 @@ export default {
     }
 
     //  webinar.director 1:有无延迟权限  0:无权限
-    if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
+    if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['portrait_screen'] == '1') {
       this.webinarDirector = true;
     } else {
       this.webinarDirector = false;
+    }
+    //  portrait_screen 是否支持竖屏 1:开启 0:关闭。
+    if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['portrait_screen'] == '1') {
+      this.webinarPortraitScreen = true;
+    } else {
+      this.webinarPortraitScreen = false;
     }
     this.getTagsList('init')
   },
@@ -1295,6 +1314,7 @@ export default {
       }
       if (index == 2) {
         this.selectDirectorMode = 0
+        this.isFullScreen = 1
       }
     },
     cropComplete(cropperData, url, mode) {
