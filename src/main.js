@@ -102,11 +102,12 @@ Vue.use(clearEmoij);
 
 // 大数据上报配置
 Vue.use(PaasPort, {
- app_id: process.env.VUE_APP_NODE_ENV === 'production' ? '15df4d3f' : 'fd8d3653',
- pf: 8,
- noConsole: false,
- isProduction: process.env.VUE_APP_NODE_ENV === 'production' ? true : false
-})
+  app_id: process.env.VUE_APP_SAAS_ENV_DESC ? bu_appId['test_new'] : process.env.VUE_APP_NODE_ENV === 'production' ? bu_appId['production'] : bu_appId['test'],
+  pf: 8,
+  noConsole: false,
+  isProduction: process.env.VUE_APP_NODE_ENV === 'production' ? true : false
+});
+
 const i18n = new VueI18n({
  locale: ['en', 'cn'].includes(getParams('lang')) ? getParams('lang') : 'cn', // 语言标识
  messages: {
