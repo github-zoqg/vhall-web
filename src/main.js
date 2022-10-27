@@ -124,7 +124,7 @@ Vue.use(clearEmoij);
 
 // 大数据上报配置
 Vue.use(PaasPort, {
-  app_id: process.env.VUE_APP_NODE_ENV === 'production' ? bu_appId['production'] : bu_appId['test'],
+  app_id: process.env.VUE_APP_SAAS_ENV_DESC ? bu_appId['test_new'] : process.env.VUE_APP_NODE_ENV === 'production' ? bu_appId['production'] : bu_appId['test'],
   pf: 8,
   noConsole: false,
   isProduction: process.env.VUE_APP_NODE_ENV === 'production' ? true : false
