@@ -1144,6 +1144,7 @@ export default {
         this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
         this.formData.date2 = this.liveDetailInfo.start_time.substring(11, 16);
         this.liveMode = this.liveDetailInfo.webinar_type;
+        this.isFullScreen = this.liveDetailInfo.webinar_show_type;
         // this.formData.imageUrl = this.liveDetailInfo.img_url;
         // this.formData.domain_url = this.liveDetailInfo.img_url;
         this.tagIndex = this.liveDetailInfo.category - 1;
