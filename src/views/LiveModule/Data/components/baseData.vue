@@ -349,7 +349,8 @@ export default {
         signNum: 0,
         submitNum: 0,
         speakNum: 0,
-        groupSwitchCount: 0
+        groupSwitchCount: 0,
+        WEBINAR_PES: {}
       }
     };
   },
@@ -408,7 +409,7 @@ export default {
       }).then(res => {
         if (res && res.code === 200 && res.data.permissions) {
           const data = JSON.parse(res.data.permissions)
-          this.WEBINAR_PES = data;
+          this.WEBINAR_PES = data  || {};
         }
       }).catch(e => {
         console.log('刷新等情况下获取活动下接口配置项情况，异常不做任何处理')
@@ -460,8 +461,8 @@ export default {
         this.dataInfo.submitNum = res.data.submit_nums || 0;
       });
       // 快问快答提交人数
-      this.$fetch('getExamSubmitNum', {room_id: this.roomId}).then(res => {
-        this.dataInfo.examSubmitNum = res.data.submit_nums || 0;
+      this.$fetch('getExamSubmitNum', {source_id: this.$route.params.str, source_type: 1}).then(res => {
+        this.dataInfo.examSubmitNum = res.data.count || 0;
       });
       // 获取抽奖人数
       this.$fetch('getPrizeUserInfo', {webinar_id: this.$route.params.str}).then(res => {

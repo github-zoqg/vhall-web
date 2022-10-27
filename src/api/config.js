@@ -746,15 +746,16 @@ const apis = {
   copyExamByIdIsWebinar: ['/v1/fqas/webinar-paper-view/copy', 'POST'], // 复制 —— 活动维度
   deleteExam: ['/v1/fqas/paper-view/delete', 'POST'], // 删除（单个 or 批量）—— 用户维度
   deleteExamIsWebinar: ['/v1/fqas/webinar-paper-view/delete', 'POST'], // 删除（单个 or 批量） —— 活动维度
-  getExamSubmitNum: ['/v3/vss/survey/get-webinar-submit-nums', 'GET'], // 获取互动统计-房间下快问快答提交人数
-  getExamUsageInfo: ['/v3/vss/survey/get-webinar-published-survey-usage', 'GET'], // 获取活动下快问快答使用数据概览
-  exportExam: ['/v3/vss/survey/export-webinar-published-survey-usage', 'GET'], //导出快问快答数据
-  resetExamStatus: ['/v3/vss/survey/export-webinar-published-survey-usage', 'GET'], // 还原数据
-  editDataStatus: ['/v3/vss/survey/export-webinar-published-survey-usage', 'GET'], // 编辑数据
-  getExamScoreList: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 查询快问快答 - 成绩列表
-  getTranscriptInfo: ['/v3/vss/survey/list-webinar-survey', 'GET'], // 查询快问快答 - 个人成绩单信息
+  getExamSubmitNum: ['/v1/fqas/webinar-paper-view/get-all-submit-count', 'POST'], // 获取互动统计-统计活动下所有快问快答提交人数
+  getExamUsageInfo: ['/v1/fqas/webinar-paper-view/get-pushed-list', 'POST'], // 获取活动下快问快答使用数据概览
+  exportExam: ['/v3/interacts/exam/export-paper-static-list', 'POST'], //导出快问快答数据
+  editExamStatus: ['/v1/fqa/webinar-paper-view/mark-status', 'GET'], // 还原/无效数据
+  getExamSummaryData: ['/v1/fqa/webinar-paper-view/summary-data', 'POST'], // 查询快问快答 -明细概略数据
+  getExamScoreList: ['/v1/fqa/webinar-paper-view/performance-list', 'POST'], // 查询快问快答 - 成绩列表
+  getTranscriptInfo: ['/v1/fqa/webinar-paper-view/get-personal-report', 'GET'], // 查询快问快答 - 个人成绩单信息
   selectExamToWebinar: ['/v1/fqas/webinar-paper-view/create-by-data-bank', 'POST'], // 资料库下选择快问快答同步到活动
-
+  exportTranscript: ['/v3/interacts/exam/export-person-score', 'POST'], // 导出单人成绩单
+  exportExamRank: ['/v3/interacts/exam/export-paper-rank-list', 'POST'], // 导出成绩列表
 };
 
 const getApi = api => {

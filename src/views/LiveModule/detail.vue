@@ -476,19 +476,11 @@ export default {
         .then((res) => {
           if (res.code == 200) {
             if (res.data.permissions) {
-              //TODO，模拟赋值
-              let temp = JSON.parse(res.data.permissions)
-temp.exam = 1;
-sessionOrLocal.set(
+              sessionOrLocal.set(
                 'WEBINAR_PES',
-                temp,
+                res.data.permissions,
                 'localStorage'
               )
-              // sessionOrLocal.set(
-              //   'WEBINAR_PES',
-              //   res.data.permissions,
-              //   'localStorage'
-              // )
               this.perssionInfo = JSON.parse(
                 sessionOrLocal.get('WEBINAR_PES', 'localStorage')
               )

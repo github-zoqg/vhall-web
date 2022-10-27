@@ -311,19 +311,7 @@ export default {
     },
     // 获取列表数据
     getExamList() {
-      let resData = this.mockExamList();
-      resData.list.map(item => {
-        item.created_at_str = item.created_at.substring(0, 16)
-        item.updated_at_str = item.updated_at.substring(0, 16)
-        item.limit_time_str = item.limit_time_switch == 1 ? item.limit_time : '不限时'
-      });
-      this.resultVo = resData
-      return
       this.loading = true;
-      if (row) {
-        this.query.pos = row.pos;
-        this.query.pageNumber = row.pageNum;
-      }
       this.isSearch = this.keyword ? true : false;
       let obj = Object.assign({}, {
         pos: this.query.pos,

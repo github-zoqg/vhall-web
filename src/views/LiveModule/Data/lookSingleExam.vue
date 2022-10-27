@@ -2,7 +2,7 @@
   <div class="single-exam-detail">
     <!-- 上半部分区间 -->
     <div class="single-exam-detail__header">
-      <p class="exam-webinar-title">xxxx快问快答标题名称</p>
+      <p class="exam-webinar-title">{{ examData.title }}</p>
       <div class="single-exam-detail__data">
         <vh-row type="flex" class="row-bg" justify="space-around">
           <vh-col :span="7">
@@ -16,9 +16,9 @@
               </vh-tooltip>
               <h3 class="custom-font-barlow">
                 <count-to :startVal="0"
-                  :endVal="examData.showNum"
+                  :endVal="examData.check_num"
                   :duration="1500"
-                  v-if="examData.showNum >= 0">
+                  v-if="examData.check_num >= 0">
                 </count-to>
               </h3>
             </div>
@@ -34,9 +34,9 @@
               </vh-tooltip>
               <h3 class="custom-font-barlow">
                 <count-to :startVal="0"
-                  :endVal="examData.submitNum"
+                  :endVal="examData.answer_num"
                   :duration="1500"
-                  v-if="examData.submitNum >= 0">
+                  v-if="examData.answer_num >= 0">
                 </count-to>
               </h3>
             </div>
@@ -51,11 +51,11 @@
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </vh-tooltip>
               <h3 class="custom-font-barlow">
-               <span>{{examData.percent}}%，</span>
+               <span>{{examData.full_score_rate}}%，</span>
                <count-to :startVal="0"
-                  :endVal="examData.total"
+                  :endVal="examData.full_score_count"
                   :duration="1500"
-                  v-if="examData.total >= 0">
+                  v-if="examData.full_score_count >= 0">
                 </count-to><span>人</span>
               </h3>
             </div>
@@ -66,7 +66,7 @@
             <div class="grid-content">
               <span>最高分</span>
               <h3 class="custom-font-barlow">
-                {{examData.maxScore}}
+                {{examData.max_score}}
               </h3>
             </div>
           </vh-col>
@@ -74,7 +74,7 @@
             <div class="grid-content">
               <span>最低分</span>
               <h3 class="custom-font-barlow">
-                {{examData.minScore}}
+                {{examData.min_score}}
               </h3>
             </div>
           </vh-col>
@@ -88,7 +88,7 @@
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </vh-tooltip>
               <h3 class="custom-font-barlow">
-                {{examData.advScore}}
+                {{examData.avg_score}}
               </h3>
             </div>
           </vh-col>
@@ -118,7 +118,7 @@
               <i class="iconfont-v3 saasicon_help_m tip"></i>
             </vh-tooltip>
           </div>
-          <VhallInput placeholder="请输入用户姓名" v-model="query.keyword"
+          <VhallInput placeholder="请输入用户姓名" v-model="query.user_name"
             clearable
             @clear="initQueryList"
             class="search-query"
@@ -127,7 +127,7 @@
             @keyup.enter.native="initQueryList">
             <i class="el-icon-search el-input__icon" slot="prefix" @click="initQueryList"></i>
           </VhallInput>
-          <vh-select placeholder="全部数据" round v-model="query.dataType" @change="initQueryList" style="width:102px">
+          <vh-select placeholder="全部数据" round v-model="query.status" @change="initQueryList" style="width:102px">
             <vh-option value="">全部数据</vh-option>
             <vh-option
               v-for="item in [{
@@ -142,7 +142,7 @@
               :value="item.value">
             </vh-option>
           </vh-select>
-          <vh-button type="info" ghost @click="downloadHandle" size="medium" borderRadius="50">导出</vh-button>
+          <vh-button type="info" ghost @click="downloadHandle" size="medium" borderRadius="50">导出全部数据</vh-button>
         </div>
         <!-- 表格与分页 -->
         <div class="tab-content">
@@ -160,8 +160,14 @@
               :show-overflow-tooltip="!item.customTooltip"
             >
               <template slot-scope="scope">
-                <div class="icon-status" v-if="item.key === 'send_status'">
-                  sfsdf
+                <div class="icon-status" v-if="item.key === 'is_initiative'">
+                  {{ scope.row.is_initiative == 1 ? '是' : '否' }}
+                </div>
+                <div class="icon-status" v-else-if="item.key === 'use_time'">
+                  {{ scope.row.use_time }} <!-- 转换时间 -->
+                </div>
+                <div class="icon-status" v-else-if="item.key === 'user_name'">
+                  {{ scope.row.user_name }} <!-- 配合头像 -->
                 </div>
                 <span v-else>{{ scope.row[item.key] || '-' }}</span>
               </template>
@@ -212,17 +218,18 @@ export default {
       vm: null,
       loading: false,
       examData: {
-        showNum: 0, // 查看人数
-        submitNum: 0, // 答题人数
-        percent: 0, // 满分率
-        total: 0, // 总人数
-        maxScore: 0, // 最高分
-        minScore: 0, // 最低分
-        advScore: 0 // 平均分
+        title: '', // 快问快答名称
+        check_num: 0, // 查看人数
+        answer_num: 0, // 答题人数
+        full_score_rate: 0, // 满分率
+        full_score_count: 0, // 总人数
+        max_score: 0, // 最高分
+        min_score: 0, // 最低分
+        avg_score: 0 // 平均分
       },
       query: {
-        dataType: '',
-        keyword: '',
+        status: '',
+        user_name: '',
         pos: 0,
         limit: 20,
         pageNumber: 1
@@ -234,43 +241,43 @@ export default {
       tableColumns: [
         {
           label: '排名',
-          key: 'name',
+          key: 'rank_no',
           width: 'auto'
         },
         {
           label: '参会ID',
-          key: 'nick_name',
+          key: 'join_id',
           width: 'auto'
         },
         {
           label: '姓名',
-          key: 'phone',
+          key: 'user_name',
           width: 'auto',
           customTooltip: true
         },
         {
           label: '手机号',
-          key: 'phone',
+          key: 'mobile',
           width: 'auto'
         },
         {
           label: '得分',
-          key: 'phone',
+          key: 'score',
           width: 'auto'
         },
         {
           label: '正确率',
-          key: 'phone',
+          key: 'right_rate',
           width: 'auto'
         },
         {
           label: '用时',
-          key: 'phone',
+          key: 'use_time',
           width: 'auto'
         },
         {
           label: '主动交卷',
-          key: 'phone',
+          key: 'is_initiative',
           width: 'auto'
         }
       ],
@@ -311,8 +318,10 @@ export default {
     },
     // 查询快问快答 - 统计人数
     getSingleExamData() {
-      let params = {}
-      this.$fetch('getDataCenterInfo', this.$params(params)).then(res =>{
+      let params = {
+        paper_id: this.$route.query.paper_id
+      }
+      this.$fetch('getExamSummaryData', this.$params(params)).then(res =>{
         this.examData = res.data;
       }).catch(e=>{
         console.log(e);
@@ -327,23 +336,16 @@ export default {
     },
     // 查询成绩排名
     getExamScoreList() {
-      this.resultVo = {
-        total: 2,
-        list: [
-          {
-            time: ''
-          }
-        ]
-      }
-      return
       let params = {
+        paper_id: this.$route.query.paperId,
         pos: this.query.pos,
         limit: this.query.limit,
-        keyword: this.query.keyword,
-        dataType: this.query.dataType
+        user_name: this.query.user_name,
+        status: this.query.status,
+        is_hidden: 0 // 是否雾化用户名 0.否 1.是
       };
       this.loading = true;
-      this.$fetch('getSonList', this.$params(params)).then(res => {
+      this.$fetch('getExamScoreList', this.$params(params)).then(res => {
         this.loading = false;
         let result = res && res.code === 200 && res.data ? res.data : {
           total: 0,
@@ -377,10 +379,35 @@ export default {
       this.getExamScoreList();
     },
     // 导出
-    downloadHandle() {},
+    downloadHandle() {
+      this.$fetch('exportExamRank', this.$params({
+        paper_id: this.$route.query.paperId,
+        webinar_id: this.$route.params.str
+      })).then(res => {
+        this.$message({
+          message: `导出成功，请去下载中心下载`,
+          showClose: true,
+          // duration: 0,
+          type: 'success',
+          customClass: 'zdy-info-box'
+        });
+        this.$EventBus.$emit('saas_vs_download_change');
+      }).catch(res => {
+        this.$message({
+          message: res.msg || `导出失败`,
+          showClose: true,
+          // duration: 0,
+          type: 'error',
+          customClass: 'zdy-info-box'
+        });
+      })
+    },
     // 查看成绩
     openScoreDialog(row) {
       this.transcriptVisible = true
+      // 拼接查看要的ID
+      row.room_id = this.$route.query.room_id
+      row.webinar_id = this.$route.query.webinar_id
       this.currentRow = row
     },
     // 标记无效
@@ -392,12 +419,19 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        this.$fetch('editDataStatus', {
-          id: rows.id
+        this.$fetch('editExamStatus', {
+          paper_id: this.$route.query.paperId,
+          join_id: rows.join_id,
+          status: 0
         }).then(res => {
-          this.messageInfo('标记成功', 'success')
-          this.initQueryList();
+          if (res.data?.is_success == 1) {
+            this.messageInfo('标记成功', 'success')
+            this.initQueryList();
+          } else {
+            this.messageInfo(res.msg || '标记失败', 'error')
+          }
         }).catch(e => {
+          this.messageInfo(res.msg || '标记失败', 'error')
         })
       }).catch(() => {
       });
@@ -411,11 +445,17 @@ export default {
         lockScroll: false,
         cancelButtonClass: 'zdy-confirm-cancel'
       }).then(() => {
-        this.$fetch('resetExamStatus', {
-          id: rows.id
+        this.$fetch('editExamStatus', {
+          paper_id: this.$route.query.paperId,
+          join_id: rows.join_id,
+          status: 1
         }).then(res => {
-          this.messageInfo('还原成功', 'success')
-          this.initQueryList();
+          if (res.data?.is_success == 1) {
+            this.messageInfo('还原成功', 'success')
+            this.initQueryList();
+          } else {
+            this.messageInfo(res.msg || '还原失败', 'error')
+          }
         }).catch(res => {
           this.messageInfo(res.msg || '还原失败', 'error')
         })
