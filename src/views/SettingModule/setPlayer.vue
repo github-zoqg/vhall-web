@@ -263,7 +263,7 @@
         },
         videoParam: {
           paas_record_id:
-            process.env.VUE_APP_NODE_ENV === 'production'
+            process.env.VUE_APP_NODE_ENV === 'production' || process.env.VUE_APP_NODE_ENV === 'pre'
               ? paas_record_id_propagandaVideo['production']
               : paas_record_id_propagandaVideo['test']
         },
