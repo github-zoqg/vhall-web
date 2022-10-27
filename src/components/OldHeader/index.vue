@@ -58,7 +58,7 @@
               </el-dropdown>
             </div>
             <div class="unlogin"  v-if="!isLogin"  @click="openLoginHandler">
-              <span><img src="../../common/images/sys/my-light@2x.png" alt=""></span>
+              <span><img :src="defaultAvatar" alt=""></span>
               <!-- <label @click="toLoginPageHandle">登录</label> -->
               <label>登录</label>
               <!-- <el-button size="small" round @click="toLoginPageHandle">登录</el-button>
@@ -77,7 +77,7 @@
 import { sessionOrLocal, clearCookies } from "@/utils/utils";
 import Env from "@/api/env";
 import RegLogin from './components/reg-login/index'
-
+import { defaultAvatar } from '@/utils/ossImgConfig';
 
 export default {
   name: "index.vue",
@@ -120,7 +120,8 @@ export default {
       userInfo: null,
       avatarImgUrl: null,
       logo: null,
-      logo_jump_url: null
+      logo_jump_url: null,
+      defaultAvatar
     };
   },
   computed: {
@@ -211,7 +212,7 @@ export default {
     },
     updateAccount(account) {
       this.userInfo = account;
-      this.avatarImgUrl = account ? account.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      this.avatarImgUrl = account ? account.avatar || defaultAvatar : defaultAvatar;
     },
     // 获取标记 logo 主办方信息
     getSignInfo (id) {
@@ -235,7 +236,7 @@ export default {
     let userInfo  = sessionOrLocal.get('userInfo');
     if(userInfo !== null && userInfo !== 'null') {
       this.userInfo = JSON.parse(userInfo);
-      this.avatarImgUrl = this.userInfo ? this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      this.avatarImgUrl = this.userInfo ? this.userInfo.avatar || defaultAvatar : defaultAvatar;
     }
     this.$EventBus.$on('saas_vs_account_change', this.updateAccount);
     this.$EventBus.$on('saas_vs_login_out', this.loginOut);
@@ -254,7 +255,7 @@ export default {
       userInfo  = sessionOrLocal.get('vhsaas_userInfo', 'localStorage');
       if(userInfo !== null && userInfo !== 'null') {
         this.userInfo = JSON.parse(userInfo);
-        this.avatarImgUrl = this.userInfo ? this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+        this.avatarImgUrl = this.userInfo ? this.userInfo.avatar || defaultAvatar : defaultAvatar;
       }
       this.isLogin = userInfo !== null && userInfo !== undefined && userInfo !== '' && userInfo !== 'null';
       // 根据专题得创建者Id，得到其头像数据
@@ -263,7 +264,7 @@ export default {
     this.$EventBus.$on('saas_vs_login_success', data => {
       this.isLogin = true
       this.userInfo = data || {}
-      this.avatarImgUrl = data ? data.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      this.avatarImgUrl = data ? data.avatar || defaultAvatar : defaultAvatar;
     })
   }
 };

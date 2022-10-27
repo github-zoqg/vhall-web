@@ -85,7 +85,7 @@ import Cookies from 'js-cookie'
 import Env from "@/api/env";
 import EventBus from "@/utils/Events";
 import { throttle } from '@/utils/utils';
-
+import { defaultAvatar } from '@/utils/ossImgConfig';
 export default {
   components: {
     Breadcrumb
@@ -232,7 +232,7 @@ export default {
     },
     updateAccount(account) {
       this.userInfo = account;
-      this.avatarImgUrl = account ?  account.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png` : `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+      this.avatarImgUrl = account ?  account.avatar || defaultAvatar : defaultAvatar;
     },
     updateDownload() {
       // 初始进入，获取未下载条数
@@ -325,9 +325,9 @@ export default {
     if(userInfo !== null) {
       this.userInfo = JSON.parse(userInfo);
       if(this.userInfo) {
-        this.avatarImgUrl = this.userInfo.avatar || `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+        this.avatarImgUrl = this.userInfo.avatar || defaultAvatar;
       } else {
-        this.avatarImgUrl = `${Env.staticLinkVo.tmplDownloadUrl}/img/head501.png`;
+        this.avatarImgUrl = defaultAvatar;
       }
      } else {
       sessionOrLocal.clear();

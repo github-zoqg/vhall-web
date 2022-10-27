@@ -17,45 +17,64 @@
             <span><i class="iconfont-v3 saasicon_guanzhu"></i> 关注</span>
             <span><i class="iconfont-v3 saasicon-share"></i> 分享</span>
           </div>
-          <div class="right_login"><span><img src="./image/living/avatar@2x.png" alt=""></span> 登录</div>
+          <div class="right_login"><span><img :src="avatarImgUrl" alt=""></span> 登录</div>
         </div>
       </div>
       <div class="pc_watch" v-if="type==1">
-        <div class="watch_left">
+        <div :class="`watch_left ${livingForm.speakerAndShowLayout == 1 ? 'layout_join' : 'layout_split'}`">
           <div class="left_top" v-if="isShowInteract" :style="videoBackground">
             <!-- 均匀 :style="videoBackground"-->
             <div class="left_top__even" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_GRID_MODE'">
               <div class="imgs">
-                <span><img src="./image/living/layout6.png" alt=""></span>
-                <span><img src="./image/living/layout1.png" alt=""></span>
-                <span><img src="./image/living/layout2.png" alt=""></span>
-                <span><img src="./image/living/layout3.png" alt=""></span>
-                <span><img src="./image/living/layout4.png" alt=""></span>
+                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/ppt.png" alt=""></span>
+                <span><img src="./image/living/layout1.jpg" alt=""></span>
+                <span><img src="./image/living/layout2.jpg" alt=""></span>
+                <span><img src="./image/living/layout3.jpg" alt=""></span>
+                <span><img src="./image/living/layout4.jpg" alt=""></span>
+                <span><img src="./image/living/layout5.jpg" alt=""></span>
               </div>
             </div>
             <!-- 主次浮窗 -->
             <div class="left_top__float" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_FLOAT_MODE'">
               <div class="imgs">
-                <span><img src="./image/living/layout2.png" alt=""></span>
-                <span><img src="./image/living/layout3.png" alt=""></span>
-                <span><img src="./image/living/layout4.png" alt=""></span>
+                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.jpg" alt=""></span>
+                <span><img src="./image/living/layout2.jpg" alt=""></span>
+                <span><img src="./image/living/layout3.jpg" alt=""></span>
+                <span><img src="./image/living/layout4.jpg" alt=""></span>
+                <span><img src="./image/living/layout5.jpg" alt=""></span>
               </div>
             </div>
             <!-- 主次平铺 -->
             <div class="left_top__tiling" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_MODE'">
               <div class="host">
-                <img src="./image/living/layout1.png" alt="">
+                <img src="./image/living/ppt.png" alt="" v-show="livingForm.speakerAndShowLayout == 1">
+                <img src="./image/living/layout1.jpg" alt="" v-show="livingForm.speakerAndShowLayout != 1">
               </div>
               <div class="imgs">
-                <span><img src="./image/living/layout2.png" alt=""></span>
-                <span><img src="./image/living/layout3.png" alt=""></span>
-                <span><img src="./image/living/layout4.png" alt=""></span>
-                <!-- <span><img src="./image/living/layout5.png" alt=""></span> -->
+                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.jpg" alt=""></span>
+                <span><img src="./image/living/layout2.jpg" alt=""></span>
+                <span><img src="./image/living/layout3.jpg" alt=""></span>
+                <span><img src="./image/living/layout4.jpg" alt=""></span>
+                <span><img src="./image/living/layout5.jpg" alt=""></span>
+              </div>
+            </div>
+            <!-- 顶部成员 -->
+            <div class="left_top__tiling" v-if="livingForm.inavLayout=='CANVAS_ADAPTIVE_LAYOUT_TILED_EXT1_MODE'">
+              <div class="imgs">
+                <span v-show="livingForm.speakerAndShowLayout == 1"><img src="./image/living/layout1.jpg" alt=""></span>
+                <span><img src="./image/living/layout2.jpg" alt=""></span>
+                <span><img src="./image/living/layout3.jpg" alt=""></span>
+                <span><img src="./image/living/layout4.jpg" alt=""></span>
+                <span><img src="./image/living/layout5.jpg" alt=""></span>
+              </div>
+              <div class="host">
+                <img src="./image/living/ppt.png" alt="" v-show="livingForm.speakerAndShowLayout == 1">
+                <img src="./image/living/layout1.jpg" alt="" v-show="livingForm.speakerAndShowLayout != 1">
               </div>
             </div>
           </div>
           <div class="left_no_interact" v-else :style="videoBackground">
-            <img src="./image/living/layout1.png" alt="">
+            <img src="./image/living/layout1.jpg" alt="">
           </div>
           <div class="left_bottom">
             <span class="left_bottom_setting">
@@ -66,7 +85,7 @@
             <span class="left_bottom_tools"><img src="./image/living/tools@2x.png" alt=""></span>
           </div>
         </div>
-        <div class="watch_right">
+        <div :class="`watch_right ${livingForm.speakerAndShowLayout == 1 ? 'layout_join' : 'layout_split'}`">
           <div class="right_top">
             <img src="./image/living/ppt.png" alt="">
           </div>
@@ -88,7 +107,7 @@
                 </div>
                 <div class="chat_box_item chat_box_top">
                   <div class="item_img">
-                    <p><img src="./image/living/layout3.png" alt=""></p>
+                    <p><img src="./image/living/layout3.jpg" alt=""></p>
                   </div>
                   <div class="item_chat">
                     <p class="chat_role">邓浩杰</p>
@@ -97,7 +116,7 @@
                 </div>
                 <div class="chat_box_item">
                   <div class="item_img">
-                    <p><img src="../../../common/images/avatar.png" alt=""></p>
+                    <p><img :src="avatarImgUrl" alt=""></p>
                   </div>
                   <div class="item_chat">
                     <p class="chat_role">王觉</p>
@@ -106,7 +125,7 @@
                 </div>
                   <div class="chat_box_item">
                   <div class="item_img">
-                    <p><img src="./image/living/layout2.png" alt=""></p>
+                    <p><img src="./image/living/layout2.jpg" alt=""></p>
                   </div>
                   <div class="item_chat">
                     <p class="chat_role"><span class="ass">助理</span> 小助理</p>
@@ -132,7 +151,7 @@
                 </div>
                 <div class="chat_right_item">
                   <div class="chat_right_item-box">
-                    <span class="item_avatar"><img src="./image/living/layout2.png" alt=""></span>
+                    <span class="item_avatar"><img src="./image/living/layout2.jpg" alt=""></span>
                     <span class="item_ass"> 助理</span>
                     <span class="item_name"> 小助理 </span>
                     获取PPT，加官微哦
@@ -147,7 +166,7 @@
                 </div>
                 <div class="chat_right_item">
                   <div class="chat_right_item-box">
-                    <span class="item_avatar"><img src="../../../common/images/avatar.png" alt=""></span>
+                    <span class="item_avatar"><img :src="avatarImgUrl" alt=""></span>
                     <span class="item_name"> 刘林一 </span>
                     30分钟直播运营实操特训营 终于开营啦，快来加入吧
                   </div>
@@ -181,7 +200,7 @@
 <script>
 import skinsPc from '@/common/skins/pc/index';
 import { imgPositionSizeMap } from '@/utils/imgSizeMap'
-
+import { defaultAvatar } from '@/utils/ossImgConfig';
 export default {
   props: {
     type: {
@@ -246,6 +265,7 @@ export default {
   },
   data() {
     return {
+      avatarImgUrl: defaultAvatar
     }
   }
 }
@@ -400,10 +420,10 @@ export default {
                 &:nth-child(3) {
                   width: 200px;
                 }
-                &:nth-child(1) {
+                &.phone__center {
                   img {
                     object-fit: contain;
-                    background: #000000;
+                    background: transparent;
                   }
                 }
                 img{
@@ -417,16 +437,12 @@ export default {
               width: 100%;
               height: 100%;
               position: relative;
-              background: url('./image/living/layout1.png') no-repeat 50% 50%;
               .imgs{
                 position: absolute;
                 left: 0;
                 bottom: 0;
-                height: 84px;
                 span{
                   display: inline-block;
-                  width: 149px;
-                  height: 84px;
                   img{
                     width: 100%;
                     height: 100%;
@@ -438,7 +454,6 @@ export default {
             &__tiling{
               .host{
                 width: 446px;
-                height: 250px;
                 margin: 0 auto;
                 img{
                   width: 100%;
@@ -450,8 +465,6 @@ export default {
                 display: flex;
                 span{
                   display: inline-block;
-                  width: 149px;
-                  height: 84px;
                   img{
                     width: 100%;
                     height: 100%;
@@ -502,6 +515,58 @@ export default {
               }
             }
           }
+          &.layout_join {
+            /* 合并模式 */
+            .left_top__float {
+              background-image: url('./image/living/ppt.png');
+              background-repeat: no-repeat;
+              background-size: 596px 336px;
+              .imgs {
+                height: 65px;
+                span {
+                  width: 119px;
+                  height: 65px;
+                }
+              }
+            }
+            .left_top__tiling {
+              .host{
+                height: 269px;
+              }
+              .imgs{
+                span {
+                  width: 119px;
+                  height: 65px;
+                }
+              }
+            }
+          }
+          &.layout_split {
+            /* 分离模式 */
+            .left_top__float {
+              background-image: url('./image/living/layout1.jpg');
+              background-repeat: no-repeat;
+              background-size: 596px 336px;
+              .imgs {
+                height: 84px;
+                span {
+                  width: 149px;
+                  height: 84px;
+                }
+              }
+            }
+            .left_top__tiling {
+              .host{
+                height: 250px;
+              }
+              .imgs{
+                span {
+                  width: 149px;
+                  height: 84px;
+                }
+              }
+            }
+          }
         }
         .watch_right{
           width: 165px;
@@ -519,9 +584,8 @@ export default {
           }
           .right_bottom{
             width: 100%;
-            height: 269px;
             background: var(--background_pc_tabs_color);
-            transition: all 0.5s linear;
+            // transition: all 0.5s linear;
             position: relative;
             border-radius: 0 0 4px 4px;
             &_chat{
@@ -533,7 +597,7 @@ export default {
                 background: var(--background_pc_tabs_color);
                 position: relative;
                 border-bottom: 1px solid var(--border_pc_tabs_color);
-                transition: all 0.5s linear;
+                // transition: all 0.5s linear;
                 p{
                   color: var(--color_pc_text_active);
                   font-size: 14px;
@@ -731,7 +795,25 @@ export default {
               }
             }
           }
-        }
+          }
+          &.layout_join {
+            /* 合并模式 */
+            .right_top {
+              display: none;
+            }
+            .right_bottom {
+              height: 362px;
+            }
+          }
+          &.layout_split {
+            /* 分离模式 */
+            .right_top {
+              display: block;
+            }
+            .right_bottom {
+              height: 269px;
+            }
+          }
         }
       }
       .pc_subscribe{
