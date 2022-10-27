@@ -102,11 +102,34 @@ Vue.use(clearEmoij);
 
 // 大数据上报配置
 Vue.use(PaasPort, {
- app_id: process.env.VUE_APP_NODE_ENV === 'production' ? '15df4d3f' : 'fd8d3653',
- pf: 8,
- noConsole: false,
- isProduction: process.env.VUE_APP_NODE_ENV === 'production' ? true : false
-})
+  app_id: process.env.VUE_APP_SAAS_ENV_DESC ? bu_appId['test_new'] : process.env.VUE_APP_NODE_ENV === 'production' ? bu_appId['production'] : bu_appId['test'],
+  pf: 8,
+  noConsole: false,
+  isProduction: process.env.VUE_APP_NODE_ENV === 'production' ? true : false
+});
+
+// 日期设置
+moment.locale(); // zh-cn
+window.mom = moment;
+
+// 过滤取设置
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key]); //插入过滤器名和对应方法
+});
+
+// 全局变量
+window.SAAS_V3_COL = {
+  KEY_1: 'SAAS_V3_SON_VO', // 子账号个数
+  KEY_2: 'SAAS_V3_PID', // 用户ID
+  KEY_3: 'SAAS_V3_BASE64', // 控制台token
+  KEY_4: 'SAAS_V3_UO' // 用户对象
+};
+
+// 微吼默认标题
+window.SAAS_vhall_title =
+  '微吼-直播,网络直播,视频直播,在线教育平台,视频直播平台,网络直播系统,中国最大的网络直播互动平台';
+
+// 国际化
 const i18n = new VueI18n({
  locale: ['en', 'cn'].includes(getParams('lang')) ? getParams('lang') : 'cn', // 语言标识
  messages: {
