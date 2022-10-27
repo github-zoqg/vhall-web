@@ -27,6 +27,7 @@ import tableList from '@/components/TableList/list';
 import searchArea from '@/components/SearchArea/index';
 import VhallDialog from '@/components/Dialog';
 import VhallInput from '@/components/Input';
+import { bu_appId } from './init-global/businessData';
 
 
 /**
