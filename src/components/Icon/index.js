@@ -1,4 +1,3 @@
-// import './iconfont.js';
 import Vue from 'vue'
 import IconTemplate from './iconTemplate.vue';
 
