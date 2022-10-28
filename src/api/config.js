@@ -272,6 +272,7 @@ const apis = {
   recordReTranscode: ['/v3/webinars/record/record-trans-code', 'POST'], // 回放重新生成
   recordRemark: ['/v3/webinars/record/record-remake', 'POST'], // 课件重制
   recordEncrypt: ['/v3/webinars/record/push-entry-video', 'POST'], // 视频加密
+  recordUpload:['/v3/webinars/record/upload', 'POST'],   // 上传回放
 
   // 小组视频
   getGroupRecordList:['/v3/webinars/record/get-group-record-list', 'POST'], //小组回放列表

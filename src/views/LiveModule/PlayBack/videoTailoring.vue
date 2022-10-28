@@ -317,6 +317,15 @@ export default {
       })
     },
     createRecord() {
+      if(new Date(this.timeVal[1]) - new Date(this.timeVal[0]) > 7*24*60*60*1000) {
+        this.$message({
+          message:  '所选时间范围不能超过7天',
+          showClose: true, // 是否展示关闭按钮
+          type: 'error', //  提示类型
+          customClass: 'zdy-info-box' // 样式处理
+        });
+        return false;
+      }
       if(!this.timeVal.length) {
         this.$message.warning('请选择时间');
         return false;
@@ -345,25 +354,32 @@ export default {
             }
             this.editLoading = false;
           } else {
-            this.$message.warning('生成失败');
+            this.$message.warning(res.msg);
             this.editLoading = false;
           }
         }).catch(err => {
-          if (err.code == 512005) {
-            this.$message({
-              message:  '所选时间范围内没有搜索到回放视频',
+          console.log('catch++++++++++++++++++++++++++++')
+          this.$message({
+              message: err.msg,
               showClose: true, // 是否展示关闭按钮
               type: 'error', //  提示类型
               customClass: 'zdy-info-box' // 样式处理
             });
-          } else if (err.code == 512908) {
-            this.$message({
-              message:  '所选时间范围不能超过7天',
-              showClose: true, // 是否展示关闭按钮
-              type: 'error', //  提示类型
-              customClass: 'zdy-info-box' // 样式处理
-            });
-          }
+          // if (err.code == 512005) {
+          //   this.$message({
+          //     message:  '所选时间范围内没有搜索到回放视频',
+          //     showClose: true, // 是否展示关闭按钮
+          //     type: 'error', //  提示类型
+          //     customClass: 'zdy-info-box' // 样式处理
+          //   });
+          // } else if (err.code == 512908) {
+          //   this.$message({
+          //     message:  '所选时间范围不能超过7天',
+          //     showClose: true, // 是否展示关闭按钮
+          //     type: 'error', //  提示类型
+          //     customClass: 'zdy-info-box' // 样式处理
+          //   });
+          // }
         })
       }
     },

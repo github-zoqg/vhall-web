@@ -1,58 +1,54 @@
 <template>
   <div class="playbackUploade">
-    <el-dialog
+    <vh-dialog
       title="选择音视频"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      :before-close='cancel'
       width="900px"
     >
-      <VhallInput
+      <vh-input
         placeholder="请输入音视频名称"
         autocomplete="off"
         clearable
-        v-clearEmoij
         v-model="keyword"
         class="search-tag"
         @clear="getSearchList('search')"
         @keyup.enter.native="getSearchList('search')"
         ><i
-          class="el-icon-search el-input__icon"
+          class="vh-icon-search vh-input__icon"
           slot="prefix"
           @click="getSearchList('search')"
         >
         </i>
-      </VhallInput>
+      </vh-input>
 
       <span>一次最多支持选择20个视频文件</span>
-      <el-button
+      <vh-button
         size="medium"
         type="primary"
         class="btn_right"
         round
         @click="jumpPage"
-        >上传</el-button
+        >上传</vh-button
       >
 
-      <el-table
+      <vh-table
         :data="tableData"
         class="table_base"
         @selection-change="changeTableCheckbox"
-        :header-cell-style="{
-          background: '#f7f7f7',
-          color: '#666',
-          height: '56px'
-        }"
+        height="400px"
       >
-        <el-table-column
+        <vh-table-column
           type="selection"
-          width="52"
+          width="55"
           align="left"
           :selectable="checkSelectable"
         />
-        <el-table-column label="音视频名称">
+        <vh-table-column label="音视频名称">
           <template slot-scope="scope">
-            <el-tooltip
+            <vh-tooltip
               placement="top"
               :content="
                 scope.row.video_name == '' ? '- -' : scope.row.video_name
@@ -68,14 +64,14 @@
                 <i class="iconfont-v3 saasshipinwenjian" v-else></i>
                 {{ scope.row.video_name || '- -' }}
               </div>
-            </el-tooltip>
+            </vh-tooltip>
           </template>
-        </el-table-column>
-        <el-table-column width="180" prop="created_at" label="上传时间">
-        </el-table-column>
-        <el-table-column width="100" prop="duration" label="时长">
-        </el-table-column>
-        <el-table-column prop="transcode_status_text" width="110" label="进度">
+        </vh-table-column>
+        <vh-table-column width="180" prop="created_at" label="上传时间">
+        </vh-table-column>
+        <vh-table-column width="100" prop="duration" label="时长">
+        </vh-table-column>
+        <vh-table-column prop="transcode_status_text" width="110" label="进度">
           <template slot-scope="scope">
             <div>
               <p v-if="scope.row.uploadObj">
@@ -83,9 +79,9 @@
                 <span>{{
                   scope.row.uploadObj.num == 100 ? '上传已完成' : '文件上传中'
                 }}</span>
-                <el-progress
+                <vh-progress
                   :percentage="scope.row.uploadObj.num"
-                ></el-progress>
+                ></vh-progress>
               </p>
               <!-- {{scope.row}} -->
               <p v-if="scope.row.transcode_status_text">
@@ -104,36 +100,38 @@
               </p>
             </div>
           </template>
-        </el-table-column>
-        <el-table-column width="110" prop="storage" label="转码后大小">
-        </el-table-column>
-        <el-table-column width="100" label="操作">
+        </vh-table-column>
+        <vh-table-column width="110" prop="storage" label="转码后大小">
+        </vh-table-column>
+        <vh-table-column width="100" label="操作">
           <template slot-scope="scope">
-            <el-button
+            <vh-button
               type="text"
               @click="preview(scope.row)"
               v-if="scope.row.transcode_status == 1"
-              >预览</el-button
+              >预览</vh-button
             >
           </template>
-        </el-table-column>
+        </vh-table-column>
         <div slot="empty">
           <noData :nullType="'null'" v-if="!total"></noData>
         </div>
-      </el-table>
+      </vh-table>
+      <div class="checked_length">
+        当前选择<span>{{ checkedList.length }}</span
+        >个文件
+      </div>
 
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="confirmEdit" round size="medium"
-          >确定</el-button
+        <vh-button type="primary" @click="sure" round size="medium"
+          >确定</vh-button
         >
-        <el-button @click="dialogVisible = false" round size="medium"
-          >取消</el-button
-        >
+        <vh-button @click="cancel" round size="medium">取消</vh-button>
       </span>
-    </el-dialog>
+    </vh-dialog>
     <!-- 预览组件 -->
     <span v-if="showDialog">
-      <el-dialog
+      <vh-dialog
         class="vh-saas-dialog"
         :visible.sync="showDialog"
         :before-close="closeBefore"
@@ -142,12 +140,12 @@
         :close-on-click-modal="true"
         :close-on-press-escape="false"
       >
-        <i class="el-icon el-icon-close" @click="closeBefore"></i>
+        <i class="vh-icon vh-icon-close" @click="closeBefore"></i>
         <video-preview
           ref="videoPreview"
           :videoParam="videoParam"
         ></video-preview>
-      </el-dialog>
+      </vh-dialog>
     </span>
   </div>
 </template>
@@ -168,6 +166,7 @@ export default {
         limit: 10
       },
       tableData: [],
+      checkedList: [],
       total: 0,
       videoParam: {},
       showDialog: false
@@ -228,11 +227,9 @@ export default {
               }
             })
             this.tableData = this.tableData.concat(res.data.list)
-            for (let i = 0; i < 30; i++) {
-              this.tableData.push(res.data.list[0])
-            }
             document
               .querySelector('.table_base')
+              .querySelector('.vh-table__body-wrapper')
               .addEventListener('scroll', this.handleScroll)
           }
         })
@@ -243,6 +240,7 @@ export default {
     // 更改选中数据
     changeTableCheckbox(item) {
       this.checkedList = item.map(val => val.id)
+      // console.log(this.checkedList, 'this.checkedList')
     },
     checkSelectable(row) {
       if (row.transcode_status_text) {
@@ -253,23 +251,51 @@ export default {
     },
     // 滚动加载
     handleScroll() {
-      let domHeight = document.querySelector('.table_base').offsetHeight
-      let scrollTop = document.querySelector('.table_base').scrollTop
+      let domHeight = document
+        .querySelector('.table_base')
+        .querySelector('.vh-table__body-wrapper').offsetHeight
+      let scrollTop = document
+        .querySelector('.table_base')
+        .querySelector('.vh-table__body-wrapper').scrollTop
       let contentH = document
         .querySelector('.table_base')
-        .querySelector('.el-table__body-wrapper').offsetHeight
+        .querySelector('.vh-table__body').offsetHeight
       if (
-        contentH + 56 <= scrollTop + domHeight &&
+        contentH == scrollTop + domHeight &&
         this.total > this.tableData.length
       ) {
         this.pageInfo.pos += 10
         this.pageInfo.pageNum += 1
         this.getSearchList()
+        console.log('加载接口', '.scrollTop')
       }
-      console.log(scrollTop, domHeight, contentH, '.scrollTop')
+      // console.log(scrollTop, domHeight, contentH, '.scrollTop')
     },
-    //
-    confirmEdit() {},
+    // 同步数据接口
+    sure() {
+      if (!this.checkedList.join()) {
+        this.$message.warning('请选择音视频')
+        return false
+      }
+      this.$fetch('recordUpload', {
+        webinar_id: this.$route.params.str,
+        record_ids: this.checkedList.join()
+      }).then(res => {
+        if (res.code == 200) {
+          this.cancel()
+          // this.getSearchList()
+          this.$emit('search')
+        } else {
+          this.$message.warning(res.msg)
+        }
+      })
+    },
+    // 关闭上传回放弹框
+    cancel() {
+      this.dialogVisible = false
+      this.checkedList = []
+      this.tableData = []
+    },
     // 跳转 资料管理-音视频
     jumpPage() {
       this.$router.push('/material/video')
@@ -294,48 +320,49 @@ export default {
     width: 220px;
     margin-bottom: 20px;
     margin-right: 12px;
-    .el-input__icon {
+    // TODO:vh-ui 需后续支持input圆角
+    .vh-input__icon {
       line-height: 36px;
     }
-    .el-input__inner {
+    .vh-input__inner {
       border-radius: 50px;
       user-select: none;
-      height: 36px;
-      line-height: 36px;
+      // height: 36px;
+      // line-height: 36px;
       padding-right: 30px !important;
     }
-    .el-input__prefix {
+    .vh-input__prefix {
       cursor: pointer;
     }
   }
   .btn_right {
     float: right;
   }
+    .checked_length{
+      position: absolute;
+      bottom: 40px;
+      span{
+        color: #fb2626;
+      }
+    }
   .table_base {
-    height: 400px;
+    // height: 400px;
     overflow: auto;
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      -webkit-border-radius: 10px;
+      border-radius: 10px;
+      background-color: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      height: 60px;
+      -webkit-border-radius: 10px;
+      border-radius: 10px;
+      background: #e0e0e0;
+    }
   }
   .vh-saas-dialog {
-    .el-icon-close {
-      position: absolute;
-      right: 0;
-      top: 20px;
-      font-size: 16px;
-      color: #fff;
-      cursor: pointer;
-    }
-    .el-dialog {
-      box-shadow: none;
-      background: transparent !important;
-    }
-    .el-dialog__header {
-      background: transparent !important;
-    }
-    .el-dialog__body {
-      padding: 4px 6px;
-      background: #000;
-      border-radius: 4px;
-    }
   }
 }
 </style>
