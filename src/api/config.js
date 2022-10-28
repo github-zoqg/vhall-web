@@ -189,6 +189,7 @@ const apis = {
   goodsImgDel: ['/v3/interacts/goods/delete-goods-img', 'POST'], // 删除活动商品图片
   goodsSetCover: ['/v3/interacts/goods/set-goods-cover', 'POST'], // 设置商品默认封面
   getGoodInfo: ['/v3/interacts/goods/watch-get-goods-details', 'GET'], // 商品详情
+  setGoodOrder: ['/v3/interacts/goods/set-order', 'POST'], // 直播设置_商品列表排序
 
   // 功能配置
   planFunctionGet: ['/v3/users/permission/get-config-list', 'POST'], // 获取可配置项列表 jia.li

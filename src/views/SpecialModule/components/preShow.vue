@@ -99,7 +99,6 @@ export default {
       shareVo: {
         url: `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.query.id}`,
         pcUrl: `${process.env.VUE_APP_WAP_WATCH}/special/detail?id=${this.$route.query.id}`
-        // pcUrl:`${process.env.VUE_APP_WEB_URL}/special/detail?id=${this.$route.query.id}`
       },
       totalList: [], //总数
       liveList: [],

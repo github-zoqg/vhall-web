@@ -1,7 +1,7 @@
 // session存储（设置、获取、删除）
 import fetchData from "@/api/fetch";
 import NProgress from "nprogress";
-import { message } from 'element-ui';
+// import { message } from 'element-ui';
 import Cookies from 'js-cookie';
 import { v1 as uuidV1 } from 'uuid';
 import { fn } from "moment";

@@ -53,8 +53,8 @@
             </div>
             <div class="bottom">
               <div class="">
-                <p class="liveTitle">{{tabType === 'live' ? item.subject : item.title}}</p>
-                <p class="liveTime">{{tabType === 'live' ? item.start_time : item.created_at | unitTime }}</p>
+                <p class="liveTitle" :class="{clamp3:tabType != 'live'}">{{tabType === 'live' ? item.subject : item.title}}</p>
+                <p class="liveTime" v-if="tabType === 'live'">{{tabType === 'live' ? item.start_time : item.created_at | unitTime }}</p>
               </div>
             </div>
             <transition name="el-zoom-in-bottom">
@@ -596,6 +596,11 @@ export default {
         -webkit-line-clamp: 2;
         line-clamp: 2;
         -webkit-box-orient: vertical;
+      }
+      .clamp3{
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+
       }
       .liveTime{
         font-size: 14px;

@@ -90,6 +90,7 @@
 import PageTitle from '@/components/PageTitle';
 import upload from '@/components/Upload/main';
 import beginPlay from '@/components/beginBtn';
+import { defaultAvatar } from '@/utils/ossImgConfig';
 import {sessionOrLocal, parseImgOssQueryString, cropperImage, getImageQuery} from "@/utils/utils";
 import cropper from '@/components/Cropper/index'
 export default {
@@ -131,8 +132,8 @@ export default {
           { required: true, message: '请输入简介', trigger: 'blur' },
         ],
       },
+      avatar: defaultAvatar,
       // domain_url: '',
-      avatar: require('../../../common/images/share/avator.png'),
       img: require('../../../common/images/share/img.jpg')
     }
   },

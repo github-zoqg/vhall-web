@@ -18,9 +18,9 @@
       <div class="vh-chose-active-item__title ellsips">
         专题示例
       </div>
-      <div class="vh-chose-active-item__info">
+      <!-- <div class="vh-chose-active-item__info">
         2020-12-30 12:00:00
-      </div>
+      </div> -->
     </div>
 
     <!-- 单个视频 -->
@@ -48,9 +48,9 @@
       <div class="vh-chose-active-item__title ellsips">
         {{ item.title }}
       </div>
-      <div class="vh-chose-active-item__info">
+      <!-- <div class="vh-chose-active-item__info">
         {{ item.created_at | unitTime }}
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

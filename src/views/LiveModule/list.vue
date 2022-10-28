@@ -473,7 +473,8 @@ export default {
           type: 'success',
           customClass: 'zdy-info-box'
         });
-        this.getLiveList();
+        // 刷新列表
+        this.searchHandler();
       }).catch(res => {
         this.$message({
           message: res.msg || `删除失败`,
