@@ -65,7 +65,8 @@ export default {
           label: '排序',
           key: 'order_num',
           width: 120,
-          type: 'input'
+          type: 'input',
+          customTooltip: true
         },
         {
           label: '图片',
@@ -89,7 +90,8 @@ export default {
         {
           label: '上下架',
           key: 'watch',
-          width: 80
+          width: 80,
+          customTooltip: true
         }
       ],
       tableRowBtnFun: [
@@ -141,7 +143,7 @@ export default {
             this.vm.close();
           }
           this.messageInfo('上架设置成功');
-          this.getTableList();
+          // this.getTableList();
           console.log(res);
         }).catch(res => {
           this.$message({
@@ -164,7 +166,7 @@ export default {
             this.vm.close();
           }
           this.messageInfo('下架设置成功');
-          this.getTableList();
+          // this.getTableList();
           console.log(res);
         }).catch(res => {
           this.$message({
