@@ -125,6 +125,7 @@
           </template>
         </vh-table-column>
         <div slot="empty">
+          <noData :nullType="'null'" v-if="!total"></noData>
         </div>
       </vh-table>
       <div class="checked_length">
