@@ -67,7 +67,7 @@ export default {
         webinar_id: this.$route.params.str,
         survey_id: this.$route.query.surveyId,
         filled_number: this.$route.query.number || 0,
-        subject: this.$route.query.subject || ''
+        // subject: this.$route.query.subject || ''
       }
       this.$fetch('getQuestionDetailList', this.$params(params)).then(res => {
         this.total = res.data.total || 0;
