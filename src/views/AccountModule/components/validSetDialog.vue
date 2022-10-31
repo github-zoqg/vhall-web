@@ -304,7 +304,7 @@
         if (value === '') {
           callback(new Error('请输入手机号'));
         } else {
-          if (!/^1[0-9]{10}$/.test(value)) {
+          if (!regRule['mobile'].test(value)) {
             callback(new Error('请输入正确的手机号'));
           } else {
             this.isValidaCode = true;
@@ -366,9 +366,6 @@
           old_pwd: [
             { required: true, trigger: 'blur', validator: verifyEnterPwd, min: 6, max: 30 }
           ],
-          /*phone: [
-          {required: true, min: 6, max: 30, pattern: /^1[0-9]{10}$/, message: '请输入手机号', trigger: 'blur'}
-        ],*/
           code: [{ required: true, message: '请输入动态密码', trigger: 'blur' }],
           new_phone: [
             { required: true, min: 6, max: 30, validator: validatePhone, trigger: 'blur' }
@@ -499,16 +496,7 @@
         let data = this.form.phone;
         let flag = false;
         if (this.showVo.executeType !== 'email') {
-          /*if(!(/^1[0-9]{10}$/.test(this.form.phone))) {
-          this.$message({
-            message:  `手机号校验失败`,
-            showClose: true,
-            // duration: 0,
-            type: 'error',
-            customClass: 'zdy-info-box'
-          });
-          flag = false;
-        } else */ if (!this.mobileKey) {
+          if (!this.mobileKey) {
             this.$message({
               message: `图形验证码校验失败`,
               showClose: true,
@@ -570,7 +558,7 @@
         let data = this.form.new_phone;
         let flag = false;
         if (this.showVo.executeType !== 'email') {
-          if (!/^1[0-9]{10}$/.test(this.form.new_phone)) {
+          if (!regRule['mobile'].test(this.form.new_phone)) {
             this.$message({
               message: '手机号校验失败',
               showClose: true,

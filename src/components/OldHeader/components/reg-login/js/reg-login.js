@@ -44,13 +44,13 @@ export default {
       }
     }
     const validatePhone = (rule, value, callback) => {
-      this.phoneError = value === '' || !(/^1[0-9]{10}$/.test(value))
-      this.isShowPhoneErr = value === '' || !(/^1[0-9]{10}$/.test(value))
+      this.phoneError = value === '' || !(regRule['mobile'].test(value))
+      this.isShowPhoneErr = value === '' || !(regRule['mobile'].test(value))
       if (value === '') {
         this.buttonControl = 'disabled' // 验证失败，禁用
         callback(new Error('请输入手机号'))
       } else {
-        if (!(/^1[0-9]{10}$/.test(value))) {
+        if (!(regRule['mobile'].test(value))) {
           this.buttonControl = 'disabled' // 验证失败，禁用
           callback(new Error('请输入正确的手机号'))
         } else {
@@ -64,13 +64,13 @@ export default {
       }
     }
     const validateRegPhone = async (rule, value, callback) => {
-      this.regPhoneFlag = value === '' || !(/^1[0-9]{10}$/.test(value))
+      this.regPhoneFlag = value === '' || !(regRule['mobile'].test(value))
       if (value === '') {
         this.regBtnControl = 'disabled' // 验证失败，禁用
         this.isShowRegPhoneErr = true
         callback(new Error('请输入手机号'))
       } else {
-        if (!(/^1[0-9]{10}$/.test(value))) {
+        if (!(regRule['mobile'].test(value))) {
           this.regBtnControl = 'disabled' // 验证失败，禁用
           this.isShowRegPhoneErr = true
           callback(new Error('请输入正确的手机号'))

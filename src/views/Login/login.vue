@@ -312,12 +312,11 @@
     },
     data() {
       var validatePhone = (rule, value, callback) => {
-        // this.registerText = '';
         this.isValidaregisterPhone = false;
         if (value === '') {
           callback(new Error('请输入手机号'));
         } else {
-          if (!/^1[0-9]{10}$/.test(value)) {
+          if (!regRule['mobile'].test(value)) {
             callback(new Error('请输入正确的手机号'));
           } else {
             this.isValidaregisterPhone = true;
@@ -370,7 +369,7 @@
         if (value === '') {
           callback(new Error('请输入手机号'));
         } else {
-          if (!/^1[0-9]{10}$/.test(value)) {
+          if (!regRule['mobile'].test(value)) {
             callback(new Error('请输入正确的手机号'));
           } else {
             this.$fetch('loginCheck', { account: value, channel: 'B' }, { token: '' })
@@ -852,7 +851,7 @@
        * 校验手机号
        */
       checkMobile(phone) {
-        return /^1[0-9]{10}$/.test(phone);
+        return regRule['mobile'].test(phone);
       },
       checkPassWord() {
         return /^(\w){6,20}$/.test(this.loginForm.password);
