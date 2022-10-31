@@ -239,10 +239,12 @@ export default {
               }
             })
             this.tableData = type == 'search' ? res.data.list : this.tableData.concat(res.data.list)
-            document
+            this.$nextTick(()=>{
+              document
               .querySelector('.table_base')
               .querySelector('.vh-table__body-wrapper')
               .addEventListener('scroll', this.handleScroll)
+            })
           }
         })
         .finally(() => {
