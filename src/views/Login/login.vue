@@ -338,8 +338,6 @@
         this.errorText = '';
         if (value === '') {
           callback(new Error('请输入密码'));
-        } else if (!regRule['pwd'].exec(value)) {
-          callback(new Error('账号密码错误'));
         } else {
           callback();
         }

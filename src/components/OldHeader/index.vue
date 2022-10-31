@@ -75,7 +75,6 @@
 
 <script>
 import { sessionOrLocal, clearCookies } from "@/utils/utils";
-import Env from "@/api/env";
 import RegLogin from './components/reg-login/index'
 import { defaultAvatar } from '@/utils/ossImgConfig';
 
