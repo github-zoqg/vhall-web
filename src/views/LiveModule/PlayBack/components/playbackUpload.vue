@@ -15,6 +15,7 @@
         v-model="keyword"
         class="search-tag"
         @clear="getSearchList('search')"
+        @blur="keyword&&getSearchList('search')"
         @keyup.enter.native="getSearchList('search')"
         ><i
           class="vh-icon-search vh-input__icon"
@@ -192,10 +193,10 @@ export default {
         }
       }
       this.isSearch = this.keyword ? true : false
-      this.getTableList(formParams)
+      this.getTableList(formParams,params)
     },
     //
-    getTableList(obj) {
+    getTableList(obj,type) {
       this.$fetch('dataVideoList', obj)
         .then(res => {
           if (res.code == 200) {
@@ -226,7 +227,7 @@ export default {
                   break
               }
             })
-            this.tableData = this.tableData.concat(res.data.list)
+            this.tableData = type == 'search' ? res.data.list : this.tableData.concat(res.data.list)
             document
               .querySelector('.table_base')
               .querySelector('.vh-table__body-wrapper')
