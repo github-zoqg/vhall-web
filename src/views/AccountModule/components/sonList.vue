@@ -176,20 +176,18 @@ export default {
       }
     };*/
     let verifyEnterPwd = (rule, value, callback) => {
-      let pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/;
       if (value === '') {
         callback(new Error('支持数字，大小写英文，6-30个字符'));
-      } else if (!pattern.exec(value)) {
+      } else if (!regRule['pwd'].exec(value)) {
         callback(new Error('支持数字，大小写英文，6-30个字符'));
       } else {
         callback();
       }
     };
     let verifyEnterEditPwd = (rule, value, callback) => {
-      let pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/;
       if (value === '') {
         callback();
-      } else if (!pattern.exec(value)) {
+      } else if (!regRule['pwd'].exec(value)) {
         callback(new Error('支持数字，大小写英文，6-30个字符'));
       } else {
         callback();

@@ -1,5 +1,6 @@
 import { JSEncrypt } from 'jsencrypt'
 import { sessionOrLocal } from '@/utils/utils';
+import regRule from '@/utils/reg-rule';
 import PwdInput from '../../pwd-input.vue'
 import {v1 as uuidV1} from "uuid";
 export default {
@@ -24,27 +25,19 @@ export default {
       }
     }
     const validPwd = (rule, value, callback) => {
-      console.log(rule)
-      // const pattern = /^(\w){6,30}$/
-      const pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/
       this.mailError = value === '' || !pattern.exec(value)
       if (value === '') {
         callback(new Error('请输入登录密码'))
-      } else if (!pattern.exec(value)) {
-        // callback(new Error('6-30位不包含空格及特殊符号的密码！'))
+      } else if (!regRule['pwd'].exec(value)) {
         callback(new Error('账号密码错误'))
       } else {
         callback()
       }
     }
     const validRegPwd = (rule, value, callback) => {
-      const pattern = /^([0-9a-zA-Z_`!~@#$%^*+=,.?;'":)(}{/\\|<>&[-]|]){6,30}$/
-      // const pattern = /^(\w){6,30}$/
       if (value === '') {
-        // callback(new Error('请设置登录密码'))
         callback() // 允许为空
-      } else if (!pattern.exec(value)) {
-        // callback(new Error('6-30位不包含空格及特殊符号的密码！'))
+      } else if (!regRule['pwd'].exec(value)) {
         callback(new Error('请设置登录密码（6-30位字符）'))
       } else {
         callback()
