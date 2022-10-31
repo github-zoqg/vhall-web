@@ -247,7 +247,7 @@
       <viewing-protocol ref="viewingProtocolComp" type="1" :tabType="tabType" v-if="permissionInfo['watch.viewing_protocol'] > 0 && tabType === 'viewingProtocol'"></viewing-protocol>
     </div>
     <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
-    <VhallDialog :visible='visible' title="权限验证" width='400px' @close="visible = false;">
+    <VhallDialog :visible='visible' title="观看验证" width='400px' @close="visible = false;">
       <span class="pr" v-if='!showPwd'>
         <el-input :placeholder="showText" v-model="stash" type="password" maxlength="12"></el-input>
         <span class="iconfont-v3 saaseyeclose_huaban1 inputIcon cursor" @click='showPwd = true'></span>
