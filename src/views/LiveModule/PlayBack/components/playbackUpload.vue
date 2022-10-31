@@ -35,7 +35,17 @@
         >上传</vh-button
       >
 
+      <noData :nullType="'null'" text='您还未上传过音视频，快来创建吧!' v-if="!keyword&&!total">
+        <vh-button
+          size="medium"
+          type="primary"
+          round
+          @click="jumpPage"
+          >上传</vh-button
+        >
+      </noData>
       <vh-table
+        v-else
         :data="tableData"
         class="table_base"
         @selection-change="changeTableCheckbox"
@@ -115,7 +125,6 @@
           </template>
         </vh-table-column>
         <div slot="empty">
-          <noData :nullType="'null'" v-if="!total"></noData>
         </div>
       </vh-table>
       <div class="checked_length">
@@ -138,6 +147,7 @@
         :before-close="closeBefore"
         width="640px"
         center
+        :show-close='false'
         :close-on-click-modal="true"
         :close-on-press-escape="false"
       >
@@ -299,7 +309,16 @@ export default {
     },
     // 跳转 资料管理-音视频
     jumpPage() {
-      this.$router.push('/material/video')
+      this.$confirm('上传资源会离开当前页面，将丢失已编辑信息，是否离开？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        customClass: 'zdy-message-box',
+        lockScroll: false,
+        cancelButtonClass: 'zdy-confirm-cancel',
+        closeOnClickModal: false
+      }).then(()=>{
+        this.$router.push('/material/video')
+      }).catch(()=>{});
     },
     // 预览
     preview(data) {
@@ -364,6 +383,26 @@ export default {
     }
   }
   .vh-saas-dialog {
+    .vh-icon-close {
+      position: absolute;
+      right: 0;
+      top: 20px;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+    }
+    .vh-dialog {
+      box-shadow: none;
+      background: transparent !important;
+    }
+    .vh-dialog__header {
+      background: transparent !important;
+    }
+    .vh-dialog__body {
+      padding: 4px 6px;
+      background: #000;
+      border-radius: 4px;
+    }
   }
 }
 </style>
