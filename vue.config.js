@@ -106,7 +106,7 @@ module.exports = {
     //   .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
 
     // 打包缓存加速
-    config.plugin("hardSource").use(HardSourceWebpackPlugin);
+    config.plugin("cache").use(HardSourceWebpackPlugin);
   },
   configureWebpack: (config) => {
     //   if (process.env.NODE_ENV === 'production') {
