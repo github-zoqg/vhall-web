@@ -720,6 +720,7 @@ const apis = {
   userRegistrationImportProgress: ['/v3/webinars/registration-form/import-progress', 'POST'], // 用户报名-导入数据结果（轮询）
   userRegistrationExportFail: ['/v3/webinars/registration-form/export-fail', 'POST'], // 用户报名-导出失效数据
   getSubjectByWebinarId: ['/v3/webinars/subject/get-list-by-webinar-id', 'POST'], // 活动下-报名表单，依据活动ID获取专题内容信息
+  getStatistics: ['/v3/webinars/registration-form/data-statistics', 'POST'], // 报名用户数据统计
   // 开播提醒
   getNoticePageList: ['/v3/interacts/notice/notice-list', 'GET'], // 获取- 开播提醒-界面设置信息
   noticeConfigEdit: ['/v3/interacts/notice/notice-config-edit', 'POST'], // 保存-开播提醒-[签名/是否开启短信验证]
