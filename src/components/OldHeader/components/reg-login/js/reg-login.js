@@ -2,7 +2,7 @@ import { JSEncrypt } from 'jsencrypt'
 import { sessionOrLocal } from '@/utils/utils';
 import regRule from '@/utils/reg-rule';
 import PwdInput from '../../pwd-input.vue'
-import {v1 as uuidV1} from "uuid";
+import { v1 as uuidV1 } from "uuid";
 export default {
   name: 'RegLogin',
   components: {
@@ -28,8 +28,6 @@ export default {
       this.mailError = value === '' || !pattern.exec(value)
       if (value === '') {
         callback(new Error('请输入登录密码'))
-      } else if (!regRule['pwd'].exec(value)) {
-        callback(new Error('账号密码错误'))
       } else {
         callback()
       }
@@ -38,7 +36,7 @@ export default {
       if (value === '') {
         callback() // 允许为空
       } else if (!regRule['pwd'].exec(value)) {
-        callback(new Error('请设置登录密码（6-30位字符）'))
+        callback(new Error('包含大小写字母,数字在内的6-30个字符'))
       } else {
         callback()
       }
@@ -76,7 +74,7 @@ export default {
           callback(new Error('请输入正确的手机号'))
         } else {
           try {
-            const result = await this.$fetch('loginCheck', {account: this.regForm.phone, channel: 'C'}, {
+            const result = await this.$fetch('loginCheck', { account: this.regForm.phone, channel: 'C' }, {
               'gray_id': this.gray_id
             })
             if (result && result.code === 200) {
@@ -234,7 +232,7 @@ export default {
           clearInterval(this.regTimer)
           this.regTimer = null
         }
-        this.$nextTick(function() {
+        this.$nextTick(function () {
           this.sendRegMsgDisabled = false
           this.regBtnControl = 'disabled'
           if (this.$refs.regForm) {
@@ -252,7 +250,7 @@ export default {
           clearInterval(this.timeinterval)
           this.timeinterval = null
         }
-        this.$nextTick(function() {
+        this.$nextTick(function () {
           this.buttonControl = 'disabled'
           this.sendLoginMsgDisabled = false
           if (this.$refs.ruleForm) {
@@ -268,7 +266,7 @@ export default {
         this.bottomLoginInfo = true
         this.errorMessage = ''
         this.smsErrorMessage = ''
-        this.$nextTick(function() {
+        this.$nextTick(function () {
           if (this.$refs.ruleForm) {
             this.$refs.ruleForm.resetFields()
           }
@@ -327,8 +325,8 @@ export default {
       // 加密数据
       retPassword = encryptor.encrypt(password)
       retPassword = retPassword.replace(/\+/g, '-').replace(/\//g, '_')
-      while(retPassword[retPassword.length - 1] === '=') {
-        retPassword = retPassword.substr(0,retPassword.length-1)
+      while (retPassword[retPassword.length - 1] === '=') {
+        retPassword = retPassword.substr(0, retPassword.length - 1)
       }
       return retPassword
     },
@@ -461,10 +459,10 @@ export default {
       this.$fetch('getInfoC', {
         scene_id: 2
       }, {
-         token: sessionOrLocal.get('vhsaas_token', 'localStorage') || '',
-         platform: 7,
-         'request-id': uuidV1(),
-         'gray-id': this.gray_id
+        token: sessionOrLocal.get('vhsaas_token', 'localStorage') || '',
+        platform: 7,
+        'request-id': uuidV1(),
+        'gray-id': this.gray_id
       }).then(res => {
         sessionOrLocal.set('vhsaas_userInfo', res.data || '', 'localStorage')
         // 关闭当前弹出框，更新状态
@@ -689,13 +687,13 @@ export default {
             }
           }).catch(e => {
             console.log(e)
-	          this.$message({
-                message: e.msg || this.$t('注册失败'),
-                showClose: true,
-                // duration: 0,
-                type: 'error',
-                customClass: 'zdy-info-box'
-              })
+            this.$message({
+              message: e.msg || this.$t('注册失败'),
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            })
             // 图片验证码重置
             this.callCaptcha('#regCaptcha')
           })

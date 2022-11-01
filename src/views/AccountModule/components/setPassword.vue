@@ -90,7 +90,7 @@
         if (value === '') {
           callback(new Error('请输入密码！'));
         } else if (!regRule['pwd'].exec(value)) {
-          callback(new Error('6-30位不包含空格及特殊符号的密码！'));
+          callback(new Error('包含大小写字母,数字在内的6-30个字符'));
         } else {
           callback();
         }
@@ -256,9 +256,6 @@
               .catch(e => {});
           }
         });
-      },
-      checkPassword(val) {
-        return !!regRule['pwd'].exec(val);
       }
     }
   };

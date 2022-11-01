@@ -11,78 +11,23 @@
             <img src="../../common/images/sys/logo@2x.png" alt="" v-else />
           </a>
         </div>
-        <div class="navbar-title">
-          <div class="navbar-intro" v-if="isSpecial">
-            <el-tooltip class="item" effect="dark" :content="specialInfo.title" placement="bottom-start">
-              <p>{{ specialInfo.title }}</p>
-            </el-tooltip>
-            <!-- <p>{{ specialInfo.title }}</p> -->
-            <span class="time">{{ (specialInfo && specialInfo.created_at ? specialInfo.created_at : '') | unitTime  }}</span>
-            <!-- <div class="share" @click="share">
-              <i class="iconfont-v3 saasfenxiang_icon" slot="reference"></i>
-              <span>分享</span>
-            </div> -->
-          </div>
-        </div>
-        <div class="collapse navbar-collapse" v-if="isShowLogin">
-          <div class="share" @click="share" v-if="isSpecial">
-            <i class="iconfont-v3 saasfenxiang_icon" slot="reference"></i>
-            <span>分享</span>
-          </div>
-          <div class="pull-right login-reg">
-            <div class="" v-if="isLogin">
-             <!--  <el-dropdown @command="handleCommand" class="hover-dropdown">
-                <span class="el-dropdown-link">
-                  <img  class="head" :src="avatarImgUrl" alt="" width="30" height="30"/>
-                  <span class="textofover">{{userInfo && userInfo.nick_name ? userInfo.nick_name : '--'}}</span>
-                  <span class="caret"></span>
-                </span>
-                <el-dropdown-menu slot="dropdown" class="zdy-hover-dropdown">
-                  <el-dropdown-item command="loginOut">退出</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown> -->
-              <el-dropdown class="avatar-container">
-                <div class="avatar-wrapper">
-                  <div class="user-avatar">
-                    <img :src="avatarImgUrl" alt=""/>
-                  </div>
-                  <span>{{show_name}}</span>
-                </div>
-                <el-dropdown-menu slot="dropdown" class="user-dropdown">
-                  <!-- <el-dropdown-item divided @click.native="toLive"><i class="iconfont-v3 saasicon_lives1"></i> 我的直播</el-dropdown-item>
-                  <el-dropdown-item divided @click.native="toFinance"><i class="iconfont-v3 saasicon_account1"></i> 账户中心</el-dropdown-item>
-                  <el-dropdown-item divided @click.native="toMyHome"><i class="iconfont-v3 saasicon_home1"></i> 我的主页</el-dropdown-item>
-                  <el-dropdown-item divided @click.native="toAccount"><i class="iconfont-v3 saasicon_Settings1"></i> 账户设置</el-dropdown-item> -->
-                  <el-dropdown-item divided @click.native="loginOut"><i class="iconfont-v3 saasicon_exit"></i> 退出登录</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </div>
-            <div class="unlogin"  v-if="!isLogin"  @click="openLoginHandler">
-              <span><img :src="defaultAvatar" alt=""></span>
-              <!-- <label @click="toLoginPageHandle">登录</label> -->
-              <label>登录</label>
-              <!-- <el-button size="small" round @click="toLoginPageHandle">登录</el-button>
-              <el-button type="primary" size="small" round @click="toRegisterHandle">注册</el-button> -->
-            </div>
-          </div>
-        </div>
       </nav>
     </header>
     <!-- 登录与注册 -->
-    <RegLogin ref="regLogin" :gray_id="gray_id"></RegLogin>
+    <!-- <RegLogin ref="regLogin" :gray_id="gray_id"></RegLogin> -->
   </div>
 </template>
 
 <script>
 import { sessionOrLocal, clearCookies } from "@/utils/utils";
-import RegLogin from './components/reg-login/index'
+// import RegLogin from './components/reg-login/index'
 import { defaultAvatar } from '@/utils/ossImgConfig';
 
 export default {
   name: "index.vue",
-  components: {
-    RegLogin
-  },
+  // components: {
+  //   RegLogin
+  // },
   props: {
     isShowLogin: {
       require: false,
@@ -97,14 +42,6 @@ export default {
       default: ''
     },
     isWhiteBg: {
-      require: false,
-      default: false
-    },
-    isSpecial: {
-      require: false,
-      default: false
-    },
-    specialInfo: {
       require: false,
       default: false
     },
@@ -137,49 +74,6 @@ export default {
     }
   },
   methods: {
-    toLoginPageHandle() {
-      this.$router.push({
-        path: '/login'
-      });
-    },
-    // 打开登录弹出框
-    openLoginHandler() {
-      this.$refs.regLogin.dialogVisible = true
-      this.$nextTick(() => {
-        this.$refs.regLogin && this.$refs.regLogin.changeTagHandler(2)
-      })
-    },
-    toRegisterHandle() {
-      this.$router.push({
-        path: '/register'
-      });
-    },
-    toLive() {
-      this.$router.push({
-        path: '/live/list'
-      });
-    },
-    toFinance() {
-      this.$router.push({
-        path: '/finance/info'
-      });
-    },
-    toMyHome() {
-      this.$router.push({
-        path: '/acc/myHome'
-      });
-    },
-    toAccount() {
-      this.$router.push({
-        path: '/acc/info'
-      });
-    },
-    handleCommand(command) {
-      if(command === 'loginOut') {
-
-        this.loginOut();
-      }
-    },
     userLogoGet(id) {
       let headers = {
         'gray-id': id
@@ -309,28 +203,7 @@ header.commen-header {
       }
     }
   }
-  .navbar-title{
-    flex:1;
-    max-width: calc(100% - 405px);
-    .navbar-intro{
-      width: 100%;
-    }
-    p{
-      padding-top: 13px;
-      line-height: 24px;
-      color: #1a1a1a;
-      font-size: 18px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      padding-right: 100px;
-      font-weight: 500;
-    }
-    .time{
-      color: #999;
-      font-size: 14px;
-    }
-  }
+
   .navbar-collapse {
     padding-right: 15px;
     padding-left: 15px;
@@ -360,68 +233,6 @@ header.commen-header {
     &:hover{
       color: #FB3A32;
     }
-  }
-  .login-reg {
-    padding: 16px 0 0 10px;
-    img.head {
-      border-radius: 50%;
-      /* margin-top: -12px;
-      border: none; */
-      margin-top: -8px;
-      border: none;
-      vertical-align: middle;
-      display: inline-block;
-      margin-right: 8px;
-    }
-    .textofover {
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-      display: inline-block;
-      max-width: 160px;
-    }
-    .caret {
-      display: inline-block;
-      width: 0;
-      height: 0;
-      vertical-align: middle;
-      border-top: 4px dashed;
-      border-right: 4px solid transparent;
-      border-left: 4px solid transparent;
-      color: #787a7b;
-      margin-left: 5px;
-     /*  margin-bottom: 13px; */
-      margin-bottom: 4px;
-    }
-    .unlogin{
-      span{
-        width: 36px;
-        height: 36px;
-        display: inline-block;
-        border-radius: 50%;
-        margin-right: 8px;
-        cursor: pointer;
-        vertical-align: middle;
-        margin-top: -5px;
-      }
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: scale-down;
-      }
-      label {
-        font-size: 14px;
-        font-weight: 400;
-        color: #666;
-        line-height: 14px;
-        cursor: pointer;
-      }
-    }
-  }
-  header #personal-info {
-    padding: 5px 9px;
-    cursor: pointer;
-    position: relative;
   }
 }
 @media (min-width: 768px) {

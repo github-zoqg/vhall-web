@@ -278,11 +278,21 @@
       PwdInput
     },
     data() {
+      //旧密码规则
+      let verifyEnterOldPwd = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入密码！'));
+        } else {
+          callback();
+        }
+      };
+
+      //新密码规则
       let verifyEnterPwd = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码！'));
         } else if (!regRule['pwd'].exec(value)) {
-          callback(new Error('6-30位不包含空格及特殊符号的密码！'));
+          callback(new Error('包含大小写字母,数字在内的6-30个字符'));
         } else {
           callback();
         }
@@ -290,15 +300,14 @@
       let verifyAgainEnterPwd = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请再次输入密码！'));
-          // this.isReset = true;
         } else if (value !== this.form.password) {
           callback(new Error('两次输入密码不一致！'));
-          // this.isReset = true;
         } else {
           callback();
-          // this.isReset = false;
         }
       };
+
+      // 手机号规则
       let validatePhone = (rule, value, callback) => {
         this.isValidaCode = false;
         if (value === '') {
@@ -312,12 +321,14 @@
           }
         }
       };
+
+      // 邮箱规则
       let validateEmail = (rule, value, callback) => {
         this.isValidaEmail = false;
         if (value === '') {
           callback(new Error('请输入邮箱'));
         } else {
-          if (!/^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/.test(value)) {
+          if (!regRule['email'].test(value)) {
             callback(new Error('请输入正确的邮箱格式'));
           } else {
             this.isValidaEmail = true;
@@ -357,15 +368,9 @@
           imgCode1: null
         },
         formRules: {
-          password: [
-            { required: true, trigger: 'blur', validator: verifyEnterPwd, min: 6, max: 30 }
-          ],
-          new_password: [
-            { required: true, trigger: 'blur', validator: verifyAgainEnterPwd, min: 6, max: 30 }
-          ],
-          old_pwd: [
-            { required: true, trigger: 'blur', validator: verifyEnterPwd, min: 6, max: 30 }
-          ],
+          password: [{ required: true, trigger: 'blur', validator: verifyEnterPwd }],
+          new_password: [{ required: true, trigger: 'blur', validator: verifyAgainEnterPwd }],
+          old_pwd: [{ required: true, trigger: 'blur', validator: verifyEnterOldPwd }],
           code: [{ required: true, message: '请输入动态密码', trigger: 'blur' }],
           new_phone: [
             { required: true, min: 6, max: 30, validator: validatePhone, trigger: 'blur' }

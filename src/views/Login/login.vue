@@ -255,7 +255,7 @@
                 @focus="handleFocus('isPasswordFocus')"
                 @blur="handleBlur('isPasswordFocus')"
                 @keyup.enter.native="registerAccount"
-                :placeholder="!isPasswordFocus ? '设置密码（6-30个字符）' : ''"
+                :placeholder="!isPasswordFocus ? '包含大小写字母,数字在内的6-30个字符' : ''"
                 :maxlength="30"
                 auto-complete="off"
                 onkeyup="this.value=this.value.replace(/[\u4E00-\u9FA5]/g,'')"
@@ -354,7 +354,7 @@
           if (this.registerText) {
             callback();
           } else {
-            callback(new Error('请设置登录密码（6-30位字符）'));
+            callback(new Error('包含大小写字母,数字在内的6-30个字符'));
           }
         } else {
           callback();
