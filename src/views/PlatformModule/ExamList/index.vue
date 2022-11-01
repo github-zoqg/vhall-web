@@ -5,30 +5,25 @@
     <!-- 全部无结果 -->
     <div class="all-no-data" v-if="isDefaultShow">
       <null-page nullType="nullData" text="您还没有快问快答，快来创建吧！" :height="0"  v-if="pageLevel == 'user'">
-        <el-button type="primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="addExam">创建</el-button>
-        <el-button type="white-primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="openSelectDialog" v-if="pageLevel == 'webinar'">资料库</el-button>
+        <vh-button type="primary" round borderRadius="50" class="length152" v-preventReClick @click.prevent.stop="addExam">创建</vh-button>
       </null-page>
       <null-page nullType="nullData" text="您还没有快问快答，快来创建吧！" :height="0" v-else>
-        <el-button type="primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="addExam">创建</el-button>
-        <el-button type="white-primary" class="length106" size="medium" round v-preventReClick @click.prevent.stop="openSelectDialog" v-if="pageLevel == 'webinar'">资料库</el-button>
+        <vh-button type="primary" round size="medium" borderRadius="50" v-preventReClick @click.prevent.stop="addExam">创建</vh-button>
+        <vh-button round type="danger" ghost size="medium" borderRadius="50" class="length106" v-preventReClick @click.prevent.stop="openSelectDialog" v-if="pageLevel == 'webinar'">资料库</vh-button>
       </null-page>
     </div>
     <!-- 全部有结果 -->
     <div class="all-yes-data" v-else>
       <!-- 搜索 -->
       <div class="list--search">
-        <el-button type="primary" size="medium" round class="head-btn set-upload" @click="addExam">创建</el-button>
-        <el-button round class="transparent-btn" size="white-medium" @click="openSelectDialog" v-if="pageLevel == 'webinar'">资料库</el-button>
-        <el-button round class="transparent-btn" @click="deleteAll(null)" size="medium" :disabled="!selectChecked.length">批量删除</el-button>
-        <VhallInput placeholder="请输入名称" v-model.trim="keyword"
-          clearable
-          @clear="initQueryList"
-          class="search-query"
-          @input="checkoutList"
-          v-clearEmoij
-          @keyup.enter.native="initQueryList">
-          <i class="el-icon-search el-input__icon" slot="prefix" @click="initQueryList"></i>
-        </VhallInput>
+        <vh-button type="primary" round size="medium" borderRadius="50" class="length76" @click="addExam">创建</vh-button>
+        <vh-button round type="danger" ghost size="medium" borderRadius="50" class="length90 transparent-btn" @click="openSelectDialog" v-if="pageLevel == 'webinar'">资料库</vh-button>
+        <vh-button round type="default" ghost size="medium" borderRadius="50" class="length106 transparent-btn" @click="deleteAll(null)" :disabled="!selectChecked.length">批量删除</vh-button>
+        <vh-input
+          type="text"
+          class="search-data__input" size="medium" round placeholder="请输入名称" v-model.trim="keyword" clearable @clear="initQueryList" @keyup.enter.native="initQueryList">
+          <i slot="prefix" class="el-input__icon el-icon-search" @click="initQueryList"></i>
+        </vh-input>
       </div>
       <!-- 有消息内容 -->
       <div class="list-table-panel">
@@ -40,36 +35,54 @@
             :header-cell-style="{background:'#f7f7f7',color:'#666',height:'56px'}"
             @selection-change="changeTableCheckbox"
           >
+            <!-- 多选列 -->
             <vh-table-column
               type="selection"
               width="55"
               align="left"
             />
             <template  v-for="(item, index) in tableColumns">
+              <!-- 名称列 -->
               <vh-table-column
-                v-if="pageLevel === 'user' && item.key !== 'status' || pageLevel === 'webinar'"
+                v-if="item.key == 'title'"
                 align="left"
                 :key="index"
                 :width="item.width"
                 :label="item.label"
-                :show-overflow-tooltip="!item.customTooltip"
+                :show-overflow-tooltip="item.customTooltip"
+                fixed="left"
               >
                 <template slot-scope="scope">
                   <span>{{ scope.row[item.key] || '-' }}</span>
                 </template>
               </vh-table-column>
+              <!-- 其它非名称列 -->
+              <vh-table-column
+                v-if="(pageLevel === 'user' && item.key !== 'status_str' || pageLevel === 'webinar') && item.key !== 'title'"
+                align="left"
+                :key="index"
+                :width="item.width"
+                :label="item.label"
+                :show-overflow-tooltip="item.customTooltip"
+              >
+                <template slot-scope="scope">
+                  <span class="statusTag" :class="scope.row.status_css" v-if="item.key == 'status_str'">{{ scope.row[item.key] }}</span>
+                  <span v-else>{{ scope.row[item.key] || '-' }}</span>
+                </template>
+              </vh-table-column>
             </template>
+            <!-- 操作列 -->
             <vh-table-column
               label="操作"
               align="left"
               class="btn-rows"
               fixed="right"
-              width="240">
+              width="196">
               <template slot-scope="scope">
                 <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" @click="preview(scope.row)">预览</vh-button>
                 <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" @click="cope(scope.row)">复制</vh-button>
-                <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" @click="edit(scope.row)">编辑</vh-button>
-                <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" @click="del(scope.row)">删除</vh-button>
+                <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" :disabled="scope.row.status > 0" @click="edit(scope.row)">编辑</vh-button>
+                <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" :disabled="scope.row.status > 0" @click="del(scope.row)">删除</vh-button>
               </template>
             </vh-table-column>
             <div slot="empty" style="height: 0"></div>
@@ -117,7 +130,7 @@ export default {
       total: 0,
       isSearch: false, //是否是搜索
       selectChecked: [],
-      keyword: '',
+      keyword: 'asdf',
       query: {
         pos: 0,
         limit: 10,
@@ -132,7 +145,7 @@ export default {
           label: '名称',
           key: 'title',
           customTooltip: true,
-          width: '240'
+          width: '220'
         },
         {
           label: '创建时间',
@@ -161,7 +174,7 @@ export default {
         },
         {
           label: '状态',
-          key: 'status',
+          key: 'status_str',
           width: '120'
         }
       ],
@@ -224,8 +237,9 @@ export default {
       this.$confirm('删除后，此快问快答将无法使用，确认删除？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          customClass: 'zdy-message-box',
+          customClass: 'zdy-message-box zdy-vh-ui',
           lockScroll: false,
+          confirmButtonClass: 'zdy-vh-ui-confirm',
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
           this.$fetch(this.pageLevel == 'user' ? 'deleteExam' : 'deleteExamIsWebinar', this.pageLevel == 'user' ? {ids: id} : {
@@ -276,7 +290,7 @@ export default {
     },
     mockExamList() {
       return {
-        total: 10,
+        total: 200,
         list: [
           {
             id: 1,
@@ -287,7 +301,8 @@ export default {
             questions_count: 10,
             limit_time_switch: 1,
             limit_time: 70,
-            auto_push_switch: 0
+            auto_push_switch: 0,
+            status: 1
           },
           {
             id: 2,
@@ -298,7 +313,44 @@ export default {
             questions_count: 10,
             limit_time_switch: 0,
             limit_time: 0,
-            auto_push_switch: 0
+            auto_push_switch: 0,
+            status: 2
+          },
+          {
+            id: 3,
+            title: 'Apple产品功能知识点3',
+            created_at: '2022-10-23 00:00:00',
+            updated_at: '2022-10-23 00:00:00',
+            total_score: 100,
+            questions_count: 10,
+            limit_time_switch: 0,
+            limit_time: 0,
+            auto_push_switch: 0,
+            status: 3
+          },
+          {
+            id: 4,
+            title: 'Apple产品功能知识点Apple产品功能知识点Apple产品功能知识点Apple产品功能知识点4',
+            created_at: '2022-10-23 00:00:00',
+            updated_at: '2022-10-23 00:00:00',
+            total_score: 100,
+            questions_count: 10,
+            limit_time_switch: 0,
+            limit_time: 0,
+            auto_push_switch: 0,
+            status: 0
+          },
+          {
+            id: 5,
+            title: 'Apple产品功能知识点Apple产品功能知识点Apple产品功能知识点Apple产品功能知识点4',
+            created_at: '2022-10-23 00:00:00',
+            updated_at: '2022-10-23 00:00:00',
+            total_score: 100,
+            questions_count: 10,
+            limit_time_switch: 0,
+            limit_time: 0,
+            auto_push_switch: 0,
+            status: 0
           }
         ]
       }
@@ -330,6 +382,8 @@ export default {
           item.created_at_str = item.created_at.substring(0, 16)
           item.updated_at_str = item.updated_at.substring(0, 16)
           item.limit_time_str = item.limit_time_switch == 1 ? item.limit_time : '不限时'
+          item.status_css = ['no-push', 'answer', 'no-publish', 'publish'][item.status]
+          item.status_str = ['未推送', '答题中', '成绩待公布', '成绩已公布'][item.status]
         });
         this.resultVo = resData;
       }).catch(e=>{
@@ -345,17 +399,11 @@ export default {
       this.initQueryList();
     },
     initQueryList() {
+      // 表格切换到第一页
       this.query.pos = 0;
       this.query.pageNumber = 1;
       this.query.limit = 10;
-      // 表格切换到第一页
-      this.$nextTick(() => {
-        if (this.$refs.tableList) {
-          this.$refs.tableList.pageInfo.pageNum = 1;
-          this.$refs.tableList.pageInfo.pos = 0;
-        }
-        this.getExamList();
-      })
+      this.getExamList();
     },
     //文案提示问题
     messageInfo(msg, type) {
@@ -380,6 +428,42 @@ export default {
   }
 };
 </script>
+<style lang="less">
+.zdy-vh-ui {
+  .zdy-vh-ui-confirm {
+    color: #fff;
+    background-color: #fb2626;
+    border-color: #fb2626;
+    &:hover {
+      background: #d4151c;
+      border-color: #d4151c;
+      color: #fff;
+    }
+    &:active, &:focus {
+      background: #ad0914;
+      border-color: #ad0914;
+      color: #fff;
+      outline: 0;
+    }
+  }
+  .zdy-confirm-cancel {
+    color: #262626;
+    border-color: #d9d9d9;
+    background: transparent;
+    &:hover {
+      color: #262626;
+      border-color: #8c8c8c;
+      background: #fff;
+    }
+    &:active, &:focus {
+      color: #262626;
+      border-color: #595959;
+      background: #fff;
+      outline: 0;
+    }
+  }
+}
+</style>
 <style lang="less" scoped>
 /* 列表样式-------------------------------------- */
 .all-no-data {
@@ -410,6 +494,9 @@ export default {
 }
 /deep/.list--search {
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   .el-input {
     width: 180px;
     float: right;
@@ -445,9 +532,21 @@ export default {
       line-height: 36px;
     }
   }
+  .search-data__input {
+    margin-left: auto;
+    width: 180px;
+    height: 36px;
+    line-height: 36px;
+    .vh-input__prefix {
+      top: -2px;
+    }
+    .vh-input__inner {
+      border-radius: 100px;
+    }
+  }
 }
 .vmp-exam-list--search{
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   .el-select{
     float: right;
     margin-right: 20px;
@@ -491,6 +590,41 @@ export default {
   /deep/.el-table {
     margin-bottom: 32px;
   }
+  /deep/.vh-button+.vh-button {
+    margin-left: 12px;
+  }
+  .statusTag {
+    font-size: 14px;
+    &::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    &.no-push::before {
+      background: #8C8C8C;
+    }
+    &.answer::before {
+      background: #FB2626;
+    }
+    &.no-publish::before {
+      background: #FC9600;
+    }
+    &.publish::before {
+      background: #14ba6a;
+    }
+  }
+  .pageBox {
+    margin-top: 16px;
+  }
+  /deep/.vh-table__empty-block {
+    min-height: 0;
+    height: 0;
+    line-height: unset;
+  }
+  /* 灰底 */
   &.gray-theme {
     .all-no-data {
       /* 基于外边框已经有距离： padding: 24px 24px 24px 24px; */
@@ -505,6 +639,23 @@ export default {
       background: #FFFFFF;
       padding-bottom: 120px;
     }
+    .transparent-btn {
+      &:hover {
+        background-color: transparent;
+      }
+    }
+    /deep/.vh-input__inner {
+      background-color: transparent;
+    }
   }
+  .vh-button--text.is-ghost, .vh-button--text.is-plain {
+    color: rgba(0, 0, 0, 0.85);
+  }
+  /deep/.vh-button--text.is-plain.is-disabled:hover, /deep/.vh-button--text.is-plain.is-disabled:active, /deep/.vh-button--text.is-plain.is-disabled:focus {
+    color: rgba(0, 0, 0, 0.25) !important;
+  }
+}
+/deep/.vh-table__fixed-right::before, /deep/.vh-table__fixed::before {
+  height: 0;
 }
 </style>

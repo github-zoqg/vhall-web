@@ -486,7 +486,7 @@ export default {
               this.type != 4 // 定时直播、点播直播不支持；没权限也不支持
           },
           {
-            icon: 'icon_questionnaire@2x',
+            icon: 'icon_exam@2x',
             id: 7,
             title: '快问快答',
             subText: '提升答题趣味性，强化知识掌握',
