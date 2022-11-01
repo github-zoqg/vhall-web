@@ -1,5 +1,7 @@
 const path = require('path')
 const btool = require('./scripts/btool');
+const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
+
 const vueURL = ['production', 'pre'].includes(process.env.VUE_APP_NODE_ENV) ?
   '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.min.js' :
   '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.js'
@@ -99,9 +101,12 @@ module.exports = {
       options[0].version = process.VUE_CLI_SERVICE.pkg.version;
       options[0].gitlabHash = argv.hash; //gitlab jenkins对应的项目hash
       return options
-    })
+    });
     // config.plugin('webpack-bundle-analyzer')
     //   .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+
+    // 打包缓存加速
+    config.plugin("hardSource").use(HardSourceWebpackPlugin);
   },
   configureWebpack: (config) => {
     //   if (process.env.NODE_ENV === 'production') {

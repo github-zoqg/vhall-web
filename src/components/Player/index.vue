@@ -128,6 +128,7 @@
     </div>
   </div>
 </template>
+
 <script>
 /**
  * @author Sean
@@ -143,7 +144,6 @@
 import { secondToDateZH } from '../../utils/filter';
 import { session } from './js/utils';
 import { isIE } from '../../utils/utils';
-// import { throttle } from 'lodash';
 export default {
   props: {
     appId: {
