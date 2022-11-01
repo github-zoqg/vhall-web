@@ -6,7 +6,7 @@
         <!-- tab切换 -->
         <div id="examTabsDom" class="exam-tabs-layout">
           <el-tabs v-model="tabType" @tab-click="handleClick">
-            <el-tab-pane label="列表" name="table"></el-tab-pane>
+            <el-tab-pane label="问答列表" name="table"></el-tab-pane>
             <el-tab-pane label="用户信息" name="user"></el-tab-pane>
           </el-tabs>
         </div>
