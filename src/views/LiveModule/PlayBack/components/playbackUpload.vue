@@ -193,8 +193,10 @@ export default {
         this.pageInfo.pageNum = 1
         this.pageInfo.pos = 0
       }
+      let file_type = this.$route.query.type == 1 ? 'MP3,WAV' : 'RMVB,MP4,AVI,WMV,MKV,FLV,MOV';
       let formParams = {
-        get_no_trans: 0,
+        get_no_trans: 1,
+        file_type,
         user_id: this.userId,
         ...this.pageInfo
       }
