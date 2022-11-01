@@ -233,7 +233,7 @@
           <div class="previewPrivacy" v-if="item.privacy">
             <p>预览效果</p>
             <el-checkbox>
-              <p v-html="privacyFormatter(item.nodes)"></p>
+              <p><pre v-html="privacyFormatter(item.nodes)"></pre></p>
             </el-checkbox>
           </div>
           <!-- 底部按钮 -->
@@ -1381,6 +1381,9 @@ export default {
         color: #3562FA;
       }
     }
+  }
+  pre{
+    font-family: @fontMedium;
   }
 }
 </style>
