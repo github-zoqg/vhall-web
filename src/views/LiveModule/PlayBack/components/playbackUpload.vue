@@ -31,7 +31,7 @@
         type="primary"
         class="btn_right"
         round
-        @click="jumpPage"
+        @click="jumpPage($event)"
         >上传</vh-button
       >
 
@@ -316,7 +316,12 @@ export default {
       this.tableData = []
     },
     // 跳转 资料管理-音视频
-    jumpPage() {
+    jumpPage(e) {
+      let target = e.target;
+      if(target.nodeName == 'SPAN' || target.nodeName == 'I'){
+          target = e.target.parentNode;
+      }
+      target.blur();
       this.$confirm('上传资源会离开当前页面，将丢失已编辑信息，是否离开？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

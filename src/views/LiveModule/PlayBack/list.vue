@@ -902,6 +902,7 @@ export default {
       // 如果是上传音视频
       if(row.source == 2){
         this.$router.push({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: true, pageKey: this.$route.meta.name, type: this.liveDetailInfo.webinar_type}});
+        return
       }
       // 如果回放未转码完成，点击的时候需要获取最新的转码状态和是否支持章节功能
       this.$fetch('recordInfo', {
