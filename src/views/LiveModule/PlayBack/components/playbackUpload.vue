@@ -201,9 +201,7 @@ export default {
         ...this.pageInfo
       }
       if (this.keyword) {
-        formParams = {
-          title: this.keyword
-        }
+        formParams.title = this.keyword
       }
       this.isSearch = this.keyword ? true : false
       this.getTableList(formParams,params)
@@ -309,6 +307,7 @@ export default {
     // 关闭上传回放弹框
     cancel() {
       this.dialogVisible = false
+      this.keyword = ''
       this.checkedList = []
       this.tableData = []
     },

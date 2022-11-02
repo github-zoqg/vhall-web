@@ -202,7 +202,7 @@
                   <!-- 隐私声明 -->
                   <template>
                     <el-checkbox class="provicy-checkbox" v-model="form[provicy.id]">
-                      <pre v-html="provicyText"></pre>
+                      <p v-html="provicyText"></p>
                     </el-checkbox>
                   </template>
                 </el-form-item>
