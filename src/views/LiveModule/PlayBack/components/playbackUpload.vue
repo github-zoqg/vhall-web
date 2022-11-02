@@ -291,6 +291,10 @@ export default {
         this.$message.warning('请选择音视频')
         return false
       }
+      if(this.checkedList.length>20){
+        this.$message.warning('一次最多支持选择20个视频文件')
+        return false
+      }
       this.$fetch('recordUpload', {
         webinar_id: this.$route.params.str,
         record_ids: this.checkedList.join()

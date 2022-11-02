@@ -511,6 +511,7 @@ export default {
             { label: '全部来源', value: '-1' },
             { label: '回放', value: '0' },
             { label: '录制', value: '1' },
+            { label: '上传', value: '2' },
             { label: '打点录制', value: '3' }
           ]
         }
