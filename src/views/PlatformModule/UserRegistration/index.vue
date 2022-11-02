@@ -6,7 +6,7 @@
     element-loading-background="rgba(255,255,255,.9)">
     <!-- 7.5.7.2优化 数据展示 -->
     <div class="totalShow">
-      <div v-if="!(signUpPageType === 'subject'&&$route.query.subject_verify==1)" class="change_inline">共计报名用户<span>{{statistics.total_num || 0}}</span>位，线上报名<span>{{statistics.online_num || 0}}</span>位；</div>
+      <div v-if="!(signUpPageType === 'subject'&&!statistics.total_num)" class="change_inline">共计报名用户<span>{{statistics.total_num || 0}}</span>位，线上报名<span>{{statistics.online_num || 0}}</span>位；</div>
       <div class="change_inline" v-if="signUpPageType === 'webinar'">报名用户中，观看直播人数<span>{{statistics.watch_num || 0}}</span>位，占比<span>{{statistics.watch_percentage || 0}}%</span></div>
     </div>
     <!-- 7.5.7.2end -->
