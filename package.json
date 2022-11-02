@@ -32,7 +32,6 @@
     "@sentry/browser": "^6.10.0",
     "@sentry/integrations": "^6.10.0",
     "@vhall/paas-report-data": "^1.0.3",
-    "axios": "^0.19.0",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "better-scroll": "^2.0.6",
     "core-js": "^3.6.5",

@@ -163,6 +163,7 @@ const apis = {
   regVisiterCheck: ['/v3/webinars/registration-form/get-visiter-register-status', 'POST'], // 查询某个访客是否已经报过名
   verifyOpenLink: ['/v3/webinars/registration-form/verify-open-link', 'GET'], // 检查报名表单是否开启独立链接以及独立链接是否有效
   getAreaList: ['/data/area.json','GET', false, false, 'staticdata'], // 本地静态资源区域列表
+  getAreaListJson: ['/saas/common_libs/area.json','GET', false, false, 'staticdata'], // 本地静态资源区域列表
 
   // 第三方K值模块
   kidAuthInfo:  ['/v3/webinars/auth/info', 'POST'], // 获取单个活动K值详情接口 •••
