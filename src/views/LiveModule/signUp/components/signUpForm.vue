@@ -1551,6 +1551,8 @@
     }
     pre{
       font-family: @fontMedium;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
   }
 </style>
@@ -1570,6 +1572,8 @@
     }
     pre{
       font-family: @fontMedium;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
   }
 </style>
