@@ -107,17 +107,17 @@
         </div>
         <div class="modeHide" v-if="$route.query.type==2"></div>
       </el-form-item>
-      <el-form-item label="横竖屏设置" required v-if="webinarType=='live'&& liveMode== 2" class="max-column">
+      <el-form-item label="横竖屏设置" required v-if="webinarType=='live'&& (liveMode== 1||liveMode== 2)" class="max-column">
         <div class="titleBox">
           <div class="pageTitle">
             <span >创建直播后，横竖屏设置将无法修改</span>
           </div>
         </div>
         <div class="delay-director">
-          <div class="mode-common" :class="{directorActive: isFullScreen ==1}" @click.stop="choseFullScreen(1)">
+          <div class="mode-common" :class="{directorActive: isFullScreen ==1 , noDelay:$route.params.id}" @click.stop="choseFullScreen(1)">
             <i class="vh-saas-iconfont vh-saas-line-vertical-screen ft20"></i> 横屏直播
           </div>
-          <div v-if="webinarPortraitScreen" class="mode-director" :class="{ directorActive: isFullScreen !=1, disableBox: selectDirectorMode === 1}" @click.stop="choseFullScreen(0)">
+          <div v-if="webinarPortraitScreen" class="mode-director" :class="{ directorActive: isFullScreen !=1, disableBox: selectDirectorMode === 1,noDelay:$route.params.id}" @click.stop="choseFullScreen(0)">
             <span class="text-content"><i class="vh-saas-iconfont vh-saas-line-landscape ft20"></i> 竖屏直播</span>
           </div>
           <div v-if="!webinarPortraitScreen" class="mode-director noDirector" :class="{ disableBox: selectDirectorMode === 1}">
@@ -137,7 +137,7 @@
           <div class="mode-common" :class="{directorActive: selectDirectorMode === 0}" @click.stop="handleSelectDirectorMode(0)">
             <i class="vh-saas-iconfont vh-saas-line-mixeroff ft20"></i> 不启用云导播
           </div>
-          <div v-if="webinarDirector" class="mode-director" :class="{ directorActive: selectDirectorMode === 1, disableBox: selectDelayMode == 'delay'|| isFullScreen==0}" @click.stop="handleSelectDirectorMode(1)">
+          <div v-if="webinarDirector" class="mode-director" :class="{ directorActive: selectDirectorMode === 1, disableBox: selectDelayMode == 'delay'|| isFullScreen==0,noDelay:$route.params.id}" @click.stop="handleSelectDirectorMode(1)">
             <span class="text-content"><i class="vh-saas-iconfont vh-saas-line-mixer-on ft20"></i> 启用云导播</span>
           </div>
           <div v-if="!webinarDirector" class="mode-director noDirector" :class="{disableBox: selectDelayMode == 'delay'}">
@@ -1922,7 +1922,8 @@ export default {
     },
     // 选择横竖屏直播设置
     choseFullScreen(type){
-      if (this.selectDirectorMode ===1 && this.liveMode==2) return
+      if (this.title === '编辑') return
+      if (this.selectDirectorMode ===1 && (this.liveMode==1||this.liveMode==2)) return
       this.isFullScreen = type
     }
   }
