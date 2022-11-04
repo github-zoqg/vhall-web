@@ -15,8 +15,6 @@ let cdn = {
     '//static.vhallyun.com/jssdk/vhall-jssdk-chat/latest/vhall-jssdk-chat-2.0.9.js',
     '//cnstatic01.e.vhall.com/vhall-new-saas/static/polyfill.js?v=202',
     '//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.6.js',
-    '//s1.e.vhall.com/common-static/middle/middle-util/1.1.3/utils/index.min.js',
-    '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.8/questionnaire_service.js',
     vueURL, // 必须在elementUI 之前
     '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.js', // vhallUI
     '//s1.e.vhall.com/common-static/middle/vue-i18n/8.26.7/vue-i18n.min.js', // VueI18n
@@ -25,6 +23,8 @@ let cdn = {
     '//s1.e.vhall.com/common-static/middle/element-ui/lib/2.15.6/index.js', //elementUI
     '//s1.e.vhall.com/common-static/middle/lodash/4.17.21/lodash.min.js', // lodash
     '//s1.e.vhall.com/common-static/middle/echarts/4.9.0/echarts.min.js', // echarts
+    '//s1.e.vhall.com/common-static/middle/middle-util/1.1.3/utils/index.min.js',
+    '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.8/questionnaire_service.js',
   ],
   css: [
     '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.css',
