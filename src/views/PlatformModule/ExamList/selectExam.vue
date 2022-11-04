@@ -4,14 +4,14 @@
       <div class="show-main data-base">
         <p class="title">选择 <i class="el-icon-close" @click="selectDialogVisible=false"></i></p>
         <div class="data-search" v-show="total || isSearch">
-          <VhallInput class="search-dialog-tag" v-clearEmoij v-model="keyword" placeholder="请输入名称" clearable  @keyup.enter.native="seachExamList" style="width: 220px" @clear="seachExamList">
-            <i slot="prefix" class="el-icon-search el-input__icon" style="cursor: pointer; line-height: 36px;" @click="seachExamList"></i>
+          <VhallInput class="search-dialog-tag" v-clearEmoij v-model="keyword" placeholder="请输入名称" clearable  @keyup.enter.native="searchExamList" style="width: 220px" @clear="searchExamList">
+            <i slot="prefix" class="el-icon-search el-input__icon" style="cursor: pointer; line-height: 36px;" @click="searchExamList"></i>
           </VhallInput>
         </div>
         <div class="data-base-list" v-show="total || isSearch">
             <vh-table
               :data="tableData"
-              ref="tableList"
+              ref="selectExamTable"
               style="width: 100%"
               :height="(isSearch && total == 0) ? 0 : 320"
               v-loadMore="moreLoadData"
@@ -147,18 +147,101 @@ export default {
       let methodsCombin = this.$options.methods;
       methodsCombin[val.type](this, val);
     },
-    seachExamList() {
+    searchExamList() {
       this.tableData = [];
       this.pageInfo.pageNum = 1;
       this.pageInfo.pos = 0;
       try {
-        if (this.$refs.tableList) {
-          this.$refs.tableList.clearSelection();
+        if (this.$refs.selectExamTable) {
+          this.$refs.selectExamTable.clearSelection();
         }
       } catch(e) {}
       this.getExamList();
     },
+    mockExamList() {
+      return {
+        total: 200,
+        list: [
+          {
+            id: 1,
+            title: 'Apple产品功能知识点①',
+            created_at: '2022-10-23 00:00:00',
+            updated_at: '2022-10-23 00:00:00',
+            total_score: 100,
+            questions_count: 10,
+            limit_time_switch: 1,
+            limit_time: 70,
+            auto_push_switch: 0,
+            status: 1
+          },
+          {
+            id: 2,
+            title: 'Apple产品功能知识点2',
+            created_at: '2022-10-23 00:00:00',
+            updated_at: '2022-10-23 00:00:00',
+            total_score: 100,
+            questions_count: 10,
+            limit_time_switch: 0,
+            limit_time: 0,
+            auto_push_switch: 0,
+            status: 2
+          },
+          {
+            id: 3,
+            title: 'Apple产品功能知识点3',
+            created_at: '2022-10-23 00:00:00',
+            updated_at: '2022-10-23 00:00:00',
+            total_score: 100,
+            questions_count: 10,
+            limit_time_switch: 0,
+            limit_time: 0,
+            auto_push_switch: 0,
+            status: 3
+          },
+          {
+            id: 4,
+            title: 'Apple产品功能知识点Apple产品功能知识点Apple产品功能知识点Apple产品功能知识点4',
+            created_at: '2022-10-23 00:00:00',
+            updated_at: '2022-10-23 00:00:00',
+            total_score: 100,
+            questions_count: 10,
+            limit_time_switch: 0,
+            limit_time: 0,
+            auto_push_switch: 0,
+            status: 0
+          },
+          {
+            id: 5,
+            title: 'Apple产品功能知识点Apple产品功能知识点Apple产品功能知识点Apple产品功能知识点4',
+            created_at: '2022-10-23 00:00:00',
+            updated_at: '2022-10-23 00:00:00',
+            total_score: 100,
+            questions_count: 10,
+            limit_time_switch: 0,
+            limit_time: 0,
+            auto_push_switch: 0,
+            status: 0
+          }
+        ]
+      }
+    },
     getExamList() {
+      let resData = this.mockExamList();
+      resData.list.map(item => {
+        item.created_at_str = item.created_at.substring(0, 16)
+        item.updated_at_str = item.updated_at.substring(0, 16)
+        item.limit_time_str = item.limit_time_switch == 1 ? item.limit_time : '不限时'
+        item.status_css = ['no-push', 'answer', 'no-publish', 'publish'][item.status]
+        item.status_str = ['未推送', '答题中', '成绩待公布', '成绩已公布'][item.status]
+      });
+      this.total = resData.total;
+      let list = resData.list;
+      this.tableData.push(...list);
+      if(this.isCheckAll) {
+        this.$refs.selectExamTable.toggleAllSelection();
+      }
+      this.totalPages = Math.ceil(resData.total / this.pageInfo.limit);
+      return
       let formParams = {
         keyword: this.keyword
       }
@@ -170,12 +253,12 @@ export default {
         let list = res.data.list;
         this.tableData.push(...list);
         if(this.isCheckAll) {
-          this.$refs.tableList.toggleAllSelection();
+          this.$refs.selectExamTable.toggleAllSelection();
         }
         this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
       })
     },
-    // 选择资料库中的问卷
+    // 选择资料库中的快问快答
     choseSureExam() {
       if (this.checkList.length >= 21) {
         this.messageInfo('每次只能添加20个快问快答', 'error')
@@ -342,6 +425,9 @@ export default {
     }
     .data-base{
       width: 750px;
+    }
+    /deep/.vh-table::before {
+      height: 0;
     }
   }
 .dialog-footer{
