@@ -125,7 +125,7 @@ export default {
           })
           console.log(files, '当前文件对象');
           let pathVo = {
-            live: `webinars/intro-imgs/${this.$moment().format('YYYYMM')}`,
+            live: `webinars/intro-imgs/${dayjs().format('YYYYMM')}`,
             customTabImg: `interacts/menu-imgs`,
             special: `webinars/subject-imgs`,
             other: `webinars/saas-tinymce`

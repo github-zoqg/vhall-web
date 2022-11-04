@@ -28,8 +28,8 @@
     </div>
   </div>
 </template>
+
 <script>
-// import moment from 'moment';
 export default {
   props: {
     goodsAllInfo: {
@@ -63,12 +63,6 @@ export default {
     },
     // 立即购买
     nowPurchase () {
-      // window.vhallReport.report('GOOD_RECOMMEND', {
-      //   event: moment().format('YYYY-MM-DD HH:mm'),
-      //   market_tools_id: this.goodsAllInfo.good_id,
-      //   // 点击购买
-      //   market_tools_status: 1
-      // });
       window.location.href = this.goodsAllInfo.goods_url;
     },
     // 切换图片按钮

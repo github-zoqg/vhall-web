@@ -180,10 +180,10 @@ export default {
       window.vhallReport = new VhallReport({
         user_id: this.rootActive.join_info.join_id,
         webinar_id: this.rootActive.webinar.id,
-        t_start: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        t_start: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss'),
         os: 10,
         type: 4,
-        entry_time: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        entry_time: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss'),
         pf: 7,
         env: process.env.VUE_APP_NODE_ENV === 'production' ? 'production' : 'test'
       });

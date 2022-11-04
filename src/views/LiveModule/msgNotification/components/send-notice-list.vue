@@ -213,8 +213,8 @@
           this.pageNum = 1;
         }
         if (this.searchDate) {
-          this.query.start_time = this.$moment(this.searchDate[0]).format('YYYY-MM-DD 00:00:00') // 有效期 - 开始时间
-          this.query.end_time = this.$moment(this.searchDate[1]).format('YYYY-MM-DD 23:59:59')
+          this.query.start_time = dayjs(this.searchDate[0]).format('YYYY-MM-DD 00:00:00') // 有效期 - 开始时间
+          this.query.end_time = dayjs(this.searchDate[1]).format('YYYY-MM-DD 23:59:59')
         } else {
           this.query.start_time = ''
           this.query.end_time = ''
@@ -291,11 +291,11 @@
         end.setTime(end.getTime())
         start.setTime(start.getTime() - 3600 * 1000 * 24 * 6)
         this.searchDate = [
-          this.$moment(start).format('YYYY-MM-DD'),
-          this.$moment(end).format('YYYY-MM-DD')
+        dayjs(start).format('YYYY-MM-DD'),
+        dayjs(end).format('YYYY-MM-DD')
         ]
-        this.query.start_time = this.$moment(this.searchDate[0]).format('YYYY-MM-DD 00:00:00')
-        this.query.end_time = this.$moment(this.searchDate[1]).format('YYYY-MM-DD 00:00:00')
+        this.query.start_time = dayjs(this.searchDate[0]).format('YYYY-MM-DD 00:00:00')
+        this.query.end_time = dayjs(this.searchDate[1]).format('YYYY-MM-DD 00:00:00')
         this.searchSendNoticeList('init')
       }
     },

@@ -36,7 +36,6 @@
 import VhallReport from '@/components/VhallReport/main'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import { isIE } from '@/utils/utils'
-import moment from 'moment'
 import tip from './tip'
 import { sessionOrLocal, clearCookies } from '@/utils/utils'
 
@@ -378,7 +377,7 @@ export default {
       this.goodInfo = goodInfo
       window.vhallReport &&
         window.vhallReport.report('GOOD_RECOMMEND', {
-          event: moment().format('YYYY-MM-DD HH:mm'),
+          event: dayjs().format('YYYY-MM-DD HH:mm'),
           market_tools_id: this.goodInfo.good_id,
           // 浏览
           market_tools_status: 0,
@@ -1179,8 +1178,8 @@ export default {
         pf: 7,
         user_id: this.roomData.join_info.join_id,
         webinar_id: this.$route.params.il_id,
-        t_start: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
-        entry_time: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        t_start: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        entry_time: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss'),
         service_names: this.roominfo.is_replay == 1 ? 2 : 1,
         type: 3,
         env:

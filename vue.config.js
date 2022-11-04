@@ -24,7 +24,6 @@ let cdn = {
     '//s2.e.vhall.com/common-static/middle/dayjs/1.10.8/dayjs.min.js', // dayjs
     '//s1.e.vhall.com/common-static/middle/element-ui/lib/2.15.6/index.js', //elementUI
     '//s1.e.vhall.com/common-static/middle/lodash/4.17.21/lodash.min.js', // lodash
-    '//s1.e.vhall.com/common-static/middle/moment/2.29.1/dist/moment.min.js', // lodash
     '//s1.e.vhall.com/common-static/middle/echarts/4.9.0/echarts.min.js', // echarts
   ],
   css: [

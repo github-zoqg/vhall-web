@@ -240,7 +240,7 @@ export default {
       const start = new Date();
       end.setTime(end.getTime());
       start.setTime(start.getTime());
-      this.dateValue = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      this.dateValue = [dayjs(start).format('YYYY-MM-DD'), dayjs(end).format('YYYY-MM-DD')];
     },
     searchTime() {
       if (this.type == 1) {

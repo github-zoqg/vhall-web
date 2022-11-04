@@ -600,7 +600,6 @@ import { isIE, clearCookies } from '@/utils/utils'
 import invited from './rankList' // 邀请榜
 import reward from './rankList/reward' // 打赏榜
 import goodsPop from './rankList/goodsPop'
-// import moment from 'moment'
 import QRcode from 'qrcode'
 // import customTab from './custom-tab'
 import tip from './tip'
@@ -945,7 +944,7 @@ export default {
     // 点击商品获得详细的信息
     sellGoodsInfo(id) {
       window.vhallReport && window.vhallReport.report('GOOD_RECOMMEND', {
-        event: moment().format('YYYY-MM-DD HH:mm'),
+        event: dayjs().format('YYYY-MM-DD HH:mm'),
         market_tools_id: id,
         // 浏览
         market_tools_status: 0
@@ -1720,8 +1719,8 @@ export default {
         pf: 7,
         user_id: this.roomData.join_info.join_id,
         webinar_id: this.$route.params.il_id,
-        t_start: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
-        entry_time: this.$moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        t_start: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        entry_time: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss'),
         service_names: this.roominfo.is_replay == 1 ? 2 : 1,
         type: 3,
         env: process.env.VUE_APP_NODE_ENV === 'production' ? 'production' : 'test'
