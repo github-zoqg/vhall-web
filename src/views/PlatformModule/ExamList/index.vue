@@ -81,8 +81,8 @@
               <template slot-scope="scope">
                 <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" @click="preview(scope.row)">预览</vh-button>
                 <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" @click="cope(scope.row)">复制</vh-button>
-                <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" :disabled="scope.row.status > 0" @click="edit(scope.row)">编辑</vh-button>
-                <vh-button borderRadius="4" type="text" plain size="mini" class="zdy-theme-gray" :disabled="scope.row.status > 0" @click="del(scope.row)">删除</vh-button>
+                <vh-button borderRadius="4" type="text" plain size="mini" :class="`zdy-theme-gray ${scope.row.status > 0 ? 'is-disabled' : ''}`" @click="edit(scope.row)">编辑</vh-button>
+                <vh-button borderRadius="4" type="text" plain size="mini" :class="`zdy-theme-gray ${scope.row.status > 0 ? 'is-disabled' : ''}`" @click="del(scope.row)">删除</vh-button>
               </template>
             </vh-table-column>
             <div slot="empty" style="height: 0"></div>
@@ -221,6 +221,12 @@ export default {
     },
     // 编辑 - 单个快问快答
     edit(rows) {
+      if (this.pageLevel == 'webinar' && rows.status > 0) {
+        this.messageInfo('已推送的快问快答不支持编辑，建议进行「复制」', 'warning');
+        return
+      } else if (rows.status > 0) {
+        return
+      }
       this.$router.push({
         path: '/material/addExam',
         query: {
@@ -231,6 +237,12 @@ export default {
     },
     // 删除 - 单条记录
     del(rows) {
+      if (this.pageLevel == 'webinar' && rows.status > 0) {
+        this.messageInfo('已推送的快问快答不支持删除', 'warning');
+        return
+      } else if (rows.status > 0) {
+        return
+      }
       this.deleteConfirm(rows.id, 2);
     },
     deleteConfirm(id, index) {
@@ -363,6 +375,16 @@ export default {
     },
     // 获取列表数据
     getExamList() {
+      let resData = this.mockExamList();
+       resData.list.map(item => {
+          item.created_at_str = item.created_at.substring(0, 16)
+          item.updated_at_str = item.updated_at.substring(0, 16)
+          item.limit_time_str = item.limit_time_switch == 1 ? item.limit_time : '不限时'
+          item.status_css = ['no-push', 'answer', 'no-publish', 'publish'][item.status]
+          item.status_str = ['未推送', '答题中', '成绩待公布', '成绩已公布'][item.status]
+        });
+        this.resultVo = resData;
+      return
       this.loading = true;
       this.isSearch = this.keyword ? true : false;
       let obj = Object.assign({}, {
@@ -613,7 +635,7 @@ export default {
       background: #FC9600;
     }
     &.publish::before {
-      background: #14ba6a;
+      background: #0FBA5A;
     }
   }
   .pageBox {
