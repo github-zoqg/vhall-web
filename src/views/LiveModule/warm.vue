@@ -283,6 +283,7 @@ export default {
           // 音视频上传跳转别的界面，什么也不做
         } else {
           this.closeWarm();
+          next && next()
         }
       } else {
         this.messageInfo('获取暖场视频信息失败，请稍后重试', 'error')
