@@ -42,7 +42,7 @@
       <div class="preview_btn">
         <vh-radio-group v-model="livingPreview" size="small" @change="choseLivingPreview">
           <vh-radio-button round :label="1">PC预览</vh-radio-button>
-          <vh-radio-button round :label="2">手机预览</vh-radio-button>
+          <vh-radio-button round :label="2" :disabled="baseInfo&&baseInfo.webinar_show_type==0">手机预览</vh-radio-button>
         </vh-radio-group>
       </div>
       <div class="preview_box">
@@ -62,10 +62,7 @@
           </div>
           <div class="preview_box_wap" v-show="livingPreview==2">
             <wap-preview ref="livingWapPreview" :type="livingPcPreviewType" :domainUrl="domain_wap_url" :livingWapForm="livingWapForm" :livingForm="livingForm" :videoUrl="video_url" :isShowInteract="isShowInteract"></wap-preview>
-            <span v-if="livingWapForm.style==3 && livingPcPreviewType == 1 && webinarType == 1" class="preview_box_wap_tip">注意：<br/>1. 用电脑客户端和app发起非无延迟视频直播，
-简洁风格无法展示文档，建议使用电脑网页端发起。<br/><template v-if="webinarId">2. 音频模式使用简洁风格，观看页无法展示文档和白板。</template><template v-if="!webinarId">2. 直播中请勿切换风格模板，以免出现问题。</template></span>
-            <span v-if="livingWapForm.style==3 && livingPcPreviewType == 1 &&  webinarType != 1" class="preview_box_wap_tip">注意：用电脑客户端和app发起非无延迟视频直播，
-简洁风格无法展示文档，建议使用电脑网页端发起。</span>
+            <span v-if="livingWapForm.style==3 && livingPcPreviewType == 1 && webinarType == 1" class="preview_box_wap_tip">注意：<template v-if="webinarId">音频模式使用简洁风格，观看页无法展示文档和白板。</template><template v-if="!webinarId">直播中请勿切换风格模板，以免出现问题。</template></span>
             <span v-if="livingWapForm.style!=3 && livingPcPreviewType == 1 && !webinarId" class="preview_box_wap_tip">注意：直播中请勿切换风格模板，以免出现问题。</span>
           </div>
         </div>
@@ -176,7 +173,7 @@
               <vh-radio-button round :label="2">左右显示</vh-radio-button>
             </vh-radio-group>
           </div>
-          <template v-if="isShowVideoBackground || isShowInteract">
+          <template v-if="baseInfo&&baseInfo.webinar_show_type==1&&(isShowVideoBackground || isShowInteract)">
             <div class="form_item_br">
               以下设置对PC和移动端同时生效～
             </div>
@@ -320,6 +317,10 @@ export default {
     livingConfig: {
       type: Number,
       default: 0
+    },
+    baseInfo: {
+      type: Object,
+      default: null
     }
   },
   data() {

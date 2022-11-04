@@ -35,7 +35,9 @@
               <label class="live-status" v-if="item.webinar_state == 1">
                 <img src="../../../../../common/images/live.gif" alt="">
               </label>
-              {{item | actionTag}}<span v-if="item.webinar_type != 6 && hasDelayPermission && item.no_delay_webinar == 1">| 无延迟</span>
+              {{item | actionTag}}
+              <span v-if="item.webinar_type != 6 && hasDelayPermission && item.no_delay_webinar == 1">| 无延迟</span>
+              <span v-if="item.webinar_show_type == 0">| 竖屏</span>
             </span>
           </div>
           <div class="vh-chose-active-item__cover-hots">
@@ -220,7 +222,7 @@ export default {
 
       item.checked = !item.checked;
       this.selectedOption = this.activeList.filter(item => item.checked);
-      
+
       // 按时间排序
       // let webinars = this.selectedOption.map((item) => {
       //   return item.webinar_id

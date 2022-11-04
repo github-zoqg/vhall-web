@@ -313,7 +313,7 @@ export default {
        * status：0互动直播  1音频直播 2视频直播
        */
       const liveTypeStr = ['', '预约', '直播', '回放', '点播', '结束'];
-      const liveStatusStr = ['互动直播', '音频直播', '视频直播'];
+      const liveStatusStr = ['互动', '音频', '视频'];
       let str = liveTypeStr[val.type];
       if (val.type != 4) {
         str += ` | ${liveStatusStr[val.is_interact]}`;

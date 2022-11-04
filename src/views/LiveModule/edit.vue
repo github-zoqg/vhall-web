@@ -6,7 +6,7 @@
         Number($route.query.type) === 2 ? '编辑信息' : `${title || ''}${webinarTypeToZHTitle}`
       "
     ></pageTitle>
-    <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="80px">
+    <el-form :model="formData" ref="ruleForm" v-loading="loading" label-width="100px">
       <!-- 观看语种 -->
       <el-form-item label="观看语种" prop="languageVa" class="margin32">
         <div class="titleBox">
@@ -36,16 +36,15 @@
         </div>
         <div class="language-select">
           <el-checkbox-group :min="1" v-model="languageVa" @change="addLangList">
-            <template v-for="(item, key) in languageOps">
-              <!-- 没有多语言权限 或者 当前选择的分组直播模式 -->
-              <el-checkbox
-                :label="item.value"
-                :key="'lang_' + key"
-                :disabled="!hasMultilingual || (webinarTypeToZHTitle == '直播' && liveMode == 6)"
-              >
-                {{ item.label }}
-              </el-checkbox>
-            </template>
+            <!-- 没有多语言权限 或者 当前选择的分组直播模式 -->
+            <el-checkbox
+              v-for="(item, key) in languageOps"
+              :key="'lang_' + key"
+              :label="item.value"
+              :disabled="!hasMultilingual || (webinarTypeToZHTitle == '直播' && liveMode == 6)"
+            >
+              {{ item.label }}
+            </el-checkbox>
           </el-checkbox-group>
         </div>
       </el-form-item>
@@ -233,6 +232,54 @@
         </div>
         <div class="modeHide" v-if="$route.query.type == 2"></div>
       </el-form-item>
+      <el-form-item
+        label="横竖屏设置"
+        required
+        v-if="webinarType == 'live' && (liveMode == 1 || liveMode == 2)"
+        class="max-column"
+      >
+        <div class="titleBox">
+          <div class="pageTitle">
+            <span>创建直播后，横竖屏设置将无法修改</span>
+          </div>
+        </div>
+        <div class="delay-director">
+          <div
+            class="mode-common"
+            :class="{ directorActive: isFullScreen == 1, noDelay: $route.params.id }"
+            @click.stop="choseFullScreen(1)"
+          >
+            <i class="vh-saas-iconfont vh-saas-line-vertical-screen ft20"></i>
+            横屏直播
+          </div>
+          <div
+            v-if="webinarPortraitScreen"
+            class="mode-director"
+            :class="{
+              directorActive: isFullScreen != 1,
+              disableBox: selectDirectorMode === 1,
+              noDelay: $route.params.id
+            }"
+            @click.stop="choseFullScreen(0)"
+          >
+            <span class="text-content">
+              <i class="vh-saas-iconfont vh-saas-line-landscape ft20"></i>
+              竖屏直播
+            </span>
+          </div>
+          <div
+            v-if="!webinarPortraitScreen"
+            class="mode-director noDirector"
+            :class="{ disableBox: selectDirectorMode === 1 }"
+          >
+            <span class="text-content">
+              <i class="vh-saas-iconfont vh-saas-line-landscape ft20"></i>
+              竖屏直播
+            </span>
+            <span class="no-open">未开通</span>
+          </div>
+        </div>
+      </el-form-item>
       <el-form-item label="云导播" required v-if="showDelayTag && liveMode == 2" class="max-column">
         <div class="titleBox">
           <div class="pageTitle">
@@ -272,7 +319,8 @@
             class="mode-director"
             :class="{
               directorActive: selectDirectorMode === 1,
-              disableBox: selectDelayMode == 'delay'
+              disableBox: selectDelayMode == 'delay' || isFullScreen == 0,
+              noDelay: $route.params.id
             }"
             @click.stop="handleSelectDirectorMode(1)"
           >
@@ -323,20 +371,19 @@
           </span>
         </div>
         <el-select filterable v-model="zdy_inav_num" style="width: 312px">
-          <template v-for="(opt, optIndex) in inavNumOptions">
-            <el-option
-              :key="optIndex"
-              :label="opt.label"
-              :value="opt.label"
-              :disabled="
-                selectDelayMode == 'delay' && liveMode != 6
-                  ? speakerMaxNum < 6
-                    ? opt.value > speakerMaxNum
-                    : opt.value > 6
-                  : opt.value > speakerMaxNum
-              "
-            />
-          </template>
+          <el-option
+            v-for="(opt, optIndex) in inavNumOptions"
+            :key="optIndex"
+            :label="opt.label"
+            :value="opt.label"
+            :disabled="
+              selectDelayMode == 'delay' && liveMode != 6
+                ? speakerMaxNum < 6
+                  ? opt.value > speakerMaxNum
+                  : opt.value > 6
+                : opt.value > speakerMaxNum
+            "
+          />
         </el-select>
         <el-tooltip v-if="liveMode == 3" v-tooltipMove>
           <div slot="content">
@@ -1227,6 +1274,7 @@
           } // 1固定，表示西班牙语
         },
         webinarDirector: false, // admin无云导播活动权限
+        webinarPortraitScreen: false, // admin无竖屏权限
         tags_name: [],
         checkedTags: [], // 选中标签
         checkedTagsBefore: [], // 选中标签确认前
@@ -1235,7 +1283,8 @@
         tagName: '', // 新建标签名称
         tagList: [1, 2, 3, 4], // 所有标签集合
         SAAS_VS_PES: null,
-        WEBINAR_PES: null
+        WEBINAR_PES: null,
+        isFullScreen: 1 // 横竖屏设置
       };
     },
     beforeRouteEnter(to, from, next) {
@@ -1340,12 +1389,16 @@
       }
 
       //  webinar.director 1:有无延迟权限  0:无权限
-      if (
-        JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1'
-      ) {
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['portrait_screen'] == '1') {
         this.webinarDirector = true;
       } else {
         this.webinarDirector = false;
+      }
+      //  portrait_screen 是否支持竖屏 1:开启 0:关闭。
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['portrait_screen'] == '1') {
+        this.webinarPortraitScreen = true;
+      } else {
+        this.webinarPortraitScreen = false;
       }
       this.getTagsList('init');
     },
@@ -1519,6 +1572,7 @@
       handleSelectDirectorMode(mode) {
         if (this.title === '编辑') return;
         if (this.selectDelayMode == 'delay' && mode == 1) return;
+        if (this.isFullScreen == 0) return;
         this.selectDirectorMode = mode;
       },
       getLiveBaseInfo(id, flag) {
@@ -1539,6 +1593,7 @@
             this.formData.date1 = this.liveDetailInfo.start_time.substring(0, 10);
             this.formData.date2 = this.liveDetailInfo.start_time.substring(11, 16);
             this.liveMode = this.liveDetailInfo.webinar_type;
+            this.isFullScreen = this.liveDetailInfo.webinar_show_type;
             // this.formData.imageUrl = this.liveDetailInfo.img_url;
             // this.formData.domain_url = this.liveDetailInfo.img_url;
             this.tagIndex = this.liveDetailInfo.category - 1;
@@ -1701,6 +1756,7 @@
         }
         if (index == 2) {
           this.selectDirectorMode = 0;
+          this.isFullScreen = 1;
         }
       },
       cropComplete(cropperData, url, mode) {
@@ -1860,7 +1916,8 @@
             (this.liveMode == 3 || this.liveMode == 6) && this.webinarType == 'live'
               ? Number(this.zdy_inav_num.replace('1v', '')) + 1
               : '',
-          is_director: this.selectDirectorMode || 0
+          is_director: this.selectDirectorMode || 0,
+          webinar_show_type: this.liveMode == 2 ? this.isFullScreen : 1
         };
         if (this.liveMode == 6) {
           data.auto_speak = Number(this.speakSwitch);
@@ -2481,6 +2538,12 @@
       unSureSelectTag() {
         this.checkedTagsBefore = this.checkedTags;
         this.selectTagDialog = false;
+      },
+      // 选择横竖屏直播设置
+      choseFullScreen(type) {
+        if (this.title === '编辑') return;
+        if (this.selectDirectorMode === 1 && (this.liveMode == 1 || this.liveMode == 2)) return;
+        this.isFullScreen = type;
       }
     }
   };
@@ -2579,13 +2642,33 @@
   }
   /deep/ .el-form-item {
     // width: 100%;
-    max-width: 668px;
+    max-width: 700px;
     margin-bottom: 22px;
     &.max-column {
       max-width: 868px;
       margin-bottom: 26px;
       .titleBox {
         padding-bottom: 4px;
+      }
+      .group {
+        display: flex;
+        align-items: center;
+        .btn {
+          height: 36px;
+          line-height: 36px;
+          border-radius: 4px;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          color: #666;
+          padding: 0 10px;
+          margin-right: 10px;
+          cursor: pointer;
+          &.active {
+            background-color: #fb3a32;
+            border-color: #fb3a32;
+            color: #fff;
+          }
+        }
       }
     }
   }

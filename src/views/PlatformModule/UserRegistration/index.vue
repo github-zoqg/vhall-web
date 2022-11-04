@@ -304,7 +304,7 @@ export default {
         type: this.query.type,
         keyword: this.query.keyword
       }
-      if (this.signUpPageType === 'subject') {
+      if (this.signUpPageType === 'webinar'&&this.query.is_enter !== '') {
         params.is_enter = this.query.is_enter
       }
       this.$fetch('exportForm', {

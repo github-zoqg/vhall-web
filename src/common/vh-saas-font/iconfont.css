@@ -1,8 +1,8 @@
 @font-face {
   font-family: "vh-saas-iconfont"; /* Project id 3120276 */
-  src: url('iconfont.woff2?t=1649299854982') format('woff2'),
-       url('iconfont.woff?t=1649299854982') format('woff'),
-       url('iconfont.ttf?t=1649299854982') format('truetype');
+  src: url('iconfont.woff2?t=1666861813196') format('woff2'),
+       url('iconfont.woff?t=1666861813196') format('woff'),
+       url('iconfont.ttf?t=1666861813196') format('truetype');
 }
 
 .vh-saas-iconfont {
@@ -13,12 +13,44 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.vh-saas-fill-off:before {
-  content: "\e792";
+.vh-saas-line-vertical-screen:before {
+  content: "\e8c9";
+}
+
+.vh-saas-line-landscape:before {
+  content: "\e915";
+}
+
+.vh-saas-line-Live:before {
+  content: "\e872";
+}
+
+.vh-saas-line-public1:before {
+  content: "\e871";
+}
+
+.vh-saas-a-line-Interactivetools:before {
+  content: "\e84d";
 }
 
 .vh-saas-Videoroundtour:before {
   content: "\e86e";
+}
+
+.vh-saas-tablets:before {
+  content: "\e870";
+}
+
+.vh-saas-delete:before {
+  content: "\e86f";
+}
+
+.vh-saas-jianpan_icon:before {
+  content: "\e75b";
+}
+
+.vh-saas-fill-off:before {
+  content: "\e792";
 }
 
 .vh-saas-line-mixeroff:before {
@@ -95,10 +127,6 @@
 
 .vh-saas-line-switch:before {
   content: "\e84c";
-}
-
-.vh-saas-a-line-Interactivetools:before {
-  content: "\e84d";
 }
 
 .vh-saas-line-drag:before {

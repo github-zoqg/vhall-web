@@ -87,6 +87,7 @@
                   <span v-if="item.is_new_version == 3 && (item.webinar_type == 3 || item.webinar_type == 6) && item.zdy_inav_num > 1"> | 1v{{Number(item.inav_num)-1}}</span>
                   <span v-if="item.webinar_type != 6 && isDelay && item.no_delay_webinar == 1"> | 无延迟</span>
                   <span v-if="webinarDirector && item.is_director === 1"> | 云导播</span>
+                  <span v-if="item.webinar_show_type == 0"> | 竖屏</span>
                 </span>
                 <span class="hot">
                   <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>

@@ -361,12 +361,5 @@ const router = [
     meta: { auth: true, title: '选择发起方式', name: 'chooseWay'},
     hidden: true
   },
-  {
-    // 该路由已废弃
-    path: '/special/detail',
-    meta: { title: '个人专题详情', name: 'specialPreview'},
-    component: () => import('@/views/SpecialModule/components/preShow'),
-    hidden: true
-  }
 ];
 export default router;
