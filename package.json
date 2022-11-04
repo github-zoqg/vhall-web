@@ -45,10 +45,12 @@
     "qs": "^6.8.0",
     "uuid": "^8.3.2",
     "vhall-ui": "0.0.2",
+    "@vue/composition-api": "1.3.0",
     "vue": "^2.6.11",
     "vue-awesome-swiper": "^3.1.3",
     "vue-cropperjs": "^4.2.0",
     "vue-router": "^3.2.0",
+    "vue-masonry": "^0.16.0",
     "vuedraggable": "^2.24.3",
     "vuescroll": "^4.17.0",
     "whatwg-fetch": "^3.0.0"

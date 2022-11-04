@@ -100,19 +100,23 @@
       <null-page class="search-no-data" :height="0" v-if="resultVo && resultVo.total === 0"></null-page>
     </div>
     <!-- 资料库：选择列表-->
-    <select-exam ref="selectExamDom" @getTableList="getExamList"></select-exam>
+    <select-exam ref="selectExamDom" @getTableList="getExamList" @selectExamPreview="selectExamPreview"></select-exam>
+    <!-- 预览快问快答 -->
+    <exam-preview ref="examPreviewDom" maxWidth="580px" maxHeight="420px"></exam-preview>
   </div>
 </template>
 
 <script>
 import NullPage from '../Error/nullPage.vue';
 import { sessionOrLocal } from '@/utils/utils';
-import SelectExam from './selectExam.vue'
+import ExamPreview from './components/exam-preview/main.vue'
+import SelectExam from './components/selectExam.vue'
 export default {
   name: "ExamList",
   components: {
     NullPage,
-    SelectExam
+    SelectExam,
+    ExamPreview
   },
   props: {
     // 查询层级
@@ -202,6 +206,7 @@ export default {
     preview(rows) {
       this.isShowQuestion = true;
       this.examId = rows.id;
+      this.$refs.examPreviewDom && this.$refs.examPreviewDom.openPreview(JSON.stringify({id: this.examId}), 'mock');
     },
     // 复制 - 单个快问快答
     cope(rows) {
@@ -444,6 +449,10 @@ export default {
     openSelectDialog() {
       this.$refs.selectExamDom.selectDialogVisible = true;
     },
+    // 资料库内预览
+    selectExamPreview(vo, answerType) {
+      this.$refs.examPreviewDom && this.$refs.examPreviewDom.openPreview(JSON.stringify(vo), answerType);
+    }
   },
   mounted() {
     this.initComp();
