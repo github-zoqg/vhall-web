@@ -638,7 +638,7 @@ export default {
         }
         // 若是当前为 this.no_show
         this.tableList.unshift({
-          created_at: this.$moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
+          created_at: dayjs(new Date()).format('YYYY-MM-DD hh:mm:ss'),
           ext: lastFileKey.toLowerCase(),
           file_name: file.name,
           id: file.uid,

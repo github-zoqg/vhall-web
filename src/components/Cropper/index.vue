@@ -42,9 +42,11 @@
     </div>
   </el-dialog>
 </template>
+
 <script>
 import vueCropper from 'vue-cropperjs'
-import { debounce } from '@/utils/utils';
+import 'cropperjs/dist/cropper.css';
+
 export default {
   props: {
     // 比例
@@ -81,15 +83,6 @@ export default {
       this.isShowImages = true;
       console.log(url, '???!2324')
     },
-    // goCropper() {
-    //   // this.isShowImages = !this.isShowImages;
-    //   debounce(this.changeValue, true, 3000)
-    //   // this.isShowImages = !this.isShowImages;
-    //   // console.log(this.isShowImages, '???13224')
-    //   // if (this.isShowImages) {
-    //   //   this.$refs.cropper.reset()
-    //   // }
-    // },
     async changeValue() {
       this.isShowImages = !this.isShowImages;
     },

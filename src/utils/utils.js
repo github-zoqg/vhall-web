@@ -1,10 +1,9 @@
 // session存储（设置、获取、删除）
 import fetchData from "@/api/fetch";
 import NProgress from "nprogress";
-// import { message } from 'element-ui';
 import Cookies from 'js-cookie';
 import { v1 as uuidV1 } from 'uuid';
-import { fn } from "moment";
+
 export const sessionOrLocal = {
   set: (key, value, saveType = 'sessionStorage') => {
     if (!key) return;
@@ -26,6 +25,7 @@ export const sessionOrLocal = {
     window[saveType].clear();
   }
 };
+
 // 判断是否IE
 export function isIE() {
   return (!!window.ActiveXObject || 'ActiveXObject' in window || navigator.userAgent.indexOf("Edge") > -1);
@@ -51,40 +51,67 @@ export function resize() {
   }
 }
 
-// 防抖
-export const debounce = (function(immediate = false) {
-  let timer = 0
-  return function(callback, ms) {
-    clearTimeout(timer)
+/**
+ * 防抖原理：一定时间内，只有最后一次操作，再过wait毫秒后才执行函数
+ * 
+ * @param {Function} func 要执行的回调函数 
+ * @param {Number} wait 延时的时间
+ * @param {Boolean} immediate 是否立即执行 
+ * @return null
+ */
+export const debounce = (function () {
+  let timeout = null;
+  return function (func, wait = 500, immediate = false) {
+    // 清除定时器
+    if (timeout !== null) clearTimeout(timeout);
+    // 立即执行，此类情况一般用不到
     if (immediate) {
-      let bool = !timer;
-      timer = setTimeout(() => (timer = 0), ms)
-      return bool && fn.apply(this, [...arguments]);
+      var callNow = !timeout;
+      timeout = setTimeout(function () {
+        timeout = null;
+      }, wait);
+      if (callNow) typeof func === 'function' && func();
     } else {
-      timer = setTimeout(callback, ms)
+      // 设置定时器，当最后一次操作后，timeout不会再被清除，所以在延时wait毫秒后执行func回调方法
+      timeout = setTimeout(function () {
+        typeof func === 'function' && func();
+      }, wait);
     }
-
   }
 })()
 
-// 节流
-export const throttle = function(func, delay) {
-  let timer = null;
-  let startTime = Date.now();
-  return function() {
-    const curTime = Date.now();
-    const remaining = delay - (curTime - startTime);
-    const context = this;
-    const args = arguments;
-    clearTimeout(timer);
-    if (remaining <= 0) {
-      func.apply(context, args);
-      startTime = Date.now();
+/**
+ * 节流原理：在一定时间内，只能触发一次
+ * 
+ * @param {Function} func 要执行的回调函数 
+ * @param {Number} wait 延时的时间
+ * @param {Boolean} immediate 是否立即执行
+ * @return null
+ */
+export const throttle = (function () {
+  let timer, flag;
+  return function (func, wait = 500, immediate = true) {
+    if (immediate) {
+      if (!flag) {
+        flag = true;
+        // 如果是立即执行，则在wait毫秒内开始时执行
+        typeof func === 'function' && func();
+        timer = setTimeout(() => {
+          flag = false;
+        }, wait);
+      }
     } else {
-      timer = setTimeout(func, remaining);
+      if (!flag) {
+        flag = true
+        // 如果是非立即执行，则在wait毫秒内的结束处执行
+        timer = setTimeout(() => {
+          flag = false
+          typeof func === 'function' && func();
+        }, wait);
+      }
     }
   }
-}
+})();
 
 export function calculateAudioLevel(level) {
   let audioLevelValue = 1;
@@ -248,7 +275,7 @@ export function checkUploadType(file, that, type = 1) {
   let imgSrc = window.URL.createObjectURL(file);
   let img = new Image();
   img.src = imgSrc;
-  img.onload = function() {
+  img.onload = function () {
     // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
     if (img.width !== 1280 && img.height !== 720) {
       that.$message({
@@ -525,14 +552,14 @@ const MOZ_HACK_REGEXP = /^moz([A-Z])/;
 const ieVersion = Number(document.documentMode);
 
 /* istanbul ignore next */
-const camelCase = function(name) {
-  return name.replace(SPECIAL_CHARS_REGEXP, function(_, separator, letter, offset) {
+const camelCase = function (name) {
+  return name.replace(SPECIAL_CHARS_REGEXP, function (_, separator, letter, offset) {
     return offset ? letter.toUpperCase() : letter;
   }).replace(MOZ_HACK_REGEXP, 'Moz$1');
 };
 
 /* istanbul ignore next */
-export const getStyle = ieVersion < 9 ? function(element, styleName) {
+export const getStyle = ieVersion < 9 ? function (element, styleName) {
   if (!element || !styleName) return null;
   styleName = camelCase(styleName);
   if (styleName === 'float') {
@@ -552,7 +579,7 @@ export const getStyle = ieVersion < 9 ? function(element, styleName) {
   } catch (e) {
     return element.style[styleName];
   }
-} : function(element, styleName) {
+} : function (element, styleName) {
   if (!element || !styleName) return null;
   styleName = camelCase(styleName);
   if (styleName === 'float') {
@@ -574,12 +601,12 @@ export const refreshToken = () => {
   if (token !== undefined && token !== 'undefined' && token !== '' && token !== null && token !== 'null') {
 
     //发起端、控制台进入页面添加刷新token机制,每七天刷新一次。  7*24*3600*1000 mm
-    let tokenRefresh = sessionOrLocal.get('tokenRefresh', 'localStorage') ||  new Date().getTime() ;
+    let tokenRefresh = sessionOrLocal.get('tokenRefresh', 'localStorage') || new Date().getTime();
     tokenRefresh = parseFloat(tokenRefresh)
     const curTime = new Date().getTime()
-    const dur = 7*24*3600*1000
+    const dur = 7 * 24 * 3600 * 1000
     console.log('tokenRefresh:', new Date(tokenRefresh).toLocaleString(), tokenRefresh)
-    if(curTime-tokenRefresh>dur){
+    if (curTime - tokenRefresh > dur) {
       return fetchData('refreshToken').then(res => {
         sessionOrLocal.set('token', res.data.token || '', 'localStorage');
         sessionOrLocal.set('tokenRefresh', new Date().getTime(), 'localStorage')
@@ -597,14 +624,16 @@ export const refreshToken = () => {
 
 // 清空Cookies
 export const clearCookies = () => {
-  const keys = document.cookie.match(/[^ =;]+(?=\\=)/g);
+  const keys = document.cookie.match(/[^ =;]+(?=\=)/g);
   if (keys) {
-    for (let i = keys.length; i--;)
-      document.cookie = keys[i] + '=0;expires=' + new Date(0).toUTCString()
+    for (let i = keys.length; i--;) {
+      // document.cookie = keys[i] + '=0;expires=' + new Date(0).toUTCString();
+      Cookies.remove(keys[i], { path: '' })
+    }
   }
-  // TODO 重点关注如何清空缓存key
-  Cookies.remove('token', { path: '' })
-  Cookies.remove('sso_token', { path: '' })
+  // 重点关注如何清空缓存key
+  // Cookies.remove('token', { path: '' })
+  // Cookies.remove('sso_token', { path: '' })
 }
 /**
  * @description 多次替换对一个问题做替换(使用uuid作为占位符)
@@ -650,7 +679,7 @@ export const isEmptyObj = obj => {
  * @param {String} url url地址
  * @returns object
  */
- export const parseQueryString = url => {
+export const parseQueryString = url => {
   return [...new URL(url).searchParams].reduce(
     (cur, [key, value]) => ((cur[key] = value), cur),
     {}
@@ -704,9 +733,9 @@ export const parseImgOssQueryString = imgUrl => {
 };
 
 export const BgImgsSize = [
-  '100% 100%','cover','contain'
+  '100% 100%', 'cover', 'contain'
 ]
 export const ImgsSize = [
-  'fill','cover','scale-down'
+  'fill', 'cover', 'scale-down'
 ]
 

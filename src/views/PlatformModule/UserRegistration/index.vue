@@ -4,6 +4,12 @@
   }]"  v-loading="loading"
     element-loading-text="加载中，请稍候"
     element-loading-background="rgba(255,255,255,.9)">
+    <!-- 7.5.7.2优化 数据展示 -->
+    <div class="totalShow">
+      <div class="change_inline">共计报名用户<span>{{statistics.total_num || 0}}</span>位，线上报名<span>{{statistics.online_num || 0}}</span>位；</div>
+      <div class="change_inline" v-if="signUpPageType === 'webinar'">报名用户中，观看直播人数<span>{{statistics.watch_num || 0}}</span>位，占比<span>{{statistics.watch_percentage || 0}}%</span></div>
+    </div>
+    <!-- 7.5.7.2end -->
     <!-- 全部无结果 -->
     <div class="all-no-data" v-if="isDefaultShow">
       <null-page nullType="nullData" text="暂无专题数据，请去专题下的直播活动查看数据吧！" :height="0"  v-if="signUpPageType === 'subject' && isDataPage">
@@ -178,7 +184,8 @@ export default {
       /*--------------------快速报名参数定义--------------------*/
       addUserVisible: false,
       /*--------------------导入用户参数定义--------------------*/
-      importVisible: false
+      importVisible: false,
+      statistics:{}
     };
   },
   computed: {
@@ -324,10 +331,29 @@ export default {
       this.importVisible = false
       this.messageInfo('导入成功')
       this.initQueryUserList()
-    }
+    },
+    getStatistics() {
+      let params;
+      if(this.signUpPageType === 'webinar'){
+        params = {
+          webinar_id: this.webinarOrSubjectId
+        }
+      } else {
+        params = {
+          subject_id: this.webinarOrSubjectId
+        }
+      }
+      this.$fetch('getStatistics', params).then(res =>{
+        this.loading = false;
+        if (res && res.code === 200) {
+          this.statistics =  res.data;
+        }
+      });
+    },
   },
   mounted() {
     this.initComp()
+    this.getStatistics()
   }
 };
 </script>
@@ -455,6 +481,19 @@ export default {
       padding-top: 60px;
       background: #FFFFFF;
       padding-bottom: 120px;
+    }
+  }
+  .totalShow{
+    height: 46px;
+    line-height: 26px;
+    span{
+      font-weight: bold;
+      color: #FB3A32;
+      font-size: 22px;
+    }
+    .change_inline{
+      font-weight: bold;
+      display: inline-block;
     }
   }
 }

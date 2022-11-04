@@ -1,7 +1,7 @@
 <template>
   <div :class="['chooseWay', { 'no-login': executeType !== 'ctrl' }]">
     <OldHeader
-      :is-show-login="false"
+      :isShowLogin="false"
       class="old-header"
       v-if="executeType !== 'ctrl' && arr[1] != 1 && arr[1] != 2"
       scene="chooseWay"
@@ -184,7 +184,6 @@
 import PageTitle from '@/components/PageTitle'
 import { sessionOrLocal, getQueryString } from '@/utils/utils'
 import OldHeader from '@/components/OldHeader'
-import Env from '@/api/env'
 import { v1 as uuidV1 } from 'uuid'
 
 export default {

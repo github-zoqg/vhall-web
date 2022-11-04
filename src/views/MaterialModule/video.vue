@@ -336,7 +336,7 @@ export default {
         this.initPayMessage()
       }
       let param = {
-        create_time: this.$moment(file.lastModifiedDate).format('YYYY-MM-DD HH:mm:ss'),
+        create_time: dayjs(file.lastModifiedDate).format('YYYY-MM-DD HH:mm:ss'),
         file_name: beforeName,  //后端要求名称带上后缀名  如xxx 改成 xxx.mp4
         duration: '',
         video_name: beforeName,

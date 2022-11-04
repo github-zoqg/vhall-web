@@ -79,7 +79,7 @@ export default {
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       end.setTime(end.getTime() - 3600 * 1000 * 24 * 1);
-      this.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      this.timeStr = [dayjs(start).format('YYYY-MM-DD'), dayjs(end).format('YYYY-MM-DD')];
       // 按时间查询
       this.getDateInfo();
     },
