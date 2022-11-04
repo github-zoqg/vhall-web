@@ -13,6 +13,9 @@ import './utils/prototype'
 import * as filters from './utils/filter';
 import { getParams } from './utils/general';
 import ElementUI from 'element-ui';
+// 瀑布流
+import { VueMasonryPlugin } from 'vue-masonry';
+
 // css相关
 import '@/common/css/theme/index.css';
 import '@/components/Icon/index';
@@ -100,6 +103,7 @@ Vue.use(VueI18n);
 Vue.use(loadMore);
 Vue.use(tooltipMove);
 Vue.use(clearEmoij);
+Vue.use(VueMasonryPlugin);
 
 // 大数据上报配置
 Vue.use(PaasPort, {

@@ -1,75 +1,76 @@
 <template>
-  <div class="height-exam">
   <div class="show-exam exam-base" v-if="selectDialogVisible">
-      <div class="show-main data-base">
-        <p class="title">选择 <i class="el-icon-close" @click="selectDialogVisible=false"></i></p>
-        <div class="data-search" v-show="total || isSearch">
-          <VhallInput class="search-dialog-tag" v-clearEmoij v-model="keyword" placeholder="请输入名称" clearable  @keyup.enter.native="searchExamList" style="width: 220px" @clear="searchExamList">
-            <i slot="prefix" class="el-icon-search el-input__icon" style="cursor: pointer; line-height: 36px;" @click="searchExamList"></i>
-          </VhallInput>
-        </div>
-        <div class="data-base-list" v-show="total || isSearch">
-            <vh-table
-              :data="tableData"
-              ref="selectExamTable"
-              style="width: 100%"
-              :height="(isSearch && total == 0) ? 0 : 320"
-              v-loadMore="moreLoadData"
-              @selection-change="handleSelectionChange"
-              @select-all="checkAllExam"
-              >
-              <vh-table-column
-                type="selection"
-                width="55">
-              </vh-table-column>
-              <vh-table-column
-                fixed
-                label="名称">
-                <template slot-scope="scope">
-                  <span class="mediaName" :title="scope.row.title">
-                    {{scope.row.title}}
-                  </span>
-                </template>
-              </vh-table-column>
-              <vh-table-column
-                prop="total_score"
-                label="总分">
-              </vh-table-column>
-              <vh-table-column
-                prop="questions_count"
-                label="题数">
-              </vh-table-column>
-              <vh-table-column
-                label="限时（分）">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.limit_time_switch == 1 ? scope.row.limit_time : '不限时'}}</span>
-                </template>
-              </vh-table-column>
-              <vh-table-column
-                width="100"
-                fixed
-                label="操作">
-                <template slot-scope="scope">
-                  <span class="show-hover" style="cursor: pointer;" @click="preview(scope.row)">预览</span>
-                </template>
-              </vh-table-column>
-            </vh-table>
-            <noData :nullType="'search'" :height="50" v-if="isSearch && total == 0"></noData>
-        </div>
-        <div class="no-live" v-show="!total && !(isSearch && total == 0)">
-          <noData :nullType="'nullData'" :text="'您还没有快问快答，快来创建吧！'" :height="10">
-            <el-button type="primary" round @click="addExam" v-preventReClick>创建</el-button>
-          </noData>
-        </div>
-        <div v-show="total || (isSearch && total == 0)">
-          <p class="text">已选择<span>{{ checkList.length }}</span>个（每次最多选择20个）</p>
-          <div slot="footer" class="dialog-footer">
-            <el-button round size="medium" type="primary" @click.prevent.stop="choseSureExam" :disabled="!checkList.length" v-preventReClick>确 定</el-button>
-            <el-button round size="medium" @click.prevent.stop="handleCloseVisiton" v-preventReClick>取 消</el-button>
-          </div>
+    <div class="show-main data-base">
+      <p class="title">选择快问快答 <i class="el-icon-close" @click="selectDialogVisible=false"></i></p>
+      <div class="data-search" v-show="total || isSearch">
+        <VhallInput class="search-dialog-tag" v-clearEmoij v-model="keyword" placeholder="请输入名称" clearable  @keyup.enter.native="searchExamList" style="width: 180px" @clear="searchExamList">
+          <i slot="prefix" class="el-icon-search el-input__icon" style="cursor: pointer; line-height: 36px;" @click="searchExamList"></i>
+        </VhallInput>
+      </div>
+      <div class="data-base-list" v-show="total || isSearch">
+          <vh-table
+            :data="tableData"
+            ref="selectExamTable"
+            style="width: 100%"
+            :height="(isSearch && total == 0) ? 0 : 320"
+            v-loadMore="moreLoadData"
+            @selection-change="handleSelectionChange"
+            @select-all="checkAllExam"
+            >
+            <vh-table-column
+              type="selection"
+              width="55">
+            </vh-table-column>
+            <vh-table-column
+              fixed="left"
+              label="名称">
+              <template slot-scope="scope">
+                <span class="mediaName" :title="scope.row.title">
+                  {{scope.row.title}}
+                </span>
+              </template>
+            </vh-table-column>
+            <vh-table-column
+              prop="total_score"
+              label="总分"
+              width="100">
+            </vh-table-column>
+            <vh-table-column
+              prop="questions_count"
+              label="题数"
+              width="100">
+            </vh-table-column>
+            <vh-table-column
+              label="限时（分）"
+              width="100">
+              <template slot-scope="scope">
+                <span>{{ scope.row.limit_time_switch == 1 ? scope.row.limit_time : '不限时'}}</span>
+              </template>
+            </vh-table-column>
+            <vh-table-column
+              width="100"
+              fixed="right"
+              label="操作">
+              <template slot-scope="scope">
+                <span class="show-hover" style="cursor: pointer;" @click="preview(scope.row)">预览</span>
+              </template>
+            </vh-table-column>
+          </vh-table>
+          <noData :nullType="'search'" :height="50" v-if="isSearch && total == 0"></noData>
+      </div>
+      <div class="no-live" v-show="!total && !(isSearch && total == 0)">
+        <noData :nullType="'nullData'" :text="'您还没有快问快答，快来创建吧！'" :height="10">
+          <el-button type="primary" round @click="addExam" v-preventReClick>创建</el-button>
+        </noData>
+      </div>
+      <div v-show="total || (isSearch && total == 0)">
+        <p class="text">已选择<span>{{ checkList.length }}</span>个（每次最多选择20个）</p>
+        <div slot="footer" class="dialog-footer">
+          <el-button round size="medium" type="primary" @click.prevent.stop="choseSureExam" :disabled="!checkList.length" v-preventReClick>确 定</el-button>
+          <el-button round size="medium" @click.prevent.stop="handleCloseVisiton" v-preventReClick>取 消</el-button>
         </div>
       </div>
-  </div>
+    </div>
   </div>
 </template>
 <script>
@@ -291,7 +292,10 @@ export default {
      // 预览
     preview(rows) {
       this.examId = rows.id;
-      this.selectDialogVisible = false;
+      // this.selectDialogVisible = false;
+      this.$emit('selectExamPreview', {
+        id: this.examId
+      }, 'mock');
     },
     checkAllExam(selection) {
       // 全选
@@ -338,7 +342,7 @@ export default {
 
 .data-base-list {
   width: 100%;
-  margin: 24px 0;
+  margin: 16px 0 24px 0;
   padding: 0 32px;
   .mediaName{
     font-size: 14px;
@@ -424,7 +428,7 @@ export default {
       }
     }
     .data-base{
-      width: 750px;
+      width: 800px;
     }
     /deep/.vh-table::before {
       height: 0;
