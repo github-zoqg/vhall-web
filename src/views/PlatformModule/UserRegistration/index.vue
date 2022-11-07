@@ -487,12 +487,12 @@ export default {
     height: 46px;
     line-height: 26px;
     span{
-      font-weight: bold;
+      color: #1A1A1A;
       color: #FB3A32;
       font-size: 22px;
     }
     .change_inline{
-      font-weight: bold;
+      color: #1A1A1A;
       display: inline-block;
     }
   }
