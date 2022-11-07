@@ -8,7 +8,7 @@
       :before-close='cancel'
       width="900px"
     >
-      <noData :nullType="'null'" text='您还未上传过音视频，快来创建吧!' height='100' v-if="!keyword&&!total" class="nullPageH">
+      <noData :nullType="'null'" text='您还未上传过音视频，快来创建吧!' :height='100' v-if="!keyword&&!total" class="nullPageH">
         <vh-button
           size="medium"
           type="primary"
@@ -239,7 +239,13 @@ export default {
                   break
               }
             })
-            this.tableData = type == 'search' ? res.data.list : this.tableData.concat(res.data.list)
+            if(type == 'search'){
+              this.tableData = res.data.list
+            } else {
+              res.data.list.forEach(i=>{
+                this.tableData.push(i)
+              })
+            }
             this.total&&this.$nextTick(()=>{
               document
               .querySelector('.table_base')
