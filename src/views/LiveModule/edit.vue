@@ -1917,7 +1917,7 @@
               ? Number(this.zdy_inav_num.replace('1v', '')) + 1
               : '',
           is_director: this.selectDirectorMode || 0,
-          webinar_show_type: this.liveMode == 2 ? this.isFullScreen : 1
+          webinar_show_type: this.liveMode == 1||this.liveMode == 2 ? this.isFullScreen : 1
         };
         if (this.liveMode == 6) {
           data.auto_speak = Number(this.speakSwitch);
