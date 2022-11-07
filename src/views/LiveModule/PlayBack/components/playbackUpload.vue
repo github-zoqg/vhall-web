@@ -5,6 +5,7 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      :append-to-body="false"
       :before-close='cancel'
       width="900px"
     >
