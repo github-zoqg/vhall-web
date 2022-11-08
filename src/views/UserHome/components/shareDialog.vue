@@ -39,7 +39,6 @@
 
 <script>
 import Env from "@/api/env";
-import { session } from '../../../components/Player/js/utils';
 import { sessionOrLocal } from '../../../utils/utils';
 export default {
   created() {},
