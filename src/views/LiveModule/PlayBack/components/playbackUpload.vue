@@ -1,6 +1,6 @@
 <template>
   <div class="playbackUploade">
-    <vh-dialog
+    <el-dialog
       title="选择音视频"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
@@ -141,7 +141,7 @@
         >
         <vh-button @click="cancel" round size="medium">取消</vh-button>
       </span>
-    </vh-dialog>
+    </el-dialog>
     <!-- 预览组件 -->
     <span v-if="showDialog">
       <vh-dialog
@@ -406,8 +406,8 @@ export default {
       background: #e0e0e0;
     }
   }
-  .vh-saas-dialog {
-    .vh-icon-close {
+  .el-saas-dialog {
+    .el-icon-close {
       position: absolute;
       right: 0;
       top: 20px;
@@ -415,14 +415,14 @@ export default {
       color: #fff;
       cursor: pointer;
     }
-    .vh-dialog {
+    .el-dialog {
       box-shadow: none;
       background: transparent !important;
     }
-    .vh-dialog__header {
+    .el-dialog__header {
       background: transparent !important;
     }
-    .vh-dialog__body {
+    .el-dialog__body {
       padding: 4px 6px;
       background: #000;
       border-radius: 4px;
