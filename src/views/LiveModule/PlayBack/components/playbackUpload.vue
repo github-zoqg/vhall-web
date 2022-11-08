@@ -283,7 +283,7 @@ export default {
         .querySelector('.table_base')
         .querySelector('.vh-table__body').offsetHeight
       if (
-        Math.ceil(contentH - (Math.ceil(scrollTop) + domHeight)) == 0 &&
+        Math.ceil(contentH - (Math.ceil(scrollTop) + domHeight)) <= 0 &&
         this.total > this.tableData.length
       ) {
         this.pageInfo.pos += 10
