@@ -250,12 +250,16 @@
           <p class="subColor">直播即将开始</p>
           <p><span>观众等待中</span></p>
           <el-button
-            v-if="liveDetailInfo.webinar_type != 5 && !portraitScreen"
+            v-if="liveDetailInfo.webinar_type != 5 "
             round
             type="primary"
+            :disabled="portraitScreen"
             @click="toRoom"
             >发起直播</el-button
           >
+          <div class="alert" v-if="portraitScreen">竖屏直播只支持由app端发起
+            <a class="qr" href="http://e.vhall.com/app" target="_blank">立即下载</a>
+          </div>
         </div>
       </el-col>
     </el-row>
