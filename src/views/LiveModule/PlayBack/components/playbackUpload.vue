@@ -291,7 +291,7 @@ export default {
         this.getSearchList()
         console.log('加载接口', '.scrollTop')
       }
-      console.log(scrollTop, domHeight, contentH, '.scrollTop')
+      // console.log(scrollTop, domHeight, contentH, '.scrollTop')
     },
     // 同步数据接口
     sure() {
