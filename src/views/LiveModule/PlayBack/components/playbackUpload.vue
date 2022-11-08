@@ -167,7 +167,7 @@
 <script>
 import noData from '@/views/PlatformModule/Error/nullPage'
 import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue'
-import { sessionOrLocal } from '@/utils/utils'
+import { sessionOrLocal, debounce } from '@/utils/utils'
 export default {
   components: { noData, VideoPreview },
   data() {
@@ -283,7 +283,7 @@ export default {
         .querySelector('.table_base')
         .querySelector('.vh-table__body').offsetHeight
       if (
-        contentH - (scrollTop + domHeight) < 1 &&
+        Math.ceil(contentH - (scrollTop + domHeight)) == 0 &&
         this.total > this.tableData.length
       ) {
         this.pageInfo.pos += 10
