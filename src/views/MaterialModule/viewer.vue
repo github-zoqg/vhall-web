@@ -282,11 +282,10 @@
 <script>
 import DefaultGroup from '@/components/DefaultGroup'
 import PageTitle from '@/components/PageTitle';
-import env from '@/api/env';
 import { sessionOrLocal } from "@/utils/utils";
+import regRule from '@/utils/reg-rule';
 import NullPage from '../PlatformModule/Error/nullPage.vue';
 import FileUpload from '@/components/FileUpload/main';
-import Env from "@/api/env";
 import { debounce } from "@/utils/utils"
 
 
@@ -435,7 +434,7 @@ export default {
         ],
         phone: [
           { required: false, message: '请输入手机号码', trigger: 'blur' },
-          { pattern: /^1[0-9]{10}$/, message: '请输入正确的手机号码', trigger: 'blur' },
+          { pattern: regRule['mobile'], message: '请输入正确的手机号码', trigger: 'blur' },
           { max: 11, message: '请输入正确的手机号码', trigger: 'blur' },
           { min: 1, message: '请输入正确的手机号码', trigger: 'blur' }
         ],

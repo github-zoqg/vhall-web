@@ -245,12 +245,12 @@
         </div>
         <div
           class="inner liveTime"
-          v-if="outLiveTime && liveDetailInfo.webinar_state == 2 && !portraitScreen"
+          v-if="outLiveTime && liveDetailInfo.webinar_state == 2"
         >
           <p class="subColor">直播即将开始</p>
           <p><span>观众等待中</span></p>
           <el-button
-            v-if="liveDetailInfo.webinar_type != 5"
+            v-if="liveDetailInfo.webinar_type != 5 && !portraitScreen"
             round
             type="primary"
             @click="toRoom"

@@ -40,19 +40,11 @@ export default {
       window.clearInterval(this.dateUpdateTimer);
     }
     // 获取本地系统时间字符串
-    // this.sysDateStr = this.$moment(new Date().getTime()).format('llll');
     let nowTime = JSON.parse(sessionOrLocal.get('currentDate'));
-    this.sysDateStr = this.$moment(nowTime).format('YYYY年MM月DD日');
-    // this.updateData();
+    this.sysDateStr = dayjs(nowTime).format('YYYY年MM月DD日');
     this.getBreadcrumb();
   },
   methods: {
-    updateData() {
-      let that = this;
-      this.dateUpdateTimer = setInterval(() => {
-        that.sysDateStr = that.$moment(new Date().getTime()).format('llll');
-      }, 60000); // 一分钟更新一下
-    },
     getBreadcrumb() {
       // this.$router 所有路由。this.$route 当前路由
       console.log('导航面包屑')

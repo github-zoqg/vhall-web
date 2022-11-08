@@ -15,7 +15,6 @@ const CHANGED = 2;
 const status = ['INIT', 'INPUT', 'CHANGED']
 const changedLog = debug=>{
     if(!debug) return ()=>false
-    console.warn("`@packy-tang/vue-tinymce`进入debug模式");
     return (e, _status, val, oldVal)=>console.log(`来自：%s | 状态：%s \n %s \n %s`, e.type, status[_status], val, oldVal)
 }
 

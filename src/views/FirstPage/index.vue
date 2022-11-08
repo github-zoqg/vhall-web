@@ -395,7 +395,7 @@ export default {
             this.openSys = false
           } else {
             let nowTime = JSON.parse(sessionOrLocal.get('currentDate'));
-            this.openSys = this.$moment(nowTime).diff(this.$moment(res.data.end_time), 'day') <= 3
+            this.openSys = dayjs(nowTime).diff(dayjs(res.data.end_time), 'day') <= 3
           }
         } else {
           this.openSys = false
@@ -425,8 +425,8 @@ export default {
         // account_id: this.userId,
         // user_id: parentId == 0 ? '' : this.userId,
         type: 1,
-        start_time: this.$moment(start).format('YYYY-MM-DD'),
-        end_time: this.$moment(end).format('YYYY-MM-DD')
+        start_time: dayjs(start).format('YYYY-MM-DD'),
+        end_time: dayjs(end).format('YYYY-MM-DD')
       };
       this.$fetch('getDataCenterInfo', this.$params(params)).then(res =>{
         this.mainKeyData = {...res.data.key_data};
