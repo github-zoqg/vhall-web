@@ -3,6 +3,7 @@ const btool = require('./scripts/btool');
 const vueURL = ['production', 'pre'].includes(process.env.VUE_APP_NODE_ENV) ?
   '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.min.js' :
   '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.js'
+  const UselessFile = require('useless-files-webpack-plugin');
 
 let cdn = {
   js: [
@@ -128,9 +129,20 @@ module.exports = {
       VueI18n: 'VueI18n',
       echarts: 'echarts',
     }
+    const plugins = []
+    if(argv.checkunuse) {
+      plugins.push(new UselessFile({
+        root: './src', // 项目目录
+        out: './fileList.json', // 输出文件列表
+        // out: (files) => deal(files), // 或者回调处理
+        clean: false // 删除文件,
+        // exclude: path // 排除文件列表, 格式为文件路径数组
+      }))
+    }
     return {
       // optimization,
-      externals
+      externals,
+      plugins
     }
   },
   pluginOptions: {
