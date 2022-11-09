@@ -262,6 +262,9 @@ export default {
       methodsCombin[val.type](this, val);
     },
     search() {
+      if (this.$refs.tableList) {
+        this.$refs.tableList.currentChangeHandler(1)
+      }
       this.pos = 0;
       this.pageNumber = 1;
       this.getTableList();

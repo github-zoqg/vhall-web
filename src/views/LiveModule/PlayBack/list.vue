@@ -83,7 +83,7 @@
 
                   <p class="create-time">{{ scope.row.created_at }}</p>
                   <span v-if="scope.row.doc_status && WEBINAR_PES['ui.record_chapter']" class="tag">章节</span>
-                  <span v-if="scope.row.layout != 0" class="tag">重制</span>
+                  <span v-if="scope.row.layout != 0 && scope.row.is_union_screen != 1" class="tag">重制</span>
                 </div>
               </div>
             </template>
@@ -161,7 +161,7 @@
               <el-dropdown v-if="!isDemand && !scope.row.is_rehearsal" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
-                  <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout" :disabled="scope.row.source == 2" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
+                  <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout && scope.row.is_union_screen != 1" :disabled="scope.row.source == 2" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
                   <el-dropdown-item v-if="!scope.row.layout" :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
                   <el-dropdown-item v-if="WEBINAR_PES['publish_record'] && !scope.row.layout" :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
                   <el-dropdown-item v-if="!scope.row.layout || scope.row.layout != 0" :command="{command: 'record.encrypt', data: scope.row}">加密</el-dropdown-item>
