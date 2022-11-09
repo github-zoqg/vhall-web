@@ -19,6 +19,8 @@
     "build:test6": "vue-cli-service build --mode test6",
     "build:test01": "vue-cli-service build --mode test01",
     "build:test02": "vue-cli-service build --mode test02",
+    "build:test03": "vue-cli-service build --mode test03",
+    "build:test04": "vue-cli-service build --mode test04",
     "build:pre": "vue-cli-service build --mode pre",
     "preview": "node build/index.js --preview",
     "test:unit": "vue-cli-service test:unit",
