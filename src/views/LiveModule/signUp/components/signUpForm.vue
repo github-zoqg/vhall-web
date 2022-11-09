@@ -8,9 +8,9 @@
             <img v-else :class="`signWrap__header-${coverImageMode}`" :src="`${ Env.staticLinkVo.uploadBaseUrl }${ baseInfo.cover }`" alt="">
           </header>
           <article>
-            <h1 class="pageTitle">{{ baseInfo.title }}</h1>
+            <h1 class="pageTitle"><pre>{{ baseInfo.title }}</pre></h1>
             <p ref="intro" v-if="baseInfo.intro" :class="['pageIntro', overflowStatus == 1 ? 'pageIntroEllipsis' : '']">
-              {{ baseInfo.intro }}
+              <pre>{{ baseInfo.intro }}</pre>
               <span @click="handleUnfold(2)" class="textTail" v-show="overflowStatus == 1">
                 <span class="isEllipsis">... </span>{{ '展开' }}
               </span>
@@ -20,14 +20,14 @@
             </p>
             <div v-if="isSubscribe === 1" class="tabsBox">
               <div :class="['tabs', baseInfo.theme_color]">
-                <div :class="{active: tabs==1}" @click="tabs=1">{{ baseInfo.tab_form_title }}</div>
-                <div :class="{active: tabs==2}" @click="tabs=2">{{ baseInfo.tab_verify_title }}</div>
+                <div :class="{active: tabs==1}" @click="tabs=1"><pre>{{ baseInfo.tab_form_title }}</pre></div>
+                <div :class="{active: tabs==2}" @click="tabs=2"><pre>{{ baseInfo.tab_verify_title }}</pre></div>
               </div>
             </div>
             <div v-if="isSubscribe === 2" class="tabsBox">
               <div :class="['tabs', baseInfo.theme_color]">
-                <div :class="{active: tabs==2}" @click="tabs=2">{{ baseInfo.tab_verify_title }}</div>
-                <div :class="{active: tabs==1}" @click="tabs=1">{{ baseInfo.tab_form_title }}</div>
+                <div :class="{active: tabs==2}" @click="tabs=2"><pre>{{ baseInfo.tab_verify_title }}</pre></div>
+                <div :class="{active: tabs==1}" @click="tabs=1"><pre>{{ baseInfo.tab_form_title }}</pre></div>
               </div>
             </div>
             <!-- 报名表单 -->
@@ -40,6 +40,9 @@
                   v-show="question.type != 6"
                   :label="question.subject === '隐私声明' ? '' : `${quesIndex < 9 ? `0${ quesIndex + 1 }` : quesIndex + 1}.${question.subject}`"
                 >
+                  <template slot="label">
+                    <pre>{{question.subject === '隐私声明' ? '' : `${quesIndex < 9 ? `0${ quesIndex + 1 }` : quesIndex + 1}.${question.subject}`}}</pre>
+                  </template>
                   <!-- 输入框 -->
                   <template
                     v-if="(question.type === 0 && question.default_type !== 4) || question.type === 1"
@@ -79,7 +82,7 @@
                             :label="radioItem.id"
                             :name="question.id + ''"
                           >
-                            {{ radioItem.subject }}
+                            <pre>{{ radioItem.subject }}</pre>
                           </el-radio>
                           <template v-if="radioItem.type === 1">
                             <VhallInput
@@ -107,7 +110,7 @@
                           :label="checkItem.id"
                           :name="question.id + ''"
                         >
-                        {{ checkItem.subject }}
+                        <pre>{{ checkItem.subject }}</pre>
                         </el-checkbox>
                         <template v-if="checkItem.type === 1">
                           <VhallInput
@@ -134,7 +137,7 @@
                         :key="option.id"
                         :label="option.subject"
                         :value="option.subject"
-                      ></el-option>
+                      ><pre>{{option.subject}}</pre></el-option>
                     </el-select>
                   </template>
                   <!-- 地域选择 -->
@@ -199,7 +202,7 @@
                   <!-- 隐私声明 -->
                   <template>
                     <el-checkbox class="provicy-checkbox" v-model="form[provicy.id]">
-                      <p v-html="provicyText"></p>
+                      <pre v-html="provicyText"></pre>
                     </el-checkbox>
                   </template>
                 </el-form-item>
@@ -258,7 +261,6 @@
 </template>
 
 <script>
-  import axios from 'axios';
   import Env from "@/api/env";
   import { validPhone } from '@/utils/validate.js'
   import PrivacySelect from '../../../Login/components/privacy-select.vue';
@@ -955,11 +957,11 @@
       },
       // 获取地域列表
       getAreaList() {
-        axios.get(`${process.env.VUE_APP_STATIC_URL}/saas/common_libs/area.json`).then(res => {
-          console.warn(res, '加载地址');
-          this.provinces = res.data.provinces;
-          this.cities = res.data.cities;
-          this.counties = res.data.counties;
+        this.$fetch('getAreaListJson').then(res => {
+          // console.warn(res, '加载地址');
+          this.provinces = res.provinces;
+          this.cities = res.cities;
+          this.counties = res.counties;
         })
       },
       // 获取表单题目列表
@@ -1102,7 +1104,6 @@
         color: #1A1A1A;
         margin: 40px 0 22px;
         text-align: center;
-        font-weight: 500;
         font-family: @fontMedium;
         line-height: 33px;
       }
@@ -1548,6 +1549,11 @@
         border-color: @purple!important;
       }
     }
+    pre{
+      font-family: @fontMedium;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
   }
 </style>
 <style lang="less">
@@ -1563,6 +1569,11 @@
       line-height: 20px;
       display: inline-block;
       padding-top: 4px;
+    }
+    pre{
+      font-family: @fontMedium;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
   }
 </style>
