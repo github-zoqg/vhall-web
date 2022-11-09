@@ -1217,7 +1217,11 @@
         this.formHorse.text = this.formHorse.text || '版权所有，盗版必究';
         this.formHorse.scrolling_open = Number(this.scrolling_open);
         this.formHorse.type = 1;
-        this.$fetch('setScrolling', this.$params(this.formHorse))
+        let params = JSON.parse(JSON.stringify(this.formHorse))
+        if(params.text_type == 2){
+          delete params.text
+        }
+        this.$fetch('setScrolling', this.$params(params))
           .then(res => {
             this.setHorseReportData();
             this.$message({
