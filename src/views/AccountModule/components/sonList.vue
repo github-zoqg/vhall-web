@@ -274,6 +274,7 @@
   import NullPage from '../../PlatformModule/Error/nullPage.vue';
   import { sessionOrLocal } from '@/utils/utils';
   import PwdInput from './pwdInput.vue';
+  import regRule from '@/utils/reg-rule';
   export default {
     name: 'sonList.vue',
     components: {
