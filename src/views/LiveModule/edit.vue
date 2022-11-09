@@ -1389,7 +1389,7 @@
       }
 
       //  webinar.director 1:有无延迟权限  0:无权限
-      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['portrait_screen'] == '1') {
+      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
         this.webinarDirector = true;
       } else {
         this.webinarDirector = false;
