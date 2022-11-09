@@ -5,11 +5,11 @@
         主办方发送的红包未领取完时，会在直播结束时退回到财务中心-账户收益-<br>红包收益中。
       </div>
       <div slot="content" v-if="title == '聊天' && $route.query.wType == 6">
-        1.分组模式下，仅展示主直播间最近聊天数据，更多内容请「导出分组数据」查看<br />2.点击“导出分组数据”，将导出每个小组内的聊天数据
+        1.分组模式下，仅展示主直播间最近聊天数据<br />2.点击“导出分组数据”，将导出每个小组内的聊天数据
       </div>
-      <div slot="content" v-if="title == '聊天' && $route.query.wType != 6">
+      <!-- <div slot="content" v-if="title == '聊天' && $route.query.wType != 6">
         1.仅展示最近聊天数据，更多内容请「导出全部数据」查看
-      </div>
+      </div> -->
       <div slot="content" v-if="title == '关注用户'">
         此列表用户来自于微信，在直播页中主动点击关注接受发送消息通知的用户（非微信粉丝）
       </div>
@@ -45,8 +45,8 @@
         <el-button size="medium" round v-if="title==='聊天' || title==='问答'" :disabled="!isSeletedCheckout" @click="deleteAll(null)">批量删除</el-button>
       </div>
       <span class="search-export">
-        <!-- <el-button round  size="medium" @click="exportData" v-if="($route.query.wType != 6 || ($route.query.wType == 6 && title!='聊天')) && totalNum">导出数据</el-button> -->
-        <el-dropdown v-if="($route.query.wType != 6 || ($route.query.wType == 6 && title!='聊天')) && totalNum" @command="exportData" trigger="click">
+        <el-button round  size="medium" @click="exportData" v-if="($route.query.wType != 6 || ($route.query.wType == 6 && title!='聊天')) && totalNum">导出数据</el-button>
+        <!-- <el-dropdown v-if="($route.query.wType != 6 || ($route.query.wType == 6 && title!='聊天')) && totalNum" @command="exportData" trigger="click">
           <el-button type="primary" round size="medium" class="create_but_padding">
             &nbsp; 导出数据 &nbsp;
           </el-button>
@@ -54,7 +54,7 @@
             <el-dropdown-item command="1" v-preventReClick size="medium">导出筛选数据</el-dropdown-item>
             <el-dropdown-item command="2" v-preventReClick>导出全部数据</el-dropdown-item>
           </el-dropdown-menu>
-        </el-dropdown>
+        </el-dropdown> -->
         <el-button round  size="medium" @click="exportData" v-if="$route.query.wType == 6 && totalNum && title=='聊天'">导出主直播间数据</el-button>
         <el-button round  size="medium" @click="getGroupRound" v-if="$route.query.wType == 6 && title=='聊天'">导出分组数据</el-button>
       </span>
@@ -1131,15 +1131,15 @@ export default {
     // 聊天
     exportChatInfo(type) {
       let params = JSON.parse(JSON.stringify(this.params))
-      if(type == 1) {
-        if(!params.start_time) {
-          this.$message.warning('请选择时间范围');
-          return false;
-        }
-      } else {
-        delete params.start_time
-        delete params.end_time
-      }
+      // if(type == 1) {
+      //   if(!params.start_time) {
+      //     this.$message.warning('请选择时间范围');
+      //     return false;
+      //   }
+      // } else {
+      //   delete params.start_time
+      //   delete params.end_time
+      // }
       this.$fetch('exportChat', params).then(res => {
         this.$vhall_paas_port({
           k: 100458,
