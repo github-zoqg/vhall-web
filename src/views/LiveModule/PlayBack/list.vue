@@ -15,6 +15,7 @@
     <template v-if="no_show === false">
       <div v-if="!isDemand" class="operaBlock">
         <el-button size="medium" type="primary" round @click="toCreate">创建回放</el-button>
+        <el-button size="medium" class="transparent-btn" round @click="uploadBut">上传</el-button>
         <el-button v-if="WEBINAR_PES.btn_record"  class="transparent-btn" size="medium" plain round @click="toRecord">录制</el-button>
         <el-button size="medium"  class="transparent-btn" round @click="settingHandler">回放设置</el-button>
         <el-button size="medium" class="transparent-btn" round :disabled="selectDatas.length < 1" @click="deletePlayBack(selectDatas.map(item=>item.id).join(','), 1)">批量删除</el-button>
@@ -153,14 +154,14 @@
             <template slot-scope="scope">
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
-              <el-button v-if="scope.row.source != 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
+              <el-button :disabled="scope.row.source == 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
               <el-button v-if="scope.row.is_rehearsal" type="text" @click="deletePlayBack(scope.row.id, 2)">删除</el-button>
               <el-button v-if="WEBINAR_PES['ui.record_chapter'] && !scope.row.is_rehearsal" type="text" @click="toChapter(scope.row)">章节</el-button>
               <el-button type="text" v-if="($route.meta.name == 'recordplayback' || $route.meta.name == 'publishplayback') && !scope.row.is_rehearsal" @click="encryption(scope.row)">加密</el-button>
               <el-dropdown v-if="!isDemand && !scope.row.is_rehearsal" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
-                  <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout && scope.row.is_union_screen != 1" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
+                  <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout && scope.row.is_union_screen != 1" :disabled="scope.row.source == 2" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
                   <el-dropdown-item v-if="!scope.row.layout" :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
                   <el-dropdown-item v-if="WEBINAR_PES['publish_record'] && !scope.row.layout" :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
                   <el-dropdown-item v-if="!scope.row.layout || scope.row.layout != 0" :command="{command: 'record.encrypt', data: scope.row}">加密</el-dropdown-item>
@@ -244,11 +245,14 @@
       </el-dialog>
     </template>
     <begin-play :webinarId="$route.params.str" v-if="webinarState!=4 && $route.query.type!=5"></begin-play>
+    <!-- 上传回放视频 -->
+    <PlaybackUpload ref="playbackUpload" @search='getList'></PlaybackUpload>
   </div>
 </template>
 
 <script>
 import VideoPreview from './components/previewVideo';
+import PlaybackUpload from './components/playbackUpload';
 import PageTitle from '@/components/PageTitle';
 import { sessionOrLocal } from '@/utils/utils';
 import NullPage from '../../PlatformModule/Error/nullPage.vue';
@@ -507,6 +511,7 @@ export default {
             { label: '全部来源', value: '-1' },
             { label: '回放', value: '0' },
             { label: '录制', value: '1' },
+            { label: '上传', value: '2' },
             { label: '打点录制', value: '3' }
           ]
         }
@@ -894,6 +899,11 @@ export default {
         await this.checkChapterSave(recordId, chapterType)
         return false
       }
+      // 如果是上传音视频
+      if(row.source == 2){
+        this.$router.push({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: true, pageKey: this.$route.meta.name, type: this.liveDetailInfo.webinar_type}});
+        return
+      }
       // 如果回放未转码完成，点击的时候需要获取最新的转码状态和是否支持章节功能
       this.$fetch('recordInfo', {
         record_id: recordId
@@ -1047,6 +1057,11 @@ export default {
     // 加密介绍
     openTip(){
       window.open('https://saas-doc.vhall.com/docs/show/1417')
+    },
+    // 上传音视频
+    uploadBut(){
+      this.$refs['playbackUpload'].dialogVisible = true;
+      this.$refs['playbackUpload'].getSearchList('search')
     }
   },
   filters: {
@@ -1101,7 +1116,8 @@ export default {
     PageTitle,
     VideoPreview,
     NullPage,
-    beginPlay
+    beginPlay,
+    PlaybackUpload
   }
 };
 </script>

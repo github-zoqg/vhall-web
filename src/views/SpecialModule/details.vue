@@ -39,7 +39,7 @@
         </div>
       </div>
     </div>
-    <itemCard></itemCard>
+    <itemCard :subjectDetailInfo='subjectDetailInfo'></itemCard>
     <share ref="share" :shareVo="shareVo"></share>
   </div>
 </template>

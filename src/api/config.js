@@ -163,6 +163,7 @@ const apis = {
   regVisiterCheck: ['/v3/webinars/registration-form/get-visiter-register-status', 'POST'], // 查询某个访客是否已经报过名
   verifyOpenLink: ['/v3/webinars/registration-form/verify-open-link', 'GET'], // 检查报名表单是否开启独立链接以及独立链接是否有效
   getAreaList: ['/data/area.json','GET', false, false, 'staticdata'], // 本地静态资源区域列表
+  getAreaListJson: ['/saas/common_libs/area.json','GET', false, false, 'staticdata'], // 本地静态资源区域列表
 
   // 第三方K值模块
   kidAuthInfo:  ['/v3/webinars/auth/info', 'POST'], // 获取单个活动K值详情接口 •••
@@ -273,6 +274,7 @@ const apis = {
   recordReTranscode: ['/v3/webinars/record/record-trans-code', 'POST'], // 回放重新生成
   recordRemark: ['/v3/webinars/record/record-remake', 'POST'], // 课件重制
   recordEncrypt: ['/v3/webinars/record/push-entry-video', 'POST'], // 视频加密
+  recordUpload:['/v3/webinars/record/upload', 'POST'],   // 上传回放
 
   // 小组视频
   getGroupRecordList:['/v3/webinars/record/get-group-record-list', 'POST'], //小组回放列表
@@ -720,6 +722,7 @@ const apis = {
   userRegistrationImportProgress: ['/v3/webinars/registration-form/import-progress', 'POST'], // 用户报名-导入数据结果（轮询）
   userRegistrationExportFail: ['/v3/webinars/registration-form/export-fail', 'POST'], // 用户报名-导出失效数据
   getSubjectByWebinarId: ['/v3/webinars/subject/get-list-by-webinar-id', 'POST'], // 活动下-报名表单，依据活动ID获取专题内容信息
+  getStatistics: ['/v3/webinars/registration-form/data-statistics', 'POST'], // 报名用户数据统计
   // 开播提醒
   getNoticePageList: ['/v3/interacts/notice/notice-list', 'GET'], // 获取- 开播提醒-界面设置信息
   noticeConfigEdit: ['/v3/interacts/notice/notice-config-edit', 'POST'], // 保存-开播提醒-[签名/是否开启短信验证]

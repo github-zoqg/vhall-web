@@ -283,6 +283,13 @@ export default {
           // 消息通知-预发短信量
           EventBus.$emit('notice_sms_send_num', msg.data);
         }
+        if (msg.data.type === 'down_center_msg') {
+          if(Number(res.user_ids) === Number(sessionOrLocal.get('userId'))) {
+            this.down_num = res.down_num;
+            this.$EventBus.$emit('saas_vs_down_num');
+          }
+          EventBus.$emit('down_center_msg', msg.data)
+        }
       })
     },
     // 初始化
