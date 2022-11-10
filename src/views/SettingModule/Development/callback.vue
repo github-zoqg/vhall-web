@@ -2,17 +2,50 @@
   <div class="page-callback">
     <div class="title-callback">
       <pageTitle pageTitle="回调设置"></pageTitle>
-      <a href="https://saas-doc.vhall.com/docs/show/975" target="_blank">回调设置说明</a>
+      <a
+        href="https://saas-doc.vhall.com/opendocs/show/1163"
+        target="_blank"
+      >回调设置说明</a>
     </div>
     <div class="layout-callback">
-      <el-form :model="form" ref="form" :rules="formRules" label-width="102px">
-        <el-form-item label="签名Key" prop="secret_key">
-          <VhallInput v-model.trim="form.secret_key" v-clearEmoij auto-complete="off" placeholder="请输入签名规则" :maxlength="32" show-word-limit></VhallInput>
+      <el-form
+        :model="form"
+        ref="form"
+        :rules="formRules"
+        label-width="102px"
+      >
+        <el-form-item
+          label="签名Key"
+          prop="secret_key"
+        >
+          <VhallInput
+            v-model.trim="form.secret_key"
+            v-clearEmoij
+            auto-complete="off"
+            placeholder="请输入签名规则"
+            :maxlength="32"
+            show-word-limit
+          ></VhallInput>
         </el-form-item>
-        <el-form-item label="回调地址" prop="callback_url">
-          <VhallInput v-model.trim="form.callback_url" v-clearEmoij auto-complete="off" placeholder="请输入Https或http开头的完整url" :maxlength="255" show-word-limit></VhallInput>
+        <el-form-item
+          label="回调地址"
+          prop="callback_url"
+        >
+          <VhallInput
+            v-model.trim="form.callback_url"
+            v-clearEmoij
+            auto-complete="off"
+            placeholder="请输入Https或http开头的完整url"
+            :maxlength="255"
+            show-word-limit
+          ></VhallInput>
         </el-form-item>
-        <el-form-item label="消息格式" prop="msg_type" class="radio-btn" label-width="102px">
+        <el-form-item
+          label="消息格式"
+          prop="msg_type"
+          class="radio-btn"
+          label-width="102px"
+        >
           <el-radio-group v-model="form.msg_type">
             <el-radio :label="1">application/x-www-form-urlencoded</el-radio>
             <el-radio :label="2">application/json</el-radio>
@@ -28,13 +61,18 @@
               :active-value="1"
               :inactive-value="0"
               active-color="#FB3A32"
-              inactive-color="#CECECE">
+              inactive-color="#CECECE"
+            >
             </el-switch>
             <span class="leve3_title title--999">{{!!form.fail_try_request ? '已开启，系统需在5秒内响应SUCCESS（不区分大小写）' : '开启后，系统需在5秒内响应SUCCESS（不区分大小写）'}}</span>
             &nbsp;
-            <el-tooltip effect="dark" placement="right" v-tooltipMove>
+            <el-tooltip
+              effect="dark"
+              placement="right"
+              v-tooltipMove
+            >
               <div slot="content">
-                <span>1.默认关闭</span> <br/>
+                <span>1.默认关闭</span> <br />
                 <p style="width:400px">2.开启后需要在5s内响应SUCCESS（不区分大小写），则视为投递成功，否则按下列规则重试：重试队列，重试16次，间隔时间为：10秒、30秒、1-10分钟、20分钟、30分钟、1小时、2小时</p>
               </div>
               <i class="iconfont-v3 saasicon_help_m"></i>
@@ -42,24 +80,41 @@
           </li>
         </ul>
       </div>
-      <div class="div__func div__view" v-if="keyList.length > 0">
+      <div
+        class="div__func div__view"
+        v-if="keyList.length > 0"
+      >
         <ul class="switch__list">
-          <li class="switch__box" v-for="(item, ins) in keyList" :key="`view_`+ins">
+          <li
+            class="switch__box"
+            v-for="(item, ins) in keyList"
+            :key="`view_`+ins"
+          >
             <label class="leve3_title label__r12">{{ item.key_name }}</label>
             <el-switch
               v-model="item.value"
               :active-value="1"
               :inactive-value="0"
               active-color="#FB3A32"
-              inactive-color="#CECECE">
+              inactive-color="#CECECE"
+            >
             </el-switch>
             <span class="leve3_title title--999">{{!!item.value ? item.closeShow : item.openShow}}</span>
           </li>
         </ul>
       </div>
       <el-form label-width="91px">
-        <el-form-item label="" class="callback-btn">
-          <el-button type="primary" class="length152" v-preventReClick round @click.prevent.stop="saveCallbackInfo">保 存</el-button>
+        <el-form-item
+          label=""
+          class="callback-btn"
+        >
+          <el-button
+            type="primary"
+            class="length152"
+            v-preventReClick
+            round
+            @click.prevent.stop="saveCallbackInfo"
+          >保 存</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -89,7 +144,7 @@ export default {
         ],
         callback_url: [
           { required: true, message: '请输入Https或http开头的完整url', trigger: 'blur' },
-          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入Https或http开头的完整url' , trigger: 'blur'}
+          { pattern: /(http|https):\/\/[\w\-_]+(\.[\w\-_]+).*?/, message: '请输入Https或http开头的完整url', trigger: 'blur' }
         ],
         msg_type: [
           { required: true, message: '请选择消息格式', trigger: 'blur' }
@@ -108,10 +163,10 @@ export default {
       this.$fetch('getCallbackInfo', {}).then(res => {
         if (res && res.code === 200) {
           // 若无内容，默认展示
-          if(res.data && !res.data.msg_type) {
+          if (res.data && !res.data.msg_type) {
             res.data.msg_type = 1
           }
-          if(res.data && !res.data.fail_try_request) {
+          if (res.data && !res.data.fail_try_request) {
             res.data.fail_try_request = 0
           }
           this.form = res.data;
@@ -139,7 +194,7 @@ export default {
             openShow: '开启后，直播结束并生成回放成功进行通知',
             closeShow: '已开启，直播结束并生成回放成功进行通知',
             value: Number(eventsList.includes('4') ? 1 : 0) || 0,
-            k:100603
+            k: 100603
           },
           {
             type: 'key_8',
@@ -283,7 +338,7 @@ export default {
       console.log(this.keyList)
       let numKeys = this.keyList.filter(item => Number(item.value) === 1).map(item => item.type.substring(4));
       this.$refs.form.validate((valid) => {
-        if(valid) {
+        if (valid) {
           let callback_event = '';
           let params = {
             secret_key: this.form.secret_key,
@@ -295,7 +350,7 @@ export default {
           this.$fetch(this.isAdd ? 'addCallbackInfo' : 'editCallbackInfo', params).then(res => {
             this.setReportData(this.keyList)
             this.$message({
-              message:  `设置成功`,
+              message: `设置成功`,
               showClose: true,
               // duration: 0,
               type: 'success',
@@ -303,9 +358,9 @@ export default {
             });
             // 数据刷新
             this.getCallbackInfo();
-          }).catch( res => {
+          }).catch(res => {
             this.$message({
-              message:  res.msg || `设置失败`,
+              message: res.msg || `设置失败`,
               showClose: true,
               // duration: 0,
               type: 'error',
@@ -318,20 +373,20 @@ export default {
     setReportData(list) {
       this.$vhall_paas_port({
         k: 100596,
-        data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: { business_uid: this.userId, user_id: '', s: '', webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: '' }
       })
       this.$vhall_paas_port({
         k: this.form.msg_type == 1 ? 100597 : 100598,
-        data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: { business_uid: this.userId, user_id: '', s: '', webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: '' }
       })
       this.$vhall_paas_port({
         k: this.form.fail_try_request == 1 ? 100599 : 100600,
-        data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+        data: { business_uid: this.userId, user_id: '', s: '', webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: '' }
       })
       list.map(item => {
         this.$vhall_paas_port({
           k: item.value == 1 ? item.k : item.k + 1,
-          data: {business_uid: this.userId, user_id: '', s: '',  webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: ''}
+          data: { business_uid: this.userId, user_id: '', s: '', webinar_id: '', refer: '', report_extra: {}, ref_url: '', req_url: '' }
         })
       })
     }
@@ -350,7 +405,7 @@ export default {
     float: right;
     font-size: 14px;
     font-weight: 400;
-    color: #3562FA;
+    color: #3562fa;
     line-height: 20px;
   }
 }
@@ -373,8 +428,8 @@ export default {
   .layout--right--main();
   .padding48-40();
 }
-/deep/.el-radio__input.is-checked+.el-radio__label {
-  color: #1A1A1A;
+/deep/.el-radio__input.is-checked + .el-radio__label {
+  color: #1a1a1a;
 }
 /deep/.el-radio__label {
   color: #666666;
