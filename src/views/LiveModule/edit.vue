@@ -270,7 +270,7 @@
           <div
             v-if="!webinarPortraitScreen"
             class="mode-director noDirector"
-            :class="{ disableBox: selectDirectorMode === 1 }"
+            :class="{ directorActive: isFullScreen != 1,disableBox: selectDirectorMode === 1 }"
           >
             <span class="text-content">
               <i class="vh-saas-iconfont vh-saas-line-landscape ft20"></i>
