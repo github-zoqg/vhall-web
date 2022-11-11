@@ -6,8 +6,8 @@
     element-loading-background="rgba(255,255,255,.9)">
     <!-- 7.5.7.2优化 数据展示 -->
     <div class="totalShow">
-      <div class="change_inline">共计报名用户<span>{{statistics.total_num || 0}}</span>位，线上报名<span>{{statistics.online_num || 0}}</span>位；</div>
-      <div class="change_inline" v-if="signUpPageType === 'webinar'">报名用户中，观看直播人数<span>{{statistics.watch_num || 0}}</span>位，占比<span>{{statistics.watch_percentage || 0}}%</span></div>
+      <div v-if="!(signUpPageType === 'subject'&&!statistics.total_num)" class="change_inline">共计报名用户<span>{{statistics.total_num || 0}}</span>位，线上报名<span>{{statistics.online_num || 0}}</span>位</div>
+      <div class="change_inline" v-if="signUpPageType === 'webinar'">；报名用户中，观看直播人数<span>{{statistics.watch_num || 0}}</span>位，占比<span>{{statistics.watch_percentage || 0}}%</span></div>
     </div>
     <!-- 7.5.7.2end -->
     <!-- 全部无结果 -->
@@ -487,12 +487,12 @@ export default {
     height: 46px;
     line-height: 26px;
     span{
-      font-weight: bold;
+      color: #1A1A1A;
       color: #FB3A32;
       font-size: 22px;
     }
     .change_inline{
-      font-weight: bold;
+      color: #1A1A1A;
       display: inline-block;
     }
   }

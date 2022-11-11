@@ -161,7 +161,7 @@
               <el-dropdown v-if="!isDemand && !scope.row.is_rehearsal" @command="handleCommand">
                 <el-button type="text">更多</el-button>
                 <el-dropdown-menu style="width: 160px;" slot="dropdown">
-                  <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout" :disabled="scope.row.source == 2" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
+                  <el-dropdown-item v-if="WEBINAR_PES['reset_record'] && !scope.row.layout && scope.row.is_union_screen != 1" :disabled="scope.row.source == 2" :command="{command: 'vodreset', data: scope.row}">重制</el-dropdown-item>
                   <el-dropdown-item v-if="!scope.row.layout" :command="{command: 'tailoring', data: scope.row}">剪辑</el-dropdown-item>
                   <el-dropdown-item v-if="WEBINAR_PES['publish_record'] && !scope.row.layout" :command="{command: 'publish', data: scope.row}">发布</el-dropdown-item>
                   <el-dropdown-item v-if="!scope.row.layout || scope.row.layout != 0" :command="{command: 'record.encrypt', data: scope.row}">加密</el-dropdown-item>
@@ -511,6 +511,7 @@ export default {
             { label: '全部来源', value: '-1' },
             { label: '回放', value: '0' },
             { label: '录制', value: '1' },
+            { label: '上传', value: '2' },
             { label: '打点录制', value: '3' }
           ]
         }
@@ -901,6 +902,7 @@ export default {
       // 如果是上传音视频
       if(row.source == 2){
         this.$router.push({path: `/${chapterType}/${this.webinar_id}`, query: {recordId, isDemand: true, pageKey: this.$route.meta.name, type: this.liveDetailInfo.webinar_type}});
+        return
       }
       // 如果回放未转码完成，点击的时候需要获取最新的转码状态和是否支持章节功能
       this.$fetch('recordInfo', {

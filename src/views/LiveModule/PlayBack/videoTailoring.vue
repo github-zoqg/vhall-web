@@ -15,6 +15,7 @@
             type="datetimerange"
             range-separator="至"
             prefix-icon="iconfont-v3 saasicon_date"
+            :picker-options="pickerOptions"
             start-placeholder="开始时间"
             end-placeholder="结束时间">
           </el-date-picker>
@@ -86,7 +87,12 @@ export default {
       handleMsgTimer: '',
       isChange: false,
       playerParams: {},
-      createRecordMsg: null
+      createRecordMsg: null,
+      pickerOptions: {
+        disabledDate(val){
+          return new Date(val).getTime() > new Date().getTime()
+        }
+      }
     };
   },
   watch: {

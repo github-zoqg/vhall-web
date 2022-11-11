@@ -1,41 +1,15 @@
 <template>
   <div class="playbackUploade">
-    <vh-dialog
+    <el-dialog
       title="选择音视频"
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
+      :append-to-body="false"
       :before-close='cancel'
       width="900px"
     >
-      <vh-input
-        placeholder="请输入音视频名称"
-        autocomplete="off"
-        clearable
-        v-model="keyword"
-        class="search-tag"
-        @clear="getSearchList('search')"
-        @blur="keyword&&getSearchList('search')"
-        @keyup.enter.native="getSearchList('search')"
-        ><i
-          class="vh-icon-search vh-input__icon"
-          slot="prefix"
-          @click="getSearchList('search')"
-        >
-        </i>
-      </vh-input>
-
-      <span>一次最多支持选择20个视频文件</span>
-      <vh-button
-        size="medium"
-        type="primary"
-        class="btn_right"
-        round
-        @click="jumpPage"
-        >上传</vh-button
-      >
-
-      <noData :nullType="'null'" text='您还未上传过音视频，快来创建吧!' v-if="!keyword&&!total">
+      <noData :nullType="'null'" text='您还未上传过音视频，快来创建吧!' :height='100' v-if="!keyword&&!total" class="nullPageH">
         <vh-button
           size="medium"
           type="primary"
@@ -44,102 +18,130 @@
           >上传</vh-button
         >
       </noData>
-      <vh-table
-        v-else
-        :data="tableData"
-        class="table_base"
-        @selection-change="changeTableCheckbox"
-        height="400px"
-      >
-        <vh-table-column
-          type="selection"
-          width="55"
-          align="left"
-          :selectable="checkSelectable"
-        />
-        <vh-table-column label="音视频名称">
-          <template slot-scope="scope">
-            <vh-tooltip
-              placement="top"
-              :content="
-                scope.row.video_name == '' ? '- -' : scope.row.video_name
-              "
-            >
-              <div class="videoName custom-tooltip-content">
-                <i
-                  class="iconfont-v3 saasyinpinwenjian"
-                  v-if="
-                    scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'
-                  "
-                ></i>
-                <i class="iconfont-v3 saasshipinwenjian" v-else></i>
-                {{ scope.row.video_name || '- -' }}
+      <div v-else>
+        <vh-input
+          placeholder="请输入音视频名称"
+          autocomplete="off"
+          clearable
+          v-model="keyword"
+          class="search-tag"
+          @clear="getSearchList('search')"
+          @blur="keyword&&getSearchList('search')"
+          @keyup.enter.native="getSearchList('search')"
+          ><i
+            class="vh-icon-search vh-input__icon"
+            slot="prefix"
+            @click="getSearchList('search')"
+          >
+          </i>
+        </vh-input>
+
+        <span>一次最多支持选择20个视频文件</span>
+        <vh-button
+          size="medium"
+          type="primary"
+          class="btn_right"
+          round
+          @click="jumpPage($event)"
+          >上传</vh-button
+        >
+
+        <vh-table
+          :data="tableData"
+          class="table_base"
+          @selection-change="changeTableCheckbox"
+          height="400px"
+        >
+          <vh-table-column
+            type="selection"
+            width="55"
+            align="left"
+            :selectable="checkSelectable"
+          />
+          <vh-table-column label="音视频名称">
+            <template slot-scope="scope">
+              <vh-tooltip
+                placement="top"
+                :content="
+                  scope.row.video_name == '' ? '- -' : scope.row.video_name
+                "
+              >
+                <div class="videoName custom-tooltip-content">
+                  <i
+                    class="iconfont-v3 saasyinpinwenjian"
+                    v-if="
+                      scope.row.msg_url == '.mp3' || scope.row.msg_url == '.mav'
+                    "
+                  ></i>
+                  <i class="iconfont-v3 saasshipinwenjian" v-else></i>
+                  {{ scope.row.video_name || '- -' }}
+                </div>
+              </vh-tooltip>
+            </template>
+          </vh-table-column>
+          <vh-table-column width="180" prop="created_at" label="上传时间">
+          </vh-table-column>
+          <vh-table-column width="100" prop="duration" label="时长">
+          </vh-table-column>
+          <vh-table-column prop="transcode_status_text" width="110" label="进度">
+            <template slot-scope="scope">
+              <div>
+                <p v-if="scope.row.uploadObj">
+                  <!-- 上传 -->
+                  <span>{{
+                    scope.row.uploadObj.num == 100 ? '上传已完成' : '文件上传中'
+                  }}</span>
+                  <vh-progress
+                    :percentage="scope.row.uploadObj.num"
+                  ></vh-progress>
+                </p>
+                <!-- {{scope.row}} -->
+                <p v-if="scope.row.transcode_status_text">
+                  <!-- 列表 -->
+                  <span
+                    class="statusTag"
+                    :class="
+                      scope.row.transcode_status == 1
+                        ? 'success'
+                        : scope.row.transcode_status == 0
+                        ? 'wating'
+                        : 'failer'
+                    "
+                    >{{ scope.row.transcode_status_text }}</span
+                  >
+                </p>
               </div>
-            </vh-tooltip>
-          </template>
-        </vh-table-column>
-        <vh-table-column width="180" prop="created_at" label="上传时间">
-        </vh-table-column>
-        <vh-table-column width="100" prop="duration" label="时长">
-        </vh-table-column>
-        <vh-table-column prop="transcode_status_text" width="110" label="进度">
-          <template slot-scope="scope">
-            <div>
-              <p v-if="scope.row.uploadObj">
-                <!-- 上传 -->
-                <span>{{
-                  scope.row.uploadObj.num == 100 ? '上传已完成' : '文件上传中'
-                }}</span>
-                <vh-progress
-                  :percentage="scope.row.uploadObj.num"
-                ></vh-progress>
-              </p>
-              <!-- {{scope.row}} -->
-              <p v-if="scope.row.transcode_status_text">
-                <!-- 列表 -->
-                <span
-                  class="statusTag"
-                  :class="
-                    scope.row.transcode_status == 1
-                      ? 'success'
-                      : scope.row.transcode_status == 0
-                      ? 'wating'
-                      : 'failer'
-                  "
-                  >{{ scope.row.transcode_status_text }}</span
-                >
-              </p>
-            </div>
-          </template>
-        </vh-table-column>
-        <vh-table-column width="110" prop="storage" label="转码后大小">
-        </vh-table-column>
-        <vh-table-column width="100" label="操作">
-          <template slot-scope="scope">
-            <vh-button
-              type="text"
-              @click="preview(scope.row)"
-              v-if="scope.row.transcode_status == 1"
-              >预览</vh-button
-            >
-          </template>
-        </vh-table-column>
-        <div slot="empty">
-          <noData :nullType="'null'" v-if="!total"></noData>
+            </template>
+          </vh-table-column>
+          <vh-table-column width="110" prop="storage" label="转码后大小">
+          </vh-table-column>
+          <vh-table-column width="100" label="操作">
+            <template slot-scope="scope">
+              <vh-button
+                type="text"
+                @click="preview(scope.row)"
+                v-if="scope.row.transcode_status == 1"
+                >预览</vh-button
+              >
+            </template>
+          </vh-table-column>
+          <div slot="empty">
+            <noData :nullType="'null'" v-if="!total"></noData>
+          </div>
+        </vh-table>
+        <div class="checked_length">
+          当前选择<span>{{ checkedList.length }}</span
+          >个文件
         </div>
-      </vh-table>
-      <div class="checked_length">
-        当前选择<span>{{ checkedList.length }}</span
-        >个文件
       </div>
 
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer" class="dialog-footer" v-if="total||keyword">
         <vh-button type="primary" @click="sure" round size="medium"
           >确定</vh-button
         >
         <vh-button @click="cancel" round size="medium">取消</vh-button>
       </span>
-    </vh-dialog>
+    </el-dialog>
     <!-- 预览组件 -->
     <span v-if="showDialog">
       <vh-dialog
@@ -165,7 +167,7 @@
 <script>
 import noData from '@/views/PlatformModule/Error/nullPage'
 import VideoPreview from '@/views/MaterialModule/VideoPreview/index.vue'
-import { sessionOrLocal } from '@/utils/utils'
+import { sessionOrLocal, debounce } from '@/utils/utils'
 export default {
   components: { noData, VideoPreview },
   data() {
@@ -201,9 +203,7 @@ export default {
         ...this.pageInfo
       }
       if (this.keyword) {
-        formParams = {
-          title: this.keyword
-        }
+        formParams.title = this.keyword
       }
       this.isSearch = this.keyword ? true : false
       this.getTableList(formParams,params)
@@ -240,8 +240,14 @@ export default {
                   break
               }
             })
-            this.tableData = type == 'search' ? res.data.list : this.tableData.concat(res.data.list)
-            this.$nextTick(()=>{
+            if(type == 'search'){
+              this.tableData = res.data.list
+            } else {
+              res.data.list.forEach(i=>{
+                this.tableData.push(i)
+              })
+            }
+            this.total&&this.$nextTick(()=>{
               document
               .querySelector('.table_base')
               .querySelector('.vh-table__body-wrapper')
@@ -277,7 +283,7 @@ export default {
         .querySelector('.table_base')
         .querySelector('.vh-table__body').offsetHeight
       if (
-        contentH == scrollTop + domHeight &&
+        Math.ceil(contentH - (Math.ceil(scrollTop) + domHeight)) <= 0 &&
         this.total > this.tableData.length
       ) {
         this.pageInfo.pos += 10
@@ -291,6 +297,10 @@ export default {
     sure() {
       if (!this.checkedList.join()) {
         this.$message.warning('请选择音视频')
+        return false
+      }
+      if(this.checkedList.length>20){
+        this.$message.warning('一次最多支持选择20个视频文件')
         return false
       }
       this.$fetch('recordUpload', {
@@ -309,11 +319,17 @@ export default {
     // 关闭上传回放弹框
     cancel() {
       this.dialogVisible = false
+      this.keyword = ''
       this.checkedList = []
       this.tableData = []
     },
     // 跳转 资料管理-音视频
-    jumpPage() {
+    jumpPage(e) {
+      let target = e.target;
+      if(target.nodeName == 'SPAN' || target.nodeName == 'I'){
+          target = e.target.parentNode;
+      }
+      target.blur();
       this.$confirm('上传资源会离开当前页面，将丢失已编辑信息，是否离开？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -341,6 +357,9 @@ export default {
 
 <style lang="less">
 .playbackUploade {
+  .nullPageH{
+    height: 400px;
+  }
   .search-tag {
     width: 220px;
     margin-bottom: 20px;
@@ -387,8 +406,8 @@ export default {
       background: #e0e0e0;
     }
   }
-  .vh-saas-dialog {
-    .vh-icon-close {
+  .el-saas-dialog {
+    .el-icon-close {
       position: absolute;
       right: 0;
       top: 20px;
@@ -396,14 +415,14 @@ export default {
       color: #fff;
       cursor: pointer;
     }
-    .vh-dialog {
+    .el-dialog {
       box-shadow: none;
       background: transparent !important;
     }
-    .vh-dialog__header {
+    .el-dialog__header {
       background: transparent !important;
     }
-    .vh-dialog__body {
+    .el-dialog__body {
       padding: 4px 6px;
       background: #000;
       border-radius: 4px;

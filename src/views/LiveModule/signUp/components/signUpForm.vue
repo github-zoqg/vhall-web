@@ -261,7 +261,6 @@
 </template>
 
 <script>
-  import axios from 'axios';
   import Env from "@/api/env";
   import { validPhone } from '@/utils/validate.js'
   import PrivacySelect from '../../../Login/components/privacy-select.vue';
@@ -958,11 +957,11 @@
       },
       // 获取地域列表
       getAreaList() {
-        axios.get(`${process.env.VUE_APP_STATIC_URL}/saas/common_libs/area.json`).then(res => {
-          console.warn(res, '加载地址');
-          this.provinces = res.data.provinces;
-          this.cities = res.data.cities;
-          this.counties = res.data.counties;
+        this.$fetch('getAreaListJson').then(res => {
+          // console.warn(res, '加载地址');
+          this.provinces = res.provinces;
+          this.cities = res.cities;
+          this.counties = res.counties;
         })
       },
       // 获取表单题目列表
@@ -1552,6 +1551,8 @@
     }
     pre{
       font-family: @fontMedium;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
   }
 </style>
@@ -1571,6 +1572,8 @@
     }
     pre{
       font-family: @fontMedium;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
   }
 </style>
