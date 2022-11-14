@@ -259,36 +259,36 @@ export default {
         }
         console.log('============收到msg_center_num2===============' + JSON.stringify(msg.data))
         if (msg.data.type === 'msg_center_num') {
-          EventBus.$emit('msg_center_num', msg.data);
+          this.$EventBus.$emit('msg_center_num', msg.data);
         }
         if (msg.data.type === 'host_msg_webinar') {
-          EventBus.$emit('host_msg_webinar', msg.data.data)
+          this.$EventBus.$emit('host_msg_webinar', msg.data.data)
         }
         if (msg.data.type === 'doc_convert_jpeg') {
-          EventBus.$emit('doc_convert_jpeg', msg.data.data)
+          this.$EventBus.$emit('doc_convert_jpeg', msg.data.data)
         }
         if (msg.data.type === 'sign_trans_code') {
-          EventBus.$emit('sign_trans_code', msg.data);
+          this.$EventBus.$emit('sign_trans_code', msg.data);
         }
         if (msg.data.type == "record_download" && msg.data.user_id == sessionOrLocal.get('userId')) {
-          EventBus.$emit('record_download', msg.data);
+          this.$EventBus.$emit('record_download', msg.data);
         }
         if (msg.data.type == "entry_trans" && msg.data.user_id == sessionOrLocal.get('userId')) {
-          EventBus.$emit('encrypt_complete', msg.data);
+          this.$EventBus.$emit('encrypt_complete', msg.data);
         }
         if (msg.data.type === 'waiting_sign_trans_code') {
-          EventBus.$emit('waiting_sign_trans_code', msg.data);
+          this.$EventBus.$emit('waiting_sign_trans_code', msg.data);
         }
         if (msg.data.type == "notice_sms_send_num" && msg.data.user_id == sessionOrLocal.get('userId')) {
           // 消息通知-预发短信量
-          EventBus.$emit('notice_sms_send_num', msg.data);
+          this.$EventBus.$emit('notice_sms_send_num', msg.data);
         }
         if (msg.data.type === 'down_center_msg') {
-          if(Number(res.user_ids) === Number(sessionOrLocal.get('userId'))) {
-            this.down_num = res.down_num;
+          if(Number(msg.user_ids) === Number(sessionOrLocal.get('userId'))) {
+            this.down_num = msg.down_num;
             this.$EventBus.$emit('saas_vs_down_num');
           }
-          EventBus.$emit('down_center_msg', msg.data)
+          this.$EventBus.$emit('down_center_msg', msg.data)
         }
       })
     },
@@ -352,14 +352,14 @@ export default {
     // 监听控制台是否触发导出
     this.$EventBus.$on('saas_vs_download_change', this.updateDownload);
     // 消息实例初始化
-    EventBus.$on('msg_center_num', res => { // 转码状态
+    this.$EventBus.$on('msg_center_num', res => { // 转码状态
       console.log(res, '监听到msg_center_num未读消息提示事件');
       if(Number(res.user_id) === Number(sessionOrLocal.get('userId'))) {
         this.unread_num = res.num;
         this.$EventBus.$emit('saas_vs_msg_num');
       }
     });
-    EventBus.$on('down_center_msg', res => { // 转码状态
+    this.$EventBus.$on('down_center_msg', res => { // 转码状态
       console.log(res, '监听到down_center_msg未下载提示事件');
       if(Number(res.user_id) === Number(sessionOrLocal.get('userId'))) {
         this.down_num = res.down_num;
