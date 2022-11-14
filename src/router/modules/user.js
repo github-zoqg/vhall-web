@@ -7,7 +7,7 @@ const router = [
     path: '/finance',
     component: Layout,
     redirect: '/finance/info',
-    meta: { auth: true, title: '财务中心', name: 'Finance', icon: 'saasicon_financial' },
+    meta: { auth: true, title: '财务中心', name: 'Finance', icon: 'saasicon_financial_img' },
     children: [
       {
         path: 'info',
@@ -61,7 +61,7 @@ const router = [
     path: '/acc',
     component: Layout,
     redirect: '/acc/info',
-    meta: { auth: true, title: '账户管理', name:'accountMgr', icon: 'saasicon_account' },
+    meta: { auth: true, title: '账户管理', name:'accountMgr', icon: 'saasicon_account_img' },
     children: [
       {
         path: 'info',
