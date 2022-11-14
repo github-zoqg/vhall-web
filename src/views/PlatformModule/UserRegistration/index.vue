@@ -331,6 +331,7 @@ export default {
       this.importVisible = false
       this.messageInfo('导入成功')
       this.initQueryUserList()
+      this.getStatistics()
     },
     getStatistics() {
       let params;
