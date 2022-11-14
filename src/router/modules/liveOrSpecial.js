@@ -37,7 +37,7 @@ const router = [
     path: '/live',
     component: Layout,
     redirect: '/live/list',
-    meta: { auth: true, title: '直播管理', icon: 'saasicon_lives', level: 1 , name: 'liveMgr'},
+    meta: { auth: true, title: '直播管理', icon: 'saasicon_lives_img', level: 1 , name: 'liveMgr'},
     children: [
       {
         path: 'list',
@@ -317,7 +317,7 @@ const router = [
     path: '/special',
     component: Layout,
     redirect: '/special/list',
-    meta: { auth: true, title: '专题管理', name: 'specialList', icon: 'saasicon_projects', level: 1, auth_key: 'subject_manager' },
+    meta: { auth: true, title: '专题管理', name: 'specialList', icon: 'saasicon_projects_img', level: 1, auth_key: 'subject_manager' },
     children: [
       {
         path: 'list',

@@ -9,7 +9,7 @@ const router = [
       {
         path: 'home',
         component: () => import('@/views/FirstPage/index.vue'),
-        meta: { auth: true, title: '首页', icon: 'saasicon_home', level: 1 , name: 'sysHome'}
+        meta: { auth: true, title: '首页', icon: 'saasicon_home_img', level: 1 , name: 'sysHome'}
       }
     ]
   }
