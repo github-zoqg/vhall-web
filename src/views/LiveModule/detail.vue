@@ -1035,7 +1035,7 @@ export default {
     background: #fff;
     width: 100%;
     height: 100%;
-    padding: 24px;
+    padding: 24px 22px;
     display: flex;
     border-radius: 4px;
     .info {
