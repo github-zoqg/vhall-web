@@ -98,7 +98,7 @@ export default {
   },
   created() {
     this.getComponents()
-    EventBus.$on(eventsType.INIT_MENU_INFO, this.menuCheck)
+    this.$EventBus.$on(eventsType.INIT_MENU_INFO, this.menuCheck)
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.handleScroll)
@@ -182,13 +182,13 @@ export default {
       dt.dropEffect = 'move'
 
       dt.setData('Text', JSON.stringify({ ...info }));
-      EventBus.$emit('VH_DRAG_EVENT', e)
+      this.$EventBus.$emit('VH_DRAG_EVENT', e)
     },
 
     dragEnd(e) {
       console.log('drag end handler', e)
       e.preventDefault()
-      EventBus.$emit('VH_DRAG_EVENT_END', e)
+      this.$EventBus.$emit('VH_DRAG_EVENT_END', e)
     },
 
 
