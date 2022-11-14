@@ -1016,7 +1016,7 @@ export default {
     .no-data{
       color: #b3b3b3;
     }
-    ::v-deep.set-upload{
+    ::v-deep .set-upload{
       position: relative;
       span{
         input{
