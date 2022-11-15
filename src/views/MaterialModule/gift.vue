@@ -669,7 +669,7 @@ export default {
         }
       }
     }
-    ::v-deep.set-upload{
+    ::v-deep .set-upload{
       position: relative;
       span{
         input{

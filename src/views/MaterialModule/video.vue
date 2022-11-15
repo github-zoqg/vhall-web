@@ -804,7 +804,7 @@ export default {
     .head-btn{
       display: inline-block;
     }
-    ::v-deep.set-upload{
+    ::v-deep .set-upload{
       position: relative;
       cursor: pointer;
       span{

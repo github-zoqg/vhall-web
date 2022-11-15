@@ -288,7 +288,7 @@ export default {
     /deep/.el-button.is-disabled{
       background: transparent;
     }
-    ::v-deep.set-upload{
+    ::v-deep .set-upload{
       position: relative;
       span{
         input{
