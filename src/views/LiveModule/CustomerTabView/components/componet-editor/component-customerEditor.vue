@@ -43,11 +43,11 @@ export default {
   },
 
   created() {
-    EventBus.$on(eventsType.EDITOR_COMPONENT_INFO, (index) => {
+    this.$EventBus.$on(eventsType.EDITOR_COMPONENT_INFO, (index) => {
       this.editorIndex = index
     })
-    EventBus.$off(eventsType.UPDATE_COMPONENT_CONTENT)
-    EventBus.$on(eventsType.UPDATE_COMPONENT_CONTENT, (val) => {
+    this.$EventBus.$off(eventsType.UPDATE_COMPONENT_CONTENT)
+    this.$EventBus.$on(eventsType.UPDATE_COMPONENT_CONTENT, (val) => {
       this.units[this.editorIndex] = val
     })
   },

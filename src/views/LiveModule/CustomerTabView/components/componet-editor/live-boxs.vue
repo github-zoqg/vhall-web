@@ -89,7 +89,7 @@ export default {
   created() {
     let _that = this
     // 移除前事件
-    EventBus.$on(eventsType.EDITOR_COMPONENT_ITEM_INFO, (del_id) => {
+    this.$EventBus.$on(eventsType.EDITOR_COMPONENT_ITEM_INFO, (del_id) => {
       let newIds = _that.checkedList.filter(item=> {
         return item != del_id
       })

@@ -82,7 +82,7 @@ export default {
     doEditor(index) {
       console.log('sssssssss', this)
       this.editorIndex = index
-      EventBus.$emit(eventsType.EDITOR_COMPONENT_INFO, index)
+      this.$EventBus.$emit(eventsType.EDITOR_COMPONENT_INFO, index)
     },
 
     addComponet(e) {
@@ -183,7 +183,7 @@ export default {
         this.editorIndex = index + 1
         this.editorIndex >= this.units.length ? this.units.length : this.editorIndex
 
-        EventBus.$emit(eventsType.EDITOR_COMPONENT_INFO, this.editorIndex)
+        this.$EventBus.$emit(eventsType.EDITOR_COMPONENT_INFO, this.editorIndex)
       })
 
 

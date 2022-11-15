@@ -184,7 +184,7 @@ export default {
       let choseInfo = this.menus[index] || info
       console.log( '菜单进行切换', choseInfo )
 
-      EventBus.$emit(eventsType.INIT_MENU_INFO, choseInfo)
+      this.$EventBus.$emit(eventsType.INIT_MENU_INFO, choseInfo)
     },
 
     // 向左滚动
