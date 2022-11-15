@@ -521,6 +521,7 @@ export default {
           if (cropperImage(this.liveDetailInfo.img_url)) {
             this.handlerImageInfo(this.liveDetailInfo.img_url);
           }
+          sessionOrLocal.set('liveDetailInfo', this.liveDetailInfo)
           sessionOrLocal.set('webinarState', this.liveDetailInfo.webinar_state)
           sessionOrLocal.set('webinarType', this.liveDetailInfo.webinar_type)
           if (res.data.webinar_state == 4) {

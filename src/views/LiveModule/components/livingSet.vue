@@ -688,6 +688,12 @@ export default {
       this.livingForm.finalVideoBackground = this.video_url;
       let skin_json_pc = Object.assign({}, this.livingPcForm, this.livingForm);
       let skin_json_wap = Object.assign({}, this.livingWapForm, this.livingForm);
+      // 竖屏直播，不支持合并模式
+      const liveDetailInfo = sessionOrLocal.get("liveDetailInfo")
+      if (liveDetailInfo.webinar_show_type == 0) {
+        skin_json_pc.speakerAndShowLayout = 0
+        skin_json_wap.speakerAndShowLayout = 1
+      }
       console.log(skin_json_pc, skin_json_wap, '??????????我是直播间设置参数')
       let params = {
         skin_id: this.skinId,
