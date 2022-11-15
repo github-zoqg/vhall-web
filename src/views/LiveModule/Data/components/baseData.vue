@@ -409,8 +409,6 @@ export default {
       }).then(res => {
         if (res && res.code === 200 && res.data.permissions) {
           const data = JSON.parse(res.data.permissions)
-          // TODO 模拟快问快答
-          data.exam = 1;
           this.WEBINAR_PES = data  || {};
         }
       }).catch(e => {
