@@ -230,6 +230,7 @@ export default {
       this.addUserVisible = false;
       if (type === 'closeAndLoading') {
         this.initQueryUserList()
+        this.getStatistics()
       }
     },
     // 跳转专题详情页
@@ -331,6 +332,7 @@ export default {
       this.importVisible = false
       this.messageInfo('导入成功')
       this.initQueryUserList()
+      this.getStatistics()
     },
     getStatistics() {
       let params;
