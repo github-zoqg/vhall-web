@@ -205,6 +205,10 @@ export default {
   background: #F5F5F5;
   border: 1px solid #D9D9D9;
 }
+.themes__BFBFBF {
+  background: #BFBFBF;
+  border: 1px solid #BFBFBF;
+}
 /*样式选择器重置*/
 .theme--select-main {
   display: inline-block;

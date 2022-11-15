@@ -251,7 +251,7 @@
           <VhallInput
             v-model="editParams.dest_url"
             autocomplete="off"
-            placeholder="请输入推流地址"
+            placeholder="请输入推流地址及串流密钥"
           >
           </VhallInput>
         </el-form-item>
@@ -294,13 +294,13 @@ export default {
     //流地址校验
     const urlValidate = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('请输入推流地址'))
+        callback(new Error('请输入推流地址及串流密钥'))
       } else {
         const reg = /^(rtmp:\/\/.+)|(rtmps:\/\/.+)/g
         if (reg.test(value)) {
           callback()
         } else {
-          callback && callback('请输入正确的推流地址')
+          callback && callback('请输入正确的推流地址及串流密钥')
         }
       }
     }

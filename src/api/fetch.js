@@ -119,7 +119,7 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   if (mock) {
     api = `/mock${api}`;
   } else if (paas || staticdata){
-    api = `${api}`
+    api = `${process.env.VUE_APP_STATIC_URL}${api}`
     option.headers = {}
   } else {
     const replaceApi = api
@@ -158,6 +158,8 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
         msg: '00:00-07:00期间系统升级中，由此给您带来不便，敬请谅解！'
       });
     } else if (res.code == 200) {
+      return res;
+    } else if (api.includes(process.env.VUE_APP_STATIC_URL)) {
       return res;
     } else {
       errMap = Object.assign(errMap, extendsMsg)

@@ -40,6 +40,7 @@ export default {
       ]
     }
   },
+  props:['subjectDetailInfo'],
   methods: {
     blockHandler(item) {
       this.reportData(item.k);
@@ -47,7 +48,12 @@ export default {
     },
     handleData() {
       this.reportData(100865);
-      this.$router.push({path: `/special/data/${this.$route.params.id}`})
+      this.$router.push({
+        path: `/special/data/${this.$route.params.id}`,
+        query: {
+          subject_verify: this.subjectDetailInfo.subject_verify
+        }
+        })
     },
     reportData(k) {
       this.$vhall_paas_port({

@@ -51,7 +51,7 @@
                     :disabled="!scrolling_open"
                     @change="editHorseInfo"
                   >
-                    固定文本+观看者ID和昵称
+                    观看者ID和昵称
                   </el-radio>
                 </el-form-item>
                 <el-form-item label="固定文本">
@@ -586,11 +586,11 @@
             value: 2
           }
         ],
-        pageThemeColors: ['FFFFFF', '1A1A1A', 'FB3A32', 'FFB201', '16C973', '3562FA', 'DC12D2'],
+        pageThemeColors: ['FFFFFF', 'BFBFBF', '1A1A1A', 'FB3A32', 'FFB201', '16C973', '3562FA'],
         formHorse: {
-          color: '#FFFFFF', // 六位
+          color: '#BFBFBF', // 六位
           text_type: 2,
-          size: 20,
+          size: 12,
           type: 2,
           speed: 6000,
           text: '版权所有，盗版必究',
@@ -867,7 +867,7 @@
           enable: Boolean(this.scrolling_open), // 默认 false
           text:
             this.formHorse.text_type == 2
-              ? `${this.formHorse.text}${userInfo.user_id}${userInfo.nick_name}`
+              ? `${userInfo.user_id}${userInfo.nick_name}`
               : this.formHorse.text, // 跑马灯的文字
           alpha: this.formHorse.alpha, // 透明度  100 完全显示   0 隐藏
           size: this.formHorse.size, // 文字大小

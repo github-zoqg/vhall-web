@@ -14,10 +14,10 @@
       <span style="color:#1a1a1a;">标签页标题</span>
     </p>
     <div :class="['tabs', colorIndex]">
-      <div :class="{active: tabs=='title'}" @click="tabs='title'">{{title1 || '活动报名'}}</div>
-      <div :class="{active: tabs=='valite'}" @click="tabs='valite'">{{title2 || '我已报名'}}</div>
+      <div :class="{active: tabs=='title'}" @click="tabs='title'"><pre>{{title1 || '活动报名'}}</pre></div>
+      <div :class="{active: tabs=='valite'}" @click="tabs='valite'"><pre>{{title2 || '我已报名'}}</pre></div>
     </div>
-    <el-input maxlength="8" v-show="tabs=='title'" v-model.trim="title1" placeholder="活动报名">
+    <el-input maxlength="8" v-show="tabs=='title'" v-model="title1" placeholder="活动报名">
       <span
         v-if="title1 != '活动报名'"
         class="el-input__icon resetbtn"
@@ -25,7 +25,7 @@
         @click="title1 = '活动报名'">重置
       </span>
     </el-input>
-    <el-input maxlength="8" v-show="tabs=='valite'" v-model.trim="title2" placeholder="我已报名">
+    <el-input maxlength="8" v-show="tabs=='valite'" v-model="title2" placeholder="我已报名">
       <span
         v-if="title2 != '我已报名'"
         class="el-input__icon resetbtn"
@@ -193,5 +193,8 @@ export default {
   .margin{
     position: relative;
     margin-top: 24px;
+  }
+  pre{
+    font-family: @fontMedium;
   }
 </style>
