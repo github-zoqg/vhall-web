@@ -469,7 +469,6 @@ export default {
             type: 100074,
             path: `/live/prizeSet/${this.$route.params.str}`,
             isShow:
-              this.webinarType != 5 &&
               perssionInfo['ui.hide_lottery'] == 1 &&
               this.type != 4,
           },
@@ -481,7 +480,6 @@ export default {
             type: 100075,
             path: '/live/question',
             isShow:
-              this.webinarType != 5 &&
               perssionInfo['ui.hide_survey'] == 1 &&
               this.type != 4,
           },

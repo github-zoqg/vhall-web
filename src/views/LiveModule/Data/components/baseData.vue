@@ -165,7 +165,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4&&webinarType!=5" @click="lookOption('签到', 100449)">
+         <div class="base-item" v-if="isStatus!=4" @click="lookOption('签到', 100449)">
           <p>查看</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_Sign@2x.png" alt=""></label>
@@ -181,7 +181,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4&&webinarType!=5"  @click="lookOption('问卷', 100450)">
+         <div class="base-item" v-if="isStatus!=4"  @click="lookOption('问卷', 100450)">
           <p>查看</p>
          <div class="base-main">
            <label><img src="../../../../common/images/icon/icon_questionnaire@2x.png" alt=""></label>
@@ -197,7 +197,7 @@
             </div>
           </div>
         </div>
-         <div class="base-item" v-if="isStatus!=4&&webinarType!=5" @click="lookOption('抽奖', 100451)">
+         <div class="base-item" v-if="isStatus!=4" @click="lookOption('抽奖', 100451)">
           <p>查看</p>
           <div class="base-main">
             <label><img src="../../../../common/images/icon/icon_Lucky draw@2x.png" alt=""></label>
