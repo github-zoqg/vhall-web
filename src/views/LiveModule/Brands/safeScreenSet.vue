@@ -1997,7 +1997,7 @@
         background: rgba(255, 255, 255, 0.5);
         z-index: 9;
         &.webinarTop {
-          top: 90px;
+          top: 100px;
         }
         &.userTop {
           height: 360px;
@@ -2012,7 +2012,7 @@
         background: rgba(255, 255, 255, 0.5);
         z-index: 9;
         &.webinarTop {
-          top: 510px;
+          top: 520px;
         }
         &.userTop {
           top: 440px;
