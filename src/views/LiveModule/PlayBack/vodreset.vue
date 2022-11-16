@@ -138,7 +138,7 @@
         },
         userId: window.sessionStorage.getItem('userId'),
         domain_url: '',
-        pathUrl: `interacts/vodreset-imgs/${this.$moment().format('YYYYMM')}`
+        pathUrl: `interacts/vodreset-imgs/${dayjs().format('YYYYMM')}`
       }
     },
     computed: {

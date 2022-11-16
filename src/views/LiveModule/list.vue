@@ -87,6 +87,7 @@
                   <span v-if="item.is_new_version == 3 && (item.webinar_type == 3 || item.webinar_type == 6) && item.zdy_inav_num > 1"> | 1v{{Number(item.inav_num)-1}}</span>
                   <span v-if="item.webinar_type != 6 && isDelay && item.no_delay_webinar == 1"> | 无延迟</span>
                   <span v-if="webinarDirector && item.is_director === 1"> | 云导播</span>
+                  <span v-if="item.webinar_show_type == 0"> | 竖屏</span>
                 </span>
                 <span class="hot">
                   <i class="iconfont-v3 saasicon_redu"> {{item.pv | formatNum}}</i>
@@ -113,7 +114,7 @@
                     <i class="iconfont-v3 saasicon_xiangqing" @click.prevent.stop="toDetail(item.webinar_id)"></i>
                   </el-tooltip>
                   <el-tooltip v-tooltipMove class="item" effect="dark" content="复制" placement="top" v-if="item.webinar_state!=4 && item.webinar_type!= 5">
-                    <i class="iconfont-v3 saasicon_copy1" @click.prevent.stop="toCopy(item.webinar_id)"></i>
+                    <i class="iconfont-v3 saasicon_copy1" @click.prevent.stop="toCopy(item.webinar_id,item.webinar_show_type)"></i>
                   </el-tooltip>
                   <span @click.prevent.stop>
                     <el-dropdown :class="{active: !!item.liveDropDownVisible}" trigger="click" placement="top-end" @visible-change="dropDownVisibleChange(item)" @command="commandMethod">
@@ -260,7 +261,7 @@ export default {
       //   this.getLowerGradeConfig();
       // }, (Math.random() * 5 + 5) * 1000);
     },
-    getPermission(id) {
+    getPermission(id,isPortraitScreen) {
       // 活动权限
       this.$fetch('planFunctionGet', {webinar_id: id, webinar_user_id: this.userId, scene_id: 1}).then(res => {
         if(res.code == 200) {
@@ -275,7 +276,19 @@ export default {
               return this.perssionInfo[item] > 0
             })
             this.hasDelayPermission = this.perssionInfo['no.delay.webinar'] && this.perssionInfo['no.delay.webinar'] == 1 ? true : false
+            const  hasPortraitScreen = this.perssionInfo['portrait_screen'] && this.perssionInfo['portrait_screen'] == 1 ? true : false
             // this.handleLowerGradeHeart()
+            //  portrait_screen 是否支持竖屏 1:开启 0:关闭。
+            if(!hasPortraitScreen&&isPortraitScreen==0){
+              this.$message({
+                message: "本活动为竖屏直播，暂无竖屏直播权限，请联系客服开通",
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
+              return
+            }
           } else {
             sessionOrLocal.removeItem('WEBINAR_PES');
           }
@@ -613,7 +626,7 @@ export default {
       const { href } = this.$router.resolve({path: `/lives/room/${id}`});
       window.open(href);
     },
-    toCopy(id) {
+    toCopy(id,isPortraitScreen) {
       this.$confirm('支持复制活动下设置的功能，不支持复制回放视频、统计的数据', '复制活动', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -625,7 +638,7 @@ export default {
           k: 100041,
           data: {business_uid: this.userId, user_id: '', webinar_id: id, refer: '',s: '', report_extra: {}, ref_url: '', req_url: ''}
         })
-        this.getPermission(id)
+        this.getPermission(id,isPortraitScreen)
       }).catch(() => {});
     }
   }

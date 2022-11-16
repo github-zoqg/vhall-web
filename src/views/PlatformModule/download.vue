@@ -134,7 +134,7 @@ export default {
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       // 若type不为空，不做重置
       if (type !== 1) {
-        this.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+        this.timeStr = [dayjs(start).format('YYYY-MM-DD'), dayjs(end).format('YYYY-MM-DD')];
       }
       this.search();
     },

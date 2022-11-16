@@ -10,12 +10,14 @@
           <b>直播 <span v-if="liveDetailInfo.webinar_type == 5">| 定时直播</span>
            <span v-if="hasDelayPermission && liveDetailInfo.no_delay_webinar && liveDetailInfo.webinar_type != 6">| 无延迟</span>
            <span v-if="webinarDirector && liveDetailInfo.is_director === 1"> | 云导播</span>
+           <span v-if="liveDetailInfo.webinar_show_type == 0"> | 竖屏</span>
            </b>
         </div>
         <div class="title-status grayColor" v-else>
           <b>{{ liveDetailInfo | actionTextTag }}
             <span v-if="liveDetailInfo.webinar_type != 6 && hasDelayPermission && liveDetailInfo.no_delay_webinar">| 无延迟</span>
             <span v-if="webinarDirector && liveDetailInfo.is_director === 1"> | 云导播</span>
+            <span v-if="liveDetailInfo.webinar_show_type == 0"> | 竖屏</span>
           </b>
         </div>
         <div class="title-text">

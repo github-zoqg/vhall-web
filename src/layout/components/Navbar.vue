@@ -323,7 +323,6 @@ export default {
         }
       }
       return throttle(handle, 500)
-
     }
   },
   mounted() {

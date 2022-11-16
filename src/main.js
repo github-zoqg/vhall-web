@@ -2,7 +2,6 @@ import Vue from 'vue'
 import App from './App.vue';
 import router from './router';
 import VhallUI from 'vhall-ui';
-import 'cropperjs/dist/cropper.css'
 import Cookies from 'js-cookie'
 // element-ui 样式重置
 import vuescroll from 'vuescroll';

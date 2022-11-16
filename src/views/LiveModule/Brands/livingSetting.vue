@@ -35,11 +35,7 @@
       </el-tabs>
       <!-- 设置区域 -->
       <!-- 直播间设置 -->
-      <living-set
-        ref="livingSet"
-        v-show="tabType === 'livingSet'"
-        :livingConfig="type"
-      ></living-set>
+      <living-set ref="livingSet" :baseInfo="baseInfo" v-show="tabType === 'livingSet'" :livingConfig="type"></living-set>
       <!-- 自定义菜单 -->
       <customer-tab
         ref="customSet"
@@ -77,10 +73,9 @@ export default {
       livingSettingOpen: false, // 业务状态
       type: 2,
       isCustomSetting: true, //是否有自定义菜单
-      permissionInfo: JSON.parse(
-        sessionOrLocal.get('WEBINAR_PES', 'localStorage')
-      ),
-      webinarState: JSON.parse(sessionOrLocal.get('webinarState'))
+      permissionInfo: JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage')),
+      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
+      baseInfo: null  // 直播间详情
     }
   },
   components: {
@@ -104,8 +99,9 @@ export default {
     }
   },
   created() {
-    this.userId = sessionOrLocal.get('userId')
-    this.getPermission()
+    this.userId = sessionOrLocal.get('userId');
+    this.getLiveBaseInfo()
+    this.getPermission();
   },
   methods: {
     handleClick(tab, event) {
@@ -193,7 +189,27 @@ export default {
     toSettingDetail() {
       const { href } = this.$router.resolve({ path: '/setting/brand' })
       window.open(href, '_blank')
-    }
+    },
+    getLiveBaseInfo() {
+      // webinar/info调整-与活动状态无关的调用
+      this.$fetch('getWebinarInfo', { webinar_id: this.$route.params.str })
+        .then((res) => {
+          if (res.code != 200) {
+            return this.$message.warning(res.msg)
+          }
+          this.baseInfo = res.data
+        })
+        .catch((res) => {
+          this.$message({
+            message: res.msg || '获取信息失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box',
+          })
+          console.log(res)
+        })
+    },
   }
 }
 </script>

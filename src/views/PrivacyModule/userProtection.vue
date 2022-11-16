@@ -1,7 +1,7 @@
 <template>
   <!-- 用户隐私协议 -->
   <div class="user-protection">
-    <OldHeader class="head-wrap" scene="userHome" :isWhiteBg=true :isShowLogin=false></OldHeader>
+    <OldHeader class="head-wrap" scene="userHome" :isWhiteBg="true" :isShowLogin="false"></OldHeader>
     <h1 class="p-title">微吼用户服务协议</h1>
     <p class="p-timer ">更新日期：【2022】年【09】月【08】日</p>
     <p class="p-timer margin-24">生效日期：【2022】年【09】月【09】日</p>

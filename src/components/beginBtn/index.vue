@@ -1,5 +1,5 @@
 <template>
-  <div class="begin-play">
+  <div class="begin-play" v-if="baseInfo&&baseInfo.webinar_show_type==1">
     <el-tooltip class="item" effect="dark" v-tooltipMove content="发起直播" placement="top">
       <div class="begin-btn" @click="toRoom">
         <i class="iconfont-v3 saasicon_kaibo"></i>
@@ -13,7 +13,8 @@ export default {
   props: ['webinarId'],
   data() {
     return {
-      userId: ''
+      userId: '',
+      baseInfo:null
     }
   },
   methods: {
@@ -73,6 +74,30 @@ export default {
         await this.getAppersInfo();
       }, 500)
     },
+    getLiveBaseInfo(id) {
+      // webinar/info调整-与活动状态无关的调用
+      this.$fetch('getWebinarInfo', { webinar_id: id })
+        .then((res) => {
+          if (res.code != 200) {
+            return this.$message.warning(res.msg)
+          }
+          this.baseInfo = res.data
+        })
+        .catch((res) => {
+          this.$message({
+            message: res.msg || '获取信息失败',
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box',
+          })
+          console.log(res)
+        })
+    },
+  },
+  mounted(){
+    const id = this.$route.query.id || this.$route.params.id || this.$route.params.str
+    this.getLiveBaseInfo(id)
   }
 }
 </script>

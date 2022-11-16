@@ -5,7 +5,7 @@ const router = [
     path: '/data',
     component: Layout,
     redirect: '/data/info',
-    meta: { auth: true,  title: '数据中心', name: 'dataMgr', icon: 'saasicon_charts' },
+    meta: { auth: true,  title: '数据中心', name: 'dataMgr', icon: 'saasicon_charts_img' },
     children: [
       {
         path: 'info',
@@ -23,7 +23,7 @@ const router = [
     path: '/setting',
     component: Layout,
     redirect: '/setting/chat',
-    meta: { auth: true, title: '设置中心', name: 'settingMgr', icon: 'saasicon_Settings'},
+    meta: { auth: true, title: '设置中心', name: 'settingMgr', icon: 'saasicon_Settings_img'},
     children: [
       // {
       //   path: 'info',
