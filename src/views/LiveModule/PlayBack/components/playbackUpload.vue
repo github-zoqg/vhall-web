@@ -415,6 +415,15 @@ export default {
         color: #fb3a32;
       }
     }
+    .statusTag::before{
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+      background: #14ba6a
+    }
   }
   .el-saas-dialog {
     .vh-icon-close {
