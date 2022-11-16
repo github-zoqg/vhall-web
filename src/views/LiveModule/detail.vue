@@ -239,7 +239,7 @@
             v-if="liveDetailInfo.webinar_type != 5"
             >发起直播</el-button
           >
-          <div class="alert" v-if="portraitScreen">竖屏直播只支持由app端发起
+          <div class="alert" v-if="portraitScreen">竖屏直播只支持app端发起
             <a class="qr" href="http://e.vhall.com/app" target="_blank">立即下载</a>
           </div>
         </div>
@@ -257,7 +257,7 @@
             @click="toRoom"
             >发起直播</el-button
           >
-          <div class="alert" v-if="portraitScreen">竖屏直播只支持由app端发起
+          <div class="alert" v-if="portraitScreen">竖屏直播只支持app端发起
             <a class="qr" href="http://e.vhall.com/app" target="_blank">立即下载</a>
           </div>
         </div>
