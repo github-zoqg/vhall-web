@@ -201,6 +201,7 @@ export default {
             }
           }
         })
+        this.selectedOption = this.activeList.filter(item => item.checked);
       } else {
       }
     },
