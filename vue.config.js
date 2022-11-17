@@ -24,6 +24,7 @@ let cdn = {
     '//s1.e.vhall.com/common-static/middle/lodash/4.17.21/lodash.min.js', // lodash
     '//s1.e.vhall.com/common-static/middle/moment/2.29.1/dist/moment.min.js', // lodash
     '//s1.e.vhall.com/common-static/middle/echarts/4.9.0/echarts.min.js', // echarts
+    '//vhallstatic.oss-cn-beijing.aliyuncs.com/common-static/vhall-form/vhall-form-vue.js'
   ],
   css: [
     '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.css',
