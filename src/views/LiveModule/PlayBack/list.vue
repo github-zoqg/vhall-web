@@ -154,7 +154,7 @@
             <template slot-scope="scope">
               {{ scope.row.date }}
               <el-button type="text" @click="editDialog(scope.row)">编辑</el-button>
-              <el-button :disabled="scope.row.source == 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
+              <el-button v-if="!(liveDetailInfo.webinar_state == 4||[5,'5'].includes(liveDetailInfo.webinar_type))" :disabled="scope.row.source == 2" type="text" @click="downPlayBack(scope.row)">下载</el-button>
               <el-button v-if="scope.row.is_rehearsal" type="text" @click="deletePlayBack(scope.row.id, 2)">删除</el-button>
               <el-button v-if="WEBINAR_PES['ui.record_chapter'] && !scope.row.is_rehearsal" type="text" @click="toChapter(scope.row)">章节</el-button>
               <el-button type="text" v-if="($route.meta.name == 'recordplayback' || $route.meta.name == 'publishplayback') && !scope.row.is_rehearsal" @click="encryption(scope.row)">加密</el-button>
