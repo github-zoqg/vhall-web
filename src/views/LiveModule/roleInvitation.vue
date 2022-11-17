@@ -765,7 +765,7 @@ export default {
 // width: 1362px;
 }
 .role-card {
-  min-height: 472px;
+  min-height: 540px;
   width: calc(50% - 12px);
   // width: 675px;
   margin-right: 12px;

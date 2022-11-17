@@ -64,7 +64,7 @@ export default {
   },
   methods: {
     updateInfo(val) {
-      EventBus.$emit(eventsType.UPDATE_COMPONENT_CONTENT, val)
+      this.$EventBus.$emit(eventsType.UPDATE_COMPONENT_CONTENT, val)
     }
   }
 }

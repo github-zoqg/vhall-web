@@ -140,10 +140,10 @@ export default {
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
-          EventBus.$emit(eventsType.EDITOR_COMPONENT_ITEM_INFO, webinar_id)
+          this.$EventBus.$emit(eventsType.EDITOR_COMPONENT_ITEM_INFO, webinar_id)
         }).catch(() => {});
       } else {
-        EventBus.$emit(eventsType.EDITOR_COMPONENT_ITEM_INFO, webinar_id)
+        this.$EventBus.$emit(eventsType.EDITOR_COMPONENT_ITEM_INFO, webinar_id)
       }
     }
   },

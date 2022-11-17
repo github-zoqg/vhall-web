@@ -324,7 +324,7 @@ export default {
   },
   async created() {
     const that = this;
-    EventBus.$on('notice_sms_send_num', msgData => {
+    this.$EventBus.$on('notice_sms_send_num', msgData => {
       if (msgData.webinar_id == that.$route.params.str) {
         // 活动匹配的时候，展示预发短信内容
         console.log('监听内容', msgData.sms_send_num)
@@ -338,7 +338,7 @@ export default {
     this.getNoticePageList()
   },
   beforeDestroy() {
-    EventBus.$off("notice_sms_send_num");
+    this.$EventBus.$off("notice_sms_send_num");
   }
 };
 </script>

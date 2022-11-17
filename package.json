@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "serve:test": "vue-cli-service serve --mode dev_test",
+    "serve:test01": "vue-cli-service serve --mode dev_test01",
     "serve:new_test": "vue-cli-service serve --mode dev_new_test",
     "serve:test_zt": "vue-cli-service serve --mode dev_test_zt",
     "serve:test4": "vue-cli-service serve --mode dev_test4",
@@ -42,6 +43,7 @@
     "path-to-regexp": "^6.2.0",
     "qs": "^6.8.0",
     "tinymce": "^5.6.0",
+    "tiny-emitter": "^2.1.0",
     "uuid": "^8.3.2",
     "vhall-ui": "0.0.2",
     "vue": "^2.6.11",

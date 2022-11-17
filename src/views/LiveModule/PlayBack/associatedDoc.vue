@@ -338,7 +338,7 @@ export default {
     this.initComp();
   },
   mounted() {
-    EventBus.$on('host_msg_webinar', res => { // 转码状态
+    this.$EventBus.$on('host_msg_webinar', res => { // 转码状态
       console.log(res, '监听到host_msg_webinar转码状态事件');
       /*
         converted_page: "0" // 动态页数

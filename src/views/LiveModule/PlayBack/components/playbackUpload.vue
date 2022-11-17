@@ -121,6 +121,7 @@
                 type="text"
                 @click="preview(scope.row)"
                 v-if="scope.row.transcode_status == 1"
+                class="preview_button_color"
                 >预览</vh-button
               >
             </template>
@@ -144,8 +145,8 @@
     </el-dialog>
     <!-- 预览组件 -->
     <span v-if="showDialog">
-      <vh-dialog
-        class="vh-saas-dialog"
+      <el-dialog
+        class="el-saas-dialog"
         :visible.sync="showDialog"
         :before-close="closeBefore"
         width="640px"
@@ -159,7 +160,7 @@
           ref="videoPreview"
           :videoParam="videoParam"
         ></video-preview>
-      </vh-dialog>
+      </el-dialog>
     </span>
   </div>
 </template>
@@ -382,13 +383,13 @@ export default {
   .btn_right {
     float: right;
   }
-    .checked_length{
-      position: absolute;
-      bottom: 40px;
-      span{
-        color: #fb2626;
-      }
+  .checked_length{
+    position: absolute;
+    bottom: 40px;
+    span{
+      color: #fb2626;
     }
+  }
   .table_base {
     // height: 400px;
     overflow: auto;
@@ -405,9 +406,27 @@ export default {
       border-radius: 10px;
       background: #e0e0e0;
     }
+    .videoName i{
+      color: #ff733c !important;
+    }
+    .preview_button_color{
+      color: #1a1a1a;
+      &:hover{
+        color: #fb3a32;
+      }
+    }
+    .statusTag::before{
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+      background: #14ba6a
+    }
   }
   .el-saas-dialog {
-    .el-icon-close {
+    .vh-icon-close {
       position: absolute;
       right: 0;
       top: 20px;

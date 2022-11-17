@@ -66,7 +66,7 @@ export default {
   },
 
   created() {
-    EventBus.$on(eventsType.INIT_MENU_INFO, this.initInfo)
+    this.$EventBus.$on(eventsType.INIT_MENU_INFO, this.initInfo)
   },
 
   methods: {

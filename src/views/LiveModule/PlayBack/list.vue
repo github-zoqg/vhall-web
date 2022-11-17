@@ -332,8 +332,8 @@ export default {
   created(){
     this.getList();
     this.getLiveDetail();
-    EventBus.$on('record_download', this.handleDownload)
-    EventBus.$on('encrypt_complete', this.handleEncryptCallback)
+    this.$EventBus.$on('record_download', this.handleDownload)
+    this.$EventBus.$on('encrypt_complete', this.handleEncryptCallback)
     this.getPermission(this.$route.params.str)
     this.getVersion()
   },
@@ -349,8 +349,8 @@ export default {
       this.chatSDK = null
     }
     if (this.lowerGradeInterval) clearInterval(this.lowerGradeInterval)
-    EventBus.$off('record_download', this.handleDownload)
-    EventBus.$off('encrypt_complete', this.handleEncryptCallback)
+    this.$EventBus.$off('record_download', this.handleDownload)
+    this.$EventBus.$off('encrypt_complete', this.handleEncryptCallback)
     window.removeEventListener('resize', this.calcScreenWidth)
   },
   methods: {

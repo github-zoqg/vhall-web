@@ -87,7 +87,7 @@ export default {
 
   created() {
     let _that = this
-    EventBus.$on(eventsType.EDITOR_COMPONENTP_PROJECT_ITEM_INFO, (del_id) => {
+    this.$EventBus.$on(eventsType.EDITOR_COMPONENTP_PROJECT_ITEM_INFO, (del_id) => {
       let newIds = _that.checkedList.filter(item=> {
         return item != del_id
       })
@@ -188,6 +188,7 @@ export default {
             }
           }
         })
+        this.selectedOption = this.activeList.filter(item => item.checked);
       }
     },
 

@@ -220,7 +220,7 @@ export default {
     this.loading = false;
   },
   mounted() {
-    EventBus.$on('sign_trans_code', res => { // 转码状态
+    this.$EventBus.$on('sign_trans_code', res => { // 转码状态
       console.log(res, '监听到sign_trans_code未读消息提示事件');
       this.tableData.map(item => {
         if (res.record_id == item.id) {
@@ -637,7 +637,7 @@ export default {
     //   this.UploadSDK.destroy()
     //   this.UploadSDK = null;
     // }
-    EventBus.$off("sign_trans_code");
+    this.$EventBus.$off("sign_trans_code");
   }
 };
 </script>

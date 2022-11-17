@@ -126,10 +126,10 @@ export default {
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
-          EventBus.$emit(eventsType.EDITOR_COMPONENTP_PROJECT_ITEM_INFO, project_id)
+          this.$EventBus.$emit(eventsType.EDITOR_COMPONENTP_PROJECT_ITEM_INFO, project_id)
         }).catch(() => {});
       } else {
-        EventBus.$emit(eventsType.EDITOR_COMPONENTP_PROJECT_ITEM_INFO, project_id)
+        this.$EventBus.$emit(eventsType.EDITOR_COMPONENTP_PROJECT_ITEM_INFO, project_id)
       }
     }
   },
