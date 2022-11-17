@@ -476,23 +476,14 @@ export default {
         .then((res) => {
           if (res.code == 200) {
             if (res.data.permissions) {
-               // TODO 模拟快问快答 - 有权限
-              let perssionInfo = JSON.parse(res.data.permissions)
-              perssionInfo.exam = 1
               sessionOrLocal.set(
                 'WEBINAR_PES',
-                perssionInfo,
+                res.data.permissions,
                 'localStorage'
               )
-              this.perssionInfo = perssionInfo
-              // sessionOrLocal.set(
-              //   'WEBINAR_PES',
-              //   res.data.permissions,
-              //   'localStorage'
-              // )
-              // this.perssionInfo = JSON.parse(
-              //   sessionOrLocal.get('WEBINAR_PES', 'localStorage')
-              // )
+              this.perssionInfo = JSON.parse(
+                sessionOrLocal.get('WEBINAR_PES', 'localStorage')
+              )
               console.log(this.perssionInfo, '>>>>>>1231<<<')
               this.isShow = true
               this.hasDelayPermission =
