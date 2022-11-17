@@ -1825,7 +1825,7 @@
     right: 0;
   }
   /deep/.el-slider__button-wrapper {
-    z-index: 500;
+    z-index: 99;
   }
   .saasclose {
     cursor: pointer;
@@ -2001,7 +2001,7 @@
         }
         &.userTop {
           height: 360px;
-          top: 20px;
+          top: 30px;
         }
       }
       .give-white-doc {
