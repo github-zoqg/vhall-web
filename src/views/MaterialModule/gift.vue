@@ -130,7 +130,7 @@
 import PageTitle from '@/components/PageTitle'
 import upload from '@/components/Upload/main'
 import SPagination from '@/components/Spagination/main'
-import { debounce, sessionOrLocal } from "@/utils/utils"
+import { sessionOrLocal } from "@/utils/utils"
 import NullPage from '../PlatformModule/Error/nullPage.vue';
 
 import Env from "@/api/env";
@@ -669,7 +669,7 @@ export default {
         }
       }
     }
-    ::v-deep.set-upload{
+    ::v-deep .set-upload{
       position: relative;
       span{
         input{

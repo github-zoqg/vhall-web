@@ -1825,7 +1825,7 @@
     right: 0;
   }
   /deep/.el-slider__button-wrapper {
-    z-index: 500;
+    z-index: 99;
   }
   .saasclose {
     cursor: pointer;
@@ -1997,11 +1997,11 @@
         background: rgba(255, 255, 255, 0.5);
         z-index: 9;
         &.webinarTop {
-          top: 90px;
+          top: 100px;
         }
         &.userTop {
           height: 360px;
-          top: 20px;
+          top: 30px;
         }
       }
       .give-white-doc {
@@ -2012,7 +2012,7 @@
         background: rgba(255, 255, 255, 0.5);
         z-index: 9;
         &.webinarTop {
-          top: 510px;
+          top: 520px;
         }
         &.userTop {
           top: 440px;

@@ -113,7 +113,7 @@ export default {
       const start = new Date();
       end.setTime(end.getTime() - 3600 * 1000 * 24);
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-      this.dateValue = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      this.dateValue = [dayjs(start).format('YYYY-MM-DD'), dayjs(end).format('YYYY-MM-DD')];
     },
     getDateList(type = 'search') {
       this.$emit('changeDate', {type, data: {time: this.dateValue, timeType: this.timeType}})

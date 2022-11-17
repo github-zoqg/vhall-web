@@ -153,25 +153,17 @@ export default {
       end.setTime(end.getTime() - 3600 * 1000 * 24)
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
       this.searchParams.searchTime = [
-        this.$moment(start).format('YYYY-MM-DD'),
-        this.$moment(end).format('YYYY-MM-DD')
+        dayjs(start).format('YYYY-MM-DD'),
+        dayjs(end).format('YYYY-MM-DD')
       ]
-      // this.search();
     },
     dealDisabledData(time) {
       // 设置选择的日期小于当前的日期,小于返回true,日期不可选
-      // return time.getTime() < Date.now() - 8.64e7
-      //return time.getTime() < Date.now() - 8.64e7;//设置选择今天以及今天之后的日
       if (this.scene === 'center_data') {
         return time.getTime() > Date.now() - 8.64e7 //设置选择今天之前的日期（不能选择当天）
       } else {
         return time.getTime() > Date.now() //设置选择今天以及今天以前的日期
       }
-      //return time.getTime() < Date.now();//设置选择今天之后的日期（不能选择当天时间）
-      // return time.getTime() > Date.now() - 8.64e7 //设置选择今天之前的日期（不能选择当天）
-      // 设置当天23：59：59可选
-      // let currentTime = this.getNowMonthDay() + ` 23:59:59`
-      // return time.getTime() > new Date(currentTime).getTime()
     },
     changeDate() {
       if (this.$route.path == '/finance/infoDetail') {

@@ -48,7 +48,7 @@ export default {
   },
   created() {
     let _that = this
-    EventBus.$on(eventsType.EDITOR_COMPONENT_ITEM_INFO, (del_id) => {
+    this.$EventBus.$on(eventsType.EDITOR_COMPONENT_ITEM_INFO, (del_id) => {
       let newIds = _that.info.webinars.filter(item=> {
         return item != del_id
       })

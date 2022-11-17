@@ -41,7 +41,9 @@
             <!-- <label class="live-status" v-if="item.webinar_state == 1">
               <img src="../../../../../common/images/live.gif" alt="">
             </label> -->
-            {{item | actionTag}}<span v-if="item.webinar_type != 6 && hasDelayPermission && item.no_delay_webinar == 1">| 无延迟</span>
+            {{item | actionTag}}
+            <span v-if="item.webinar_type != 6 && hasDelayPermission && item.no_delay_webinar == 1">| 无延迟</span>
+            <span v-if="item.webinar_show_type == 0">| 竖屏</span>
           </span>
         </div>
         <div class="vh-chose-active-item__cover-hots">
@@ -138,10 +140,10 @@ export default {
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
         }).then(() => {
-          EventBus.$emit(eventsType.EDITOR_COMPONENT_ITEM_INFO, webinar_id)
+          this.$EventBus.$emit(eventsType.EDITOR_COMPONENT_ITEM_INFO, webinar_id)
         }).catch(() => {});
       } else {
-        EventBus.$emit(eventsType.EDITOR_COMPONENT_ITEM_INFO, webinar_id)
+        this.$EventBus.$emit(eventsType.EDITOR_COMPONENT_ITEM_INFO, webinar_id)
       }
     }
   },

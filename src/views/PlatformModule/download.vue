@@ -134,7 +134,7 @@ export default {
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       // 若type不为空，不做重置
       if (type !== 1) {
-        this.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+        this.timeStr = [dayjs(start).format('YYYY-MM-DD'), dayjs(end).format('YYYY-MM-DD')];
       }
       this.search();
     },
@@ -371,7 +371,7 @@ export default {
         }
         console.log('============收到聊天消息2===============' + JSON.stringify(msg.data))
         if (msg.data.type === 'down_center_msg') {
-          EventBus.$emit('down_center_msg', {
+          this.$EventBus.$emit('down_center_msg', {
             dow_task_id: msg.data.dow_task_id,
             status: msg.data.status
           })
@@ -406,7 +406,7 @@ export default {
   mounted() {
     this.initPage();
     this.$EventBus.$on('saas_vs_down_num', this.search);
-    EventBus.$on('down_center_msg', res => { // 转码状态
+    this.$EventBus.$on('down_center_msg', res => { // 转码状态
       console.log(res, '监听到down_center_msg123转码状态事件');
       this.docDao.list.map(item => {
         if (Number(item.dow_task_id) === Number(res.dow_task_id)) {

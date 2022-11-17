@@ -133,34 +133,3 @@ export function getRangeDays(value) {
     return formateDate(date);
   }
 }
-// import moment from 'moment';
-export function difSeconds(start, end) {
-  // console.warn(start, end);
-  let dif = end ? moment(end).diff(moment(), 'seconds') : moment(start).diff(moment(), 'seconds')
-  // console.warn(dif, 78, moment(end).diff(moment(), 'seconds'));
-  if (dif < 0) return '-1';
-  let days = Math.floor(dif / (24 * 60 * 60))
-  let hours = Math.floor(dif / (60 * 60)) - days * 24
-  let minutes = Math.floor(dif / 60) - days * 24 * 60 - hours * 60
-  let seconds = dif % 60
-  return [days, hours, minutes, seconds]
-}
-
-// 最近7天、30天和90天
-export function getRangeDay() {
-  let ret = [];
-  let desc = ['最近7天', '最近30天', '最近90天'];
-  let diffdays = [7, 30, 90];
-  diffdays.forEach((item, index) => {
-    ret.push({
-      text: desc[index],
-      value: [
-        moment()
-          .subtract(item, 'days')
-          .format('YYYY-MM-DD'),
-        moment().format('YYYY-MM-DD')
-      ]
-    });
-  });
-  return ret;
-}

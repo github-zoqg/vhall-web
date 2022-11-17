@@ -33,6 +33,7 @@
                     </label>
                     {{item | liveTag}}
                     <span v-if="item.webinar_type != 6 && hasDelayPermission && item.no_delay_webinar == 1"> | 无延迟</span>
+                    <span v-if="item.webinar_show_type == 0"> | 竖屏</span>
                   </span>
                 </div>
                 <div class="vh-chose-active-item__cover-hots">

@@ -24,8 +24,11 @@
     </div>
   </el-dialog>
 </template>
+
 <script>
  import vueCropper from 'vue-cropperjs'
+ import 'cropperjs/dist/cropper.css';
+ 
 export default {
   props: {
     // 比例

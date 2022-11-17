@@ -33,11 +33,14 @@ export const liveTag = (val) => {
      * webinar_type  1音频直播 2视频直播 3互动直播 5定时直播 6分组直播
      */
     const liveTypeStr = ['', '直播', '预告', '结束', '点播', '回放'];
-    const liveStatusStr = ['', '音频直播', '视频直播', '互动直播', '', '定时直播', '分组直播'];
+    const liveStatusStr = ['', '音频', '视频', '互动', '', '定时', '分组', '竖屏'];
     let str = liveTypeStr[val.webinar_state];
     if (val.webinar_state != 4) {
       str += ` | ${liveStatusStr[val.webinar_type]}`;
     }
+    // if(val.webinar_show_type==0){
+    //   str+=' | 竖屏'
+    // }
     return str;
 };
 export const actionTextTag = (val) => {
@@ -48,11 +51,15 @@ export const actionTextTag = (val) => {
   return str;
 };
 export const actionTag = (val) => {
+  // console.log(val)
   // webinar_state  1直播 2预约 3结束 4点播 5回放
   // webinar_type  1音频直播 2视频直播 3互动直播 5定时直播
   const liveTypeStr = ['', '直播', '预告', '结束', '点播', '回放'];
-  const liveStatusStr = ['', '音频直播', '视频直播', '互动直播', '', '', '分组直播'];
+  const liveStatusStr = ['', '音频', '视频', '互动', '', '', '分组'];
   let str = val.webinar_type == 5 || val.webinar_state == 4 ? `${liveTypeStr[val.webinar_state]}` : liveTypeStr[val.webinar_state] + ' | ' + liveStatusStr[val.webinar_type];
+  // if(val.webinar_show_type==0){
+  //   str+=' | 竖屏'
+  // }
   return str;
 };
 export const actionText = (val) => {

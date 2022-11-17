@@ -638,7 +638,7 @@ export default {
         }
         // 若是当前为 this.no_show
         this.tableList.unshift({
-          created_at: this.$moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
+          created_at: dayjs(new Date()).format('YYYY-MM-DD hh:mm:ss'),
           ext: lastFileKey.toLowerCase(),
           file_name: file.name,
           id: file.uid,
@@ -1173,10 +1173,10 @@ export default {
             JSON.stringify(msg.data)
         )
         if (msg.data.type === 'host_msg_webinar') {
-          EventBus.$emit('host_msg_webinar', msg.data.data)
+          this.$EventBus.$emit('host_msg_webinar', msg.data.data)
         }
         if (msg.data.type === 'doc_convert_jpeg') {
-          EventBus.$emit('doc_convert_jpeg', msg.data.data)
+          this.$EventBus.$emit('doc_convert_jpeg', msg.data.data)
         }
       })
     },
@@ -1221,7 +1221,7 @@ export default {
         };
         return textArr[error_status + ""];
     }*/
-    EventBus.$on('doc_convert_jpeg', (res) => {
+    this.$EventBus.$on('doc_convert_jpeg', (res) => {
       // 转码状态
       console.log(res, '监听到doc_convert_jpeg转码状态事件')
       this.tableList.forEach((item) => {
@@ -1267,7 +1267,7 @@ export default {
       })
     })
 
-    EventBus.$on('host_msg_webinar', (res) => {
+    this.$EventBus.$on('host_msg_webinar', (res) => {
       // 转码状态
       console.log(res, '监听到host_msg_webinar转码状态事件')
       /*
@@ -1446,7 +1446,7 @@ export default {
       //   line-height: 38px;
       // }
     }
-    ::v-deep.set-upload {
+    ::v-deep .set-upload {
       position: relative;
       span {
         input {

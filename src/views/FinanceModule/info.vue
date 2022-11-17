@@ -328,8 +328,8 @@ export default {
       const start = new Date();
       end.setTime(end.getTime() - 3600 * 1000 * 24);
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-      this.lineSearchDate = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
-      this.accountSearchDate = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')]
+      this.lineSearchDate = [dayjs(start).format('YYYY-MM-DD'), dayjs(end).format('YYYY-MM-DD')];
+      this.accountSearchDate = [dayjs(start).format('YYYY-MM-DD'), dayjs(end).format('YYYY-MM-DD')]
     },
     getVersion() {
       this.$fetch('getVersionInfo', { user_id: this.userId}).then(res => {

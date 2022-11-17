@@ -301,7 +301,7 @@ export default {
       const start = new Date();
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
       end.setTime(end.getTime() - 3600 * 1000 * 24 * 1);
-      this.query.timeStr = [this.$moment(start).format('YYYY-MM-DD'), this.$moment(end).format('YYYY-MM-DD')];
+      this.query.timeStr = [dayjs(start).format('YYYY-MM-DD'), dayjs(end).format('YYYY-MM-DD')];
       // 格式化表格
       this.compareTableColumns()
       this.$nextTick(() => {
