@@ -458,7 +458,8 @@
         },
         guestVo: null,
         assistantVo: null,
-        lowerGradeInterval: null
+        lowerGradeInterval: null,
+        webinarIsDirector: sessionOrLocal.get(`webinar_is_director__${this.$route.params.str}`) || 0 // 是否活动标记为云导播活动
       };
     },
     computed: {
@@ -466,43 +467,39 @@
         return `您好，【${this.privilegeVo.nick_name}】邀您参加《${
           this.privilegeVo.subject
         }》的直播，以下为直播的详细信息及参会信息，请准时参加，谢谢
-直播名称：${this.privilegeVo.subject}
-直播ID：${this.privilegeVo.webinar_id}
-开始时间：${this.privilegeVo.start_time}
-主持人口令：${
-          this.privilegeVo && this.privilegeVo.host_password
-            ? this.privilegeVo.host_password
-            : '未设置'
-        }
-加入链接：${this.privilegeVo && this.host_join_link ? this.host_join_link : ''}`;
+  直播名称：${this.privilegeVo.subject}
+  直播ID：${this.privilegeVo.webinar_id}
+  开始时间：${this.privilegeVo.start_time}
+  主持人口令：${
+    this.privilegeVo && this.privilegeVo.host_password ? this.privilegeVo.host_password : '未设置'
+  }
+  加入链接：${this.privilegeVo && this.host_join_link ? this.host_join_link : ''}`;
       },
       urlText2: function () {
         return `您好，【${this.privilegeVo.nick_name}】邀您参加《${
           this.privilegeVo.subject
         }》的直播，以下为直播的详细信息及参会信息，请准时参加，谢谢
-直播名称：${this.privilegeVo.subject}
-直播ID：${this.privilegeVo.webinar_id}
-开始时间：${this.privilegeVo.start_time}
-嘉宾口令：${
-          this.privilegeVo && this.privilegeVo.guest_password
-            ? this.privilegeVo.guest_password
-            : '未设置'
-        }
-加入链接：${this.privilegeVo && this.join_link ? this.join_link : ''}`;
+  直播名称：${this.privilegeVo.subject}
+  直播ID：${this.privilegeVo.webinar_id}
+  开始时间：${this.privilegeVo.start_time}
+  嘉宾口令：${
+    this.privilegeVo && this.privilegeVo.guest_password ? this.privilegeVo.guest_password : '未设置'
+  }
+  加入链接：${this.privilegeVo && this.join_link ? this.join_link : ''}`;
       },
       urlText3: function () {
         return `您好，【${this.privilegeVo.nick_name}】邀您参加《${
           this.privilegeVo.subject
         }》的直播，以下为直播的详细信息及参会信息，请准时参加，谢谢
-直播名称：${this.privilegeVo.subject}
-直播ID：${this.privilegeVo.webinar_id}
-开始时间：${this.privilegeVo.start_time}
-助理口令：${
-          this.privilegeVo && this.privilegeVo.assistant_password
-            ? this.privilegeVo.assistant_password
-            : '未设置'
-        }
-加入链接：${this.privilegeVo && this.assistant_join_link ? this.assistant_join_link : ''}`;
+  直播名称：${this.privilegeVo.subject}
+  直播ID：${this.privilegeVo.webinar_id}
+  开始时间：${this.privilegeVo.start_time}
+  助理口令：${
+    this.privilegeVo && this.privilegeVo.assistant_password
+      ? this.privilegeVo.assistant_password
+      : '未设置'
+  }
+  加入链接：${this.privilegeVo && this.assistant_join_link ? this.assistant_join_link : ''}`;
       },
       // 主持人
       host_join_link: function () {
@@ -580,6 +577,11 @@
           'speak_manage',
           'desktop_share' // 桌面共享
         ];
+        // webinar_type: 1.音频 2 视频 3 互动  5 定时直播
+        if (this.webinarIsDirector == 1 && this.privilegeVo.webinar_type == 2) {
+          // 如果是云导播 & 视频直播
+          defaultSortArr.splice(defaultSortArr.indexOf('exam'), 1);
+        }
         const obj = {};
         defaultSortArr.forEach(item => {
           if (sortKeys.includes(item)) {

@@ -16,7 +16,6 @@
     },
     mounted() {
       const aa = new ExamTemplateServer();
-      debugger;
       aa.mount({ id: '', el: '#exam-edit' });
       console.log('111111', aa);
     },
