@@ -12,7 +12,9 @@
         <!--</li>-->
       </ul>
       <div class="card--blue">
-        <el-button type="text" @click.prevent.stop="bindShowHandle('pwd')">{{accountInfo && accountInfo.has_password>0 ? '修改' : '设置'}}</el-button>
+        <el-button type="text" @click.prevent.stop="bindShowHandle('pwd')">
+          {{ accountInfo && accountInfo.has_password > 0 ? '修改' : '设置' }}
+        </el-button>
       </div>
     </div>
     <div class="comp-card-one">
@@ -20,20 +22,40 @@
       <ul class="ul--son--card">
         <li><label class="card--bold">密保手机</label></li>
         <!--<li><label class="card&#45;&#45;txt">已绑定手机：{{accountInfo && accountInfo.phone ? `${accountInfo.phone.replace(/(\d{4})\d*(\d{4})/, '$1****$2')}` : '&#45;&#45;'}}</label></li>-->
-        <li><label class="card--txt">{{accountInfo && accountInfo.phone ? `已绑定手机：${accountInfo.phone}` : '当前尚未绑定手机'}}</label></li>
+        <li>
+          <label class="card--txt">
+            {{
+              accountInfo && accountInfo.phone
+                ? `已绑定手机：${accountInfo.phone}`
+                : '当前尚未绑定手机'
+            }}
+          </label>
+        </li>
       </ul>
       <div class="card--blue">
-        <el-button type="text" @click.prevent.stop="bindShowHandle('phone')">{{ accountInfo && accountInfo.phone ? '修改' : '设置' }}</el-button>
+        <el-button type="text" @click.prevent.stop="bindShowHandle('phone')">
+          {{ accountInfo && accountInfo.phone ? '修改' : '设置' }}
+        </el-button>
       </div>
     </div>
     <div class="comp-card-one">
       <span class="pwd--circle green"><i class="iconfont-v3 saasicon_email"></i></span>
       <ul class="ul--son--card">
         <li><label class="card--bold">绑定邮箱</label></li>
-        <li><label class="card--txt">{{accountInfo && accountInfo.email ? `已绑定邮箱：${accountInfo.email}` : '当前尚未绑定邮箱'}}</label></li>
+        <li>
+          <label class="card--txt">
+            {{
+              accountInfo && accountInfo.email
+                ? `已绑定邮箱：${accountInfo.email}`
+                : '当前尚未绑定邮箱'
+            }}
+          </label>
+        </li>
       </ul>
       <div class="card--blue">
-        <el-button type="text" @click.prevent.stop="bindShowHandle('email')">{{ accountInfo && accountInfo.email ? '修改' : '设置' }}</el-button>
+        <el-button type="text" @click.prevent.stop="bindShowHandle('email')">
+          {{ accountInfo && accountInfo.email ? '修改' : '设置' }}
+        </el-button>
       </div>
     </div>
     <!-- 绑定邮箱/手机号/修改密码 -->
@@ -42,58 +64,60 @@
 </template>
 
 <script>
-import {sessionOrLocal} from "@/utils/utils";
-import ValidSetDialog from  './components/validSetDialog';
+  import { sessionOrLocal } from '@/utils/utils';
+  import ValidSetDialog from './components/validSetDialog';
 
-export default {
-  name: "validSet.vue",
-  components: {
-    ValidSetDialog
-  },
-  data() {
-    return {
-      accountInfo: null,
-      pwdLevel: null
-    };
-  },
-  methods: {
-    initComp() {
-      let account_info = sessionOrLocal.get('userInfo');
-      if(account_info !== null) {
-        let accountInfo = JSON.parse(account_info);
-        this.accountInfo = accountInfo;
-      }
+  export default {
+    name: 'validSet.vue',
+    components: {
+      ValidSetDialog
     },
-    bindShowHandle(type) {
-      this.$nextTick(() => {
-        this.$refs.validSetDialog.initComp(this.accountInfo, type);
-      });
+    data() {
+      return {
+        accountInfo: null,
+        pwdLevel: null
+      };
     },
-    changeOkHandle() {
-      // 保存成功，数据更新
-      this.$fetch('getInfo', {
-        scene_id: 2
-      }).then(res =>{
-        sessionOrLocal.set('userInfo', JSON.stringify(res.data));
-        sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+    methods: {
+      initComp() {
         let account_info = sessionOrLocal.get('userInfo');
-        if(account_info !== null) {
+        if (account_info !== null) {
           let accountInfo = JSON.parse(account_info);
           this.accountInfo = accountInfo;
         }
-        this.$EventBus.$emit('saas_vs_account_change', res.data);
-      }).catch(res => {
-        this.$message({
-          message: res.msg || `获取账户信息失败`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
+      },
+      bindShowHandle(type) {
+        this.$nextTick(() => {
+          this.$refs.validSetDialog.initComp(this.accountInfo, type);
         });
-      });
+      },
+      changeOkHandle() {
+        // 保存成功，数据更新
+        this.$fetch('getInfo', {
+          scene_id: 2
+        })
+          .then(res => {
+            sessionOrLocal.set('userInfo', JSON.stringify(res.data));
+            sessionOrLocal.set('userId', JSON.stringify(res.data.user_id));
+            let account_info = sessionOrLocal.get('userInfo');
+            if (account_info !== null) {
+              let accountInfo = JSON.parse(account_info);
+              this.accountInfo = accountInfo;
+            }
+            this.$EventBus.$emit('saas_vs_account_change', res.data);
+          })
+          .catch(res => {
+            this.$message({
+              message: res.msg || `获取账户信息失败`,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+          });
+      }
     }
-  }
-};
+  };
 </script>
 
 <style lang="less" scoped>
@@ -102,7 +126,7 @@ export default {
   }
   .card--blue {
     /deep/.el-button.el-button--text {
-      color: #3562FA;
+      color: #3562fa;
     }
   }
 </style>

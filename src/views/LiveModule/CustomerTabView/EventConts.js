@@ -1,4 +1,3 @@
-
 const menuTypes = {
   // 菜单 内容更新
   UPDATE_MENU_INFO: 'UPDATE_MENU_INFO',
@@ -12,5 +11,5 @@ const menuTypes = {
   EDITOR_COMPONENT_ITEM_INFO: 'EDITOR_COMPONENT_ITEM_INFO',
   // 编辑单个 专题选择 - 选项
   EDITOR_COMPONENTP_PROJECT_ITEM_INFO: 'EDITOR_COMPONENTP_PROJECT_ITEM_INFO'
-}
-export default menuTypes
+};
+export default menuTypes;

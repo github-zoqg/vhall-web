@@ -1,5 +1,5 @@
-import Layout from "@/layout/index";
-import EmptyLayout from "@/layout/emptyLayout";
+import Layout from '@/layout/index';
+import EmptyLayout from '@/layout/emptyLayout';
 
 const router = [
   {
@@ -30,22 +30,28 @@ const router = [
       {
         path: 'msgList',
         component: () => import('@/views/PlatformModule/Message/list'),
-        meta: { auth: true, title: '消息中心', name: 'msgList', icon: 'table'}
+        meta: { auth: true, title: '消息中心', name: 'msgList', icon: 'table' }
       },
       {
         path: 'msgDetail/:str(\\d+)',
         component: () => import('@/views/PlatformModule/Message/detail'),
-        meta: { auth: true, title: '消息详情', name: 'msgDetail', icon: 'table', activeMenu: '/other/msgList'},
+        meta: {
+          auth: true,
+          title: '消息详情',
+          name: 'msgDetail',
+          icon: 'table',
+          activeMenu: '/other/msgList'
+        },
         hidden: true
       },
       {
         path: 'downloadList',
         component: () => import('@/views/PlatformModule/download'),
-        meta: { auth: true, title: '下载中心', name: 'downloadList', icon: 'table'}
+        meta: { auth: true, title: '下载中心', name: 'downloadList', icon: 'table' }
       }
     ]
   },
- /* {
+  /* {
     path: '/css-demo',
     component: Layout,
     meta: { auth: false, title: '样式Demo', name: 'cssDemoAll', icon: 'el-icon-s-help' },
@@ -61,25 +67,25 @@ const router = [
   {
     path: '/warning/:str(.+)', // 说明包含 404，500，405 ，sysUnder 系统维护中，network 网络异常
     component: () => import('@/views/PlatformModule/Error/index'),
-    meta: { auth: false, name: 'common'},
+    meta: { auth: false, name: 'common' },
     hidden: true
   },
   {
     path: '/upgrading', // 说明包含 404，500，405 ，sysUnder 系统维护中，network 网络异常
     component: () => import('@/views/PlatformModule/Upgrading/index'),
-    meta: { auth: false, name: 'upgrading'},
+    meta: { auth: false, name: 'upgrading' },
     hidden: true
   },
   {
     path: '/browser', // 浏览器
     component: () => import('@/views/PlatformModule/browser'),
-    meta: { auth: false, name: 'common'},
+    meta: { auth: false, name: 'common' },
     hidden: true
   },
   {
     path: '/nullPage', // 空白
     component: () => import('@/views/PlatformModule/Error/nullPage'),
-    meta: { auth: false, name: 'common'},
+    meta: { auth: false, name: 'common' },
     hidden: true
   },
   {
@@ -93,7 +99,8 @@ const router = [
     meta: { auth: false, name: 'privacyPolicy', title: '隐私政策' },
     component: () => import('@/views/PrivacyModule/privacyPolicy'),
     hidden: true
-  },{
+  },
+  {
     path: '/privacyUPo',
     meta: { auth: false, name: 'userProtection', title: '用户服务协议' },
     component: () => import('@/views/PrivacyModule/userProtection'),

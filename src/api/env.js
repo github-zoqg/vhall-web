@@ -24,11 +24,11 @@ let staticImgs = {
     'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_7@2x.png',
     'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_8@2x.png',
     'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_9@2x.png'
-  ],
-}
+  ]
+};
 if (process.env.VUE_APP_NODE_ENV === 'production') {
-  staticLinkVo.uploadBaseUrl = 'https://cnstatic01.e.vhall.com/upload/'
-  staticLinkVo.tmplDownloadUrl = 'https://cnstatic01.e.vhall.com/static'
+  staticLinkVo.uploadBaseUrl = 'https://cnstatic01.e.vhall.com/upload/';
+  staticLinkVo.tmplDownloadUrl = 'https://cnstatic01.e.vhall.com/static';
   staticImgs = {
     invitation: [
       'https://cnstatic01.e.vhall.com/upload/common/static-imgs/c8/38/c838fcf61ce4f692dcf84fa02bb16fe3.png',
@@ -41,7 +41,7 @@ if (process.env.VUE_APP_NODE_ENV === 'production') {
       'https://cnstatic01.e.vhall.com/upload/common/static-imgs/01/a7/01a71e81df96b05c598625cc9032b626.png',
       'https://cnstatic01.e.vhall.com/upload/common/static-imgs/20/d5/20d5f3fb24d5d7b834e7520eadca7223.png'
     ]
-  }
+  };
 }
 export default {
   staticLinkVo,

@@ -5,29 +5,28 @@
 </template>
 
 <script>
-import ExamList from '../../../PlatformModule/ExamList/index.vue';
-export default {
-  components: {
-    ExamList
-  },
-  data(){
-    return {}
-  },
-  created(){
-  },
-  methods: {
-    initComp() {
-      this.$refs.webinarExamList && this.$refs.webinarExamList.initComp()
+  import ExamList from '../../../PlatformModule/ExamList/index.vue';
+  export default {
+    components: {
+      ExamList
+    },
+    data() {
+      return {};
+    },
+    created() {},
+    methods: {
+      initComp() {
+        this.$refs.webinarExamList && this.$refs.webinarExamList.initComp();
+      }
+    },
+    mounted() {
+      this.initComp();
     }
-  },
-  mounted() {
-    this.initComp()
-  }
-};
+  };
 </script>
 
 <style lang="less" scoped>
-.exam-table-panel {
-  padding: 24px 24px 40px 24px;
-}
+  .exam-table-panel {
+    padding: 24px 24px 40px 24px;
+  }
 </style>

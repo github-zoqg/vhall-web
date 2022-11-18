@@ -1,8 +1,13 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" class="exam-preview-pc" :width="maxWidth" :height="maxHeight"
-    :close-on-click-modal=false
-    :close-on-press-escape=false
-    @close="handleClose">
+  <el-dialog
+    :visible.sync="dialogVisible"
+    class="exam-preview-pc"
+    :width="maxWidth"
+    :height="maxHeight"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    @close="handleClose"
+  >
     <!-- 标题栏 -->
     <div slot="title" class="exam-execute-title" v-if="isDialogOpen && step != 2">
       <template v-if="answerType != 'show'">
@@ -11,10 +16,14 @@
           <template v-if="answerFormat && (answerFormat.hour > 0 || answerFormat.minute > 0)">
             <ul v-if="previewVo && previewVo.limit_time_switch > 0">
               <li class="exam-css-text">剩余时间：</li>
-              <li class="exam-css-timer" v-if="answerFormat && answerFormat.hour > 0">{{answerFormat.hour > 9 ? answerFormat.hour : `0${answerFormat.hour}`}}</li>
+              <li class="exam-css-timer" v-if="answerFormat && answerFormat.hour > 0">
+                {{ answerFormat.hour > 9 ? answerFormat.hour : `0${answerFormat.hour}` }}
+              </li>
               <li class="exam-css-timer" v-else>00</li>
               <li class="exam-css-timer">:</li>
-              <li class="exam-css-timer" v-if="answerFormat && answerFormat.minute > 0">{{answerFormat.minute > 9 ? answerFormat.minute : `0${answerFormat.minute}`}}</li>
+              <li class="exam-css-timer" v-if="answerFormat && answerFormat.minute > 0">
+                {{ answerFormat.minute > 9 ? answerFormat.minute : `0${answerFormat.minute}` }}
+              </li>
               <li class="exam-css-timer" v-else>00</li>
             </ul>
             <span v-else>不限时</span>
@@ -145,12 +154,12 @@
     },
     computed: {
       maxSonWidth() {
-        let maxWidthNum = this.maxWidth.substring(0, this.maxWidth.length - 2)
-        return `${Number(maxWidthNum) - 64}px`
+        let maxWidthNum = this.maxWidth.substring(0, this.maxWidth.length - 2);
+        return `${Number(maxWidthNum) - 64}px`;
       },
       maxSonHeight() {
-        let maxHeightNum = this.maxHeight.substring(0, this.maxHeight.length - 2)
-        return `${Number(maxHeightNum) - 100}px`
+        let maxHeightNum = this.maxHeight.substring(0, this.maxHeight.length - 2);
+        return `${Number(maxHeightNum) - 100}px`;
       }
     },
     methods: {
@@ -194,14 +203,14 @@
       },
       // 快问快答详情
       previewInfo(previewInfo) {
-        this.previewVo = previewInfo
-        this.answerTimeNum = previewInfo.limit_time // 倒计时（数值单位分钟）
+        this.previewVo = previewInfo;
+        this.answerTimeNum = previewInfo.limit_time; // 倒计时（数值单位分钟）
         this.timeLoaded = true;
-        this.executeInterval()
+        this.executeInterval();
       },
       // 是否允许执行答题
       examCheckOption(status) {
-        this.isDisabledSave = status
+        this.isDisabledSave = status;
       },
       // 倒计时 -- 初始化
       initInterval() {
@@ -220,10 +229,10 @@
       computeAnswerTime() {
         let timer = this.answerTimeNum;
         let hour = Math.floor(timer / 60);
-        let minute = timer - hour*60;
+        let minute = timer - hour * 60;
         this.answerFormat.hour = hour;
         this.answerFormat.minute = minute;
-        console.log(`${hour}时${minute}分钟`)
+        console.log(`${hour}时${minute}分钟`);
       },
       // 倒计时 -- 执行
       executeInterval() {
@@ -267,7 +276,7 @@
             margin-right: 8px;
           }
           .exam-css-timer {
-            color: #FB3A32;
+            color: #fb3a32;
           }
         }
       }

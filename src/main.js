@@ -1,15 +1,14 @@
-import Vue from 'vue'
+import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import VhallUI from 'vhall-ui';
-import 'cropperjs/dist/cropper.css'
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
 // element-ui 样式重置
 import vuescroll from 'vuescroll';
-import PaasPort from '@vhall/paas-report-data'
+import PaasPort from '@vhall/paas-report-data';
 import { sessionOrLocal, refreshToken } from './utils/utils';
 import { loadMore, tooltipMove, clearEmoij } from '@/utils/directive';
-import './utils/prototype'
+import './utils/prototype';
 import * as filters from './utils/filter';
 import { getParams } from './utils/general';
 import ElementUI from 'element-ui';
@@ -32,7 +31,6 @@ import VhallDialog from '@/components/Dialog';
 import VhallInput from '@/components/Input';
 import { bu_appId } from './init-global/businessData';
 
-
 /**
  * ???
  */
@@ -40,23 +38,23 @@ window.SAAS_V3_COL = {
   KEY_1: 'SAAS_V3_SON_VO', // 子账号个数
   KEY_2: 'SAAS_V3_PID', // 用户ID
   KEY_3: 'SAAS_V3_BASE64', // 控制台token
-  KEY_4: 'SAAS_V3_UO', // 用户对象
+  KEY_4: 'SAAS_V3_UO' // 用户对象
 };
 // 微吼默认标题
-window.SAAS_vhall_title = "微吼-直播,网络直播,视频直播,在线教育平台,视频直播平台,网络直播系统,中国最大的网络直播互动平台";
-
-
+window.SAAS_vhall_title =
+  '微吼-直播,网络直播,视频直播,在线教育平台,视频直播平台,网络直播系统,中国最大的网络直播互动平台';
 
 //-------------------------- 隔离(组件,指令,过滤器) --------------------------
 
 Vue.component('SPagination', SPagination);
 Vue.component('VhallDialog', VhallDialog); // 弹框
-Vue.component('tableList', tableList);  // 表格区域
+Vue.component('tableList', tableList); // 表格区域
 Vue.component('searchArea', searchArea); // 搜索区域
 Vue.component('VhallInput', VhallInput); // input 重写
 // 指令
-Vue.directive('preventReClick', {    // 限制按钮重复点击
-  inserted: function(el, binding) {
+Vue.directive('preventReClick', {
+  // 限制按钮重复点击
+  inserted: function (el, binding) {
     el.addEventListener('click', () => {
       if (!el.disabled) {
         el.disabled = true;
@@ -82,22 +80,22 @@ Vue.directive('preventReOneClick', {
 });
 // 过滤器
 Object.keys(filters).forEach(key => {
-  Vue.filter(key, filters[key]);    //插入过滤器名和对应方法
+  Vue.filter(key, filters[key]); //插入过滤器名和对应方法
 });
 // 插件
-Vue.use(VhallUI)
-Vue.use(ElementUI)
+Vue.use(VhallUI);
+Vue.use(ElementUI);
 Vue.use(vuescroll, {
- ops: {
-   // The global config
-   bar: {
-     background: 'rgba(0,0,0,0.3)'
-   },
-   /* scrollPanel: {
+  ops: {
+    // The global config
+    bar: {
+      background: 'rgba(0,0,0,0.3)'
+    }
+    /* scrollPanel: {
      initialScrollY: '100%'
    } */
- },
- name: 'vhscroll' // customize component name, default -> vueScroll
+  },
+  name: 'vhscroll' // customize component name, default -> vueScroll
 });
 Vue.use(VueI18n);
 Vue.use(loadMore);
@@ -107,18 +105,22 @@ Vue.use(VueMasonryPlugin);
 
 // 大数据上报配置
 Vue.use(PaasPort, {
-  app_id: process.env.VUE_APP_SAAS_ENV_DESC ? bu_appId['test_new'] : process.env.VUE_APP_NODE_ENV === 'production' ? bu_appId['production'] : bu_appId['test'],
+  app_id: process.env.VUE_APP_SAAS_ENV_DESC
+    ? bu_appId['test_new']
+    : process.env.VUE_APP_NODE_ENV === 'production'
+    ? bu_appId['production']
+    : bu_appId['test'],
   pf: 8,
   noConsole: false,
   isProduction: process.env.VUE_APP_NODE_ENV === 'production' ? true : false
 });
 
 const i18n = new VueI18n({
- locale: ['en', 'cn'].includes(getParams('lang')) ? getParams('lang') : 'cn', // 语言标识
- messages: {
-   cn: require('../src/common/js/lan/cn'),
-   en: require('../src/common/js/lan/en')
- }
+  locale: ['en', 'cn'].includes(getParams('lang')) ? getParams('lang') : 'cn', // 语言标识
+  messages: {
+    cn: require('../src/common/js/lan/cn'),
+    en: require('../src/common/js/lan/en')
+  }
 });
 window.i18n = i18n;
 //-------------------------- 隔离 (vue指令,过滤器,插件)--------------------------

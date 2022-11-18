@@ -34,6 +34,6 @@ const compoentMap = {
   8: 'line',
   // 排行榜
   9: 'rank'
-}
+};
 
-export default compoentMap
+export default compoentMap;

@@ -7,11 +7,7 @@ const mixins = {
         timestamp: '', // 必填,生成签名的时间戳
         nonceStr: '', // 必填,生成签名的随机串
         signature: '', // 必填,签名
-        jsApiList: [
-          'chooseWXPay',
-          'updateAppMessageShareData',
-          'updateTimelineShareData'
-        ]
+        jsApiList: ['chooseWXPay', 'updateAppMessageShareData', 'updateTimelineShareData']
       };
       wx.config({ ...params, ...initData });
       wx.ready(() => {

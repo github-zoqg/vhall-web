@@ -1,16 +1,17 @@
 <template>
-  <div :class="[
-    type === 'textarea' ? 'el-textarea' : 'el-input',
-    inputSize ? 'el-input--' + inputSize : '',
-    {
-      'is-disabled': inputDisabled,
-      'is-exceed': inputExceed,
-      'el-input-group': $slots.prepend || $slots.append,
-      'el-input-group--append': $slots.append,
-      'el-input-group--prepend': $slots.prepend,
-      'el-input--prefix': $slots.prefix || prefixIcon,
-      'el-input--suffix': $slots.suffix || suffixIcon || clearable || showPassword
-    }
+  <div
+    :class="[
+      type === 'textarea' ? 'el-textarea' : 'el-input',
+      inputSize ? 'el-input--' + inputSize : '',
+      {
+        'is-disabled': inputDisabled,
+        'is-exceed': inputExceed,
+        'el-input-group': $slots.prepend || $slots.append,
+        'el-input-group--append': $slots.append,
+        'el-input-group--prepend': $slots.prepend,
+        'el-input--prefix': $slots.prefix || prefixIcon,
+        'el-input--suffix': $slots.suffix || suffixIcon || clearable || showPassword
+      }
     ]"
     @mouseenter="hovering = true"
     @mouseleave="hovering = false"
@@ -38,33 +39,27 @@
         @change="handleChange"
         :aria-label="label"
         :style="textStyle"
-      >
+      />
       <!-- 前置内容 -->
       <span class="el-input__prefix" v-if="$slots.prefix || prefixIcon">
         <slot name="prefix"></slot>
-        <i class="el-input__icon"
-           v-if="prefixIcon"
-           :class="prefixIcon">
-        </i>
+        <i class="el-input__icon" v-if="prefixIcon" :class="prefixIcon"></i>
       </span>
       <!-- 后置内容 -->
-      <span
-        class="el-input__suffix"
-        v-if="getSuffixVisible()">
+      <span class="el-input__suffix" v-if="getSuffixVisible()">
         <span class="el-input__suffix-inner">
           <template v-if="!showClear || !showPwdVisible || !isWordLimitVisible">
             <slot name="suffix"></slot>
-            <i class="el-input__icon"
-              v-if="suffixIcon"
-              :class="suffixIcon">
-            </i>
+            <i class="el-input__icon" v-if="suffixIcon" :class="suffixIcon"></i>
           </template>
-          <i v-if="showClear"
+          <i
+            v-if="showClear"
             class="el-input__icon el-icon-circle-close el-input__clear"
             @mousedown.prevent
             @click="clear"
           ></i>
-          <i v-if="showPwdVisible"
+          <i
+            v-if="showPwdVisible"
             class="el-input__icon el-icon-view el-input__clear"
             @click="handlePasswordVisible"
           ></i>
@@ -73,17 +68,28 @@
               <span
                 :class="[
                   'el-input__count-inner__numerator',
-                  `${value}`.length && `${value}`.length != $attrs.maxlength ? 'el-input__count-inner__numerator-hasnum' : '',
-                  `${value}`.length && `${value}`.length == $attrs.maxlength ? 'el-input__count-inner__numerator-maxnum' : ''
+                  `${value}`.length && `${value}`.length != $attrs.maxlength
+                    ? 'el-input__count-inner__numerator-hasnum'
+                    : '',
+                  `${value}`.length && `${value}`.length == $attrs.maxlength
+                    ? 'el-input__count-inner__numerator-maxnum'
+                    : ''
                 ]"
-              >{{ textLength }}</span><span class="el-input__count-inner__denominator"><span ref="separator">/</span><span ref="limit_total">{{ upperLimit }}</span></span>
+              >
+                {{ textLength }}
+              </span>
+              <span class="el-input__count-inner__denominator">
+                <span ref="separator">/</span>
+                <span ref="limit_total">{{ upperLimit }}</span>
+              </span>
             </span>
           </span>
         </span>
-        <i class="el-input__icon"
+        <i
+          class="el-input__icon"
           v-if="validateState"
-          :class="['el-input__validateIcon', validateIcon]">
-        </i>
+          :class="['el-input__validateIcon', validateIcon]"
+        ></i>
       </span>
       <!-- 后置元素 -->
       <div class="el-input-group__append" v-if="$slots.append">
@@ -93,70 +99,69 @@
   </div>
 </template>
 <script>
-  import { Input } from 'element-ui'
+  import { Input } from 'element-ui';
   //自定义密码输入框
   //input元素光标操作
   class CursorPosition {
     constructor(_inputEl) {
-      this._inputEl = _inputEl
+      this._inputEl = _inputEl;
     }
     //获取光标的位置 前，后，以及中间字符
     get() {
-      var rangeData = { text: '', start: 0, end: 0 }
+      var rangeData = { text: '', start: 0, end: 0 };
       if (this._inputEl.setSelectionRange) {
         // W3C
-        this._inputEl.focus()
-        rangeData.start = this._inputEl.selectionStart
-        rangeData.end = this._inputEl.selectionEnd
+        this._inputEl.focus();
+        rangeData.start = this._inputEl.selectionStart;
+        rangeData.end = this._inputEl.selectionEnd;
         rangeData.text =
           rangeData.start != rangeData.end
             ? this._inputEl.value.substring(rangeData.start, rangeData.end)
-            : ''
+            : '';
       } else if (document.selection) {
         // IE
-        this._inputEl.focus()
+        this._inputEl.focus();
         var i,
           oS = document.selection.createRange(),
-          oR = document.body.createTextRange()
-        oR.moveToElementText(this._inputEl)
+          oR = document.body.createTextRange();
+        oR.moveToElementText(this._inputEl);
 
-        rangeData.text = oS.text
-        rangeData.bookmark = oS.getBookmark()
+        rangeData.text = oS.text;
+        rangeData.bookmark = oS.getBookmark();
         for (
           i = 0;
-          oR.compareEndPoints('StartToStart', oS) < 0 &&
-          oS.moveStart('character', -1) !== 0;
+          oR.compareEndPoints('StartToStart', oS) < 0 && oS.moveStart('character', -1) !== 0;
           i++
         ) {
           if (this._inputEl.value.charAt(i) == '\r') {
-            i++
+            i++;
           }
         }
-        rangeData.start = i
-        rangeData.end = rangeData.text.length + rangeData.start
+        rangeData.start = i;
+        rangeData.end = rangeData.text.length + rangeData.start;
       }
 
-      return rangeData
+      return rangeData;
     }
     //写入光标的位置
     set(rangeData) {
-      var oR
+      var oR;
       if (!rangeData) {
-        alert('You must get cursor position first.')
+        alert('You must get cursor position first.');
       }
-      this._inputEl.focus()
+      this._inputEl.focus();
       if (this._inputEl.setSelectionRange) {
         // W3C
-        this._inputEl.setSelectionRange(rangeData.start, rangeData.end)
+        this._inputEl.setSelectionRange(rangeData.start, rangeData.end);
       } else if (this._inputEl.createTextRange) {
         // IE
-        oR = this._inputEl.createTextRange()
+        oR = this._inputEl.createTextRange();
         if (this._inputEl.value.length === rangeData.start) {
-          oR.collapse(false)
-          oR.select()
+          oR.collapse(false);
+          oR.select();
         } else {
-          oR.moveToBookmark(rangeData.bookmark)
-          oR.select()
+          oR.moveToBookmark(rangeData.bookmark);
+          oR.select();
         }
       }
     }
@@ -172,29 +177,27 @@
         symbol: '●', //自定义的密码符号
         pwd: '', //密码明文数据
         calcWidth: ''
-      }
+      };
     },
     mounted() {
       this.calcWidth =
         this.$refs.limit_total && this.$refs.limit_total.offsetWidth
-          ? this.$refs.limit_total.offsetWidth * 2 +
-            this.$refs.separator.offsetWidth +
-            15 +
-            'px'
-          : '12px'
+          ? this.$refs.limit_total.offsetWidth * 2 + this.$refs.separator.offsetWidth + 15 + 'px'
+          : '12px';
     },
     watch: {
       value() {
-        this.pwd = this.value
-        !this.isPasswordVisible && this.$nextTick(() => {
-          this.inputDataConversion(this.pwd)
-        })
+        this.pwd = this.value;
+        !this.isPasswordVisible &&
+          this.$nextTick(() => {
+            this.inputDataConversion(this.pwd);
+          });
       },
       isPasswordVisible(newVal) {
         if (newVal) {
-          this.$refs.input.value = this.pwd
+          this.$refs.input.value = this.pwd;
         } else {
-          this.inputDataConversion(this.pwd)
+          this.inputDataConversion(this.pwd);
         }
       }
     },
@@ -202,67 +205,64 @@
       textStyle() {
         return {
           paddingRight: this.calcWidth
-        }
+        };
       }
     },
     methods: {
       inputDataConversion(value) {
         //输入框里的数据转换，将123转为***
         if (!value) {
-          this.$refs.input.value = ''
-          return
+          this.$refs.input.value = '';
+          return;
         }
-        let data = ''
+        let data = '';
         for (let i = 0; i < value.length; i++) {
-          data += this.symbol
+          data += this.symbol;
         }
-        this.$refs.input.value = data
+        this.$refs.input.value = data;
       },
       pwdSetData(positionIndex, value) {
         //写入原始数据
-        let _pwd = value.split(this.symbol).join('')
+        let _pwd = value.split(this.symbol).join('');
         if (_pwd) {
-          let index = this.pwd.length - (value.length - positionIndex.end)
+          let index = this.pwd.length - (value.length - positionIndex.end);
           this.pwd =
-            this.pwd.slice(0, positionIndex.end - _pwd.length) +
-            _pwd +
-            this.pwd.slice(index)
+            this.pwd.slice(0, positionIndex.end - _pwd.length) + _pwd + this.pwd.slice(index);
         } else {
           this.pwd =
             this.pwd.slice(0, positionIndex.end) +
-            this.pwd.slice(positionIndex.end + this.pwd.length - value.length)
+            this.pwd.slice(positionIndex.end + this.pwd.length - value.length);
         }
       },
       handleInput(e) {
         //输入值变化后执行
         //撰写期间不应发出输入
-        if (this.isComposing) return
-        let cursorPosition = new CursorPosition(this.$refs.input)
-        let positionIndex = cursorPosition.get()
-        let value = e.target.value //整个输入框的值
-        e.target.value = value = this.checkValue(value)
-        this.pwdSetData(positionIndex, value)
-        cursorPosition.set(positionIndex, this.$refs.input)
-        this.$emit('input', this.pwd)
+        if (this.isComposing) return;
+        let cursorPosition = new CursorPosition(this.$refs.input);
+        let positionIndex = cursorPosition.get();
+        let value = e.target.value; //整个输入框的值
+        e.target.value = value = this.checkValue(value);
+        this.pwdSetData(positionIndex, value);
+        cursorPosition.set(positionIndex, this.$refs.input);
+        this.$emit('input', this.pwd);
       },
       checkValue(str) {
-        var temp = ''
+        var temp = '';
         for (var i = 0; i < str.length; i++)
-          if (str.charCodeAt(i) > 0 && str.charCodeAt(i) < 255)
-            temp += str.charAt(i)
-        return temp
+          if (str.charCodeAt(i) > 0 && str.charCodeAt(i) < 255) temp += str.charAt(i);
+        return temp;
       }
     }
-  }
+  };
 </script>
 <style lang="less">
   .el-input__count-inner__numerator {
     color: #999999;
     &.el-input__count-inner__numerator-hasnum {
-      color: #3562FA;
+      color: #3562fa;
     }
     &.el-input__count-inner__numerator-maxnum {
-      color: #FB3A32;
+      color: #fb3a32;
     }
   }
   .el-input__count-inner__denominator {
@@ -270,9 +270,10 @@
   }
   // 输入框样式重置
   .el-form-item.is-error .el-input__inner {
-    border-color: #FB3A32;
+    border-color: #fb3a32;
   }
-  .el-input__inner,.el-textarea__inner {
+  .el-input__inner,
+  .el-textarea__inner {
     border-color: #ccc;
     color: #1a1a1a;
     &:hover {
@@ -281,35 +282,43 @@
     &:focus {
       border-color: #999;
     }
-    &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-      color:    #999999;
+    &::-webkit-input-placeholder {
+      /* WebKit, Blink, Edge */
+      color: #999999;
     }
-    &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-      color:    #999999;
+    &:-moz-placeholder {
+      /* Mozilla Firefox 4 to 18 */
+      color: #999999;
     }
-    &::-moz-placeholder { /* Mozilla Firefox 19+ */
-      color:    #999999;
+    &::-moz-placeholder {
+      /* Mozilla Firefox 19+ */
+      color: #999999;
     }
-    &:-ms-input-placeholder { /* Internet Explorer 10-11 */
-      color:    #999999;
+    &:-ms-input-placeholder {
+      /* Internet Explorer 10-11 */
+      color: #999999;
     }
   }
   .el-input.is-disabled .el-input__inner {
-    background-color: #FFFFFF;
-    border-color: #E6E6E6;
+    background-color: #ffffff;
+    border-color: #e6e6e6;
     color: #999999;
     cursor: not-allowed;
-    &::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-      color:    #B3B3B3;
+    &::-webkit-input-placeholder {
+      /* WebKit, Blink, Edge */
+      color: #b3b3b3;
     }
-    &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-      color:    #B3B3B3;
+    &:-moz-placeholder {
+      /* Mozilla Firefox 4 to 18 */
+      color: #b3b3b3;
     }
-    &::-moz-placeholder { /* Mozilla Firefox 19+ */
-      color:    #B3B3B3;
+    &::-moz-placeholder {
+      /* Mozilla Firefox 19+ */
+      color: #b3b3b3;
     }
-    &:-ms-input-placeholder { /* Internet Explorer 10-11 */
-      color:    #B3B3B3;
+    &:-ms-input-placeholder {
+      /* Internet Explorer 10-11 */
+      color: #b3b3b3;
     }
   }
 </style>

@@ -16,68 +16,74 @@
       </div>
     </div>
     <!-- 开播按钮 -->
-    <begin-play :webinarId="$route.params.str" v-if="$route.query.type != 5 && webinarState!=4"></begin-play>
+    <begin-play
+      :webinarId="$route.params.str"
+      v-if="$route.query.type != 5 && webinarState != 4"
+    ></begin-play>
   </div>
 </template>
 
 <script>
-import PageTitle from '@/components/PageTitle';
-import { sessionOrLocal } from '@/utils/utils';
-import beginPlay from '@/components/beginBtn';
-import ExamTablePanel from './components/ExamTablePanel';
-import ExamUserInfo from './components/ExamUserInfo';
-export default {
-  components: {
-    PageTitle,
-    beginPlay,
-    ExamTablePanel,
-    ExamUserInfo
-  },
-  data(){
-    return {
-      tabType: 'table', // form-表单；user-用户
-      userId: '',
-      webinarState: JSON.parse(sessionOrLocal.get("webinarState")),
-      vm: null
-    };
-  },
-  async created(){
-    this.userId = JSON.parse(sessionOrLocal.get('userId'));
-  },
-  mounted() {
-    if (this.$route.query.tab == 2) {
-      this.tabType = 'user'
-      this.$refs.examUserInfo && this.$refs.examUserInfo.initComp()
-    } else {
-      this.tabType = 'table'
-      this.$refs.examTable && this.$refs.examTable.initComp()
-    }
-  },
-  methods: {
-    // 切换tab
-    handleClick(tab, event) {
-      // 如果是活动，左右切换
-      let tabCount = this.tabType === 'table' ? 1 : this.tabType === 'user' ? 2 : 0;
-      this.$router.push({path: `/live/exam/${this.$route.params.str}`, query: {
-        ...this.$route.query,
-        tab: tabCount
-      }})
+  import PageTitle from '@/components/PageTitle';
+  import { sessionOrLocal } from '@/utils/utils';
+  import beginPlay from '@/components/beginBtn';
+  import ExamTablePanel from './components/ExamTablePanel';
+  import ExamUserInfo from './components/ExamUserInfo';
+  export default {
+    components: {
+      PageTitle,
+      beginPlay,
+      ExamTablePanel,
+      ExamUserInfo
     },
-    //文案提示问题
-    messageInfo(title, type) {
-      if (this.vm) {
-        this.vm.close()
+    data() {
+      return {
+        tabType: 'table', // form-表单；user-用户
+        userId: '',
+        webinarState: JSON.parse(sessionOrLocal.get('webinarState')),
+        vm: null
+      };
+    },
+    async created() {
+      this.userId = JSON.parse(sessionOrLocal.get('userId'));
+    },
+    mounted() {
+      if (this.$route.query.tab == 2) {
+        this.tabType = 'user';
+        this.$refs.examUserInfo && this.$refs.examUserInfo.initComp();
+      } else {
+        this.tabType = 'table';
+        this.$refs.examTable && this.$refs.examTable.initComp();
       }
-      this.vm = this.$message({
-        showClose: true,
-        duration: 2000,
-        message: title,
-        type: type,
-        customClass: 'zdy-info-box'
-      });
+    },
+    methods: {
+      // 切换tab
+      handleClick(tab, event) {
+        // 如果是活动，左右切换
+        let tabCount = this.tabType === 'table' ? 1 : this.tabType === 'user' ? 2 : 0;
+        this.$router.push({
+          path: `/live/exam/${this.$route.params.str}`,
+          query: {
+            ...this.$route.query,
+            tab: tabCount
+          }
+        });
+      },
+      //文案提示问题
+      messageInfo(title, type) {
+        if (this.vm) {
+          this.vm.close();
+        }
+        this.vm = this.$message({
+          showClose: true,
+          duration: 2000,
+          message: title,
+          type: type,
+          customClass: 'zdy-info-box'
+        });
+      }
     }
-  }
-};
+  };
 </script>
 
 <style lang="less" scoped>
@@ -90,9 +96,9 @@ export default {
       padding-left: 22px;
       padding-right: 2px;
     }
-    /deep/ .el-switch__core{
+    /deep/ .el-switch__core {
       height: 16px;
-      width: 28px!important;
+      width: 28px !important;
       &:after {
         width: 12px;
         height: 12px;
@@ -102,7 +108,7 @@ export default {
       margin-left: -13px;
     }
     .isTabFixedBottom {
-      position: fixed!important;
+      position: fixed !important;
       z-index: 1000;
       top: 60px;
       background: #ffffff;
@@ -116,85 +122,85 @@ export default {
       .isFixed {
         width: 100%;
         background: #ffffff;
-        position:fixed!important;
-        top:60px;
+        position: fixed !important;
+        top: 60px;
         z-index: 1000;
       }
       .isFixedBottom {
         width: 100%;
         background: #ffffff;
-        position:fixed!important;
+        position: fixed !important;
         z-index: 1000;
-        top:60px;
-        section{
-          &.block{
+        top: 60px;
+        section {
+          &.block {
             display: none;
           }
         }
       }
     }
   }
-  .titleBox{
-    display: block!important;
+  .titleBox {
+    display: block !important;
     line-height: 40px;
     margin-bottom: 22px;
     /deep/.pageTitle {
       line-height: 40px;
     }
   }
-  .settingBox{
+  .settingBox {
     position: relative;
     .isFixed {
-      position:fixed!important;
-      top:70px;
-      z-index:999;
+      position: fixed !important;
+      top: 70px;
+      z-index: 999;
     }
     .isFixedBottom {
-      position:fixed!important;
-      z-index:999;
-      top:70px;
-      section{
-        &.block{
+      position: fixed !important;
+      z-index: 999;
+      top: 70px;
+      section {
+        &.block {
           display: none;
         }
       }
     }
-    .options{
+    .options {
       width: 170px;
       float: left;
       position: relative;
-      .block{
+      .block {
         font-size: 16px;
         color: #666666;
         height: 40px;
         line-height: 40px;
       }
-      .block-bto{
+      .block-bto {
         margin-top: 10px;
       }
-      .item{
+      .item {
         font-size: 14px;
-        color: #1A1A1A;
+        color: #1a1a1a;
         width: fit-content;
         height: 40px;
         line-height: 40px;
         cursor: pointer;
         &:hover {
-          color: #FB3A32!important;
-          i{
-            color: #FB3A32!important;
+          color: #fb3a32 !important;
+          i {
+            color: #fb3a32 !important;
           }
         }
-        &.active{
-          color: #B3B3B3;
+        &.active {
+          color: #b3b3b3;
           pointer-events: none;
-          i{
-            color: #B3B3B3;
+          i {
+            color: #b3b3b3;
           }
         }
-        i{
+        i {
           margin-right: 4px;
-          color: #1A1A1A;
+          color: #1a1a1a;
         }
         .icon {
           width: 14px;
@@ -205,24 +211,24 @@ export default {
         }
       }
     }
-    .rightView{
+    .rightView {
       display: flex;
       justify-content: center;
       width: calc(100% - 170px);
       float: right;
       position: relative;
     }
-    .disable_wrap{
+    .disable_wrap {
       position: absolute;
       z-index: 1000;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(255, 255, 255, 0.5)
+      background-color: rgba(255, 255, 255, 0.5);
     }
-    .options .disable_wrap{
-      background: #F7F7F7;
+    .options .disable_wrap {
+      background: #f7f7f7;
       opacity: 0.5;
     }
   }
