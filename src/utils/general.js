@@ -48,10 +48,7 @@ export function formateSeconds(result) {
 
 export function formatDate(date, fmt) {
   if (/(y+)/.test(fmt)) {
-    fmt = fmt.replace(
-      RegExp.$1,
-      (date.getFullYear() + '').substr(4 - RegExp.$1.length)
-    );
+    fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
   }
   const o = {
     'M+': date.getMonth() + 1,
@@ -63,10 +60,7 @@ export function formatDate(date, fmt) {
   for (const k in o) {
     if (new RegExp(`(${k})`).test(fmt)) {
       const str = o[k] + '';
-      fmt = fmt.replace(
-        RegExp.$1,
-        RegExp.$1.length === 1 ? str : paddingZero(str)
-      );
+      fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? str : paddingZero(str));
     }
   }
   return fmt;
@@ -93,9 +87,7 @@ export function formateDates(timer) {
   let h = time.getHours();
   let mm = time.getMinutes();
   let s = time.getSeconds();
-  return (
-    `${y}-${mat(m)}-${mat(d)} ${mat(h)}:${mat(mm)}:${mat(s)}`
-  );
+  return `${y}-${mat(m)}-${mat(d)} ${mat(h)}:${mat(mm)}:${mat(s)}`;
 }
 //格式化日期
 export function formateDate(timer) {
@@ -107,9 +99,7 @@ export function formateDate(timer) {
   let h = time.getHours();
   let mm = time.getMinutes();
   let s = time.getSeconds();
-  return (
-    `${y}-${mat(m)}-${mat(d)}`
-  );
+  return `${y}-${mat(m)}-${mat(d)}`;
 }
 
 export function getRangeDays(value) {
@@ -126,41 +116,10 @@ export function getRangeDays(value) {
     // 近30日
     let oldMonth = date.setTime(date.getTime() - 3600 * 1000 * 24 * 30);
     return formateDate(oldMonth);
-  } else if (value == 5){
+  } else if (value == 5) {
     let yesDate = date.setTime(date.getTime() - 3600 * 1000 * 24);
     return formateDate(yesDate);
   } else {
     return formateDate(date);
   }
-}
-// import moment from 'moment';
-export function difSeconds(start, end) {
-  // console.warn(start, end);
-  let dif = end ? moment(end).diff(moment(), 'seconds') : moment(start).diff(moment(), 'seconds')
-  // console.warn(dif, 78, moment(end).diff(moment(), 'seconds'));
-  if (dif < 0) return '-1';
-  let days = Math.floor(dif / (24 * 60 * 60))
-  let hours = Math.floor(dif / (60 * 60)) - days * 24
-  let minutes = Math.floor(dif / 60) - days * 24 * 60 - hours * 60
-  let seconds = dif % 60
-  return [days, hours, minutes, seconds]
-}
-
-// 最近7天、30天和90天
-export function getRangeDay() {
-  let ret = [];
-  let desc = ['最近7天', '最近30天', '最近90天'];
-  let diffdays = [7, 30, 90];
-  diffdays.forEach((item, index) => {
-    ret.push({
-      text: desc[index],
-      value: [
-        moment()
-          .subtract(item, 'days')
-          .format('YYYY-MM-DD'),
-        moment().format('YYYY-MM-DD')
-      ]
-    });
-  });
-  return ret;
 }

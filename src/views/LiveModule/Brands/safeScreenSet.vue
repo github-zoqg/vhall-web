@@ -553,7 +553,7 @@
     <div
       v-if="
         (hasDelayPremission && showDelay && webinar_type != 6) ||
-          (webinar_type == 6 && showGroupLive)
+        (webinar_type == 6 && showGroupLive)
       "
       class="delay-mask"
     >
@@ -1217,9 +1217,9 @@
         this.formHorse.text = this.formHorse.text || '版权所有，盗版必究';
         this.formHorse.scrolling_open = Number(this.scrolling_open);
         this.formHorse.type = 1;
-        let params = JSON.parse(JSON.stringify(this.formHorse))
-        if(params.text_type == 2){
-          delete params.text
+        let params = JSON.parse(JSON.stringify(this.formHorse));
+        if (params.text_type == 2) {
+          delete params.text;
         }
         this.$fetch('setScrolling', this.$params(params))
           .then(res => {
@@ -1245,20 +1245,8 @@
         console.log(this.formHorse);
         let loactionArr = [100239, 100240, 100241, 100242];
         let fontArr = [
-          100243,
-          100244,
-          100245,
-          100246,
-          100247,
-          100248,
-          100249,
-          100250,
-          100251,
-          100252,
-          100253,
-          100254,
-          100255,
-          100256
+          100243, 100244, 100245, 100246, 100247, 100248, 100249, 100250, 100251, 100252, 100253,
+          100254, 100255, 100256
         ];
         if (this.scrolling_open) {
           this.$vhall_paas_port({
@@ -1825,7 +1813,7 @@
     right: 0;
   }
   /deep/.el-slider__button-wrapper {
-    z-index: 500;
+    z-index: 99;
   }
   .saasclose {
     cursor: pointer;
@@ -1997,11 +1985,11 @@
         background: rgba(255, 255, 255, 0.5);
         z-index: 9;
         &.webinarTop {
-          top: 90px;
+          top: 100px;
         }
         &.userTop {
           height: 360px;
-          top: 20px;
+          top: 30px;
         }
       }
       .give-white-doc {
@@ -2012,7 +2000,7 @@
         background: rgba(255, 255, 255, 0.5);
         z-index: 9;
         &.webinarTop {
-          top: 510px;
+          top: 520px;
         }
         &.userTop {
           top: 440px;

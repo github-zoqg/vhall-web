@@ -1,9 +1,9 @@
-import { getStyle } from "@/utils/utils"
+import { getStyle } from '@/utils/utils';
 const tableCellTooltip = {
   data() {
     return {
       isTextOverflow: false
-    }
+    };
   },
   methods: {
     // 单元格鼠标移入事件
@@ -19,16 +19,19 @@ const tableCellTooltip = {
       range.setStart(cellChild, 0);
       range.setEnd(cellChild, cellChild.childNodes.length);
       const rangeWidth = range.getBoundingClientRect().width;
-      const padding = (parseInt(getStyle(cellChild, 'paddingLeft'), 10) || 0) +
+      const padding =
+        (parseInt(getStyle(cellChild, 'paddingLeft'), 10) || 0) +
         (parseInt(getStyle(cellChild, 'paddingRight'), 10) || 0);
-      if ((rangeWidth + padding > cellChild.offsetWidth || cellChild.scrollWidth > cellChild.offsetWidth)) {
-        this.isTextOverflow = true
+      if (
+        rangeWidth + padding > cellChild.offsetWidth ||
+        cellChild.scrollWidth > cellChild.offsetWidth
+      ) {
+        this.isTextOverflow = true;
       }
     },
     handleCellMouseLeave() {
-      this.isTextOverflow = false
-    },
-  },
+      this.isTextOverflow = false;
+    }
+  }
 };
 export default tableCellTooltip;
-

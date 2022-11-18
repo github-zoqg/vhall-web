@@ -3,9 +3,9 @@ import Cookies from 'js-cookie';
 import { v1 as uuidV1 } from 'uuid';
 import qs from 'qs';
 import getApi from './config';
-import { sessionOrLocal,getQueryString } from '../utils/utils';
+import { sessionOrLocal, getQueryString } from '../utils/utils';
 import { Message } from 'element-ui';
-import errorMap from './errorMap'
+import errorMap from './errorMap';
 
 /**
  * 错误码提示 统一在次处理
@@ -13,7 +13,7 @@ import errorMap from './errorMap'
  * 200
  * 600 对应 10000 参数错误
  * 其余错误信息 510000 - 516999，通过errorMap引入
-*/
+ */
 export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {}) {
   const config = getApi(url);
   let [api, method, mock, paas, staticdata] = config;
@@ -23,41 +23,41 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   let data = Object.assign(data1);
   if (window.location.href.indexOf('/chooseWay') !== -1) {
     // 修改存储live_token 方案    改为活动ID_token值
-    let _live_token = sessionOrLocal.get('live_token', 'localStorage')
-    let ActiveID = null
+    let _live_token = sessionOrLocal.get('live_token', 'localStorage');
+    let ActiveID = null;
     try {
-      ActiveID = location.pathname.split('chooseWay/')[1].split('/')[0]
+      ActiveID = location.pathname.split('chooseWay/')[1].split('/')[0];
     } catch (error) {
-      if(_live_token.length >32){
-        _live_token = _live_token.slice(live_token.length - 32)
+      if (_live_token.length > 32) {
+        _live_token = _live_token.slice(live_token.length - 32);
       }
     }
     try {
-      if(_live_token.indexOf(ActiveID)!=-1){
-        data.live_token = _live_token.split(`${ActiveID}_`)[1]
+      if (_live_token.indexOf(ActiveID) != -1) {
+        data.live_token = _live_token.split(`${ActiveID}_`)[1];
       }
     } catch (error) {}
-    if(location.search.includes('liveT')){
-      data.live_token = getQueryString('liveT')
+    if (location.search.includes('liveT')) {
+      data.live_token = getQueryString('liveT');
     }
   }
   // const interact_token = sessionStorage.getItem('interact_token') || null;
   let formData = null;
   if (method === 'GET' && data) {
-      let Uri;
-      api.indexOf('?') > -1 ? (Uri = '&') : (Uri = '?');
-      Object.keys(data).forEach((key, indx) => {
-        if (indx === data.length) {
-          Uri = Uri + `${key}=${data[key]}`;
+    let Uri;
+    api.indexOf('?') > -1 ? (Uri = '&') : (Uri = '?');
+    Object.keys(data).forEach((key, indx) => {
+      if (indx === data.length) {
+        Uri = Uri + `${key}=${data[key]}`;
+      } else {
+        if (indx < Object.keys(data).length - 1) {
+          Uri = Uri + `${key}=${data[key]}&`;
         } else {
-          if (indx < Object.keys(data).length - 1) {
-            Uri = Uri + `${key}=${data[key]}&`;
-          } else {
-            Uri = Uri + `${key}=${data[key]}`;
-          }
+          Uri = Uri + `${key}=${data[key]}`;
         }
-      });
-      api = api + Uri;
+      }
+    });
+    api = api + Uri;
   }
 
   let headers = {
@@ -69,32 +69,34 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   };
   // header 可能传gray-id，可能传递token，可能传递Content-Type
   if (header['token'] !== null && header['token'] !== undefined) {
-    headers['token'] = header['token']
+    headers['token'] = header['token'];
   }
   // 若head里面存在，以head传入的灰度ID为准
   if (header['gray-id'] > 0) {
-    headers['gray-id'] = header['gray-id']
-  } else if(window.sessionStorage.getItem('userId')) {
-    headers['gray-id'] = window.sessionStorage.getItem('userId')
-  } else if ( Cookies.get('gray-id')) {
-    headers['gray-id'] = Cookies.get('gray-id')
+    headers['gray-id'] = header['gray-id'];
+  } else if (window.sessionStorage.getItem('userId')) {
+    headers['gray-id'] = window.sessionStorage.getItem('userId');
+  } else if (Cookies.get('gray-id')) {
+    headers['gray-id'] = Cookies.get('gray-id');
   }
   // 若选择发起传入了
-  if(window.location.href.indexOf('/chooseWay') !== -1) {
+  if (window.location.href.indexOf('/chooseWay') !== -1) {
     // pc观看等
     headers.platform = header.platform || sessionOrLocal.get('platform', 'localStorage') || 17;
   }
   // interact_token && (headers['interact-token'] = interact_token)
-  if(window.location.hash.indexOf('/live/watch/') !== -1
-     || window.location.pathname.indexOf('/cMiddle/') !== -1) {
+  if (
+    window.location.hash.indexOf('/live/watch/') !== -1 ||
+    window.location.pathname.indexOf('/cMiddle/') !== -1
+  ) {
     // pc观看等
     headers.platform = 7;
   }
   // 针对微吼云  通过审核接口  单独进行修改传参类型--- 勿删
-  if (header['Content-Type'] === 'multipart/form-data' || api.indexOf('apply-message-send')!=-1) {
+  if (header['Content-Type'] === 'multipart/form-data' || api.indexOf('apply-message-send') != -1) {
     formData = new FormData();
     for (let key in data) {
-      if(data[key] !== null &&  data[key] !== undefined && data[key] !== '') {
+      if (data[key] !== null && data[key] !== undefined && data[key] !== '') {
         formData.append(key, data[key]);
       }
     }
@@ -118,16 +120,21 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   }
   if (mock) {
     api = `/mock${api}`;
-  } else if (paas || staticdata){
-    api = `${process.env.VUE_APP_STATIC_URL}${api}`
-    option.headers = {}
+  } else if (paas || staticdata) {
+    api = `${process.env.VUE_APP_STATIC_URL}${api}`;
+    option.headers = {};
   } else {
-    const replaceApi = api
-    const hasLowerConfig = replaceApi.indexOf('ops_fault_code_publish') > -1
-    const _nodeEnv = process.env.VUE_APP_NODE_ENV == 'production' || process.env.VUE_APP_NODE_ENV == 'pre'  ? 'product' : 'test';
+    const replaceApi = api;
+    const hasLowerConfig = replaceApi.indexOf('ops_fault_code_publish') > -1;
+    const _nodeEnv =
+      process.env.VUE_APP_NODE_ENV == 'production' || process.env.VUE_APP_NODE_ENV == 'pre'
+        ? 'product'
+        : 'test';
     if (hasLowerConfig) {
-      const str = replaceApi.replace('test', _nodeEnv).replace('ops_fault_code_publish', 'ops_fault_code_publish_2')
-      api = `${process.env.VUE_APP_LOWER_GRADE_URL}${str}`
+      const str = replaceApi
+        .replace('test', _nodeEnv)
+        .replace('ops_fault_code_publish', 'ops_fault_code_publish_2');
+      api = `${process.env.VUE_APP_LOWER_GRADE_URL}${str}`;
     } else {
       api = `${process.env.VUE_APP_BASE_URL}${api}`;
     }
@@ -135,44 +142,46 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
 
   // 对跨域携带cookie进行处理
   if (header.credentials) {
-    option.credentials = 'include'
+    option.credentials = 'include';
   }
-  console.log(option, headers)
-  return fetch(api, option).then((res) => {
-    return res.json();
-  }).then(res => {
-    let msg = ''
-    let errMap = errorMap
-    if (res.code === 404 || res.code === 403) {
-      sessionStorage.setItem('errorReturn', this.$route.path);
-      this.$router.push({
-        path: '/warning/error'
-      });
-      return
-    } else if (res.code === 510015) {
-      this.$router.push({
-        path: '/upgrading'
-      });
-      return Promise.reject({
-        code: 510015,
-        msg: '00:00-07:00期间系统升级中，由此给您带来不便，敬请谅解！'
-      });
-    } else if (res.code == 200) {
-      return res;
-    } else if (api.includes(process.env.VUE_APP_STATIC_URL)) {
-      return res;
-    } else {
-      errMap = Object.assign(errMap, extendsMsg)
-      msg = errMap[res.code]
-      if (msg) {
-        // Message.error(res.msg)
-        res.msg = msg;
+  console.log(option, headers);
+  return fetch(api, option)
+    .then(res => {
+      return res.json();
+    })
+    .then(res => {
+      let msg = '';
+      let errMap = errorMap;
+      if (res.code === 404 || res.code === 403) {
+        sessionStorage.setItem('errorReturn', this.$route.path);
+        this.$router.push({
+          path: '/warning/error'
+        });
+        return;
+      } else if (res.code === 510015) {
+        this.$router.push({
+          path: '/upgrading'
+        });
+        return Promise.reject({
+          code: 510015,
+          msg: '00:00-07:00期间系统升级中，由此给您带来不便，敬请谅解！'
+        });
+      } else if (res.code == 200) {
+        return res;
+      } else if (api.includes(process.env.VUE_APP_STATIC_URL)) {
+        return res;
+      } else {
+        errMap = Object.assign(errMap, extendsMsg);
+        msg = errMap[res.code];
+        if (msg) {
+          // Message.error(res.msg)
+          res.msg = msg;
+        }
+        if (res.code == 511006 && sessionOrLocal.getItem('token')) {
+          sessionOrLocal.removeItem('token');
+          sessionOrLocal.removeItem('tokenExpiredTime');
+        }
+        return Promise.reject(res);
       }
-      if (res.code == 511006 && sessionOrLocal.getItem('token')) {
-        sessionOrLocal.removeItem('token');
-        sessionOrLocal.removeItem('tokenExpiredTime');
-      }
-      return Promise.reject(res);
-    }
-  });
+    });
 }

@@ -337,7 +337,7 @@
               imgUrl: ''
             }
           ],
-          auto_push_switch: 0, // 自动推送 开关 0.否 1.是	
+          auto_push_switch: 0, // 自动推送 开关 0.否 1.是
           limit_time: 60, // 限制时间
           limit_time_switch: 1 // 限制时间开关 0.否 1.是
         }
@@ -404,13 +404,16 @@
     computed: {
       // 是否允许点击下一题
       isDisabledSave() {
-        let questionList = this.questionList
+        let questionList = this.questionList;
         let nullList = questionList.filter((item, index) => {
-          return (item.type === 'radio' && item.answer == '') || (item.type == 'checkbox' && item.answer.length == 0)
-        })
+          return (
+            (item.type === 'radio' && item.answer == '') ||
+            (item.type == 'checkbox' && item.answer.length == 0)
+          );
+        });
         // 如若存在没有选择的题目，禁用下一题 or 提交按钮
-        let isDisabledSave = nullList && nullList.length > 0
-        this.$emit('examCheckOption', isDisabledSave)
+        let isDisabledSave = nullList && nullList.length > 0;
+        this.$emit('examCheckOption', isDisabledSave);
         return isDisabledSave;
       }
     },

@@ -1,19 +1,19 @@
 export function CrumbLiveList(key) {
   return {
     liveList: [
-     {
-       title: '直播管理',
-       path: '/live',
-       isClick: false,
-       redirect: 'noRedirect'
-     },
-     {
-       title: '直播列表',
-       path: '/live/list',
-       isClick: true
-     }
-   ],
-   specialList: [
+      {
+        title: '直播管理',
+        path: '/live',
+        isClick: false,
+        redirect: 'noRedirect'
+      },
+      {
+        title: '直播列表',
+        path: '/live/list',
+        isClick: true
+      }
+    ],
+    specialList: [
       {
         title: '专题管理',
         path: '/special',
@@ -25,93 +25,96 @@ export function CrumbLiveList(key) {
         path: '/special/list',
         isClick: true
       }
-   ],
-   material: [
-    {
-      title: '资料管理',
-      path: '/material',
-      isClick: false,
-      redirect: 'noRedirect'
-    }
-   ],
-   data: [
-    {
-      title: '数据中心',
-      path: '/data',
-      isClick: false,
-      redirect: 'noRedirect'
-    }
-   ],
-   setting: [
-    {
-      title: '设置中心',
-      path: '/setting',
-      isClick: false,
-      redirect: 'noRedirect'
-    }
-   ],
-   finance: [
-    {
-      title: '财务中心',
-      path: '/finance',
-      isClick: false,
-      redirect: 'noRedirect'
-    }
-   ],
-   account: [
-    {
-      title: '账户管理',
-      path: '/acc',
-      isClick: false,
-      redirect: 'noRedirect'
-    }
-   ]
-  }[key]
+    ],
+    material: [
+      {
+        title: '资料管理',
+        path: '/material',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ],
+    data: [
+      {
+        title: '数据中心',
+        path: '/data',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ],
+    setting: [
+      {
+        title: '设置中心',
+        path: '/setting',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ],
+    finance: [
+      {
+        title: '财务中心',
+        path: '/finance',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ],
+    account: [
+      {
+        title: '账户管理',
+        path: '/acc',
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ]
+  }[key];
 }
 export function CrumbSet(metaName, that) {
   console.log('当前路由：' + metaName);
-  if (metaName === 'sysHome') {// 首页
+  if (metaName === 'sysHome') {
+    // 首页
     return [];
-  }
-  else if (metaName === 'liveList') {// 直播列表
+  } else if (metaName === 'liveList') {
+    // 直播列表
     return CrumbLiveList('liveList');
-  }
-  else if (metaName === 'liveCreate') {// 创建直播
-    return Number(that.$route.query.type) === 3 ? [
-      {
-        title: '直播管理',
-        path: '/live',
-        isClick: false,
-        redirect: 'noRedirect'
-      },
-      {
-        title: '直播列表',
-        path: '/live/list',
-        isClick: true
-      },
-      {
-        title: '复制直播',
-        path: '/live/edit',
-        query: that.$route.query,
-        isClick: false,
-        redirect: 'noRedirect'
-      }
-    ] : [
-      {
-        title: '直播管理',
-        path: '/live',
-        isClick: false,
-        redirect: 'noRedirect'
-      },
-      {
-        title: '创建直播',
-        path: '/live/edit',
-        isClick: false,
-        redirect: 'noRedirect'
-      }
-    ];
-  }
-  else if (metaName === 'vodCreate') {// 创建点播
+  } else if (metaName === 'liveCreate') {
+    // 创建直播
+    return Number(that.$route.query.type) === 3
+      ? [
+          {
+            title: '直播管理',
+            path: '/live',
+            isClick: false,
+            redirect: 'noRedirect'
+          },
+          {
+            title: '直播列表',
+            path: '/live/list',
+            isClick: true
+          },
+          {
+            title: '复制直播',
+            path: '/live/edit',
+            query: that.$route.query,
+            isClick: false,
+            redirect: 'noRedirect'
+          }
+        ]
+      : [
+          {
+            title: '直播管理',
+            path: '/live',
+            isClick: false,
+            redirect: 'noRedirect'
+          },
+          {
+            title: '创建直播',
+            path: '/live/edit',
+            isClick: false,
+            redirect: 'noRedirect'
+          }
+        ];
+  } else if (metaName === 'vodCreate') {
+    // 创建点播
     return [
       {
         title: '直播管理',
@@ -126,8 +129,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'liveTimeCreate') {// 创建定时直播
+  } else if (metaName === 'liveTimeCreate') {
+    // 创建定时直播
     return [
       {
         title: '直播管理',
@@ -142,8 +145,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'liveDetail') {// 直播详情
+  } else if (metaName === 'liveDetail') {
+    // 直播详情
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -153,57 +156,60 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'liveEdit') {// 编辑直播
+  } else if (metaName === 'liveEdit') {
+    // 编辑直播
     return [
       ...CrumbLiveList('liveList'),
       {
         title: '直播详情',
         path: `/live/detail/${that.$route.params.id}`,
         isClick: true
-      },{
+      },
+      {
         title: '编辑信息',
         path: `/live/edit/${that.$route.params.id}`,
         isClick: false,
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'vodEdit') {// 编辑点播
+  } else if (metaName === 'vodEdit') {
+    // 编辑点播
     return [
-     ...CrumbLiveList('liveList'),
+      ...CrumbLiveList('liveList'),
       {
         title: '直播详情',
         path: `/live/detail/${that.$route.params.id}`,
         query: that.$route.query,
         isClick: true
-      },{
+      },
+      {
         title: '编辑信息',
         path: `/live/vodEdit/${that.$route.params.id}`,
         isClick: false,
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'liveTimeEdit') {// 编辑定时直播
+  } else if (metaName === 'liveTimeEdit') {
+    // 编辑定时直播
     return [
-     ...CrumbLiveList('liveList'),
+      ...CrumbLiveList('liveList'),
       {
         title: '直播详情',
         path: `/live/detail/${that.$route.params.id}`,
         query: that.$route.query,
         isClick: true
-      },{
+      },
+      {
         title: '编辑信息',
         path: `/live/timeEdit/${that.$route.params.id}`,
         isClick: false,
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'chooseWay') {// 选择发起方式
+  } else if (metaName === 'chooseWay') {
+    // 选择发起方式
     return [
-     ...CrumbLiveList('liveList'),
+      ...CrumbLiveList('liveList'),
       {
         title: '选择发起方式',
         path: `/live/chooseWay/${that.$route.params.str}/1?type=ctrl`,
@@ -211,8 +217,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'planFunction') {// 功能配置
+  } else if (metaName === 'planFunction') {
+    // 功能配置
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -227,8 +233,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'viewerRules') {// 观看限制
+  } else if (metaName === 'viewerRules') {
+    // 观看限制
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -243,8 +249,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'roleInvitation') {// 角色邀请
+  } else if (metaName === 'roleInvitation') {
+    // 角色邀请
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -259,8 +265,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'warm') {// 暖场视频
+  } else if (metaName === 'warm') {
+    // 暖场视频
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -275,8 +281,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'virtual') {// 虚拟人数
+  } else if (metaName === 'virtual') {
+    // 虚拟人数
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -291,8 +297,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'signup') {// 报名表单
+  } else if (metaName === 'signup') {
+    // 报名表单
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -307,8 +313,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'embedCard') {// 推广嵌入
+  } else if (metaName === 'embedCard') {
+    // 推广嵌入
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -323,8 +329,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'langCard') {// 多语言链接
+  } else if (metaName === 'langCard') {
+    // 多语言链接
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -339,8 +345,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'msgNotification') {// 开播提醒
+  } else if (metaName === 'msgNotification') {
+    // 开播提醒
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -355,8 +361,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'livingSetting') {// 直播间设置
+  } else if (metaName === 'livingSetting') {
+    // 直播间设置
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -371,8 +377,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'customTab') {// 自定义菜单
+  } else if (metaName === 'customTab') {
+    // 自定义菜单
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -387,8 +393,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'customTab') {// 自定义菜单
+  } else if (metaName === 'customTab') {
+    // 自定义菜单
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -403,8 +409,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'playerSet') {// 播放器设置
+  } else if (metaName === 'playerSet') {
+    // 播放器设置
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -419,8 +425,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'safeScreenSet') {// 防录屏设置
+  } else if (metaName === 'safeScreenSet') {
+    // 防录屏设置
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -435,8 +441,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-   else if (metaName === 'invCard') {// 邀请卡
+  } else if (metaName === 'invCard') {
+    // 邀请卡
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -451,8 +457,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'advertCard' && that.$route.params.str) {// 广告
+  } else if (metaName === 'advertCard' && that.$route.params.str) {
+    // 广告
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -467,8 +473,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'officialCard') {// 公众号展示
+  } else if (metaName === 'officialCard') {
+    // 公众号展示
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -483,8 +489,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-   else if (metaName === 'officeSet') {// 公众号展示
+  } else if (metaName === 'officeSet') {
+    // 公众号展示
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -499,8 +505,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'posterSet') {// 开屏海报展示
+  } else if (metaName === 'posterSet') {
+    // 开屏海报展示
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -515,8 +521,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'shareSet') {// 开屏海报展示
+  } else if (metaName === 'shareSet') {
+    // 开屏海报展示
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -531,8 +537,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'word') {// 文档
+  } else if (metaName === 'word') {
+    // 文档
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -547,8 +553,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'videoSet') {// 插播文件
+  } else if (metaName === 'videoSet') {
+    // 插播文件
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -563,8 +569,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'prizeSet') {// 抽奖
+  } else if (metaName === 'prizeSet') {
+    // 抽奖
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -579,8 +585,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'question') {// 问卷
+  } else if (metaName === 'question') {
+    // 问卷
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -595,8 +601,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-   else if (metaName === 'addQuestion') {// 创建问卷
+  } else if (metaName === 'addQuestion') {
+    // 创建问卷
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -620,8 +626,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'exam') {// 快问快答
+  } else if (metaName === 'exam') {
+    // 快问快答
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -636,8 +642,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-   else if (metaName === 'addExam') {// 创建快问快答
+  } else if (metaName === 'addExam') {
+    // 创建快问快答
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -662,8 +668,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'productSet') {// 商品
+  } else if (metaName === 'productSet') {
+    // 商品
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -678,8 +684,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'addProduct') {// 创建商品
+  } else if (metaName === 'addProduct') {
+    // 创建商品
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -699,8 +705,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-   else if (metaName === 'editProduct') {// 编辑商品
+  } else if (metaName === 'editProduct') {
+    // 编辑商品
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -715,8 +721,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'gift') {// 礼物
+  } else if (metaName === 'gift') {
+    // 礼物
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -731,8 +737,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'playback') {// 回放管理
+  } else if (metaName === 'playback') {
+    // 回放管理
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -747,8 +753,8 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if(metaName === 'playbackGroupList'){ // 回放管理- 小组视频
+  } else if (metaName === 'playbackGroupList') {
+    // 回放管理- 小组视频
     return [
       ...CrumbLiveList('liveList'),
       {
@@ -768,82 +774,84 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'chapter') {// 章节打点
+  } else if (metaName === 'chapter') {
+    // 章节打点
     return [
-     ...CrumbLiveList('liveList'),
-     {
-      title: '直播详情',
-      path: `/live/detail/${that.$route.params.str}`,
-      isClick: true
-    },
-    {
-      title: '回放管理',
-      path: `/live/playback/${that.$route.params.str}`,
-      isClick: true,
-    },
-    {
-      title: '章节打点',
-      path: `/live/chapter/${that.$route.params.str}`,
-      isClick: false,
-      redirect: 'noRedirect'
-    }
-    ];
-  }
-  else if (metaName === 'vodreset') {// 回放重制
-    return [
-     ...CrumbLiveList('liveList'),
-     {
-      title: '直播详情',
-      path: `/live/detail/${that.$route.params.str}`,
-      isClick: true
-    },
-    {
-      title: '回放管理',
-      path: `/live/playback/${that.$route.params.str}`,
-      isClick: true,
-    },
-    {
-      title: '课件重制',
-      path: `/live/vodreset/${that.$route.params.str}`,
-      isClick: false,
-      redirect: 'noRedirect'
-    }
-    ];
-  }
-  else if (metaName === 'recordplayback') {// 点播管理
-    return [
-     ...CrumbLiveList('liveList'),
+      ...CrumbLiveList('liveList'),
       {
         title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
-      },{
+      },
+      {
+        title: '回放管理',
+        path: `/live/playback/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '章节打点',
+        path: `/live/chapter/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  } else if (metaName === 'vodreset') {
+    // 回放重制
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '直播详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '回放管理',
+        path: `/live/playback/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
+        title: '课件重制',
+        path: `/live/vodreset/${that.$route.params.str}`,
+        isClick: false,
+        redirect: 'noRedirect'
+      }
+    ];
+  } else if (metaName === 'recordplayback') {
+    // 点播管理
+    return [
+      ...CrumbLiveList('liveList'),
+      {
+        title: '直播详情',
+        path: `/live/detail/${that.$route.params.str}`,
+        isClick: true
+      },
+      {
         title: '点播管理',
         path: `/live/recordplayback/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'publishplayback') {// 定时直播管理
+  } else if (metaName === 'publishplayback') {
+    // 定时直播管理
     return [
-     ...CrumbLiveList('liveList'),
+      ...CrumbLiveList('liveList'),
       {
         title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
         isClick: true
-      },{
+      },
+      {
         title: '视频管理',
         path: `/live/publishplayback/${that.$route.params.str}`,
         isClick: false,
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'recordchapter') {// 章节打点
+  } else if (metaName === 'recordchapter') {
+    // 章节打点
     return [
-     ...CrumbLiveList('liveList'),
+      ...CrumbLiveList('liveList'),
       {
         title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
@@ -861,10 +869,10 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'reportsData') {// 数据报告
+  } else if (metaName === 'reportsData') {
+    // 数据报告
     return [
-     ...CrumbLiveList('liveList'),
+      ...CrumbLiveList('liveList'),
       {
         title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
@@ -877,10 +885,10 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'interactionData') {// 互动统计
+  } else if (metaName === 'interactionData') {
+    // 互动统计
     return [
-     ...CrumbLiveList('liveList'),
+      ...CrumbLiveList('liveList'),
       {
         title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
@@ -893,10 +901,10 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'userData') {// 用户统计
+  } else if (metaName === 'userData') {
+    // 用户统计
     return [
-     ...CrumbLiveList('liveList'),
+      ...CrumbLiveList('liveList'),
       {
         title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
@@ -909,10 +917,10 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
-  else if (metaName === 'interactionDetail') {// 邀请排名、聊天、问答、签到、问卷、抽奖、发群红包、
+  } else if (metaName === 'interactionDetail') {
+    // 邀请排名、聊天、问答、签到、问卷、抽奖、发群红包、
     return [
-     ...CrumbLiveList('liveList'),
+      ...CrumbLiveList('liveList'),
       {
         title: '直播详情',
         path: `/live/detail/${that.$route.query.id}`,
@@ -933,9 +941,10 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  } else if (metaName === 'lookSingleQuestion') {// 邀请排名、聊天、问答、签到、问卷、抽奖、发群红包、
+  } else if (metaName === 'lookSingleQuestion') {
+    // 邀请排名、聊天、问答、签到、问卷、抽奖、发群红包、
     return [
-     ...CrumbLiveList('liveList'),
+      ...CrumbLiveList('liveList'),
       {
         title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
@@ -967,9 +976,10 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  } else if (metaName === 'lookSingleExam') {// 邀请排名、聊天、问答、签到、问卷、快问快答、抽奖、发群红包
+  } else if (metaName === 'lookSingleExam') {
+    // 邀请排名、聊天、问答、签到、问卷、快问快答、抽奖、发群红包
     return [
-     ...CrumbLiveList('liveList'),
+      ...CrumbLiveList('liveList'),
       {
         title: '直播详情',
         path: `/live/detail/${that.$route.params.str}`,
@@ -995,48 +1005,49 @@ export function CrumbSet(metaName, that) {
         redirect: 'noRedirect'
       }
     ];
-  }
+  } else if (metaName === 'specialList') {
   /** 专题 **/
-
-  else if (metaName === 'specialList') {// 专题列表
+    // 专题列表
     return CrumbLiveList('specialList');
-  }
-  else if (metaName === 'subjectEdit') {// 创建专题、编辑专题
-    return that.$route.params.id ? [
-      {
-        title: '专题管理',
-        path: '/special',
-        isClick: false,
-        redirect: 'noRedirect'
-      },
-      {
-        title: '专题列表',
-        path: '/special/list',
-        isClick: true
-      },
-      {
-        title: '专题详情',
-        path: `/special/details/${that.$route.params.id}`,
-        isClick: true
-      },
-      {
-        title: '编辑专题',
-        path: `/special/edit/${that.$route.params.id}`,
-        isClick: true
-      }
-    ] : [
-      {
-        title: '专题管理',
-        path: '/special',
-        isClick: false,
-        redirect: 'noRedirect'
-      },
-      {
-        title: '创建专题',
-        path: '/special/edit',
-        isClick: true
-      }
-    ];
+  } else if (metaName === 'subjectEdit') {
+    // 创建专题、编辑专题
+    return that.$route.params.id
+      ? [
+          {
+            title: '专题管理',
+            path: '/special',
+            isClick: false,
+            redirect: 'noRedirect'
+          },
+          {
+            title: '专题列表',
+            path: '/special/list',
+            isClick: true
+          },
+          {
+            title: '专题详情',
+            path: `/special/details/${that.$route.params.id}`,
+            isClick: true
+          },
+          {
+            title: '编辑专题',
+            path: `/special/edit/${that.$route.params.id}`,
+            isClick: true
+          }
+        ]
+      : [
+          {
+            title: '专题管理',
+            path: '/special',
+            isClick: false,
+            redirect: 'noRedirect'
+          },
+          {
+            title: '创建专题',
+            path: '/special/edit',
+            isClick: true
+          }
+        ];
   } else if (metaName === 'subjectViewer') {
     return [
       {
@@ -1060,7 +1071,7 @@ export function CrumbSet(metaName, that) {
         path: '/special/viewer',
         isClick: true
       }
-    ]
+    ];
   } else if (metaName === 'subjectDetails') {
     return [
       {
@@ -1079,7 +1090,7 @@ export function CrumbSet(metaName, that) {
         path: `/special/details/${that.$route.params.id}`,
         isClick: true
       }
-    ]
+    ];
   } else if (metaName === 'subjectData') {
     return [
       {
@@ -1103,11 +1114,11 @@ export function CrumbSet(metaName, that) {
         path: '/special/data',
         isClick: true
       }
-    ]
-  }
+    ];
+  } else if (metaName === 'wordMgr') {
 
   /** 资料管理 **/
-  else if (metaName === 'wordMgr') {// 资料-文档
+    // 资料-文档
     return [
       ...CrumbLiveList('material'),
       {
@@ -1116,9 +1127,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'videoMgr') {// 资料-音视频
+    ];
+  } else if (metaName === 'videoMgr') {
+    // 资料-音视频
     return [
       ...CrumbLiveList('material'),
       {
@@ -1127,9 +1138,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'questionMgr') {// 资料-问卷
+    ];
+  } else if (metaName === 'questionMgr') {
+    // 资料-问卷
     return [
       ...CrumbLiveList('material'),
       {
@@ -1138,9 +1149,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'addQuestionMgr') {// 资料-问卷-创建问卷
+    ];
+  } else if (metaName === 'addQuestionMgr') {
+    // 资料-问卷-创建问卷
     return [
       ...CrumbLiveList('material'),
       {
@@ -1154,9 +1165,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'examMgr') {// 资料-快问快答
+    ];
+  } else if (metaName === 'examMgr') {
+    // 资料-快问快答
     return [
       ...CrumbLiveList('material'),
       {
@@ -1165,9 +1176,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'addExamMgr') {// 资料-快问快答-创建
+    ];
+  } else if (metaName === 'addExamMgr') {
+    // 资料-快问快答-创建
     return [
       ...CrumbLiveList('material'),
       {
@@ -1181,9 +1192,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'prizeMgr') {// 资料-奖品
+    ];
+  } else if (metaName === 'prizeMgr') {
+    // 资料-奖品
     return [
       ...CrumbLiveList('material'),
       {
@@ -1191,9 +1202,9 @@ export function CrumbSet(metaName, that) {
         path: '/material/prize',
         isClick: true
       }
-    ]
-  }
-  else if (metaName === 'viewerMgr') {// 资料-观众
+    ];
+  } else if (metaName === 'viewerMgr') {
+    // 资料-观众
     return [
       ...CrumbLiveList('material'),
       {
@@ -1201,9 +1212,9 @@ export function CrumbSet(metaName, that) {
         path: '/material/viewer',
         isClick: true
       }
-    ]
-  }
-  else if (metaName === 'advertCard') {// 资料-广告
+    ];
+  } else if (metaName === 'advertCard') {
+    // 资料-广告
     return [
       ...CrumbLiveList('material'),
       {
@@ -1211,9 +1222,9 @@ export function CrumbSet(metaName, that) {
         path: '/material/advertCard',
         isClick: true
       }
-    ]
-  }
-  else if (metaName === 'giftMgr') {// 资料-礼物
+    ];
+  } else if (metaName === 'giftMgr') {
+    // 资料-礼物
     return [
       ...CrumbLiveList('material'),
       {
@@ -1221,11 +1232,11 @@ export function CrumbSet(metaName, that) {
         path: '/material/gift',
         isClick: true
       }
-    ]
-  }
+    ];
+  } else if (metaName === 'dataInfo') {
 
   /** 数据总览 **/
-  else if (metaName === 'dataInfo') {// 数据中心-数据总览
+    // 数据中心-数据总览
     return [
       ...CrumbLiveList('data'),
       {
@@ -1234,9 +1245,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'dataLive') {// 数据中心-活动数据
+    ];
+  } else if (metaName === 'dataLive') {
+    // 数据中心-活动数据
     return [
       ...CrumbLiveList('data'),
       {
@@ -1245,16 +1256,14 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
+    ];
+  } else if (metaName === 'settingInfo') {
 
   /** 设置中心 **/
-  else if (metaName === 'settingInfo') {//设置中心
-    return [
-      ...CrumbLiveList('setting')
-    ]
-  }
-  else if (metaName === 'chatMgr') {//设置中心-聊天严禁词
+    //设置中心
+    return [...CrumbLiveList('setting')];
+  } else if (metaName === 'chatMgr') {
+    //设置中心-聊天严禁词
     return [
       ...CrumbLiveList('setting'),
       {
@@ -1263,9 +1272,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'safeScreen') {//设置中心-聊天严禁词
+    ];
+  } else if (metaName === 'safeScreen') {
+    //设置中心-聊天严禁词
     return [
       ...CrumbLiveList('setting'),
       {
@@ -1274,9 +1283,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'devMgr') {//设置中心-开发设置
+    ];
+  } else if (metaName === 'devMgr') {
+    //设置中心-开发设置
     return [
       ...CrumbLiveList('setting'),
       {
@@ -1285,9 +1294,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'devCallback') {//设置中心-开发设置-回调设置
+    ];
+  } else if (metaName === 'devCallback') {
+    //设置中心-开发设置-回调设置
     return [
       ...CrumbLiveList('setting'),
       {
@@ -1301,9 +1310,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'devModify') {//设置中心-开发设置-应用详情
+    ];
+  } else if (metaName === 'devModify') {
+    //设置中心-开发设置-应用详情
     return [
       ...CrumbLiveList('setting'),
       {
@@ -1317,9 +1326,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'logoMgr') {//设置中心-控制台标识
+    ];
+  } else if (metaName === 'logoMgr') {
+    //设置中心-控制台标识
     return [
       ...CrumbLiveList('setting'),
       {
@@ -1327,10 +1336,10 @@ export function CrumbSet(metaName, that) {
         path: '/setting/logo',
         isClick: false,
         redirect: 'noRedirect'
-      },
-    ]
-  }
-  else if (metaName === 'functionMgr') {//设置中心-功能配置
+      }
+    ];
+  } else if (metaName === 'functionMgr') {
+    //设置中心-功能配置
     return [
       ...CrumbLiveList('setting'),
       {
@@ -1339,9 +1348,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'livingMgr') {//设置中心-直播间设置
+    ];
+  } else if (metaName === 'livingMgr') {
+    //设置中心-直播间设置
     return [
       ...CrumbLiveList('setting'),
       {
@@ -1350,9 +1359,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'protocolMgr') {//设置中心-观看协议
+    ];
+  } else if (metaName === 'protocolMgr') {
+    //设置中心-观看协议
     return [
       ...CrumbLiveList('setting'),
       {
@@ -1361,9 +1370,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'playerMgr') {//设置中心-播放器设置
+    ];
+  } else if (metaName === 'playerMgr') {
+    //设置中心-播放器设置
     return [
       ...CrumbLiveList('setting'),
       {
@@ -1372,9 +1381,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'tagset') {//设置中心-标签设置
+    ];
+  } else if (metaName === 'tagset') {
+    //设置中心-标签设置
     return [
       ...CrumbLiveList('setting'),
       {
@@ -1383,10 +1392,10 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
+    ];
+  } else if (metaName === 'financeInfo') {
   /** 财务中心 **/
-  else if (metaName === 'financeInfo') {//财务中心-财务总览
+    //财务中心-财务总览
     return [
       ...CrumbLiveList('finance'),
       {
@@ -1395,9 +1404,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'infoDetail') {//财务中心-订单明细
+    ];
+  } else if (metaName === 'infoDetail') {
+    //财务中心-订单明细
     return [
       ...CrumbLiveList('finance'),
       {
@@ -1411,9 +1420,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'payOrder') {//财务中心-订单支付
+    ];
+  } else if (metaName === 'payOrder') {
+    //财务中心-订单支付
     return [
       ...CrumbLiveList('finance'),
       {
@@ -1427,9 +1436,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'orderDetail') {//财务中心-版本升级
+    ];
+  } else if (metaName === 'orderDetail') {
+    //财务中心-版本升级
     return [
       ...CrumbLiveList('finance'),
       {
@@ -1443,9 +1452,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'financeIncome') {//财务中心-账户收益
+    ];
+  } else if (metaName === 'financeIncome') {
+    //财务中心-账户收益
     return [
       ...CrumbLiveList('finance'),
       {
@@ -1454,9 +1463,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'accountDetail') {//财务中心-提现明细
+    ];
+  } else if (metaName === 'accountDetail') {
+    //财务中心-提现明细
     return [
       ...CrumbLiveList('finance'),
       {
@@ -1470,9 +1479,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'incomeDetail') {//财务中心-收益详情
+    ];
+  } else if (metaName === 'incomeDetail') {
+    //财务中心-收益详情
     return [
       ...CrumbLiveList('finance'),
       {
@@ -1486,11 +1495,11 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
+    ];
+  } else if (metaName === 'accountInfo') {
 
   /** 账户管理 **/
-  else if (metaName === 'accountInfo') {//账户管理-账户信息
+    //账户管理-账户信息
     return [
       ...CrumbLiveList('account'),
       {
@@ -1499,9 +1508,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'sonMgr') {//账户管理-子账号管理
+    ];
+  } else if (metaName === 'sonMgr') {
+    //账户管理-子账号管理
     return [
       ...CrumbLiveList('account'),
       {
@@ -1510,9 +1519,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'allocation') {//账户管理-子账号管理
+    ];
+  } else if (metaName === 'allocation') {
+    //账户管理-子账号管理
     return [
       ...CrumbLiveList('account'),
       {
@@ -1526,9 +1535,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'sonDetail') {//账户管理-子账号详情
+    ];
+  } else if (metaName === 'sonDetail') {
+    //账户管理-子账号详情
     return [
       ...CrumbLiveList('account'),
       {
@@ -1542,9 +1551,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'myHome') {//账户管理-个人主页
+    ];
+  } else if (metaName === 'myHome') {
+    //账户管理-个人主页
     return [
       ...CrumbLiveList('account'),
       {
@@ -1553,9 +1562,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'homeSet') {//账户管理-个人主页-设置
+    ];
+  } else if (metaName === 'homeSet') {
+    //账户管理-个人主页-设置
     return [
       ...CrumbLiveList('account'),
       {
@@ -1569,10 +1578,10 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
+    ];
+  } else if (metaName === 'downloadList') {
   /** 下载中心 **/
-  else if (metaName === 'downloadList') {//下载中心
+    //下载中心
     return [
       {
         title: '下载中心',
@@ -1580,10 +1589,10 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
+    ];
+  } else if (metaName === 'msgList') {
   /** 消息中心 **/
-  else if (metaName === 'msgList') {//消息中心
+    //消息中心
     return [
       {
         title: '消息中心',
@@ -1591,9 +1600,9 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
-  }
-  else if (metaName === 'msgDetail') {//消息详情
+    ];
+  } else if (metaName === 'msgDetail') {
+    //消息详情
     return [
       {
         title: '消息中心',
@@ -1606,7 +1615,7 @@ export function CrumbSet(metaName, that) {
         isClick: false,
         redirect: 'noRedirect'
       }
-    ]
+    ];
   } else {
     return [];
   }
