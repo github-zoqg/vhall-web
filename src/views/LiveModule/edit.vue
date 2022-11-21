@@ -21,14 +21,22 @@
               >
                 联系客服
               </a>
-              <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">
+              <a
+                class="set-font"
+                href="https://saas-doc.vhall.com/opendocs/show/1384"
+                target="_blank"
+              >
                 功能介绍
               </a>
             </span>
             <!-- 已开通权限 -->
             <span v-else>
               分组直播暂不支持多语言！仅生效网页观看端，不生效JS-SDK和移动SDK观看端
-              <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">
+              <a
+                class="set-font"
+                href="https://saas-doc.vhall.com/opendocs/show/1384"
+                target="_blank"
+              >
                 功能介绍
               </a>
             </span>
@@ -270,7 +278,7 @@
           <div
             v-if="!webinarPortraitScreen"
             class="mode-director noDirector"
-            :class="{ directorActive: isFullScreen != 1,disableBox: selectDirectorMode === 1 }"
+            :class="{ directorActive: isFullScreen != 1, disableBox: selectDirectorMode === 1 }"
           >
             <span class="text-content">
               <i class="vh-saas-iconfont vh-saas-line-landscape ft20"></i>
@@ -293,13 +301,21 @@
                 联系客服
               </a>
               开通，点我了解
-              <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1504" target="_blank">
+              <a
+                class="set-font"
+                href="https://saas-doc.vhall.com/opendocs/show/1388"
+                target="_blank"
+              >
                 云导播活动
               </a>
             </span>
             <span v-else>
               云导播活动不能使用无延迟技术，点我了解
-              <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1504" target="_blank">
+              <a
+                class="set-font"
+                href="https://saas-doc.vhall.com/opendocs/show/1388"
+                target="_blank"
+              >
                 云导播活动
               </a>
             </span>
@@ -364,7 +380,7 @@
                 联系客服
               </a>
               ，支持
-              <a class="blue" target="_blank" href="https://saas-doc.vhall.com/docs/show/1458">
+              <a class="blue" target="_blank" href="https://saas-doc.vhall.com/opendocs/show/1385">
                 手机网页连麦
               </a>
             </span>
@@ -1389,7 +1405,9 @@
       }
 
       //  webinar.director 1:有无延迟权限  0:无权限
-      if (JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1') {
+      if (
+        JSON.parse(sessionOrLocal.get('SAAS_VS_PES', 'localStorage'))['webinar.director'] == '1'
+      ) {
         this.webinarDirector = true;
       } else {
         this.webinarDirector = false;
@@ -1917,7 +1935,7 @@
               ? Number(this.zdy_inav_num.replace('1v', '')) + 1
               : '',
           is_director: this.selectDirectorMode || 0,
-          webinar_show_type: this.liveMode == 1||this.liveMode == 2 ? this.isFullScreen : 1
+          webinar_show_type: this.liveMode == 1 || this.liveMode == 2 ? this.isFullScreen : 1
         };
         if (this.liveMode == 6) {
           data.auto_speak = Number(this.speakSwitch);
