@@ -287,7 +287,7 @@
         this.$fetch('getWebinarSwitchList', { webinar_id: this.$route.params.str }).then(res => {
           this.switchList = res.data.switch_list.map((item, index) => {
             return {
-              label: `第${index + 1}场 ${item.type == 2 ? '(彩排)' : ''}`,
+              label: `第${switchList.length - index}场 ${item.type == 2 ? '(彩排)' : ''}`,
               value: item.id
             };
           });
