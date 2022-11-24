@@ -36,7 +36,7 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
       if (_live_token.indexOf(ActiveID) != -1) {
         data.live_token = _live_token.split(`${ActiveID}_`)[1];
       }
-    } catch (error) {}
+    } catch (error) { }
     if (location.search.includes('liveT')) {
       data.live_token = getQueryString('liveT');
     }
@@ -144,7 +144,6 @@ export default function fetchData(url, data1 = {}, header = {}, extendsMsg = {})
   if (header.credentials) {
     option.credentials = 'include';
   }
-  console.log(option, headers);
   return fetch(api, option)
     .then(res => {
       return res.json();

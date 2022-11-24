@@ -57,169 +57,17 @@
           }}，未答{{ transcriptInfo.unanswer_num || '--' }}
         </span>
       </div>
-      <div class="transcript-page--answer-ctx">
-        <!--
-          题目类型：subject_type（图片题 img-text；文字题 text；）
-          选择类型：type（单选 radio；多选 checkbox；）
-          排列方式：layout_type（单列 1；多列 2；）
-          图文排列方式：layout_css （上图下文：1；左图右文：2）
-         -->
-        <div
-          class="transcript-page--question"
-          v-for="(item, index) in transcriptInfo.detail"
-          :key="`qt_${index}`"
-        >
-          <!-- 图片题 （selectType: 1单选；2多选。支持单选 or 多选）-->
-          <h1>{{ item.title }}</h1>
-          <template v-if="item.detail">
-            <div
-              :class="`transcript-page--option ${
-                item.layout_type == 1 ? 'max-width' : 'min-width'
-              } ${item.layout_css == 1 ? 'top-bottom' : 'left-right'}`"
-              v-for="(sonItem, sonIndex) in item.detail.list"
-              :key="`qt_${index}_son${sonIndex}`"
-            >
-              <img
-                v-if="item.subject_type == 'img-text'"
-                src="https://t-alistatic01.e.vhall.com/upload/users/logo-imgs/ba/e1/bae13a3f7402fded318e89b1b45050b3.jpg"
-              />
-              <div class="transcript-page--text">
-                <el-radio></el-radio>
-                <div>{{ sonItem.key + '、' + sonItem.value }}</div>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
+      <div ref="answerResult"></div>
     </div>
   </div>
 </template>
 <script>
+  import examServer from '@/utils/examServer';
   export default {
     data() {
       return {
         loading: false,
         transcriptInfo: {
-          detail: [
-            {
-              id: 2435359,
-              subject_type: 'img-text',
-              layout_type: 1,
-              layout_css: 1,
-              title: '单选题1231231',
-              type: 'radio',
-              score: 2,
-              detail: {
-                list: [
-                  {
-                    id: 2314123,
-                    key: 'A',
-                    value: '选项1212',
-                    imgUrl: ''
-                  },
-                  {
-                    id: 2314124,
-                    key: 'B',
-                    value:
-                      '选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123',
-                    imgUrl: ''
-                  }
-                ],
-                min: null,
-                max: null
-              },
-              imgUrl: ''
-            },
-            {
-              id: 24353591,
-              subject_type: 'img-text',
-              layout_type: 2,
-              layout_css: 1,
-              title: '单选题1231231',
-              type: 'checkbox',
-              score: 2,
-              detail: {
-                list: [
-                  {
-                    id: 23141231,
-                    key: 'A',
-                    value: '选项1212',
-                    imgUrl: ''
-                  },
-                  {
-                    id: 23141241,
-                    key: 'B',
-                    value:
-                      '选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123',
-                    imgUrl: ''
-                  }
-                ],
-                min: null,
-                max: null
-              },
-              imgUrl: ''
-            },
-            {
-              id: 24353591,
-              subject_type: 'img-text',
-              layout_type: 1,
-              layout_css: 2,
-              title: '单选题1231231',
-              type: 'checkbox',
-              score: 2,
-              detail: {
-                list: [
-                  {
-                    id: 23141231,
-                    key: 'A',
-                    value: '选项1212',
-                    imgUrl: ''
-                  },
-                  {
-                    id: 23141241,
-                    key: 'B',
-                    value:
-                      '选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123',
-                    imgUrl: ''
-                  }
-                ],
-                min: null,
-                max: null
-              },
-              imgUrl: ''
-            },
-            {
-              id: 24353591,
-              subject_type: 'text',
-              layout_type: 1,
-              layout_css: 1,
-              title:
-                '单选题1231231单选题1231231单选题1231231单选题1231231单选题1231231单选题1231231',
-              type: 'checkbox',
-              score: 2,
-              detail: {
-                list: [
-                  {
-                    id: 23141231,
-                    key: 'A',
-                    value:
-                      '选项1212选项1212选项1212选项1212选项1212选项1212选项1212选项1212选项1212选项1212选项1212选项1212选项1212选项1212选项1212选项1212选项1212选项1212',
-                    imgUrl: ''
-                  },
-                  {
-                    id: 23141241,
-                    key: 'B',
-                    value:
-                      '选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123选项123123',
-                    imgUrl: ''
-                  }
-                ],
-                min: null,
-                max: null
-              },
-              imgUrl: ''
-            }
-          ],
           imgUrl: null,
           finishTime: null
         }
@@ -232,7 +80,23 @@
         default: () => ({})
       }
     },
+    mounted() {
+      this.mountAnswerResult();
+    },
     methods: {
+      mountAnswerResult() {
+        const el = this.$refs.answerResult;
+        examServer.mount({
+          examId: 211,
+          el,
+          componentName: 'exampc',
+          configs: {
+            role: 1,
+            // pageSize: 1,
+            answerType: 3
+          }
+        });
+      },
       // 导出数据
       handleDownload() {
         this.$fetch(
@@ -292,7 +156,7 @@
     }
   };
 </script>
-<style lang="less" scoped>
+<style lang="less">
   .transcript-page {
     &--info {
       .transcript-item {
@@ -345,69 +209,12 @@
         }
       }
     }
-    &--answer {
-      margin-top: 24px;
-      .transcript-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid #eaeaea;
-        padding: 12px 0;
-      }
-      &-ctx {
-        margin-top: 24px;
-        max-height: 200px;
-        overflow-y: auto;
-        .transcript-page--question {
-          h1 {
-            margin-bottom: 16px;
-            font-weight: bold;
-          }
-        }
-        .transcript-page--option {
-          margin-bottom: 16px;
-          padding: 0 24px 0 24px;
-          img {
-            width: 100%;
-            height: auto;
-            margin-bottom: 8px;
-          }
-          .transcript-page--text {
-            /deep/.el-radio {
-              margin-right: 8px;
-            }
-            div {
-              display: inline-block;
-              vertical-align: text-top;
-              width: 80%;
-            }
-          }
-          &.max-width {
-            width: 100%;
-            display: block;
-            &.left-right {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              img {
-                display: inline-block;
-                vertical-align: middle;
-                width: 50%;
-              }
-              .transcript-page--text {
-                display: inline-block;
-                vertical-align: middle;
-                width: 50%;
-                padding-left: 10px;
-              }
-            }
-          }
-          &.min-width {
-            width: 50%;
-            display: inline-block;
-          }
-        }
-      }
+    // 覆盖表单库样式
+    .exam-execute-body {
+      padding: 0;
+    }
+    .exam-execute-header {
+      display: none;
     }
   }
 </style>

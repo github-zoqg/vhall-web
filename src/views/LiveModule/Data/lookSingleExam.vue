@@ -54,9 +54,8 @@
                 <span>{{ examData.full_score_rate }}%，</span>
                 <count-to
                   :startVal="0"
-                  :endVal="examData.full_score_count"
+                  :endVal="examData.full_score_num"
                   :duration="1500"
-                  v-if="examData.full_score_count >= 0"
                 ></count-to>
                 <span>人</span>
               </h3>
@@ -262,6 +261,7 @@
   import NullPage from '@/views/PlatformModule/Error/nullPage';
   import CountTo from 'vue-count-to';
   import Transcript from '@/components/Transcript';
+  import examServer from '@/utils/examServer';
   export default {
     data() {
       return {
@@ -272,7 +272,7 @@
           check_num: 0, // 查看人数
           answer_num: 0, // 答题人数
           full_score_rate: 0, // 满分率
-          full_score_count: 0, // 总人数
+          full_score_num: 0, // 总人数
           max_score: 0, // 最高分
           min_score: 0, // 最低分
           avg_score: 0 // 平均分
@@ -368,17 +368,16 @@
       },
       // 查询快问快答 - 统计人数
       getSingleExamData() {
-        let params = {
-          paper_id: this.$route.query.paper_id
-        };
-        this.$fetch('getExamSummaryData', this.$params(params))
+        examServer
+          .getExamPaperSummary({
+            paper_id: this.$route.query.paperId
+          })
           .then(res => {
             this.examData = res.data;
           })
           .catch(e => {
             console.log(e);
-          })
-          .finally(() => {});
+          });
       },
       // 页码改变按钮事件
       currentChangeHandler(current) {
@@ -397,18 +396,11 @@
           is_hidden: 0 // 是否雾化用户名 0.否 1.是
         };
         this.loading = true;
-        this.$fetch('getExamScoreList', this.$params(params))
+        examServer
+          .getExamRankList(this.$params(params))
           .then(res => {
             this.loading = false;
-            let result =
-              res && res.code === 200 && res.data
-                ? res.data
-                : {
-                    total: 0,
-                    list: []
-                  };
-            (result.list || []).map(item => {});
-            this.resultVo = dao;
+            this.resultVo = res.data;
           })
           .catch(e => {
             this.loading = false;

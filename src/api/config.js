@@ -757,12 +757,9 @@ const apis = {
   copyExamByIdIsWebinar: ['/v1/fqas/webinar-paper-view/copy', 'POST'], // 复制 —— 活动维度
   deleteExam: ['/v1/fqas/paper-view/delete', 'POST'], // 删除（单个 or 批量）—— 用户维度
   deleteExamIsWebinar: ['/v1/fqas/webinar-paper-view/delete', 'POST'], // 删除（单个 or 批量） —— 活动维度
-  getExamSubmitNum: ['/v1/fqas/webinar-paper-view/get-all-submit-count', 'POST'], // 获取互动统计-统计活动下所有快问快答提交人数
-  getExamUsageInfo: ['/v1/fqas/webinar-paper-view/get-pushed-list', 'POST'], // 获取活动下快问快答使用数据概览
+  getExamToken: ['/v3/interacts/exam/get-init-data', 'POST'], // 获取公共服务的token
   exportExam: ['/v3/interacts/exam/export-paper-static-list', 'POST'], //导出快问快答数据
   editExamStatus: ['/v1/fqa/webinar-paper-view/mark-status', 'GET'], // 还原/无效数据
-  getExamSummaryData: ['/v1/fqa/webinar-paper-view/summary-data', 'POST'], // 查询快问快答 -明细概略数据
-  getExamScoreList: ['/v1/fqa/webinar-paper-view/performance-list', 'POST'], // 查询快问快答 - 成绩列表
   getTranscriptInfo: ['/v1/fqa/webinar-paper-view/get-personal-report', 'GET'], // 查询快问快答 - 个人成绩单信息
   selectExamToWebinar: ['/v1/fqas/webinar-paper-view/create-by-data-bank', 'POST'], // 资料库下选择快问快答同步到活动
   exportTranscript: ['/v3/interacts/exam/export-person-score', 'POST'], // 导出单人成绩单
