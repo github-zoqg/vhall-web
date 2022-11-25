@@ -20,12 +20,19 @@ const examServer = {
   },
   // 互动统计-明细汇总
   getExamPaperSummary(params) {
-    console.log("🚀 ~ file: examServer.js ~ line 23 ~ getExamPaperSummary ~ params", params)
     return examInstance.api.getExamPaperSummary(params)
   },
   // 考试排名
   getExamRankList(params) {
     return examInstance.api.getExamUserPerformances(params)
+  },
+  // 修改成绩单有效状态
+  markExamTranscript(params) {
+    return examInstance.api.changeExamPerformanceStatus(params)
+  },
+  // 用户成绩
+  getExamUserScope(params) {
+    return examInstance.api.getExamUserScope(params)
   }
 }
 
