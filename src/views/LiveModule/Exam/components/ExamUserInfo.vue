@@ -1,23 +1,36 @@
 <template>
-  <div class="exam-user-info">用户信息</div>
+  <div class="exam-user-info">
+    <div ref="ExamUserInfo"></div>
+  </div>
 </template>
-
 <script>
+  import examServer from '@/utils/examServer';
   export default {
-    components: {},
-    props: {},
+    name: 'ExamUserInfo',
     data() {
       return {};
     },
-    created() {},
+    mounted() {
+      this.initComp();
+    },
     methods: {
-      initComp() {}
+      initComp() {
+        const el = this.$refs.ExamUserInfo;
+        examServer.mount({
+          componentName: 'userInfoEdit',
+          id: this.$route.params.str,
+          el,
+          configs: {
+            client: 'console'
+          }
+        });
+      }
     }
   };
 </script>
-
 <style lang="less" scoped>
   .exam-user-info {
-    padding: 24px 24px 40px 24px;
+    height: 380px;
+    overflow: auto;
   }
 </style>

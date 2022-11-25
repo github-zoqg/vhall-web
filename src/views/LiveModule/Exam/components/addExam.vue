@@ -1,28 +1,58 @@
 <template>
   <div class="exam-add-page">
     <pageTitle :pageTitle="$route.query.examId ? '编辑' : '创建'"></pageTitle>
-    <div id="exam-edit"></div>
+    <div class="exam-create-edit">
+      <div ref="ExamCreate"></div>
+    </div>
   </div>
 </template>
 <script>
   import PageTitle from '@/components/PageTitle';
+  import examServer from '@/utils/examServer';
   export default {
-    name: 'examAddPage',
-    data() {
-      return {};
-    },
+    name: 'ExamCreate',
     components: {
       PageTitle
     },
     mounted() {
-      const aa = new ExamTemplateServer();
-      aa.mount({ id: '', el: '#exam-edit' });
-      console.log('111111', aa);
+      this.initComp();
     },
-    methods: {}
+    created() {
+      this.initEvent();
+    },
+    beforeDestroy() {
+      this.removeEvent();
+    },
+    methods: {
+      initComp() {
+        const el = this.$refs.ExamCreate;
+        examServer.mount({
+          componentName: 'examedit',
+          examId: this.$route.query.examId || '',
+          el,
+          configs: {
+            role: 1,
+            source_id: this.$route.query.webinarId || '',
+            source_type: 1,
+            client: 'console'
+          }
+        });
+      },
+      initEvent() {
+        examServer.on('SUBMITEDIT', this.examEvent);
+      },
+      removeEvent() {
+        examServer.off('SUBMITEDIT', this.examEvent);
+      },
+      examEvent() {
+        this.$router.replace({
+          path: `/live/exam/${this.$route.query.webinarId}`,
+          query: {
+            roomId: this.$route.query.roomId,
+            tab: 1
+          }
+        });
+      }
+    }
   };
 </script>
-<style lang="less" scoped>
-  .exam-add-page {
-  }
-</style>

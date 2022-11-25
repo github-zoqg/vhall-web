@@ -9,9 +9,14 @@ const examServer = {
   mount(...args) {
     return examInstance.mount(...args)
   },
+  on(evt, handler) {
+    examInstance.$on(evt, handler)
+  },
+  off(evt, handler) {
+    examInstance.$off(evt, handler)
+  },
   // 统计答题人数
   getExamAnserCount(params) {
-    console.log("🚀 ~ file: examServer.js ~ line 19 ~ getExamPushedList ~ examInstance", examInstance)
     return examInstance.api.getExamAnserCount(params)
   },
   // 已推送列表
@@ -33,6 +38,24 @@ const examServer = {
   // 用户成绩
   getExamUserScope(params) {
     return examInstance.api.getExamUserScope(params)
+  },
+  getExamList(params) {
+    return examInstance.api.getExamList(params)
+  },
+  copyExam(examId) {
+    const data = {
+      id: examId
+    }
+    return examInstance.api.copyExam(data)
+  },
+  delExam(examIds = []) {
+    if (!Array.isArray(examIds)) {
+      examIds = [examIds]
+    }
+    const data = {
+      ids: examIds.join(',')
+    }
+    return examInstance.api.delExam(data)
   }
 }
 
