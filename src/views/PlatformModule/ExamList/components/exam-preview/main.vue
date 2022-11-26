@@ -105,14 +105,9 @@
   </el-dialog>
 </template>
 <script>
-  import ExamInfo from './components/exam-info.vue';
-  import ExamResult from './components/exam-result.vue';
   export default {
     name: 'VmpExamPreview',
-    components: {
-      ExamInfo,
-      ExamResult
-    },
+
     data() {
       return {
         currentRow: null,

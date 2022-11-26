@@ -953,7 +953,6 @@
         console.log('实例化文档参数进入');
         let result = await this.$fetch('msgInitConsole');
         if (result) {
-          console.log(result, '值');
           sessionOrLocal.set('SAAS_V3_INIT', JSON.stringify(result.data), 'localStorage');
           let opt = {
             accountId: result.data.accountId,
@@ -1083,7 +1082,6 @@
       async initWebinarChat() {
         let result = await this.$fetch('msgInitConsole');
         if (result) {
-          console.log(result, '值');
           let option = {
             appId: result.data.paasAppId || '', // appId 必须
             accountId: result.data.accountId || '', // 第三方用户ID

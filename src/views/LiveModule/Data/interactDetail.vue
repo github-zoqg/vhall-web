@@ -169,6 +169,7 @@
   import { textToEmoji } from './js/emoji';
   import noData from '@/views/PlatformModule/Error/nullPage';
   import { sessionOrLocal } from '@/utils/utils';
+  import examServer from '@/utils/examServer';
   export default {
     components: {
       PageTitle,
@@ -923,19 +924,21 @@
         let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
         let params = {
           source_type: 1,
-          source_id: this.webinarId
+          source_id: this.webinarId,
+          pos: pageInfo.pageNum
         };
         let obj = Object.assign({}, pageInfo, params);
-        this.$fetch('getExamUsageInfo', obj)
+        examServer
+          .getExamPushedList(obj)
           .then(res => {
             this.tableList = res.data.list;
-            this.totalNum = res.data.count || 0;
-            if (!res.data.count) {
+            this.totalNum = res.data.total || 0;
+            if (!res.data.total) {
               this.nullText = 'nullData';
               this.text = '您还没有快问快答数据！';
             }
           })
-          .catch(res => {
+          .catch(() => {
             this.tableList = [];
             this.totalNum = 0;
             this.nullText = 'nullData';

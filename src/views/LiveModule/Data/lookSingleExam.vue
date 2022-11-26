@@ -54,9 +54,8 @@
                 <span>{{ examData.full_score_rate }}%，</span>
                 <count-to
                   :startVal="0"
-                  :endVal="examData.full_score_count"
+                  :endVal="examData.full_score_num"
                   :duration="1500"
-                  v-if="examData.full_score_count >= 0"
                 ></count-to>
                 <span>人</span>
               </h3>
@@ -209,7 +208,7 @@
                   plain
                   size="mini"
                   class="zdy-theme-gray"
-                  @click="editDataStatus(scope.row)"
+                  @click="editDataStatus(scope.row, false)"
                   v-if="scope.row.status > 0"
                 >
                   标记无效
@@ -220,7 +219,7 @@
                   plain
                   size="mini"
                   class="zdy-theme-gray"
-                  @click="resetExamStatus(scope.row)"
+                  @click="editDataStatus(scope.row, true)"
                   v-else
                 >
                   还原数据
@@ -246,22 +245,14 @@
       </div>
     </div>
     <!-- 个人成绩单 -->
-    <vh-dialog
-      width="800px"
-      title="成绩单"
-      :visible.sync="transcriptVisible"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      append-to-body
-    >
-      <transcript ref="transition" :select="currentRow" v-if="transcriptVisible"></transcript>
-    </vh-dialog>
+    <transcript ref="transition"></transcript>
   </div>
 </template>
 <script>
   import NullPage from '@/views/PlatformModule/Error/nullPage';
   import CountTo from 'vue-count-to';
   import Transcript from '@/components/Transcript';
+  import examServer from '@/utils/examServer';
   export default {
     data() {
       return {
@@ -272,7 +263,7 @@
           check_num: 0, // 查看人数
           answer_num: 0, // 答题人数
           full_score_rate: 0, // 满分率
-          full_score_count: 0, // 总人数
+          full_score_num: 0, // 总人数
           max_score: 0, // 最高分
           min_score: 0, // 最低分
           avg_score: 0 // 平均分
@@ -330,9 +321,7 @@
             key: 'is_initiative',
             width: 'auto'
           }
-        ],
-        transcriptVisible: false, // 个人成绩单
-        currentRow: null
+        ]
       };
     },
     computed: {
@@ -368,17 +357,16 @@
       },
       // 查询快问快答 - 统计人数
       getSingleExamData() {
-        let params = {
-          paper_id: this.$route.query.paper_id
-        };
-        this.$fetch('getExamSummaryData', this.$params(params))
+        examServer
+          .getExamPaperSummary({
+            paper_id: this.$route.query.paperId
+          })
           .then(res => {
             this.examData = res.data;
           })
           .catch(e => {
             console.log(e);
-          })
-          .finally(() => {});
+          });
       },
       // 页码改变按钮事件
       currentChangeHandler(current) {
@@ -397,18 +385,11 @@
           is_hidden: 0 // 是否雾化用户名 0.否 1.是
         };
         this.loading = true;
-        this.$fetch('getExamScoreList', this.$params(params))
+        examServer
+          .getExamRankList(this.$params(params))
           .then(res => {
             this.loading = false;
-            let result =
-              res && res.code === 200 && res.data
-                ? res.data
-                : {
-                    total: 0,
-                    list: []
-                  };
-            (result.list || []).map(item => {});
-            this.resultVo = dao;
+            this.resultVo = res.data;
           })
           .catch(e => {
             this.loading = false;
@@ -465,74 +446,43 @@
       },
       // 查看成绩
       openScoreDialog(row) {
-        this.transcriptVisible = true;
-        // 拼接查看要的ID
-        row.room_id = this.$route.query.room_id;
-        row.webinar_id = this.$route.query.webinar_id;
-        this.currentRow = row;
+        this.$refs.transition.open({
+          ...row,
+          id: this.$route.query.paperId,
+          roomId: this.$route.query.roomId,
+          webinarId: this.$route.params.str
+        });
       },
       // 标记无效
-      editDataStatus(rows) {
-        this.$confirm(
-          '「标记无效」后，当前数据默认不计入统计分析和成绩排名中，确定标为无效数据？',
-          '提示',
-          {
-            cancelButtonText: '取消',
-            confirmButtonText: '确定',
-            customClass: 'zdy-message-box',
-            lockScroll: false,
-            cancelButtonClass: 'zdy-confirm-cancel'
-          }
-        )
+      editDataStatus(rows, resultFul = false) {
+        const tip = resultFul
+          ? '「还原数据」后，当前数据重新计入统计分析和成绩排名中，确定进行还原？'
+          : '「标记无效」后，当前数据默认不计入统计分析和成绩排名中，确定标为无效数据？';
+        this.$confirm(tip, '提示', {
+          cancelButtonText: '取消',
+          confirmButtonText: '确定',
+          customClass: 'zdy-message-box',
+          lockScroll: false,
+          cancelButtonClass: 'zdy-confirm-cancel'
+        })
           .then(() => {
-            this.$fetch('editExamStatus', {
-              paper_id: this.$route.query.paperId,
-              join_id: rows.join_id,
-              status: 0
-            })
+            examServer
+              .markExamTranscript({
+                paper_id: this.$route.query.paperId,
+                account_type: rows.account_type,
+                account_id: rows.account_id,
+                status: resultFul ? 1 : 0
+              })
               .then(res => {
-                if (res.data?.is_success == 1) {
-                  this.messageInfo('标记成功', 'success');
+                if (res.code === 200) {
+                  this.messageInfo('操作成功', 'success');
                   this.initQueryList();
                 } else {
-                  this.messageInfo(res.msg || '标记失败', 'error');
+                  this.messageInfo(res.msg || '操作失败', 'error');
                 }
               })
               .catch(e => {
-                this.messageInfo(res.msg || '标记失败', 'error');
-              });
-          })
-          .catch(() => {});
-      },
-      // 还原数据
-      resetExamStatus(rows) {
-        this.$confirm(
-          '「还原数据」后，当前数据重新计入统计分析和成绩排名中，确定进行还原？',
-          '提示',
-          {
-            cancelButtonText: '取消',
-            confirmButtonText: '确定',
-            customClass: 'zdy-message-box',
-            lockScroll: false,
-            cancelButtonClass: 'zdy-confirm-cancel'
-          }
-        )
-          .then(() => {
-            this.$fetch('editExamStatus', {
-              paper_id: this.$route.query.paperId,
-              join_id: rows.join_id,
-              status: 1
-            })
-              .then(res => {
-                if (res.data?.is_success == 1) {
-                  this.messageInfo('还原成功', 'success');
-                  this.initQueryList();
-                } else {
-                  this.messageInfo(res.msg || '还原失败', 'error');
-                }
-              })
-              .catch(res => {
-                this.messageInfo(res.msg || '还原失败', 'error');
+                this.messageInfo(res.msg || '操作失败', 'error');
               });
           })
           .catch(() => {});

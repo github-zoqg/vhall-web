@@ -249,11 +249,7 @@
             </div>
           </div>
         </div>
-        <div
-          class="base-item"
-          v-if="isStatus != 4 && WEBINAR_PES && WEBINAR_PES['exam'] == 1"
-          @click="lookOption('快问快答', 'TODO')"
-        >
+        <div class="base-item" @click="lookOption('快问快答', 'TODO')">
           <p>查看</p>
           <div class="base-main">
             <label>
@@ -405,6 +401,7 @@
 <script>
   import CountTo from 'vue-count-to';
   import { sessionOrLocal } from '@/utils/utils';
+  import examServer from '@/utils/examServer';
   export default {
     data() {
       return {
@@ -463,6 +460,7 @@
         // 点播不需要调用
         this.getOtherInfo();
       }
+      this.getOtherInfo();
     },
     methods: {
       //文案提示问题
@@ -541,11 +539,15 @@
           this.dataInfo.submitNum = res.data.submit_nums || 0;
         });
         // 快问快答提交人数
-        this.$fetch('getExamSubmitNum', { source_id: this.$route.params.str, source_type: 1 }).then(
-          res => {
+        examServer
+          .getExamAnserCount({
+            source_id: this.$route.params.str,
+            source_type: 1
+          })
+          .then(res => {
+            console.log('🚀 ~ file: baseData.vue ~ line 548 ~ getOtherInfo ~ res', res);
             this.dataInfo.examSubmitNum = res.data.count || 0;
-          }
-        );
+          });
         // 获取抽奖人数
         this.$fetch('getPrizeUserInfo', { webinar_id: this.$route.params.str }).then(res => {
           this.dataInfo.prizeNum = res.data.count || 0;
