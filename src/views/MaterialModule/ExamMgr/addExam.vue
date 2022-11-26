@@ -14,6 +14,12 @@
     components: {
       PageTitle
     },
+    mounted() {
+      this.initComp();
+    },
+    created() {
+      this.initEvent();
+    },
     beforeDestroy() {
       this.removeEvent();
     },
@@ -29,22 +35,22 @@
             client: 'console'
           }
         });
+      },
+      initEvent() {
+        examServer.on('SUBMITEDIT', this.examEvent);
+      },
+      removeEvent() {
+        examServer.off('SUBMITEDIT', this.examEvent);
+      },
+      examEvent() {
+        this.$router.replace({
+          path: `/live/exam/${this.$route.query.webinarId}`,
+          query: {
+            roomId: this.$route.query.roomId,
+            tab: 1
+          }
+        });
       }
-      // initEvent() {
-      //   examServer.on('SUBMITEDIT', this.examEvent);
-      // },
-      // removeEvent() {
-      //   examServer.off('SUBMITEDIT', this.examEvent);
-      // },
-      // examEvent() {
-      //   this.$router.replace({
-      //     path: `/live/exam/${this.$route.query.webinarId}`,
-      //     query: {
-      //       roomId: this.$route.query.roomId,
-      //       tab: 1
-      //     }
-      //   });
-      // }
     }
   };
 </script>

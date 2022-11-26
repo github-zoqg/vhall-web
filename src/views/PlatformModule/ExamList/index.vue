@@ -314,13 +314,15 @@
       },
       queryExamList() {
         const keywords = (this.queryParams.keyword = this.keywordIpt);
-        const params = {
+        let params = {
           limit: this.queryParams.limit,
           pos: (this.queryParams.pageNum - 1) * this.queryParams.limit,
-          keywords,
-          source_id: this.$route.params.str, // 活动id
-          source_type: 1
+          keywords
         };
+        if (this.pageLevel != 'user') {
+          params.source_id = this.$route.params.str; // 活动id
+          params.source_type = 1;
+        }
         examServer.getExamList(params).then(res => {
           this.examList = res.data.list || [];
           this.total = res.data.total;
