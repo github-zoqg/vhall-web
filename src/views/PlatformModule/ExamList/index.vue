@@ -381,40 +381,47 @@
         this.deleteConfirm(rows.id, 2);
       },
       deleteConfirm(id, index) {
-        this.$confirm('删除后，此快问快答将无法使用，确认删除？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          customClass: 'zdy-message-box zdy-vh-ui',
-          lockScroll: false,
-          confirmButtonClass: 'zdy-vh-ui-confirm',
-          cancelButtonClass: 'zdy-confirm-cancel'
-        })
-          .then(() => {
-            this.$fetch(
-              this.pageLevel == 'user' ? 'deleteExam' : 'deleteExamIsWebinar',
-              this.pageLevel == 'user'
-                ? { ids: id }
-                : {
-                    ids: id,
-                    source_type: 1,
-                    source_id: this.$route.params.str
-                  }
-            )
-              .then(res => {
-                if (res.data?.is_success == 1) {
-                  // 删除成功
-                  this.messageInfo('删除成功', 'success');
-                  this.initQueryList();
-                } else {
-                  this.messageInfo(res.msg || '删除失败', 'error');
-                }
-              })
-              .catch(res => {
-                this.messageInfo(res.msg || '删除失败', 'error');
-              });
+        if (this.pageLevel == 'user') {
+          this.sendDelRequest();
+        } else {
+          this.$confirm('删除后，此快问快答将无法使用，确认删除？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            customClass: 'zdy-message-box zdy-vh-ui',
+            lockScroll: false,
+            confirmButtonClass: 'zdy-vh-ui-confirm',
+            cancelButtonClass: 'zdy-confirm-cancel'
           })
-          .catch(() => {
-            this.messageInfo('已取消删除', 'info');
+            .then(() => {
+              this.sendDelRequest();
+            })
+            .catch(() => {
+              this.messageInfo('已取消删除', 'info');
+            });
+        }
+      },
+      sendDelRequest() {
+        this.$fetch(
+          this.pageLevel == 'user' ? 'deleteExam' : 'deleteExamIsWebinar',
+          this.pageLevel == 'user'
+            ? { ids: id }
+            : {
+                ids: id,
+                source_type: 1,
+                source_id: this.$route.params.str
+              }
+        )
+          .then(res => {
+            if (res.data?.is_success == 1) {
+              // 删除成功
+              this.messageInfo('删除成功', 'success');
+              this.initQueryList();
+            } else {
+              this.messageInfo(res.msg || '删除失败', 'error');
+            }
+          })
+          .catch(res => {
+            this.messageInfo(res.msg || '删除失败', 'error');
           });
       },
       // 批量删除
