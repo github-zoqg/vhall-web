@@ -56,7 +56,10 @@ const examServer = {
       ids: examIds.join(',')
     }
     return examInstance.api.delExam(data)
-  }
+  },
+  selectExamFromUser(params) {
+    return examInstance.api.selectExamFromUser(params)
+  },
 }
 
 let examInstance = {}

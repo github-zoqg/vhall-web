@@ -97,7 +97,7 @@
           v-model.trim="keywordIpt"
           clearable
           @clear="getExamList"
-          @keyup.enter.native="queryExamList"
+          @keyup.enter.native="getExamList"
         >
           <i slot="prefix" class="el-input__icon el-icon-search" @click="getExamList"></i>
         </vh-input>
@@ -215,11 +215,7 @@
       <null-page class="search-no-data" :height="0" v-if="total === 0"></null-page>
     </div>
     <!-- 资料库：选择列表-->
-    <select-exam
-      ref="selectExamDom"
-      @getTableList="getExamList"
-      @selectExamPreview="preview"
-    ></select-exam>
+    <select-exam ref="selectExamDom" @prev="preview" @added="getExamList"></select-exam>
     <!-- 预览快问快答 -->
     <exam-preview ref="examPrev" maxWidth="580px" maxHeight="420px"></exam-preview>
   </div>
@@ -268,12 +264,12 @@
           },
           {
             label: '创建时间',
-            key: 'created_at_str',
+            key: 'created_at',
             width: '180'
           },
           {
             label: '更新时间',
-            key: 'updated_at_str',
+            key: 'updated_at',
             width: '180'
           },
           {
@@ -288,7 +284,7 @@
           },
           {
             label: '限时（分）',
-            key: 'limit_time_str',
+            key: 'limit_time',
             width: '120'
           },
           {
@@ -320,8 +316,7 @@
         const keywords = (this.queryParams.keyword = this.keywordIpt);
         const params = {
           limit: this.queryParams.limit,
-          pos: this.queryParams.pageNum,
-          // pos: (this.queryParams.pageNum - 1) * this.queryParams.limit,
+          pos: (this.queryParams.pageNum - 1) * this.queryParams.limit,
           keywords,
           source_id: this.$route.params.str, // 活动id
           source_type: 1
@@ -439,7 +434,7 @@
       },
       // 打开资料库
       openSelectDialog() {
-        this.$refs.selectExamDom.selectDialogVisible = true;
+        this.$refs.selectExamDom.open();
       }
     }
   };

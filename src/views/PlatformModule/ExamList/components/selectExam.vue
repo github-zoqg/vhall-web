@@ -1,36 +1,35 @@
 <template>
-  <div class="show-exam exam-base" v-if="selectDialogVisible">
+  <div class="show-exam exam-base" v-if="dialogVisible">
     <div class="show-main data-base">
       <p class="title">
         选择快问快答
-        <i class="el-icon-close" @click="selectDialogVisible = false"></i>
+        <i class="el-icon-close" @click="dialogVisible = false"></i>
       </p>
       <div class="data-search" v-show="total || isSearch">
         <VhallInput
           class="search-dialog-tag"
           v-clearEmoij
-          v-model="keyword"
+          v-model="keywordIpt"
           placeholder="请输入名称"
           clearable
-          @keyup.enter.native="searchExamList"
+          @keyup.enter.native="getExamList"
           style="width: 180px"
-          @clear="searchExamList"
+          @clear="getExamList"
         >
           <i
             slot="prefix"
             class="el-icon-search el-input__icon"
             style="cursor: pointer; line-height: 36px"
-            @click="searchExamList"
+            @click="getExamList"
           ></i>
         </VhallInput>
       </div>
       <div class="data-base-list" v-show="total || isSearch">
         <vh-table
-          :data="tableData"
+          :data="examList"
           ref="selectExamTable"
           style="width: 100%"
           :height="isSearch && total == 0 ? 0 : 320"
-          v-loadMore="moreLoadData"
           @selection-change="handleSelectionChange"
           @select-all="checkAllExam"
         >
@@ -64,6 +63,12 @@
           <el-button type="primary" round @click="addExam" v-preventReClick>创建</el-button>
         </noData>
       </div>
+      <SPagination
+        :total="total"
+        :currentPage="queryParams.pageNum"
+        @current-change="currentChangeHandler"
+        align="center"
+      ></SPagination>
       <div v-show="total || (isSearch && total == 0)">
         <p class="text">
           已选择
@@ -91,44 +96,57 @@
 </template>
 <script>
   import noData from '@/views/PlatformModule/Error/nullPage';
+  import examServer from '@/utils/examServer';
   export default {
     data() {
       return {
         vm: null,
         total: 0,
         isSearch: false, //是否是搜索
-        selectDialogVisible: false,
+        dialogVisible: false,
         loading: false,
-        keyword: '',
-        examId: '',
         checkList: [],
         totalPages: 1,
-        tableData: [],
+        examList: [],
         isCheckAll: false,
-        pageInfo: {
-          pageNum: 1,
-          pos: 0,
-          limit: 10
+        keywordIpt: '',
+        queryParams: {
+          limit: 10,
+          keyword: '',
+          pageNum: 1
         }
       };
     },
     components: {
       noData
     },
-    watch: {
-      selectDialogVisible() {
-        if (this.selectDialogVisible) {
-          this.keyword = '';
-          this.isCheckAll = false;
-          this.pageInfo.pageNum = 1;
-          this.pageInfo.pos = 0;
-          this.checkList = [];
-          this.tableData = [];
-          this.getExamList();
-        }
-      }
-    },
     methods: {
+      open() {
+        this.dialogVisible = true;
+        this.keywordIpt = '';
+        this.isCheckAll = false;
+        this.examList = [];
+        this.getExamList();
+      },
+      getExamList() {
+        this.queryParams.pageNum = 1;
+        this.keywordIpt = '';
+        this.queryExamList();
+      },
+      queryExamList() {
+        const keywords = (this.queryParams.keyword = this.keywordIpt);
+        const params = {
+          limit: this.queryParams.limit,
+          pos: (this.queryParams.pageNum - 1) * this.queryParams.limit,
+          keywords
+        };
+        examServer.getExamList(params).then(res => {
+          this.examList = res.data.list || [];
+          this.total = res.data.total;
+          this.firstLoad = true;
+        });
+      },
+
       //文案提示问题
       messageInfo(msg, type) {
         if (this.vm) {
@@ -150,132 +168,11 @@
       handleCloseVisiton() {
         this.pageInfo.pageNum = 1;
         this.pageInfo.pos = 0;
-        this.selectDialogVisible = false;
-      },
-      moreLoadData() {
-        if (this.pageInfo.pageNum >= this.totalPages) {
-          return false;
-        }
-        this.pageInfo.pageNum++;
-        this.pageInfo.pos = parseInt((this.pageInfo.pageNum - 1) * this.pageInfo.limit);
-        this.getExamList();
+        this.dialogVisible = false;
       },
       handleBtnClick(val) {
         let methodsCombin = this.$options.methods;
         methodsCombin[val.type](this, val);
-      },
-      searchExamList() {
-        this.tableData = [];
-        this.pageInfo.pageNum = 1;
-        this.pageInfo.pos = 0;
-        try {
-          if (this.$refs.selectExamTable) {
-            this.$refs.selectExamTable.clearSelection();
-          }
-        } catch (e) {}
-        this.getExamList();
-      },
-      mockExamList() {
-        return {
-          total: 200,
-          list: [
-            {
-              id: 1,
-              title: 'Apple产品功能知识点①',
-              created_at: '2022-10-23 00:00:00',
-              updated_at: '2022-10-23 00:00:00',
-              total_score: 100,
-              questions_count: 10,
-              limit_time_switch: 1,
-              limit_time: 70,
-              auto_push_switch: 0,
-              status: 1
-            },
-            {
-              id: 2,
-              title: 'Apple产品功能知识点2',
-              created_at: '2022-10-23 00:00:00',
-              updated_at: '2022-10-23 00:00:00',
-              total_score: 100,
-              questions_count: 10,
-              limit_time_switch: 0,
-              limit_time: 0,
-              auto_push_switch: 0,
-              status: 2
-            },
-            {
-              id: 3,
-              title: 'Apple产品功能知识点3',
-              created_at: '2022-10-23 00:00:00',
-              updated_at: '2022-10-23 00:00:00',
-              total_score: 100,
-              questions_count: 10,
-              limit_time_switch: 0,
-              limit_time: 0,
-              auto_push_switch: 0,
-              status: 3
-            },
-            {
-              id: 4,
-              title:
-                'Apple产品功能知识点Apple产品功能知识点Apple产品功能知识点Apple产品功能知识点4',
-              created_at: '2022-10-23 00:00:00',
-              updated_at: '2022-10-23 00:00:00',
-              total_score: 100,
-              questions_count: 10,
-              limit_time_switch: 0,
-              limit_time: 0,
-              auto_push_switch: 0,
-              status: 0
-            },
-            {
-              id: 5,
-              title:
-                'Apple产品功能知识点Apple产品功能知识点Apple产品功能知识点Apple产品功能知识点4',
-              created_at: '2022-10-23 00:00:00',
-              updated_at: '2022-10-23 00:00:00',
-              total_score: 100,
-              questions_count: 10,
-              limit_time_switch: 0,
-              limit_time: 0,
-              auto_push_switch: 0,
-              status: 0
-            }
-          ]
-        };
-      },
-      getExamList() {
-        let resData = this.mockExamList();
-        resData.list.map(item => {
-          item.created_at_str = item.created_at.substring(0, 16);
-          item.updated_at_str = item.updated_at.substring(0, 16);
-          item.limit_time_str = item.limit_time_switch == 1 ? item.limit_time : '不限时';
-          item.status_css = ['no-push', 'answer', 'no-publish', 'publish'][item.status];
-          item.status_str = ['未推送', '答题中', '成绩待公布', '成绩已公布'][item.status];
-        });
-        this.total = resData.total;
-        let list = resData.list;
-        this.tableData.push(...list);
-        if (this.isCheckAll) {
-          this.$refs.selectExamTable.toggleAllSelection();
-        }
-        this.totalPages = Math.ceil(resData.total / this.pageInfo.limit);
-        return;
-        let formParams = {
-          keyword: this.keyword
-        };
-        this.isSearch = this.keyword ? true : false;
-        let obj = Object.assign({}, this.pageInfo, formParams);
-        this.$fetch('getExamList', this.$params(obj)).then(res => {
-          this.loading = false;
-          this.total = res.data.total;
-          let list = res.data.list;
-          this.tableData.push(...list);
-          if (this.isCheckAll) {
-            this.$refs.selectExamTable.toggleAllSelection();
-          }
-          this.totalPages = Math.ceil(res.data.total / this.pageInfo.limit);
-        });
       },
       // 选择资料库中的快问快答
       choseSureExam() {
@@ -288,17 +185,15 @@
           ids: this.checkList.join(','),
           source_id: this.$route.params.str // 活动ID
         };
-        this.$fetch('selectExamToWebinar', params)
+        examServer
+          .selectExamFromUser(params)
           .then(res => {
             this.messageInfo('添加成功', 'success');
-            this.selectDialogVisible = false;
-            this.pageInfo.pageNum = 1;
-            this.pageInfo.pos = 0;
-            this.$emit('getTableList');
+            this.dialogVisible = false;
+            this.$emit('added');
           })
           .catch(res => {
             this.messageInfo('添加失败', 'error');
-            this.selectDialogVisible = true;
           });
       },
       addExam() {
@@ -311,15 +206,7 @@
       },
       // 预览
       preview(rows) {
-        this.examId = rows.id;
-        // this.selectDialogVisible = false;
-        this.$emit(
-          'selectExamPreview',
-          {
-            id: this.examId
-          },
-          'mock'
-        );
+        this.$emit('prev', rows.id);
       },
       checkAllExam(selection) {
         // 全选
@@ -329,6 +216,10 @@
       // 选中
       handleSelectionChange(val) {
         this.checkList = val.map(item => item.id);
+      },
+      currentChangeHandler(page) {
+        this.queryParams.pageNum = page;
+        this.queryExamList();
       }
     }
   };
