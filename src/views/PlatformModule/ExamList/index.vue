@@ -362,27 +362,38 @@
           this.getExamList();
         });
       },
-      // 批量删除
       deleteConfirm(ids) {
-        this.$confirm('删除后，此快问快答将无法使用，确认删除？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          customClass: 'zdy-message-box zdy-vh-ui',
-          lockScroll: false,
-          confirmButtonClass: 'zdy-vh-ui-confirm',
-          cancelButtonClass: 'zdy-confirm-cancel'
-        })
-          .then(() => {
-            examServer?.delExam(ids).then(res => {
-              this.$message.success('删除成功');
-              this.getExamList();
-            });
+        if (this.pageLevel == 'user') {
+          this.sendDelRequest(ids);
+        } else {
+          this.$confirm('删除后，此快问快答将无法使用，确认删除？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            customClass: 'zdy-message-box zdy-vh-ui',
+            lockScroll: false,
+            confirmButtonClass: 'zdy-vh-ui-confirm',
+            cancelButtonClass: 'zdy-confirm-cancel'
           })
-          .catch(() => {
-            this.messageInfo('已取消删除', 'info');
+            .then(() => {
+              this.sendDelRequest(ids);
+            })
+            .catch(() => {
+              this.messageInfo('已取消删除', 'info');
+            });
+        }
+      },
+      sendDelRequest(ids) {
+        // 用户级别的
+        examServer
+          ?.delExam(ids)
+          .then(res => {
+            this.$message.success('删除成功');
+            this.getExamList();
+          })
+          .catch(res => {
+            this.messageInfo(res.msg || '删除失败', 'error');
           });
       },
-      // 批量删除
       deleteAll() {
         if (this.selectChecked.length < 1) {
           this.messageInfo('请选择要操作的选项', 'warning');

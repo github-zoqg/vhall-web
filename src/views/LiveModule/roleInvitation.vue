@@ -578,10 +578,6 @@
           'desktop_share' // 桌面共享
         ];
         // webinar_type: 1.音频 2 视频 3 互动  5 定时直播
-        if (this.webinarIsDirector == 1 && this.privilegeVo.webinar_type == 2) {
-          // 如果是云导播 & 视频直播
-          defaultSortArr.splice(defaultSortArr.indexOf('exam'), 1);
-        }
         const obj = {};
         defaultSortArr.forEach(item => {
           if (sortKeys.includes(item)) {
