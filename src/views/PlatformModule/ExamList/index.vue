@@ -357,7 +357,7 @@
       },
       // 删除 - 单条记录
       del(examObj) {
-        examServer?.delExam(examObj.id, this.pageLevel).then(res => {
+        examServer?.delExam(examObj.id).then(res => {
           this.$message.success('删除成功');
           this.getExamList();
         });
