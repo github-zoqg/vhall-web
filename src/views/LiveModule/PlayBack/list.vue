@@ -1398,7 +1398,7 @@
       },
       // 加密介绍
       openTip() {
-        window.open('https://saas-doc.vhall.com/docs/show/1417');
+        window.open('https://saas-doc.vhall.com/opendocs/show/1382');
       },
       // 上传音视频
       uploadBut() {

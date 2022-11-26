@@ -294,7 +294,7 @@
           });
       },
       workHelp() {
-        let url = 'https://saas-doc.vhall.com/docs/show/1235';
+        let url = 'https://saas-doc.vhall.com/opendocs/show/1379';
         this.$vhall_paas_port({
           k: 100226,
           data: {

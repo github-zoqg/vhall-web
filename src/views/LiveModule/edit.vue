@@ -21,14 +21,22 @@
               >
                 联系客服
               </a>
-              <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">
+              <a
+                class="set-font"
+                href="https://saas-doc.vhall.com/opendocs/show/1384"
+                target="_blank"
+              >
                 功能介绍
               </a>
             </span>
             <!-- 已开通权限 -->
             <span v-else>
               分组直播暂不支持多语言！仅生效网页观看端，不生效JS-SDK和移动SDK观看端
-              <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1451" target="_blank">
+              <a
+                class="set-font"
+                href="https://saas-doc.vhall.com/opendocs/show/1384"
+                target="_blank"
+              >
                 功能介绍
               </a>
             </span>
@@ -293,13 +301,21 @@
                 联系客服
               </a>
               开通，点我了解
-              <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1504" target="_blank">
+              <a
+                class="set-font"
+                href="https://saas-doc.vhall.com/opendocs/show/1388"
+                target="_blank"
+              >
                 云导播活动
               </a>
             </span>
             <span v-else>
               云导播活动不能使用无延迟技术，点我了解
-              <a class="set-font" href="https://saas-doc.vhall.com/docs/show/1504" target="_blank">
+              <a
+                class="set-font"
+                href="https://saas-doc.vhall.com/opendocs/show/1388"
+                target="_blank"
+              >
                 云导播活动
               </a>
             </span>
@@ -364,7 +380,7 @@
                 联系客服
               </a>
               ，支持
-              <a class="blue" target="_blank" href="https://saas-doc.vhall.com/docs/show/1458">
+              <a class="blue" target="_blank" href="https://saas-doc.vhall.com/opendocs/show/1385">
                 手机网页连麦
               </a>
             </span>
