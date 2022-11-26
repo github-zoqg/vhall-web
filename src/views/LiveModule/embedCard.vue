@@ -33,7 +33,7 @@
         </div>
         <p>
           提示：在微信公众号管理平台，自定义菜单添加链接，用户点击菜单可快速观看直播，详细信息参见
-          <a @click="goForm('https://saas-doc.vhall.com/docs/show/1243', 1)">微信嵌入</a>
+          <a @click="goForm('https://saas-doc.vhall.com/opendocs/show/1284', 1)">微信嵌入</a>
         </p>
       </div>
     </div>
@@ -69,13 +69,13 @@
           <span v-if="isInteract == 3">互动连麦功能必须要求浏览器地址为https协议进入！</span>
           <span v-if="isInteract != 3">1.视频嵌入不支持无延迟直播；2.</span>
           当前只支持默认活动和密码活动的嵌入，更多嵌入信息参见
-          <a @click="goForm('https://saas-doc.vhall.com/docs/show/1238', 2)">网页嵌入指南</a>
+          <a @click="goForm('https://saas-doc.vhall.com/opendocs/show/1282', 2)">网页嵌入指南</a>
         </p>
         <p v-else>
           提示：
           <span>互动连麦功能必须要求浏览器地址为https协议进入！</span>
           当前只支持密码活动的嵌入，更多嵌入信息参见
-          <a @click="goForm('https://saas-doc.vhall.com/docs/show/1238', 2)">网页嵌入指南</a>
+          <a @click="goForm('https://saas-doc.vhall.com/opendocs/show/1282', 2)">网页嵌入指南</a>
         </p>
       </div>
     </div>

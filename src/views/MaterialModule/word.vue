@@ -14,7 +14,7 @@
       </div>
       <div class="title_text">
         推荐开播前提前上传课件，上传过程中如果遇到问题请查看
-        <a href="https://saas-doc.vhall.com/docs/show/1278" target="_blank">《常见问题》</a>
+        <a href="https://saas-doc.vhall.com/opendocs/show/1380" target="_blank">《常见问题》</a>
       </div>
     </pageTitle>
     <!-- 无权限，未创建 -->
