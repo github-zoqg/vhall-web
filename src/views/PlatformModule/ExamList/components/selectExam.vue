@@ -206,7 +206,7 @@
       },
       // 预览
       preview(rows) {
-        this.$emit('prev', rows.id);
+        this.$emit('prev', rows);
       },
       checkAllExam(selection) {
         // 全选
