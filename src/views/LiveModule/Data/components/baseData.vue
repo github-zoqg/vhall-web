@@ -249,11 +249,11 @@
             </div>
           </div>
         </div>
-        <div class="base-item" @click="lookOption('快问快答', 'TODO')">
+        <div class="base-item" v-if="isStatus != 4" @click="lookOption('快问快答', 'TODO')">
           <p>查看</p>
           <div class="base-main">
             <label>
-              <img src="../../../../common/images/icon/icon_questionnaire@2x.png" alt="" />
+              <img src="../../../../common/images/icon/icon_exam@2x.png" alt="" />
             </label>
             <div class="base-text">
               <span>快问快答(人)</span>

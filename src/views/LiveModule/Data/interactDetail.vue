@@ -425,8 +425,8 @@
             key: 'title'
           },
           {
-            label: '查看人数',
-            key: 'check_num'
+            label: '未答人数',
+            key: 'un_answered_num'
           },
           {
             label: '答题人数',
@@ -931,7 +931,7 @@
         examServer
           .getExamPushedList(obj)
           .then(res => {
-            this.tableList = res.data.list;
+            this.tableList = res.data.list || [];
             this.totalNum = res.data.total || 0;
             if (!res.data.total) {
               this.nullText = 'nullData';

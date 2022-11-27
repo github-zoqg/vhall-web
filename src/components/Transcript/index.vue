@@ -27,10 +27,6 @@
               <span>{{ transcriptInfo.user_name || '--' }}</span>
             </p>
             <p>
-              <label>手机号:</label>
-              <span>{{ transcriptInfo.mobile || '--' }}</span>
-            </p>
-            <p>
               <label>答题用时:</label>
               <span>
                 {{ transcriptInfo.use_time || '--' }}
@@ -67,7 +63,9 @@
             }}，未答{{ transcriptInfo.unanswer_num || '--' }}
           </span>
         </div>
-        <div ref="answerResult"></div>
+        <div v-if="dialogVisible">
+          <div ref="answerResult"></div>
+        </div>
       </div>
     </vh-dialog>
   </div>
@@ -103,6 +101,7 @@
             paper_id: this.examInfo.id
           })
           .then(res => {
+            console.log('🚀 ~ file: index.vue ~ line 106 ~ getTransitionData ~ res', res);
             this.transcriptInfo = res.data;
           });
       },
@@ -114,7 +113,9 @@
           componentName: 'exampc',
           configs: {
             role: 1,
-            answerType: 3
+            answerType: 3,
+            account_type: this.examInfo.account_type,
+            account_id: this.examInfo.account_id
           }
         });
       },

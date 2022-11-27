@@ -7,7 +7,7 @@
         <vh-row type="flex" class="row-bg" justify="space-around">
           <vh-col :span="7">
             <div class="grid-content">
-              <span>查看人数</span>
+              <span>未答人数</span>
               <vh-tooltip effect="dark" placement="right" v-tooltipMove>
                 <div slot="content">
                   主办方推送快问快答至观看端，仅查看题目未进行作答的人数，人数排重
@@ -17,9 +17,8 @@
               <h3 class="custom-font-barlow">
                 <count-to
                   :startVal="0"
-                  :endVal="examData.check_num"
+                  :endVal="examData.un_answered_num || 0"
                   :duration="1500"
-                  v-if="examData.check_num >= 0"
                 ></count-to>
               </h3>
             </div>
