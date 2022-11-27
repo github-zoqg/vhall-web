@@ -354,7 +354,7 @@
         this.$fetch('getWebinarSwitchList', { webinar_id: this.$route.params.str }).then(res => {
           res.data.switch_list.map((item, index) => {
             this.switchList.push({
-              label: `第${index + 1}场`,
+              label: `第${res.data.switch_list.length - index}场`,
               value: item.id
             });
           });

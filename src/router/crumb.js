@@ -1006,7 +1006,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   } else if (metaName === 'specialList') {
-  /** 专题 **/
+    /** 专题 **/
     // 专题列表
     return CrumbLiveList('specialList');
   } else if (metaName === 'subjectEdit') {
@@ -1116,8 +1116,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   } else if (metaName === 'wordMgr') {
-
-  /** 资料管理 **/
+    /** 资料管理 **/
     // 资料-文档
     return [
       ...CrumbLiveList('material'),
@@ -1234,8 +1233,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   } else if (metaName === 'dataInfo') {
-
-  /** 数据总览 **/
+    /** 数据总览 **/
     // 数据中心-数据总览
     return [
       ...CrumbLiveList('data'),
@@ -1258,8 +1256,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   } else if (metaName === 'settingInfo') {
-
-  /** 设置中心 **/
+    /** 设置中心 **/
     //设置中心
     return [...CrumbLiveList('setting')];
   } else if (metaName === 'chatMgr') {
@@ -1394,7 +1391,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   } else if (metaName === 'financeInfo') {
-  /** 财务中心 **/
+    /** 财务中心 **/
     //财务中心-财务总览
     return [
       ...CrumbLiveList('finance'),
@@ -1497,8 +1494,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   } else if (metaName === 'accountInfo') {
-
-  /** 账户管理 **/
+    /** 账户管理 **/
     //账户管理-账户信息
     return [
       ...CrumbLiveList('account'),
@@ -1580,7 +1576,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   } else if (metaName === 'downloadList') {
-  /** 下载中心 **/
+    /** 下载中心 **/
     //下载中心
     return [
       {
@@ -1591,7 +1587,7 @@ export function CrumbSet(metaName, that) {
       }
     ];
   } else if (metaName === 'msgList') {
-  /** 消息中心 **/
+    /** 消息中心 **/
     //消息中心
     return [
       {
