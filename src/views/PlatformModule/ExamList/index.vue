@@ -328,15 +328,22 @@
       },
       //编辑 - 单个快问快答
       edit(examObj) {
-        this.$router.push({
-          path: '/live/addExam',
-          query: {
-            webinarId: this.$route.params.str,
-            roomId: this.$route.query.roomId,
-            type: 2,
-            examId: examObj.id
-          }
-        });
+        if (examObj.status === 0) {
+          this.$router.push({
+            path: '/live/addExam',
+            query: {
+              webinarId: this.$route.params.str,
+              roomId: this.$route.query.roomId,
+              type: 2,
+              examId: examObj.id
+            }
+          });
+        } else {
+          this.$message({
+            message: '已推送的快问快答不支持编辑，建议进行「复制」',
+            type: 'warning'
+          });
+        }
       },
       clear(e) {
         e.stopPropagation();
