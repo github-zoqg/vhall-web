@@ -351,7 +351,6 @@
       // 预览
       preview(examObj) {
         const prevCom = this.$refs.examPrev;
-        console.log('🚀 ~ file: index.vue ~ line 351 ~ preview ~ prevCom', prevCom);
         prevCom.open(examObj.id, examObj.title);
       },
       // 删除 - 单条记录
