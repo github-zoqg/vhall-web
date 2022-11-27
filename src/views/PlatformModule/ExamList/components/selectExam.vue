@@ -95,12 +95,12 @@
   </div>
 </template>
 <script>
-  // import noData from '@/views/PlatformModule/Error/nullPage';
+  import noData from '@/views/PlatformModule/Error/nullPage';
   import examServer from '@/utils/examServer';
   export default {
     name: 'materialExamSelect',
     components: {
-      // noData
+      noData
     },
     data() {
       return {
@@ -205,10 +205,7 @@
       },
       addExam() {
         this.$router.push({
-          path: '/material/addExam',
-          query: {
-            type: 1
-          }
+          path: '/material/addExam'
         });
       },
       // 预览

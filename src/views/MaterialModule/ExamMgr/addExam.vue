@@ -8,7 +8,7 @@
 </template>
 <script>
   /**
-   * @description 活动下创建文件
+   * @description 资料库创建问卷
    */
   import PageTitle from '@/components/PageTitle';
   import examServer from '@/utils/examServer';
@@ -47,11 +47,7 @@
       },
       examEvent() {
         this.$router.replace({
-          path: `/live/exam/${this.$route.query.webinarId}`,
-          query: {
-            roomId: this.$route.query.roomId,
-            tab: 1
-          }
+          path: '/material/exam'
         });
       }
     }
