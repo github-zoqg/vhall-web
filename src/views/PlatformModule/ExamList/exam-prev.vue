@@ -8,7 +8,9 @@
       draggable
       :modal="false"
     >
-      <div ref="ExamPrev"></div>
+      <div v-if="dialogVisible">
+        <div ref="ExamPrev"></div>
+      </div>
     </vh-dialog>
   </div>
 </template>
