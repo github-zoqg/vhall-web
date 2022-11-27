@@ -97,7 +97,7 @@
           v-model.trim="keywordIpt"
           clearable
           @clear="getExamList"
-          @keyup.enter.native="getExamList"
+          @keyup.enter.native="getExamList(false)"
         >
           <i slot="prefix" class="el-input__icon el-icon-search" @click="getExamList"></i>
         </vh-input>
@@ -116,27 +116,18 @@
           >
             <!-- 多选列 -->
             <vh-table-column type="selection" width="55" align="left" />
+            <!-- 名称列 -->
+            <vh-table-column
+              align="left"
+              width="220"
+              label="名称"
+              show-overflow-tooltip
+              fixed="left"
+              prop="title"
+            />
             <template v-for="(item, index) in tableColumns">
-              <!-- 名称列 -->
-              <vh-table-column
-                v-if="item.key == 'title'"
-                align="left"
-                :key="index"
-                :width="item.width"
-                :label="item.label"
-                :show-overflow-tooltip="item.customTooltip"
-                fixed="left"
-              >
-                <template slot-scope="scope">
-                  <span>{{ scope.row[item.key] || '-' }}</span>
-                </template>
-              </vh-table-column>
               <!-- 其它非名称列 -->
               <vh-table-column
-                v-if="
-                  ((scene === 'material' && item.key !== 'status_str') || scene === 'webinar') &&
-                  item.key !== 'title'
-                "
                 align="left"
                 :key="index"
                 :width="item.width"
@@ -144,17 +135,23 @@
                 :show-overflow-tooltip="item.customTooltip"
               >
                 <template slot-scope="scope">
-                  <span
-                    class="statusTag"
-                    :class="scope.row.status_css"
-                    v-if="item.key == 'status_str'"
-                  >
-                    {{ scope.row[item.key] }}
-                  </span>
-                  <span v-else>{{ scope.row[item.key] || '-' }}</span>
+                  {{ scope.row[item.key] || '-' }}
                 </template>
               </vh-table-column>
             </template>
+            <!-- 限时 -->
+            <vh-table-column label="限时(分)">
+              <template slot-scope="scope">
+                {{ scope.row.limit_time_switch > 0 ? scope.row.limit_time : '不限时' }}
+              </template>
+            </vh-table-column>
+            <!--  状态 -->
+            <vh-table-column v-if="scene === 'webinar'" label="状态" width="120">
+              <template slot-scope="{ row }">
+                <i :class="['icon-dot', `status-${row.status}`]" />
+                {{ row.status | fmtExamStatus }}
+              </template>
+            </vh-table-column>
             <!-- 操作列 -->
             <vh-table-column label="操作" align="left" class="btn-rows" fixed="right" width="196">
               <template slot-scope="scope">
@@ -256,12 +253,6 @@
         examList: [],
         tableColumns: [
           {
-            label: '名称',
-            key: 'title',
-            customTooltip: true,
-            width: '220'
-          },
-          {
             label: '创建时间',
             key: 'created_at',
             width: '180'
@@ -280,16 +271,6 @@
             label: '题数',
             key: 'questions_count',
             width: '120'
-          },
-          {
-            label: '限时（分）',
-            key: 'limit_time',
-            width: '120'
-          },
-          {
-            label: '状态',
-            key: 'status_str',
-            width: '120'
           }
         ]
       };
@@ -299,6 +280,13 @@
         return this.total === 0 && this.queryParams.keyword === '';
       }
     },
+    filters: {
+      fmtExamStatus(status) {
+        status = parseInt(status);
+        const statusMap = ['未推送', '答题中', '成绩待公布', '成绩已公布'];
+        return statusMap[status] || '-';
+      }
+    },
     created() {
       this.initComp();
     },
@@ -306,9 +294,11 @@
       initComp() {
         this.getExamList();
       },
-      getExamList() {
+      getExamList(clear = true) {
         this.queryParams.pageNum = 1;
-        this.keywordIpt = '';
+        if (clear) {
+          this.keywordIpt = '';
+        }
         this.queryExamList();
       },
       queryExamList() {
@@ -336,7 +326,7 @@
           this.getExamList();
         });
       },
-      //TODO: 编辑 - 单个快问快答
+      //编辑 - 单个快问快答
       edit(examObj) {
         this.$router.push({
           path: '/live/addExam',
@@ -359,10 +349,11 @@
       },
       // 删除 - 单条记录
       del(examObj) {
-        examServer?.delExam(examObj.id).then(res => {
-          this.$message.success('删除成功');
-          this.getExamList();
-        });
+        this.deleteConfirm(examObj.id);
+        // examServer?.delExam(examObj.id).then(res => {
+        //   this.$message.success('删除成功');
+        //   this.getExamList();
+        // });
       },
       // 批量删除
       deleteConfirm(ids) {
@@ -608,27 +599,23 @@
     /deep/.vh-button + .vh-button {
       margin-left: 12px;
     }
-    .statusTag {
-      font-size: 14px;
-      &::before {
-        content: '';
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 6px;
+    .icon-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      line-height: 40px;
+      &.status-0 {
+        background-color: #8c8c8c;
       }
-      &.no-push::before {
-        background: #8c8c8c;
+      &.status-1 {
+        background-color: #0a7ff5;
       }
-      &.answer::before {
-        background: #fb2626;
+      &.status-2 {
+        background-color: #fc9600;
       }
-      &.no-publish::before {
-        background: #fc9600;
-      }
-      &.publish::before {
-        background: #0fba5a;
+      &.status-3 {
+        background-color: #0fba5a;
       }
     }
     .pageBox {

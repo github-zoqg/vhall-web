@@ -5,14 +5,14 @@
         选择快问快答
         <i class="el-icon-close" @click="dialogVisible = false"></i>
       </p>
-      <div class="data-search" v-show="total || isSearch">
+      <div class="data-search" v-show="!noExamData">
         <VhallInput
           class="search-dialog-tag"
           v-clearEmoij
           v-model="keywordIpt"
           placeholder="请输入名称"
           clearable
-          @keyup.enter.native="getExamList"
+          @keyup.enter.native="getExamList(false)"
           style="width: 180px"
           @clear="getExamList"
         >
@@ -24,12 +24,12 @@
           ></i>
         </VhallInput>
       </div>
-      <div class="data-base-list" v-show="total || isSearch">
+      <div class="data-base-list" v-show="!noExamData">
         <vh-table
           :data="examList"
           ref="selectExamTable"
           style="width: 100%"
-          :height="isSearch && total == 0 ? 0 : 320"
+          :height="noExamData && total == 0 ? 0 : 320"
           @selection-change="handleSelectionChange"
           @select-all="checkAllExam"
         >
@@ -56,9 +56,9 @@
             </template>
           </vh-table-column>
         </vh-table>
-        <noData :nullType="'search'" :height="50" v-if="isSearch && total == 0"></noData>
+        <!-- <noData :nullType="'search'" :height="50" v-if="!noExamData && total == 0"></noData> -->
       </div>
-      <div class="no-live" v-show="!total && !(isSearch && total == 0)">
+      <div class="no-live" v-show="noExamData">
         <noData :nullType="'nullData'" :text="'您还没有快问快答，快来创建吧！'" :height="10">
           <el-button type="primary" round @click="addExam" v-preventReClick>创建</el-button>
         </noData>
@@ -69,7 +69,7 @@
         @current-change="currentChangeHandler"
         align="center"
       ></SPagination>
-      <div v-show="total || (isSearch && total == 0)">
+      <div v-show="!noExamData">
         <p class="text">
           已选择
           <span>{{ checkList.length }}</span>
@@ -95,18 +95,20 @@
   </div>
 </template>
 <script>
-  import noData from '@/views/PlatformModule/Error/nullPage';
+  // import noData from '@/views/PlatformModule/Error/nullPage';
   import examServer from '@/utils/examServer';
   export default {
+    name: 'materialExamSelect',
+    components: {
+      // noData
+    },
     data() {
       return {
         vm: null,
         total: 0,
-        isSearch: false, //是否是搜索
         dialogVisible: false,
         loading: false,
         checkList: [],
-        totalPages: 1,
         examList: [],
         isCheckAll: false,
         keywordIpt: '',
@@ -117,8 +119,11 @@
         }
       };
     },
-    components: {
-      noData
+    computed: {
+      // 暂未创建列表
+      noExamData() {
+        return this.queryParams.keyword === '' && this.total === 0;
+      }
     },
     methods: {
       open() {
@@ -128,9 +133,11 @@
         this.examList = [];
         this.getExamList();
       },
-      getExamList() {
+      getExamList(clear = true) {
         this.queryParams.pageNum = 1;
-        this.keywordIpt = '';
+        if (clear) {
+          this.keywordIpt = '';
+        }
         this.queryExamList();
       },
       queryExamList() {
