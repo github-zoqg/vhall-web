@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['vmp-exam-list', { 'gray-theme': pageLevel == 'user' }]"
+    :class="['vmp-exam-list', { 'gray-theme': scene == 'material' }]"
     v-loading="loading"
     element-loading-text="加载中，请稍候"
     element-loading-background="rgba(255,255,255,.9)"
@@ -11,7 +11,7 @@
         nullType="nullData"
         text="您还没有快问快答，快来创建吧！"
         :height="0"
-        v-if="pageLevel == 'user'"
+        v-if="scene == 'material'"
       >
         <vh-button
           type="primary"
@@ -44,7 +44,7 @@
           class="length106"
           v-preventReClick
           @click.prevent.stop="openSelectDialog"
-          v-if="pageLevel == 'webinar'"
+          v-if="scene == 'webinar'"
         >
           资料库
         </vh-button>
@@ -72,7 +72,7 @@
           borderRadius="50"
           class="length90 transparent-btn"
           @click="openSelectDialog"
-          v-if="pageLevel == 'webinar'"
+          v-if="scene == 'webinar'"
         >
           资料库
         </vh-button>
@@ -134,8 +134,7 @@
               <!-- 其它非名称列 -->
               <vh-table-column
                 v-if="
-                  ((pageLevel === 'user' && item.key !== 'status_str') ||
-                    pageLevel === 'webinar') &&
+                  ((scene === 'material' && item.key !== 'status_str') || scene === 'webinar') &&
                   item.key !== 'title'
                 "
                 align="left"
@@ -235,9 +234,9 @@
     },
     props: {
       // 查询层级
-      pageLevel: {
+      scene: {
         type: String,
-        default: 'webinar' // webinar 活动层级；user 用户层级
+        default: 'webinar' // webinar 活动层级；material 资料库
       }
     },
     data() {
@@ -317,10 +316,13 @@
         const params = {
           limit: this.queryParams.limit,
           pos: (this.queryParams.pageNum - 1) * this.queryParams.limit,
-          keywords,
-          source_id: this.$route.params.str, // 活动id
-          source_type: 1
+          keywords
         };
+        // 活动下列表增加活动id
+        if (this.scene === 'webinar') {
+          params.source_id = this.$route.params.str;
+          params.source_type = 1;
+        }
         examServer.getExamList(params).then(res => {
           this.examList = res.data.list || [];
           this.total = res.data.total;
@@ -397,7 +399,7 @@
       },
       // 创建-快问快答
       addExam() {
-        if (this.pageLevel == 'user') {
+        if (this.scene == 'material') {
           this.$router.push({
             path: '/material/addExam',
             query: { type: 1 }

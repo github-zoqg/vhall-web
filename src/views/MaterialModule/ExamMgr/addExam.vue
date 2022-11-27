@@ -7,12 +7,21 @@
   </div>
 </template>
 <script>
+  /**
+   * @description 活动下创建文件
+   */
   import PageTitle from '@/components/PageTitle';
   import examServer from '@/utils/examServer';
   export default {
     name: 'ExamCreate',
     components: {
       PageTitle
+    },
+    created() {
+      this.initEvent();
+    },
+    mounted() {
+      this.initComp();
     },
     beforeDestroy() {
       this.removeEvent();
@@ -29,22 +38,22 @@
             client: 'console'
           }
         });
+      },
+      initEvent() {
+        examServer.on('SUBMITEDIT', this.examEvent);
+      },
+      removeEvent() {
+        examServer.off('SUBMITEDIT', this.examEvent);
+      },
+      examEvent() {
+        this.$router.replace({
+          path: `/live/exam/${this.$route.query.webinarId}`,
+          query: {
+            roomId: this.$route.query.roomId,
+            tab: 1
+          }
+        });
       }
-      // initEvent() {
-      //   examServer.on('SUBMITEDIT', this.examEvent);
-      // },
-      // removeEvent() {
-      //   examServer.off('SUBMITEDIT', this.examEvent);
-      // },
-      // examEvent() {
-      //   this.$router.replace({
-      //     path: `/live/exam/${this.$route.query.webinarId}`,
-      //     query: {
-      //       roomId: this.$route.query.roomId,
-      //       tab: 1
-      //     }
-      //   });
-      // }
     }
   };
 </script>

@@ -2,13 +2,12 @@
   <div class="exam-wrap">
     <pageTitle pageTitle="快问快答"></pageTitle>
     <div>
-      <exam-list pageLevel="user" ref="userExamList"></exam-list>
+      <exam-list scene="material"></exam-list>
     </div>
   </div>
 </template>
 <script>
   import PageTitle from '@/components/PageTitle';
-  import { sessionOrLocal } from '@/utils/utils';
   import ExamList from '../../PlatformModule/ExamList/index.vue';
   export default {
     name: 'exam',
@@ -18,9 +17,6 @@
     components: {
       PageTitle,
       ExamList
-    },
-    mounted() {
-      this.$refs.userExamList && this.$refs.userExamList.initComp();
     }
   };
 </script>

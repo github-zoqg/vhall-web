@@ -1,6 +1,6 @@
 <template>
   <div class="exam-table-panel">
-    <exam-list ref="webinarExamList" pageLevel="webinar"></exam-list>
+    <exam-list ref="webinarExamList" scene="webinar"></exam-list>
   </div>
 </template>
 
