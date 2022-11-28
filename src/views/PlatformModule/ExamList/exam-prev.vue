@@ -1,18 +1,16 @@
 <template>
   <div class="vmp-exam-prev">
-    <!-- vh-dialog的关闭弹窗bug -->
-    <el-dialog
+    <vh-dialog
       :visible.sync="dialogVisible"
       :close-on-click-modal="true"
       width="380px"
-      draggable
       :modal="false"
     >
       <span slot="title"></span>
       <div v-if="dialogVisible" class="content">
         <div ref="ExamPrev"></div>
       </div>
-    </el-dialog>
+    </vh-dialog>
   </div>
 </template>
 <script>
@@ -54,7 +52,7 @@
 .
 <style lang="less">
   .vmp-exam-prev {
-    .el-dialog__header {
+    .vh-dialog__header {
       padding-top: 0 !important;
     }
     .content {
@@ -75,7 +73,7 @@
         border-radius: 3px;
       }
     }
-    .el-dialog__body {
+    .vh-dialog__body {
       padding: 0 !important;
     }
   }
