@@ -179,7 +179,7 @@
                   {{ scope.row.is_initiative == 1 ? '是' : '否' }}
                 </div>
                 <div class="icon-status" v-else-if="item.key === 'use_time'">
-                  {{ scope.row.use_time }}
+                  {{ scope.row.use_time | fmtUseTime }}
                   <!-- 转换时间 -->
                 </div>
                 <div class="icon-status" v-else-if="item.key === 'user_name'">
@@ -322,6 +322,14 @@
           }
         ]
       };
+    },
+    filters: {
+      fmtUseTime(time) {
+        time = parseInt(time) || 0;
+        const mm = `${Math.floor(time / 60)}`.padStart(2, '0');
+        const ss = `${Math.floor(time % 60)}`.padStart(2, '0');
+        return `${mm}:${ss}`;
+      }
     },
     computed: {
       isNullData() {

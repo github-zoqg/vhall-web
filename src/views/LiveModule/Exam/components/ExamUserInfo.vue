@@ -30,9 +30,9 @@
     }
   };
 </script>
-<style lang="less" scoped>
+<style lang="less">
   .exam-user-info {
-    height: 380px;
     overflow: auto;
+    padding: 0 15px;
   }
 </style>

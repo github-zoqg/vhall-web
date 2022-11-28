@@ -53,3 +53,13 @@
     }
   };
 </script>
+<style lang="less">
+  .exam-add-page {
+    .create-examination .create-panel {
+      height: initial;
+    }
+    .examination-items-panel {
+      height: initial;
+    }
+  }
+</style>
