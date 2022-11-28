@@ -7,11 +7,6 @@
   import examServer from '@/utils/examServer';
   export default {
     name: 'ExamUserInfo',
-    pops: {
-      webinarId: {
-        type: String
-      }
-    },
     data() {
       return {};
     },
@@ -23,11 +18,10 @@
         const el = this.$refs.ExamUserInfo;
         examServer.mount({
           componentName: 'userInfoEdit',
-          id: this.$route.params.str,
           el,
           configs: {
             role: 1,
-            source_id: this.webinarId,
+            source_id: this.$route.params.str,
             source_type: 1,
             client: 'console'
           }
