@@ -925,7 +925,7 @@
         let params = {
           source_type: 1,
           source_id: this.webinarId,
-          pos: pageInfo.pageNum
+          pos: (pageInfo.pageNum - 1) * pageInfo.limit
         };
         let obj = Object.assign({}, pageInfo, params);
         examServer
