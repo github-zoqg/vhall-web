@@ -12,7 +12,7 @@
         </div>
         <!-- 快问快答 内容区域 -->
         <exam-table-panel ref="examTable" v-if="tabType == 'table'"></exam-table-panel>
-        <exam-user-info ref="examUserInfo" v-else></exam-user-info>
+        <exam-user-info v-else ref="examUserInfo" :webinarId="$route.params.str"></exam-user-info>
       </div>
     </div>
     <!-- 开播按钮 -->

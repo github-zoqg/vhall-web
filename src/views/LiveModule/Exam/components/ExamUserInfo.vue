@@ -7,6 +7,11 @@
   import examServer from '@/utils/examServer';
   export default {
     name: 'ExamUserInfo',
+    pops: {
+      webinarId: {
+        type: String
+      }
+    },
     data() {
       return {};
     },
@@ -21,6 +26,9 @@
           id: this.$route.params.str,
           el,
           configs: {
+            role: 1,
+            source_id: this.webinarId,
+            source_type: 1,
             client: 'console'
           }
         });

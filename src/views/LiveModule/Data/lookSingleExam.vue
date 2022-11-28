@@ -62,7 +62,7 @@
           </vh-col>
         </vh-row>
         <vh-row type="flex" class="row-bg" justify="space-around">
-          <vh-col :span="7">
+          <vh-col :span="7" v-if="examData.max_score">
             <div class="grid-content">
               <span>最高分</span>
               <h3 class="custom-font-barlow">
