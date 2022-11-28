@@ -55,11 +55,16 @@
 </script>
 <style lang="less">
   .exam-add-page {
+    .create-examination .examination-items-panel,
+    .create-examination .examination-settings-panel,
+    .create-examination .examination-pattern,
     .create-examination .create-panel {
-      height: initial;
+      // height: initial;
+      height: calc(100vh - 290px);
+      min-height: 360px;
     }
-    .examination-items-panel {
-      height: initial;
+    .examination-settings-panel.live .vh-tab-pane {
+      min-height: 100%;
     }
   }
 </style>
