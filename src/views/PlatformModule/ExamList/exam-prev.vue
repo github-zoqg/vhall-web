@@ -2,11 +2,11 @@
   <div class="vmp-exam-prev">
     <vh-dialog
       :visible.sync="dialogVisible"
-      :close-on-click-modal="true"
+      :close-on-click-modal="false"
       width="380px"
       :modal="false"
     >
-      <span slot="title"></span>
+      <span slot="title" class="hidden">title</span>
       <div v-if="dialogVisible" class="content">
         <div ref="ExamPrev"></div>
       </div>
@@ -52,6 +52,9 @@
 .
 <style lang="less">
   .vmp-exam-prev {
+    .hidden {
+      opacity: 0; // vhall-ui的bug, 当title没有内容时不能关闭弹窗
+    }
     .vh-dialog__header {
       padding-top: 0 !important;
     }
