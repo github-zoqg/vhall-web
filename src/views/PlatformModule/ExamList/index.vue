@@ -99,7 +99,7 @@
           @clear="getExamList"
           @keyup.enter.native="getExamList(false)"
         >
-          <i slot="prefix" class="el-input__icon el-icon-search" @click="getExamList"></i>
+          <i slot="prefix" class="el-input__icon el-icon-search" @click="getExamList(false)"></i>
         </vh-input>
       </div>
       <!-- 有消息内容 -->
