@@ -57,6 +57,8 @@
     }
     .vh-dialog__header {
       padding-top: 0 !important;
+      // opacity: 0; // vhall-ui的bug, 当title没有内容时不能关闭弹窗
+      // height: 3px;
     }
     .content {
       padding-top: 10px !important;
