@@ -7,12 +7,12 @@
         <div id="examTabsDom" class="exam-tabs-layout">
           <el-tabs v-model="tabType" @tab-click="handleClick">
             <el-tab-pane label="问答列表" name="table"></el-tab-pane>
-            <el-tab-pane label="用户信息" name="user"></el-tab-pane>
+            <!-- <el-tab-pane label="用户信息" name="user"></el-tab-pane> -->
           </el-tabs>
         </div>
         <!-- 快问快答 内容区域 -->
         <exam-table-panel ref="examTable" v-if="tabType == 'table'"></exam-table-panel>
-        <exam-user-info v-else ref="examUserInfo"></exam-user-info>
+        <!-- <exam-user-info v-else ref="examUserInfo"></exam-user-info> -->
       </div>
     </div>
     <!-- 开播按钮 -->
@@ -48,13 +48,13 @@
       this.userId = JSON.parse(sessionOrLocal.get('userId'));
     },
     mounted() {
-      if (this.$route.query.tab == 2) {
-        this.tabType = 'user';
-        this.$refs.examUserInfo && this.$refs.examUserInfo.initComp();
-      } else {
-        this.tabType = 'table';
-        this.$refs.examTable && this.$refs.examTable.initComp();
-      }
+      // if (this.$route.query.tab == 2) {
+      //   this.tabType = 'user';
+      //   this.$refs.examUserInfo && this.$refs.examUserInfo.initComp();
+      // } else {
+      //   this.tabType = 'table';
+      //   this.$refs.examTable && this.$refs.examTable.initComp();
+      // }
     },
     methods: {
       // 切换tab
