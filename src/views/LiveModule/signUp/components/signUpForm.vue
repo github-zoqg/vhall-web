@@ -210,7 +210,7 @@
                   <el-button style="margin-top: 11px;" :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click="submitForm">报名</el-button>
                 </div>
                 <!-- 隐私协议合规 -->
-                <privacy-select scene="signForm" compType="2"></privacy-select>
+                <privacy-select v-if="!provicy" scene="signForm" compType="2"></privacy-select>
               </el-form>
             </template>
 
