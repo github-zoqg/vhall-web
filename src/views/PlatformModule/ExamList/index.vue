@@ -26,6 +26,7 @@
       </null-page>
       <null-page nullType="nullData" text="您还没有快问快答，快来创建吧！" :height="0" v-else>
         <vh-button
+          class="bigBtn"
           type="primary"
           round
           size="medium"
@@ -41,7 +42,7 @@
           ghost
           size="medium"
           borderRadius="50"
-          class="length106"
+          class="bigBtn"
           v-preventReClick
           @click.prevent.stop="openSelectDialog"
           v-if="scene == 'webinar'"
@@ -112,41 +113,59 @@
             tooltip-effect="dark"
             style="width: 100%"
             :header-cell-style="{ background: '#f7f7f7', color: '#666', height: '56px' }"
+            height="455px"
             @selection-change="changeTableCheckbox"
           >
             <!-- 多选列 -->
-            <vh-table-column type="selection" width="55" align="left" />
+            <vh-table-column type="selection" width="55" align="left" :selectable="selectable" />
             <!-- 名称列 -->
             <vh-table-column
               align="left"
-              width="220"
+              min-width="220"
               label="名称"
               show-overflow-tooltip
               fixed="left"
               prop="title"
             />
-            <template v-for="(item, index) in tableColumns">
-              <!-- 其它非名称列 -->
-              <vh-table-column
-                align="left"
-                :key="index"
-                :width="item.width"
-                :label="item.label"
-                :show-overflow-tooltip="item.customTooltip"
-              >
-                <template slot-scope="scope">
-                  {{ scope.row[item.key] || '-' }}
-                </template>
-              </vh-table-column>
-            </template>
+            <!-- 创建时间 -->
+            <vh-table-column
+              v-if="scene === 'webinar'"
+              align="left"
+              min-width="148px"
+              label="创建时间"
+              prop="created_at"
+            />
+            <!--  更新时间 -->
+            <vh-table-column
+              v-if="scene === 'material'"
+              align="left"
+              min-width="148px"
+              label="更新时间"
+              prop="updated_at"
+            />
+            <!-- 总分 -->
+            <vh-table-column
+              align="left"
+              :min-width="scene === 'webinar' ? '76px' : '52px'"
+              label="总分"
+              prop="total_score"
+            />
+            <!-- 题数 -->
+            <vh-table-column
+              align="left"
+              :min-width="scene === 'webinar' ? '80px' : '52px'"
+              label="题数"
+              prop="questions_count"
+            />
+
             <!-- 限时 -->
-            <vh-table-column label="限时(分)">
+            <vh-table-column label="限时(分)" :min-width="scene === 'webinar' ? '80px' : '75px'">
               <template slot-scope="scope">
                 {{ scope.row.limit_time_switch > 0 ? scope.row.limit_time : '不限时' }}
               </template>
             </vh-table-column>
             <!--  状态 -->
-            <vh-table-column v-if="scene === 'webinar'" label="状态" width="120">
+            <vh-table-column v-if="scene === 'webinar'" label="状态" min-width="120px">
               <template slot-scope="{ row }">
                 <i :class="['icon-dot', `status-${row.status}`]" />
                 {{ row.status | fmtExamStatus }}
@@ -197,7 +216,7 @@
                 </vh-button>
               </template>
             </vh-table-column>
-            <div slot="empty" style="height: 0"></div>
+            <null-page slot="empty" class="search-no-data" :height="0"></null-page>
           </vh-table>
         </div>
         <SPagination
@@ -208,7 +227,6 @@
         ></SPagination>
       </div>
       <!-- 无消息内容 -->
-      <null-page class="search-no-data" :height="0" v-if="total === 0"></null-page>
     </div>
     <!-- 资料库：选择列表-->
     <select-exam ref="selectExamDom" @prev="preview" @added="getExamList"></select-exam>
@@ -246,33 +264,11 @@
         keywordIpt: '',
         queryParams: {
           pos: 0,
-          limit: 10,
+          limit: 8,
           keyword: '',
           pageNum: 1
         },
-        examList: [],
-        tableColumns: [
-          {
-            label: '创建时间',
-            key: 'created_at',
-            width: '180'
-          },
-          {
-            label: '更新时间',
-            key: 'updated_at',
-            width: '180'
-          },
-          {
-            label: '总分',
-            key: 'total_score',
-            width: '120'
-          },
-          {
-            label: '题数',
-            key: 'questions_count',
-            width: '120'
-          }
-        ]
+        examList: []
       };
     },
     computed: {
@@ -294,6 +290,9 @@
       initComp() {
         this.getExamList();
       },
+      selectable(examInfo) {
+        return this.scene === 'material' || examInfo.status === 0;
+      },
       getExamList(clear = true) {
         this.queryParams.pageNum = 1;
         if (clear) {
@@ -312,6 +311,9 @@
         if (this.scene === 'webinar') {
           params.source_id = this.$route.params.str;
           params.source_type = 1;
+          params.sort_field = 'updated_at';
+        } else {
+          params.sort_field = 'created_at';
         }
         examServer.getExamList(params).then(res => {
           this.examList = res.data.list || [];
@@ -364,11 +366,14 @@
       },
       // 删除 - 单条记录
       del(examObj) {
-        this.deleteConfirm(examObj.id);
-        // examServer?.delExam(examObj.id).then(res => {
-        //   this.$message.success('删除成功');
-        //   this.getExamList();
-        // });
+        if (this.scene === 'material' || examObj.status === 0) {
+          this.deleteConfirm(examObj.id);
+        } else {
+          this.$message({
+            message: '已推送的快问快答不支持删除',
+            type: 'warning'
+          });
+        }
       },
       deleteConfirm(ids) {
         if (this.pageLevel == 'user') {
@@ -437,7 +442,6 @@
         this.queryParams.pageNum = page;
         this.queryExamList();
       },
-
       //文案提示问题
       messageInfo(msg, type) {
         if (this.vm) {
@@ -498,6 +502,9 @@
 </style>
 <style lang="less" scoped>
   /* 列表样式-------------------------------------- */
+  .bigBtn {
+    width: 160px;
+  }
   .all-no-data {
     /* 基于外边框已经有距离： padding: 24px 24px 24px 24px; */
     padding-top: 105px;
@@ -631,6 +638,8 @@
       height: 6px;
       border-radius: 50%;
       line-height: 40px;
+      margin-right: 2px;
+      vertical-align: 2px;
       &.status-0 {
         background-color: #8c8c8c;
       }

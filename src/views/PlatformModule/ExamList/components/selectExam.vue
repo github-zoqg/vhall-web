@@ -1,9 +1,9 @@
 <template>
-  <div class="show-exam exam-base" v-if="dialogVisible">
+  <div class="show-exam exam-base webkit-scrollbar" v-if="dialogVisible">
     <div class="show-main data-base">
       <p class="title">
         选择快问快答
-        <i class="el-icon-close" @click="dialogVisible = false"></i>
+        <i class="el-icon-close cursor-pointer" @click="dialogVisible = false"></i>
       </p>
       <div class="data-search" v-show="!noExamData">
         <VhallInput
@@ -20,62 +20,65 @@
             slot="prefix"
             class="el-icon-search el-input__icon"
             style="cursor: pointer; line-height: 36px"
-            @click="getExamList"
+            @click="getExamList(false)"
           ></i>
         </VhallInput>
       </div>
       <div class="data-base-list" v-show="!noExamData">
-        <vh-table
+        <el-table
           :data="examList"
           ref="selectExamTable"
           style="width: 100%"
-          :height="noExamData && total == 0 ? 0 : 320"
+          height="320px"
+          class="scrollbar"
           @selection-change="handleSelectionChange"
           @select-all="checkAllExam"
+          v-loadMore="moreLoadData"
         >
-          <vh-table-column type="selection" width="55"></vh-table-column>
-          <vh-table-column fixed="left" label="名称">
+          <vh-empty
+            slot="empty"
+            :image="searchNoData"
+            description="暂未搜索到您想要的内容"
+          ></vh-empty>
+
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column fixed="left" label="名称">
             <template slot-scope="scope">
               <span class="mediaName" :title="scope.row.title">
                 {{ scope.row.title }}
               </span>
             </template>
-          </vh-table-column>
-          <vh-table-column prop="total_score" label="总分" width="100"></vh-table-column>
-          <vh-table-column prop="questions_count" label="题数" width="100"></vh-table-column>
-          <vh-table-column label="限时（分）" width="100">
+          </el-table-column>
+          <el-table-column prop="total_score" label="总分" width="80"></el-table-column>
+          <el-table-column prop="questions_count" label="题数" width="80"></el-table-column>
+          <el-table-column label="限时（分）" width="105">
             <template slot-scope="scope">
               <span>{{ scope.row.limit_time_switch == 1 ? scope.row.limit_time : '不限时' }}</span>
             </template>
-          </vh-table-column>
-          <vh-table-column width="100" fixed="right" label="操作">
+          </el-table-column>
+          <el-table-column width="65" label="操作">
             <template slot-scope="scope">
               <span class="show-hover" style="cursor: pointer" @click="preview(scope.row)">
                 预览
               </span>
             </template>
-          </vh-table-column>
-        </vh-table>
-        <!-- <noData :nullType="'search'" :height="50" v-if="!noExamData && total == 0"></noData> -->
+          </el-table-column>
+        </el-table>
       </div>
-      <div class="no-live" v-show="noExamData">
-        <noData :nullType="'nullData'" :text="'您还没有快问快答，快来创建吧！'" :height="10">
-          <el-button type="primary" round @click="addExam" v-preventReClick>创建</el-button>
-        </noData>
+      <div class="no-exam" v-show="noExamData">
+        <vh-empty :image="searchNoData" description="您还没有快问快答，快来创建吧!">
+          <el-button type="primary" class="create-button" round @click="addExam" v-preventReClick>
+            创建
+          </el-button>
+        </vh-empty>
       </div>
-      <SPagination
-        :total="total"
-        :currentPage="queryParams.pageNum"
-        @current-change="currentChangeHandler"
-        align="center"
-      ></SPagination>
-      <div v-show="!noExamData">
+      <div v-show="!noExamData" slot="footer" class="dialog-footer">
         <p class="text">
           已选择
           <span>{{ checkList.length }}</span>
           个（每次最多选择20个）
         </p>
-        <div slot="footer" class="dialog-footer">
+        <div>
           <el-button
             round
             size="medium"
@@ -86,22 +89,17 @@
           >
             确 定
           </el-button>
-          <el-button round size="medium" @click.prevent.stop="handleCloseVisiton" v-preventReClick>
-            取 消
-          </el-button>
+          <el-button round size="medium" @click.prevent.stop="handleCloseVisiton">取 消</el-button>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-  import noData from '@/views/PlatformModule/Error/nullPage';
+  import { searchNoData } from '@/utils/ossImgConfig';
   import examServer from '@/utils/examServer';
   export default {
     name: 'materialExamSelect',
-    components: {
-      noData
-    },
     data() {
       return {
         vm: null,
@@ -116,7 +114,8 @@
           limit: 10,
           keyword: '',
           pageNum: 1
-        }
+        },
+        searchNoData
       };
     },
     computed: {
@@ -138,6 +137,7 @@
         if (clear) {
           this.keywordIpt = '';
         }
+        this.examList = [];
         this.queryExamList();
       },
       queryExamList() {
@@ -148,12 +148,19 @@
           keywords
         };
         examServer.getExamList(params).then(res => {
-          this.examList = res.data.list || [];
+          res.data.list.map(item => {
+            this.examList.push(item);
+          });
           this.total = res.data.total;
           this.firstLoad = true;
         });
       },
-
+      moreLoadData() {
+        console.log('🚀 ~ file: selectExam.vue:153 ~ moreLoadData ~ moreLoadData');
+        if (this.examList.length >= this.total) return false;
+        this.queryParams.pageNum++;
+        this.queryExamList();
+      },
       //文案提示问题
       messageInfo(msg, type) {
         if (this.vm) {
@@ -173,8 +180,6 @@
         done();
       },
       handleCloseVisiton() {
-        this.pageInfo.pageNum = 1;
-        this.pageInfo.pos = 0;
         this.dialogVisible = false;
       },
       handleBtnClick(val) {
@@ -183,7 +188,7 @@
       },
       // 选择资料库中的快问快答
       choseSureExam() {
-        if (this.checkList.length >= 21) {
+        if (this.checkList.length > 20) {
           this.messageInfo('每次只能添加20个快问快答', 'error');
           return;
         }
@@ -228,19 +233,19 @@
     }
   };
 </script>
-<style lang="less" scoped>
+<style lang="less">
   .search-dialog-tag {
-    /deep/ .el-input__icon {
+    .el-input__icon {
       line-height: 36px;
     }
-    /deep/.el-input__inner {
+    .el-input__inner {
       border-radius: 20px;
       height: 36px;
       padding-right: 30px !important;
+      border-radius: 18px;
     }
-    /deep/ .el-input__prefix {
+    .el-input__prefix {
       cursor: pointer;
-      // padding-right: 10px;
     }
   }
   .data-base {
@@ -255,13 +260,13 @@
       }
     }
     .data-search {
-      padding-left: 24px;
+      padding-left: 32px;
     }
   }
 
   .data-base-list {
     width: 100%;
-    margin: 16px 0 24px 0;
+    margin: 16px 0 20px 0;
     padding: 0 32px;
     .mediaName {
       font-size: 14px;
@@ -271,7 +276,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    /deep/.el-table th {
+    .el-table th {
       background-color: #f7f7f7;
     }
     .show-hover {
@@ -281,20 +286,16 @@
     }
   }
   .text {
-    height: 40px;
-    padding-top: 8px;
     font-size: 14px;
-    padding-left: 32px;
     span {
       color: #fb3a32;
       padding: 0 5px;
     }
-    // max-height: 300px;
-    /deep/.el-table th {
+    .el-table th {
       background: #f7f7f7;
       padding: 15px 0;
     }
-    /deep/.el-table td {
+    .el-table td {
       padding: 15px 0;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -318,9 +319,9 @@
       left: 50%;
       background: #fff;
       transform: translate(-50%, -50%);
-      width: 760px;
+      width: 800px;
       // padding: 24px 32px;
-      padding-bottom: 24px;
+      padding-bottom: 30px;
       border-radius: 4px;
       .exam_main {
         max-height: 550px;
@@ -349,13 +350,24 @@
     .data-base {
       width: 800px;
     }
-    /deep/.vh-table::before {
+    .el-table::before {
       height: 0;
     }
   }
   .dialog-footer {
-    position: absolute;
-    bottom: 25px;
-    right: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px;
+    // position: absolute;
+    // bottom: 25px;
+    // right: 30px;
+  }
+  .no-exam {
+    height: 360px;
+  }
+  .cursor-pointer {
+    cursor: pointer;
   }
 </style>

@@ -4,90 +4,43 @@
       <pageTitle pageTitle="快问快答"></pageTitle>
       <div class="exam-main-center">
         <!-- tab切换 -->
-        <div id="examTabsDom" class="exam-tabs-layout">
-          <el-tabs v-model="tabType" @tab-click="handleClick">
-            <el-tab-pane label="问答列表" name="table"></el-tab-pane>
-            <!-- <el-tab-pane label="用户信息" name="user"></el-tab-pane> -->
+        <div class="exam-tabs-layout">
+          <el-tabs v-model="tabType">
+            <el-tab-pane label="问答列表" name="table">
+              <exam-table-panel ref="examTable" v-if="tabType == 'table'"></exam-table-panel>
+            </el-tab-pane>
+            <el-tab-pane label="" name=""></el-tab-pane>
           </el-tabs>
         </div>
-        <!-- 快问快答 内容区域 -->
-        <exam-table-panel ref="examTable" v-if="tabType == 'table'"></exam-table-panel>
         <!-- <exam-user-info v-else ref="examUserInfo"></exam-user-info> -->
       </div>
     </div>
-    <!-- 开播按钮 -->
-    <begin-play
-      :webinarId="$route.params.str"
-      v-if="$route.query.type != 5 && webinarState != 4"
-    ></begin-play>
   </div>
 </template>
 
 <script>
   import PageTitle from '@/components/PageTitle';
-  import { sessionOrLocal } from '@/utils/utils';
-  import beginPlay from '@/components/beginBtn';
   import ExamTablePanel from './components/ExamTablePanel';
   import ExamUserInfo from './components/ExamUserInfo';
   export default {
     components: {
       PageTitle,
-      beginPlay,
       ExamTablePanel,
       ExamUserInfo
     },
     data() {
       return {
-        tabType: 'table', // form-表单；user-用户
-        userId: '',
-        webinarState: JSON.parse(sessionOrLocal.get('webinarState')),
-        vm: null
+        tabType: 'table' // form-表单；user-用户
       };
-    },
-    async created() {
-      this.userId = JSON.parse(sessionOrLocal.get('userId'));
-    },
-    mounted() {
-      // if (this.$route.query.tab == 2) {
-      //   this.tabType = 'user';
-      //   this.$refs.examUserInfo && this.$refs.examUserInfo.initComp();
-      // } else {
-      //   this.tabType = 'table';
-      //   this.$refs.examTable && this.$refs.examTable.initComp();
-      // }
-    },
-    methods: {
-      // 切换tab
-      handleClick(tab, event) {
-        // 如果是活动，左右切换
-        let tabCount = this.tabType === 'table' ? 1 : this.tabType === 'user' ? 2 : 0;
-        this.$router.push({
-          path: `/live/exam/${this.$route.params.str}`,
-          query: {
-            ...this.$route.query,
-            tab: tabCount
-          }
-        });
-      },
-      //文案提示问题
-      messageInfo(title, type) {
-        if (this.vm) {
-          this.vm.close();
-        }
-        this.vm = this.$message({
-          showClose: true,
-          duration: 2000,
-          message: title,
-          type: type,
-          customClass: 'zdy-info-box'
-        });
-      }
     }
   };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
   .exam-main {
+    #tab-1 {
+      display: none;
+    }
     /deep/.el-tabs__item {
       height: 48px;
       line-height: 48px;

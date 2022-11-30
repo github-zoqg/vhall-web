@@ -5,9 +5,10 @@
       :close-on-click-modal="false"
       width="380px"
       :modal="false"
+      custom-class="vmp-exam-prev-dialog"
     >
-      <span slot="title" class="hidden">title</span>
-      <div v-if="dialogVisible" class="content">
+      <div class="vh-dialog-title" slot="title"></div>
+      <div v-if="dialogVisible" class="content webkit-scrollbar">
         <div ref="ExamPrev"></div>
       </div>
     </vh-dialog>
@@ -52,13 +53,20 @@
 .
 <style lang="less">
   .vmp-exam-prev {
-    .hidden {
-      opacity: 0; // vhall-ui的bug, 当title没有内容时不能关闭弹窗
+    .vmp-exam-prev-dialog {
+      height: 460px;
+      background: url('~@/common/images/exam/bg_default.png') no-repeat;
+      border-radius: 12px;
+      background-color: #ffffff;
+      background-position: top;
+      background-size: cover;
     }
     .vh-dialog__header {
-      padding-top: 0 !important;
-      // opacity: 0; // vhall-ui的bug, 当title没有内容时不能关闭弹窗
-      // height: 3px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 2;
     }
     .content {
       padding-top: 10px !important;

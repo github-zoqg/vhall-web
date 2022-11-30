@@ -253,7 +253,7 @@
           <p>查看</p>
           <div class="base-main">
             <label>
-              <img src="../../../../common/images/icon/icon_exam@2x.png" alt="" />
+              <img src="../../../../common/images/icon/icon_exam.png" alt="" />
             </label>
             <div class="base-text">
               <span>快问快答(人)</span>
