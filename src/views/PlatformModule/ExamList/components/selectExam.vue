@@ -25,12 +25,12 @@
         </VhallInput>
       </div>
       <div class="data-base-list" v-show="!noExamData">
-        <el-table
+        <vh-table
           :data="examList"
           ref="selectExamTable"
           style="width: 100%"
           height="320px"
-          class="scrollbar"
+          class="scrollbar no-border"
           @selection-change="handleSelectionChange"
           @select-all="checkAllExam"
           v-loadMore="moreLoadData"
@@ -41,35 +41,35 @@
             description="暂未搜索到您想要的内容"
           ></vh-empty>
 
-          <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column fixed="left" label="名称">
+          <vh-table-column type="selection" width="55"></vh-table-column>
+          <vh-table-column fixed="left" label="名称">
             <template slot-scope="scope">
               <span class="mediaName" :title="scope.row.title">
                 {{ scope.row.title }}
               </span>
             </template>
-          </el-table-column>
-          <el-table-column prop="total_score" label="总分" width="80"></el-table-column>
-          <el-table-column prop="questions_count" label="题数" width="80"></el-table-column>
-          <el-table-column label="限时（分）" width="105">
+          </vh-table-column>
+          <vh-table-column prop="total_score" label="总分" width="80"></vh-table-column>
+          <vh-table-column prop="questions_count" label="题数" width="80"></vh-table-column>
+          <vh-table-column label="限时（分）" width="105">
             <template slot-scope="scope">
               <span>{{ scope.row.limit_time_switch == 1 ? scope.row.limit_time : '不限时' }}</span>
             </template>
-          </el-table-column>
-          <el-table-column width="65" label="操作">
+          </vh-table-column>
+          <vh-table-column width="65" label="操作">
             <template slot-scope="scope">
               <span class="show-hover" style="cursor: pointer" @click="preview(scope.row)">
                 预览
               </span>
             </template>
-          </el-table-column>
-        </el-table>
+          </vh-table-column>
+        </vh-table>
       </div>
       <div class="no-exam" v-show="noExamData">
         <vh-empty :image="searchNoData" description="您还没有快问快答，快来创建吧!">
-          <el-button type="primary" class="create-button" round @click="addExam" v-preventReClick>
+          <vh-button type="primary" class="create-button" round @click="addExam" v-preventReClick>
             创建
-          </el-button>
+          </vh-button>
         </vh-empty>
       </div>
       <div v-show="!noExamData" slot="footer" class="dialog-footer">
@@ -79,7 +79,7 @@
           个（每次最多选择20个）
         </p>
         <div>
-          <el-button
+          <vh-button
             round
             size="medium"
             type="primary"
@@ -88,8 +88,8 @@
             v-preventReClick
           >
             确 定
-          </el-button>
-          <el-button round size="medium" @click.prevent.stop="handleCloseVisiton">取 消</el-button>
+          </vh-button>
+          <vh-button round size="medium" @click.prevent.stop="handleCloseVisiton">取 消</vh-button>
         </div>
       </div>
     </div>
@@ -256,7 +256,6 @@
       font-size: 20px;
       i {
         float: right;
-        color: #1a1a1a;
       }
     }
     .data-search {
@@ -276,7 +275,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .el-table th {
+    .vh-table th {
       background-color: #f7f7f7;
     }
     .show-hover {
@@ -291,11 +290,11 @@
       color: #fb3a32;
       padding: 0 5px;
     }
-    .el-table th {
+    .vh-table th {
       background: #f7f7f7;
       padding: 15px 0;
     }
-    .el-table td {
+    .vh-table td {
       padding: 15px 0;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -350,7 +349,7 @@
     .data-base {
       width: 800px;
     }
-    .el-table::before {
+    .vh-table::before {
       height: 0;
     }
   }
@@ -368,6 +367,10 @@
     height: 360px;
   }
   .cursor-pointer {
+    color: #8c8c8c;
     cursor: pointer;
+    &:hover {
+      color: #595959;
+    }
   }
 </style>

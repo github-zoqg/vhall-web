@@ -59,8 +59,8 @@
     .create-examination .examination-settings-panel,
     .create-examination .examination-pattern,
     .create-examination .create-panel {
-      // height: initial;
-      height: calc(100vh - 290px);
+      height: initial;
+      // height: calc(100vh - 290px);
       min-height: 360px;
     }
     .examination-settings-panel.live .vh-tab-pane {

@@ -108,6 +108,7 @@
         <!-- 表格与分页 -->
         <div class="tab-content">
           <vh-table
+            class="no-border"
             ref="tableList"
             :data="examList"
             tooltip-effect="dark"
@@ -124,7 +125,6 @@
               min-width="220"
               label="名称"
               show-overflow-tooltip
-              fixed="left"
               prop="title"
             />
             <!-- 创建时间 -->
@@ -172,7 +172,7 @@
               </template>
             </vh-table-column>
             <!-- 操作列 -->
-            <vh-table-column label="操作" align="left" class="btn-rows" fixed="right" width="196">
+            <vh-table-column label="操作" align="left" class="btn-rows" width="196">
               <template slot-scope="scope">
                 <vh-button
                   borderRadius="4"
@@ -221,6 +221,7 @@
         </div>
         <SPagination
           :total="total"
+          hide-on-single-page
           :currentPage="queryParams.pageNum"
           @current-change="currentChangeHandler"
           align="center"
@@ -694,9 +695,5 @@
     /deep/.vh-button--text.is-plain.is-disabled:focus {
       color: rgba(0, 0, 0, 0.25) !important;
     }
-  }
-  /deep/.vh-table__fixed-right::before,
-  /deep/.vh-table__fixed::before {
-    height: 0;
   }
 </style>
