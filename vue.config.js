@@ -1,11 +1,11 @@
-const path = require('path')
+const path = require('path');
 const btool = require('./scripts/btool');
-const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
-const vueURL = ['production', 'pre'].includes(process.env.VUE_APP_NODE_ENV) ?
-  '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.min.js' :
-  '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.js'
-  const UselessFile = require('useless-files-webpack-plugin');
+const vueURL = ['production', 'pre'].includes(process.env.VUE_APP_NODE_ENV)
+  ? '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.min.js'
+  : '//s1.e.vhall.com/common-static/middle/vue/2.6.14/dist/vue.js';
+const UselessFile = require('useless-files-webpack-plugin');
 
 let cdn = {
   js: [
@@ -25,20 +25,19 @@ let cdn = {
     '//s1.e.vhall.com/common-static/middle/lodash/4.17.21/lodash.min.js', // lodash
     '//s1.e.vhall.com/common-static/middle/echarts/4.9.0/echarts.min.js', // echarts
     '//s1.e.vhall.com/common-static/middle/middle-util/1.1.3/utils/index.min.js',
-    '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.8/questionnaire_service.js',
+    // '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.8/questionnaire_service.js',
+    '//t-vhallsaas-static.oss-cn-beijing.aliyuncs.com/common-static/middle/questionnaire/1.0.9/questionnaire_service.js'
   ],
-  css: [
-    '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.css',
-  ]
-}
+  css: ['//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.css']
+};
 // console.warn(process)
-let publicPath = process.env.VUE_APP_PUBLIC_PATH || './'
+let publicPath = process.env.VUE_APP_PUBLIC_PATH || './';
 console.warn('配置环境变量----', {
   // MODE: process.VUE_CLI_SERVICE,
   NODE_ENV: process.env.NODE_ENV,
   VUE_APP_NODE_ENV: process.env.VUE_APP_NODE_ENV,
   VUE_APP_WEB_URL: process.env.VUE_APP_WEB_URL,
-  VUE_APP_BASE_URL: process.env.VUE_APP_BASE_URL,
+  VUE_APP_BASE_URL: process.env.VUE_APP_BASE_URL
 });
 
 // 解析参数成key-value形式：
@@ -49,7 +48,7 @@ console.warn('配置环境变量----', {
 //   mode: 'development'
 // };
 const argv = btool.parseArgv(process.argv);
-console.warn('argv------>', argv)
+console.warn('argv------>', argv);
 
 module.exports = {
   lintOnSave: false,
@@ -59,15 +58,15 @@ module.exports = {
     proxy: {
       '/mock': {
         target: 'http://yapi.vhall.domain',
-        changeOrigin: true,
+        changeOrigin: true
       },
       '/v3': {
         target: process.env.VUE_APP_BASE_URL,
-        changeOrigin: true,
+        changeOrigin: true
       },
       '/account': {
         target: process.env.VUE_APP_BASE_URL,
-        changeOrigin: true,
+        changeOrigin: true
       },
       // '/account': {
       //   target: 'http://t-saas-dispatch.vhall.com',
@@ -75,16 +74,16 @@ module.exports = {
       // },
       '/api/upload': {
         target: 'http://test-zhike.vhall.com/',
-        changeOrigin: true,
+        changeOrigin: true
       },
       '/domian': {
         target: 'http://t-webinar.e.vhall.com/',
         changeOrigin: true,
         pathRewrite: {
-          '^/domian': '',
-        },
-      },
-    },
+          '^/domian': ''
+        }
+      }
+    }
   },
   // pwa: {
   //   iconPaths: {
@@ -95,20 +94,20 @@ module.exports = {
   //     msTileImage: 'favicon.ico'
   //   }
   // },
-  chainWebpack: (config) => {
-    config.plugin('html').tap((options) => {
+  chainWebpack: config => {
+    config.plugin('html').tap(options => {
       options[0].cdn = cdn;
       options[0].version = process.VUE_CLI_SERVICE.pkg.version;
       options[0].gitlabHash = argv.hash; //gitlab jenkins对应的项目hash
-      return options
+      return options;
     });
     // config.plugin('webpack-bundle-analyzer')
     //   .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
 
     // 打包缓存加速
-    config.plugin("cache").use(HardSourceWebpackPlugin);
+    config.plugin('cache').use(HardSourceWebpackPlugin);
   },
-  configureWebpack: (config) => {
+  configureWebpack: config => {
     //   if (process.env.NODE_ENV === 'production') {
     // 为生产环境修改配置...
     // const optimization = {
@@ -126,33 +125,35 @@ module.exports = {
     // }
     const externals = {
       vue: 'Vue',
-      "vhall-ui": "VHALLUI",
+      'vhall-ui': 'VHALLUI',
       'vue-router': 'VueRouter',
       'element-ui': 'ELEMENT',
       lodash: '_',
       VueI18n: 'VueI18n',
-      echarts: 'echarts',
-    }
-    const plugins = []
-    if(argv.checkunuse) {
-      plugins.push(new UselessFile({
-        root: './src', // 项目目录
-        out: './fileList.json', // 输出文件列表
-        // out: (files) => deal(files), // 或者回调处理
-        clean: false // 删除文件,
-        // exclude: path // 排除文件列表, 格式为文件路径数组
-      }))
+      echarts: 'echarts'
+    };
+    const plugins = [];
+    if (argv.checkunuse) {
+      plugins.push(
+        new UselessFile({
+          root: './src', // 项目目录
+          out: './fileList.json', // 输出文件列表
+          // out: (files) => deal(files), // 或者回调处理
+          clean: false // 删除文件,
+          // exclude: path // 排除文件列表, 格式为文件路径数组
+        })
+      );
     }
     return {
       // optimization,
       externals,
       plugins
-    }
+    };
   },
   pluginOptions: {
     'style-resources-loader': {
       preProcessor: 'less',
-      patterns: [path.resolve(__dirname, './src/common/css/common.less')],
-    },
-  },
-}
+      patterns: [path.resolve(__dirname, './src/common/css/common.less')]
+    }
+  }
+};
