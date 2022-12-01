@@ -186,8 +186,15 @@
                   {{ scope.row.use_time | fmtUseTime }}
                   <!-- 转换时间 -->
                 </div>
-                <div class="icon-status" v-else-if="item.key === 'user_name'">
+                <!-- <div class="icon-status" v-else-if="item.key === 'user_name'">
                   {{ scope.row.user_name }}
+                </div> -->
+                <div class="icon-status" v-else-if="item.key === 'rank_no'">
+                  {{ scope.row.status ? scope.row.rank_no : '-' }}
+                  <!-- 配合头像 -->
+                </div>
+                <div class="icon-status" v-else-if="item.key === 'score'">
+                  {{ scope.row.total_score ? scope.row.score : '-' }}
                   <!-- 配合头像 -->
                 </div>
                 <span v-else>{{ scope.row[item.key] || '-' }}</span>

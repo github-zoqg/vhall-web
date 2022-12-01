@@ -1,8 +1,8 @@
 @font-face {
   font-family: 'iconfont-v3'; /* Project id 2212678 */
-  src: url('iconfont.woff2?t=1663052648622') format('woff2'),
-    url('iconfont.woff?t=1663052648622') format('woff'),
-    url('iconfont.ttf?t=1663052648622') format('truetype');
+  src: url('iconfont.woff2?t=1669862361086') format('woff2'),
+    url('iconfont.woff?t=1669862361086') format('woff'),
+    url('iconfont.ttf?t=1669862361086') format('truetype');
 }
 
 .iconfont-v3 {
@@ -11,6 +11,14 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.saasfill-send:before {
+  content: '\e7be';
+}
+
+.saasline-download:before {
+  content: '\e7bd';
 }
 
 .saashuifangtixing:before {

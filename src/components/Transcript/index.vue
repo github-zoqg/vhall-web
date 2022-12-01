@@ -11,65 +11,79 @@
     >
       <header slot="title">
         <label class="dialog-title">成绩单</label>
-        <span class="export-btn" @click="handleDownload">导出数据</span>
+        <span class="export-btn" @click="handleDownload">
+          <i class="iconfont-v3 saasline-download" />
+          导出数据
+        </span>
       </header>
       <!-- 基本信息层 -->
       <div class="transcript-page--info">
         <div class="transcript-page--info-statistics">
-          <vh-row>
-            <vh-col :span="6">
-              <span class="label">参会ID:</span>
-              <span class="info">
-                {{ transcriptInfo.account_id || '--' }}
-              </span>
-            </vh-col>
-            <vh-col :span="6">
-              <span class="label">姓名:</span>
-              <span class="info">
-                {{ transcriptInfo.user_name || '--' }}
-              </span>
-            </vh-col>
-            <vh-col :span="6">
-              <span class="label">正确率:</span>
-              <span class="info">{{ transcriptInfo.right_rate || '--' }}%</span>
-            </vh-col>
-            <vh-col :span="6">
-              <span class="label">主动交卷:</span>
-              <span class="info">
-                {{ transcriptInfo.is_initiative ? '是' : '否' }}
-              </span>
-            </vh-col>
-          </vh-row>
-          <vh-row class="m-t-20">
-            <vh-col :span="8">
-              <p class="label">答题用时</p>
-              <p class="statistics">
-                {{ transcriptInfo.use_time || '--' }}
-              </p>
-            </vh-col>
-            <vh-col :span="8">
-              <p class="label">得分</p>
-              <p class="statistics">
-                {{ transcriptInfo.score }}
-              </p>
-            </vh-col>
-            <vh-col :span="8">
-              <p class="label">个人排名/全部排名</p>
-              <p class="statistics">
-                {{ transcriptInfo.rank + '/' + transcriptInfo.rank }}
-              </p>
-            </vh-col>
-          </vh-row>
+          <div class="statistics-panel">
+            <div class="info-layout">
+              <div class="join-id">
+                <span class="label">参会ID:</span>
+                <span class="info">
+                  {{ transcriptInfo.account_id || '--' }}
+                </span>
+              </div>
+              <div class="user-name">
+                <span class="label">姓名:</span>
+                <span class="info">
+                  {{ transcriptInfo.user_name || '-' }}
+                </span>
+              </div>
+              <div class="rate">
+                <span class="label">正确率:</span>
+                <span class="info">{{ transcriptInfo.right_rate }}%</span>
+              </div>
+              <div class="rate">
+                <span class="label">主动交卷:</span>
+                <span class="info">
+                  {{ transcriptInfo.is_initiative ? '是' : '否' }}
+                </span>
+              </div>
+            </div>
+            <div class="info-layout m-t-20">
+              <div class="user-time">
+                <p class="label">答题用时</p>
+                <p class="statistics">
+                  {{ transcriptInfo.use_time | fmtUseTime }}
+                </p>
+              </div>
+              <div class="score">
+                <p class="label">得分</p>
+                <p class="statistics">
+                  {{ transcriptInfo.score }}
+                </p>
+              </div>
+              <div class="rank">
+                <p class="label">个人排名/全部排名</p>
+                <p class="statistics">
+                  {{ transcriptInfo.rank || '-' + '/' + transcriptInfo.rank }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="transcript-total">
+            答题情况：
+            <span class="total-item">
+              答对
+              <span class="right" v-text="transcriptInfo.right_num"></span>
+            </span>
+            <span class="total-item">
+              答错
+
+              <span class="error" v-text="transcriptInfo.error_num"></span>
+            </span>
+            <span class="total-item">
+              未答
+              <span v-text="transcriptInfo.unanswer_num"></span>
+            </span>
+          </div>
         </div>
         <!-- 答题情况层 -->
         <div class="transcript-page--answer">
-          <div class="transcript-item">
-            <span class="transcript-item--title">
-              答题情况：答对{{ transcriptInfo.right_num || '--' }}，答错{{
-                transcriptInfo.error_num || '--'
-              }}，未答{{ transcriptInfo.unanswer_num || '--' }}
-            </span>
-          </div>
           <div v-if="dialogVisible">
             <div ref="answerResult"></div>
           </div>
@@ -91,6 +105,14 @@
         },
         examInfo: {}
       };
+    },
+    filters: {
+      fmtUseTime(time) {
+        time = parseInt(time) || 0;
+        const mm = `${Math.floor(time / 60)}`.padStart(2, '0');
+        const ss = `${Math.floor(time % 60)}`.padStart(2, '0');
+        return `${mm}:${ss}`;
+      }
     },
     methods: {
       open(examInfo) {
@@ -172,6 +194,41 @@
         padding: 16px 24px;
         border-radius: 4px;
         font-size: 14px;
+        .statistics-panel {
+          padding-bottom: 12px;
+          border-bottom: 1px solid #f0f0f0;
+        }
+        .info-layout {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: center;
+          > div:not(:last-child) {
+            margin-right: 24px;
+          }
+          .join-id,
+          .rate,
+          .initiative {
+            width: 120px;
+          }
+          .user-name {
+            width: 180px;
+            .info {
+              width: 135px;
+            }
+          }
+          .user-time {
+            width: 218px;
+          }
+
+          .score {
+            width: 265px;
+          }
+          .rank {
+            width: 205px;
+          }
+        }
+
         .label {
           display: inline-block;
           color: #8c8c8c;
@@ -181,15 +238,29 @@
           margin-left: 5px;
           color: #262626;
           display: inline-block;
-          width: 100px;
+          width: 55px;
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
         }
         .statistics {
+          margin-top: 2px;
+          font-family: 'D-DIN';
           font-size: 20px;
           line-height: 22px;
           color: #262626;
+        }
+      }
+      .transcript-total {
+        .total-item {
+          margin-left: 24px;
+        }
+        margin-top: 8px;
+        .right {
+          color: #0fba5a;
+        }
+        .error {
+          color: #fb2626;
         }
       }
       .transcript-item {
@@ -199,6 +270,7 @@
         border-bottom: 1px solid #eaeaea;
         padding: 12px 0;
       }
+
       .transcript-ctx {
         display: flex;
         justify-content: space-between;
@@ -269,6 +341,9 @@
       line-height: 22px;
       color: #1e4edc;
       cursor: pointer;
+      .saasline-download {
+        font-size: 14px;
+      }
     }
     .vh-dialog__body {
       padding: 0;
