@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "31863629",
+      "name": "fill-send",
+      "font_class": "fill-send",
+      "unicode": "e7be",
+      "unicode_decimal": 59326
+    },
+    {
+      "icon_id": "31796317",
+      "name": "line-download",
+      "font_class": "line-download",
+      "unicode": "e7bd",
+      "unicode_decimal": 59325
+    },
+    {
       "icon_id": "31632304",
       "name": "回放提醒",
       "font_class": "huifangtixing",

@@ -190,6 +190,14 @@
                   {{ scope.row.user_name }}
                   <!-- 配合头像 -->
                 </div>
+                <div class="icon-status" v-else-if="item.key === 'rank_no'">
+                  {{ scope.row.status ? scope.row.rank_no : '-' }}
+                  <!-- 配合头像 -->
+                </div>
+                <div class="icon-status" v-else-if="item.key === 'score'">
+                  {{ scope.row.total_score ? scope.row.score : '-' }}
+                  <!-- 配合头像 -->
+                </div>
                 <span v-else>{{ scope.row[item.key] || '-' }}</span>
               </template>
             </vh-table-column>
