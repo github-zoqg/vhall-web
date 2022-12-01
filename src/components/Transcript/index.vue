@@ -123,7 +123,8 @@
             role: 1,
             answerType: 3,
             account_type: this.examInfo.account_type,
-            account_id: this.examInfo.account_id
+            account_id: this.examInfo.account_id,
+            style: 'control'
           }
         });
       },
