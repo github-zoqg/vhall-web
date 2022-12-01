@@ -418,7 +418,8 @@
         examColumn: [
           {
             label: '推送时间',
-            key: 'push_time'
+            key: 'push_time',
+            width: 180
           },
           {
             label: '名称',
@@ -426,19 +427,23 @@
           },
           {
             label: '未答人数',
-            key: 'un_answered_num'
+            key: 'un_answered_num',
+            width: 95
           },
           {
             label: '答题人数',
-            key: 'answer_num'
+            key: 'answer_num',
+            width: 95
           },
           {
             label: '满分率(%)',
-            key: 'full_score_rate'
+            key: 'full_score_rate',
+            width: 100
           },
           {
             label: '平均分',
-            key: 'avg_score'
+            key: 'avg_score',
+            width: 95
           }
         ],
         tableRowBtnFun: [],

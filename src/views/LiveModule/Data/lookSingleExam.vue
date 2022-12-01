@@ -1,8 +1,13 @@
 <template>
   <div class="single-exam-detail">
+    <pageTitle :pageTitle="examData.title">
+      <vh-tooltip class="item" effect="dark" content="建议答题结束后查看完整数据" placement="right">
+        <i class="iconfont-v3 saasicon_help_m" />
+      </vh-tooltip>
+    </pageTitle>
     <!-- 上半部分区间 -->
     <div class="single-exam-detail__header">
-      <p class="exam-webinar-title">{{ examData.title }}</p>
+      <!-- <p class="exam-webinar-title">{{ examData.title }}</p> -->
       <div class="single-exam-detail__data">
         <vh-row type="flex" class="row-bg" justify="space-around">
           <vh-col :span="7">
@@ -62,11 +67,11 @@
           </vh-col>
         </vh-row>
         <vh-row type="flex" class="row-bg" justify="space-around">
-          <vh-col :span="7" v-if="examData.max_score">
+          <vh-col :span="7">
             <div class="grid-content">
               <span>最高分</span>
               <h3 class="custom-font-barlow">
-                {{ examData.max_score }}
+                {{ examData.max_score || 0 }}
               </h3>
             </div>
           </vh-col>
@@ -123,7 +128,6 @@
             clearable
             @clear="initQueryList"
             class="search-query"
-            @input="checkoutList"
             v-clearEmoij
             @keyup.enter.native="initQueryList"
           >
@@ -141,11 +145,11 @@
               v-for="item in [
                 {
                   label: '有效数据',
-                  value: '1'
+                  value: 1
                 },
                 {
                   label: '无效数据',
-                  value: '0'
+                  value: 0
                 }
               ]"
               :key="'data_' + item.label"
@@ -252,7 +256,15 @@
   import CountTo from 'vue-count-to';
   import Transcript from '@/components/Transcript';
   import examServer from '@/utils/examServer';
+  import PageTitle from '@/components/PageTitle';
   export default {
+    name: 'ExamPerformanceStatistics',
+    components: {
+      CountTo,
+      NullPage,
+      Transcript,
+      PageTitle
+    },
     data() {
       return {
         vm: null,
@@ -282,43 +294,37 @@
           {
             label: '排名',
             key: 'rank_no',
-            width: 'auto'
+            width: 100
           },
           {
             label: '参会ID',
-            key: 'join_id',
-            width: 'auto'
+            key: 'account_id',
+            width: 100
           },
           {
             label: '姓名',
             key: 'user_name',
-            width: 'auto',
             customTooltip: true
-          },
-          {
-            label: '手机号',
-            key: 'mobile',
-            width: 'auto'
           },
           {
             label: '得分',
             key: 'score',
-            width: 'auto'
+            width: 100
           },
           {
             label: '正确率',
             key: 'right_rate',
-            width: 'auto'
+            width: 100
           },
           {
             label: '用时',
             key: 'use_time',
-            width: 'auto'
+            width: 100
           },
           {
             label: '主动交卷',
             key: 'is_initiative',
-            width: 'auto'
+            width: 100
           }
         ]
       };
@@ -336,11 +342,6 @@
         return false;
       }
     },
-    components: {
-      CountTo,
-      NullPage,
-      Transcript
-    },
     mounted() {
       this.initComp();
     },
@@ -356,11 +357,6 @@
           type: type,
           customClass: 'zdy-info-box'
         });
-      },
-      checkoutList(newValue) {
-        if (!newValue) {
-          this.initQueryList();
-        }
       },
       // 查询快问快答 - 统计人数
       getSingleExamData() {
@@ -411,15 +407,6 @@
         this.query.pos = 0;
         this.query.pageNumber = 1;
         this.query.limit = 10;
-        // 表格切换到第一页
-        try {
-          if (this.$refs.tableList) {
-            this.$refs.tableList.pageInfo.pageNum = 1;
-            this.$refs.tableList.pageInfo.pos = 0;
-          }
-        } catch (e) {
-          console.log(e);
-        }
         this.getExamScoreList();
       },
       // 导出

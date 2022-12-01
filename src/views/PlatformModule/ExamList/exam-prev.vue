@@ -57,7 +57,7 @@
       height: 460px;
       background: url('~@/common/images/exam/bg_default.png') no-repeat;
       border-radius: 12px;
-      background-color: #ffffff;
+      background-color: #fff;
       background-position: top;
       background-size: cover;
     }
