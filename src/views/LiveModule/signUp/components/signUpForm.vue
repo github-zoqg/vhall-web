@@ -243,11 +243,19 @@
                     </el-col>
                   </el-row>
                 </el-form-item>
+                <el-form-item class="provicy-item" v-if="provicy" :prop="provicy.id + ''">
+                  <!-- 隐私声明 -->
+                  <template>
+                    <el-checkbox class="provicy-checkbox" v-model="form[provicy.id]">
+                      <pre v-html="provicyText"></pre>
+                    </el-checkbox>
+                  </template>
+                </el-form-item>
                 <div class="btnBox">
                   <el-button :disabled="isPreview" :class="[baseInfo.theme_color]" round type="primary" v-preventReClick @click="submitVerify">提交</el-button>
                 </div>
                 <!-- 隐私协议合规 -->
-                <privacy-select scene="signForm" compType="2"></privacy-select>
+                <privacy-select scene="signForm" compType="2" v-if="!provicy" ></privacy-select>
               </el-form>
             </template>
           </article>
