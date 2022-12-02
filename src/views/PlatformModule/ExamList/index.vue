@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['vmp-exam-list', { 'gray-theme': scene == 'material' }]"
+    :class="['vmp-exam-list', 'gray-theme']"
     v-loading="loading"
     element-loading-text="加载中，请稍候"
     element-loading-background="rgba(255,255,255,.9)"

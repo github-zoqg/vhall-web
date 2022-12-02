@@ -60,7 +60,7 @@
               <div class="rank">
                 <p class="label">个人排名/全部排名</p>
                 <p class="statistics">
-                  {{ transcriptInfo.rank || '-' + '/' + transcriptInfo.rank_all }}
+                  {{ (transcriptInfo.rank || '-') + '/' + transcriptInfo.rank_all }}
                 </p>
               </div>
             </div>

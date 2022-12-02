@@ -27,6 +27,6 @@
 
 <style lang="less" scoped>
   .exam-table-panel {
-    padding: 24px 24px 40px 24px;
+    // padding: 24px 24px 40px 24px;
   }
 </style>

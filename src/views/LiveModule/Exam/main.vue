@@ -2,35 +2,35 @@
   <div class="exam-main">
     <div class="head">
       <pageTitle pageTitle="快问快答"></pageTitle>
-      <div class="exam-main-center">
-        <!-- tab切换 -->
-        <div class="exam-tabs-layout">
-          <el-tabs v-model="tabType">
+      <!-- <div class="exam-main-center"> -->
+      <!-- tab切换 -->
+      <!-- <div class="exam-tabs-layout"> -->
+      <exam-table-panel ref="examTable"></exam-table-panel>
+      <!-- <el-tabs v-model="tabType">
             <el-tab-pane label="问答列表" name="table">
-              <exam-table-panel ref="examTable" v-if="tabType == 'table'"></exam-table-panel>
             </el-tab-pane>
             <el-tab-pane label="" name=""></el-tab-pane>
-          </el-tabs>
-        </div>
-        <!-- <exam-user-info v-else ref="examUserInfo"></exam-user-info> -->
-      </div>
+          </el-tabs> -->
     </div>
+    <!-- <exam-user-info v-else ref="examUserInfo"></exam-user-info> -->
+    <!-- </div> -->
+    <!-- </div> -->
   </div>
 </template>
 
 <script>
   import PageTitle from '@/components/PageTitle';
   import ExamTablePanel from './components/ExamTablePanel';
-  import ExamUserInfo from './components/ExamUserInfo';
+  // import ExamUserInfo from './components/ExamUserInfo';
   export default {
     components: {
       PageTitle,
-      ExamTablePanel,
-      ExamUserInfo
+      ExamTablePanel
+      // ExamUserInfo
     },
     data() {
       return {
-        tabType: 'table' // form-表单；user-用户
+        // tabType: 'table' // form-表单；user-用户
       };
     }
   };
