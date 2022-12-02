@@ -265,7 +265,7 @@
         keywordIpt: '',
         queryParams: {
           pos: 0,
-          limit: 8,
+          limit: 10,
           keyword: '',
           pageNum: 1
         },
