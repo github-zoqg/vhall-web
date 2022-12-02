@@ -114,7 +114,6 @@
             tooltip-effect="dark"
             style="width: 100%"
             :header-cell-style="{ background: '#f7f7f7', color: '#666', height: '56px' }"
-            height="455px"
             @selection-change="changeTableCheckbox"
           >
             <!-- 多选列 -->
