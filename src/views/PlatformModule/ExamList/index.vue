@@ -126,17 +126,8 @@
               show-overflow-tooltip
               prop="title"
             />
-            <!-- 创建时间 -->
-            <vh-table-column
-              v-if="scene === 'webinar'"
-              align="left"
-              min-width="148px"
-              label="创建时间"
-              prop="created_at"
-            />
             <!--  更新时间 -->
             <vh-table-column
-              v-if="scene === 'material'"
               align="left"
               min-width="148px"
               label="更新时间"
