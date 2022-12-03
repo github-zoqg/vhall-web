@@ -140,7 +140,7 @@
               align="left"
               min-width="148px"
               label="更新时间"
-              prop="updated_at"
+              prop="paper_edit_time"
             />
             <!-- 总分 -->
             <vh-table-column
@@ -311,9 +311,7 @@
         if (this.scene === 'webinar') {
           params.source_id = this.$route.params.str;
           params.source_type = 1;
-          params.sort_field = 'updated_at';
-        } else {
-          params.sort_field = 'created_at';
+          params.sort_field = 'paper_edit_time';
         }
         examServer.getExamList(params).then(res => {
           this.examList = res.data.list || [];

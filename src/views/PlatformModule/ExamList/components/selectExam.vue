@@ -42,7 +42,7 @@
           ></vh-empty>
 
           <vh-table-column type="selection" width="55"></vh-table-column>
-          <vh-table-column fixed="left" label="名称">
+          <vh-table-column label="名称">
             <template slot-scope="scope">
               <span class="mediaName" :title="scope.row.title">
                 {{ scope.row.title }}
@@ -145,7 +145,8 @@
         const params = {
           limit: this.queryParams.limit,
           pos: (this.queryParams.pageNum - 1) * this.queryParams.limit,
-          keywords
+          keywords,
+          sort_field: 'paper_edit_time'
         };
         examServer.getExamList(params).then(res => {
           res.data.list.map(item => {
