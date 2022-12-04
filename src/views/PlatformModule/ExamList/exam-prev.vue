@@ -89,5 +89,12 @@
     .vh-dialog__body {
       padding: 0 !important;
     }
+    .exam-execute-body {
+      height: calc(100% - 120px);
+      max-height: calc(100% - 120px);
+    }
+    .vh-dialog__headerbtn {
+      top: 14px;
+    }
   }
 </style>

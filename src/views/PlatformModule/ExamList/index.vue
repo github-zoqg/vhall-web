@@ -151,7 +151,7 @@
             <!-- 限时 -->
             <vh-table-column label="限时(分)" :min-width="scene === 'webinar' ? '80px' : '75px'">
               <template slot-scope="scope">
-                {{ scope.row.limit_time_switch > 0 ? scope.row.limit_time : '不限时' }}
+                {{ scope.row.limit_time_switch > 0 ? scope.row.limit_time : '无' }}
               </template>
             </vh-table-column>
             <!--  状态 -->

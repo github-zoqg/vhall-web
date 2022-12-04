@@ -146,7 +146,7 @@
             answerType: 3,
             account_type: this.examInfo.account_type,
             account_id: this.examInfo.account_id,
-            style: 'control'
+            style: 'transcript' // 成绩单
           }
         });
       },
@@ -189,6 +189,7 @@
       padding: 0 32px;
       height: 460px;
       overflow-y: auto;
+      margin-right: 2px;
       &-statistics {
         background: #fff;
         padding: 16px 24px;
@@ -347,6 +348,9 @@
     }
     .vh-dialog__body {
       padding: 0;
+    }
+    .exam-execute-footer {
+      padding: 12px 32px 16px 32px;
     }
   }
 </style>
