@@ -170,6 +170,7 @@
   import noData from '@/views/PlatformModule/Error/nullPage';
   import { sessionOrLocal } from '@/utils/utils';
   import examServer from '@/utils/examServer';
+  import { roundRate } from '@/utils/utils';
   export default {
     components: {
       PageTitle,
@@ -936,7 +937,12 @@
         examServer
           .getExamPushedList(obj)
           .then(res => {
-            this.tableList = res.data.list || [];
+            const list = res.data.list || [];
+            list.map(item => {
+              item.full_score_rate = roundRate(item.full_score_rate) + '%';
+              item.avg_score = roundRate(item.avg_score);
+            });
+            this.tableList = list;
             this.totalNum = res.data.total || 0;
             if (!res.data.total) {
               this.nullText = 'nullData';
