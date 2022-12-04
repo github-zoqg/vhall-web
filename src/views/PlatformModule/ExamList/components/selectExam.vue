@@ -89,7 +89,9 @@
           >
             确 定
           </vh-button>
-          <vh-button round size="medium" @click.prevent.stop="handleCloseVisiton">取 消</vh-button>
+          <vh-button plain round size="medium" @click.prevent.stop="handleCloseVisiton">
+            取 消
+          </vh-button>
         </div>
       </div>
     </div>
