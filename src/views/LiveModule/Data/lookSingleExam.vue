@@ -1,6 +1,6 @@
 <template>
   <div class="single-exam-detail">
-    <pageTitle :pageTitle="examData.title">
+    <pageTitle :pageTitle="overHidden(examData.title, 30)">
       <vh-tooltip class="item" effect="dark" content="建议答题结束后查看完整数据" placement="right">
         <i class="iconfont-v3 saasicon_help_m" />
       </vh-tooltip>
@@ -55,7 +55,7 @@
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </vh-tooltip>
               <h3 class="custom-font-barlow">
-                <span>{{ examData.full_score_rate }}%，</span>
+                <span>{{ roundRate(examData.full_score_rate) }}%，</span>
                 <count-to
                   :startVal="0"
                   :endVal="examData.full_score_num"
@@ -91,7 +91,7 @@
                 <i class="iconfont-v3 saasicon_help_m"></i>
               </vh-tooltip>
               <h3 class="custom-font-barlow">
-                {{ examData.avg_score }}
+                {{ roundRate(examData.avg_score) }}
               </h3>
             </div>
           </vh-col>
@@ -197,6 +197,10 @@
                   {{ scope.row.total_score ? scope.row.score : '-' }}
                   <!-- 配合头像 -->
                 </div>
+                <div class="icon-status" v-else-if="item.key === 'right_rate'">
+                  {{ roundRate(scope.row.right_rate) }}%
+                  <!-- 配合头像 -->
+                </div>
                 <span v-else>{{ scope.row[item.key] || '-' }}</span>
               </template>
             </vh-table-column>
@@ -264,6 +268,7 @@
   import Transcript from '@/components/Transcript';
   import examServer from '@/utils/examServer';
   import PageTitle from '@/components/PageTitle';
+  import { overHidden, roundRate } from '@/utils/utils';
   export default {
     name: 'ExamPerformanceStatistics',
     components: {
@@ -497,7 +502,9 @@
       initComp() {
         this.getSingleExamData();
         this.initQueryList();
-      }
+      },
+      overHidden,
+      roundRate
     }
   };
 </script>
