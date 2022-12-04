@@ -35,7 +35,7 @@
               </div>
               <div class="rate">
                 <span class="label">正确率:</span>
-                <span class="info">{{ transcriptInfo.right_rate }}%</span>
+                <span class="info">{{ roundRate(transcriptInfo.right_rate) }}%</span>
               </div>
               <div class="rate">
                 <span class="label">主动交卷:</span>
@@ -94,6 +94,7 @@
 </template>
 <script>
   import examServer from '@/utils/examServer';
+  import { roundRate } from '@/utils/utils';
   export default {
     data() {
       return {
@@ -179,7 +180,8 @@
               customClass: 'zdy-info-box'
             });
           });
-      }
+      },
+      roundRate
     }
   };
 </script>
