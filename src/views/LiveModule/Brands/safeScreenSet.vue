@@ -553,7 +553,7 @@
     <div
       v-if="
         (hasDelayPremission && showDelay && webinar_type != 6) ||
-          (webinar_type == 6 && showGroupLive)
+        (webinar_type == 6 && showGroupLive)
       "
       class="delay-mask"
     >
@@ -1217,10 +1217,10 @@
         this.formHorse.text = this.formHorse.text || '版权所有，盗版必究';
         this.formHorse.scrolling_open = Number(this.scrolling_open);
         this.formHorse.type = 1;
-        let params = JSON.parse(JSON.stringify(this.formHorse))
-        if(params.text_type == 2){
-          delete params.text
-        }
+        let params = JSON.parse(JSON.stringify(this.formHorse));
+        // if(params.text_type == 2){
+        //   delete params.text
+        // }
         this.$fetch('setScrolling', this.$params(params))
           .then(res => {
             this.setHorseReportData();
@@ -1245,20 +1245,8 @@
         console.log(this.formHorse);
         let loactionArr = [100239, 100240, 100241, 100242];
         let fontArr = [
-          100243,
-          100244,
-          100245,
-          100246,
-          100247,
-          100248,
-          100249,
-          100250,
-          100251,
-          100252,
-          100253,
-          100254,
-          100255,
-          100256
+          100243, 100244, 100245, 100246, 100247, 100248, 100249, 100250, 100251, 100252, 100253,
+          100254, 100255, 100256
         ];
         if (this.scrolling_open) {
           this.$vhall_paas_port({
