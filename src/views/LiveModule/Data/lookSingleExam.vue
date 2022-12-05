@@ -176,7 +176,7 @@
               :key="index"
               :width="item.width"
               :label="item.label"
-              :show-overflow-tooltip="!item.customTooltip"
+              :show-overflow-tooltip="item.customTooltip"
             >
               <template slot-scope="scope">
                 <div class="icon-status" v-if="item.key === 'is_initiative'">
@@ -397,7 +397,7 @@
           limit: this.query.limit,
           user_name: this.query.user_name,
           status: this.query.status,
-          is_hidden: 0 // 是否雾化用户名 0.否 1.是
+          is_desensitization: 0 // 是否雾化用户名 0.否 1.是
         };
         this.loading = true;
         examServer
