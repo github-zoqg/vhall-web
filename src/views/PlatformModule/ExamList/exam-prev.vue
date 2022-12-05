@@ -54,12 +54,21 @@
 <style lang="less">
   .vmp-exam-prev {
     .vmp-exam-prev-dialog {
-      height: 460px;
+      min-height: 287px;
       background: url('~@/common/images/exam/bg_default.png') no-repeat;
       border-radius: 12px;
       background-color: #fff;
       background-position: top;
       background-size: cover;
+      .exam-execute-header {
+        min-height: 38px;
+      }
+      // 重置内部元素
+      .exam-execute-body {
+        height: calc(460px - 120px) !important;
+        max-height: calc(460px - 120px) !important;
+        margin-right: 2px;
+      }
     }
     .vh-dialog__header {
       position: absolute;
@@ -70,7 +79,7 @@
     }
     .content {
       padding-top: 10px !important;
-      height: 465px;
+      // height: 465px;
       overflow-y: auto;
       &::-webkit-scrollbar-track-piece {
         opacity: 0;
@@ -89,9 +98,25 @@
     .vh-dialog__body {
       padding: 0 !important;
     }
-    .exam-execute-body {
-      height: calc(100% - 120px);
-      max-height: calc(100% - 120px);
+
+    .vmp-transcripts {
+      &.vmp-transcripts-other {
+        // 百分比 or 正确率
+        height: 409px;
+        padding-top: 27px;
+        button.vh-button--primary {
+          margin: 57px auto 64px auto;
+        }
+      }
+      &.vmp-transcripts-extreme {
+        // 满分 or 0分
+        button.vh-button--primary {
+          margin: 24px auto 24px auto;
+        }
+        .trophy-wrap {
+          margin-top: 30px;
+        }
+      }
     }
     .vh-dialog__headerbtn {
       top: 14px;
