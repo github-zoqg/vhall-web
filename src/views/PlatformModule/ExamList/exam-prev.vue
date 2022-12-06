@@ -78,7 +78,7 @@
       z-index: 2;
     }
     .content {
-      padding-top: 10px !important;
+      padding-top: 25px !important;
       // height: 465px;
       overflow-y: auto;
       &::-webkit-scrollbar-track-piece {
@@ -117,9 +117,6 @@
           margin-top: 30px;
         }
       }
-    }
-    .vh-dialog__headerbtn {
-      top: 14px;
     }
   }
 </style>
