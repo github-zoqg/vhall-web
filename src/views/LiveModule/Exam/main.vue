@@ -15,6 +15,11 @@
     <!-- <exam-user-info v-else ref="examUserInfo"></exam-user-info> -->
     <!-- </div> -->
     <!-- </div> -->
+    <!-- 开播按钮 -->
+    <begin-play
+      :webinarId="$route.params.str"
+      v-if="$route.query.type != 5 && webinarState != 4"
+    ></begin-play>
   </div>
 </template>
 
@@ -22,14 +27,17 @@
   import PageTitle from '@/components/PageTitle';
   import ExamTablePanel from './components/ExamTablePanel';
   // import ExamUserInfo from './components/ExamUserInfo';
+  import beginPlay from '@/components/beginBtn';
   export default {
     components: {
       PageTitle,
-      ExamTablePanel
+      ExamTablePanel,
+      beginPlay
       // ExamUserInfo
     },
     data() {
       return {
+        webinarState: JSON.parse(sessionOrLocal.get('webinarState'))
         // tabType: 'table' // form-表单；user-用户
       };
     }
