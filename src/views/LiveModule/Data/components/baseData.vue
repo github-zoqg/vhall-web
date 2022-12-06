@@ -262,7 +262,6 @@
                   :startVal="0"
                   :endVal="dataInfo.examSubmitNum"
                   :duration="1500"
-                  v-if="dataInfo.examSubmitNum >= 0"
                 ></count-to>
               </h1>
             </div>
@@ -545,7 +544,6 @@
             source_type: 1
           })
           .then(res => {
-            console.log('🚀 ~ file: baseData.vue ~ line 548 ~ getOtherInfo ~ res', res);
             this.dataInfo.examSubmitNum = res.data.count || 0;
           });
         // 获取抽奖人数
