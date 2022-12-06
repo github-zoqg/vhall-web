@@ -352,7 +352,7 @@
       padding: 0;
     }
     .exam-execute-footer {
-      padding: 0 32px 16px 32px;
+      padding: 0 32px 0 32px;
     }
   }
 </style>
