@@ -4,7 +4,7 @@
       :visible.sync="dialogVisible"
       :close-on-click-modal="false"
       width="380px"
-      :modal="false"
+      modal
       custom-class="vmp-exam-prev-dialog"
     >
       <div class="vh-dialog-title" slot="title"></div>
