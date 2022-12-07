@@ -460,7 +460,6 @@
         // 点播不需要调用
         this.getOtherInfo();
       }
-      this.getOtherInfo();
     },
     methods: {
       //文案提示问题
