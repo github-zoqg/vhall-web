@@ -276,14 +276,15 @@
   margin-top: 24px;
 }
 
-.el-form-item.is-required:not(.is-no-asterisk) .el-form-item__label-wrap>.el-form-item__label:before,
-.el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {
+.el-form-item.is-required:not(.is-no-asterisk)
+  .el-form-item__label-wrap
+  > .el-form-item__label:before,
+.el-form-item.is-required:not(.is-no-asterisk) > .el-form-item__label:before {
   color: #fb3a32;
 }
 
 /*左侧导航重置*/
 .el-menu-reset.el-menu {
-
   .el-menu-item,
   .el-submenu__title {
     height: auto;
@@ -633,7 +634,6 @@ body {
 
   td.end-date,
   td.start-date {
-
     // div{
     //   background-color: #fff6f6;
     // }
@@ -1471,7 +1471,8 @@ button.el-button.el-button--white-primary {
 
 /*确定同步xxxx至XXXX 弹出框*/
 .zdy-async-dialog {
-  .async__body {}
+  .async__body {
+  }
 
   .async__ctx {
     p {
@@ -1497,7 +1498,7 @@ button.el-button.el-button--white-primary {
     padding: 16px 0 24px 0;
     text-align: right;
 
-    /deep/.el-button+.el-button {
+    /deep/.el-button + .el-button {
       margin-left: 12px;
     }
   }
