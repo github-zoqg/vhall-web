@@ -26,7 +26,7 @@ let staticImgs = {
     'https://t-alistatic01.e.vhall.com/static/images/invitation/bg_9@2x.png'
   ]
 };
-if (process.env.VUE_APP_NODE_ENV === 'production') {
+if (['production', 'pre'].includes(process.env.VUE_APP_NODE_ENV)) {
   staticLinkVo.uploadBaseUrl = 'https://cnstatic01.e.vhall.com/upload/';
   staticLinkVo.tmplDownloadUrl = 'https://cnstatic01.e.vhall.com/static';
   staticImgs = {
