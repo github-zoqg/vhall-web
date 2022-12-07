@@ -424,6 +424,7 @@
           submitNum: 0,
           speakNum: 0,
           groupSwitchCount: 0,
+          examSubmitNum: 0,
           WEBINAR_PES: {}
         }
       };
