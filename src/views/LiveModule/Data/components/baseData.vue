@@ -140,11 +140,11 @@
           <br />
           3.点赞：当前活动总计收到多少次点赞，数据统计不去重
           <br />
-          4.签到：推送签到后，统计多少人进行了签到，支持查看明细
+          4.快问快答：推送快问快答后，统计多少人提交了快问快答，支持查看明细
           <br />
           5.问卷：推送问卷后，统计多少人填写了问卷，支持查看明细
           <br />
-          6.快问快答：推送快问快答后，统计多少人提交了快问快答，支持查看明细
+          6.签到：推送签到后，统计多少人进行了签到，支持查看明细
           <br />
           7.抽奖：推送抽奖后，统计多少人中奖，支持查看明细
           <br />
@@ -213,18 +213,19 @@
             </div>
           </div>
         </div>
-        <div class="base-item" v-if="isStatus != 4" @click="lookOption('签到', 100449)">
+        <div class="base-item" v-if="isStatus != 4" @click="lookOption('快问快答', 'TODO')">
           <p>查看</p>
           <div class="base-main">
-            <label><img src="../../../../common/images/icon/icon_Sign@2x.png" alt="" /></label>
+            <label>
+              <img src="../../../../common/images/icon/icon_exam.png" alt="" />
+            </label>
             <div class="base-text">
-              <span>签到(人)</span>
+              <span>快问快答(人)</span>
               <h1 class="custom-font-barlow">
                 <count-to
                   :startVal="0"
-                  :endVal="dataInfo.signNum"
+                  :endVal="dataInfo.examSubmitNum"
                   :duration="1500"
-                  v-if="dataInfo.signNum >= 0"
                 ></count-to>
               </h1>
             </div>
@@ -249,19 +250,18 @@
             </div>
           </div>
         </div>
-        <div class="base-item" v-if="isStatus != 4" @click="lookOption('快问快答', 'TODO')">
+        <div class="base-item" v-if="isStatus != 4" @click="lookOption('签到', 100449)">
           <p>查看</p>
           <div class="base-main">
-            <label>
-              <img src="../../../../common/images/icon/icon_exam.png" alt="" />
-            </label>
+            <label><img src="../../../../common/images/icon/icon_Sign@2x.png" alt="" /></label>
             <div class="base-text">
-              <span>快问快答(人)</span>
+              <span>签到(人)</span>
               <h1 class="custom-font-barlow">
                 <count-to
                   :startVal="0"
-                  :endVal="dataInfo.examSubmitNum"
+                  :endVal="dataInfo.signNum"
                   :duration="1500"
+                  v-if="dataInfo.signNum >= 0"
                 ></count-to>
               </h1>
             </div>
