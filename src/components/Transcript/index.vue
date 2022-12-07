@@ -348,6 +348,29 @@
         font-size: 14px;
       }
     }
+    .exam-style-transcript {
+      .long {
+        .vmp-exam-item-comp-pc {
+          .vmp-exam-info--question--result {
+            padding-bottom: 32px;
+            padding-top: 4px;
+          }
+          .vmp-exam-info--option.question_img-text.max-width {
+            &:last-child {
+              margin-bottom: 8px;
+            }
+          }
+        }
+
+        &:last-child {
+          .vmp-exam-item-comp-pc {
+            .vmp-exam-info--question--result {
+              padding-bottom: 16px;
+            }
+          }
+        }
+      }
+    }
     .vh-dialog__body {
       padding: 0;
     }
