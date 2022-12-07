@@ -41,10 +41,10 @@ export function browserDetect() {
   return chromeResult
     ? !(chromeResult.length == 0 || chromeResult[1] < 61)
     : !(
-      !safariResult ||
-      safariResult.length == 0 ||
-      parseInt(safariResult[1].split('.').join('')) < 121
-    );
+        !safariResult ||
+        safariResult.length == 0 ||
+        parseInt(safariResult[1].split('.').join('')) < 121
+      );
 }
 
 // 尺寸重置
@@ -67,21 +67,21 @@ export function resize() {
  * @param {Boolean} immediate 是否立即执行
  * @return null
  */
-export const debounce = (function() {
+export const debounce = (function () {
   let timeout = null;
-  return function(func, wait = 500, immediate = false) {
+  return function (func, wait = 500, immediate = false) {
     // 清除定时器
     if (timeout !== null) clearTimeout(timeout);
     // 立即执行，此类情况一般用不到
     if (immediate) {
       var callNow = !timeout;
-      timeout = setTimeout(function() {
+      timeout = setTimeout(function () {
         timeout = null;
       }, wait);
       if (callNow) typeof func === 'function' && func();
     } else {
       // 设置定时器，当最后一次操作后，timeout不会再被清除，所以在延时wait毫秒后执行func回调方法
-      timeout = setTimeout(function() {
+      timeout = setTimeout(function () {
         typeof func === 'function' && func();
       }, wait);
     }
@@ -96,9 +96,9 @@ export const debounce = (function() {
  * @param {Boolean} immediate 是否立即执行
  * @return null
  */
-export const throttle = (function() {
+export const throttle = (function () {
   let timer, flag;
-  return function(func, wait = 500, immediate = true) {
+  return function (func, wait = 500, immediate = true) {
     if (immediate) {
       if (!flag) {
         flag = true;
@@ -285,7 +285,7 @@ export function checkUploadType(file, that, type = 1) {
   let imgSrc = window.URL.createObjectURL(file);
   let img = new Image();
   img.src = imgSrc;
-  img.onload = function() {
+  img.onload = function () {
     // 我在这里就可以获取到图片的宽度和高度了 img.width 、img.height
     if (img.width !== 1280 && img.height !== 720) {
       that.$message({
@@ -545,7 +545,7 @@ export function checkAuth(to, from, next, that) {
               sessionOrLocal.set(SAAS_V3_COL.KEY_1, JSON.stringify(result.data || {}));
             }
           })
-          .catch(e => { });
+          .catch(e => {});
         next();
         NProgress.done();
       })
@@ -586,9 +586,9 @@ const MOZ_HACK_REGEXP = /^moz([A-Z])/;
 const ieVersion = Number(document.documentMode);
 
 /* istanbul ignore next */
-const camelCase = function(name) {
+const camelCase = function (name) {
   return name
-    .replace(SPECIAL_CHARS_REGEXP, function(_, separator, letter, offset) {
+    .replace(SPECIAL_CHARS_REGEXP, function (_, separator, letter, offset) {
       return offset ? letter.toUpperCase() : letter;
     })
     .replace(MOZ_HACK_REGEXP, 'Moz$1');
@@ -597,42 +597,42 @@ const camelCase = function(name) {
 /* istanbul ignore next */
 export const getStyle =
   ieVersion < 9
-    ? function(element, styleName) {
-      if (!element || !styleName) return null;
-      styleName = camelCase(styleName);
-      if (styleName === 'float') {
-        styleName = 'styleFloat';
-      }
-      try {
-        switch (styleName) {
-          case 'opacity':
-            try {
-              return element.filters.item('alpha').opacity / 100;
-            } catch (e) {
-              return 1.0;
-            }
-          default:
-            return element.style[styleName] || element.currentStyle
-              ? element.currentStyle[styleName]
-              : null;
+    ? function (element, styleName) {
+        if (!element || !styleName) return null;
+        styleName = camelCase(styleName);
+        if (styleName === 'float') {
+          styleName = 'styleFloat';
         }
-      } catch (e) {
-        return element.style[styleName];
+        try {
+          switch (styleName) {
+            case 'opacity':
+              try {
+                return element.filters.item('alpha').opacity / 100;
+              } catch (e) {
+                return 1.0;
+              }
+            default:
+              return element.style[styleName] || element.currentStyle
+                ? element.currentStyle[styleName]
+                : null;
+          }
+        } catch (e) {
+          return element.style[styleName];
+        }
       }
-    }
-    : function(element, styleName) {
-      if (!element || !styleName) return null;
-      styleName = camelCase(styleName);
-      if (styleName === 'float') {
-        styleName = 'cssFloat';
-      }
-      try {
-        var computed = document.defaultView.getComputedStyle(element, '');
-        return element.style[styleName] || computed ? computed[styleName] : null;
-      } catch (e) {
-        return element.style[styleName];
-      }
-    };
+    : function (element, styleName) {
+        if (!element || !styleName) return null;
+        styleName = camelCase(styleName);
+        if (styleName === 'float') {
+          styleName = 'cssFloat';
+        }
+        try {
+          var computed = document.defaultView.getComputedStyle(element, '');
+          return element.style[styleName] || computed ? computed[styleName] : null;
+        } catch (e) {
+          return element.style[styleName];
+        }
+      };
 
 // element-ui 中用来判断 text-overflow 的工具方法 end
 
@@ -674,7 +674,7 @@ export const refreshToken = () => {
 export const clearCookies = () => {
   const keys = document.cookie.match(/[^ =;]+(?=\=)/g);
   if (keys) {
-    for (let i = keys.length; i--;) {
+    for (let i = keys.length; i--; ) {
       // document.cookie = keys[i] + '=0;expires=' + new Date(0).toUTCString();
       Cookies.remove(keys[i], { path: '' });
     }
@@ -790,7 +790,6 @@ export function overHidden(value = '', len = 0) {
   }
   return value;
 }
-
 
 /**
  * 分率计算转换,保留小数1位

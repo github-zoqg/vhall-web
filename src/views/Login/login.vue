@@ -85,6 +85,12 @@
                 登&nbsp;&nbsp;&nbsp;录
               </el-button>
             </div>
+            <!-- 隐私协议合规 -->
+            <privacy-select
+              :scene="isOpenOther ? 'login' : 'login_normal'"
+              ref="loginPrivacyCompliance"
+              @check="checkResult"
+            ></privacy-select>
             <div class="login-just">
               现在注册，就送20G流量
               <span @click="toRegister">立即注册</span>
@@ -109,12 +115,6 @@
                 ></span>
               </div>
             </div>
-            <!-- 隐私协议合规 -->
-            <privacy-select
-              :scene="isOpenOther ? 'login' : 'login_normal'"
-              ref="loginPrivacyCompliance"
-              @check="checkResult"
-            ></privacy-select>
           </el-form>
         </div>
         <!-- 手机号登录 -->
@@ -279,15 +279,15 @@
                 立即注册
               </el-button>
             </div>
-            <el-form-item class="auto-login register-checked">
-              <span class="toLogin" @click="$router.push({ path: '/login' })">去登录</span>
-            </el-form-item>
             <!-- 隐私协议合规 -->
             <privacy-select
               scene="register"
               ref="registerPrivacyCompliance"
               @check="checkResult"
             ></privacy-select>
+            <el-form-item class="auto-login register-checked">
+              <span class="toLogin" @click="$router.push({ path: '/login' })">去登录</span>
+            </el-form-item>
           </el-form>
         </div>
       </div>
