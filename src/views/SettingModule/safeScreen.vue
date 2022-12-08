@@ -480,7 +480,9 @@
           <span>1.移动端全屏播放时，跑马灯会失效；</span>
           <span>2.安卓手机浏览器劫持可能导致跑马灯失效；</span>
           <span>3.因浏览器自身策略，开启自动播放也会出现无法自动播放情况；</span>
-          <span>4.无延迟直播/分组直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能。</span>
+          <span>
+            4.无延迟直播/分组直播不支持使用跑马灯、水印及弹幕，默认关闭跑马灯、水印及弹幕功能。
+          </span>
           <span>5.竖屏直播的移动观看端不支持展示跑马灯、水印及弹幕，pc观看端不受影响</span>
         </p>
       </div>
@@ -1499,7 +1501,7 @@
     overflow: inherit;
   }
   /deep/.el-slider__button-wrapper {
-    z-index: 500;
+    z-index: 90;
   }
   #videoDom {
     width: 100%;
@@ -1645,7 +1647,7 @@
       .give-white {
         position: absolute;
         width: 100%;
-        height: 290px;
+        height: 320px;
         top: 90px;
         left: 0;
         background: rgba(255, 255, 255, 0.5);
@@ -1655,7 +1657,7 @@
         position: absolute;
         width: 100%;
         height: 370px;
-        top: 510px;
+        top: 540px;
         left: 0;
         background: rgba(255, 255, 255, 0.5);
         z-index: 9;
@@ -1962,7 +1964,7 @@
       width: calc(100% - 280px);
       height: 1px;
       position: absolute;
-      top: 500px;
+      top: 525px;
       left: 48px;
       background-color: #e6e6e6;
     }
