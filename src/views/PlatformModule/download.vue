@@ -144,14 +144,14 @@
         }
         this.search();
       },
-      search() {
-        this.query.pos = 0;
-        this.query.pageNumber = 1;
+      search(pageData) {
+        this.query.pos = (pageData && pageData.pos) || 0;
+        this.query.pageNumber = (pageData && pageData.pageNumber) || 1;
         this.query.limit = 10;
         // 表格切换到第一页
         try {
-          this.$refs.downloadTable.pageInfo.pageNum = 1;
-          this.$refs.downloadTable.pageInfo.pos = 0;
+          this.$refs.downloadTable.pageInfo.pageNum = this.query.pageNumber;
+          this.$refs.downloadTable.pageInfo.pos = this.query.pos;
         } catch (e) {
           console.log(e);
         }
@@ -202,7 +202,7 @@
             // 通知右上角导航，需要更新下载消息
             this.$EventBus.$emit('saas_vs_download_count', true);
             // 重新拉取数据
-            // this.search();
+            this.search(this.query);
           })
           .then(e => {
             console.log(e, '下载状态更新失败');
