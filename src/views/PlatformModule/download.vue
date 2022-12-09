@@ -209,15 +209,15 @@
           });
       },
       /*   // 页码改变按钮事件
-    currentChangeHandler(current) {
-      this.pageNumber = current;
-      this.pos = (Number(current) - 1) * this.limit;
-      this.getTableList({
-        pos: this.pos,
-        limit: this.limit,
-        pageNumber: this.pageNumber
-      });
-    }, */
+      currentChangeHandler(current) {
+        this.pageNumber = current;
+        this.pos = (Number(current) - 1) * this.limit;
+        this.getTableList({
+          pos: this.pos,
+          limit: this.limit,
+          pageNumber: this.pageNumber
+        });
+      }, */
       getTableList(row) {
         if (row) {
           this.query.pos = row.pos;
@@ -402,7 +402,6 @@
       async initChat() {
         let result = await this.$fetch('msgInitConsole');
         if (result) {
-          console.log(result, '值');
           let option = {
             appId: result.data.paasAppId || '', // appId 必须
             accountId: result.data.accountId || '', // 第三方用户ID

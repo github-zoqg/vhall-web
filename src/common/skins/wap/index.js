@@ -16,7 +16,6 @@ import style_3_theme_5 from './style_3_theme_5';
 
 import { setTheme } from '../../../utils/skins-utils';
 
-
 export default {
   setTheme,
   themes: {
@@ -36,4 +35,4 @@ export default {
     style_3_theme_4,
     style_3_theme_5
   }
-}
+};

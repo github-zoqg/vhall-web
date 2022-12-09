@@ -5,7 +5,8 @@
     </div>
     <div class="qr-editor-box" v-if="mode == 2">
       <div class="label">
-        <span style="color:#FB3A32">*</span>标题
+        <span style="color: #fb3a32">*</span>
+        标题
       </div>
       <div class="editorContent">
         <VhallInput
@@ -20,55 +21,54 @@
   </div>
 </template>
 <script>
-import EventBus from '../../bus'
-import eventsType from '../../EventConts'
+  import EventBus from '../../bus';
+  import eventsType from '../../EventConts';
 
-export default {
-  name: 'component-title',
-  props: {
-    // 1. 显示  2. 编辑
-    mode: {
-      required: true,
-      default: 1
+  export default {
+    name: 'component-title',
+    props: {
+      // 1. 显示  2. 编辑
+      mode: {
+        required: true,
+        default: 1
+      },
+      info: {
+        required: false
+      }
     },
-    info: {
-      required: false
-    }
-  },
 
-  data() {
-    return {
-    }
-  },
+    data() {
+      return {};
+    },
 
-  methods: {
-    changeHandler() {
-      this.$emit('updateInfo', this.info)
+    methods: {
+      changeHandler() {
+        this.$emit('updateInfo', this.info);
+      }
     }
-  }
-}
+  };
 </script>
 <style lang="less" scoped>
-.title-previewbox{
-  color: #1A1A1A;
-  font-size: 14px;
-  line-height: 22px;
-  text-align: center;
-}
-  .qr-editor-box{
+  .title-previewbox {
+    color: #1a1a1a;
+    font-size: 14px;
+    line-height: 22px;
+    text-align: center;
+  }
+  .qr-editor-box {
     padding-top: 16px;
   }
-  .label{
+  .label {
     display: inline-block;
-    color: #1A1A1A;
-    span{
+    color: #1a1a1a;
+    span {
       margin-right: 5px;
     }
   }
-  .editorContent{
+  .editorContent {
     margin-left: 10px;
     display: inline-block;
-    /deep/ input{
+    /deep/ input {
       width: 312px;
       line-height: 40px;
       height: 40px;
