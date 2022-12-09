@@ -6,7 +6,7 @@
           <doc
             v-if="showDoc"
             ref="doc"
-            :webinarId='webinarId'
+            :webinarId="webinarId"
             docPermissionId="no"
             :isInteract="true"
             :roleType="2"
@@ -39,7 +39,12 @@
         </span>
         <div :class="['playerBox', chanBenVisible ? 'openControler' : '']">
           <!-- v-if="docSDKReady" -->
-          <player ref="player" v-if="docSDKReady"  v-bind="playerProps" :playerParams="playerParams"></player>
+          <player
+            ref="player"
+            v-if="docSDKReady"
+            v-bind="playerProps"
+            :playerParams="playerParams"
+          ></player>
         </div>
         <!-- <div class="chaptersBox">
           <div class="tab">
@@ -60,81 +65,84 @@
 </template>
 
 <script>
-import player from '@/components/Player_1';
-import doc from '@/components/Doc/watch-doc';
-export default {
-  name: 'Chapters',
-  props: {
-    recordId: {
-      required: true,
-      type: [Number, String]
-    },
-    webinarId: {
-      required: {
+  import player from '@/components/Player_1';
+  import doc from '@/components/Doc/watch-doc';
+  export default {
+    name: 'Chapters',
+    props: {
+      recordId: {
         required: true,
         type: [Number, String]
+      },
+      webinarId: {
+        required: {
+          required: true,
+          type: [Number, String]
+        }
       }
-    }
-  },
-  data(){
-    return {
-      showDoc: false,
-      userId: window.sessionStorage.getItem('userId'),
-      playerProps: {},
-      playerParams: {
-        subtitleOption: {
-          enable: true
-        }
-      },
-      docSDKReady: false,
-      docsdk: {},
-      pageInfo: {pageIndex: 0, total: 0},
-      // tableData: [],
-      selectedData: [],
-      docToolStatus: {
-        docToolActive: '',
-        hb: {
-          width: 7,
-          color: '#FD2C0A'
+    },
+    data() {
+      return {
+        showDoc: false,
+        userId: window.sessionStorage.getItem('userId'),
+        playerProps: {},
+        playerParams: {
+          subtitleOption: {
+            enable: true
+          }
         },
-        ygb: {
-          width: 7,
-          color: '#FD2C0A'
+        docSDKReady: false,
+        docsdk: {},
+        pageInfo: { pageIndex: 0, total: 0 },
+        // tableData: [],
+        selectedData: [],
+        docToolStatus: {
+          docToolActive: '',
+          hb: {
+            width: 7,
+            color: '#FD2C0A'
+          },
+          ygb: {
+            width: 7,
+            color: '#FD2C0A'
+          },
+          graph: {
+            color: '#FD2C0A',
+            value: 'setCircle'
+          },
+          font: {
+            width: '18',
+            color: '#FD2C0A'
+          }
         },
-        graph: {
-          color: '#FD2C0A',
-          value: 'setCircle'
-        },
-        font: {
-          width: '18',
-          color: '#FD2C0A'
-        }
-      },
-      bigElem: 'doc',
-      chanBenVisible: false,
-      isOpenControler: true
-    };
-  },
-  provide () {
-    return {
-      docToolStatus: this.docToolStatus
-    };
-  },
-  computed: {
-    docInfo(){
-      console.log('docInfo', this.docsdk._currentDoc ? this.docsdk._currentDoc.getDocInfo() : {toal: 0, current:0});
-      return 1234;
-    }
-  },
-  created(){
-    // this.checkChapterSave();
-    this.getPlayBackInfo();
-    this.$EventBus.$on('docSDK_ready', docsdk=>{
-      console.log(docsdk)
-      this.docSDKReady = true;
-      this.docsdk = docsdk;
-      this.docsdk.on(window.VHDocSDK.Event.PAGE_CHANGE, event => {
-        /* event内容
+        bigElem: 'doc',
+        chanBenVisible: false,
+        isOpenControler: true
+      };
+    },
+    provide() {
+      return {
+        docToolStatus: this.docToolStatus
+      };
+    },
+    computed: {
+      docInfo() {
+        console.log(
+          'docInfo',
+          this.docsdk._currentDoc ? this.docsdk._currentDoc.getDocInfo() : { toal: 0, current: 0 }
+        );
+        return 1234;
+      }
+    },
+    created() {
+      // this.checkChapterSave();
+      this.getPlayBackInfo();
+      this.$EventBus.$on('docSDK_ready', docsdk => {
+        console.log(docsdk);
+        this.docSDKReady = true;
+        this.docsdk = docsdk;
+        this.docsdk.on(window.VHDocSDK.Event.PAGE_CHANGE, event => {
+          /* event内容
         {
           id:"document-5cbbb8f", // 当前选中的容器id
           info:{
@@ -148,258 +156,260 @@ export default {
               totalSteps: 1 // 当前页的总步数
             ｝
         ｝*/
-        this.pageInfo.pageIndex= event.info.slideIndex+1;
-        this.pageInfo.total= event.info.slidesTotal;
+          this.pageInfo.pageIndex = event.info.slideIndex + 1;
+          this.pageInfo.total = event.info.slidesTotal;
+        });
+        console.log('docSDK_ready', docsdk, this.$refs.doc);
       });
-      console.log('docSDK_ready', docsdk, this.$refs.doc);
-    });
-    // this.$EventBus.$on('component_docSDK_ready', docsdk=>{
-    //   this.docSDKReady = true;
-    //   this.docsdk = docsdk;
-    //   console.log('component_docSDK_ready', docsdk, this.$refs.doc);
-    // });
+      // this.$EventBus.$on('component_docSDK_ready', docsdk=>{
+      //   this.docSDKReady = true;
+      //   this.docsdk = docsdk;
+      //   console.log('component_docSDK_ready', docsdk, this.$refs.doc);
+      // });
 
-    this.$EventBus.$on('component_playerSDK_ready', ()=>{
-      console.log('component_playerSDK_ready');
-      // 延时获取事件点的位置
-      setTimeout(() => {
-        this.updateEventPonitPosition()
-      }, 1000)
-    });
+      this.$EventBus.$on('component_playerSDK_ready', () => {
+        console.log('component_playerSDK_ready');
+        // 延时获取事件点的位置
+        setTimeout(() => {
+          this.updateEventPonitPosition();
+        }, 1000);
+      });
 
-    this.$EventBus.$on('component_page_info', ()=>{
-      console.log('component_page_info', this.$refs.doc.pageInfo);
-      this.pageInfo = this.$refs.doc.pageInfo;
-    });
+      this.$EventBus.$on('component_page_info', () => {
+        console.log('component_page_info', this.$refs.doc.pageInfo);
+        this.pageInfo = this.$refs.doc.pageInfo;
+      });
 
-    // 监听文档加载完毕,暂时隐藏，不要删除，需要章节时，去掉注释即可
-    // this.$EventBus.$on('vod_cuepoint_load_complete', chapters => {
-    //   console.log("=============所有文档加载完毕==============", chapters)
-    //   chapters.map((item, index) => {
-    //      this.tableData.push({
-    //       ...item,
-    //       index: index + 1,
-    //       createTimeShow: this.secondsFormmat(item.createTime),
-    //       sub: item.sub.map((subItem, subIndex) => ({
-    //         ...subItem,
-    //         createTimeShow: this.secondsFormmat(subItem.createTime),
-    //         index: `${index + 1}-${subIndex + 1}`
-    //       }))
-    //     })
-    //     if (item.sub.length) {
-    //       item.sub.map((subItem, subIndex) => {
-    //         this.tableData.push({
-    //           ...subItem,
-    //           createTimeShow: this.secondsFormmat(subItem.createTime),
-    //           index: `${index + 1}-${subIndex + 1}`
-    //         })
-    //       })
-    //     }
-    //   });
-    // });
-  },
-  mounted(){
-
-  },
-  beforeDestroy(){
-    this.$EventBus.$off('docSDK_ready');
-    this.$EventBus.$off('component_playerSDK_ready');
-    this.$EventBus.$off('component_page_info');
-    this.$EventBus.$off('vod_cuepoint_load_complete');
-  },
-  methods: {
-    // checkChapterSave() {
-    //   this.$fetch('checkChapterSave', {
-    //     record_id: this.recordId
-    //   }).then(res => {
-    //     if (res.data && res.data.chatper_callbanck_status == 0) {
-    //       this.$message.warning('上次章节保存任务尚未完成，当前章节信息为前一次保存的章节')
-    //     }
-    //   })
-    // },
-    // chapterHandler(index){
-    //   console.log(index)
-    //   let opts = {
-    //     id: this.docsdk._currentDoc._currentContainer._id, // 容器id， 必填
-    //     page: Number(this.tableData[index].slideIndex) // 跳转到某页，数字，必填
-    //   };
-    //   console.log(this.tableData[index].createTime)
-    //   // this.docsdk.gotoPage(opts);
-    //   this.$refs.player.$PLAYER.setCurrentTime(this.tableData[index].createTime, (e) => console.log(e));
-    // },
-    updateEventPonitPosition() {
-      const parentWidth = document.querySelector('.vhallPlayer-progress-container').offsetWidth
-      const markpoints = document.getElementsByClassName('v-p-markpoint')
-      const markpointMarks = document.getElementsByClassName('v-p-markpoint__mark')
-      Array.from(markpoints).forEach((item, index) => {
-        markpointMarks[index].style.left = 'auto'
-        if (item.offsetLeft < 52) {
-          markpointMarks[index].style.left = '54px'
-        } else if (parentWidth - item.offsetLeft - 50 < 52) {
-          console.log(item.offsetLeft)
-          markpointMarks[index].style.right = '-46px'
+      // 监听文档加载完毕,暂时隐藏，不要删除，需要章节时，去掉注释即可
+      // this.$EventBus.$on('vod_cuepoint_load_complete', chapters => {
+      //   console.log("=============所有文档加载完毕==============", chapters)
+      //   chapters.map((item, index) => {
+      //      this.tableData.push({
+      //       ...item,
+      //       index: index + 1,
+      //       createTimeShow: this.secondsFormmat(item.createTime),
+      //       sub: item.sub.map((subItem, subIndex) => ({
+      //         ...subItem,
+      //         createTimeShow: this.secondsFormmat(subItem.createTime),
+      //         index: `${index + 1}-${subIndex + 1}`
+      //       }))
+      //     })
+      //     if (item.sub.length) {
+      //       item.sub.map((subItem, subIndex) => {
+      //         this.tableData.push({
+      //           ...subItem,
+      //           createTimeShow: this.secondsFormmat(subItem.createTime),
+      //           index: `${index + 1}-${subIndex + 1}`
+      //         })
+      //       })
+      //     }
+      //   });
+      // });
+    },
+    mounted() {},
+    beforeDestroy() {
+      this.$EventBus.$off('docSDK_ready');
+      this.$EventBus.$off('component_playerSDK_ready');
+      this.$EventBus.$off('component_page_info');
+      this.$EventBus.$off('vod_cuepoint_load_complete');
+    },
+    methods: {
+      // checkChapterSave() {
+      //   this.$fetch('checkChapterSave', {
+      //     record_id: this.recordId
+      //   }).then(res => {
+      //     if (res.data && res.data.chatper_callbanck_status == 0) {
+      //       this.$message.warning('上次章节保存任务尚未完成，当前章节信息为前一次保存的章节')
+      //     }
+      //   })
+      // },
+      // chapterHandler(index){
+      //   console.log(index)
+      //   let opts = {
+      //     id: this.docsdk._currentDoc._currentContainer._id, // 容器id， 必填
+      //     page: Number(this.tableData[index].slideIndex) // 跳转到某页，数字，必填
+      //   };
+      //   console.log(this.tableData[index].createTime)
+      //   // this.docsdk.gotoPage(opts);
+      //   this.$refs.player.$PLAYER.setCurrentTime(this.tableData[index].createTime, (e) => console.log(e));
+      // },
+      updateEventPonitPosition() {
+        const parentWidth = document.querySelector('.vhallPlayer-progress-container').offsetWidth;
+        const markpoints = document.getElementsByClassName('v-p-markpoint');
+        const markpointMarks = document.getElementsByClassName('v-p-markpoint__mark');
+        Array.from(markpoints).forEach((item, index) => {
+          markpointMarks[index].style.left = 'auto';
+          if (item.offsetLeft < 52) {
+            markpointMarks[index].style.left = '54px';
+          } else if (parentWidth - item.offsetLeft - 50 < 52) {
+            console.log(item.offsetLeft);
+            markpointMarks[index].style.right = '-46px';
+          } else {
+            markpointMarks[index].style.left = item.style.left;
+          }
+        });
+      },
+      videoMouseOver() {
+        this.chanBenVisible = true;
+      },
+      videoMouseLeave() {
+        this.chanBenVisible = false;
+      },
+      resize() {
+        if (isIE()) {
+          var evt = window.document.createEvent('UIEvents');
+          evt.initUIEvent('resize', true, false, window, 0);
+          window.dispatchEvent(evt);
         } else {
-          markpointMarks[index].style.left = item.style.left
+          const resizeEvent = new Event('resize');
+          window.dispatchEvent(resizeEvent);
         }
-      })
-    },
-    videoMouseOver() {
-      this.chanBenVisible = true;
-    },
-    videoMouseLeave() {
-      this.chanBenVisible = false;
-    },
-    resize () {
-      if (isIE()) {
-        var evt = window.document.createEvent('UIEvents')
-        evt.initUIEvent('resize', true, false, window, 0)
-        window.dispatchEvent(evt)
-      } else {
-        const resizeEvent = new Event('resize')
-        window.dispatchEvent(resizeEvent)
+      },
+      switchBox() {
+        this.bigElem = this.bigElem == 'doc' ? 'video' : 'doc';
+        this.$nextTick(() => {
+          this.$refs.doc.resize();
+          this.updateEventPonitPosition();
+        });
+      },
+      getPlayBackInfo() {
+        this.$fetch('playBackPreview', {
+          webinar_id: this.webinarId,
+          record_id: this.recordId,
+          type: 0
+        }).then(res => {
+          console.log(res);
+          const data = res.data;
+          this.playerProps = {
+            appId: data.paasAppId,
+            channelId: data.doc.channelId,
+            roomId: data.doc.roomId,
+            accountId: data.accountId,
+            // watchAccountId: '10000128',
+            token: data.paasAccessToken,
+            recordId: data.player.paasRecordId,
+            nickName: '123',
+            type: data.player.type,
+            channel_id: data.doc.channelId,
+            vodOption: {
+              recordId: data.player.paasRecordId
+            },
+            openPlayerUI: false,
+            playerInfo: {}
+          };
+          this.playerParams.otherOption = {
+            vid: res.data.report_data.vid, // hostId
+            vfid: res.data.report_data.vfid,
+            guid: res.data.report_data.guid,
+            biz_id: this.webinarId
+          };
+          this.playerParams.otherOption.report_extra = res.data.report_data.report_extra;
+          console.log(this.playerProps);
+          this.showDoc = true;
+        });
+      },
+      prevPage() {
+        this.docsdk.prevPage({ id: document.querySelector('.docInner .doc-box').id });
+      },
+      nextPage() {
+        this.docsdk.nextPage({ id: document.querySelector('.docInner .doc-box').id });
+      },
+      // 格式化秒数为时分秒 s => hh:mm:ss
+      secondsFormmat(val) {
+        val = Number(val);
+        val = Math.floor(val);
+        if (isNaN(val)) return val;
+        const hours = parseInt(val / 3600);
+        const minutes = parseInt(val / 60) - hours * 60;
+        const seconds = val % 60;
+        return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}:${
+          seconds < 10 ? `0${seconds}` : seconds
+        }`;
       }
     },
-    switchBox() {
-      this.bigElem = this.bigElem == 'doc' ? 'video' : 'doc';
-      this.$nextTick(() => {
-        this.$refs.doc.resize()
-        this.updateEventPonitPosition()
-      })
-    },
-    getPlayBackInfo() {
-      this.$fetch('playBackPreview', {
-        webinar_id: this.webinarId,
-        record_id: this.recordId,
-        type: 0
-      }).then(res => {
-        console.log(res)
-        const data = res.data
-        this.playerProps = {
-          appId: data.paasAppId,
-          channelId: data.doc.channelId,
-          roomId: data.doc.roomId,
-          accountId: data.accountId,
-          // watchAccountId: '10000128',
-          token: data.paasAccessToken,
-          recordId: data.player.paasRecordId,
-          nickName: '123',
-          type: data.player.type,
-          channel_id: data.doc.channelId,
-          vodOption: {
-            recordId: data.player.paasRecordId
-          },
-          openPlayerUI: false,
-          playerInfo: {}
-        }
-        this.playerParams.otherOption = {
-          vid: res.data.report_data.vid, // hostId
-          vfid: res.data.report_data.vfid,
-          guid: res.data.report_data.guid,
-          biz_id: this.webinarId
-        }
-        this.playerParams.otherOption.report_extra = res.data.report_data.report_extra
-        console.log(this.playerProps)
-        this.showDoc = true
-      })
-    },
-    prevPage(){
-      this.docsdk.prevPage({id: document.querySelector('.docInner .doc-box').id});
-    },
-    nextPage(){
-      this.docsdk.nextPage({id: document.querySelector('.docInner .doc-box').id});
-    },
-    // 格式化秒数为时分秒 s => hh:mm:ss
-    secondsFormmat(val){
-      val = Number(val);
-      val = Math.floor(val)
-      if(isNaN(val)) return val;
-      const hours = parseInt(val/3600);
-      const minutes = parseInt(val/60) - (hours*60);
-      const seconds = val % 60;
-      return `${hours < 10 ? `0${hours}` : hours}:${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
-    },
-  },
-  components: {
-    player,
-    doc,
-  }
-};
+    components: {
+      player,
+      doc
+    }
+  };
 </script>
 
 <style lang="less" scoped>
-  .contentView{
+  .contentView {
     padding: 4px;
     width: 100%;
     height: 560px;
     background: #222;
     position: relative;
     border-radius: 4px;
-    .bigBox{
+    .bigBox {
       width: calc(100% - 8px);
       height: calc(100% - 8px);
       position: absolute;
       top: 4px;
       right: 4px;
     }
-    .docBox{
+    .docBox {
       width: 100%;
       height: 100%;
-      .docInner{
+      .docInner {
         height: 100%;
         background-color: #292929;
       }
     }
-    .actionBar{
+    .actionBar {
       height: 48px;
       background: rgba(0, 0, 0, 0.5);
       text-align: center;
       line-height: 48px;
       padding: 0 16px;
-      .translatePage{
+      .translatePage {
         float: left;
-        i{
+        i {
           color: #999999;
           cursor: pointer;
         }
       }
-      .pages{
+      .pages {
         color: #666;
         font-size: 14px;
-        em{
+        em {
           color: #fff;
           font-style: normal;
         }
       }
-
     }
-    /deep/ .vhallPlayer-container{
+    /deep/ .vhallPlayer-container {
       position: relative;
       visibility: visible;
       opacity: 1;
       z-index: 2;
-      .vhallPlayer-progress-container .vhallPlayer-progress-play{
-        background: #FB3A32;
+      .vhallPlayer-progress-container .vhallPlayer-progress-play {
+        background: #fb3a32;
       }
-      .vhallPlayer-progress-container{
+      .vhallPlayer-progress-container {
         background-color: rgba(0, 0, 0, 0.7);
-        .vhallPlayer-progress-scrubber>i {
+        .vhallPlayer-progress-scrubber > i {
           width: 6px;
           height: 6px;
         }
         .vhallPlayer-progress-scrubber {
-          display: none!important;
+          display: none !important;
           width: 8px;
           height: 8px;
         }
-        &:hover{
+        &:hover {
           height: 4px;
         }
         .v-p-markpoint {
           border: none;
         }
       }
-      .vhallPlayer-verticalSlider-popup .vhallPlayer-verticalSlider-box .verticalSlider-range .verticalSlider-value{
-        background: #FB3A32;
+      .vhallPlayer-verticalSlider-popup
+        .vhallPlayer-verticalSlider-box
+        .verticalSlider-range
+        .verticalSlider-value {
+        background: #fb3a32;
       }
       .v-p-markpoint__mark {
         min-height: auto;
@@ -416,43 +426,43 @@ export default {
         }
       }
     }
-    .littleBox{
+    .littleBox {
       width: 302px;
       height: 190px;
       position: absolute;
       top: 16px;
       right: 16px;
-      z-index: 2
+      z-index: 2;
     }
-    .playerBoxContainer{
+    .playerBoxContainer {
       width: 100%;
       height: 100%;
       position: relative;
       .playerBox {
         height: 100%;
-        >div{
-          height:100%;
+        > div {
+          height: 100%;
         }
         /deep/ #vh-player {
           height: 100%;
         }
-        /deep/ .vhallPlayer-container{
+        /deep/ .vhallPlayer-container {
           position: absolute;
         }
-        /deep/ .vhallPlayer-volume-component{
+        /deep/ .vhallPlayer-volume-component {
           margin-right: 0px;
         }
-        &.openControler{
-          /deep/ .vhallPlayer-container{
-            display: block!important;
+        &.openControler {
+          /deep/ .vhallPlayer-container {
+            display: block !important;
           }
         }
-        /deep/ .vhallPlayer-controller-box{
+        /deep/ .vhallPlayer-controller-box {
           height: 40px;
           padding: 0 10px;
         }
       }
-      .changeBigElem{
+      .changeBigElem {
         position: absolute;
         top: 10px;
         left: 10px;
@@ -465,18 +475,18 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
-        /deep/ i{
+        /deep/ i {
           color: #fff;
         }
       }
       .chaptersBox {
         height: calc(100% - 223px);
-        .tab{
+        .tab {
           height: 32px;
-          box-shadow: 0px 1px 0px 0px #1A1A1A;
+          box-shadow: 0px 1px 0px 0px #1a1a1a;
           text-align: center;
           line-height: 32px;
-          span{
+          span {
             color: #fff;
             border-bottom: 1px solid #fff;
             padding-bottom: 6px;
@@ -487,45 +497,48 @@ export default {
           height: calc(100% - 32px);
           overflow-y: auto;
         }
-        .chapterList{
-          li{
-            color: #CCCCCC;
+        .chapterList {
+          li {
+            color: #cccccc;
             font-size: 12px;
             height: 32px;
             line-height: 32px;
             padding-left: 8px;
             cursor: pointer;
-            transition: all .1s linear;
+            transition: all 0.1s linear;
             display: flex;
-            &:hover{
+            &:hover {
               background: #333333;
-              color: #FB3A32;
+              color: #fb3a32;
             }
           }
-          .times,.title{
+          .times,
+          .title {
             display: inline-block;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
           }
-          .times{
+          .times {
             width: 50px;
           }
-          .title{
+          .title {
             flex: 1;
           }
         }
       }
     }
-    /deep/ .v-c-right{
-      .vhallPlayer-definition-component, .vhallPlayer-config-component, .vhallPlayer-speed-component{
+    /deep/ .v-c-right {
+      .vhallPlayer-definition-component,
+      .vhallPlayer-config-component,
+      .vhallPlayer-speed-component {
         display: none;
       }
       .vhallPlayer-fullScreen-btn {
         margin-left: 8px;
       }
     }
-    /deep/ .vh-doc__wrap{
+    /deep/ .vh-doc__wrap {
       background-color: #666;
     }
   }

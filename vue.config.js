@@ -17,7 +17,7 @@ let cdn = {
     '//cnstatic01.e.vhall.com/vhall-new-saas/static/polyfill.js?v=202',
     '//static.vhallyun.com/jssdk/vhall-jssdk-doc/latest/vhall-jssdk-doc-3.1.6.js',
     vueURL, // 必须在elementUI 之前
-    '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.js', // vhallUI
+    '//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v2.0.2-beta/index.js', // vhallUI
     '//s1.e.vhall.com/common-static/middle/vue-i18n/8.26.7/vue-i18n.min.js', // VueI18n
     '//s1.e.vhall.com/common-static/middle/vue-router/3.5.3/dist/vue-router.min.js', // VueRouter
     '//s2.e.vhall.com/common-static/middle/dayjs/1.10.8/dayjs.min.js', // dayjs
@@ -25,9 +25,10 @@ let cdn = {
     '//s1.e.vhall.com/common-static/middle/lodash/4.17.21/lodash.min.js', // lodash
     '//s1.e.vhall.com/common-static/middle/echarts/4.9.0/echarts.min.js', // echarts
     '//s1.e.vhall.com/common-static/middle/middle-util/1.1.3/utils/index.min.js',
-    '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.9/questionnaire_service.js'
+    '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.9/questionnaire_service.js',
+    '//s3.e.vhall.com/common-static/vhall-form/vhall-form-vue.js'
   ],
-  css: ['//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.css']
+  css: ['//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v2.0.2-beta/index.css']
 };
 // console.warn(process)
 let publicPath = process.env.VUE_APP_PUBLIC_PATH || './';

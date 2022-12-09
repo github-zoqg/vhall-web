@@ -7,17 +7,17 @@
   </div>
 </template>
 <script>
-import PageTitle from '@/components/PageTitle';
-import ViewingProtocol from '../LiveModule/components/viewingProtocol';
-export default {
-  components: {
-    PageTitle,
-    ViewingProtocol
-  }
-}
+  import PageTitle from '@/components/PageTitle';
+  import ViewingProtocol from '../LiveModule/components/viewingProtocol';
+  export default {
+    components: {
+      PageTitle,
+      ViewingProtocol
+    }
+  };
 </script>
 <style lang="less" scoped>
-  .set_protocol{
+  .set_protocol {
     &_container {
       background: #fff;
     }

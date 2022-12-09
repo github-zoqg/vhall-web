@@ -1,286 +1,292 @@
 <template>
-<div style="height: 100%; min-height: 320px">
-  <div class="search" >
-    <VhallInput
-      v-model="keyword"
-      placeholder="请输入直播标题或者直播ID"
-      @change="inputChange"
-      v-clearEmoij
-      clearable
-      prefix-icon="el-icon-search"
-      style="width:220px; border-radius:24px"
-      class="input-box"
-    ></VhallInput>
-  </div>
-  <div class="vh-chose-active-box"
-    v-infinite-scroll="getActiveList"
-    :infinite-scroll-disabled="disabled"
-    :infinite-scroll-immediate="true"
-    v-show="total"
-  >
-    <vue-scroll>
-      <!-- 单个视频 -->
-      <div class="vh-chose-active-item"
-        v-for="(item) in activeList"
-        :key="item.webinar_id"
-        @click="doSelect(item)"
-        :class="{'checkedActive': item.checked}"
-      >
-        <i class="iconfont-v3 saasicon-choose-01" v-show="item.checked"></i>
-        <div class="vh-chose-active-item__cover">
-          <!-- TODO 右侧直播选择区域 -->
-          <img :class="`img_box_bg box_bg_${item.itemMode}`" :src="item.img_url" alt="">
-          <div class="vh-chose-active-item__cover-status">
-            <span class="liveTag">
-              <label class="live-status" v-if="item.webinar_state == 1">
-                <img src="../../../../../common/images/live.gif" alt="">
-              </label>
-              {{item | actionTag}}
-              <span v-if="item.webinar_type != 6 && hasDelayPermission && item.no_delay_webinar == 1">| 无延迟</span>
-              <span v-if="item.webinar_show_type == 0">| 竖屏</span>
-            </span>
+  <div style="height: 100%; min-height: 320px">
+    <div class="search">
+      <VhallInput
+        v-model="keyword"
+        placeholder="请输入直播标题或者直播ID"
+        @change="inputChange"
+        v-clearEmoij
+        clearable
+        prefix-icon="el-icon-search"
+        style="width: 220px; border-radius: 24px"
+        class="input-box"
+      ></VhallInput>
+    </div>
+    <div
+      class="vh-chose-active-box"
+      v-infinite-scroll="getActiveList"
+      :infinite-scroll-disabled="disabled"
+      :infinite-scroll-immediate="true"
+      v-show="total"
+    >
+      <vue-scroll>
+        <!-- 单个视频 -->
+        <div
+          class="vh-chose-active-item"
+          v-for="item in activeList"
+          :key="item.webinar_id"
+          @click="doSelect(item)"
+          :class="{ checkedActive: item.checked }"
+        >
+          <i class="iconfont-v3 saasicon-choose-01" v-show="item.checked"></i>
+          <div class="vh-chose-active-item__cover">
+            <!-- TODO 右侧直播选择区域 -->
+            <img :class="`img_box_bg box_bg_${item.itemMode}`" :src="item.img_url" alt="" />
+            <div class="vh-chose-active-item__cover-status">
+              <span class="liveTag">
+                <label class="live-status" v-if="item.webinar_state == 1">
+                  <img src="../../../../../common/images/live.gif" alt="" />
+                </label>
+                {{ item | actionTag }}
+                <span
+                  v-if="item.webinar_type != 6 && hasDelayPermission && item.no_delay_webinar == 1"
+                >
+                  | 无延迟
+                </span>
+                <span v-if="item.webinar_show_type == 0">| 竖屏</span>
+              </span>
+            </div>
+            <div class="vh-chose-active-item__cover-hots">
+              <i class="iconfont-v3 saasicon_redu"></i>
+              {{ item.pv | formatNum }}
+            </div>
           </div>
-          <div class="vh-chose-active-item__cover-hots">
-            <i class="iconfont-v3 saasicon_redu"></i>
-            {{ item.pv | formatNum }}
+          <div class="vh-chose-active-item__title ellsips">
+            {{ item.subject }}
           </div>
-
+          <div class="vh-chose-active-item__info">
+            {{ item.start_time }}
+          </div>
         </div>
-        <div class="vh-chose-active-item__title ellsips">
-          {{ item.subject }}
-        </div>
-        <div class="vh-chose-active-item__info">
-          {{ item.start_time }}
-        </div>
-      </div>
-    </vue-scroll>
+      </vue-scroll>
+    </div>
   </div>
-</div>
 </template>
 <script>
-import noData from '@/views/PlatformModule/Error/nullPage';
-import EventBus from '../../bus'
-import eventsType from '../../EventConts'
-import {sessionOrLocal, parseImgOssQueryString, cropperImage} from "@/utils/utils";
+  import noData from '@/views/PlatformModule/Error/nullPage';
+  import EventBus from '../../bus';
+  import eventsType from '../../EventConts';
+  import { sessionOrLocal, parseImgOssQueryString, cropperImage } from '@/utils/utils';
 
-export default {
-  props: ['checkedList'],
-  data() {
-    return {
-      page: 1,
-      pageSize: 6,
-      nullText: 'nullData',
-      text: '你还没有创建直播',
-      total: 0,
-      activeList: [],
-      selectedOption: [],
-      keyword: '',
-      lock: false,
-      loading: false,
-      visible: true,
-      isSearch: false,
-      hasDelayPermission: false,
-      selectWebinars: this.checkedList
-    }
-  },
-  computed: {
-    disabled () {
-      return this.loading || this.lock
-    }
-  },
-  created() {
-    let _that = this
-    // 移除前事件
-    this.$EventBus.$on(eventsType.EDITOR_COMPONENT_ITEM_INFO, (del_id) => {
-      let newIds = _that.checkedList.filter(item=> {
-        return item != del_id
-      })
-      _that.syncCheckStatus(newIds, del_id)
-    })
-  },
-  mounted() {
-    this.getActiveList();
-    const perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
-    if (perssionInfo) {
-      this.hasDelayPermission = perssionInfo['no.delay.webinar'] && perssionInfo['no.delay.webinar'] == 1 ? true : false
-    }
-  },
-
-  methods: {
-    inputChange() {
-      this.page = 1;
-      this.activeList = []
+  export default {
+    props: ['checkedList'],
+    data() {
+      return {
+        page: 1,
+        pageSize: 6,
+        nullText: 'nullData',
+        text: '你还没有创建直播',
+        total: 0,
+        activeList: [],
+        selectedOption: [],
+        keyword: '',
+        lock: false,
+        loading: false,
+        visible: true,
+        isSearch: false,
+        hasDelayPermission: false,
+        selectWebinars: this.checkedList
+      };
+    },
+    computed: {
+      disabled() {
+        return this.loading || this.lock;
+      }
+    },
+    created() {
+      let _that = this;
+      // 移除前事件
+      this.$EventBus.$on(eventsType.EDITOR_COMPONENT_ITEM_INFO, del_id => {
+        let newIds = _that.checkedList.filter(item => {
+          return item != del_id;
+        });
+        _that.syncCheckStatus(newIds, del_id);
+      });
+    },
+    mounted() {
       this.getActiveList();
+      const perssionInfo = JSON.parse(sessionOrLocal.get('WEBINAR_PES', 'localStorage'));
+      if (perssionInfo) {
+        this.hasDelayPermission =
+          perssionInfo['no.delay.webinar'] && perssionInfo['no.delay.webinar'] == 1 ? true : false;
+      }
     },
-    getActiveList() {
-      this.loading = true
-      const pos = (this.page - 1) * this.pageSize
-      const limit = this.pageSize
-      const userId = sessionStorage.getItem('userId')
-      let params = {
-        pos: pos,
-        user_id: userId,
-        limit: limit,
 
-        order_type: 1,
-      }
+    methods: {
+      inputChange() {
+        this.page = 1;
+        this.activeList = [];
+        this.getActiveList();
+      },
+      getActiveList() {
+        this.loading = true;
+        const pos = (this.page - 1) * this.pageSize;
+        const limit = this.pageSize;
+        const userId = sessionStorage.getItem('userId');
+        let params = {
+          pos: pos,
+          user_id: userId,
+          limit: limit,
 
-      // 增加 - 标题搜索
-      if(this.keyword != '') {
-        params.title = this.keyword
-      }
+          order_type: 1
+        };
 
-      this.$fetch('liveList', this.$params(params)).then((res) => {
-        if(res.code == 200) {
-          this.page = this.page + 1
-          console.log(0, res.data.list.length)
-          if(res.data.total == 0) {
-            this.lock = true
-            this.loading = false
-            this.total = 0
-            console.log(1, this.disabled,this.loading, this.lock, this.activeList)
-          } else if (res.data.list.length == 0) {
-            this.lock = true
-            this.loading = false
-          }else {
-            this.activeList =  this.activeList.concat(res.data.list.map(item => {
-              let mode = 3;
-              if (cropperImage(item.img_url)) {
-                mode = this.handlerImageInfo(item.img_url);
-              }
-              return {
-                ...item,
-                itemMode: mode,
-                checked: false
-              }
-            }))
-            this.lock = false
-            this.total = res.data.total
-            // 老控制台选择不需要回显选中的
-            this.syncCheckStatus()
-            this.loading = false
-            console.log(2,this.disabled,this.loading, this.lock, this.activeList)
-          }
-        } else {
-          this.loading = false
-          console.log(3,this.disabled,this.loading, this.lock)
+        // 增加 - 标题搜索
+        if (this.keyword != '') {
+          params.title = this.keyword;
         }
-      })
-    },
-    // 解析图片地址
-    handlerImageInfo(url) {
-      let obj = parseImgOssQueryString(url);
-      return Number(obj.mode) || 3;
-    },
-    // 同步 选中状态
-    syncCheckStatus(ids, del_id) {
-      let checkIds = this.checkedList
-      if(ids && ids.length > 0) {
-        checkIds = ids
-        this.selectWebinars = ids
-      }
-      if (checkIds.length > 0) {
-        const checked = checkIds.map((item) => {
-          return item
-        })
-        this.activeList = this.activeList.map((item) => {
-          if(checked.includes(item.webinar_id)) {
-            if(del_id != item.webinar_id) {
-              return {
-                ...item,
-                checked: true
+
+        this.$fetch('liveList', this.$params(params)).then(res => {
+          if (res.code == 200) {
+            this.page = this.page + 1;
+            console.log(0, res.data.list.length);
+            if (res.data.total == 0) {
+              this.lock = true;
+              this.loading = false;
+              this.total = 0;
+              console.log(1, this.disabled, this.loading, this.lock, this.activeList);
+            } else if (res.data.list.length == 0) {
+              this.lock = true;
+              this.loading = false;
+            } else {
+              this.activeList = this.activeList.concat(
+                res.data.list.map(item => {
+                  let mode = 3;
+                  if (cropperImage(item.img_url)) {
+                    mode = this.handlerImageInfo(item.img_url);
+                  }
+                  return {
+                    ...item,
+                    itemMode: mode,
+                    checked: false
+                  };
+                })
+              );
+              this.lock = false;
+              this.total = res.data.total;
+              // 老控制台选择不需要回显选中的
+              this.syncCheckStatus();
+              this.loading = false;
+              console.log(2, this.disabled, this.loading, this.lock, this.activeList);
+            }
+          } else {
+            this.loading = false;
+            console.log(3, this.disabled, this.loading, this.lock);
+          }
+        });
+      },
+      // 解析图片地址
+      handlerImageInfo(url) {
+        let obj = parseImgOssQueryString(url);
+        return Number(obj.mode) || 3;
+      },
+      // 同步 选中状态
+      syncCheckStatus(ids, del_id) {
+        let checkIds = this.checkedList;
+        if (ids && ids.length > 0) {
+          checkIds = ids;
+          this.selectWebinars = ids;
+        }
+        if (checkIds.length > 0) {
+          const checked = checkIds.map(item => {
+            return item;
+          });
+          this.activeList = this.activeList.map(item => {
+            if (checked.includes(item.webinar_id)) {
+              if (del_id != item.webinar_id) {
+                return {
+                  ...item,
+                  checked: true
+                };
+              } else {
+                return {
+                  ...item,
+                  checked: false
+                };
               }
             } else {
               return {
                 ...item,
                 checked: false
-              }
+              };
             }
-          } else {
-            return {
-              ...item,
-              checked: false
-            }
-          }
-        })
+          });
+          this.selectedOption = this.activeList.filter(item => item.checked);
+        } else {
+        }
+      },
+
+      doSelect(item) {
+        if (this.selectedOption.length == 10 && !item.checked) {
+          this.$message({
+            message: `直播最多只能选择10个`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+          return;
+        }
+
+        item.checked = !item.checked;
         this.selectedOption = this.activeList.filter(item => item.checked);
-      } else {
+
+        // 按时间排序
+        // let webinars = this.selectedOption.map((item) => {
+        //   return item.webinar_id
+        // })
+
+        // 按选择顺序排序
+        item.checked && this.selectWebinars.push(item.webinar_id);
+        if (!item.checked) {
+          this.selectWebinars = this.selectWebinars.filter(i => i != item.webinar_id);
+        }
+
+        this.$emit('seleclted', this.selectWebinars);
       }
-    },
-
-    doSelect(item) {
-
-      if (this.selectedOption.length == 10 && !item.checked) {
-        this.$message({
-          message: `直播最多只能选择10个`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-        return
-      }
-
-      item.checked = !item.checked;
-      this.selectedOption = this.activeList.filter(item => item.checked);
-
-      // 按时间排序
-      // let webinars = this.selectedOption.map((item) => {
-      //   return item.webinar_id
-      // })
-
-      // 按选择顺序排序
-      item.checked && this.selectWebinars.push(item.webinar_id)
-      if( !item.checked ) {
-        this.selectWebinars = this.selectWebinars.filter(i => i != item.webinar_id)
-      }
-
-      this.$emit('seleclted', this.selectWebinars)
-    },
-  },
-
-}
+    }
+  };
 </script>
 <style lang="less" scoped>
-  .vh-chose-active-box{
+  .vh-chose-active-box {
     width: 100%;
     height: 580px;
     overflow: auto;
     overflow-x: hidden;
     position: relative;
   }
-  .search{
+  .search {
     margin-bottom: 20px;
-    .input-box{
-      /deep/ input{
+    .input-box {
+      /deep/ input {
         border-radius: 24px !important;
       }
-      /deep/.el-input__icon{
+      /deep/.el-input__icon {
         line-height: 36px;
       }
-      /deep/.el-input__inner{
-        padding-right: 10px!important;
+      /deep/.el-input__inner {
+        padding-right: 10px !important;
       }
     }
   }
 
-  .vh-chose-active-item{
+  .vh-chose-active-item {
     cursor: pointer;
     display: inline-block;
     width: 175px;
     height: 182px;
     overflow: hidden;
-    background: #F7F7F7;
+    background: #f7f7f7;
     border-radius: 4px;
     margin: 0 16px 14px 0;
     position: relative;
     transition: all 0.15s ease-in;
-    border: 1px solid #FFFFFF;
-    &:hover{
+    border: 1px solid #ffffff;
+    &:hover {
       box-shadow: 0px 6px 12px 0px rgba(0, 0, 0, 0.08), 0px 2px 4px 0px rgba(0, 0, 0, 0.02);
       border-radius: 4px;
     }
-    i.saasicon-choose-01{
+    i.saasicon-choose-01 {
       position: absolute;
       right: 0;
       top: 0;
@@ -294,18 +300,18 @@ export default {
       background-size: 100% 100%;
       z-index: 1;
       &::before {
-        content: ''!important;
+        content: '' !important;
       }
     }
-    &.checkedActive{
-      border: 1px solid #FB3A32;
+    &.checkedActive {
+      border: 1px solid #fb3a32;
     }
-    &__cover{
+    &__cover {
       position: relative;
       width: 100%;
       height: 120px;
       /* background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab); */
-      background: #1A1A1A;
+      background: #1a1a1a;
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
       &:after {
@@ -314,29 +320,29 @@ export default {
         position: absolute;
         height: 50px;
         width: 100%;
-        background: linear-gradient(180deg,transparent,rgba(0,0,0,.2));
+        background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.2));
         bottom: 0;
         left: 0;
         color: #fff;
         font-size: 14px;
       }
-      .img_box_bg{
+      .img_box_bg {
         width: 100%;
         height: 100%;
         object-fit: contain;
         object-position: center;
         position: absolute;
-        top:0;
+        top: 0;
         left: 0;
-        &.box_bg_1{
+        &.box_bg_1 {
           object-fit: fill;
         }
-        &.box_bg_2{
+        &.box_bg_2 {
           object-fit: cover;
           object-position: left top;
         }
       }
-      &-status{
+      &-status {
         position: absolute;
         left: 8px;
         top: 8px;
@@ -347,41 +353,41 @@ export default {
         border-radius: 100px;
         font-size: 12px;
         font-weight: 400;
-        color: #FFFFFF;
+        color: #ffffff;
         text-align: center;
-        img{
+        img {
           height: 8px;
           width: auto;
           position: static;
         }
       }
-      &-hots{
+      &-hots {
         position: absolute;
         left: 10px;
         bottom: 4px;
         font-size: 14px;
         font-weight: 400;
-        color: #FFFFFF;
+        color: #ffffff;
         line-height: 20px;
       }
     }
-    &__title{
+    &__title {
       margin: 8px 8px 4px 8px;
       line-height: 20px;
       font-size: 16px;
       font-weight: 400;
-      color: #1A1A1A;
+      color: #1a1a1a;
       line-height: 20px;
     }
-    &__info{
+    &__info {
       margin: 8px 8px 4px 8px;
       font-size: 14px;
       font-weight: 400;
       color: #666666;
       line-height: 16px;
     }
-    .liveTag{
-      background: rgba(0,0,0, .7);
+    .liveTag {
+      background: rgba(0, 0, 0, 0.7);
       color: #fff;
       font-size: 12px;
       padding: 2px 9px;
@@ -395,18 +401,18 @@ export default {
       width: 215px;
     }
   }
-  .select-option{
+  .select-option {
     position: absolute;
     bottom: 40px;
     left: 32px;
     line-height: 20px;
-    span{
-      color: #FB3A32;
+    span {
+      color: #fb3a32;
       font-size: 16px;
       padding: 0 10px;
     }
   }
-  .no-create{
+  .no-create {
     margin-bottom: 20px;
   }
 </style>

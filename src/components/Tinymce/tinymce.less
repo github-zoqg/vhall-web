@@ -1,12 +1,12 @@
 /* 样式重写-弹出框 */
 .tox {
   .tox-dialog-wrap__backdrop {
-    background-color:rgba(0,0,0,.5);
+    background-color: rgba(0, 0, 0, 0.5);
   }
   .tox-dialog {
-    border-radius: 4px!important;
-    box-shadow: unset!important;
-    border-width: 0!important;
+    border-radius: 4px !important;
+    box-shadow: unset !important;
+    border-width: 0 !important;
   }
   .tox-dialog__header {
     padding: 24px 32px;
@@ -34,59 +34,67 @@
     }
   }
   .tox-dialog__title {
-    font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    font-family: '-apple-system', 'BlinkMacSystemFon', 'Helvetica Neue', Helvetica, 'PingFang SC',
+      'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
     font-weight: 500;
-    color: #1A1A1A;
+    color: #1a1a1a;
     line-height: 24px;
   }
-  .tox-listboxfield .tox-listbox--select:focus, .tox-textarea:focus, .tox-textfield:focus {
+  .tox-listboxfield .tox-listbox--select:focus,
+  .tox-textarea:focus,
+  .tox-textfield:focus {
     border-color: #999;
   }
-  .tox-listboxfield .tox-listbox--select:hover, .tox-textarea:hover, .tox-textfield:hover {
+  .tox-listboxfield .tox-listbox--select:hover,
+  .tox-textarea:hover,
+  .tox-textfield:hover {
     border-color: #999;
   }
-  .tox-dialog__footer{
+  .tox-dialog__footer {
     border-top: 0;
     padding: 24px 32px;
     .tox-button {
-      border-color: #FB3A32;
+      border-color: #fb3a32;
       border-radius: 20px;
       min-width: 76px;
       font-size: 14px;
-      font-family: "-apple-system","BlinkMacSystemFon","Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+      font-family: '-apple-system', 'BlinkMacSystemFon', 'Helvetica Neue', Helvetica, 'PingFang SC',
+        'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
       font-weight: 400;
       color: #ffffff;
       line-height: 26px;
-      background-color: #FB3A32;
+      background-color: #fb3a32;
       &.tox-button--secondary {
         background-color: #ffffff;
-        border-color:#CCCCCC;
+        border-color: #cccccc;
         color: #666666;
-        order:25;
+        order: 25;
       }
       &:hover {
         color: #fff;
-        background: #FC615B;
-        border: 1px solid #FC615B;
+        background: #fc615b;
+        border: 1px solid #fc615b;
       }
       &:active {
-        background: #E2332C;
-        border: 1px solid #E2332C;
+        background: #e2332c;
+        border: 1px solid #e2332c;
       }
       &.is-disabled {
-        background: #F09D99;
-        border: 1px solid #F09D99;
+        background: #f09d99;
+        border: 1px solid #f09d99;
         cursor: not-allowed;
         color: #fff;
-        &:hover, &:active {
-          background: #F09D99;
-          border: 1px solid #F09D99;
+        &:hover,
+        &:active {
+          background: #f09d99;
+          border: 1px solid #f09d99;
         }
       }
     }
   }
 
-  .tox:not([dir=rtl]) .tox-dialog__footer .tox-dialog__footer-end>*, .tox:not([dir=rtl]) .tox-dialog__footer .tox-dialog__footer-start>* {
+  .tox:not([dir='rtl']) .tox-dialog__footer .tox-dialog__footer-end > *,
+  .tox:not([dir='rtl']) .tox-dialog__footer .tox-dialog__footer-start > * {
     margin-left: 12px;
   }
 
@@ -101,7 +109,8 @@
     color: #666666;
     margin: 0 24px 0 0;
     font-size: 16px;
-    font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    font-family: '-apple-system', 'BlinkMacSystemFon', 'Helvetica Neue', Helvetica, 'PingFang SC',
+      'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
     font-weight: 400;
     height: 30px;
     line-height: 30px;
@@ -110,11 +119,12 @@
     }
   }
   .tox-dialog__body-nav-item--active {
-    border-bottom: 2px solid #FB3A32;
-    color: #FB3A32;
+    border-bottom: 2px solid #fb3a32;
+    color: #fb3a32;
     margin: 0 24px 0 0;
     font-size: 16px;
-    font-family: "-apple-system", "BlinkMacSystemFon", "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    font-family: '-apple-system', 'BlinkMacSystemFon', 'Helvetica Neue', Helvetica, 'PingFang SC',
+      'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
     font-weight: 400;
     height: 30px;
     line-height: 30px;
@@ -125,8 +135,8 @@
 
   .tox-dialog__body-content {
     padding: 0 0;
-    height: 168px!important;
-    flex-basis: 168px!important;
+    height: 168px !important;
+    flex-basis: 168px !important;
   }
   .tox-form {
     .tox-label {
@@ -143,7 +153,7 @@
   }
   .tox-dropzone {
     padding: 0 0;
-    background-color: #F7F7F7;
+    background-color: #f7f7f7;
     border: 1px solid #cccccc;
     border-radius: 4px;
     font-size: 12px;
@@ -154,9 +164,9 @@
       color: #666666;
     }
     .tox-button--secondary {
-      color: #1A1A1A;
-      &:hover:not(:disabled){
-        color: #1A1A1A;
+      color: #1a1a1a;
+      &:hover:not(:disabled) {
+        color: #1a1a1a;
       }
     }
   }
@@ -168,8 +178,8 @@
     width: 400px;
     height: 200px;
     .tox-dialog__body-content {
-      height: 108px!important;
-      flex-basis: 108px!important;
+      height: 108px !important;
+      flex-basis: 108px !important;
       padding-top: 24px;
     }
   }

@@ -25,4 +25,4 @@ export default {
     style_2_theme_4,
     style_2_theme_5
   }
-}
+};

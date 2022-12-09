@@ -10,7 +10,8 @@
     <div class="textlink-editor-box" v-if="mode == 2">
       <div style="margin-bottom: 10px">
         <div class="label">
-          <span style="color:#FB3A32">*</span> 文字
+          <span style="color: #fb3a32">*</span>
+          文字
         </div>
         <div class="editorContent">
           <VhallInput
@@ -26,82 +27,86 @@
       </div>
       <div style="margin-top: 30px">
         <div class="label">
-          <span style="color:#FB3A32">*</span> 跳转地址
+          <span style="color: #fb3a32">*</span>
+          跳转地址
         </div>
         <div class="editorContent">
-          <el-input v-model="info.src" @change="changeLink" placeholder="请输入http://或https://开头的跳转地址"></el-input>
+          <el-input
+            v-model="info.src"
+            @change="changeLink"
+            placeholder="请输入http://或https://开头的跳转地址"
+          ></el-input>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import planFunctionVue from '../../../planFunction.vue'
-export default {
-  name: 'component-textlink',
-  props: {
-    // 1. 显示  2. 编辑
-    mode: {
-      required: true,
-      default: 1
-    },
-    info: {
-      required: false
-    }
-  },
-
-  data: function() {
-    return {
-      a: 'test',
-    }
-  },
-
-  watch: {
-  },
-
-  methods: {
-    changeLink(e) {
-      console.log(this.info.src)
-      const result = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/.test(this.info.src)
-      this.info.src = this.info.src.trim()
-      if(result) {
-        this.$emit('updateInfo', this.info)
-      } else {
-        this.$message.warning('请输入http://或https://开头的地址')
+  import planFunctionVue from '../../../planFunction.vue';
+  export default {
+    name: 'component-textlink',
+    props: {
+      // 1. 显示  2. 编辑
+      mode: {
+        required: true,
+        default: 1
+      },
+      info: {
+        required: false
       }
     },
 
-    changeText() {
-      this.$emit('updateInfo', this.info)
+    data: function () {
+      return {
+        a: 'test'
+      };
+    },
+
+    watch: {},
+
+    methods: {
+      changeLink(e) {
+        console.log(this.info.src);
+        const result = /http[s]{0,1}:\/\/([\w.]+\/?)\S*/.test(this.info.src);
+        this.info.src = this.info.src.trim();
+        if (result) {
+          this.$emit('updateInfo', this.info);
+        } else {
+          this.$message.warning('请输入http://或https://开头的地址');
+        }
+      },
+
+      changeText() {
+        this.$emit('updateInfo', this.info);
+      }
     }
-  }
-}
+  };
 </script>
 <style lang="less" scoped>
-  .textlink-wrapbox{
+  .textlink-wrapbox {
     .textlink {
       position: relative;
       min-height: 40px;
       line-height: 20px;
       word-break: break-all;
-      a{
+      a {
         color: #3562fa;
         font-size: 14px;
       }
     }
   }
-  .label{
+  .label {
     display: inline-block;
     font-size: 14px;
     line-height: 40px;
     width: 80px;
     text-align: right;
   }
-  .editorContent{
+  .editorContent {
     margin-left: 10px;
     font-size: 14px;
     display: inline-block;
-    /deep/ input{
+    /deep/ input {
       width: 312px;
       height: 40px;
       line-height: 40px;
@@ -111,9 +116,8 @@ export default {
     }
   }
   /* 图片上传 */
-  .upload-qrCode{
+  .upload-qrCode {
     height: 180px;
-    background: #CCCCCC;
-
+    background: #cccccc;
   }
 </style>
