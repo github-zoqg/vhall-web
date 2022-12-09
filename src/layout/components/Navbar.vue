@@ -41,7 +41,7 @@
             <el-dropdown-item
               divided
               @click.native="toAccountPage"
-              v-if="userInfo.user_extends.extends_remark != 2"
+              v-if="userInfo && userInfo.user_extends.extends_remark != 2"
             >
               <i class="iconfont-v3 saasicon_account1"></i>
               账户信息
@@ -469,6 +469,8 @@
       this.getDownNum();
       // 初始化聊天SDK [用户下的]
       this.initChat();
+      this.userInfo =
+        (sessionOrLocal.get('userInfo') && JSON.parse(sessionOrLocal.get('userInfo'))) || {};
     },
     beforeDestroy() {
       console.log('消亡');
