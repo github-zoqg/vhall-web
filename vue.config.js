@@ -26,7 +26,7 @@ let cdn = {
     '//s1.e.vhall.com/common-static/middle/echarts/4.9.0/echarts.min.js', // echarts
     '//s1.e.vhall.com/common-static/middle/middle-util/1.1.3/utils/index.min.js',
     '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.9/questionnaire_service.js',
-    '//s3.e.vhall.com/common-static/vhall-form/vhall-form-vue.js'
+    '//s3.e.vhall.com/common-static/middle/vhall-form/1.0.0-pre/vhall-form-vue.js'
   ],
   css: ['//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v2.0.2-beta/index.css']
 };
