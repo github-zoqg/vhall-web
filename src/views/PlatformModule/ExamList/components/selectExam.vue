@@ -132,6 +132,7 @@
         this.keywordIpt = '';
         this.isCheckAll = false;
         this.examList = [];
+        this.checkList = []; // 清空选中列表
         this.getExamList();
       },
       getExamList(clear = true) {
@@ -159,7 +160,6 @@
         });
       },
       moreLoadData() {
-        console.log('🚀 ~ file: selectExam.vue:153 ~ moreLoadData ~ moreLoadData');
         if (this.examList.length >= this.total) return false;
         this.queryParams.pageNum++;
         this.queryExamList();
@@ -202,12 +202,13 @@
         };
         examServer
           .selectExamFromUser(params)
-          .then(res => {
+          .then(() => {
             this.messageInfo('添加成功', 'success');
+            this.checkList = []; // 清空选中列表
             this.dialogVisible = false;
             this.$emit('added');
           })
-          .catch(res => {
+          .catch(() => {
             this.messageInfo('添加失败', 'error');
           });
       },
