@@ -20,7 +20,7 @@
           </p>
           <p class="index-btn">
             <el-button type="primary" @click.prevent.stop="toReturn" round>
-              {{ userInfo.user_extends.extends_remark == 2 ? '返回' : '返回首页' }}
+              {{ $route.params.str == 'fail' ? '返回' : '返回首页' }}
             </el-button>
           </p>
         </div>
@@ -67,7 +67,7 @@
     methods: {
       toReturn() {
         // 七牛返回页
-        if (this.userInfo.user_extends.extends_remark == 2) {
+        if (this.$route.params.str == 'fail') {
           window.open(
             'https://portal.qiniu.com/oauth/v2/authorize?response_type=code&client_id=ZmPTBUkzstLiMqHhrOAPsuVc&redirect_uri=https://test01-saas-api.vhall.com/v3/commons/auth/qny-callback&state=qiniu',
             '_self'
