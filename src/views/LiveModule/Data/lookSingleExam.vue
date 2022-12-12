@@ -204,14 +204,13 @@
                 <span v-else>{{ scope.row[item.key] || '-' }}</span>
               </template>
             </vh-table-column>
-            <vh-table-column label="操作" align="left" class="btn-rows" fixed="right" width="210">
+            <vh-table-column label="操作" align="left" class="btn-rows" fixed="right" width="160">
               <template slot-scope="scope">
                 <vh-button
                   borderRadius="4"
                   type="text"
                   plain
                   size="mini"
-                  class="zdy-theme-gray"
                   @click="openScoreDialog(scope.row)"
                 >
                   查看成绩
@@ -221,7 +220,6 @@
                   type="text"
                   plain
                   size="mini"
-                  class="zdy-theme-gray"
                   @click="editDataStatus(scope.row, false)"
                   v-if="scope.row.status > 0"
                 >
@@ -232,7 +230,6 @@
                   type="text"
                   plain
                   size="mini"
-                  class="zdy-theme-gray"
                   @click="editDataStatus(scope.row, true)"
                   v-else
                 >
@@ -464,12 +461,11 @@
         const tip = resultFul
           ? '「还原数据」后，当前数据重新计入统计分析和成绩排名中，确定进行还原？'
           : '「标记无效」后，当前数据默认不计入统计分析和成绩排名中，确定标为无效数据？';
-        this.$confirm(tip, '提示', {
-          cancelButtonText: '取消',
+        this.$vhConfirm(tip, '提示', {
           confirmButtonText: '确定',
-          customClass: 'zdy-message-box',
-          lockScroll: false,
-          cancelButtonClass: 'zdy-confirm-cancel'
+          cancelButtonText: '取消',
+          roundButton: true,
+          closeOnClickModal: false
         })
           .then(() => {
             examServer
@@ -567,7 +563,7 @@
       }
     }
     .single-exam-detail__list {
-      margin-top: 24px;
+      margin-top: 32px;
       padding: 24px 32px 40px 32px;
       background: #fff;
       border-radius: 4px;

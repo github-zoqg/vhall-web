@@ -65,8 +65,8 @@
       }
       // 重置内部元素
       .exam-execute-body {
-        height: calc(460px - 120px) !important;
-        max-height: calc(460px - 120px) !important;
+        height: calc(460px - 134px) !important;
+        max-height: calc(460px - 134px) !important;
         margin-right: 2px;
       }
     }
@@ -79,6 +79,7 @@
     }
     .content {
       padding-top: 25px !important;
+      padding-top: 24px !important;
       // height: 465px;
       overflow-y: auto;
       &::-webkit-scrollbar-track-piece {
@@ -117,6 +118,12 @@
           margin-top: 30px;
         }
       }
+    }
+    .vh-dialog__headerbtn {
+      top: 28px;
+    }
+    .exam-execute-footer {
+      border-radius: 0 0 12px 12px;
     }
   }
 </style>

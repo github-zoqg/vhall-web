@@ -54,7 +54,7 @@
     /* 登录：展开其它登录方式 */
     &.scene_login,
     &.scene_loginDynamic {
-      margin-top: 24px;
+      margin-top: 8px;
     }
     /* 登录：未展开其它登录方式 */
     &.scene_login_normal {
@@ -62,7 +62,7 @@
     }
     /* 注册 */
     &.scene_register {
-      margin-top: 24px;
+      margin-top: 8px;
     }
     /* 问卷 */
     &.scene_question {

@@ -1218,9 +1218,9 @@
         this.formHorse.scrolling_open = Number(this.scrolling_open);
         this.formHorse.type = 1;
         let params = JSON.parse(JSON.stringify(this.formHorse));
-        if (params.text_type == 2) {
-          delete params.text;
-        }
+        // if(params.text_type == 2){
+        //   delete params.text
+        // }
         this.$fetch('setScrolling', this.$params(params))
           .then(res => {
             this.setHorseReportData();
