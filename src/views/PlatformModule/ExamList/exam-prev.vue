@@ -78,7 +78,6 @@
       z-index: 2;
     }
     .content {
-      padding-top: 25px !important;
       padding-top: 24px !important;
       // height: 465px;
       overflow-y: auto;
