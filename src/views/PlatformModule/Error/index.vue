@@ -69,7 +69,7 @@
         // 七牛返回页
         if (this.$route.params.str == 'fail') {
           window.open(
-            'https://portal.qiniu.com/oauth/v2/authorize?response_type=code&client_id=ZmPTBUkzstLiMqHhrOAPsuVc&redirect_uri=https://test01-saas-api.vhall.com/v3/commons/auth/qny-callback&state=qiniu',
+            'https://portal.qiniu.com/oauth/v2/authorize?response_type=code&client_id=ZmPTBUkzstLiMqHhrOAPsuVc&redirect_uri=https://test01-saas-api.vhall.com/v3/users/auth/qny-callback&state=qiniu',
             '_self'
           );
         } else {
