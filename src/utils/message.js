@@ -1,7 +1,7 @@
-import Vue from 'vue'
+import Vue from 'vue';
 import { Message } from 'element-ui';
 // 全局配置 message 的 offset 值
-const offset = 8
+const offset = 8;
 
 const $message = options => {
   return Message({
@@ -29,4 +29,4 @@ const $message = options => {
 //将$message挂载到this上，用异步任务，是为了能覆盖element自动写入的 $message
 setTimeout(() => {
   Vue.prototype.$message = $message;
-})
+});

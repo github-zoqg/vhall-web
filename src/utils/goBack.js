@@ -14,10 +14,7 @@ const goBack = {
         }
       }
     }
-    var visibilityChangeEvent = hiddenProperty.replace(
-      /hidden/i,
-      'visibilitychange'
-    );
+    var visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
     var onVisibilityChange = () => {
       if (!document[hiddenProperty]) {
         // 判断是否切换页面进入的  防止切换页面进入导致结束的时候会再次展示倒计时

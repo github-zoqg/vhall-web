@@ -4,9 +4,7 @@
       <p class="title">使用场景</p>
       <article class="valueItem">
         <p class="itemTitle"></p>
-        <p class="itemValue">
-          在观看录播课或回放时，学员希望根据精彩看点的提示观看喜欢的内容。
-        </p>
+        <p class="itemValue">在观看录播课或回放时，学员希望根据精彩看点的提示观看喜欢的内容。</p>
       </article>
       <article class="valueItem">
         <p class="itemTitle"></p>
@@ -19,9 +17,7 @@
 </template>
 
 <script>
-  export default {
-
-  }
+  export default {};
 </script>
 
 <style lang="less" scoped>
@@ -35,7 +31,7 @@
     .title {
       width: 95px;
       height: 24px;
-      background: #FB3D32;
+      background: #fb3d32;
       border-radius: 12px;
       color: #ffffff;
       line-height: 24px;
@@ -50,7 +46,7 @@
         margin-top: 22px;
         // background-image: linear-gradient(to right, color-stop1, color-stop2);
 
-        background: linear-gradient(270deg, rgba(255, 255, 255, 0.2) 0%, #FB3B32 100%);
+        background: linear-gradient(270deg, rgba(255, 255, 255, 0.2) 0%, #fb3b32 100%);
       }
       .itemValue {
         width: 230px;

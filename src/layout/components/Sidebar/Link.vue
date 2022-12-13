@@ -5,37 +5,37 @@
 </template>
 
 <script>
-export default {
-  props: {
-    to: {
-      type: String,
-      required: true
-    }
-  },
-  computed: {
-    isExternal() {
-      return /^(https?:|mailto:|tel:)/.test(this.to);
-    },
-    type() {
-      if (this.isExternal) {
-        return 'a';
+  export default {
+    props: {
+      to: {
+        type: String,
+        required: true
       }
-      return 'router-link';
-    }
-  },
-  methods: {
-    linkProps(to) {
-      if (this.isExternal) {
+    },
+    computed: {
+      isExternal() {
+        return /^(https?:|mailto:|tel:)/.test(this.to);
+      },
+      type() {
+        if (this.isExternal) {
+          return 'a';
+        }
+        return 'router-link';
+      }
+    },
+    methods: {
+      linkProps(to) {
+        if (this.isExternal) {
+          return {
+            href: to,
+            target: '_blank',
+            rel: 'noopener'
+          };
+        }
         return {
-          href: to,
-          target: '_blank',
-          rel: 'noopener'
+          to: to
         };
       }
-      return {
-        to: to
-      };
     }
-  }
-};
+  };
 </script>

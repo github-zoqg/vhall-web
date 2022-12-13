@@ -1,6 +1,6 @@
-import Emitter from 'tiny-emitter'
+import Emitter from 'tiny-emitter';
 
-const emitter = new Emitter()
+const emitter = new Emitter();
 
 emitter.$on = emitter.on;
 emitter.$once = emitter.once;

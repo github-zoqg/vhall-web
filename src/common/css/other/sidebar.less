@@ -1,15 +1,17 @@
 #app {
   .main-container {
     min-height: 100%;
-    transition: margin-left .28s;
+    transition: margin-left 0.28s;
     margin-left: @sideBarWidth;
     position: relative;
   }
-  .header__nav, .sys-banner-layout {
+  .header__nav,
+  .sys-banner-layout {
     width: calc(100% - @sideBarWidth);
   }
   .hideSidebar {
-    .header__nav, .sys-banner-layout {
+    .header__nav,
+    .sys-banner-layout {
       width: calc(100% - @minSideBarWidth);
     }
   }
@@ -25,7 +27,7 @@
     left: 0;
     z-index: 1001;
     overflow: hidden;
-    span[slot="title"] {
+    span[slot='title'] {
       font-size: 16px;
     }
     // reset element-ui css
@@ -80,8 +82,8 @@
       .el-submenu__icon-arrow {
         transform: rotateZ(360deg);
       }
-      .el-submenu.is-opened>.el-submenu__title .el-submenu__icon-arrow {
-          transform: rotateZ(180deg);
+      .el-submenu.is-opened > .el-submenu__title .el-submenu__icon-arrow {
+        transform: rotateZ(180deg);
       }
     }
     // menu hover
@@ -120,7 +122,7 @@
       }
     }
 
-    .is-active>.el-submenu__title {
+    .is-active > .el-submenu__title {
       color: @subMenuActiveText !important;
     }
 
@@ -150,7 +152,7 @@
         background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACBUlEQVQ4T62UMW8TQRCF59050JofcLN2S0OcFFhYSKajhJqCREpHQUIFFaaCCpKCLhJOQY3p6EiEHDlFYiras+/+gFvAt4PmdGudTxdbOrHd3q4/v3nzdkD/eWEdL4qiRyJyJ7s3sdZ+bTabs+t+txKoMCLqE9HPDLApIj1jzGEl4HQ67QHoMnNXAcV9GXRJYRRFO0T0SVWJyATAPhGdMbMqdcDXRHQoIrPsvM/MBw6+AIZh2PB9PxSRAwDqWwNAj5m15MWK47grIgqs67kKAPAgCIJTvbQARlE0IKIZM6tKCsOwvsp89w+ZDU+ZuVkEChHtFhX9aW/fhS9HelkSPL8xurwoUfw9SZJbKiCvMPVPRN4YY7QUkvut2/M5fYTnfU731j6p1egZfox/6T7n+YmrbKkpcRyncQiCQJtBf+9tfbOQ8c3h+JXuf3dabz1Ba+P86uF1XV8N7GyNQDiuDS+PFTDvbO8Jyd7G8Kq9Fujk50tO/YN9Zz0aKcCz1BbxXjofs+B/0Zgx825ZUx4zs3Z7sVIfE7zXDzVfXjj/3IUsRqVNqRwbItoxxjSWFOaCva/BJqJG9m5PijGx1n4AUNdzAP3SYOdioJ0e5J7eafHpATiy1qZPT4EuFUsK8yoKr6D6cChCsy7qsMiPLw1+tfGV2aCDYjMtB5gkSTKoPGDLbFj37R8BXzMkYc8YmAAAAABJRU5ErkJggg==);
       }
     }
-    & .nest-menu .el-submenu>.el-submenu__title,
+    & .nest-menu .el-submenu > .el-submenu__title,
     & .el-submenu .el-menu-item {
       min-width: @sideBarWidth !important;
       &.is-active {
@@ -175,7 +177,7 @@
         width: 0;
       }
       .hamburger-container {
-        padding: 0 0!important;
+        padding: 0 0 !important;
         span {
           margin: 0 36px;
         }
@@ -202,7 +204,7 @@
     .el-submenu {
       overflow: hidden;
 
-      &>.el-submenu__title {
+      & > .el-submenu__title {
         padding: 0 !important;
 
         .svg-icon {
@@ -220,8 +222,8 @@
     }
     .el-menu--collapse {
       .el-submenu {
-        &>.el-submenu__title {
-          &>span[slot="title"] {
+        & > .el-submenu__title {
+          & > span[slot='title'] {
             height: 48px;
             width: 0;
             overflow: hidden;
@@ -237,7 +239,7 @@
     .sidebar-font {
       margin: 0 34px;
     }
-    .el-menu-item .sidebar-font{
+    .el-menu-item .sidebar-font {
       margin-left: 32px;
     }
   }
@@ -248,7 +250,7 @@
       margin-left: 0;
     }
     .sidebar-container {
-      transition: transform .28s;
+      transition: transform 0.28s;
       width: @sideBarWidth;
     }
     &.hideSidebar {
@@ -287,7 +289,7 @@
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAABQklEQVQ4T83UP0vDUBQF8HPyZ9Y10Hehi6C4ODi0UzsIfg0dXcXFpbj5CUQEZ1f9BBZ0cpYOihTSxknoYAYNCVciRJIWmyZ28EHI8s4vh+TdEEterOMFQbAVRdGK67qvjUbjKW+UgpPJZDUMw7aqtkm20juAFwAfAN6NMbskPzN0BhyPx2uquq2qXQBpeB3ANYAb13UfPM8bZGHf959JnhpjLmfA0WjUU9UOgPRaeJEMVfVIRM7T0E9D3/cfSQ7iOD5bWAPgOM6BqrZExEyDmiRJt9ls9quAw+GwY9v2rYh8l8s3XD5Y+PzkRRzHV2WNSxtmqGVZhyTfRGRv3isoBbNG0xt/Q0vBLGjb9g4AT0T2azfMB1X1mOS9iNzVBv/9sfnLpGyIyGbhYNedZQB9kn1jzEkBrDJu8/aW/g+rPmjp4BcUfMsVD2Uw0gAAAABJRU5ErkJggg==);
 }
 .saasicon_home_img {
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAABm0lEQVQ4T+2UMUsDQRCFZ/YupVhZhLATLgiCYq2llgE7EfwDFhFUEEtFRDtFxIAGbSyFgJWQUkutRUGQXG6XkMLOwiZ7jGxIwhljkpOUbrk78+3jzdtFGPLCQXhBECzZunQ6XexX3xOotR5n5lMAyDZBJURcl1K+/Qb+Fai1zjJzHhGfmHnLAhDxiJmnEXFNSlnqBu0K1FqvNZUdENFOtFEptQ8A202l+U7oD6BS6hwAFhBxQ0p5001FpVJZFEKcAMAtEeWiNW1guVyecF33EhE/hBC5VCqlew2gWq1KY0wBEUeMMSuZTOa1YUurKQiCCyFEVUq512+S0XOt9S4zjxLR5jegUorDMJz3PO8+DtD3/TnHce6IqCGurfAf2LaxVqtN1uv1Y7uRSCQ2k8nkS9TjWB76vj/jOM41ABwCwCcA7IZhuOx53mMLGguotX5g5gIRXVmAjYh911LK2T8BOyffqcZCeym8Q8R3Y8xZ63abL5vNqGede67rrjLzGBE16to5bCbe/ntTcYINAM+IWGy9sIE+2DgXDB34BZPK+BVMt73qAAAAAElFTkSuQmCC");
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAABm0lEQVQ4T+2UMUsDQRCFZ/YupVhZhLATLgiCYq2llgE7EfwDFhFUEEtFRDtFxIAGbSyFgJWQUkutRUGQXG6XkMLOwiZ7jGxIwhljkpOUbrk78+3jzdtFGPLCQXhBECzZunQ6XexX3xOotR5n5lMAyDZBJURcl1K+/Qb+Fai1zjJzHhGfmHnLAhDxiJmnEXFNSlnqBu0K1FqvNZUdENFOtFEptQ8A202l+U7oD6BS6hwAFhBxQ0p5001FpVJZFEKcAMAtEeWiNW1guVyecF33EhE/hBC5VCqlew2gWq1KY0wBEUeMMSuZTOa1YUurKQiCCyFEVUq512+S0XOt9S4zjxLR5jegUorDMJz3PO8+DtD3/TnHce6IqCGurfAf2LaxVqtN1uv1Y7uRSCQ2k8nkS9TjWB76vj/jOM41ABwCwCcA7IZhuOx53mMLGguotX5g5gIRXVmAjYh911LK2T8BOyffqcZCeym8Q8R3Y8xZ63abL5vNqGede67rrjLzGBE16to5bCbe/ntTcYINAM+IWGy9sIE+2DgXDB34BZPK+BVMt73qAAAAAElFTkSuQmCC');
 }
 .saasicon_lives_img {
   background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAABIElEQVQ4T7XUTUrEMBQH8P9rc4ku8qA7GT8OoCjjFVx6BEE8grjwBuIVBMEzWEUv4Ax12TYRindIeZKBSukoZGgmUMji8cv/NR+EyIMie9gOaK29FpE5AP+FjIKICq31zbh4ldAYsySi0jl3H6IppS5EZMbMe/+B0nXdaZ7nRQhYVdU8TdNnZl4Fatt2lmVZ6ed9wl/QpwWwO4AXzHwwXGgIWmufROQMwAMzn6+Bvniccpy8BwF8AvgiolsRKXziNXCTlgHcMfOlMeYEwMtksP+HxphjAK/RwKZpjojobTLYt1zX9WGSJO8xwA8A30qpK+dcORn0gLX2UUR2ACz/PDab7HK/Kdbafa31Yniw41696I9DSJuhNdt5D0NXD6n7AQ5J4RXaK73NAAAAAElFTkSuQmCC);
@@ -304,7 +306,7 @@
   .el-menu--popup {
     padding: 0 0;
   }
-  &>.el-menu {
+  & > .el-menu {
     .svg-icon {
       margin-right: 16px;
     }
@@ -314,12 +316,13 @@
     }
   }
 
-  .el-menu-item, .el-submenu__title {
+  .el-menu-item,
+  .el-submenu__title {
     height: 48px;
     line-height: 48px;
   }
 
-  .nest-menu .el-submenu>.el-submenu__title,
+  .nest-menu .el-submenu > .el-submenu__title,
   .el-menu-item {
     border-left: 4px @menuBg solid;
     &:hover {
@@ -335,7 +338,7 @@
   }
 
   // the scroll bar appears when the subMenu is too long
-  >.el-menu--popup {
+  > .el-menu--popup {
     max-height: 100vh;
     overflow-y: auto;
     border-radius: 4px;
