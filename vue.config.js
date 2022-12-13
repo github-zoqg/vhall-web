@@ -25,7 +25,7 @@ let cdn = {
     '//s1.e.vhall.com/common-static/middle/lodash/4.17.21/lodash.min.js', // lodash
     '//s1.e.vhall.com/common-static/middle/echarts/4.9.0/echarts.min.js', // echarts
     '//s1.e.vhall.com/common-static/middle/middle-util/1.1.3/utils/index.min.js',
-    '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.9/questionnaire_service.js'
+    '//s3.e.vhall.com/common-static/middle/questionnaire-web/1.0.10/questionnaire_service.js'
   ],
   css: ['//cnstatic01.e.vhall.com/common-static/middle/vhall-ui/v1.1.0/index.css']
 };
