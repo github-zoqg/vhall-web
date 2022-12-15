@@ -71,7 +71,12 @@ const router = [
     path: '/acc',
     component: Layout,
     redirect: '/acc/info',
-    meta: { auth: true, title: '账户管理', name: 'accountMgr', icon: 'saasicon_account_img' },
+    meta: {
+      auth: true,
+      title: '账户管理',
+      name: 'accountMgr',
+      icon: 'saasicon_account_img'
+    },
     children: [
       {
         path: 'info',
