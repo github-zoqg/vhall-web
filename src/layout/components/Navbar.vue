@@ -385,7 +385,6 @@
       async initChat() {
         let result = await this.$fetch('msgInitConsole');
         if (result) {
-          console.log(result, '值');
           let option = {
             appId: result.data.paasAppId || '', // appId 必须
             accountId: result.data.accountId || '', // 第三方用户ID

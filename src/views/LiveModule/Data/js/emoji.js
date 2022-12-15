@@ -1,5 +1,5 @@
 // import { emojiUrl } from './config.js'
-const emojiUrl = 'https://cnstatic01.e.vhall.com/static/img/arclist'
+const emojiUrl = 'https://cnstatic01.e.vhall.com/static/img/arclist';
 const faceArr = {
   '[微笑]': '1',
   '[撇嘴]': '2',
@@ -91,14 +91,14 @@ const faceArr = {
   '[爱你]': '88',
   '[NO]': '89',
   '[OK]': '90'
-}
+};
 const textToEmoji = s => {
-  s = s.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>')
+  s = s.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
   // eslint-disable-next-line no-useless-escape
-  let reg = /\[[^\[\]]+?\]/g
-  let ret = []
-  let textArr = s.split(reg) // 字符串分割，返回一个数组
-  let emojiArr = s.match(reg) // 返回一个数组，成员是所有匹配的子字符串
+  let reg = /\[[^\[\]]+?\]/g;
+  let ret = [];
+  let textArr = s.split(reg); // 字符串分割，返回一个数组
+  let emojiArr = s.match(reg); // 返回一个数组，成员是所有匹配的子字符串
 
   // 文字与表情 轮流添加到a
   // textArr 的长度 永远比 emojiArr 大 1
@@ -109,7 +109,7 @@ const textToEmoji = s => {
       ret.push({
         msgType: 'text',
         msgCont: cont
-      })
+      });
 
     // 最后一次循环，肯定没有表情与之对应，所以忽略
     // 如果不是最后一次，添加表情到a
@@ -118,45 +118,48 @@ const textToEmoji = s => {
       ret.push(
         faceArr[emojiArr[i]]
           ? {
-            msgType: 'emoji',
-            msgCont: emojiArr[i],
-            msgImage: emojiToPath(emojiArr[i])
-          }
+              msgType: 'emoji',
+              msgCont: emojiArr[i],
+              msgImage: emojiToPath(emojiArr[i])
+            }
           : {
-            msgType: 'text',
-            msgCont: emojiArr[i]
-          }
-      )
-  })
-  return ret
-}
+              msgType: 'text',
+              msgCont: emojiArr[i]
+            }
+      );
+  });
+  return ret;
+};
 function getEmojiList() {
-  let result = []
+  let result = [];
   for (let key in faceArr) {
     result.push({
       name: key,
       value: faceArr[key],
       src: emojiToPath(key)
-    })
+    });
   }
 
-  return result
+  return result;
 }
 // 将拆分开的消息数组转换成字符串
 function combinationStr(arr) {
-  let result = ''
+  let result = '';
 
   arr.forEach(item => {
-    let str = item.msgType === 'text' ? item.msgCont : `<img width="24" height="24" style="vertical-align:text-bottom;" src="${item.msgImage}"/>`
-    result += str
-  })
+    let str =
+      item.msgType === 'text'
+        ? item.msgCont
+        : `<img width="24" height="24" style="vertical-align:text-bottom;" src="${item.msgImage}"/>`;
+    result += str;
+  });
 
-  return result
+  return result;
 }
 function textToEmojiText(str) {
-  let arr = textToEmoji(str)
-  let result = combinationStr(arr)
-  return result
+  let arr = textToEmoji(str);
+  let result = combinationStr(arr);
+  return result;
 }
-const emojiToPath = key => `${emojiUrl}/Expression_${faceArr[key]}@2x.png`
-export { getEmojiList, textToEmojiText, emojiToPath, textToEmoji, faceArr }
+const emojiToPath = key => `${emojiUrl}/Expression_${faceArr[key]}@2x.png`;
+export { getEmojiList, textToEmojiText, emojiToPath, textToEmoji, faceArr };

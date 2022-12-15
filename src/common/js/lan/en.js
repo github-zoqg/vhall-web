@@ -46,7 +46,8 @@ module.exports = {
     没有白名单: '没有白名单',
     setHostTips: ' set to be the host',
     host: 'Host',
-    compatabilityTipA: 'Live Broadcast cannot be smoothly played in current browser, Chrome is recommended.',
+    compatabilityTipA:
+      'Live Broadcast cannot be smoothly played in current browser, Chrome is recommended.',
     compatabilityTipB: '当前浏览器版本较低，请升级浏览器版本或使用Chrome浏览器',
     downloadBrowser: 'Download here',
     // saas-popup组件相关

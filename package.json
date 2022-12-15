@@ -5,9 +5,10 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "serve:test": "vue-cli-service serve --mode dev_test",
-    "serve:test01": "vue-cli-service serve --mode dev_test01",
     "serve:new_test": "vue-cli-service serve --mode dev_new_test",
     "serve:test_zt": "vue-cli-service serve --mode dev_test_zt",
+    "serve:test1": "vue-cli-service serve --mode dev_test1",
+    "serve:test2": "vue-cli-service serve --mode dev_test2",
     "serve:test4": "vue-cli-service serve --mode dev_test4",
     "serve:test5": "vue-cli-service serve --mode dev_test5",
     "serve:test6": "vue-cli-service serve --mode dev_test6",
@@ -25,6 +26,7 @@
     "build:pre": "vue-cli-service build --mode pre",
     "preview": "node build/index.js --preview",
     "test:unit": "vue-cli-service test:unit",
+    "format": "prettier --write './src/**/*.(vue|js|css|less|jsx)'",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -46,11 +48,14 @@
     "tiny-emitter": "^2.1.0",
     "uuid": "^8.3.2",
     "vhall-ui": "0.0.2",
+    "@vue/composition-api": "1.3.0",
     "vue": "^2.6.11",
     "vue-awesome-swiper": "^3.1.3",
     "vue-color": "^2.7.1",
     "vue-count-to": "^1.0.13",
     "vue-cropperjs": "^4.2.0",
+    "vue-router": "^3.2.0",
+    "vue-masonry": "^0.16.0",
     "vuedraggable": "^2.24.3",
     "vuescroll": "^4.17.0",
     "whatwg-fetch": "^3.0.0"

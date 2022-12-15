@@ -47,7 +47,8 @@ module.exports = {
     normal: '正常',
     hostLeft: '暂时离开了页面，请稍等...',
     host: '主持人',
-    compatabilityTipA: '当前浏览器不能很好的支持直播的正常播放，为了更好的直播体验，推荐您使用Chrome浏览器进行观看',
+    compatabilityTipA:
+      '当前浏览器不能很好的支持直播的正常播放，为了更好的直播体验，推荐您使用Chrome浏览器进行观看',
     compatabilityTipB: '当前浏览器版本较低，请升级浏览器版本或使用Chrome浏览器',
     downloadBrowser: '点击下载',
     // saas-popup组件相关

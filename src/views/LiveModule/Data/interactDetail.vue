@@ -7,13 +7,25 @@
         红包收益中。
       </div>
       <div slot="content" v-if="title == '聊天' && $route.query.wType == 6">
-        1.分组模式下，仅展示主直播间最近聊天数据，更多内容请「导出分组数据」查看<br />2.点击“导出分组数据”，将导出每个小组内的聊天数据
+        1.分组模式下，仅展示主直播间最近聊天数据，更多内容请「导出分组数据」查看
+        <br />
+        2.点击“导出分组数据”，将导出每个小组内的聊天数据
       </div>
       <div slot="content" v-if="title == '聊天' && $route.query.wType != 6">
         1.仅展示最近聊天数据，更多内容请「导出全部数据」查看
       </div>
       <div slot="content" v-if="title == '关注用户'">
         此列表用户来自于微信，在直播页中主动点击关注接受发送消息通知的用户（非微信粉丝）
+      </div>
+      <div slot="content" v-if="title == '快问快答'">
+        1.未答人数：主办方推送快问快答至观看端，仅查看题目未进行作答的人数，人数排重
+        <br />
+        2.答题人数：主办方推送快问快答至观看端，参与答题的人数（包含主动交卷、人工及系统收卷），人数排重
+        <br />
+        3.满分率：（满分人数/提交人数）*100%
+        <br />
+        4.平均分：本次答题的总分数/答题人数
+        <br />
       </div>
     </pageTitle>
     <div class="operaBox">
@@ -69,18 +81,40 @@
         </el-button>
       </div>
       <span class="search-export">
-        <el-button round  size="medium" @click="exportData" v-if="title!='聊天' && totalNum">导出数据</el-button>
-        <el-dropdown v-if="($route.query.wType != 6 && title=='聊天') && totalNum" @command="exportData" trigger="click">
+        <el-button round size="medium" @click="exportData" v-if="title != '聊天' && totalNum">
+          导出数据
+        </el-button>
+        <el-dropdown
+          v-if="$route.query.wType != 6 && title == '聊天' && totalNum"
+          @command="exportData"
+          trigger="click"
+        >
           <el-button type="primary" round size="medium" class="create_but_padding">
             &nbsp; 导出数据 &nbsp;
           </el-button>
           <el-dropdown-menu slot="dropdown" class="dropdown_width">
-            <el-dropdown-item command="1" v-preventReClick size="medium">导出筛选数据</el-dropdown-item>
+            <el-dropdown-item command="1" v-preventReClick size="medium">
+              导出筛选数据
+            </el-dropdown-item>
             <el-dropdown-item command="2" v-preventReClick>导出全部数据</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button round  size="medium" @click="exportData" v-if="$route.query.wType == 6 && totalNum && title=='聊天'">导出主直播间数据</el-button>
-        <el-button round  size="medium" @click="getGroupRound" v-if="$route.query.wType == 6 && title=='聊天'">导出分组数据</el-button>
+        <el-button
+          round
+          size="medium"
+          @click="exportData"
+          v-if="$route.query.wType == 6 && totalNum && title == '聊天'"
+        >
+          导出主直播间数据
+        </el-button>
+        <el-button
+          round
+          size="medium"
+          @click="getGroupRound"
+          v-if="$route.query.wType == 6 && title == '聊天'"
+        >
+          导出分组数据
+        </el-button>
       </span>
     </div>
     <div class="interact-detail" v-show="totalNum">
@@ -135,6 +169,8 @@
   import { textToEmoji } from './js/emoji';
   import noData from '@/views/PlatformModule/Error/nullPage';
   import { sessionOrLocal } from '@/utils/utils';
+  import examServer from '@/utils/examServer';
+  import { roundRate } from '@/utils/utils';
   export default {
     components: {
       PageTitle,
@@ -379,6 +415,38 @@
             width: 120
           }
         ],
+        // 快问快答
+        examColumn: [
+          {
+            label: '推送时间',
+            key: 'push_time',
+            width: 180
+          },
+          {
+            label: '名称',
+            key: 'title'
+          },
+          {
+            label: '未答人数',
+            key: 'un_answered_num',
+            width: 95
+          },
+          {
+            label: '答题人数',
+            key: 'answer_num',
+            width: 95
+          },
+          {
+            label: '满分率(%)',
+            key: 'full_score_rate',
+            width: 100
+          },
+          {
+            label: '平均分',
+            key: 'avg_score',
+            width: 95
+          }
+        ],
         tableRowBtnFun: [],
         inviteBtnFun: [
           {
@@ -403,6 +471,13 @@
             name: '查看',
             methodName: 'lookDetail',
             path: '/live/lookSingleQuestion'
+          }
+        ],
+        examBtnFun: [
+          {
+            name: '查看明细',
+            methodName: 'lookExamDetail',
+            path: '/live/lookSingleExam'
           }
         ]
       };
@@ -503,6 +578,12 @@
             this.placeholder = '搜索微信昵称/手机号';
             this.text = '还没有人关注哦';
             this.getFollowersList();
+            break;
+          case '快问快答':
+            this.isCheckout = false;
+            this.tabelColumn = this.examColumn;
+            this.tableRowBtnFun = this.examBtnFun;
+            this.getExamInfo();
             break;
           default:
             break;
@@ -844,6 +925,37 @@
           }
         });
       },
+      // 快问快答
+      getExamInfo() {
+        let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
+        let params = {
+          source_type: 1,
+          source_id: this.webinarId,
+          pos: (pageInfo.pageNum - 1) * pageInfo.limit
+        };
+        let obj = Object.assign({}, pageInfo, params);
+        examServer
+          .getExamPushedList(obj)
+          .then(res => {
+            const list = res.data.list || [];
+            list.map(item => {
+              item.full_score_rate = roundRate(item.full_score_rate) + '%';
+              item.avg_score = roundRate(item.avg_score);
+            });
+            this.tableList = list;
+            this.totalNum = res.data.total || 0;
+            if (!res.data.total) {
+              this.nullText = 'nullData';
+              this.text = '您还没有快问快答数据！';
+            }
+          })
+          .catch(() => {
+            this.tableList = [];
+            this.totalNum = 0;
+            this.nullText = 'nullData';
+            this.text = '您还没有快问快答数据！';
+          });
+      },
       // 抽奖
       prizeList() {
         let pageInfo = this.$refs.tableList.pageInfo; //获取分页信息
@@ -970,507 +1082,687 @@
           customClass: 'zdy-message-box',
           lockScroll: false,
           cancelButtonClass: 'zdy-confirm-cancel'
-        }).then(() => {
-          let obj = {
-            id: item.id,
-            type: item.name === '问' ? 2 : 1,
-            room_id: this.roomId
-          }
-          this.$fetch('deleteRecodrder', obj).then(res => {
+        })
+          .then(() => {
+            let obj = {
+              id: item.id,
+              type: item.name === '问' ? 2 : 1,
+              room_id: this.roomId
+            };
+            this.$fetch('deleteRecodrder', obj).then(res => {
+              this.$message({
+                message: `删除成功`,
+                showClose: true,
+                // duration: 0,
+                type: 'success',
+                customClass: 'zdy-info-box'
+              });
+              this.getRecordList(this.pageInfo);
+            });
+          })
+          .catch(() => {
             this.$message({
-              message: `删除成功`,
+              message: `已取消删除`,
               showClose: true,
               // duration: 0,
-              type: 'success',
+              type: 'info',
               customClass: 'zdy-info-box'
             });
-            this.getRecordList(this.pageInfo);
           });
-        }).catch(() => {
-          this.$message({
-            message:  `已取消删除`,
-            showClose: true,
-            // duration: 0,
-            type: 'info',
-            customClass: 'zdy-info-box'
+      },
+      // 现金红包列表
+      getRedpacketList() {
+        let pageInfo = this.$refs.tableList.pageInfo;
+        pageInfo.pos = pageInfo.pageNum;
+        let formParams = {
+          webinar_id: this.webinarId
+        };
+        let obj = Object.assign({}, pageInfo, formParams);
+        this.$fetch('getRedpacketList', obj).then(res => {
+          this.tableList = res.data.data;
+          this.totalNum = res.data.total;
+          if (!res.data.total) {
+            this.nullText = 'nullData';
+            this.text = '您还没有发红包记录！';
+          }
+          this.tableList.map((item, index) => {
+            item.method =
+              item.pay_channel == 1
+                ? '微信'
+                : item.pay_channel == 2
+                ? '支付宝'
+                : item.pay_channel == 3
+                ? '余额支付'
+                : '-';
+            item.typeStr = item.type === 1 ? '均分红包' : '拼手气';
+            item.index = index + 1;
           });
         });
-    },
-    // 现金红包列表
-    getRedpacketList() {
-      let pageInfo = this.$refs.tableList.pageInfo;
-      pageInfo.pos = pageInfo.pageNum;
-      let formParams = {
-        webinar_id: this.webinarId
-      }
-      let obj = Object.assign({}, pageInfo, formParams);
-      this.$fetch('getRedpacketList', obj).then(res => {
-        this.tableList = res.data.data;
-        this.totalNum = res.data.total;
-        if (!res.data.total) {
-          this.nullText = 'nullData';
-          this.text = '您还没有发红包记录！';
-        }
-        this.tableList.map((item, index) => {
-          item.method = item.pay_channel == 1 ? '微信' : item.pay_channel == 2 ? '支付宝' : item.pay_channel == 3 ? '余额支付' : '-';
-          item.typeStr = item.type === 1 ? '均分红包' : '拼手气';
-          item.index = index + 1;
-        })
-      });
-    },
-     // 红包列表
-    getCodeRedpacketList() {
-      let pageInfo = this.$refs.tableList.pageInfo;
-      pageInfo.pos = pageInfo.pageNum;
-      let formParams = {
-        webinar_id: this.webinarId
-      }
-      let obj = Object.assign({}, pageInfo, formParams);
-      this.$fetch('getCodeRedpacketList', obj).then(res => {
-        this.tableList = res.data.data;
-        this.totalNum = res.data.total;
-        if (!res.data.total) {
-          this.nullText = 'nullData';
-          this.text = '您还没有发红包记录！';
-        } else {
-           this.tableList.map((item, index) => {
-            item.index = index + 1;
-          })
-        }
-
-      });
-    },
-    // 关注用户列表
-    getFollowersList() {
-      let params = {
-        room_id: this.roomId
-      };
-      if (this.searchTime) {
-        this.$refs.tableList.clearSelect();
-        params.start_time = this.searchTime[0];
-        params.end_time = this.searchTime[1];
-      }
-      this.tableList = [];
-      let obj = Object.assign({}, pageInfo, params);
-      this.params = params;
-      this.$fetch('getFollowersList', obj).then(res => {
-        this.tableList = res.data.data;
-        this.totalNum = res.data.total;
-        if (!res.data.total) {
-          this.nullText = 'nullData';
-          this.text = '还没有人关注哦';
-        } else {
-           this.tableList.map((item, index) => {
-            item.index = index + 1;
-          })
-        }
-      });
-    },
-    getTableList(params) {
-      this.changeColumn(this.title);
-    },
-    // 导出明细
-    reportDetail(that, {rows}) {
-      if (that.title === '现金红包') {
-        that.exportRedpacketDetailInfo(rows.id, rows.type);
-      }else if (that.title === '口令红包') {
-        that.exportCodeRedpacketDetailInfo(rows.id);
-      } else if (that.title === '签到') {
-        that.exportDetailSignInfo(rows.id);
-      } else if (that.title === '邀请排名') {
-        that.exportInviteDetailInfo(rows.invite_id);
-      } else {
-        that.exportPrizeDetailInfo(rows);
-      }
-    },
-    changeTableCheckbox(val) {
-      if (this.title === '聊天') {
-        this.seleteAllOptionList = val.map(item => item.msg_id);
-        this.isSeletedCheckout = this.seleteAllOptionList.length > 0 ? true : false
-      } else {
-        this.seleteAnwerList = val.filter(item => item.name == '答').map(item => item.id);
-        this.seleteQuestionList = val.filter(item => item.name == '问').map(item => item.id);
-        if (this.seleteAnwerList.length > 0 || this.seleteQuestionList.length > 0) {
-          this.isSeletedCheckout = true;
-        } else {
-          this.isSeletedCheckout = false;
-        }
-      }
-
-    },
-    exportData(type) {
-      switch (this.title) {
-        case '邀请排名':
-          this.exportInviteInfo();
-          break;
-        case '签到':
-          this.exportSignInfo();
-          break;
-        case '聊天':
-          this.exportChatInfo(type); // 基本聊天导出，or分组直播中 - 导出聊天 - 主直播间数据
-          break;
-        case '问答':
-          this.exportRecordInfo();
-          break;
-        case '抽奖':
-          this.exportPrizeInfo();
-          break;
-        case '问卷':
-          this.exportQuestionInfo();
-          break;
-        case '现金红包':
-          this.exportRedpacketInfo();
-          break;
-        case '口令红包':
-          this.exportCodeRedpacketInfo();
-          break;
-        case '关注用户':
-          this.exportFollowersInfo();
-          break;
-        default:
-          break;
-      }
-    },
-    // 获取可选场次
-    async getGroupRound() {
-      try {
-        let roundResult = await this.$fetch('getWebinarSwitchList', this.$params({webinar_id: this.webinarId, ...this.params }))
-        if (roundResult && roundResult.code == 200) {
-          this.groupRoundList = roundResult.data.switch_list || []
-          if (this.groupRoundList.length > 0) {
-            this.groupRoundVisible = true
+      },
+      // 红包列表
+      getCodeRedpacketList() {
+        let pageInfo = this.$refs.tableList.pageInfo;
+        pageInfo.pos = pageInfo.pageNum;
+        let formParams = {
+          webinar_id: this.webinarId
+        };
+        let obj = Object.assign({}, pageInfo, formParams);
+        this.$fetch('getCodeRedpacketList', obj).then(res => {
+          this.tableList = res.data.data;
+          this.totalNum = res.data.total;
+          if (!res.data.total) {
+            this.nullText = 'nullData';
+            this.text = '您还没有发红包记录！';
           } else {
-            this.groupRoundVisible = false
-            this.$message({
-              message: `没有可选场次的数据`,
-              showClose: true,
-              // duration: 0,
-              type: 'error',
-              customClass: 'zdy-info-box'
-            })
+            this.tableList.map((item, index) => {
+              item.index = index + 1;
+            });
+          }
+        });
+      },
+      // 关注用户列表
+      getFollowersList() {
+        let params = {
+          room_id: this.roomId
+        };
+        if (this.searchTime) {
+          this.$refs.tableList.clearSelect();
+          params.start_time = this.searchTime[0];
+          params.end_time = this.searchTime[1];
+        }
+        this.tableList = [];
+        let obj = Object.assign({}, pageInfo, params);
+        this.params = params;
+        this.$fetch('getFollowersList', obj).then(res => {
+          this.tableList = res.data.data;
+          this.totalNum = res.data.total;
+          if (!res.data.total) {
+            this.nullText = 'nullData';
+            this.text = '还没有人关注哦';
+          } else {
+            this.tableList.map((item, index) => {
+              item.index = index + 1;
+            });
+          }
+        });
+      },
+      getTableList(params) {
+        this.changeColumn(this.title);
+      },
+      // 导出明细
+      reportDetail(that, { rows }) {
+        if (that.title === '现金红包') {
+          that.exportRedpacketDetailInfo(rows.id, rows.type);
+        } else if (that.title === '口令红包') {
+          that.exportCodeRedpacketDetailInfo(rows.id);
+        } else if (that.title === '签到') {
+          that.exportDetailSignInfo(rows.id);
+        } else if (that.title === '邀请排名') {
+          that.exportInviteDetailInfo(rows.invite_id);
+        } else {
+          that.exportPrizeDetailInfo(rows);
+        }
+      },
+      changeTableCheckbox(val) {
+        if (this.title === '聊天') {
+          this.seleteAllOptionList = val.map(item => item.msg_id);
+          this.isSeletedCheckout = this.seleteAllOptionList.length > 0 ? true : false;
+        } else {
+          this.seleteAnwerList = val.filter(item => item.name == '答').map(item => item.id);
+          this.seleteQuestionList = val.filter(item => item.name == '问').map(item => item.id);
+          if (this.seleteAnwerList.length > 0 || this.seleteQuestionList.length > 0) {
+            this.isSeletedCheckout = true;
+          } else {
+            this.isSeletedCheckout = false;
           }
         }
-      } catch(e) {
-        this.groupRoundVisible = false
-        this.$message({
-          message: `没有可选场次的数据`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        })
-      }
-    },
-    closeGroupRoundDialog() {
-      this.groupRoundVisible = false
-    },
-    exportGroupByRound() {
-      if (this.groupRound) {
-        const vo = this.groupRoundList.filter(item => item.id == this.groupRound)
-        if (!(vo && vo.length > 0)) {
-          console.log('未筛选到有效场次，直接阻止不返回')
-          return
+      },
+      exportData(type) {
+        switch (this.title) {
+          case '邀请排名':
+            this.exportInviteInfo();
+            break;
+          case '签到':
+            this.exportSignInfo();
+            break;
+          case '聊天':
+            this.exportChatInfo(type); // 基本聊天导出，or分组直播中 - 导出聊天 - 主直播间数据
+            break;
+          case '问答':
+            this.exportRecordInfo();
+            break;
+          case '抽奖':
+            this.exportPrizeInfo();
+            break;
+          case '问卷':
+            this.exportQuestionInfo();
+            break;
+          case '现金红包':
+            this.exportRedpacketInfo();
+            break;
+          case '口令红包':
+            this.exportCodeRedpacketInfo();
+            break;
+          case '关注用户':
+            this.exportFollowersInfo();
+            break;
+          case '快问快答':
+            this.exportExamInfo();
+            break;
+          default:
+            break;
         }
-        this.$fetch('exportChatSwitch', {room_id: this.roomId, switch_id: this.groupRound, start_time: vo[0].start_time, end_time: vo[0].end_time}).then(res => {
-          // 暂无上报 this.$vhall_paas_port({
-          //   k: 100457,
-          //   data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-          // })
+      },
+      // 获取可选场次
+      async getGroupRound() {
+        try {
+          let roundResult = await this.$fetch(
+            'getWebinarSwitchList',
+            this.$params({ webinar_id: this.webinarId, ...this.params })
+          );
+          if (roundResult && roundResult.code == 200) {
+            this.groupRoundList = roundResult.data.switch_list || [];
+            if (this.groupRoundList.length > 0) {
+              this.groupRoundVisible = true;
+            } else {
+              this.groupRoundVisible = false;
+              this.$message({
+                message: `没有可选场次的数据`,
+                showClose: true,
+                // duration: 0,
+                type: 'error',
+                customClass: 'zdy-info-box'
+              });
+            }
+          }
+        } catch (e) {
+          this.groupRoundVisible = false;
           this.$message({
-            message: `导出申请成功，请去下载中心下载`,
-            showClose: true,
-            // duration: 0,
-            type: 'success',
-            customClass: 'zdy-info-box'
-          });
-          this.$EventBus.$emit('saas_vs_download_change');
-          this.groupRoundVisible = false
-        })
-      } else {
-        this.$message({
-          message: `请选择活动场次`,
-          showClose: true,
-          // duration: 0,
-          type: 'error',
-          customClass: 'zdy-info-box'
-        });
-      }
-    },
-    // 邀请详情导出
-    exportInviteDetailInfo(id) {
-       this.$fetch('exportDetailInvite', {webinar_id: this.webinarId, join_id: id }).then(res => {
-        this.$vhall_paas_port({
-          k: 100457,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.$EventBus.$emit('saas_vs_download_change');
-      })
-    },
-    // 邀请导出
-    exportInviteInfo() {
-      this.$fetch('exportInvite', {webinar_id: this.webinarId}).then(res => {
-        this.$vhall_paas_port({
-          k: 100456,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.$EventBus.$emit('saas_vs_download_change');
-      })
-    },
-    // 聊天
-    exportChatInfo(type) {
-      let params = JSON.parse(JSON.stringify(this.params))
-      if(type == 1) {
-        if(!params.start_time) {
-          this.$message.warning('请选择时间范围');
-          return false;
-        }
-      }
-      if(type == 2) {
-        delete params.start_time
-        delete params.end_time
-      }
-      this.$fetch('exportChat', params).then(res => {
-        this.$vhall_paas_port({
-          k: 100458,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.$EventBus.$emit('saas_vs_download_change');
-      }).catch(err=>{
-        this.$message({
-          message: err.msg,
-          showClose: true,
-          type: 'warning',
-          customClass: 'zdy-info-box'
-        });
-      })
-    },
-    // 问答
-    exportRecordInfo() {
-      this.$fetch('exportRecodrder', this.$params(this.params)).then(res => {
-        this.$vhall_paas_port({
-          k: 100461,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.$EventBus.$emit('saas_vs_download_change');
-      })
-    },
-    // 签到
-    exportSignInfo() {
-      this.$fetch('exportSign', {room_id: this.roomId}).then(res => {
-        this.$vhall_paas_port({
-          k: 100465,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.$EventBus.$emit('saas_vs_download_change');
-      })
-    },
-    exportDetailSignInfo(id) {
-      this.$fetch('exportDetailSign',{room_id: this.roomId, sign_id: id}).then(res => {
-        this.$vhall_paas_port({
-          k: 100464,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.$EventBus.$emit('saas_vs_download_change');
-      })
-    },
-    // 问卷
-    exportQuestionInfo() {
-      this.$fetch('exportSurvey',{webinar_id: this.webinarId, room_id: this.roomId}).then(res => {
-        this.$vhall_paas_port({
-          k: 100469,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.$EventBus.$emit('saas_vs_download_change');
-      })
-    },
-    // 抽奖
-    exportPrizeInfo() {
-      this.$fetch('exportLottery', this.params).then(res => {
-        this.$vhall_paas_port({
-          k: 100471,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.$EventBus.$emit('saas_vs_download_change');
-      })
-    },
-    // 抽奖单个
-    exportPrizeDetailInfo(item) {
-      this.$fetch('exportDetailLottery',{webinar_id: this.webinarId, id: item.id}).then(res => {
-        this.$vhall_paas_port({
-          k: 100472,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.$EventBus.$emit('saas_vs_download_change');
-      })
-    },
-    // 现金红包
-    exportRedpacketInfo() {
-      this.$fetch('exportRedpacket',{webinar_id: this.webinarId}).then(res => {
-        this.$vhall_paas_port({
-          k: 100473,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.$EventBus.$emit('saas_vs_download_change');
-      })
-    },
-     // 现金红包---导出明细
-    exportRedpacketDetailInfo(uuid, type) {
-      this.$fetch('exportDetailRedpacket',{webinar_id: this.webinarId, red_packet_uuid: uuid, type: type}).then(res => {
-        this.$vhall_paas_port({
-          k: 100474,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.$EventBus.$emit('saas_vs_download_change');
-      })
-    },
-    // 口令红包--导出全部
-    exportCodeRedpacketInfo() {
-      this.$fetch('exportCodeRedpacket',{webinar_id: this.webinarId}).then(res => {
-        if (res.code === 200) {
-          this.$message({
-            message: `导出申请成功，请去下载中心下载`,
-            showClose: true,
-            // duration: 0,
-            type: 'success',
-            customClass: 'zdy-info-box'
-          });
-          this.$EventBus.$emit('saas_vs_download_change');
-        } else {
-          this.$message({
-            message: res.msg,
+            message: `没有可选场次的数据`,
             showClose: true,
             // duration: 0,
             type: 'error',
             customClass: 'zdy-info-box'
           });
         }
-      })
-    },
-    // 口令红包--导出明细详情（单个）
-    exportCodeRedpacketDetailInfo(uuid, type) {
-      this.$fetch('exportDetailCodeRedpacket',{webinar_id: this.webinarId, red_packet_uuid: uuid, type: type}).then(res => {
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
+      },
+      closeGroupRoundDialog() {
+        this.groupRoundVisible = false;
+      },
+      exportGroupByRound() {
+        if (this.groupRound) {
+          const vo = this.groupRoundList.filter(item => item.id == this.groupRound);
+          if (!(vo && vo.length > 0)) {
+            console.log('未筛选到有效场次，直接阻止不返回');
+            return;
+          }
+          this.$fetch('exportChatSwitch', {
+            room_id: this.roomId,
+            switch_id: this.groupRound,
+            start_time: vo[0].start_time,
+            end_time: vo[0].end_time
+          }).then(res => {
+            // 暂无上报 this.$vhall_paas_port({
+            //   k: 100457,
+            //   data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
+            // })
+            this.$message({
+              message: `导出申请成功，请去下载中心下载`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.$EventBus.$emit('saas_vs_download_change');
+            this.groupRoundVisible = false;
+          });
+        } else {
+          this.$message({
+            message: `请选择活动场次`,
+            showClose: true,
+            // duration: 0,
+            type: 'error',
+            customClass: 'zdy-info-box'
+          });
+        }
+      },
+      // 邀请详情导出
+      exportInviteDetailInfo(id) {
+        this.$fetch('exportDetailInvite', { webinar_id: this.webinarId, join_id: id }).then(res => {
+          this.$vhall_paas_port({
+            k: 100457,
+            data: {
+              business_uid: this.userId,
+              user_id: '',
+              webinar_id: this.webinarId,
+              refer: '',
+              s: '',
+              report_extra: {},
+              ref_url: '',
+              req_url: ''
+            }
+          });
+          this.$message({
+            message: `导出申请成功，请去下载中心下载`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.$EventBus.$emit('saas_vs_download_change');
         });
-        this.$EventBus.$emit('saas_vs_download_change');
-      })
-    },
-    // 关注用户 - 导出全部（支持条件筛选）
-    exportFollowersInfo() {
-      let params = {
-        webinar_id: this.webinar_id
-      };
-      if (this.searchTime) {
-        params.start_time = this.searchTime[0] + ' 00:00:00';
-        params.end_time = this.searchTime[1] + ' 23:59:59';
+      },
+      // 邀请导出
+      exportInviteInfo() {
+        this.$fetch('exportInvite', { webinar_id: this.webinarId }).then(res => {
+          this.$vhall_paas_port({
+            k: 100456,
+            data: {
+              business_uid: this.userId,
+              user_id: '',
+              webinar_id: this.webinarId,
+              refer: '',
+              s: '',
+              report_extra: {},
+              ref_url: '',
+              req_url: ''
+            }
+          });
+          this.$message({
+            message: `导出申请成功，请去下载中心下载`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.$EventBus.$emit('saas_vs_download_change');
+        });
+      },
+      // 聊天
+      exportChatInfo(type) {
+        let params = JSON.parse(JSON.stringify(this.params));
+        if (type == 1) {
+          if (!params.start_time) {
+            this.$message.warning('请选择时间范围');
+            return false;
+          }
+        }
+        if (type == 2) {
+          delete params.start_time;
+          delete params.end_time;
+        }
+        this.$fetch('exportChat', params)
+          .then(res => {
+            this.$vhall_paas_port({
+              k: 100458,
+              data: {
+                business_uid: this.userId,
+                user_id: '',
+                webinar_id: this.webinarId,
+                refer: '',
+                s: '',
+                report_extra: {},
+                ref_url: '',
+                req_url: ''
+              }
+            });
+            this.$message({
+              message: `导出申请成功，请去下载中心下载`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.$EventBus.$emit('saas_vs_download_change');
+          })
+          .catch(err => {
+            this.$message({
+              message: err.msg,
+              showClose: true,
+              type: 'warning',
+              customClass: 'zdy-info-box'
+            });
+          });
+      },
+      // 问答
+      exportRecordInfo() {
+        this.$fetch('exportRecodrder', this.$params(this.params)).then(res => {
+          this.$vhall_paas_port({
+            k: 100461,
+            data: {
+              business_uid: this.userId,
+              user_id: '',
+              webinar_id: this.webinarId,
+              refer: '',
+              s: '',
+              report_extra: {},
+              ref_url: '',
+              req_url: ''
+            }
+          });
+          this.$message({
+            message: `导出申请成功，请去下载中心下载`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.$EventBus.$emit('saas_vs_download_change');
+        });
+      },
+      // 签到
+      exportSignInfo() {
+        this.$fetch('exportSign', { room_id: this.roomId }).then(res => {
+          this.$vhall_paas_port({
+            k: 100465,
+            data: {
+              business_uid: this.userId,
+              user_id: '',
+              webinar_id: this.webinarId,
+              refer: '',
+              s: '',
+              report_extra: {},
+              ref_url: '',
+              req_url: ''
+            }
+          });
+          this.$message({
+            message: `导出申请成功，请去下载中心下载`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.$EventBus.$emit('saas_vs_download_change');
+        });
+      },
+      exportDetailSignInfo(id) {
+        this.$fetch('exportDetailSign', { room_id: this.roomId, sign_id: id }).then(res => {
+          this.$vhall_paas_port({
+            k: 100464,
+            data: {
+              business_uid: this.userId,
+              user_id: '',
+              webinar_id: this.webinarId,
+              refer: '',
+              s: '',
+              report_extra: {},
+              ref_url: '',
+              req_url: ''
+            }
+          });
+          this.$message({
+            message: `导出申请成功，请去下载中心下载`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.$EventBus.$emit('saas_vs_download_change');
+        });
+      },
+      // 问卷
+      exportQuestionInfo() {
+        this.$fetch('exportSurvey', { webinar_id: this.webinarId, room_id: this.roomId }).then(
+          res => {
+            this.$vhall_paas_port({
+              k: 100469,
+              data: {
+                business_uid: this.userId,
+                user_id: '',
+                webinar_id: this.webinarId,
+                refer: '',
+                s: '',
+                report_extra: {},
+                ref_url: '',
+                req_url: ''
+              }
+            });
+            this.$message({
+              message: `导出申请成功，请去下载中心下载`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.$EventBus.$emit('saas_vs_download_change');
+          }
+        );
+      },
+      // 快问快答导出
+      exportExamInfo() {
+        this.$fetch('exportExam', { webinar_id: this.webinarId, room_id: this.roomId }).then(
+          res => {
+            this.$message({
+              message: `导出申请成功，请去下载中心下载`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.$EventBus.$emit('saas_vs_download_change');
+          }
+        );
+      },
+      // 抽奖
+      exportPrizeInfo() {
+        this.$fetch('exportLottery', this.params).then(res => {
+          this.$vhall_paas_port({
+            k: 100471,
+            data: {
+              business_uid: this.userId,
+              user_id: '',
+              webinar_id: this.webinarId,
+              refer: '',
+              s: '',
+              report_extra: {},
+              ref_url: '',
+              req_url: ''
+            }
+          });
+          this.$message({
+            message: `导出申请成功，请去下载中心下载`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.$EventBus.$emit('saas_vs_download_change');
+        });
+      },
+      // 抽奖单个
+      exportPrizeDetailInfo(item) {
+        this.$fetch('exportDetailLottery', { webinar_id: this.webinarId, id: item.id }).then(
+          res => {
+            this.$vhall_paas_port({
+              k: 100472,
+              data: {
+                business_uid: this.userId,
+                user_id: '',
+                webinar_id: this.webinarId,
+                refer: '',
+                s: '',
+                report_extra: {},
+                ref_url: '',
+                req_url: ''
+              }
+            });
+            this.$message({
+              message: `导出申请成功，请去下载中心下载`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.$EventBus.$emit('saas_vs_download_change');
+          }
+        );
+      },
+      // 现金红包
+      exportRedpacketInfo() {
+        this.$fetch('exportRedpacket', { webinar_id: this.webinarId }).then(res => {
+          this.$vhall_paas_port({
+            k: 100473,
+            data: {
+              business_uid: this.userId,
+              user_id: '',
+              webinar_id: this.webinarId,
+              refer: '',
+              s: '',
+              report_extra: {},
+              ref_url: '',
+              req_url: ''
+            }
+          });
+          this.$message({
+            message: `导出申请成功，请去下载中心下载`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.$EventBus.$emit('saas_vs_download_change');
+        });
+      },
+      // 现金红包---导出明细
+      exportRedpacketDetailInfo(uuid, type) {
+        this.$fetch('exportDetailRedpacket', {
+          webinar_id: this.webinarId,
+          red_packet_uuid: uuid,
+          type: type
+        }).then(res => {
+          this.$vhall_paas_port({
+            k: 100474,
+            data: {
+              business_uid: this.userId,
+              user_id: '',
+              webinar_id: this.webinarId,
+              refer: '',
+              s: '',
+              report_extra: {},
+              ref_url: '',
+              req_url: ''
+            }
+          });
+          this.$message({
+            message: `导出申请成功，请去下载中心下载`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.$EventBus.$emit('saas_vs_download_change');
+        });
+      },
+      // 口令红包--导出全部
+      exportCodeRedpacketInfo() {
+        this.$fetch('exportCodeRedpacket', { webinar_id: this.webinarId }).then(res => {
+          if (res.code === 200) {
+            this.$message({
+              message: `导出申请成功，请去下载中心下载`,
+              showClose: true,
+              // duration: 0,
+              type: 'success',
+              customClass: 'zdy-info-box'
+            });
+            this.$EventBus.$emit('saas_vs_download_change');
+          } else {
+            this.$message({
+              message: res.msg,
+              showClose: true,
+              // duration: 0,
+              type: 'error',
+              customClass: 'zdy-info-box'
+            });
+          }
+        });
+      },
+      // 口令红包--导出明细详情（单个）
+      exportCodeRedpacketDetailInfo(uuid, type) {
+        this.$fetch('exportDetailCodeRedpacket', {
+          webinar_id: this.webinarId,
+          red_packet_uuid: uuid,
+          type: type
+        }).then(res => {
+          this.$message({
+            message: `导出申请成功，请去下载中心下载`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.$EventBus.$emit('saas_vs_download_change');
+        });
+      },
+      // 关注用户 - 导出全部（支持条件筛选）
+      exportFollowersInfo() {
+        let params = {
+          webinar_id: this.webinar_id
+        };
+        if (this.searchTime) {
+          params.start_time = this.searchTime[0] + ' 00:00:00';
+          params.end_time = this.searchTime[1] + ' 23:59:59';
+        }
+        this.$fetch('exportFollowersInfo', params).then(res => {
+          this.$vhall_paas_port({
+            k: 100473,
+            data: {
+              business_uid: this.userId,
+              user_id: '',
+              webinar_id: this.webinarId,
+              refer: '',
+              s: '',
+              report_extra: {},
+              ref_url: '',
+              req_url: ''
+            }
+          });
+          this.$message({
+            message: `导出申请成功，请去下载中心下载`,
+            showClose: true,
+            // duration: 0,
+            type: 'success',
+            customClass: 'zdy-info-box'
+          });
+          this.$EventBus.$emit('saas_vs_download_change');
+        });
+      },
+      // 问卷查看
+      lookDetail(that, val) {
+        let rows = val.rows;
+        that.$vhall_paas_port({
+          k: 100470,
+          data: {
+            business_uid: this.userId,
+            user_id: '',
+            webinar_id: this.webinarId,
+            refer: '',
+            s: '',
+            report_extra: {},
+            ref_url: '',
+            req_url: ''
+          }
+        });
+        that.$router.push({
+          path: `${val.path}/${that.webinarId}`,
+          query: {
+            surveyId: rows.survey_id,
+            roomId: that.$route.query.roomId,
+            subject: rows.subject,
+            number: rows.filled_number
+          }
+        });
+      },
+      // 快问快答查看
+      lookExamDetail(that, val) {
+        let rows = val.rows;
+        that.$router.push({
+          path: `${val.path}/${that.webinarId}`,
+          query: { paperId: rows.paper_id, roomId: that.$route.query.roomId }
+        });
       }
-      this.$fetch('exportFollowersInfo', params).then(res => {
-        this.$vhall_paas_port({
-          k: 100473,
-          data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-        })
-        this.$message({
-          message: `导出申请成功，请去下载中心下载`,
-          showClose: true,
-          // duration: 0,
-          type: 'success',
-          customClass: 'zdy-info-box'
-        });
-        this.$EventBus.$emit('saas_vs_download_change');
-      })
-    },
-    // 问卷查看
-    lookDetail(that, val) {
-      let rows = val.rows;
-      that.$vhall_paas_port({
-        k: 100470,
-        data: {business_uid: this.userId, user_id: '', webinar_id: this.webinarId, refer: '', s: '', report_extra: {}, ref_url: '', req_url: ''}
-      })
-      that.$router.push({path: `${val.path}/${that.webinarId}`, query: {surveyId: rows.survey_id,roomId:that.$route.query.roomId, subject: rows.subject, number: rows.filled_number}});
     }
-  }
-};
+  };
 </script>
 <style lang="less">
   .el-tooltip__popper {

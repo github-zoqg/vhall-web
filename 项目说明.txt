@@ -6,42 +6,70 @@ JS开发规范： http://wiki.vhallops.com/pages/viewpage.action?pageId=61177907
 public
 ----favicon.ico
 ----index.html
+scripts
+----btool.js
+----path-config.js
 src
 ----api
 --------config.js 接口请求地址配置文件
---------fetch.js 接口请求封装文件
 --------env.js 不同环境，静态地址配置  因太多使用，不删除     所有环境变量防止 .env.*****
+--------errorMap.js 后端code码映射提示文案文件
+--------fetch.js 接口请求封装文件
+--------StaticFileUrl.js 静态下载文件地址（CDN）统一维护文件
 ----common
 --------css 样式文件（less）
+--------icon-font 阿里巴巴icon-font字体图标库（原控制台）
+--------vh-saas-font 阿里巴巴icon-font字体图标库（微吼）
 --------images 图片
 --------js 通用JS类库文件
 ------------lan 国际化目录
-----components
+------------tinynce 富文本编辑器-中文
+------------json
+----------------china.json  中国地图json文件
+------------skins 皮肤
+----------------pc  pc端直播间设计器-pc主题配置
+----------------wap  wap端直播间设计器-wap主题配置
+----components 通用组件
+--------beginBtn 右侧开播按钮
 --------ColorSelect 颜色选择器
+--------Cropper 图片裁剪组件
 --------DataUsage 数据并发、流量总览卡片
---------Doc ???
+--------DefaultGroup 小组成员分配
+--------Dialog 弹窗
+--------Doc 选择文档等
 --------Echarts echarts图形组件
---------TableList 数据-表格类通用
+--------FileUpload 文件上传
 --------Footer 网站底部
+--------Icon 阿里iconfont
+--------Input 单行/多行输入框组件
 --------ItemCard 简介卡片入口
 --------MenuItem 菜单导航组件
---------Header 头部公共导航
---------Icon 阿里iconfont
+--------OldHeader
 --------PageTitle 页面头部标题
---------Dialog 弹窗
---------Player 播放器
---------Doc 文档
---------Player_1 播放器（待删除）
---------Share 分享
---------Upload 上传
---------Pagination 分页组件（待删除）
---------Sidebar 左侧菜单导航组件
---------Spagination 分页组件
+--------Player 播放器 (待优化)
+--------Player_1 播放器
+--------Question 问卷
 --------SearchArea 搜索组件
+--------Share 分享
+--------Spagination 分页组件
+--------TableList 数据-表格类通用
+--------Tinymce 富文本编辑器
+--------Transcript 个人成绩单组件
+--------Upload 上传
+--------VhallReport 数据上报
+--------VideoTailoring 剪辑台
+----init-global
+--------businessData.js 回放视频等全局性配置文件
 ----layout
---------baseLayout.vue 基础布局 默认包含header和侧边导航栏
---------baseLayout.vue 空白布局 不默认包含任何内容
-----tangram（tangram不在以依赖形式安装，而是将相关文件复制到项目里面，此文件夹为原tangram项目）
+--------components
+------------Breadcrumb 欢迎回来
+------------Hamburger 是否收缩按钮
+------------Sidebar 左侧菜单栏
+------------SysBanner 系统通知
+------------AppMain.vue 主体内容
+------------Navbar.vue 顶部导航
+--------emptyLayout.vue  router-viewer口子
+--------index.vue 默认布局
 ----router 路由
 --------modules
 ------------home.js 首页
@@ -51,72 +79,51 @@ src
 ------------settingOrData.js 数据或开发设置
 ------------user.js 财务中心、账户管理、个人主页
 ------------v3Sys.js 登录、注册、忘记密码、消息中心、下载中心、公共页面、*跳转
+--------crumb.js 面包屑文件
 --------index.js 入口
 ----utils
---------enumeration.js 常量、枚举，用于页面展示反显
+--------dictionary.js 常量、枚举，用于页面展示反显、
+--------directive.js 自定义指令
 --------Events.js
---------general.js
---------goBack.js
---------jsonp.js
---------qq.js
---------softKeyboard.js
+--------filter.js 过滤器
+--------general.js 日期转换
+--------getBrowserType.js 浏览器判断
+--------goBack.js （无效文件）
+--------imgSizeMap.js 图片尺寸映射
+--------jsonp.js jsonp封装
+--------message.js
+--------ossImgConfig.js 默认头像常量
+--------prototype.js 原型链绑定
+--------qq.js QQ分享
+--------skins-utils.js 皮肤主题转换文件
+--------ssoAutoLogin.js sso自动登录
 --------utils.js 工具包处理
---------weChat.js
+--------validate.js 手机号验证
+--------weChat.js 微信分享等
 ----views
---------LiveModule 直播模块
-------------Room（文件夹，原发起端与观看端，移植到项目里面，这版不做修改）
-------------signUp（文件夹，报名表单相关页面）
-----------------fieldSet.vue 报名表单设置页面
-----------------mian.vue 首页，包含左侧题型设置与右侧ui显示
-----------------shareDialog.vue 独立表单设置页面
-----------------signUpForm.vue 表单预览页面
-----------------themeSet.vue 主题设置页面
-----------------util.js 题型数据
-------------Subscribe（文件夹，预约相关）
-----------------associatedDoc.vue 关联文档弹框
-----------------chapter.vue 打点页
-----------------list.vue 回放列表
-----------------previewChapter.vue 预览打点弹框
-----------------videoTailoring.vue 剪辑台
-------------PlayBack（文件夹，回放相关）
-----------------feedBack.vue 反馈弹框
-----------------index.vue 预约页
-----------------productDialog.vue 产品弹框
-------------customTab.vue 自定义组件
-------------detail.vue 直播详情
-------------edit.vue 编辑/基本信息
-------------list.vue 直播列表
-------------planFunction.vue 准备_功能配置
-------------signUp.vue 报名表单
-------------viewerRules.vue 准备_观看限制
---------SpecialModule 专题模块
-------------detail.vue 专题详情
-------------list.vue 专题列表
---------MaterialModule 资料模块
-------------advert.vue 广告推荐
-------------gift.vue 礼物
-------------prize.vue 奖品
-------------question.vue 问卷
-------------view.vue 音视频
-------------viewer.vue 观众
-------------word.vue 文档
---------StatisticsModule 数据统计模块
-------------dataInfo.vue 数据总览
-------------dataLive.vue 活动数据
---------SettingModule 设置中心模块
-------------chat.vue 聊天严禁词
-------------dev.vue 开发设置
-------------logo.vue 控制台标识
-------------setting.vue 设置中心总览
---------FinanceModule 财务中心模块
-------------income.vue 账户收益
-------------info.vue 财务总览
 --------AccountModule 账户模块
-------------home.vue 个人主页
-------------info.vue 账户信息
-------------son.vue  子账号管理
+------------模块说明.md（模块说明见此文件）
+--------FinanceModule 财务管理模块
+------------模块说明.md（模块说明见此文件）
+--------FirstPage 首页模块
+------------模块说明.md（模块说明见此文件）
+--------LiveModule 直播模块
+------------模块说明.md（模块说明见此文件）
+--------SpecialModule 专题模块
+------------模块说明.md（模块说明见此文件）
+--------MaterialModule 资料模块
+------------模块说明.md（模块说明见此文件）
+--------StatisticsModule 数据统计模块
+------------模块说明.md（模块说明见此文件）
+--------SettingModule 设置中心模块
+------------模块说明.md（模块说明见此文件）
+--------FinanceModule 财务中心模块
+------------模块说明.md（模块说明见此文件）
 --------PlatformModule 全平台-公共模块
-------------Error 通用错误页
+------------模块说明.md（模块说明见此文件）
+--------PrivacyModule 隐私协议通用文案管理
+------------模块说明.md（模块说明见此文件）
+--------UserHome 个人主页
 ----App.vue
 ----main.js 入口执行文件
 tests
@@ -124,10 +131,26 @@ tests
 --------example.spec.js 单元测试
 .browserslistrc
 .editorconfig
+.env.dev_stress 压测环境
+.env.dev_test 测试环境
+.env.dev_new_test 测试环境
+.env.dev_test_zt 测试环境-本地启动
+.env.dev_test01 测试环境-本地启动
+.env.dev_test02 测试环境-本地启动
+.env.dev_test4 测试环境-本地启动
+.env.dev_test5 测试环境-本地启动
+.env.dev_test6 测试环境-本地启动
 .env.development  开发环境
+.env.new_test 测试环境
 .env.pre  预发布环境
 .env.production 生产环境
 .env.test 测试环境
+.env.test_zt 测试环境
+.env.test01 测试环境
+.env.test02 测试环境
+.env.test4 测试环境
+.env.test5 测试环境
+.env.test6 测试环境
 .eslintrc.js
 .gitignore
 babel.config.js
@@ -135,5 +158,3 @@ jest.config.js
 package.json
 README.md
 vue.config.js
-
-富文本编辑器为wangEdtior，已将编辑器封装成组件，位置：components/WangEdtior/，直接引用即可 [废弃，应该替换成tinymce]

@@ -76,7 +76,7 @@
     computed: {
       newChild: function () {
         let children = this.item.children;
-        console.log('children', children);
+        // console.log('children', children);
         let userInfo = sessionOrLocal.get('userInfo');
         let permissions = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
         let perVo = permissions ? JSON.parse(permissions) : {};
