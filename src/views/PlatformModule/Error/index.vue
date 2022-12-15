@@ -19,7 +19,9 @@
             <br />
           </p>
           <p class="index-btn">
-            <el-button type="primary" @click.prevent.stop="toReturn" round>返回首页</el-button>
+            <el-button type="primary" @click.prevent.stop="toReturn" round>
+              {{ $route.params.str == 'fail' ? '返回' : '返回首页' }}
+            </el-button>
           </p>
         </div>
       </div>
@@ -54,12 +56,27 @@
 <script>
   export default {
     name: 'Error.vue',
-    beforeCreate() {},
+    data() {
+      return {
+        userInfo: {}
+      };
+    },
+    created() {
+      this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+    },
     methods: {
       toReturn() {
-        this.$router.push({
-          path: '/'
-        });
+        // 七牛返回页
+        if (this.$route.params.str == 'fail') {
+          window.open(
+            'https://portal.qiniu.com/oauth/v2/authorize?response_type=code&client_id=ZmPTBUkzstLiMqHhrOAPsuVc&redirect_uri=https://test01-saas-api.vhall.com/v3/users/auth/qny-callback&state=qiniu',
+            '_self'
+          );
+        } else {
+          this.$router.push({
+            path: '/'
+          });
+        }
       }
     }
   };
@@ -152,5 +169,22 @@
     top: calc(25%);
     max-width: 100%;
     max-height: 100%;
+  }
+  @media screen and (max-width: 750px) {
+    .container {
+      width: 100%;
+    }
+    .left-section {
+      height: 50%;
+      width: 92%;
+      position: relative;
+      top: 33%;
+    }
+    .right-section {
+      width: 100%;
+      position: absolute;
+      top: 0;
+      height: 50%;
+    }
   }
 </style>

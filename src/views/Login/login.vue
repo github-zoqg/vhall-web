@@ -664,6 +664,7 @@
             sessionOrLocal.set('SAAS_V3_SSO_TOKEN', res.data.sso_token || '', 'localStorage');
             // 用户登录完成后，用户ID写入Cookie
             Cookies.set('gray-id', res.data.user_id, { expires: 30 });
+            let userType = res.data.extends_remark;
             // 登录完成后，获取当前用户的权限
             this.$fetch(
               'planFunctionGet',
@@ -679,10 +680,16 @@
                   sessionOrLocal.set('SAAS_VS_PES', permissions, 'localStorage');
                   let isOld = localStorage.getItem('isOld');
                   if (getQueryString('form') && getQueryString('form') == 1) {
-                    location.href = `${location.origin}${process.env.VUE_APP_WEB_KEY}?form=1`;
+                    location.href =
+                      userType == 2
+                        ? `${location.origin}/v3/live/list`
+                        : `${location.origin}${process.env.VUE_APP_WEB_KEY}?form=1`;
                     // this.$router.push({path: '/', query:{'form': 1}});
                   } else {
-                    location.href = `${location.origin}${process.env.VUE_APP_WEB_KEY}`;
+                    location.href =
+                      userType == 2
+                        ? `${location.origin}/v3/live/list`
+                        : `${location.origin}${process.env.VUE_APP_WEB_KEY}`;
                     // this.$router.push({path: '/'});
                   }
                 } else {

@@ -1304,8 +1304,8 @@
       };
     },
     beforeRouteEnter(to, from, next) {
-      let userPhone = JSON.parse(sessionOrLocal.get('userInfo')).phone;
-      if (!vm.$route.query.id && !userPhone) {
+      let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+      if (!vm.$route.query.id && !userInfo.phone && userInfo.user_extends.extends_remark != 2) {
         vm.$alert('您还没有绑定手机，为了保证您的权益，请绑定后再发起直播！', '提示', {
           confirmButtonText: '立即绑定',
           customClass: 'zdy-message-box',

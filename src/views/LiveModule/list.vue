@@ -921,8 +921,8 @@
       // 创建活动
       createLiveAction(index) {
         console.log('账号下最多创建100个直播标签');
-        let userPhone = JSON.parse(sessionOrLocal.get('userInfo')).phone;
-        if (!userPhone) {
+        let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
+        if (!userInfo.phone && userInfo.user_extends.extends_remark != 2) {
           this.$alert('您还没有绑定手机，为了保证您的权益，请绑定后再发起直播！', '提示', {
             confirmButtonText: '立即绑定',
             customClass: 'zdy-message-box',

@@ -1,13 +1,21 @@
 <template>
   <div :class="{ 'has-logo': showLogo }">
-    <div class="sidebar-logo-container" :class="{ collapse: !sidebar.opened }">
+    <div
+      class="sidebar-logo-container"
+      :class="{ collapse: !sidebar.opened, isQn: userInfo.user_extends.extends_remark == 2 }"
+    >
       <transition>
         <!-- 关闭情况下 -->
         <router-link v-if="!sidebar.opened" key="collapse" class="sidebar-logo-link" to="/">
           <img v-if="logo" :src="logo" class="sidebar-logo" />
         </router-link>
         <!-- 展开情况下 -->
-        <div v-else key="expand" class="sidebar-logo-link">
+        <div
+          v-else
+          key="expand"
+          class="sidebar-logo-link"
+          :class="{ isQn: userInfo.user_extends.extends_remark == 2 }"
+        >
           <a :href="logo_jump_url" v-if="logo" class="sidebar-logo2">
             <img v-if="logo" :src="logo" />
           </a>
@@ -55,6 +63,7 @@
   import Hamburger from '../Hamburger/index.vue';
   import Env from '@/api/env.js';
   import { sessionOrLocal } from '@/utils/utils';
+  import QnLogo from '@/common/images/temp/QnLogo.png';
   export default {
     components: {
       SidebarItem,
@@ -68,7 +77,8 @@
         },
         logo: null,
         logo_jump_url: process.env.VUE_APP_COMPANY_URL,
-        childPremission: {}
+        childPremission: {},
+        userInfo: {}
       };
     },
     computed: {
@@ -118,6 +128,13 @@
               return false;
             }
           } else {
+            // 七牛账号不展示以下菜单
+            if (
+              this.userInfo.user_extends.extends_remark == 2 &&
+              ['/acc', '/'].includes(route.path)
+            ) {
+              return false;
+            }
             return true;
           }
         }
@@ -236,6 +253,7 @@
     },
     async created() {
       let userInfo = sessionOrLocal.get('userInfo');
+      this.userInfo = JSON.parse(userInfo);
       let vsPersonStr = sessionOrLocal.get('SAAS_VS_PES', 'localStorage');
       if (vsPersonStr) {
         this.vsQuanxian = JSON.parse(vsPersonStr);
@@ -251,6 +269,9 @@
       // 从缓存中获取控制台图片
       let userInfo = JSON.parse(sessionOrLocal.get('userInfo'));
       this.logo = userInfo.user_extends ? userInfo.user_extends.logo : '';
+      if (userInfo.user_extends.extends_remark == 2) {
+        this.logo = QnLogo;
+      }
       console.log(this.logo, process.env.VUE_APP_COMPANY_URL, '2222222222222222');
 
       if (this.logo) {
@@ -351,5 +372,8 @@
     &.left {
       left: 0;
     }
+  }
+  .isQn {
+    background: #3562fa;
   }
 </style>
