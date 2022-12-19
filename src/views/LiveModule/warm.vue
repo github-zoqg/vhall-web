@@ -235,7 +235,7 @@
         warmFlag: false,
         loading: false,
         isChange: false,
-        videoSize: '500.1',
+        videoSize: '5120.1',
         videoType: 'MP4',
         warmId: '',
         userId: '',
